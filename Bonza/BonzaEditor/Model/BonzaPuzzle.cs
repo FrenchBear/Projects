@@ -17,20 +17,19 @@ namespace Bonza
     {
         public List<WordPosition> Layout;
 
-
         public BonzaPuzzle()
         {
             // Demo
-            ReadLayout("fruits.layout");
+            Layout = ReadLayout("fruits.layout");
         }
 
         // Load layout from a .json file
-        internal void ReadLayout(string inFile)
+        internal List<WordPosition> ReadLayout(string inFile)
         {
             Debug.Assert(Layout == null);
             string text = File.ReadAllText(inFile);
 
-            Layout = JsonConvert.DeserializeObject<List<WordPosition>>(text);
+            return JsonConvert.DeserializeObject<List<WordPosition>>(text);
         }
 
     }

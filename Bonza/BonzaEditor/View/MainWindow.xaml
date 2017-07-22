@@ -21,9 +21,37 @@
                     <Button Command="{Binding Path=LoadCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Load</Button>
                     <Button Command="{Binding Path=SaveCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Save</Button>
                     <Button Command="{Binding Path=ResetCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Reset</Button>
+
+                    <ListView  ItemsSource="{Binding Words}"/>
                 </StackPanel>
             </DockPanel>
-            <ListView Grid.Column="1" ItemsSource="{Binding Words}"/>
+
+            <DockPanel Grid.Column="1">
+                <StatusBar DockPanel.Dock="Bottom">
+                    <TextBlock>Drag: Move canvas, point or line; Wheel: Rotate canvas; Ctrl+Wheel: Rescale canvas</TextBlock>
+                </StatusBar>
+                <StatusBar DockPanel.Dock="Bottom">
+                    <TextBlock>Rotation:</TextBlock>
+                    <TextBlock Name="rotationTextBlock" Width="80"/>
+                    <TextBlock>Scale:</TextBlock>
+                    <TextBlock Name="scaleTextBlock" Width="80"/>
+                    <TextBlock>Translation:</TextBlock>
+                    <TextBlock Name="translationTextBlock" Width="80"/>
+                </StatusBar>
+
+                <Grid Name="mainGrid" MouseMove="MainGrid_MouseMoveWhenUp" MouseDown="MainGrid_MouseDown" MouseUp="MainGrid_MouseUp" MouseWheel="MainGrid_MouseWheel" Background="Transparent">
+                    <Canvas ClipToBounds="True">
+                        <Image Name="backgroundImage" IsHitTestVisible="False" />
+                        <Canvas Name="myCanvas" ClipToBounds="False">
+                            <Canvas.RenderTransform>
+                                <MatrixTransform x:Name="mainMatrixTransform"/>
+                            </Canvas.RenderTransform>
+                        </Canvas>
+                    </Canvas>
+                    <Canvas Name="hotTipCanvas" />
+                </Grid>
+            </DockPanel>
+
         </Grid>
     </Grid>
 </Window>
