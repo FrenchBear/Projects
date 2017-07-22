@@ -1,0 +1,254 @@
+[
+  {
+    "Word": "MANDARINE",
+    "StartRow": 0,
+    "StartColumn": 0,
+    "IsVertical": true
+  },
+  {
+    "Word": "PASTÈQUE",
+    "StartRow": 1,
+    "StartColumn": -1,
+    "IsVertical": false
+  },
+  {
+    "Word": "VANILLE",
+    "StartRow": 7,
+    "StartColumn": -2,
+    "IsVertical": false
+  },
+  {
+    "Word": "NÈFLE",
+    "StartRow": 4,
+    "StartColumn": 3,
+    "IsVertical": true
+  },
+  {
+    "Word": "MERISE",
+    "StartRow": 0,
+    "StartColumn": 6,
+    "IsVertical": true
+  },
+  {
+    "Word": "CHÂTAIGNE",
+    "StartRow": 4,
+    "StartColumn": -4,
+    "IsVertical": false
+  },
+  {
+    "Word": "MYRTILLE",
+    "StartRow": 0,
+    "StartColumn": 6,
+    "IsVertical": false
+  },
+  {
+    "Word": "AMANDE",
+    "StartRow": -5,
+    "StartColumn": 13,
+    "IsVertical": true
+  },
+  {
+    "Word": "ORANGE",
+    "StartRow": -1,
+    "StartColumn": 8,
+    "IsVertical": true
+  },
+  {
+    "Word": "BANANE",
+    "StartRow": -2,
+    "StartColumn": 9,
+    "IsVertical": false
+  },
+  {
+    "Word": "DATTE",
+    "StartRow": -2,
+    "StartColumn": 2,
+    "IsVertical": true
+  },
+  {
+    "Word": "ABRICOT",
+    "StartRow": 0,
+    "StartColumn": -4,
+    "IsVertical": true
+  },
+  {
+    "Word": "GRENADE",
+    "StartRow": -2,
+    "StartColumn": -3,
+    "IsVertical": false
+  },
+  {
+    "Word": "LITCHI",
+    "StartRow": 0,
+    "StartColumn": 11,
+    "IsVertical": true
+  },
+  {
+    "Word": "KIWI",
+    "StartRow": 5,
+    "StartColumn": 10,
+    "IsVertical": false
+  },
+  {
+    "Word": "PÊCHE",
+    "StartRow": -6,
+    "StartColumn": -1,
+    "IsVertical": true
+  },
+  {
+    "Word": "FRAISE",
+    "StartRow": -7,
+    "StartColumn": 3,
+    "IsVertical": true
+  },
+  {
+    "Word": "CITRON",
+    "StartRow": 4,
+    "StartColumn": 13,
+    "IsVertical": true
+  },
+  {
+    "Word": "POIRE",
+    "StartRow": -4,
+    "StartColumn": 1,
+    "IsVertical": false
+  },
+  {
+    "Word": "MELON",
+    "StartRow": -6,
+    "StartColumn": 11,
+    "IsVertical": true
+  },
+  {
+    "Word": "POMME",
+    "StartRow": -8,
+    "StartColumn": 5,
+    "IsVertical": true
+  },
+  {
+    "Word": "CERISE",
+    "StartRow": 7,
+    "StartColumn": 11,
+    "IsVertical": false
+  },
+  {
+    "Word": "FRAMBOISE",
+    "StartRow": 0,
+    "StartColumn": 15,
+    "IsVertical": true
+  },
+  {
+    "Word": "MÛRE",
+    "StartRow": -5,
+    "StartColumn": 8,
+    "IsVertical": false
+  },
+  {
+    "Word": "MIRABELLE",
+    "StartRow": -4,
+    "StartColumn": 13,
+    "IsVertical": false
+  },
+  {
+    "Word": "CASSIS",
+    "StartRow": 7,
+    "StartColumn": 11,
+    "IsVertical": true
+  },
+  {
+    "Word": "RAISIN",
+    "StartRow": 1,
+    "StartColumn": 15,
+    "IsVertical": false
+  },
+  {
+    "Word": "GRIOTTE",
+    "StartRow": -10,
+    "StartColumn": 21,
+    "IsVertical": true
+  },
+  {
+    "Word": "FIGUE",
+    "StartRow": 0,
+    "StartColumn": 17,
+    "IsVertical": true
+  },
+  {
+    "Word": "NOIX",
+    "StartRow": 1,
+    "StartColumn": 20,
+    "IsVertical": true
+  },
+  {
+    "Word": "PAMPLEMOUSSE",
+    "StartRow": -15,
+    "StartColumn": 18,
+    "IsVertical": true
+  },
+  {
+    "Word": "GROSEILLE",
+    "StartRow": -8,
+    "StartColumn": 16,
+    "IsVertical": false
+  },
+  {
+    "Word": "MANGUE",
+    "StartRow": -13,
+    "StartColumn": 18,
+    "IsVertical": false
+  },
+  {
+    "Word": "ANANAS",
+    "StartRow": -16,
+    "StartColumn": 20,
+    "IsVertical": true
+  },
+  {
+    "Word": "PAPAYE",
+    "StartRow": -8,
+    "StartColumn": 5,
+    "IsVertical": false
+  },
+  {
+    "Word": "COING",
+    "StartRow": -12,
+    "StartColumn": 16,
+    "IsVertical": true
+  },
+  {
+    "Word": "QUETSCHE",
+    "StartRow": -10,
+    "StartColumn": 24,
+    "IsVertical": true
+  },
+  {
+    "Word": "GOYAVE",
+    "StartRow": -13,
+    "StartColumn": 10,
+    "IsVertical": true
+  },
+  {
+    "Word": "BRUGNON",
+    "StartRow": -13,
+    "StartColumn": 7,
+    "IsVertical": false
+  },
+  {
+    "Word": "PRUNE",
+    "StartRow": -14,
+    "StartColumn": 8,
+    "IsVertical": true
+  },
+  {
+    "Word": "CLÉMENTINE",
+    "StartRow": -10,
+    "StartColumn": -1,
+    "IsVertical": false
+  },
+  {
+    "Word": "NOISETTE",
+    "StartRow": 11,
+    "StartColumn": 9,
+    "IsVertical": false
+  }
+]
