@@ -17,7 +17,7 @@ namespace Bonza
     class BonzaViewModel : INotifyPropertyChanged
     {
         // Model data
-        BonzaPuzzle puzzle;
+        private BonzaPuzzle puzzle;
 
 
         // Implementation of INotifyPropertyChanged, standard since View is only linked through DataBinding
@@ -44,17 +44,35 @@ namespace Bonza
 
             // Initialize ViewModel
             puzzle = new BonzaPuzzle();
-            foreach (var wp in puzzle.Layout)
-                words.Add(wp);
+            //foreach (var wp in puzzle.Layout)
+            //    words.Add(wp);
         }
 
         // -------------------------------------------------
         // Bindings
 
-        private ObservableCollection<WordPosition> words = new ObservableCollection<WordPosition>();
-        public ObservableCollection<WordPosition> Words
+        //private ObservableCollection<WordPosition> words = new ObservableCollection<WordPosition>();
+        //public ObservableCollection<WordPosition> Words
+        //{
+        //    get => words;
+        //}
+
+        public IEnumerable<WordPosition> Layout  => puzzle.Layout;
+
+
+
+        // -------------------------------------------------
+        // View helpers
+
+        // returns True if WordPosition can start at (top, left) with either no intersection or a valid intersection
+        internal bool OkPlaceWord(WordPosition wp, int left, int top)
         {
-            get => words;
+            return puzzle.OkPlaceWord(wp, left, top);
+        }
+
+        internal void UpdateWordPositionLocation(WordPosition wp, int left, int top)
+        {
+            puzzle.UpdateWordPositionLocation(wp, left, top);
         }
 
 
