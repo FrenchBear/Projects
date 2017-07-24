@@ -56,6 +56,19 @@ namespace Bonza.Editor
 
         public IEnumerable<WordPosition> WordPositionList  => model.Layout.WordPositionList;
 
+        private int _WordsNotConnected;
+        public int WordsNotConnected
+        {
+            get { return _WordsNotConnected; }
+            set
+            {
+                if (_WordsNotConnected != value)
+                {
+                    _WordsNotConnected = value;
+                    NotifyPropertyChanged(nameof(WordsNotConnected));
+                }
+            }
+        }
 
 
         // -------------------------------------------------

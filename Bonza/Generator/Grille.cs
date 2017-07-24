@@ -163,84 +163,18 @@ namespace Bonza.Generator
                     foreach (int positionInWordToPlace in positionsInWordToPlace)
                         foreach (int positionInPlacedWord in positionsInPlacedWord)
                         {
-                            WordPosition wp = TryPlaceWordWithSpecificIntersection(!placedWord.IsVertical, wordToPlace, positionInWordToPlace, placedWord, positionInPlacedWord);
-                            if (wp != null)
-                                possibleWordPositions.Add(wp);
+                            WordPosition testWP = new WordPosition
+                            {
+                                Word = wordToPlace,
+                                IsVertical = !placedWord.IsVertical,
+                                StartRow = placedWord.IsVertical ? (placedWord.StartRow + positionInPlacedWord) : (placedWord.StartRow - positionInWordToPlace),
+                                StartColumn = placedWord.IsVertical ? (placedWord.StartColumn - positionInWordToPlace) : (placedWord.StartColumn + positionInPlacedWord)
+                            };
+                            if (Layout.CanPlaceWord(testWP))
+                                possibleWordPositions.Add(testWP);
                         }
                 }
         }
-
-        // Try to place word wordToPlace that cross placedWord, common letter is at position positionInWordToPlace in 1st word, and position positionInPlacedWord in the second word
-        // Return null if it's not possible with current layout (collides or too close to another placed word)
-        // Return a WordPosition if placement is possible (layout is not modified)
-        private WordPosition TryPlaceWordWithSpecificIntersection(bool isToPlaceVertical, string wordToPlace, int positionInWordToPlace, WordPosition placedWord, int positionInPlacedWord)
-        {
-            int row, column;
-
-            if (isToPlaceVertical)
-            {
-                // wordToPlace is vertical, placedWord is horizontal
-                row = placedWord.StartRow - positionInWordToPlace;
-                column = placedWord.StartColumn + positionInPlacedWord;
-
-                // Need free cell above
-                if (Layout.GetSquare(row - 1, column) != null) return null;
-                // Need free cell below
-                if (Layout.GetSquare(row + wordToPlace.Length, column) != null) return null;
-
-                bool prevousLetterMatch = false;
-                for (int i = 0; i < wordToPlace.Length; i++)
-                    if (Layout.GetLetter(row + i, column) == wordToPlace[i])
-                    {   // If we have a match, we're almost good, need to verify that previous
-                        // letter was not a match to avoid overlapping a smaller word
-                        if (prevousLetterMatch) return null;
-                        prevousLetterMatch = true;
-                    }
-                    else
-                    {
-                        // We need an empty cell, and a free cell on the left and on the right
-                        if (Layout.GetLetter(row + i, column - 1) != EmptyLetter || Layout.GetLetter(row + i, column) != EmptyLetter || Layout.GetLetter(row + i, column + 1) != EmptyLetter)
-                            return null;
-                        prevousLetterMatch = false;
-                    }
-            }
-            else
-            {
-                // wordToPlace is horizontal, placedWord is vertical
-                row = placedWord.StartRow + positionInPlacedWord;
-                column = placedWord.StartColumn - positionInWordToPlace;
-
-                // Free cell left
-                if (Layout.GetSquare(row, column - 1) != null) return null;
-                // Free cell right
-                if (Layout.GetSquare(row, column + wordToPlace.Length) != null) return null;
-
-                bool prevousLetterMatch = false;
-                for (int i = 0; i < wordToPlace.Length; i++)
-                    if (Layout.GetLetter(row, column + i) == wordToPlace[i])
-                    {   // If we have a match, we're almost good, need to verify that previous
-                        // letter was not a match to avoid overlapping a smaller word
-                        if (prevousLetterMatch) return null;
-                        prevousLetterMatch = true;
-                    }
-                    else
-                    {
-                        if (Layout.GetLetter(row - 1, column + i) != EmptyLetter || Layout.GetLetter(row, column + i) != EmptyLetter || Layout.GetLetter(row + 1, column + i) != EmptyLetter)
-                            return null;
-                        prevousLetterMatch = false;
-                    }
-            }
-
-            // Ok, all is clear!
-            return new WordPosition
-            {
-                IsVertical = isToPlaceVertical,
-                StartColumn = column,
-                StartRow = row,
-                Word = wordToPlace
-            };
-        }
-
 
 
         // Write a text representation of current layout on stdout
@@ -293,13 +227,13 @@ namespace Bonza.Generator
         // Save layout in a .json file
         public void SaveLayout(string outFile)
         {
-            Layout.Save(outFile);
+            Layout.SaveToFile(outFile);
         }
 
         // Load layout from a .json file
-        public void ReadLayout(string inFile)
+        public void LoadLayout(string inFile)
         {
-            Layout.Read(inFile);
+            Layout.LoadFromFile(inFile);
         }
 
     }

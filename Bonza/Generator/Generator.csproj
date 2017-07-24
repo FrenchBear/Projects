@@ -46,6 +46,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BonzaException.cs" />
+    <Compile Include="Chunk.cs" />
+    <Compile Include="ChunkLayout.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Grille.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

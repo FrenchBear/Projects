@@ -17,12 +17,22 @@ namespace Bonza.Editor
 {
     class BonzaModel
     {
+        private BonzaViewModel viewModel;
+
+
         public WordPositionLayout Layout = new WordPositionLayout();
         public WordPositionLayout MoveTestLayout;
+
         public BonzaModel()
         {
             // Demo
-            Layout.Read("fruits.layout");
+            Layout.LoadFromFile("fruits.layout");
+        }
+
+        public void SetViewModel(BonzaViewModel viewModel)
+        {
+            this.viewModel = viewModel;
+            viewModel.WordsNotConnected = Layout.GetWordsNotConnected();
         }
 
         // Build a copy of Layout without a specific WordPosition to validate placement
@@ -137,10 +147,14 @@ namespace Bonza.Editor
         }
         */
 
+        // Update a word in current Layout
         internal void UpdateWordPositionLocation(WordPosition word, int column, int row)
         {
             word.StartColumn = column;
             word.StartRow = row;
+
+            // Need to recompute number of words not connected
+            viewModel.WordsNotConnected = Layout.GetWordsNotConnected();
         }
 
     }

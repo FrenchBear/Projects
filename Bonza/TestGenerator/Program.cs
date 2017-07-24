@@ -24,6 +24,7 @@ namespace Bonza
             g.Print("C:\\temp\\fruits.txt");
             g.SaveLayout("c:\\temp\\fruits.layout");
             g.BuildPuzzle(5);
+            g.SavePuzzle("c:\\temp\\fruits.chunks");
 
             Console.WriteLine();
             Console.Write("(Pause)");

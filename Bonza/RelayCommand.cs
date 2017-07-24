@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Input;
 
-namespace Bonza
+namespace Bonza.Editor
 {
     class RelayCommand<T> : ICommand
     {

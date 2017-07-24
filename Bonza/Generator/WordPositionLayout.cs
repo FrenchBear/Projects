@@ -1,4 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿// WordPositionLayout.cs
+// A class representing placed words on a virtual grid of 1-letter squares
+// 2017-07-24   PV      Moved as an external class during refactoring
+
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -149,17 +153,99 @@ namespace Bonza.Generator
             return true;
         }
 
+        // Helper, returns the number of words that do not intersect with any other word
+        public int GetWordsNotConnected()
+        {
+            int count = 0;
+            for (int i = 0; i < m_WordPositionList.Count; i++)
+            {
+                WordPosition word1 = m_WordPositionList[i];
+                bool intersect = false;
+                for (int j = i + 1; j < m_WordPositionList.Count; j++)
+                {
+                    WordPosition word2 = m_WordPositionList[j];
+                    if (IntersectWords(word1, word2))
+                    {
+                        intersect = true;
+                        break;
+                    }
+                }
+                if (!intersect)
+                    count++;
+            }
+            return count;
+        }
+
+
+        // Returns true if the two WordPosition intersect
+        private bool IntersectWords(WordPosition word1, WordPosition word2)
+        {
+            if (word1.IsVertical && word2.IsVertical)
+            {
+                // Both vertical, different column: no problem
+                if (word1.StartColumn != word2.StartColumn) return false;
+
+                // On the same column, check that one row ends before the other starts
+                if (word1.StartRow + word1.Word.Length - 1 < word2.StartRow
+                    || word2.StartRow + word2.Word.Length - 1 < word1.StartRow)
+                    return false;
+
+                // They overlap
+                return true;
+            }
+            else if (!word1.IsVertical && !word2.IsVertical)
+            {
+                // Both horizontal, different row, no problem
+                if (word1.StartRow != word2.StartRow) return false;
+
+                // On the same row, check that one column ends before the other starts
+                if (word1.StartColumn + word1.Word.Length - 1 < word2.StartColumn
+                    || word2.StartColumn + word2.Word.Length - 1 < word1.StartColumn)
+                    return false;
+
+                // Overlap of two horizontal words
+                return true;
+            }
+            else if (!word1.IsVertical && word2.IsVertical)
+            {
+                // word1 horizontal, word2 vertical
+                // if word2 column does not overlap with word1 columns, no problem
+                if (word2.StartColumn < word1.StartColumn || word2.StartColumn > word1.StartColumn + word1.Word.Length - 1)
+                    return false;
+
+                // If word2 rows do now overlap with word1 row, no problem
+                if (word1.StartRow < word2.StartRow || word1.StartRow > word2.StartRow + word2.Word.Length - 1)
+                    return false;
+
+                // Otherwise we have an intersection
+                return true;
+            }
+            else
+            {
+                // word1 vertical, word2 horizontal
+                // if word1 column does not overlap with word2 columns, no problem
+                if (word1.StartColumn < word2.StartColumn || word1.StartColumn > word2.StartColumn + word2.Word.Length - 1)
+                    return false;
+
+                // If word1 rows do now overlap with word2 row, no problem
+                if (word2.StartRow < word1.StartRow || word2.StartRow > word1.StartRow + word1.Word.Length - 1)
+                    return false;
+
+                // Otherwise we have an intersection
+                return true;
+            }
+        }
 
 
         // Save layout in a .json file
-        public void Save(string outFile)
+        public void SaveToFile(string outFile)
         {
             string json = JsonConvert.SerializeObject(m_WordPositionList, Formatting.Indented);
             File.WriteAllText(outFile, json);
         }
 
         // Load layout from a .json file
-        public void Read(string inFile)
+        public void LoadFromFile(string inFile)
         {
             string text = File.ReadAllText(inFile);
             m_WordPositionList = JsonConvert.DeserializeObject<List<WordPosition>>(text);

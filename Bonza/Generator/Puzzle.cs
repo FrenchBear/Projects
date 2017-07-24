@@ -1,13 +1,11 @@
 ﻿// Puzzle.cs
 // Subset of Grille class to manage Chunks after layout has been built
+//
 // 2017-07-22   PV      Split from program.cs
 
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using static System.Console;
 
@@ -16,121 +14,12 @@ namespace Bonza.Generator
 {
     public partial class Grille
     {
-        // A group of letters taken from global layout
-        class Chunk
-        {
-            List<Square> m_Squares = new List<Square>();
-
-            public int ChunkID { get; }
-            public ReadOnlyCollection<Square> Squares => m_Squares.AsReadOnly();
-            public int SquaresCount => m_Squares.Count;
-            public bool IsDeleted { get; set; }
-
-            // Get next ID on creation
-            public Chunk(int newId)
-            {
-                ChunkID = newId;
-            }
-
-            public (int minRow, int maxRow, int minColumn, int maxColumn) GetBounds()
-            {
-                int minRow = int.MaxValue;
-                int maxRow = int.MinValue;
-                int minColumn = int.MaxValue;
-                int maxColumn = int.MinValue;
-
-                foreach (Square sq in Squares)
-                {
-                    minRow = Math.Min(minRow, sq.Row);
-                    maxRow = Math.Max(maxRow, sq.Row);
-                    minColumn = Math.Min(minColumn, sq.Column);
-                    maxColumn = Math.Max(maxColumn, sq.Column);
-                }
-
-                return (minRow, maxRow, minColumn, maxColumn);
-            }
-
-            public override string ToString()
-            {
-                var sb = new StringBuilder();
-
-                (int minRow, int maxRow, int minColumn, int maxColumn) = GetBounds();
-                sb.Append($"{ChunkID}[{SquaresCount}]: {maxRow - minRow + 1}x{maxColumn - minColumn + 1}:");
-                foreach (Square sq in Squares)
-                    sb.Append(' ').Append(sq.ToString());
-                return sb.ToString();
-            }
-
-            public void AddSquare(Square square)
-            {
-                if (square == null) throw new ArgumentNullException(nameof(square));
-                m_Squares.Add(square);
-            }
-
-            public void AddSquares(IEnumerable<Square> squares)
-            {
-                if (squares == null) throw new ArgumentNullException(nameof(squares));
-                m_Squares.AddRange(squares);
-            }
-        }
-
-
-        class PuzzleToSolve
-        {
-            List<Chunk> m_Chunks = new List<Chunk>();
-
-            public ReadOnlyCollection<Chunk> Chunks => m_Chunks.AsReadOnly();
-            public int ChunksCount => m_Chunks.Count;
-            public int SquaresCount => m_Chunks.Sum(ch => ch.SquaresCount);
-
-
-            public List<Chunk> GetAdjacentChunks(Chunk it)
-            {
-                if (it == null) throw new ArgumentNullException(nameof(it));
-                var l = new List<Chunk>();
-
-                foreach (var chunk in Chunks)
-                {
-                    if (chunk != it)
-                    {
-                        foreach (Square sq1 in chunk.Squares)
-                            foreach (Square sq2 in it.Squares)
-                            {
-                                if ((sq1.Row == sq2.Row && (sq1.Column == sq2.Column - 1 || sq1.Column == sq2.Column + 1))
-                                     || (sq1.Column == sq2.Column && (sq1.Row == sq2.Row - 1 || sq1.Row == sq2.Row + 1)))
-                                {
-                                    l.Add(chunk);
-                                    goto NextChunk;
-                                }
-                            }
-                    }
-                    NextChunk:;
-                }
-                return l;
-            }
-
-            public void AddChunk(Chunk chunk)
-            {
-                if (chunk == null) throw new ArgumentNullException(nameof(chunk));
-                m_Chunks.Add(chunk);
-            }
-
-            public void RemoveChunk(Chunk chunk)
-            {
-                if (chunk == null) throw new ArgumentNullException(nameof(chunk));
-                m_Chunks.Remove(chunk);
-                chunk.IsDeleted = true;
-            }
-        }
-
-
-        PuzzleToSolve Puzzle;
-
+        ChunkLayout Puzzle;
 
         public void BuildPuzzle(int averageCount = 4)
         {
             Debug.Assert(Puzzle == null);
-            Puzzle = new PuzzleToSolve();
+            Puzzle = new ChunkLayout();
 
             // Find a starting letter on the first row
             (int minRow, int maxRow, int minColumn, int maxColumn) = Layout.GetBounds();
@@ -140,10 +29,11 @@ namespace Bonza.Generator
                     break;
             Debug.Assert(loopCol <= maxColumn);
 
+            // Start accumulation process from this initial square
             Stack<Square> myStack = new Stack<Square>();
             myStack.Push(Layout.GetSquare(minRow, loopCol));
 
-
+            // We stop once all squares have been placed
             while (myStack.Count > 0)
             {
                 Square sq = myStack.Pop();
@@ -256,6 +146,18 @@ namespace Bonza.Generator
                 default:
                     return false;
             }
+        }
+
+        // Save chunks in a .json file
+        public void SavePuzzle(string outFile)
+        {
+            Puzzle.SaveToFile(outFile);
+        }
+
+        // Load chunks from a .json file
+        public void LoadPuzzle(string inFile)
+        {
+            Puzzle.LoadFromFile(inFile);
         }
 
     }

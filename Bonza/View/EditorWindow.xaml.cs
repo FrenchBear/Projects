@@ -30,6 +30,7 @@ namespace Bonza.Editor
             InitializeComponent();
             model = new BonzaModel();
             viewModel = new BonzaViewModel(model, this);
+            model.SetViewModel(viewModel);
             DataContext = viewModel;
             UpdateTransformationsFeedBack();
 
