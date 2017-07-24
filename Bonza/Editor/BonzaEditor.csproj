@@ -20,7 +20,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>Output\</OutputPath>
+    <OutputPath>..\Output\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -29,7 +29,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>Output\</OutputPath>
+    <OutputPath>..\Output\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -112,7 +112,7 @@
     <None Include="fruits.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Generator\Generator.csproj">
+    <ProjectReference Include="..\Generator\Generator.csproj">
       <Project>{46505a9e-b84d-4664-bb02-515706791af3}</Project>
       <Name>Generator</Name>
     </ProjectReference>
