@@ -12,9 +12,9 @@ using System.Threading.Tasks;
 using static System.Console;
 
 
-namespace Bonza
+namespace Bonza.Generator
 {
-    partial class Grille
+    public partial class Grille
     {
         // A group of letters taken from global layout
         class Chunk
@@ -127,7 +127,7 @@ namespace Bonza
         PuzzleToSolve Puzzle;
 
 
-        internal void BuildPuzzle(int averageCount = 4)
+        public void BuildPuzzle(int averageCount = 4)
         {
             Debug.Assert(Puzzle == null);
             Puzzle = new PuzzleToSolve();

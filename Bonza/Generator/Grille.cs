@@ -13,9 +13,9 @@ using System.IO;
 using System.Diagnostics;
 using System.Globalization;
 
-namespace Bonza
+namespace Bonza.Generator
 {
-    partial class Grille
+    public partial class Grille
     {
         readonly bool TraceBuild = false;
         readonly Random rnd;
@@ -351,14 +351,14 @@ namespace Bonza
         }
 
         // Save layout in a .json file
-        internal void SaveLayout(string outFile)
+        public void SaveLayout(string outFile)
         {
             string json = JsonConvert.SerializeObject(Layout, Formatting.Indented);
             File.WriteAllText(outFile, json);
         }
 
         // Load layout from a .json file
-        internal void ReadLayout(string inFile)
+        public void ReadLayout(string inFile)
         {
             Debug.Assert(Layout == null);
             string text = File.ReadAllText(inFile);

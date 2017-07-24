@@ -10,8 +10,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Bonza.Generator;
 
-namespace Bonza
+
+namespace Bonza.Editor
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

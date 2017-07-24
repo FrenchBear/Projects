@@ -4,15 +4,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Bonza.Generator;
 
-namespace Bonza
+
+namespace Bonza.Editor
 {
     class BonzaViewModel : INotifyPropertyChanged
     {

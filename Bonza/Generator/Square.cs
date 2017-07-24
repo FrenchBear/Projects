@@ -3,7 +3,7 @@
 // 2017-07-21   PV      Split from program.cs
 
 
-namespace Bonza
+namespace Bonza.Generator
 {
     internal class Square
     {

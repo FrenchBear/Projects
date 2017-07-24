@@ -3,9 +3,9 @@
 // 2017-07-21   PV      Split from program.cs
 
 
-namespace Bonza
+namespace Bonza.Generator
 {
-    internal class WordPosition
+    public class WordPosition
     {
         public string Word { get; set; }
         public int StartRow { get; set; }

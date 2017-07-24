@@ -10,9 +10,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Bonza.Generator;
 
 
-namespace Bonza
+namespace Bonza.Editor
 {
     class BonzaPuzzle
     {
