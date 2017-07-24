@@ -18,16 +18,18 @@ namespace Bonza.Editor
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class EditorWindow : Window
     {
+        private BonzaModel model;
         private BonzaViewModel viewModel;
 
         const double UnitSize = 25;
 
-        public MainWindow()
+        public EditorWindow()
         {
             InitializeComponent();
-            viewModel = new BonzaViewModel();
+            model = new BonzaModel();
+            viewModel = new BonzaViewModel(model, this);
             DataContext = viewModel;
             UpdateTransformationsFeedBack();
 
@@ -69,7 +71,7 @@ namespace Bonza.Editor
 
             // Draw letters
             var arial = new FontFamily("Arial");
-            foreach (WordPosition wp in viewModel.Layout)
+            foreach (WordPosition wp in viewModel.WordPositionList)
             {
                 // Group letters in a canvas to be able later to move them at once
                 var wordCanvas = new Canvas();
@@ -174,6 +176,9 @@ namespace Bonza.Editor
                     myCanvas.Children.Add(hitCanvas);
                     SetWordCanvasColor(hitCanvas, Brushes.White, Brushes.DarkBlue);
 
+                    // Need a layout without moved word to validate placement
+                    model.BuildMoveTestLayout(hitWordPosition);
+
                     m.Invert();     // To convert from screen transformed coordinates into ideal grid
                                     // coordinates starting at (0,0) with a square side of UnitSize
                     Point canvasTopLeft = new Point((double)hitCanvas.GetValue(Canvas.LeftProperty), (double)hitCanvas.GetValue(Canvas.TopProperty));
@@ -190,7 +195,8 @@ namespace Bonza.Editor
                         int left = (int)Math.Floor(((double)hitCanvas.GetValue(Canvas.LeftProperty) / UnitSize) + 0.5);
                         int top = (int)Math.Floor(((double)hitCanvas.GetValue(Canvas.TopProperty) / UnitSize) + 0.5);
 
-                        if (viewModel.OkPlaceWord(hitWordPosition, left, top))
+                        // Find out if it's possible to place the word here, provide color feed-back
+                        if (model.CanPlaceWordInMoveTestLayout(hitWordPosition, left, top))
                             SetWordCanvasColor(hitCanvas, Brushes.White, Brushes.DarkBlue);
                         else
                             SetWordCanvasColor(hitCanvas, Brushes.White, Brushes.DarkRed);
@@ -259,7 +265,7 @@ namespace Bonza.Editor
 
                 // If position is not valid, look around until a valid position is found
                 // Examine surrounding cells in a "snail pattern" 
-                if (!viewModel.OkPlaceWord(hitWordPosition, left, top))
+                if (!model.CanPlaceWordInMoveTestLayout(hitWordPosition, left, top))
                 {
                     int st = 1;
                     int sign = 1;
@@ -269,12 +275,12 @@ namespace Bonza.Editor
                         for (int i = 0; i < st; i++)
                         {
                             left += sign;
-                            if (viewModel.OkPlaceWord(hitWordPosition, left, top)) goto FoundValidPosition;
+                            if (model.CanPlaceWordInMoveTestLayout(hitWordPosition, left, top)) goto FoundValidPosition;
                         }
                         for (int i = 0; i < st; i++)
                         {
                             top += sign;
-                            if (viewModel.OkPlaceWord(hitWordPosition, left, top)) goto FoundValidPosition;
+                            if (model.CanPlaceWordInMoveTestLayout(hitWordPosition, left, top)) goto FoundValidPosition;
                         }
                         sign = -sign;
                         st++;

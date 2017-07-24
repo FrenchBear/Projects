@@ -28,6 +28,11 @@ namespace Bonza.Generator
             m_WordPositionList.Add(wp);
 
             // Add new squares
+            AddSquares(wp);
+        }
+
+        private void AddSquares(WordPosition wp)
+        {
             int row = wp.StartRow;
             int column = wp.StartColumn;
             for (int il = 0; il < wp.Word.Length; il++)
@@ -89,6 +94,62 @@ namespace Bonza.Generator
             return (newMinRow, newMaxRow, newMinColumn, newMaxColumn);
         }
 
+        // Try to place a word in current layout, following rules of puzzle layout
+        // Return true of it's possible, false otherwise
+        public bool CanPlaceWord(WordPosition wp)
+        {
+            int row = wp.StartRow;
+            int column = wp.StartColumn;
+
+            if (wp.IsVertical)
+            {
+                // Need free cell above
+                if (GetSquare(row - 1, column) != null) return false;
+                // Need free cell below
+                if (GetSquare(row + wp.Word.Length, column) != null) return false;
+
+                bool prevousLetterMatch = false;
+                for (int i = 0; i < wp.Word.Length; i++)
+                    if (GetLetter(row + i, column) == wp.Word[i])
+                    {   // If we have a match, we're almost good, need to verify that previous
+                        // letter was not a match to avoid overlapping a smaller word
+                        if (prevousLetterMatch) return false;
+                        prevousLetterMatch = true;
+                    }
+                    else
+                    {
+                        // We need an empty cell, and a free cell on the left and on the right
+                        if (GetLetter(row + i, column - 1) != '\0' || GetLetter(row + i, column) != '\0' || GetLetter(row + i, column + 1) != '\0')
+                            return false;
+                        prevousLetterMatch = false;
+                    }
+            }
+            else
+            {
+                // Free cell left
+                if (GetSquare(row, column - 1) != null) return false;
+                // Free cell right
+                if (GetSquare(row, column + wp.Word.Length) != null) return false;
+
+                bool prevousLetterMatch = false;
+                for (int i = 0; i < wp.Word.Length; i++)
+                    if (GetLetter(row, column + i) == wp.Word[i])
+                    {   // If we have a match, we're almost good, need to verify that previous
+                        // letter was not a match to avoid overlapping a smaller word
+                        if (prevousLetterMatch) return false;
+                        prevousLetterMatch = true;
+                    }
+                    else
+                    {
+                        if (GetLetter(row - 1, column + i) != '\0' || GetLetter(row, column + i) != '\0' || GetLetter(row + 1, column + i) != '\0')
+                            return false;
+                        prevousLetterMatch = false;
+                    }
+            }
+            return true;
+        }
+
+
 
         // Save layout in a .json file
         public void Save(string outFile)
@@ -102,7 +163,10 @@ namespace Bonza.Generator
         {
             string text = File.ReadAllText(inFile);
             m_WordPositionList = JsonConvert.DeserializeObject<List<WordPosition>>(text);
-        }
 
+            m_Squares = new Dictionary<(int, int), Square>();
+            foreach (var wp in m_WordPositionList)
+                AddSquares(wp);
+        }
     }
 }

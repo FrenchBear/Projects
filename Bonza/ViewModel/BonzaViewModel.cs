@@ -14,9 +14,9 @@ namespace Bonza.Editor
 {
     class BonzaViewModel : INotifyPropertyChanged
     {
-        // Model data
-        private BonzaPuzzle puzzle;
-
+        // Model and View
+        private BonzaModel model;
+        private EditorWindow view;
 
         // Implementation of INotifyPropertyChanged, standard since View is only linked through DataBinding
         public event PropertyChangedEventHandler PropertyChanged;
@@ -33,7 +33,7 @@ namespace Bonza.Editor
 
 
         // Constructor
-        public BonzaViewModel()
+        public BonzaViewModel(BonzaModel model, EditorWindow view)
         {
             // Binding commands with behavior
             LoadCommand = new RelayCommand<object>(LoadExecute, LoadCanExecute);
@@ -41,9 +41,8 @@ namespace Bonza.Editor
             ResetCommand = new RelayCommand<object>(ResetExecute, ResetCanExecute);
 
             // Initialize ViewModel
-            puzzle = new BonzaPuzzle();
-            //foreach (var wp in puzzle.Layout)
-            //    words.Add(wp);
+            this.model = model;
+            this.view = view;
         }
 
         // -------------------------------------------------
@@ -55,22 +54,16 @@ namespace Bonza.Editor
         //    get => words;
         //}
 
-        public IEnumerable<WordPosition> Layout  => puzzle.Layout.WordPositionList;
+        public IEnumerable<WordPosition> WordPositionList  => model.Layout.WordPositionList;
 
 
 
         // -------------------------------------------------
         // View helpers
 
-        // returns True if WordPosition can start at (top, left) with either no intersection or a valid intersection
-        internal bool OkPlaceWord(WordPosition wp, int left, int top)
-        {
-            return puzzle.OkPlaceWord(wp, left, top);
-        }
-
         internal void UpdateWordPositionLocation(WordPosition wp, int left, int top)
         {
-            puzzle.UpdateWordPositionLocation(wp, left, top);
+            model.UpdateWordPositionLocation(wp, left, top);
         }
 
 

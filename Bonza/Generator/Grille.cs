@@ -242,6 +242,7 @@ namespace Bonza.Generator
         }
 
 
+
         // Write a text representation of current layout on stdout
         public void Print() => Print(Console.Out);
 

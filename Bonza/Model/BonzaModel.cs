@@ -15,25 +15,38 @@ using Bonza.Generator;
 
 namespace Bonza.Editor
 {
-    class BonzaPuzzle
+    class BonzaModel
     {
         public WordPositionLayout Layout = new WordPositionLayout();
-
-        public BonzaPuzzle()
+        public WordPositionLayout MoveTestLayout;
+        public BonzaModel()
         {
             // Demo
             Layout.Read("fruits.layout");
         }
 
-        // Load layout from a .json file
-        internal List<WordPosition> ReadLayout(string inFile)
+        // Build a copy of Layout without a specific WordPosition to validate placement
+        internal void BuildMoveTestLayout(WordPosition movedWordPosition)
         {
-            Debug.Assert(Layout == null);
-            string text = File.ReadAllText(inFile);
-
-            return JsonConvert.DeserializeObject<List<WordPosition>>(text);
+            MoveTestLayout = new WordPositionLayout();
+            foreach (var wp in Layout.WordPositionList)
+                if (wp != movedWordPosition)
+                    MoveTestLayout.AddWordPositionAndSquares(wp);
         }
 
+        internal bool CanPlaceWordInMoveTestLayout(WordPosition hitWordPosition, int left, int top)
+        {
+            WordPosition testWordPosition = new WordPosition
+            {
+                Word = hitWordPosition.Word,
+                IsVertical = hitWordPosition.IsVertical,
+                StartColumn = left,
+                StartRow = top
+            };
+            return MoveTestLayout.CanPlaceWord(testWordPosition);
+        }
+
+        /*
         // returns True if WordPosition can start at (top, left) with either no intersection or a valid intersection
         internal bool OkPlaceWord(WordPosition word, int column, int row)
         {
@@ -44,12 +57,13 @@ namespace Bonza.Editor
                 StartRow = row,
                 StartColumn = column
             };
-            // First bad intersection returns false
-            foreach (WordPosition wp in Layout.WordPositionList)
-                if (word != wp && BadWordIntersection(test, wp))
-                    return false;
-            // We're good!
-            return true;
+            return Layout.CanPlaceWord(test);
+            //// First bad intersection returns false
+            //foreach (WordPosition wp in Layout.WordPositionList)
+            //    if (word != wp && BadWordIntersection(test, wp))
+            //        return false;
+            //// We're good!
+            //return true;
         }
 
         // Returns true if word1 intersects incorrectly with word2
@@ -121,11 +135,13 @@ namespace Bonza.Editor
                 return true;
             }
         }
+        */
 
         internal void UpdateWordPositionLocation(WordPosition word, int column, int row)
         {
             word.StartColumn = column;
             word.StartRow = row;
         }
+
     }
 }
