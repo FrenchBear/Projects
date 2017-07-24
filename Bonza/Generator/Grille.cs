@@ -30,6 +30,27 @@ namespace Bonza.Generator
             rnd = new Random(seed);
         }
 
+        // Temporary, find something better!
+        public WordPositionLayout GetLayout()
+        {
+            return Layout;
+        }
+
+        public bool PlaceWords(string filename)
+        {
+            List<string> wordsList = new List<string>();
+            using (StreamReader sr = new StreamReader("..\\Lists\\" + filename, Encoding.UTF8))
+            {
+                while (!sr.EndOfStream)
+                {
+                    string line = sr.ReadLine().Trim();
+                    if (!string.IsNullOrWhiteSpace(line))
+                        wordsList.Add(line);
+                }
+            }
+            return PlaceWords(wordsList.ToArray());
+        }
+
 
         public bool PlaceWords(string[] wordsTable)
         {

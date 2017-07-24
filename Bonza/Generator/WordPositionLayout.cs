@@ -156,24 +156,27 @@ namespace Bonza.Generator
         // Helper, returns the number of words that do not intersect with any other word
         public int GetWordsNotConnected()
         {
-            int count = 0;
-            for (int i = 0; i < m_WordPositionList.Count; i++)
-            {
-                WordPosition word1 = m_WordPositionList[i];
-                bool intersect = false;
-                for (int j = i + 1; j < m_WordPositionList.Count; j++)
-                {
-                    WordPosition word2 = m_WordPositionList[j];
-                    if (IntersectWords(word1, word2))
-                    {
-                        intersect = true;
-                        break;
-                    }
-                }
-                if (!intersect)
-                    count++;
-            }
-            return count;
+            return 0;
+
+            // ToDo: Wrong solution!
+            //int count = 0;
+            //for (int i = 0; i < m_WordPositionList.Count; i++)
+            //{
+            //    WordPosition word1 = m_WordPositionList[i];
+            //    bool intersect = false;
+            //    for (int j = i + 1; j < m_WordPositionList.Count; j++)
+            //    {
+            //        WordPosition word2 = m_WordPositionList[j];
+            //        if (IntersectWords(word1, word2))
+            //        {
+            //            intersect = true;
+            //            break;
+            //        }
+            //    }
+            //    if (!intersect)
+            //        count++;
+            //}
+            //return count;
         }
 
 

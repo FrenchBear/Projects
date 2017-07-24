@@ -26,7 +26,12 @@ namespace Bonza.Editor
         public BonzaModel()
         {
             // Demo
-            Layout.LoadFromFile("fruits.layout");
+            Grille g = new Grille();
+            for (; !g.PlaceWords("ConstellationsFrench.txt");)
+            {
+            }
+            Layout = g.GetLayout();
+            //Layout.LoadFromFile("fruits.layout");
         }
 
         public void SetViewModel(BonzaViewModel viewModel)
