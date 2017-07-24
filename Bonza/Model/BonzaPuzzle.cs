@@ -17,12 +17,12 @@ namespace Bonza.Editor
 {
     class BonzaPuzzle
     {
-        public List<WordPosition> Layout;
+        public WordPositionLayout Layout = new WordPositionLayout();
 
         public BonzaPuzzle()
         {
             // Demo
-            Layout = ReadLayout("fruits.layout");
+            Layout.Read("fruits.layout");
         }
 
         // Load layout from a .json file
@@ -45,7 +45,7 @@ namespace Bonza.Editor
                 StartColumn = column
             };
             // First bad intersection returns false
-            foreach (WordPosition wp in Layout)
+            foreach (WordPosition wp in Layout.WordPositionList)
                 if (word != wp && BadWordIntersection(test, wp))
                     return false;
             // We're good!

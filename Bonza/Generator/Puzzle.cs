@@ -133,15 +133,15 @@ namespace Bonza.Generator
             Puzzle = new PuzzleToSolve();
 
             // Find a starting letter on the first row
-            (int minRow, int maxRow, int minColumn, int maxColumn) = GetLayoutBounds();
+            (int minRow, int maxRow, int minColumn, int maxColumn) = Layout.GetBounds();
             int loopCol;
             for (loopCol = minColumn; loopCol <= maxColumn; loopCol++)
-                if (GetSquare(minRow, loopCol) != null)
+                if (Layout.GetSquare(minRow, loopCol) != null)
                     break;
             Debug.Assert(loopCol <= maxColumn);
 
             Stack<Square> myStack = new Stack<Square>();
-            myStack.Push(GetSquare(minRow, loopCol));
+            myStack.Push(Layout.GetSquare(minRow, loopCol));
 
 
             while (myStack.Count > 0)
@@ -160,16 +160,16 @@ namespace Bonza.Generator
                     {
                         int row = sq.Row;
                         int column = sq.Column;
-                        sq = GetSquare(row + 1, column);
+                        sq = Layout.GetSquare(row + 1, column);
                         if (sq != null && !sq.IsInChunk)
                             connectedSquares.Enqueue(sq);
-                        sq = GetSquare(row - 1, column);
+                        sq = Layout.GetSquare(row - 1, column);
                         if (sq != null && !sq.IsInChunk)
                             connectedSquares.Enqueue(sq);
-                        sq = GetSquare(row, column + 1);
+                        sq = Layout.GetSquare(row, column + 1);
                         if (sq != null && !sq.IsInChunk)
                             connectedSquares.Enqueue(sq);
-                        sq = GetSquare(row, column - 1);
+                        sq = Layout.GetSquare(row, column - 1);
                         if (sq != null && !sq.IsInChunk)
                             connectedSquares.Enqueue(sq);
 

@@ -55,7 +55,7 @@ namespace Bonza.Editor
         //    get => words;
         //}
 
-        public IEnumerable<WordPosition> Layout  => puzzle.Layout;
+        public IEnumerable<WordPosition> Layout  => puzzle.Layout.WordPositionList;
 
 
 

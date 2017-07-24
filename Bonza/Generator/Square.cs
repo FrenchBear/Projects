@@ -5,7 +5,7 @@
 
 namespace Bonza.Generator
 {
-    internal class Square
+    public class Square
     {
         public int Row { get; set; }
         public int Column { get; set; }
