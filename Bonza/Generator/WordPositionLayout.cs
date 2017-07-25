@@ -156,27 +156,44 @@ namespace Bonza.Generator
         // Helper, returns the number of words that do not intersect with any other word
         public int GetWordsNotConnected()
         {
-            return 0;
+            List<WordPosition> tempList = new List<WordPosition>();
+            foreach (WordPosition wpLoop in m_WordPositionList)
+                tempList.Add(wpLoop);
 
-            // ToDo: Wrong solution!
-            //int count = 0;
-            //for (int i = 0; i < m_WordPositionList.Count; i++)
-            //{
-            //    WordPosition word1 = m_WordPositionList[i];
-            //    bool intersect = false;
-            //    for (int j = i + 1; j < m_WordPositionList.Count; j++)
-            //    {
-            //        WordPosition word2 = m_WordPositionList[j];
-            //        if (IntersectWords(word1, word2))
-            //        {
-            //            intersect = true;
-            //            break;
-            //        }
-            //    }
-            //    if (!intersect)
-            //        count++;
-            //}
-            //return count;
+            int blocksCount = 0;
+            for(;;)
+            {
+                if (tempList.Count == 0)
+                    break;
+                // Start a new block of connected WordPosition
+                blocksCount++;
+
+                WordPosition wp = tempList[0];
+                tempList.RemoveAt(0);
+                Stack<WordPosition> toExamine = new Stack<WordPosition>();
+                List<WordPosition> connected = new List<WordPosition>();
+                toExamine.Push(wp);
+
+                while (toExamine.Count>0)
+                {
+                    WordPosition w1 = toExamine.Pop();
+                    if (!connected.Contains(w1))
+                    {
+                        connected.Add(w1);
+                        foreach (var w2 in tempList)
+                        {
+                            if (IntersectWords(w1, w2) && !connected.Contains(w2))
+                                toExamine.Push(w2);
+                        }
+                    }
+
+                    foreach (WordPosition w in connected)
+                        if (tempList.Contains(w))
+                            tempList.Remove(w);
+                }
+            }
+
+            return blocksCount;
         }
 
 
