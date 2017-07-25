@@ -37,7 +37,6 @@ namespace Bonza.Editor
             // Can only reference ActualWidth after Window is loaded
             Loaded += MainWindow_Loaded;
             SizeChanged += MainWindow_SizeChanged;
-            ContentRendered += EditorWindow_ContentRendered;
         }
 
         // HitTest selects a canvas, this dictionary maps it to associated WordPosition
@@ -113,29 +112,23 @@ namespace Bonza.Editor
             Rescale();
         }
 
-        private void EditorWindow_ContentRendered(object sender, EventArgs e)
-        {
-            // Adjust scale and origin to see whole puzzle
-            //Rescale();
-        }
-
         // Adjust scale and origin to see whole puzzle
         private void Rescale()
         {
             (int minRow, int maxRow, int minColumn, int maxColumn) = model.Layout.GetBounds();
             // Add some extra margin
-            minRow -= 2;minColumn -= 2;
-            maxRow += 3;maxColumn += 3;
+            minRow -= 2; minColumn -= 2;
+            maxRow += 3; maxColumn += 3;
 
             // Reverse-transform corners into Canvas coordinates
-            Point P1Grid = new Point(minColumn*UnitSize, minRow*UnitSize);
-            Point P2Grid = new Point(maxColumn*UnitSize, maxRow*UnitSize);
+            Point P1Grid = new Point(minColumn * UnitSize, minRow * UnitSize);
+            Point P2Grid = new Point(maxColumn * UnitSize, maxRow * UnitSize);
 
             // First adjust scale
             Matrix m = MainMatrixTransform.Matrix;
             Point P1Screen = m.Transform(P1Grid);
             Point P2Screen = m.Transform(P2Grid);
-            double scaleX = ClippingCanvas.ActualWidth/ (P2Screen.X - P1Screen.X);
+            double scaleX = ClippingCanvas.ActualWidth / (P2Screen.X - P1Screen.X);
             double scaleY = ClippingCanvas.ActualHeight / (P2Screen.Y - P1Screen.Y);
             double scale = Math.Min(scaleX, scaleY);
             if (scale > 1) scale = 1;
@@ -148,7 +141,7 @@ namespace Bonza.Editor
             double offX2 = ClippingCanvas.ActualWidth - P2Screen.X;
             double offY1 = -P1Screen.Y;
             double offY2 = ClippingCanvas.ActualHeight - P2Screen.Y;
-            m.Translate((offX1+offX2)/2, (offY1+offY2)/2);
+            m.Translate((offX1 + offX2) / 2, (offY1 + offY2) / 2);
 
             MainMatrixTransform.Matrix = m;
             UpdateTransformationsFeedBack();
@@ -192,9 +185,6 @@ namespace Bonza.Editor
 
 
         // When moving a word
-        Canvas hitCanvas;
-        WordPosition hitWordPosition;
-
         List<Canvas> hitCanvasList;
         List<WordPosition> hitWordPositionList;
 
@@ -212,54 +202,67 @@ namespace Bonza.Editor
             if (DrawingCanvas.InputHitTest(e.GetPosition(DrawingCanvas)) is TextBlock hitTextBlock)
             {
                 // We want to move its parent Canvas, that contains all the text blocks for the word
-                hitCanvas = (hitTextBlock.Parent) as Canvas;
-                if (!CanvasToWordPosition.ContainsKey(hitCanvas))
+                Canvas hitC = (hitTextBlock.Parent) as Canvas;
+                if (!CanvasToWordPosition.ContainsKey(hitC))
                     Debugger.Break();
-                hitWordPosition = CanvasToWordPosition[hitCanvas];
-
                 hitCanvasList = new List<Canvas>();
-                hitCanvasList.Add(hitCanvas);
+                hitCanvasList.Add(hitC);
                 hitWordPositionList = new List<WordPosition>();
-                hitWordPositionList.Add(hitWordPosition);
+                WordPosition hitWP = CanvasToWordPosition[hitC];
+                hitWordPositionList.Add(hitWP);
 
+                // If Ctrl key is pressed, selection to move is extended to connected words
                 if (Keyboard.IsKeyDown(Key.LeftCtrl))
-                {
-                    List<WordPosition> connectedList = model.Layout.GetConnectedWordPositions(hitWordPosition);
-                }
+                    foreach (WordPosition connected in model.Layout.GetConnectedWordPositions(hitWP))
+                    {
+                        hitWordPositionList.Add(connected);
+                        foreach (var k in CanvasToWordPosition)
+                            if (k.Value == connected)
+                            {
+                                hitCanvasList.Add(k.Key);
+                                break;
+                            }
+                    }
 
-                if (hitCanvas != null)
+                foreach (var hitCanvas in hitCanvasList)
                 {
-                    // Make sure that hitCanvas is drawn on top of others
                     DrawingCanvas.Children.Remove(hitCanvas);
                     DrawingCanvas.Children.Add(hitCanvas);
                     SetWordCanvasColor(hitCanvas, Brushes.White, Brushes.DarkBlue);
+                }
 
-                    // Need a layout without moved word to validate placement
-                    model.BuildMoveTestLayout(hitWordPosition);
+                // Need a layout without moved word to validate placement
+                model.BuildMoveTestLayout(hitWordPositionList);
 
-                    m.Invert();     // To convert from screen transformed coordinates into ideal grid
-                                    // coordinates starting at (0,0) with a square side of UnitSize
-                    Point canvasTopLeft = new Point((double)hitCanvas.GetValue(Canvas.LeftProperty), (double)hitCanvas.GetValue(Canvas.TopProperty));
+                m.Invert();     // To convert from screen transformed coordinates into ideal grid
+                                // coordinates starting at (0,0) with a square side of UnitSize
+                List<Vector> clickOffsetList = new List<Vector>();
+                for (int i = 0; i < hitCanvasList.Count; i++)
+                {
+                    Point canvasTopLeft = new Point((double)hitCanvasList[i].GetValue(Canvas.LeftProperty), (double)hitCanvasList[i].GetValue(Canvas.TopProperty));
                     // clickOffset memorizes the difference between (top,left) of word canvas and the clicked point
                     // since when we move, we need that information to adjust word canvas position
-                    Vector clickOffset = canvasTopLeft - m.Transform(previousMousePosition);
-                    pmm = P =>      // When moving, P is current mouse in ideal grid coordinates
+                    clickOffsetList.Add(canvasTopLeft - m.Transform(previousMousePosition));
+                }
+                pmm = P =>      // When moving, P is current mouse in ideal grid coordinates
+                {
+                    // Just move canvas
+                    for (int i = 0; i < hitCanvasList.Count; i++)
                     {
-                        // Just move canvas
-                        hitCanvas.SetValue(Canvas.TopProperty, P.Y + clickOffset.Y);
-                        hitCanvas.SetValue(Canvas.LeftProperty, P.X + clickOffset.X);
+                        hitCanvasList[i].SetValue(Canvas.TopProperty, P.Y + clickOffsetList[i].Y);
+                        hitCanvasList[i].SetValue(Canvas.LeftProperty, P.X + clickOffsetList[i].X);
 
                         // Round position to closest square on the grid
-                        int left = (int)Math.Floor(((double)hitCanvas.GetValue(Canvas.LeftProperty) / UnitSize) + 0.5);
-                        int top = (int)Math.Floor(((double)hitCanvas.GetValue(Canvas.TopProperty) / UnitSize) + 0.5);
+                        int left = (int)Math.Floor(((double)hitCanvasList[i].GetValue(Canvas.LeftProperty) / UnitSize) + 0.5);
+                        int top = (int)Math.Floor(((double)hitCanvasList[i].GetValue(Canvas.TopProperty) / UnitSize) + 0.5);
 
                         // Find out if it's possible to place the word here, provide color feed-back
-                        if (model.CanPlaceWordInMoveTestLayout(hitWordPosition, left, top))
-                            SetWordCanvasColor(hitCanvas, Brushes.White, Brushes.DarkBlue);
+                        if (model.CanPlaceWordInMoveTestLayout(hitWordPositionList[i], left, top))
+                            SetWordCanvasColor(hitCanvasList[i], Brushes.White, Brushes.DarkBlue);
                         else
-                            SetWordCanvasColor(hitCanvas, Brushes.White, Brushes.DarkRed);
-                    };
-                }
+                            SetWordCanvasColor(hitCanvasList[i], Brushes.White, Brushes.DarkRed);
+                    }
+                };
             }
 
             // Hit nothing: move background canvas itself (ppm=null)
@@ -315,15 +318,30 @@ namespace Bonza.Editor
             if (pmm != null)
             {
                 // End of visual feed-back, align on grid, and update ViewModel
-                SetWordCanvasColor(hitCanvas, Brushes.White, Brushes.Black);
+                List<int> leftList = new List<int>();
+                List<int> topList = new List<int>();
+                foreach (Canvas hitCanvas in hitCanvasList)
+                {
+                    SetWordCanvasColor(hitCanvas, Brushes.White, Brushes.Black);
 
-                // Round position to closest square on the grid
-                int left = (int)Math.Floor(((double)hitCanvas.GetValue(Canvas.LeftProperty) / UnitSize) + 0.5);
-                int top = (int)Math.Floor(((double)hitCanvas.GetValue(Canvas.TopProperty) / UnitSize) + 0.5);
+                    // Round position to closest square on the grid
+                    leftList.Add((int)Math.Floor(((double)hitCanvas.GetValue(Canvas.LeftProperty) / UnitSize) + 0.5));
+                    topList.Add((int)Math.Floor(((double)hitCanvas.GetValue(Canvas.TopProperty) / UnitSize) + 0.5));
+                }
 
                 // If position is not valid, look around until a valid position is found
                 // Examine surrounding cells in a "snail pattern" 
-                if (!model.CanPlaceWordInMoveTestLayout(hitWordPosition, left, top))
+                //if (!model.CanPlaceWordInMoveTestLayout(hitWordPosition, left, top))
+
+                bool CanPlaceAllWords()
+                {
+                    for (int il = 0; il < hitWordPositionList.Count; il++)
+                        if (!model.CanPlaceWordInMoveTestLayout(hitWordPositionList[il], leftList[il], topList[il]))
+                            return false;
+                    return true;
+                }
+
+                if (!CanPlaceAllWords())
                 {
                     int st = 1;
                     int sign = 1;
@@ -332,25 +350,31 @@ namespace Bonza.Editor
                     {
                         for (int i = 0; i < st; i++)
                         {
-                            left += sign;
-                            if (model.CanPlaceWordInMoveTestLayout(hitWordPosition, left, top)) goto FoundValidPosition;
+                            for (int il = 0; il < hitWordPositionList.Count; il++)
+                                leftList[il] += sign;
+                            if (CanPlaceAllWords()) goto FoundValidPosition;
                         }
                         for (int i = 0; i < st; i++)
                         {
-                            top += sign;
-                            if (model.CanPlaceWordInMoveTestLayout(hitWordPosition, left, top)) goto FoundValidPosition;
+                            for (int il = 0; il < hitWordPositionList.Count; il++)
+                                topList[il] += sign;
+                            if (CanPlaceAllWords()) goto FoundValidPosition;
                         }
                         sign = -sign;
                         st++;
                     }
                 }
 
-            FoundValidPosition:
-                hitCanvas.SetValue(Canvas.LeftProperty, left * UnitSize);
-                hitCanvas.SetValue(Canvas.TopProperty, top * UnitSize);
+                FoundValidPosition:
+                // Move wp to final, rounded position
+                for (int il = 0; il < hitWordPositionList.Count; il++)
+                {
+                    hitCanvasList[il].SetValue(Canvas.LeftProperty, leftList[il] * UnitSize);
+                    hitCanvasList[il].SetValue(Canvas.TopProperty, topList[il] * UnitSize);
+                    // Notify ViewModel of the final position
+                    viewModel.UpdateWordPositionLocation(hitWordPositionList[il], leftList[il], topList[il]);
+                }
 
-                // Notify ViewModel of the final position
-                viewModel.UpdateWordPositionLocation(hitWordPosition, left, top);
             }
         }
 

@@ -156,12 +156,10 @@ namespace Bonza.Generator
         // Helper, returns the number of words that do not intersect with any other word
         public int GetWordsNotConnected()
         {
-            List<WordPosition> tempList = new List<WordPosition>();
-            foreach (WordPosition wpLoop in m_WordPositionList)
-                tempList.Add(wpLoop);
+            List<WordPosition> tempList = new List<WordPosition>(m_WordPositionList);
 
             int blocksCount = 0;
-            for(;;)
+            for (;;)
             {
                 if (tempList.Count == 0)
                     break;
@@ -170,35 +168,52 @@ namespace Bonza.Generator
 
                 WordPosition wp = tempList[0];
                 tempList.RemoveAt(0);
-                Stack<WordPosition> toExamine = new Stack<WordPosition>();
-                List<WordPosition> connected = new List<WordPosition>();
-                toExamine.Push(wp);
-
-                while (toExamine.Count>0)
-                {
-                    WordPosition w1 = toExamine.Pop();
-                    if (!connected.Contains(w1))
-                    {
-                        connected.Add(w1);
-                        foreach (var w2 in tempList)
-                        {
-                            if (IntersectWords(w1, w2) && !connected.Contains(w2))
-                                toExamine.Push(w2);
-                        }
-                    }
-
-                    foreach (WordPosition w in connected)
-                        if (tempList.Contains(w))
-                            tempList.Remove(w);
-                }
+                foreach (WordPosition w in GetConnectedWordPositions(wp, tempList))
+                    if (tempList.Contains(w))
+                        tempList.Remove(w);
             }
 
             return blocksCount;
         }
 
+        // Private version, returns a list of WordPosition that wp is connected to from wordPositionList
+        private static List<WordPosition> GetConnectedWordPositions(WordPosition wp, List<WordPosition> wordPositionList)
+        {
+            List<WordPosition> tempList = new List<WordPosition>(wordPositionList);
+            Stack<WordPosition> toExamine = new Stack<WordPosition>();
+            List<WordPosition> connected = new List<WordPosition>();
+            toExamine.Push(wp);
+            if (tempList.Contains(wp))
+                tempList.Remove(wp);
+
+            while (toExamine.Count > 0)
+            {
+                WordPosition w1 = toExamine.Pop();
+                if (!connected.Contains(w1))
+                {
+                    if (wp != w1)
+                        connected.Add(w1);
+                    if (tempList.Contains(w1))
+                        tempList.Remove(w1);
+                    foreach (var w2 in tempList)
+                        if (DoWordsIntersect(w1, w2) && !connected.Contains(w2))
+                            toExamine.Push(w2);
+                }
+            }
+
+            return connected;
+        }
+
+
+        // Public version, returns words connected to wp (not including wp) from current layout
+        public List<WordPosition> GetConnectedWordPositions(WordPosition wp)
+        {
+            return GetConnectedWordPositions(wp, m_WordPositionList);
+        }
+
 
         // Returns true if the two WordPosition intersect
-        private bool IntersectWords(WordPosition word1, WordPosition word2)
+        private static bool DoWordsIntersect(WordPosition word1, WordPosition word2)
         {
             if (word1.IsVertical && word2.IsVertical)
             {
@@ -210,7 +225,7 @@ namespace Bonza.Generator
                     || word2.StartRow + word2.Word.Length - 1 < word1.StartRow)
                     return false;
 
-                // They overlap
+                // They overlap, it's not really an intersection but still count as one
                 return true;
             }
             else if (!word1.IsVertical && !word2.IsVertical)

@@ -22,7 +22,7 @@ namespace Bonza.Generator
 
         const char EmptyLetter = '\0';        // When there is nothing on the grid
 
-        WordPositionLayout Layout = new WordPositionLayout();
+        WordPositionLayout Layout;
 
 
         public Grille(int seed = 0)
@@ -56,13 +56,15 @@ namespace Bonza.Generator
         {
             if (wordsTable == null)
                 throw new ArgumentNullException(nameof(wordsTable));
+            Debug.Assert(wordsTable.Length >= 2);
 
             Stopwatch sw = Stopwatch.StartNew();
             List<string> Words = new List<string>();
 
-            // Only work with an empty puzzle; Basic word checks
-            Debug.Assert(Layout.WordPositionList.Count == 0);
-            Debug.Assert(wordsTable.Length >= 2);
+            // Only work with an empty puzzle
+            Debug.Assert(Layout == null);
+            Layout = new WordPositionLayout();
+
             foreach (string word in wordsTable)
             {
                 // A small centered dot is visually better in the grid than a space in words containing spaces
@@ -254,6 +256,7 @@ namespace Bonza.Generator
         // Load layout from a .json file
         public void LoadLayout(string inFile)
         {
+            Layout = new WordPositionLayout();
             Layout.LoadFromFile(inFile);
         }
 

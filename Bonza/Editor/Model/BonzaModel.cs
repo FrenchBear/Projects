@@ -41,11 +41,11 @@ namespace Bonza.Editor
         }
 
         // Build a copy of Layout without a specific WordPosition to validate placement
-        internal void BuildMoveTestLayout(WordPosition movedWordPosition)
+        internal void BuildMoveTestLayout(List<WordPosition> movedWordPositionList)
         {
             MoveTestLayout = new WordPositionLayout();
             foreach (var wp in Layout.WordPositionList)
-                if (wp != movedWordPosition)
+                if (!movedWordPositionList.Contains(wp))
                     MoveTestLayout.AddWordPositionAndSquares(wp);
         }
 
