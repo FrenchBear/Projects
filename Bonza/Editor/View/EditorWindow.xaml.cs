@@ -195,6 +195,9 @@ namespace Bonza.Editor
         Canvas hitCanvas;
         WordPosition hitWordPosition;
 
+        List<Canvas> hitCanvasList;
+        List<WordPosition> hitWordPositionList;
+
         private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {
             MainGrid.MouseMove -= MainGrid_MouseMoveWhenUp;
@@ -213,6 +216,16 @@ namespace Bonza.Editor
                 if (!CanvasToWordPosition.ContainsKey(hitCanvas))
                     Debugger.Break();
                 hitWordPosition = CanvasToWordPosition[hitCanvas];
+
+                hitCanvasList = new List<Canvas>();
+                hitCanvasList.Add(hitCanvas);
+                hitWordPositionList = new List<WordPosition>();
+                hitWordPositionList.Add(hitWordPosition);
+
+                if (Keyboard.IsKeyDown(Key.LeftCtrl))
+                {
+                    List<WordPosition> connectedList = model.Layout.GetConnectedWordPositions(hitWordPosition);
+                }
 
                 if (hitCanvas != null)
                 {
