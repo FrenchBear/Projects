@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{454EF9C3-AD96-45F0-B63A-79589D324554}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>BonzaEditorApp</RootNamespace>
+    <RootNamespace>Bonza.Editor</RootNamespace>
     <AssemblyName>BonzaEditor</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -59,6 +59,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="View\MaxtrixAnimation.cs" />
     <Page Include="View\EditorWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

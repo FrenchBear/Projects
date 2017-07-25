@@ -27,7 +27,7 @@ namespace Bonza.Editor
         {
             // Demo
             Grille g = new Grille();
-            for (; !g.PlaceWords("Fruits.txt");)
+            for (; !g.PlaceWords("USStates.txt");)
             {
             }
             Layout = g.GetLayout();

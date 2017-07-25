@@ -11,7 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Bonza.Generator;
-
+using System.Windows.Media.Animation;
 
 namespace Bonza.Editor
 {
@@ -109,12 +109,15 @@ namespace Bonza.Editor
                 DrawingCanvas.Children.Add(wordCanvas);
             }
 
-            Rescale();
+            RescaleAndCenter();
         }
 
-        // Adjust scale and origin to see whole puzzle
-        private void Rescale()
+        // Adjust scale and origin to see the whole puzzle
+        internal void RescaleAndCenter()
         {
+            if (model.Layout == null)
+                return;
+
             (int minRow, int maxRow, int minColumn, int maxColumn) = model.Layout.GetBounds();
             // Add some extra margin
             minRow -= 2; minColumn -= 2;
@@ -124,26 +127,53 @@ namespace Bonza.Editor
             Point P1Grid = new Point(minColumn * UnitSize, minRow * UnitSize);
             Point P2Grid = new Point(maxColumn * UnitSize, maxRow * UnitSize);
 
+
+            RescaleMatrix = MainMatrixTransform.Matrix;
+
+            // Set rotation to zero
+            // get angle from transformation matrix:
+            // | M11 M12 0 |   | cos θ  -sin θ   0 |
+            // | M21 M22 0 | = | sin θ   cos θ   0 |
+            // | dx  dy  1 |   | dx      dy      1 |
+            double θ = Math.Atan2(RescaleMatrix.M21, RescaleMatrix.M11);    // Just to use a variable named θ
+            RescaleMatrix.Rotate(θ / Math.PI * 180);            // It would certainly kill Microsoft to indicate on Rotate page or tooltip that angle is in degrees...
+
             // First adjust scale
-            Matrix m = MainMatrixTransform.Matrix;
-            Point P1Screen = m.Transform(P1Grid);
-            Point P2Screen = m.Transform(P2Grid);
+            Point P1Screen = RescaleMatrix.Transform(P1Grid);
+            Point P2Screen = RescaleMatrix.Transform(P2Grid);
             double scaleX = ClippingCanvas.ActualWidth / (P2Screen.X - P1Screen.X);
             double scaleY = ClippingCanvas.ActualHeight / (P2Screen.Y - P1Screen.Y);
             double scale = Math.Min(scaleX, scaleY);
-            if (scale > 1) scale = 1;
-            m.Scale(scale, scale);
+            if (scale > 5) scale = 5;
+            RescaleMatrix.Scale(scale, scale);
 
             // Then adjust location and center
-            P1Screen = m.Transform(P1Grid);
-            P2Screen = m.Transform(P2Grid);
+            P1Screen = RescaleMatrix.Transform(P1Grid);
+            P2Screen = RescaleMatrix.Transform(P2Grid);
             double offX1 = -P1Screen.X;
             double offX2 = ClippingCanvas.ActualWidth - P2Screen.X;
             double offY1 = -P1Screen.Y;
             double offY2 = ClippingCanvas.ActualHeight - P2Screen.Y;
-            m.Translate((offX1 + offX2) / 2, (offY1 + offY2) / 2);
+            RescaleMatrix.Translate((offX1 + offX2) / 2, (offY1 + offY2) / 2);
 
-            MainMatrixTransform.Matrix = m;
+
+            // Use an animation for a smooth transformation
+            // ToDo: Stop animation if user interacts with canvas
+            MatrixAnimation ma = new MatrixAnimation(RescaleMatrix, new Duration(TimeSpan.FromSeconds(0.35)));
+            ma.From = MainMatrixTransform.Matrix;
+            ma.Completed += sb_Completed;
+            MainMatrixTransform.BeginAnimation(MatrixTransform.MatrixProperty, ma);
+        }
+
+        Matrix RescaleMatrix;
+
+        // Terminate transformation in a clean way, "freeing" property
+        private void sb_Completed(object sender, EventArgs e)
+        {
+            MainMatrixTransform.BeginAnimation(MatrixTransform.MatrixProperty, null);
+
+            // Final tasks
+            MainMatrixTransform.Matrix = RescaleMatrix;
             UpdateTransformationsFeedBack();
             UpdateBackgroundGrid();
         }
@@ -205,11 +235,9 @@ namespace Bonza.Editor
                 Canvas hitC = (hitTextBlock.Parent) as Canvas;
                 if (!CanvasToWordPosition.ContainsKey(hitC))
                     Debugger.Break();
-                hitCanvasList = new List<Canvas>();
-                hitCanvasList.Add(hitC);
-                hitWordPositionList = new List<WordPosition>();
                 WordPosition hitWP = CanvasToWordPosition[hitC];
-                hitWordPositionList.Add(hitWP);
+                hitCanvasList = new List<Canvas> { hitC };
+                hitWordPositionList = new List<WordPosition> { hitWP };
 
                 // If Ctrl key is pressed, selection to move is extended to connected words
                 if (Keyboard.IsKeyDown(Key.LeftCtrl))
@@ -236,7 +264,7 @@ namespace Bonza.Editor
 
                 m.Invert();     // To convert from screen transformed coordinates into ideal grid
                                 // coordinates starting at (0,0) with a square side of UnitSize
-                List<Vector> clickOffsetList = new List<Vector>();
+                List<Vector> clickOffsetList = new List<Vector>(hitWordPositionList.Count);
                 for (int i = 0; i < hitCanvasList.Count; i++)
                 {
                     Point canvasTopLeft = new Point((double)hitCanvasList[i].GetValue(Canvas.LeftProperty), (double)hitCanvasList[i].GetValue(Canvas.TopProperty));
@@ -312,12 +340,14 @@ namespace Bonza.Editor
         private void MainGrid_MouseUp(object sender, MouseButtonEventArgs e)
         {
             Mouse.Capture(null);
-            MainGrid.MouseMove -= new MouseEventHandler(MainGrid_MouseMoveWhenDown);
-            MainGrid.MouseMove += new MouseEventHandler(MainGrid_MouseMoveWhenUp);
+            MainGrid.MouseMove -= MainGrid_MouseMoveWhenDown;
+            MainGrid.MouseMove += MainGrid_MouseMoveWhenUp;
 
             if (pmm != null)
             {
                 // End of visual feed-back, align on grid, and update ViewModel
+                // Not efficient to manage a single list of (top, left) tuple since in the snail pattern
+                // placement code, top is updated independently from left, and a tuple makes it heavy
                 List<int> leftList = new List<int>();
                 List<int> topList = new List<int>();
                 foreach (Canvas hitCanvas in hitCanvasList)
@@ -331,8 +361,6 @@ namespace Bonza.Editor
 
                 // If position is not valid, look around until a valid position is found
                 // Examine surrounding cells in a "snail pattern" 
-                //if (!model.CanPlaceWordInMoveTestLayout(hitWordPosition, left, top))
-
                 bool CanPlaceAllWords()
                 {
                     for (int il = 0; il < hitWordPositionList.Count; il++)

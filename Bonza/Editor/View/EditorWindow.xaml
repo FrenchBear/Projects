@@ -21,7 +21,8 @@
                     <Label Content="Bonza" FontWeight="Bold" FontSize="16" Margin="0,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="PowderBlue" Foreground="Blue" />
                     <Button Command="{Binding Path=LoadCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Load</Button>
                     <Button Command="{Binding Path=SaveCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Save</Button>
-                    <Button Command="{Binding Path=ResetCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Reset</Button>
+                    <Button Command="{Binding Path=ResetCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Reset Layout</Button>
+                    <Button Command="{Binding Path=CenterCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Center</Button>
                     <Label>Disjoint groups:</Label>
                     <TextBlock Text="{Binding WordsNotConnected}" />
                 </StackPanel>

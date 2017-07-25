@@ -30,6 +30,7 @@ namespace Bonza.Editor
         public ICommand LoadCommand { get; private set; }
         public ICommand SaveCommand { get; private set; }
         public ICommand ResetCommand { get; private set; }
+        public ICommand CenterCommand { get; private set; }
 
 
         // Constructor
@@ -39,6 +40,7 @@ namespace Bonza.Editor
             LoadCommand = new RelayCommand<object>(LoadExecute, LoadCanExecute);
             SaveCommand = new RelayCommand<object>(SaveExecute, SaveCanExecute);
             ResetCommand = new RelayCommand<object>(ResetExecute, ResetCanExecute);
+            CenterCommand = new RelayCommand<object>(CenterExecute, CenterCanExecute);
 
             // Initialize ViewModel
             this.model = model;
@@ -54,7 +56,7 @@ namespace Bonza.Editor
         //    get => words;
         //}
 
-        public IEnumerable<WordPosition> WordPositionList  => model.Layout.WordPositionList;
+        public IEnumerable<WordPosition> WordPositionList => model.Layout.WordPositionList;
 
         private int _WordsNotConnected;
         public int WordsNotConnected
@@ -113,6 +115,17 @@ namespace Bonza.Editor
         private void ResetExecute(object obj)
         {
             MessageBox.Show("Reset: ToDo");
+        }
+
+
+        private bool CenterCanExecute(object obj)
+        {
+            return model.Layout != null;
+        }
+
+        private void CenterExecute(object obj)
+        {
+            view.RescaleAndCenter();
         }
 
     }
