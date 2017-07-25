@@ -23,7 +23,7 @@ namespace Bonza.Editor
         private BonzaModel model;
         private BonzaViewModel viewModel;
 
-        const double UnitSize = 25;
+        private static readonly double UnitSize = 25;
 
         public EditorWindow()
         {
@@ -35,8 +35,9 @@ namespace Bonza.Editor
             UpdateTransformationsFeedBack();
 
             // Can only reference ActualWidth after Window is loaded
-            Loaded += new RoutedEventHandler(MainWindow_Loaded);
-            SizeChanged += new SizeChangedEventHandler(MainWindow_SizeChanged);
+            Loaded += MainWindow_Loaded;
+            SizeChanged += MainWindow_SizeChanged;
+            ContentRendered += EditorWindow_ContentRendered;
         }
 
         // HitTest selects a canvas, this dictionary maps it to associated WordPosition
@@ -65,10 +66,9 @@ namespace Bonza.Editor
                 r.Stroke = Brushes.Blue;
                 r.StrokeThickness = 1;
 
-                myCanvas.Children.Add(r);
+                DrawingCanvas.Children.Add(r);
             }
             */
-
 
             // Draw letters
             var arial = new FontFamily("Arial");
@@ -107,8 +107,52 @@ namespace Bonza.Editor
                 wordCanvas.SetValue(Canvas.LeftProperty, UnitSize * wp.StartColumn);
                 wordCanvas.SetValue(Canvas.TopProperty, UnitSize * wp.StartRow);
                 SetWordCanvasColor(wordCanvas, Brushes.White, Brushes.Black);
-                myCanvas.Children.Add(wordCanvas);
+                DrawingCanvas.Children.Add(wordCanvas);
             }
+
+            Rescale();
+        }
+
+        private void EditorWindow_ContentRendered(object sender, EventArgs e)
+        {
+            // Adjust scale and origin to see whole puzzle
+            //Rescale();
+        }
+
+        // Adjust scale and origin to see whole puzzle
+        private void Rescale()
+        {
+            (int minRow, int maxRow, int minColumn, int maxColumn) = model.Layout.GetBounds();
+            // Add some extra margin
+            minRow -= 2;minColumn -= 2;
+            maxRow += 3;maxColumn += 3;
+
+            // Reverse-transform corners into Canvas coordinates
+            Point P1Grid = new Point(minColumn*UnitSize, minRow*UnitSize);
+            Point P2Grid = new Point(maxColumn*UnitSize, maxRow*UnitSize);
+
+            // First adjust scale
+            Matrix m = MainMatrixTransform.Matrix;
+            Point P1Screen = m.Transform(P1Grid);
+            Point P2Screen = m.Transform(P2Grid);
+            double scaleX = ClippingCanvas.ActualWidth/ (P2Screen.X - P1Screen.X);
+            double scaleY = ClippingCanvas.ActualHeight / (P2Screen.Y - P1Screen.Y);
+            double scale = Math.Min(scaleX, scaleY);
+            if (scale > 1) scale = 1;
+            m.Scale(scale, scale);
+
+            // Then adjust location and center
+            P1Screen = m.Transform(P1Grid);
+            P2Screen = m.Transform(P2Grid);
+            double offX1 = -P1Screen.X;
+            double offX2 = ClippingCanvas.ActualWidth - P2Screen.X;
+            double offY1 = -P1Screen.Y;
+            double offY2 = ClippingCanvas.ActualHeight - P2Screen.Y;
+            m.Translate((offX1+offX2)/2, (offY1+offY2)/2);
+
+            MainMatrixTransform.Matrix = m;
+            UpdateTransformationsFeedBack();
+            UpdateBackgroundGrid();
         }
 
         // Helper to set foreground/background on all TextBlock of a wordCanvas 
@@ -136,10 +180,10 @@ namespace Bonza.Editor
 
         private void MainGrid_MouseMoveWhenUp(object sender, MouseEventArgs e)
         {
-            //previousMousePosition = e.GetPosition(mainGrid);
+            //previousMousePosition = e.GetPosition(MainGrid);
 
             //// Reverse-transform mouse Grid coordinates into Canvas coordinates
-            //Matrix m = mainMatrixTransform.Matrix;
+            //Matrix m = MainMatrixTransform.Matrix;
 
             //// ToDo
             //Point pointInUserSpace = new Point(0, 0), pointOnScreenSpace;
@@ -153,16 +197,16 @@ namespace Bonza.Editor
 
         private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            mainGrid.MouseMove -= new MouseEventHandler(MainGrid_MouseMoveWhenUp);
-            mainGrid.MouseMove += new MouseEventHandler(MainGrid_MouseMoveWhenDown);
-            previousMousePosition = e.GetPosition(mainGrid);
+            MainGrid.MouseMove -= MainGrid_MouseMoveWhenUp;
+            MainGrid.MouseMove += MainGrid_MouseMoveWhenDown;
+            previousMousePosition = e.GetPosition(MainGrid);
 
             // Reverse-transform mouse Grid coordinates into Canvas coordinates
-            Matrix m = mainMatrixTransform.Matrix;
+            Matrix m = MainMatrixTransform.Matrix;
 
             pmm = null;
             // HitTest: Test if a word was clicked on, if true, hitTextBlock is a TextBloxk
-            if (myCanvas.InputHitTest(e.GetPosition(myCanvas)) is TextBlock hitTextBlock)
+            if (DrawingCanvas.InputHitTest(e.GetPosition(DrawingCanvas)) is TextBlock hitTextBlock)
             {
                 // We want to move its parent Canvas, that contains all the text blocks for the word
                 hitCanvas = (hitTextBlock.Parent) as Canvas;
@@ -173,8 +217,8 @@ namespace Bonza.Editor
                 if (hitCanvas != null)
                 {
                     // Make sure that hitCanvas is drawn on top of others
-                    myCanvas.Children.Remove(hitCanvas);
-                    myCanvas.Children.Add(hitCanvas);
+                    DrawingCanvas.Children.Remove(hitCanvas);
+                    DrawingCanvas.Children.Add(hitCanvas);
                     SetWordCanvasColor(hitCanvas, Brushes.White, Brushes.DarkBlue);
 
                     // Need a layout without moved word to validate placement
@@ -209,14 +253,14 @@ namespace Bonza.Editor
 
             // Be sure to call GetPosition before Capture, otherwise GetPosition returns 0 after Capture
             // Capture to get MouseUp event raised by grid
-            Mouse.Capture(mainGrid);
+            Mouse.Capture(MainGrid);
         }
 
 
         void MainGrid_MouseMoveWhenDown(object sender, MouseEventArgs e)
         {
-            var newPosition = e.GetPosition(mainGrid);
-            Matrix m = mainMatrixTransform.Matrix;
+            var newPosition = e.GetPosition(MainGrid);
+            Matrix m = MainMatrixTransform.Matrix;
 
             if (pmm == null)
             {
@@ -224,7 +268,7 @@ namespace Bonza.Editor
                 var delta = newPosition - previousMousePosition;
                 previousMousePosition = newPosition;
                 m.Translate(delta.X, delta.Y);
-                mainMatrixTransform.Matrix = m;
+                MainMatrixTransform.Matrix = m;
                 UpdateTransformationsFeedBack();
                 UpdateBackgroundGrid();
             }
@@ -239,12 +283,12 @@ namespace Bonza.Editor
         private void UpdateTransformationsFeedBack()
         {
             // Update status bar
-            Matrix matrix = mainMatrixTransform.Matrix;
+            Matrix matrix = MainMatrixTransform.Matrix;
             var a = Math.Atan2(matrix.M12, matrix.M11) / Math.PI * 180;
-            rotationTextBlock.Text = string.Format("{0:F1}°", a);
+            RotationTextBlock.Text = string.Format("{0:F1}°", a);
             var s = Math.Sqrt(matrix.M11 * matrix.M11 + matrix.M12 * matrix.M12);
-            scaleTextBlock.Text = string.Format("{0:F2}", s);
-            translationTextBlock.Text = string.Format("X:{0:F2} Y:{1:F2}", matrix.OffsetX, matrix.OffsetY);
+            ScaleTextBlock.Text = string.Format("{0:F2}", s);
+            TranslationTextBlock.Text = string.Format("X:{0:F2} Y:{1:F2}", matrix.OffsetX, matrix.OffsetY);
         }
 
 
@@ -252,8 +296,8 @@ namespace Bonza.Editor
         private void MainGrid_MouseUp(object sender, MouseButtonEventArgs e)
         {
             Mouse.Capture(null);
-            mainGrid.MouseMove -= new MouseEventHandler(MainGrid_MouseMoveWhenDown);
-            mainGrid.MouseMove += new MouseEventHandler(MainGrid_MouseMoveWhenUp);
+            MainGrid.MouseMove -= new MouseEventHandler(MainGrid_MouseMoveWhenDown);
+            MainGrid.MouseMove += new MouseEventHandler(MainGrid_MouseMoveWhenUp);
 
             if (pmm != null)
             {
@@ -299,8 +343,8 @@ namespace Bonza.Editor
 
         private void MainGrid_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            var newPosition = e.GetPosition(mainGrid);
-            var m = mainMatrixTransform.Matrix;
+            var newPosition = e.GetPosition(MainGrid);
+            var m = MainMatrixTransform.Matrix;
 
             // Ctrl+MouseWheel for rotation
             if (System.Windows.Input.Keyboard.IsKeyDown(Key.LeftCtrl))
@@ -314,7 +358,7 @@ namespace Bonza.Editor
                 var scale = 1 - sign / 10.0;
                 m.ScaleAt(scale, scale, newPosition.X, newPosition.Y);
             }
-            mainMatrixTransform.Matrix = m;
+            MainMatrixTransform.Matrix = m;
 
             UpdateTransformationsFeedBack();
             UpdateBackgroundGrid();
@@ -324,10 +368,10 @@ namespace Bonza.Editor
 
         private void UpdateBackgroundGrid()
         {
-            var matrix = mainMatrixTransform.Matrix;
+            var matrix = MainMatrixTransform.Matrix;
 
-            var w = mainGrid.ActualWidth;
-            var h = mainGrid.ActualHeight;
+            var w = MainGrid.ActualWidth;
+            var h = MainGrid.ActualHeight;
             Rect rectBackground = new Rect(0, 0, w, h);
 
             PathGeometry pgGrid = new PathGeometry();
@@ -398,14 +442,14 @@ namespace Bonza.Editor
             di.Freeze();
 
             // Finally draw it!
-            backgroundImage.Source = di;
+            BackgroundImage.Source = di;
 
 
             // Update status bar
             var a = Math.Atan2(matrix.M12, matrix.M11) / Math.PI * 180;
-            rotationTextBlock.Text = string.Format("{0:F1}°", a);
+            RotationTextBlock.Text = string.Format("{0:F1}°", a);
             var s = Math.Sqrt(matrix.M11 * matrix.M11 + matrix.M12 * matrix.M12);
-            scaleTextBlock.Text = string.Format("{0:F2}", s);
+            ScaleTextBlock.Text = string.Format("{0:F2}", s);
         }
 
     }

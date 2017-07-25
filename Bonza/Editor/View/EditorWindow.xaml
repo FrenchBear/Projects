@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Bonza.Editor"
         mc:Ignorable="d"
-        Title="BonzaEditor" Height="350" Width="525">
+        Title="BonzaEditor" Height="768" Width="1024">
+    
     <Grid>
         <Grid Margin="6">
             <Grid.ColumnDefinitions>
@@ -14,7 +15,7 @@
             </Grid.ColumnDefinitions>
             <DockPanel>
                 <StatusBar DockPanel.Dock="Bottom">
-                    <TextBlock Name="statusLabel" Text="{Binding StatusText}"/>
+                    <TextBlock Name="StatusLabel" Text="{Binding StatusText}"/>
                 </StatusBar>
                 <StackPanel Orientation="Vertical">
                     <Label Content="Bonza" FontWeight="Bold" FontSize="16" Margin="0,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="PowderBlue" Foreground="Blue" />
@@ -32,23 +33,23 @@
                 </StatusBar>
                 <StatusBar DockPanel.Dock="Bottom">
                     <TextBlock>Rotation:</TextBlock>
-                    <TextBlock Name="rotationTextBlock" Width="80"/>
+                    <TextBlock Name="RotationTextBlock" Width="80"/>
                     <TextBlock>Scale:</TextBlock>
-                    <TextBlock Name="scaleTextBlock" Width="80"/>
+                    <TextBlock Name="ScaleTextBlock" Width="80"/>
                     <TextBlock>Translation:</TextBlock>
-                    <TextBlock Name="translationTextBlock" Width="80"/>
+                    <TextBlock Name="TranslationTextBlock" Width="80"/>
                 </StatusBar>
 
-                <Grid Name="mainGrid" MouseMove="MainGrid_MouseMoveWhenUp" MouseDown="MainGrid_MouseDown" MouseUp="MainGrid_MouseUp" MouseWheel="MainGrid_MouseWheel" Background="Transparent">
-                    <Canvas ClipToBounds="True">
-                        <Image Name="backgroundImage" IsHitTestVisible="False" />
-                        <Canvas Name="myCanvas" ClipToBounds="False">
+                <Grid Name="MainGrid" MouseMove="MainGrid_MouseMoveWhenUp" MouseDown="MainGrid_MouseDown" MouseUp="MainGrid_MouseUp" MouseWheel="MainGrid_MouseWheel" Background="Transparent" Margin="0,-3,0,2.6">
+                    <Canvas Name="ClippingCanvas" ClipToBounds="True">
+                        <Image Name="BackgroundImage" IsHitTestVisible="False" />
+                        <Canvas Name="DrawingCanvas" ClipToBounds="False" >
                             <Canvas.RenderTransform>
-                                <MatrixTransform x:Name="mainMatrixTransform"/>
+                                <MatrixTransform x:Name="MainMatrixTransform"/>
                             </Canvas.RenderTransform>
                         </Canvas>
                     </Canvas>
-                    <Canvas Name="hotTipCanvas" />
+                    <!--<Canvas Name="HotTipCanvas" />-->
                 </Grid>
             </DockPanel>
 
