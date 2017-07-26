@@ -33,11 +33,12 @@ namespace Bonza.Generator
         }
 
         // Memorize the list of words to place as a class variable if later we call PlaceWordsAgain
-        List<string> wordsList = new List<string>();
+        List<string> wordsList;
         public bool PlaceWords(string filename)
         {
             // Will throw an exception in case of problem with file
-            using (StreamReader sr = new StreamReader( filename, Encoding.UTF8))
+            wordsList = new List<string>();
+            using (StreamReader sr = new StreamReader(filename, Encoding.UTF8))
             {
                 while (!sr.EndOfStream)
                 {
@@ -60,6 +61,8 @@ namespace Bonza.Generator
         {
             if (wordsTable == null)
                 throw new ArgumentNullException(nameof(wordsTable));
+            if (wordsTable.Length < 1)
+                throw new BonzaException("Au moins un mot requis");
             if (wordsTable.Any(w => w.Length <= 2))
                 throw new BonzaException("Mots de longueur <=2 non autorisés");
 

@@ -44,9 +44,10 @@ namespace Bonza.Editor
         // HitTest selects a canvas, this dictionary maps it to associated WordPosition
         Dictionary<Canvas, WordPosition> CanvasToWordPosition = new Dictionary<Canvas, WordPosition>();
 
-        internal void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        public void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            model.LoadGrille(@"..\Lists\Fruits.txt");
+            // For development tests
+            viewModel.LoadWordsList(@"..\Lists\Fruits.txt");
         }
 
         // On window resize, background grid need update
@@ -56,19 +57,24 @@ namespace Bonza.Editor
         }
 
 
-        // Initial drawing of canvas for current model layout
-        internal void NewLayout()
+        // Clears the grid, before loading a new list of words or reorganizing layout
+        internal void ClearLayout()
         {
             // Clear previous elements layout
             DrawingCanvas.Children.Clear();
+        }
 
+
+
+        // Initial drawing of canvas for current model layout
+        internal void NewLayout()
+        {
             // Draw letters
             var arial = new FontFamily("Arial");
             foreach (WordPosition wp in viewModel.WordPositionList)
             {
                 // Group letters in a canvas to be able later to move them at once
-                var wordCanvas = new Canvas();
-                wordCanvas.Name = wp.Word;
+                var wordCanvas = new Canvas() { Name = wp.Word };   // Mostly for trace/debug, useless
                 CanvasToWordPosition.Add(wordCanvas, wp);
 
                 for (int i = 0; i < wp.Word.Length; i++)
@@ -156,8 +162,12 @@ namespace Bonza.Editor
             {
                 // Use an animation for a smooth transformation
                 // ToDo: Stop animation if user interacts with canvas
-                MatrixAnimation ma = new MatrixAnimation(RescaleMatrix, new Duration(TimeSpan.FromSeconds(0.35)));
-                ma.From = MainMatrixTransform.Matrix;
+                MatrixAnimation ma = new MatrixAnimation()
+                {
+                    From = MainMatrixTransform.Matrix,
+                    To = RescaleMatrix,
+                    Duration = new Duration(TimeSpan.FromSeconds(0.35))
+                };
                 ma.Completed += MatrixAnimationCompleted;
                 isMatrixAnimationInProgress = true;
                 MainMatrixTransform.BeginAnimation(MatrixTransform.MatrixProperty, ma);
@@ -395,7 +405,7 @@ namespace Bonza.Editor
                     int st = 1;
                     int sign = 1;
 
-                    for (; ; )
+                    for (;;)
                     {
                         for (int i = 0; i < st; i++)
                         {
@@ -421,7 +431,7 @@ namespace Bonza.Editor
             }
         }
 
-        int moveWordAnimationInProgressCount = 0;
+        int moveWordAnimationInProgressCount;
 
         public void MoveWordPositionList(IEnumerable<WordPosition> wordPositionList)
         {

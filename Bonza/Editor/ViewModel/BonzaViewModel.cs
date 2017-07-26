@@ -9,7 +9,7 @@ using System.Windows;
 using System.Windows.Input;
 using Bonza.Generator;
 using Microsoft.Win32;
-
+using System.IO;
 
 namespace Bonza.Editor
 {
@@ -70,6 +70,19 @@ namespace Bonza.Editor
             }
         }
 
+        private string _Caption;
+        public string Caption
+        {
+            get { return _Caption; }
+            set
+            {
+                if (_Caption != value)
+                {
+                    _Caption = value;
+                    NotifyPropertyChanged(nameof(Caption));
+                }
+            }
+        }
 
         // -------------------------------------------------
         // Undo support
@@ -126,7 +139,7 @@ namespace Bonza.Editor
 
         private bool SaveCanExecute(object obj)
         {
-            return model.Layout != null;
+            return false;       // For now
         }
 
         private void SaveExecute(object obj)
@@ -143,14 +156,31 @@ namespace Bonza.Editor
 
         private void LoadExecute(object obj)
         {
-            OpenFileDialog dlg = new OpenFileDialog();
-            dlg.DefaultExt = ".txt";
-            dlg.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
-            dlg.CheckFileExists = true;
-            dlg.InitialDirectory = @"C:\Development\GitHub\Projects\Bonza\Lists";   // Path.Combine( Directory.GetCurrentDirectory(), @"..\Lists");
+            OpenFileDialog dlg = new OpenFileDialog()
+            {
+                DefaultExt = ".txt",
+                Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*",
+                CheckFileExists = true,
+                InitialDirectory = @"C:\Development\GitHub\Projects\Bonza\Lists"   // Path.Combine( Directory.GetCurrentDirectory(), @"..\Lists");
+            };
             var result = dlg.ShowDialog();
             if (result.HasValue && result.Value == true)
-                model.LoadGrille(dlg.FileName);
+                LoadWordsList(dlg.FileName);
+        }
+
+        public void LoadWordsList(string filename)
+        {
+            try
+            {
+                view.ClearLayout();
+                Caption = App.AppName;
+                model.LoadGrille(filename);
+                Caption = App.AppName + " - " + Path.GetFileName(filename);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Problème avec le fichier de mots " + filename + ":\r\n" + ex.Message, App.AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
         }
 
 
@@ -161,8 +191,16 @@ namespace Bonza.Editor
 
         private void ResetExecute(object obj)
         {
-            model.ResetLayout();
-
+            try
+            {
+                view.ClearLayout();
+                model.ResetLayout();
+            }
+            catch (Exception ex)
+            {
+                Caption = App.AppName;
+                MessageBox.Show("Problème lors de la réinitialisation du layout:\r\n" + ex.Message, App.AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
         }
 
 

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Bonza.Editor"
         mc:Ignorable="d"
-        Title="BonzaEditor" Height="768" Width="1024" Icon="/BonzaEditor;component/Bonza.ico">
+        Title="{Binding Caption,FallbackValue='Bonza Editor'}" Height="768" Width="1024" Icon="/BonzaEditor;component/Bonza.ico">
 
     <Window.InputBindings>
         <KeyBinding Key="Z" Modifiers="Ctrl" Command="{Binding UndoCommand}" />
@@ -22,7 +22,7 @@
                     <TextBlock Name="StatusLabel" Text="{Binding StatusText}"/>
                 </StatusBar>
                 <StackPanel Orientation="Vertical" Margin="0,0,6,0">
-                    <Label Content="Bonza" FontWeight="Bold" FontSize="16" Margin="0,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="PowderBlue" Foreground="Blue" />
+                    <Label Content="Bonza Editor" FontWeight="Bold" FontSize="16" Margin="0,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="PowderBlue" Foreground="Blue" />
                     <Button Command="{Binding Path=LoadCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Load</Button>
                     <Button Command="{Binding Path=SaveCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Save</Button>
                     <Button Command="{Binding Path=ResetCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Reset Layout</Button>

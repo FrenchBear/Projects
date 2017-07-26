@@ -1,1 +1,5 @@
-B
+CANE
+BAC
+CUBE
+BUS
+CAB

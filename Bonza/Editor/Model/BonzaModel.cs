@@ -32,15 +32,19 @@ namespace Bonza.Editor
         internal void LoadGrille(string wordsFile)
         {
             grille = new Grille();
-            for (; !grille.PlaceWords(wordsFile);)
-            {
-            }
+            int i;
+            for (i = 0; i < 5 && !grille.PlaceWords(wordsFile); i++) { }
+            if (i == 5)
+                throw new BonzaException("Impossible de placer les mots malgré 5 tentatives");
             viewModel.NewLayout();
         }
 
         internal void ResetLayout()
         {
-            grille.PlaceWordsAgain();
+            int i;
+            for (i = 0; i < 5 && !grille.PlaceWordsAgain(); i++) { }
+            if (i == 5)
+                throw new BonzaException("Impossible de générer un nouveau layout malgré 5 tentatives");
             viewModel.NewLayout();
         }
 

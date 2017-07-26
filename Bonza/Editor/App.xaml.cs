@@ -13,5 +13,6 @@ namespace Bonza.Editor
     /// </summary>
     public partial class App : Application
     {
+        public static string AppName => "BonzaEditor";
     }
 }
