@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Generator")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("BonzaGenerator")]
+[assembly: AssemblyDescription("Generation of Bonza puzzles: placing words, breking in chunks")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("eurofins")]
-[assembly: AssemblyProduct("Generator")]
-[assembly: AssemblyCopyright("Copyright © eurofins 2017")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("BonzaGenerator")]
+[assembly: AssemblyCopyright("Copyright ©2017 Pierre Violent")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

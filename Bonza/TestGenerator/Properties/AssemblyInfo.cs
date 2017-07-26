@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("TestGenerator")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Simple text-based testing application for BonzaGenerator")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("eurofins")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("TestGenerator")]
-[assembly: AssemblyCopyright("Copyright © eurofins 2017")]
+[assembly: AssemblyCopyright("Copyright ©2017 Pierre Violent")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

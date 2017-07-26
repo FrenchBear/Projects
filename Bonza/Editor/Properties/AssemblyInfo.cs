@@ -8,7 +8,7 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("BonzaEditor")]
-[assembly: AssemblyDescription("WPF Tool to prepare Bonza-style puzzles")]
+[assembly: AssemblyDescription("WPF Visual Editor to prepare Bonza-style puzzles")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("BonzaEditor")]

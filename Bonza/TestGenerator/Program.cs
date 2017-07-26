@@ -8,17 +8,18 @@ using System.IO;
 using System.Runtime.Serialization;
 using static System.Console;
 using Bonza.Generator;
+using System.Diagnostics;
 
-namespace Bonza
+namespace TestGenerator
 {
     class TestGeneratorApp
     {
         static void Main()
         {
             Grille g = new Grille();
-            for (; !g.PlaceWords(@"..\Lists\Jours.txt");)
-            {
-            }
+            int i;
+            for (i = 0; i < 5 && !g.PlaceWords(@"..\Lists\Jours.txt"); i++) { }
+            Debug.Assert(i < 5);
             g.Print();
             //g.Print("C:\\temp\\fruits.txt");
             //g.SaveLayout("c:\\temp\\fruits.layout");

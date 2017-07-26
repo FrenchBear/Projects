@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -53,19 +54,32 @@ namespace Bonza.Generator
         }
 
         // Returns square at a given position, or null if there is nothing in current layout
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Square GetSquare(int row, int column)
         {
-            if (m_Squares.ContainsKey((row, column)))
+            if (IsOccupiedSquare(row, column))
                 return m_Squares[(row, column)];
             else
                 return null;
         }
 
+        // Specialized helper for performance, returns true if there's no square at this position
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool IsOccupiedSquare(int row, int column)
+        {
+            return m_Squares.ContainsKey((row, column));
+        }
+
 
         // Helper: Return letter placed at coordinates (row, column), or EmptyLetter if there is nothing there
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public char GetLetter(int row, int column)
         {
-            return GetSquare(row, column)?.Letter ?? '\0';
+            //return GetSquare(row, column)?.Letter ?? '\0';
+            if (m_Squares.ContainsKey((row, column)))
+                return m_Squares[(row, column)].Letter;
+            else
+                return '\0';
         }
 
         // Compute layout external bounds
@@ -108,9 +122,9 @@ namespace Bonza.Generator
             if (wp.IsVertical)
             {
                 // Need free cell above
-                if (GetSquare(row - 1, column) != null) return false;
+                if (IsOccupiedSquare(row - 1, column)) return false;
                 // Need free cell below
-                if (GetSquare(row + wp.Word.Length, column) != null) return false;
+                if (IsOccupiedSquare(row + wp.Word.Length, column)) return false;
 
                 bool prevousLetterMatch = false;
                 for (int i = 0; i < wp.Word.Length; i++)
@@ -123,7 +137,7 @@ namespace Bonza.Generator
                     else
                     {
                         // We need an empty cell, and a free cell on the left and on the right
-                        if (GetLetter(row + i, column - 1) != '\0' || GetLetter(row + i, column) != '\0' || GetLetter(row + i, column + 1) != '\0')
+                        if (IsOccupiedSquare(row + i, column - 1) || IsOccupiedSquare(row + i, column) || IsOccupiedSquare(row + i, column + 1))
                             return false;
                         prevousLetterMatch = false;
                     }
@@ -131,9 +145,9 @@ namespace Bonza.Generator
             else
             {
                 // Free cell left
-                if (GetSquare(row, column - 1) != null) return false;
+                if (IsOccupiedSquare(row, column - 1)) return false;
                 // Free cell right
-                if (GetSquare(row, column + wp.Word.Length) != null) return false;
+                if (IsOccupiedSquare(row, column + wp.Word.Length)) return false;
 
                 bool prevousLetterMatch = false;
                 for (int i = 0; i < wp.Word.Length; i++)
@@ -145,7 +159,7 @@ namespace Bonza.Generator
                     }
                     else
                     {
-                        if (GetLetter(row - 1, column + i) != '\0' || GetLetter(row, column + i) != '\0' || GetLetter(row + 1, column + i) != '\0')
+                        if (IsOccupiedSquare(row - 1, column + i) || IsOccupiedSquare(row, column + i) || IsOccupiedSquare(row + 1, column + i))
                             return false;
                         prevousLetterMatch = false;
                     }

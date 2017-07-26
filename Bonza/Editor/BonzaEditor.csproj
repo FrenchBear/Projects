@@ -60,7 +60,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ExtensionMethods.cs" />
     <Compile Include="View\MaxtrixAnimation.cs" />
     <Page Include="View\EditorWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

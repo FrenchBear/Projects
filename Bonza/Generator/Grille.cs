@@ -15,7 +15,7 @@ namespace Bonza.Generator
 {
     public partial class Grille
     {
-        readonly bool TraceBuild;   // = false;
+        const bool TraceBuild = false;
         readonly Random rnd;        // Initialized in constructor
 
         WordPositionLayout Layout;

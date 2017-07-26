@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Bonza.Generator
 {
-    internal static class ExtensionMethods
+    public static class ExtensionMethods
     {
         static readonly Random rnd = new Random();
 

@@ -13,7 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Bonza.Generator;
 using System.Windows.Media.Animation;
-using System.Collections.ObjectModel;
+
 
 namespace Bonza.Editor
 {
@@ -39,6 +39,7 @@ namespace Bonza.Editor
             // Can only reference ActualWidth after Window is loaded
             Loaded += MainWindow_Loaded;
             SizeChanged += MainWindow_SizeChanged;
+            // ContentRendered += (sender, e) => Environment.Exit(0);       // For performance testing
         }
 
         // HitTest selects a canvas, this dictionary maps it to associated WordPosition
@@ -48,6 +49,7 @@ namespace Bonza.Editor
         {
             // For development tests
             viewModel.LoadWordsList(@"..\Lists\Fruits.txt");
+            //viewModel.LoadWordsList(@"..\Lists\Countries.txt");       // For performance testing
         }
 
         // On window resize, background grid need update
@@ -74,7 +76,7 @@ namespace Bonza.Editor
             foreach (WordPosition wp in viewModel.WordPositionList)
             {
                 // Group letters in a canvas to be able later to move them at once
-                var wordCanvas = new Canvas() { Name = wp.Word };   // Mostly for trace/debug, useless
+                var wordCanvas = new Canvas();
                 CanvasToWordPosition.Add(wordCanvas, wp);
 
                 for (int i = 0; i < wp.Word.Length; i++)
