@@ -28,13 +28,29 @@ namespace Bonza.Generator
                 // It's Ok to have p1==p2, for instance when shuffling a 2-element list 
                 // so that in 50% we return the original list, in 50% a swapped version
                 int p1, p2;
-                p1 = rnd.Next(list.Count);
+                p1 = i; // rnd.Next(list.Count);
                 p2 = rnd.Next(list.Count);
                 T temp = shuffledList[p1];
                 shuffledList[p1] = shuffledList[p2];
                 shuffledList[p2] = temp;
             }
             return shuffledList;
+        }
+
+
+        // Shuffle any (I)List with an extension method based on the Fisher-Yates shuffle
+        // https://stackoverflow.com/questions/273313/randomize-a-listt
+        public static void Shuffle<T>(this IList<T> list)
+        {
+            int n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = rnd.Next(n + 1);
+                T value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
         }
 
         // Return a random element from a list

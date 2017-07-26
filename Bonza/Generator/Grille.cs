@@ -82,7 +82,9 @@ namespace Bonza.Generator
             }
 
             // Chose random word and orientation to start, anchored at position (0, 0)
+            // ToDo: Why the in place shuffling almost do not work ????
             Words = Words.Shuffle();
+            //Words.Shuffle();
             AddWordPositionToLayout(new WordPosition { Word = Words[0], StartColumn = 0, StartRow = 0, IsVertical = rnd.NextDouble() > 0.5 });
             Words.RemoveAt(0);
 
@@ -106,7 +108,7 @@ namespace Bonza.Generator
 
                         // Take position that minimize layout surface, random selection generates a 'diagonal' puzzle
                         // Adjust surface calculation to avoid too much extension in one direction
-                        foreach (WordPosition wp in possibleWordPositions.Shuffle())
+                        foreach (WordPosition wp in possibleWordPositions)
                         {
                             (int newMinRow, int newMaxRow, int newMinCol, int newMaxCol) = Layout.ExtendBounds(minRow, maxRow, minColumn, maxColumn, wp);
                             int newSurface = ComputeAdjustedSurface(newMaxCol - newMinCol + 1, newMaxRow - newMinRow + 1);
@@ -182,12 +184,13 @@ namespace Bonza.Generator
             }
 
             // For each letter of wordToPlace, look if placedWord contains this letter at least once
-            foreach (char letter in wordToPlaceLetters.Keys.ToList().Shuffle())
+            foreach (char letter in wordToPlaceLetters.Keys)
                 if (placedWordLetters.Keys.Contains(letter))
                 {
                     // Matching letter!
-                    List<int> positionsInWordToPlace = Enumerable.Range(0, wordToPlace.Length).Where(i => wordToPlace[i] == letter).ToList().Shuffle();
-                    List<int> positionsInPlacedWord = Enumerable.Range(0, placedWord.Word.Length).Where(i => placedWord.Word[i] == letter).ToList().Shuffle();
+                    // ToDo: Performance??
+                    List<int> positionsInWordToPlace = Enumerable.Range(0, wordToPlace.Length).Where(i => wordToPlace[i] == letter).ToList();
+                    List<int> positionsInPlacedWord = Enumerable.Range(0, placedWord.Word.Length).Where(i => placedWord.Word[i] == letter).ToList();
 
                     // Look for all possible combinations of letter in both words if it's possible to place wordToPlace.
                     foreach (int positionInWordToPlace in positionsInWordToPlace)
