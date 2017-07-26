@@ -1,4 +1,4 @@
-﻿// Bonza
+﻿// Bonza Generator
 // Various extension methods to simplify code
 // 2017-07-24   PV      Split from program.cs to prepare new merged application
 
@@ -46,5 +46,7 @@ namespace Bonza.Generator
                 throw new ArgumentException("Can't select a random element from a list of zero element");
             return list[rnd.Next(list.Count)];
         }
+
+
     }
 }

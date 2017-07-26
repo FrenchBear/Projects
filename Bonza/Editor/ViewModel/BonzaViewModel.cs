@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using Bonza.Generator;
+using Microsoft.Win32;
 
 
 namespace Bonza.Editor
@@ -48,6 +49,7 @@ namespace Bonza.Editor
             this.model = model;
             this.view = view;
         }
+
 
         // -------------------------------------------------
         // Bindings
@@ -90,6 +92,16 @@ namespace Bonza.Editor
 
 
         // -------------------------------------------------
+        // Model helpers
+
+        internal void NewLayout()
+        {
+            ClearUndoStack();
+            view.NewLayout();
+        }
+
+
+        // -------------------------------------------------
         // View helpers
 
         // When a list of WordPositions have moved to their final location in view
@@ -114,13 +126,14 @@ namespace Bonza.Editor
 
         private bool SaveCanExecute(object obj)
         {
-            return true;
+            return model.Layout != null;
         }
 
         private void SaveExecute(object obj)
         {
             MessageBox.Show("Save: ToDo");
         }
+
 
 
         private bool LoadCanExecute(object obj)
@@ -130,7 +143,14 @@ namespace Bonza.Editor
 
         private void LoadExecute(object obj)
         {
-            MessageBox.Show("Load: ToDo");
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.DefaultExt = ".txt";
+            dlg.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
+            dlg.CheckFileExists = true;
+            dlg.InitialDirectory = @"C:\Development\GitHub\Projects\Bonza\Lists";   // Path.Combine( Directory.GetCurrentDirectory(), @"..\Lists");
+            var result = dlg.ShowDialog();
+            if (result.HasValue && result.Value == true)
+                model.LoadGrille(dlg.FileName);
         }
 
 
@@ -141,7 +161,8 @@ namespace Bonza.Editor
 
         private void ResetExecute(object obj)
         {
-            MessageBox.Show("Reset: ToDo");
+            model.ResetLayout();
+
         }
 
 
@@ -152,13 +173,14 @@ namespace Bonza.Editor
 
         private void CenterExecute(object obj)
         {
-            view.RescaleAndCenter();
+            view.RescaleAndCenter(true);        // Use animations
         }
+
 
 
         private bool UndoCanExecute(object obj)
         {
-            return UndoStack.Count > 0;
+            return model.Layout != null && UndoStack.Count > 0;
         }
 
         private void UndoExecute(object obj)

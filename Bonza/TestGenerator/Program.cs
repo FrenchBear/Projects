@@ -16,7 +16,7 @@ namespace Bonza
         static void Main()
         {
             Grille g = new Grille();
-            for (; !g.PlaceWords("Jours.txt");)
+            for (; !g.PlaceWords(@"..\Lists\Jours.txt");)
             {
             }
             g.Print();

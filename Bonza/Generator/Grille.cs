@@ -36,10 +36,11 @@ namespace Bonza.Generator
             return Layout;
         }
 
+        // Memorize the list of words to place as a class variable if later we call PlaceWordsAgain
+        List<string> wordsList = new List<string>();
         public bool PlaceWords(string filename)
         {
-            List<string> wordsList = new List<string>();
-            using (StreamReader sr = new StreamReader("..\\Lists\\" + filename, Encoding.UTF8))
+            using (StreamReader sr = new StreamReader( filename, Encoding.UTF8))
             {
                 while (!sr.EndOfStream)
                 {
@@ -51,8 +52,14 @@ namespace Bonza.Generator
             return PlaceWords(wordsList.ToArray());
         }
 
+        public bool PlaceWordsAgain()
+        {
+            return PlaceWords(wordsList.ToArray());
+        }
 
-        public bool PlaceWords(string[] wordsTable)
+        // Private automatic placement of words in current grid
+        // Returns False if placement failed, true in case of success
+        private bool PlaceWords(string[] wordsTable)
         {
             if (wordsTable == null)
                 throw new ArgumentNullException(nameof(wordsTable));
@@ -61,9 +68,9 @@ namespace Bonza.Generator
             Stopwatch sw = Stopwatch.StartNew();
             List<string> Words = new List<string>();
 
-            // Only work with an empty puzzle
-            Debug.Assert(Layout == null);
+            // We start with a fresh new Layout
             Layout = new WordPositionLayout();
+
 
             foreach (string word in wordsTable)
             {
