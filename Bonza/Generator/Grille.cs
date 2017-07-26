@@ -6,8 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 using static System.Console;
 using System.IO;
 using System.Diagnostics;
@@ -17,10 +15,8 @@ namespace Bonza.Generator
 {
     public partial class Grille
     {
-        readonly bool TraceBuild = false;
+        readonly bool TraceBuild;   // = false;
         readonly Random rnd;        // Initialized in constructor
-
-        const char EmptyLetter = '\0';        // When there is nothing on the grid
 
         WordPositionLayout Layout;
 
@@ -40,6 +36,7 @@ namespace Bonza.Generator
         List<string> wordsList = new List<string>();
         public bool PlaceWords(string filename)
         {
+            // Will throw an exception in case of problem with file
             using (StreamReader sr = new StreamReader( filename, Encoding.UTF8))
             {
                 while (!sr.EndOfStream)
@@ -63,14 +60,14 @@ namespace Bonza.Generator
         {
             if (wordsTable == null)
                 throw new ArgumentNullException(nameof(wordsTable));
-            Debug.Assert(wordsTable.Length >= 2);
+            if (wordsTable.Any(w => w.Length <= 2))
+                throw new BonzaException("Mots de longueur <=2 non autorisés");
 
             Stopwatch sw = Stopwatch.StartNew();
             List<string> Words = new List<string>();
 
             // We start with a fresh new Layout
             Layout = new WordPositionLayout();
-
 
             foreach (string word in wordsTable)
             {

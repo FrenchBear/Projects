@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Bonza.Editor"
         mc:Ignorable="d"
-        Title="BonzaEditor" Height="768" Width="1024">
+        Title="BonzaEditor" Height="768" Width="1024" Icon="/BonzaEditor;component/Bonza.ico">
 
     <Window.InputBindings>
         <KeyBinding Key="Z" Modifiers="Ctrl" Command="{Binding UndoCommand}" />
