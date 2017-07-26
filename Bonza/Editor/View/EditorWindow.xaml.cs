@@ -49,8 +49,17 @@ namespace Bonza.Editor
             model.LoadGrille(@"..\Lists\Fruits.txt");
         }
 
+        // On window resize, background grid need update
+        void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateBackgroundGrid();
+        }
+
+
+        // Initial drawing of canvas for current model layout
         internal void NewLayout()
         {
+            // Clear previous elements layout
             DrawingCanvas.Children.Clear();
 
             // Draw letters
@@ -59,6 +68,7 @@ namespace Bonza.Editor
             {
                 // Group letters in a canvas to be able later to move them at once
                 var wordCanvas = new Canvas();
+                wordCanvas.Name = wp.Word;
                 CanvasToWordPosition.Add(wordCanvas, wp);
 
                 for (int i = 0; i < wp.Word.Length; i++)
@@ -93,6 +103,7 @@ namespace Bonza.Editor
                 DrawingCanvas.Children.Add(wordCanvas);
             }
 
+            // After initial drawing, rescale and center without animations
             RescaleAndCenter(false);
         }
 
@@ -147,18 +158,30 @@ namespace Bonza.Editor
                 // ToDo: Stop animation if user interacts with canvas
                 MatrixAnimation ma = new MatrixAnimation(RescaleMatrix, new Duration(TimeSpan.FromSeconds(0.35)));
                 ma.From = MainMatrixTransform.Matrix;
-                ma.Completed += AnimationCompleted;
+                ma.Completed += MatrixAnimationCompleted;
+                isMatrixAnimationInProgress = true;
                 MainMatrixTransform.BeginAnimation(MatrixTransform.MatrixProperty, ma);
             }
             else
-                AnimationCompleted(null, null);
+                MatrixAnimationEnd();
         }
 
+        bool isMatrixAnimationInProgress;
         Matrix RescaleMatrix;
 
-        // Terminate transformation in a clean way, "freeing" property
-        private void AnimationCompleted(object sender, EventArgs e)
+
+        // Event handler when MatrixAnimation is completed, need to "free" animated properties otherwise
+        // they're "hold" by animation
+        private void MatrixAnimationCompleted(object sender, EventArgs e)
         {
+            MatrixAnimationEnd();
+        }
+
+
+        // Terminate transformation in a clean way, "freeing" animated properties
+        private void MatrixAnimationEnd()
+        {
+            isMatrixAnimationInProgress = false;
             MainMatrixTransform.BeginAnimation(MatrixTransform.MatrixProperty, null);
 
             // Final tasks
@@ -166,6 +189,7 @@ namespace Bonza.Editor
             UpdateTransformationsFeedBack();
             UpdateBackgroundGrid();
         }
+
 
         // Helper to set foreground/background on all TextBlock of a wordCanvas 
         static void SetWordCanvasColor(Canvas wordCanvas, Brush foreground, Brush background)
@@ -177,11 +201,6 @@ namespace Bonza.Editor
             }
         }
 
-        // On window resize, background grid need update
-        void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            UpdateBackgroundGrid();
-        }
 
         // Mouse click and drag management
         Point previousMousePosition;
@@ -191,18 +210,11 @@ namespace Bonza.Editor
 
         private void MainGrid_MouseMoveWhenUp(object sender, MouseEventArgs e)
         {
-            //previousMousePosition = e.GetPosition(MainGrid);
-
-            //// Reverse-transform mouse Grid coordinates into Canvas coordinates
-            //Matrix m = MainMatrixTransform.Matrix;
-
-            //// ToDo
-            //Point pointInUserSpace = new Point(0, 0), pointOnScreenSpace;
-            //pointOnScreenSpace = m.Transform(pointInUserSpace);
+            // ToDo, for example, provide word hovering visual feed-back
         }
 
 
-        // When moving a word
+        // Word or a group of connected words being moved
         List<Canvas> hitCanvasList;
         List<WordPosition> hitWordPositionList;
 
@@ -223,6 +235,11 @@ namespace Bonza.Editor
 
         private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            if (moveWordAnimationInProgressCount > 0)
+                return;
+            if (isMatrixAnimationInProgress)
+                MatrixAnimationEnd();
+
             MainGrid.MouseMove -= MainGrid_MouseMoveWhenUp;
             MainGrid.MouseMove += MainGrid_MouseMoveWhenDown;
             previousMousePosition = e.GetPosition(MainGrid);
@@ -241,6 +258,7 @@ namespace Bonza.Editor
         }
 
 
+        // Separate from MainGrid_MouseDown to reduce complexity
         private Action<Point> GetMouseDownMoveAction(Canvas hitC)
         {
             WordPosition hitWP = GetWordPositionFromCanvas(hitC);
@@ -281,7 +299,7 @@ namespace Bonza.Editor
             }
 
             // When moving, P is current mouse in ideal grid coordinates
-            return P =>      
+            return P =>
             {
                 // Just move canvas
                 for (int i = 0; i < hitCanvasList.Count; i++)
@@ -327,9 +345,9 @@ namespace Bonza.Editor
             }
         }
 
+        // Update status bar
         private void UpdateTransformationsFeedBack()
         {
-            // Update status bar
             Matrix matrix = MainMatrixTransform.Matrix;
             var a = Math.Atan2(matrix.M12, matrix.M11) / Math.PI * 180;
             RotationTextBlock.Text = string.Format("{0:F1}°", a);
@@ -403,14 +421,52 @@ namespace Bonza.Editor
             }
         }
 
+        int moveWordAnimationInProgressCount = 0;
+
         public void MoveWordPositionList(IEnumerable<WordPosition> wordPositionList)
         {
+            if (wordPositionList == null) throw new ArgumentNullException(nameof(wordPositionList));
+
+            // Compute distance moved on 1st element to choose speed
+            WordPosition wp1 = wordPositionList.FirstOrDefault();
+            Debug.Assert(wp1 != null);
+            Canvas c1 = GetCanvasFromWordPosition(wp1);
+            double deltaX = (double)c1.GetValue(Canvas.LeftProperty) - (wp1.StartColumn * UnitSize);
+            double deltaY = (double)c1.GetValue(Canvas.TopProperty) - (wp1.StartRow * UnitSize);
+            double distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+
             foreach (WordPosition wp in wordPositionList)
             {
                 Canvas c = GetCanvasFromWordPosition(wp);
-                c.SetValue(Canvas.LeftProperty, wp.StartColumn * UnitSize);
-                c.SetValue(Canvas.TopProperty, wp.StartRow * UnitSize);
+
+                DoubleAnimation daLeft = new DoubleAnimation();
+                double finalLeftValue = wp.StartColumn * UnitSize;
+                daLeft.From = (double)c.GetValue(Canvas.LeftProperty);
+                daLeft.To = finalLeftValue;
+                daLeft.Duration = new Duration(TimeSpan.FromSeconds(distance >= UnitSize ? 0.35 : 0.1));
+                daLeft.Completed += (sender, e) => { MoveWordAnimationEnd(c, Canvas.LeftProperty, finalLeftValue); };
+                System.Threading.Interlocked.Increment(ref moveWordAnimationInProgressCount);
+                c.BeginAnimation(Canvas.LeftProperty, daLeft);
+
+                DoubleAnimation daTop = new DoubleAnimation();
+                double finalTopValue = wp.StartRow * UnitSize;
+                daTop.From = (double)c.GetValue(Canvas.TopProperty);
+                daTop.To = finalTopValue;
+                daTop.Duration = new Duration(TimeSpan.FromSeconds(distance >= UnitSize ? 0.35 : 0.1));
+                daTop.Completed += (sender, e) => { MoveWordAnimationEnd(c, Canvas.TopProperty, finalTopValue); };
+                System.Threading.Interlocked.Increment(ref moveWordAnimationInProgressCount);
+                c.BeginAnimation(Canvas.TopProperty, daTop);
             }
+        }
+
+        private void MoveWordAnimationEnd(Canvas c, DependencyProperty dp, double finalValue)
+        {
+            // Need to wait all animations end!
+            System.Threading.Interlocked.Decrement(ref moveWordAnimationInProgressCount);
+            c.BeginAnimation(dp, null);
+
+            // Set final value
+            c.SetValue(dp, finalValue);
         }
 
         private void MainGrid_MouseWheel(object sender, MouseWheelEventArgs e)
