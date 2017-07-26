@@ -49,14 +49,14 @@ namespace Bonza.Editor
                     MoveTestLayout.AddWordPositionAndSquares(wp);
         }
 
-        internal bool CanPlaceWordInMoveTestLayout(WordPosition hitWordPosition, int left, int top)
+        internal bool CanPlaceWordInMoveTestLayout(WordPosition hitWordPosition, (int left, int top) position)
         {
             WordPosition testWordPosition = new WordPosition
             {
                 Word = hitWordPosition.Word,
                 IsVertical = hitWordPosition.IsVertical,
-                StartColumn = left,
-                StartRow = top
+                StartColumn = position.left,
+                StartRow = position.top
             };
             return MoveTestLayout.CanPlaceWord(testWordPosition);
         }

@@ -31,6 +31,7 @@ namespace Bonza.Editor
         public ICommand SaveCommand { get; private set; }
         public ICommand ResetCommand { get; private set; }
         public ICommand CenterCommand { get; private set; }
+        public ICommand UndoCommand { get; private set; }
 
 
         // Constructor
@@ -41,6 +42,7 @@ namespace Bonza.Editor
             SaveCommand = new RelayCommand<object>(SaveExecute, SaveCanExecute);
             ResetCommand = new RelayCommand<object>(ResetExecute, ResetCanExecute);
             CenterCommand = new RelayCommand<object>(CenterExecute, CenterCanExecute);
+            UndoCommand = new RelayCommand<object>(UndoExecute, UndoCanExecute);
 
             // Initialize ViewModel
             this.model = model;
@@ -49,12 +51,6 @@ namespace Bonza.Editor
 
         // -------------------------------------------------
         // Bindings
-
-        //private ObservableCollection<WordPosition> words = new ObservableCollection<WordPosition>();
-        //public ObservableCollection<WordPosition> Words
-        //{
-        //    get => words;
-        //}
 
         public IEnumerable<WordPosition> WordPositionList => model.Layout.WordPositionList;
 
@@ -74,11 +70,42 @@ namespace Bonza.Editor
 
 
         // -------------------------------------------------
+        // Undo support
+
+        Stack<(List<WordPosition>, List<(int Left, int Top)>)> UndoStack = new Stack<(List<WordPosition>, List<(int, int)>)>();
+
+        public void ClearUndoStack()
+        {
+            UndoStack = new Stack<(List<WordPosition>, List<(int, int)>)>();
+        }
+
+        private void PerformUndo()
+        {
+            if (UndoStack.Count == 0) return;
+
+            var (wordPositionList, leftTopList) = UndoStack.Pop();
+            UpdateWordPositionLocation(wordPositionList, leftTopList, false);   // Coordinates in wordPositionList are updated
+            view.MoveWordPositionList(wordPositionList);
+        }
+
+
+        // -------------------------------------------------
         // View helpers
 
-        internal void UpdateWordPositionLocation(WordPosition wp, int left, int top)
+        // When a list of WordPositions have moved to their final location in view
+        internal void UpdateWordPositionLocation(List<WordPosition> wordPositionList, List<(int Left, int Top)> leftTopList, bool isMemorizedForUndo)
         {
-            model.UpdateWordPositionLocation(wp, left, top);
+            // Memorize position before move for undo
+            if (isMemorizedForUndo)
+            {
+                List<(int Left, int Top)> originalLeftTopList = new List<(int, int)>();
+                foreach (WordPosition wp in wordPositionList)
+                    originalLeftTopList.Add((wp.StartColumn, wp.StartRow));
+                UndoStack.Push((wordPositionList, originalLeftTopList));
+            }
+
+            for (int i = 0; i < wordPositionList.Count; i++)
+                model.UpdateWordPositionLocation(wordPositionList[i], leftTopList[i].Left, leftTopList[i].Top);
         }
 
 
@@ -109,7 +136,7 @@ namespace Bonza.Editor
 
         private bool ResetCanExecute(object obj)
         {
-            return true;
+            return model.Layout != null;
         }
 
         private void ResetExecute(object obj)
@@ -126,6 +153,17 @@ namespace Bonza.Editor
         private void CenterExecute(object obj)
         {
             view.RescaleAndCenter();
+        }
+
+
+        private bool UndoCanExecute(object obj)
+        {
+            return UndoStack.Count > 0;
+        }
+
+        private void UndoExecute(object obj)
+        {
+            PerformUndo();
         }
 
     }
