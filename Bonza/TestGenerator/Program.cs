@@ -16,19 +16,24 @@ namespace TestGenerator
     {
         static void Main()
         {
-            Grille g = new Grille();
-            int i;
-            for (i = 0; i < 5 && !g.PlaceWords(@"..\Lists\Prénoms.txt"); i++) { }
-            Debug.Assert(i < 5);
+            Stopwatch sw = Stopwatch.StartNew();
+            for (int n = 0; n < 3; n++)
+            {
+                Grille g = new Grille();
+                int i;
+                for (i = 0; i < 5 && !g.PlaceWords(@"..\Lists\Prénoms.txt"); i++) { }
+                Debug.Assert(i < 5);
+            }
+            WriteLine("Temps 3 générations: " + sw.Elapsed);
             //g.Print();
             //g.Print("C:\\temp\\out.txt");
             //g.SaveLayout("c:\\temp\\fruits.layout");
             //g.BuildPuzzle(5);
             //g.SavePuzzle("c:\\temp\\fruits.chunks");
 
-            //Console.WriteLine();
-            //Console.Write("(Pause)");
-            //Console.ReadLine();
+            Console.WriteLine();
+            Console.Write("(Pause)");
+            Console.ReadLine();
         }
     }
 

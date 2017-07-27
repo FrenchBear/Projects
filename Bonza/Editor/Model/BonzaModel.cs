@@ -27,11 +27,16 @@ namespace Bonza.Editor
             viewModel = vm;
         }
 
-
+        internal void NewGrille()
+        {
+            grille = new Grille();
+            viewModel.ClearLayout();
+        }
 
         internal void LoadGrille(string wordsFile)
         {
             grille = new Grille();
+            viewModel.ClearLayout();
             int i;
             for (i = 0; i < 5 && !grille.PlaceWords(wordsFile); i++) { }
             if (i == 5)
@@ -41,6 +46,7 @@ namespace Bonza.Editor
 
         internal void ResetLayout()
         {
+            viewModel.ClearLayout();
             int i;
             for (i = 0; i < 5 && !grille.PlaceWordsAgain(); i++) { }
             if (i == 5)
@@ -81,6 +87,7 @@ namespace Bonza.Editor
             // Need to recompute number of words not connected
             viewModel.WordsNotConnected = Layout.GetWordsNotConnected();
         }
+
 
     }
 }

@@ -67,7 +67,6 @@ namespace Bonza.Editor
         }
 
 
-
         // Initial drawing of canvas for current model layout
         internal void NewLayout()
         {

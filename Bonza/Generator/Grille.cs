@@ -82,9 +82,7 @@ namespace Bonza.Generator
             }
 
             // Chose random word and orientation to start, anchored at position (0, 0)
-            // ToDo: Why the in place shuffling almost do not work ????
-            Words = Words.Shuffle();
-            //Words.Shuffle();
+            Words.ShuffleInPlace();
             AddWordPositionToLayout(new WordPosition { Word = Words[0], StartColumn = 0, StartRow = 0, IsVertical = rnd.NextDouble() > 0.5 });
             Words.RemoveAt(0);
 
@@ -102,7 +100,7 @@ namespace Bonza.Generator
 
                     if (possibleWordPositions.Count > 0)
                     {
-                        WordPosition selectedWordPosition = null;
+                        List<WordPosition> selectedWordPositionList = null;
                         (int minRow, int maxRow, int minColumn, int maxColumn) = Layout.GetBounds();
                         int surface = int.MaxValue;
 
@@ -115,12 +113,12 @@ namespace Bonza.Generator
                             if (newSurface < surface)
                             {
                                 surface = newSurface;
-                                selectedWordPosition = wp;
+                                selectedWordPositionList = new List<WordPosition> { wp };
                             }
                         }
 
-                        // Position is now selected, we can add it to current layout
-                        AddWordPositionToLayout(selectedWordPosition);
+                        // Take a possibility among those who minimally extend surface, and add it to current layout
+                        AddWordPositionToLayout(selectedWordPositionList.TakeRandom());
 
                         Words.Remove(Words[i]);
 
@@ -166,35 +164,43 @@ namespace Bonza.Generator
         private void TryPlace(string wordToPlace, WordPosition placedWord, List<WordPosition> possibleWordPositions)
         {
             // Build a dictionary of (letter, count) for each word
-            Dictionary<char, int> wordToPlaceLetters = BreakLetters(wordToPlace);
-            Dictionary<char, int> placedWordLetters = BreakLetters(placedWord.Word);
+            HashSet<char> wordToPlaceLetters = BreakLetters(wordToPlace);
+            HashSet<char> placedWordLetters = BreakLetters(placedWord.Word);
 
             // Internal helper function, returns a dictionary of (letter, count) for word w
-            Dictionary<char, int> BreakLetters(string w)
+            HashSet<char> BreakLetters(string w)
             {
-                var dic = new Dictionary<char, int>();
+                var set = new HashSet<char>();
                 foreach (char letter in w)
-                {
-                    if (dic.ContainsKey(letter))
-                        dic[letter]++;
-                    else
-                        dic.Add(letter, 1);
-                }
-                return dic;
+                    if (!set.Contains(letter))
+                        set.Add(letter);
+                return set;
             }
 
             // For each letter of wordToPlace, look if placedWord contains this letter at least once
-            foreach (char letter in wordToPlaceLetters.Keys)
-                if (placedWordLetters.Keys.Contains(letter))
+            foreach (char letter in wordToPlaceLetters)
+                if (placedWordLetters.Contains(letter))
                 {
                     // Matching letter!
-                    // ToDo: Performance??
-                    List<int> positionsInWordToPlace = Enumerable.Range(0, wordToPlace.Length).Where(i => wordToPlace[i] == letter).ToList();
-                    List<int> positionsInPlacedWord = Enumerable.Range(0, placedWord.Word.Length).Where(i => placedWord.Word[i] == letter).ToList();
+
+                    // Helper, returns a list of positions of letter (external variable) in word
+                    List<int> FindPositions(string word)
+                    {
+                        var list = new List<int>(3);
+                        int p = 0;
+                        for (;;)
+                        {
+                            int q = word.IndexOf(letter, p);
+                            if (q < 0) break;
+                            list.Add(q);
+                            p = q + 1;
+                        }
+                        return list;
+                    }
 
                     // Look for all possible combinations of letter in both words if it's possible to place wordToPlace.
-                    foreach (int positionInWordToPlace in positionsInWordToPlace)
-                        foreach (int positionInPlacedWord in positionsInPlacedWord)
+                    foreach (int positionInWordToPlace in FindPositions(wordToPlace))           // positionsInWordToPlace)
+                        foreach (int positionInPlacedWord in FindPositions(placedWord.Word))    // positionsInPlacedWord)
                         {
                             WordPosition testWP = new WordPosition
                             {

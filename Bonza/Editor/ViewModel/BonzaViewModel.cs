@@ -34,6 +34,9 @@ namespace Bonza.Editor
         public ICommand CenterCommand { get; private set; }
         public ICommand UndoCommand { get; private set; }
 
+        // Menus
+        public ICommand NewCommand { get; private set; }
+
 
         // Constructor
         public BonzaViewModel(BonzaModel model, EditorWindow view)
@@ -45,6 +48,8 @@ namespace Bonza.Editor
             CenterCommand = new RelayCommand<object>(CenterExecute, CenterCanExecute);
             UndoCommand = new RelayCommand<object>(UndoExecute, UndoCanExecute);
 
+            NewCommand = new RelayCommand<object>(NewExecute);
+
             // Initialize ViewModel
             this.model = model;
             this.view = view;
@@ -54,7 +59,7 @@ namespace Bonza.Editor
         // -------------------------------------------------
         // Bindings
 
-        public IEnumerable<WordPosition> WordPositionList => model.Layout.WordPositionList;
+        public IEnumerable<WordPosition> WordPositionList => model?.Layout?.WordPositionList;
 
         private int _WordsNotConnected;
         public int WordsNotConnected
@@ -107,11 +112,18 @@ namespace Bonza.Editor
         // -------------------------------------------------
         // Model helpers
 
-        internal void NewLayout()
+        internal void ClearLayout()
         {
             ClearUndoStack();
+            view.ClearLayout();
+        }
+
+        internal void NewLayout()
+        {
             view.NewLayout();
         }
+
+
 
 
         // -------------------------------------------------
@@ -224,6 +236,16 @@ namespace Bonza.Editor
         private void UndoExecute(object obj)
         {
             PerformUndo();
+        }
+
+
+
+        // -------------------------------------------------
+        // Commands
+
+        private void NewExecute(object obj)
+        {
+            model.NewGrille();
         }
 
     }

@@ -122,5 +122,8 @@
   <ItemGroup>
     <Resource Include="Bonza.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\new.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

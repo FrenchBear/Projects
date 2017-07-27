@@ -9,56 +9,129 @@
 
     <Window.InputBindings>
         <KeyBinding Key="Z" Modifiers="Ctrl" Command="{Binding UndoCommand}" />
+        <KeyBinding Key="N" Modifiers="Control" Command="{Binding NewCommand}" />
     </Window.InputBindings>
 
     <Grid>
-        <Grid Margin="6">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="120"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <DockPanel>
-                <StatusBar DockPanel.Dock="Bottom">
-                    <TextBlock Name="StatusLabel" Text="{Binding StatusText}"/>
-                </StatusBar>
-                <StackPanel Orientation="Vertical" Margin="0,0,6,0">
-                    <Label Content="Bonza Editor" FontWeight="Bold" FontSize="16" Margin="0,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="PowderBlue" Foreground="Blue" />
-                    <Button Command="{Binding Path=LoadCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Load Words</Button>
-                    <Button Command="{Binding Path=SaveCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Save</Button>
-                    <Button Command="{Binding Path=ResetCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Reset Layout</Button>
-                    <Button Command="{Binding Path=CenterCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Center View</Button>
-                    <Button Command="{Binding Path=UndoCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Undo</Button>
-                    <Label>Disjoint groups:</Label>
-                    <TextBlock Text="{Binding WordsNotConnected}" />
-                </StackPanel>
-            </DockPanel>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="120"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
 
-            <DockPanel Grid.Column="1">
-                <StatusBar DockPanel.Dock="Bottom">
-                    <TextBlock>Drag: Move canvas, point or line; Wheel: Rotate canvas; Ctrl+Wheel: Rescale canvas</TextBlock>
-                </StatusBar>
-                <StatusBar DockPanel.Dock="Bottom">
-                    <TextBlock>Rotation:</TextBlock>
-                    <TextBlock Name="RotationTextBlock" Width="80"/>
-                    <TextBlock>Scale:</TextBlock>
-                    <TextBlock Name="ScaleTextBlock" Width="80"/>
-                    <TextBlock>Translation:</TextBlock>
-                    <TextBlock Name="TranslationTextBlock" Width="80"/>
-                </StatusBar>
+        <Menu Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,6" >
+            <MenuItem Name="FileMenu" Header="_Fichier">
+                <MenuItem Command="{Binding NewCommand}" Header="_Nouveau" >
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/new.ico" Stretch="None" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="{Binding}" Header="_Ouvrir..." >
+                    <MenuItem.Icon>
+                        <Image Source="Icons/open.ico" Stretch="None" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="Save" Header="_Enregistrer">
+                    <MenuItem.Icon>
+                        <Image Source="Icons/save.ico" Stretch="None" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="SaveAs" Header="Enregistrer _sous..." />
 
-                <Grid Name="MainGrid" MouseMove="MainGrid_MouseMoveWhenUp" MouseDown="MainGrid_MouseDown" MouseUp="MainGrid_MouseUp" MouseWheel="MainGrid_MouseWheel" Background="Transparent" Margin="0,-3,0,2.6">
-                    <Canvas Name="ClippingCanvas" ClipToBounds="True">
-                        <Canvas Name="ZZDrawingCanvas" ClipToBounds="False" >
-                            <Canvas Name="BackgroundGrid" ClipToBounds="False" />
-                            <Canvas Name="DrawingCanvas" ClipToBounds="False" />
-                            <Canvas.RenderTransform>
-                                <MatrixTransform x:Name="MainMatrixTransform"/>
-                            </Canvas.RenderTransform>
-                        </Canvas>
+                <Separator/>
+                <MenuItem Name="CloseCommand" Command="Close" InputGestureText="Alt+F4" Header="_Quitter">
+                    <MenuItem.Icon>
+                        <Image Source="Icons/close.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Name="EditMenu" Header="_Edition">
+                <MenuItem Command="Undo" Header="_Annuler">
+                    <MenuItem.Icon>
+                        <Image Source="Icons/undo.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="Redo" Header="_Refaire">
+                    <MenuItem.Icon>
+                        <Image Source="Icons/redo.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator/>
+                <MenuItem Name="CutCommand" Command="Cut" Header="_Couper" >
+                    <MenuItem.Icon>
+                        <Image Source="Icons/cut.png" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Name="CopyCommand" Command="Copy" Header="Co_pier">
+                    <MenuItem.Icon>
+                        <Image Source="Icons/copy.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Name="PasteCommand" Command="Paste" Header="C_oller">
+                    <MenuItem.Icon>
+                        <Image Source="Icons/paste.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="EditingCommands.Delete" Header="_Supprimer" InputGestureText="Suppr" />
+                <Separator/>
+                <MenuItem Command="SelectAll" Header="Sélectionner _tout">
+                    <MenuItem.Icon>
+                        <Image Source="Icons/selectall.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+
+            <MenuItem Name="HelpMenu" Header="_?" >
+                <MenuItem Name="AboutCommand" Command="{Binding AboutCommand}" Header="À _propos de Bonza...">
+                    <MenuItem.Icon>
+                        <Image Source="Icons/about.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+
+
+        <DockPanel Grid.Row="1">
+            <StackPanel Orientation="Vertical" Margin="6,0,6,0">
+                <Label Content="Bonza Editor" FontWeight="Bold" FontSize="16" Margin="0,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="PowderBlue" Foreground="Blue" />
+                <Button Command="{Binding Path=LoadCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Load Words</Button>
+                <Button Command="{Binding Path=SaveCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Save</Button>
+                <Button Command="{Binding Path=ResetCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Reset Layout</Button>
+                <Button Command="{Binding Path=CenterCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Center View</Button>
+                <Button Command="{Binding Path=UndoCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Undo</Button>
+                <Label>Disjoint groups:</Label>
+                <TextBlock Text="{Binding WordsNotConnected}" />
+            </StackPanel>
+        </DockPanel>
+
+        <DockPanel Grid.Row="1" Grid.Column="1">
+            <StatusBar DockPanel.Dock="Bottom">
+                <TextBlock>Drag: Move canvas, point or line; Wheel: Rotate canvas; Ctrl+Wheel: Rescale canvas</TextBlock>
+            </StatusBar>
+            <StatusBar DockPanel.Dock="Bottom">
+                <TextBlock>Rotation:</TextBlock>
+                <TextBlock Name="RotationTextBlock" Width="80"/>
+                <TextBlock>Scale:</TextBlock>
+                <TextBlock Name="ScaleTextBlock" Width="80"/>
+                <TextBlock>Translation:</TextBlock>
+                <TextBlock Name="TranslationTextBlock" Width="80"/>
+            </StatusBar>
+
+            <Grid Name="MainGrid" MouseMove="MainGrid_MouseMoveWhenUp" MouseDown="MainGrid_MouseDown" MouseUp="MainGrid_MouseUp" MouseWheel="MainGrid_MouseWheel" Background="AntiqueWhite"  >
+                <Canvas Name="ClippingCanvas" ClipToBounds="True">
+                    <Canvas Name="ZZDrawingCanvas" ClipToBounds="False" >
+                        <Canvas Name="BackgroundGrid" ClipToBounds="False" />
+                        <Canvas Name="DrawingCanvas" ClipToBounds="False" />
+                        <Canvas.RenderTransform>
+                            <MatrixTransform x:Name="MainMatrixTransform"/>
+                        </Canvas.RenderTransform>
                     </Canvas>
-                </Grid>
-            </DockPanel>
+                </Canvas>
+            </Grid>
+        </DockPanel>
 
-        </Grid>
     </Grid>
 </Window>
