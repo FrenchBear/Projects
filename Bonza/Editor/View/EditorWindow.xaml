@@ -23,10 +23,10 @@
                 </StatusBar>
                 <StackPanel Orientation="Vertical" Margin="0,0,6,0">
                     <Label Content="Bonza Editor" FontWeight="Bold" FontSize="16" Margin="0,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="PowderBlue" Foreground="Blue" />
-                    <Button Command="{Binding Path=LoadCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Load</Button>
+                    <Button Command="{Binding Path=LoadCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Load Words</Button>
                     <Button Command="{Binding Path=SaveCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Save</Button>
                     <Button Command="{Binding Path=ResetCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Reset Layout</Button>
-                    <Button Command="{Binding Path=CenterCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Center</Button>
+                    <Button Command="{Binding Path=CenterCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Center View</Button>
                     <Button Command="{Binding Path=UndoCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Undo</Button>
                     <Label>Disjoint groups:</Label>
                     <TextBlock Text="{Binding WordsNotConnected}" />
@@ -48,14 +48,14 @@
 
                 <Grid Name="MainGrid" MouseMove="MainGrid_MouseMoveWhenUp" MouseDown="MainGrid_MouseDown" MouseUp="MainGrid_MouseUp" MouseWheel="MainGrid_MouseWheel" Background="Transparent" Margin="0,-3,0,2.6">
                     <Canvas Name="ClippingCanvas" ClipToBounds="True">
-                        <Image Name="BackgroundImage" IsHitTestVisible="False" />
-                        <Canvas Name="DrawingCanvas" ClipToBounds="False" >
+                        <Canvas Name="ZZDrawingCanvas" ClipToBounds="False" >
+                            <Canvas Name="BackgroundGrid" ClipToBounds="False" />
+                            <Canvas Name="DrawingCanvas" ClipToBounds="False" />
                             <Canvas.RenderTransform>
                                 <MatrixTransform x:Name="MainMatrixTransform"/>
                             </Canvas.RenderTransform>
                         </Canvas>
                     </Canvas>
-                    <!--<Canvas Name="HotTipCanvas" />-->
                 </Grid>
             </DockPanel>
 

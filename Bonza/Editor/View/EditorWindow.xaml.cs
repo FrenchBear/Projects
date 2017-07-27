@@ -13,7 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Bonza.Generator;
 using System.Windows.Media.Animation;
-
+using System.Windows.Shapes;
 
 namespace Bonza.Editor
 {
@@ -113,6 +113,9 @@ namespace Bonza.Editor
 
             // After initial drawing, rescale and center without animations
             RescaleAndCenter(false);
+
+            // Just as a safeguard
+            moveWordAnimationInProgressCount = 0;
         }
 
 
@@ -136,20 +139,19 @@ namespace Bonza.Editor
 
             // Set rotation to zero
             // get angle from transformation matrix:
-            // | M11 M12 0 |   | cos θ  -sin θ   0 |
-            // | M21 M22 0 | = | sin θ   cos θ   0 |
-            // | dx  dy  1 |   | dx      dy      1 |
+            // | M11 M12 0 |   | s.cos θ -s.sin θ   0 |
+            // | M21 M22 0 | = | s.sin θ  s.cos θ   0 |  (s = scale)
+            // | dx  dy  1 |   | dx       dy        1 |
             double θ = Math.Atan2(RescaleMatrix.M21, RescaleMatrix.M11);    // Just to use a variable named θ
-            RescaleMatrix.Rotate(θ / Math.PI * 180);            // It would certainly kill Microsoft to indicate on Rotate page or tooltip that angle is in degrees...
+            RescaleMatrix.Rotate(θ / Math.PI * 180);            // It would certainly kill Microsoft to indicate on Rotate page or Intellisense tooltip that angle is in degrees...
 
             // First adjust scale
             Point P1Screen = RescaleMatrix.Transform(P1Grid);
             Point P2Screen = RescaleMatrix.Transform(P2Grid);
-            double scaleX = ClippingCanvas.ActualWidth / (P2Screen.X - P1Screen.X);
-            double scaleY = ClippingCanvas.ActualHeight / (P2Screen.Y - P1Screen.Y);
-            double scale = Math.Min(scaleX, scaleY);
-            if (scale > 5) scale = 5;
-            RescaleMatrix.Scale(scale, scale);
+            double rescaleFactorX = ClippingCanvas.ActualWidth / (P2Screen.X - P1Screen.X);
+            double rescaleFactorY = ClippingCanvas.ActualHeight / (P2Screen.Y - P1Screen.Y);
+            double rescaleFactor = Math.Min(rescaleFactorX, rescaleFactorY);
+            RescaleMatrix.Scale(rescaleFactor, rescaleFactor);
 
             // Then adjust location and center
             P1Screen = RescaleMatrix.Transform(P1Grid);
@@ -407,7 +409,7 @@ namespace Bonza.Editor
                     int st = 1;
                     int sign = 1;
 
-                    for (;;)
+                    for (; ; )
                     {
                         for (int i = 0; i < st; i++)
                         {
@@ -438,6 +440,11 @@ namespace Bonza.Editor
         public void MoveWordPositionList(IEnumerable<WordPosition> wordPositionList)
         {
             if (wordPositionList == null) throw new ArgumentNullException(nameof(wordPositionList));
+
+            // If bounding rectangle is updated, need to redraw background grid
+            (int minRow, int maxRow, int minColumn, int maxColumn) = model.Layout.GetBounds();
+            if (minRow != minRowGrid || minColumn != minColumnGrid || maxRow != maxRowGrid || maxColumn != maxColumnGrid)
+                UpdateBackgroundGrid();
 
             // Compute distance moved on 1st element to choose speed
             WordPosition wp1 = wordPositionList.FirstOrDefault();
@@ -505,91 +512,54 @@ namespace Bonza.Editor
         }
 
 
+        // Grid currently drawn
+        int minRowGrid, maxRowGrid, minColumnGrid, maxColumnGrid;
 
         private void UpdateBackgroundGrid()
         {
             var matrix = MainMatrixTransform.Matrix;
-
-            var w = MainGrid.ActualWidth;
-            var h = MainGrid.ActualHeight;
-            Rect rectBackground = new Rect(0, 0, w, h);
-
-            PathGeometry pgGrid = new PathGeometry();
-            PathGeometry pgAxis = new PathGeometry();
-            PathFigure pf;
-
-
-            // Origin and vectors i and j transformed to get new referential
-            Point o = matrix.Transform(new Point(0, 0));
-            Vector vi, vj;
-            vi = matrix.Transform(new Vector(UnitSize, 0));
-            vj = matrix.Transform(new Vector(0, UnitSize));
-
-
-            // Draw grid using transformed referential from -gmax to gmax on both axes
-            // A better algorithm should be implemented, supporting infinite scroll
-            // typically find a point of the grid on screen, then explore/expand to
-            // fill the screen from this point
-            const int gmax = 145;
-            for (int i = -gmax; i < gmax; i++)
-                for (int j = -gmax; j < gmax; j++)
-                {
-                    Point p1 = o + i * vi + j * vj;
-                    Point p2 = p1 + vi;
-                    if (rectBackground.Contains(p1) || rectBackground.Contains(p2))
-                    {
-                        pf = new PathFigure(p1, new List<PathSegment> { new LineSegment(p2, true) }, false);
-                        if (j == 0)
-                            pgAxis.Figures.Add(pf);
-                        else
-                            pgGrid.Figures.Add(pf);
-                    }
-                    p2 = p1 + vj;
-                    if (rectBackground.Contains(p1) || rectBackground.Contains(p2))
-                    {
-                        pf = new PathFigure()
-                        {
-                            StartPoint = p1
-                        };
-                        pf.Segments.Add(new LineSegment(p2, true));
-                        if (i == 0)
-                            pgAxis.Figures.Add(pf);
-                        else
-                            pgGrid.Figures.Add(pf);
-                    }
-
-                }
-
-
-            // Grid in gray
-            GeometryDrawing gdGrid = new GeometryDrawing(null, new Pen(Brushes.LightGray, 1.0), pgGrid);
-            GeometryDrawing gdAxis = new GeometryDrawing(null, new Pen(Brushes.LightGray, 3.0), pgAxis);
-
-            DrawingGroup dg = new DrawingGroup();
-            dg.Children.Add(gdGrid);
-            dg.Children.Add(gdAxis);
-
-            // Add a transparent border rectangle to force scale to be correct just in case
-            // there is only 1 line drawn in one direction
-            var eg = new RectangleGeometry(new Rect(0, 0, w, h));
-            dg.Children.Add(new GeometryDrawing(null, new Pen(Brushes.Transparent, 1.0), eg));
-
-            // And also clip on this rectangle
-            dg.ClipGeometry = eg;
-
-            // Make a DrawingImage and freeze it for performance
-            DrawingImage di = new DrawingImage(dg);
-            di.Freeze();
-
-            // Finally draw it!
-            BackgroundImage.Source = di;
-
 
             // Update status bar
             var a = Math.Atan2(matrix.M12, matrix.M11) / Math.PI * 180;
             RotationTextBlock.Text = string.Format("{0:F1}°", a);
             var s = Math.Sqrt(matrix.M11 * matrix.M11 + matrix.M12 * matrix.M12);
             ScaleTextBlock.Text = string.Format("{0:F2}", s);
+
+            BackgroundGrid.Children.Clear();
+            minRowGrid = int.MinValue;          // Force redraw after it's been cleared
+            if (model.Layout != null)
+            {
+                (minRowGrid, maxRowGrid, minColumnGrid, maxColumnGrid) = model.Layout.GetBounds();
+                // Add some extra margin
+                int minRow = minRowGrid - 2;
+                int minColumn = minColumnGrid - 2;
+                int maxRow = maxRowGrid + 3;
+                int maxColumn = maxColumnGrid + 3;
+
+                for (int row = minRow; row <= maxRow; row++)
+                {
+                    Line l = new Line();
+                    l.X1 = minColumn * UnitSize;
+                    l.X2 = maxColumn * UnitSize;
+                    l.Y1 = row * UnitSize;
+                    l.Y2 = row * UnitSize;
+                    l.Stroke = Brushes.LightGray;
+                    l.StrokeThickness = row == 0 ? 3 : 1;
+                    BackgroundGrid.Children.Add(l);
+                }
+
+                for (int column = minColumn; column <= maxColumn; column++)
+                {
+                    Line l = new Line();
+                    l.X1 = column * UnitSize;
+                    l.X2 = column * UnitSize;
+                    l.Y1 = minRow * UnitSize;
+                    l.Y2 = maxRow * UnitSize;
+                    l.Stroke = Brushes.LightGray;
+                    l.StrokeThickness = column == 0 ? 3 : 1;
+                    BackgroundGrid.Children.Add(l);
+                }
+            }
         }
 
     }
