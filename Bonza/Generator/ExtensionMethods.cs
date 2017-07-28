@@ -63,6 +63,11 @@ namespace Bonza.Generator
             return list[rnd.Next(list.Count)];
         }
 
-
+        // Execute an action on every element of an enumeration
+        public static void ForEach<T>(this IEnumerable<T> collection, Action<T> action)
+        {
+            foreach (var item in collection)
+                action(item);
+        }
     }
 }
