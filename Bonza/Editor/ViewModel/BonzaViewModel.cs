@@ -28,27 +28,35 @@ namespace Bonza.Editor
 
 
         // Commands
-        public ICommand LoadCommand { get; private set; }
         public ICommand SaveCommand { get; private set; }
         public ICommand ResetCommand { get; private set; }
         public ICommand CenterCommand { get; private set; }
-        public ICommand UndoCommand { get; private set; }
 
         // Menus
         public ICommand NewCommand { get; private set; }
+        public ICommand LoadCommand { get; private set; }
+        public ICommand QuitCommand { get; private set; }
+
+        public ICommand UndoCommand { get; private set; }
+
+        public ICommand AboutCommand { get; private set; }
 
 
         // Constructor
         public BonzaViewModel(BonzaModel model, EditorWindow view)
         {
             // Binding commands with behavior
-            LoadCommand = new RelayCommand<object>(LoadExecute, LoadCanExecute);
             SaveCommand = new RelayCommand<object>(SaveExecute, SaveCanExecute);
             ResetCommand = new RelayCommand<object>(ResetExecute, ResetCanExecute);
             CenterCommand = new RelayCommand<object>(CenterExecute, CenterCanExecute);
-            UndoCommand = new RelayCommand<object>(UndoExecute, UndoCanExecute);
 
             NewCommand = new RelayCommand<object>(NewExecute);
+            LoadCommand = new RelayCommand<object>(LoadExecute, LoadCanExecute);
+            QuitCommand = new RelayCommand<object>(QuitExecute);
+
+            UndoCommand = new RelayCommand<object>(UndoExecute, UndoCanExecute);
+
+            AboutCommand = new RelayCommand<object>(AboutExecute);
 
             // Initialize ViewModel
             this.model = model;
@@ -114,17 +122,16 @@ namespace Bonza.Editor
 
         internal void ClearLayout()
         {
+            Caption = App.AppName;
             ClearUndoStack();
             view.ClearLayout();
         }
 
-        internal void NewLayout()
+        internal void InitialLayoutDisplay()
         {
-            view.NewLayout();
+            view.InitialLayoutDisplay();
         }
-
-
-
+        
 
         // -------------------------------------------------
         // View helpers
@@ -247,6 +254,20 @@ namespace Bonza.Editor
         {
             model.NewGrille();
         }
+
+        private void QuitExecute(object obj)
+        {
+            // ToDo: Add detection of unsaved changes once Save is implemented
+            System.Environment.Exit(0);
+        }
+
+
+        private void AboutExecute(object obj)
+        {
+            var aw = new AboutWindow();
+            aw.ShowDialog();
+        }
+
 
     }
 }

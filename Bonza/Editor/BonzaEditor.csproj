@@ -60,7 +60,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="View\AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\MaxtrixAnimation.cs" />
+    <Page Include="View\AboutWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="View\EditorWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -124,6 +131,15 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\new.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\about.ico" />
+    <Resource Include="Icons\close.ico" />
+    <Resource Include="Icons\open.ico" />
+    <Resource Include="Icons\undo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Bonza.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

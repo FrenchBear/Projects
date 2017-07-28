@@ -154,6 +154,7 @@ namespace Bonza.Generator
                     if (GetLetter(row, column + i) == wp.Word[i])
                     {   // If we have a match, we're almost good, need to verify that previous
                         // letter was not a match to avoid overlapping a smaller word
+                        // ToDo: Wrong!!! Two consecutive letters can intersect a word in other orientation...
                         if (prevousLetterMatch) return false;
                         prevousLetterMatch = true;
                     }

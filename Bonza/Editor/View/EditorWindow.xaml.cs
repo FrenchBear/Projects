@@ -64,11 +64,12 @@ namespace Bonza.Editor
         {
             // Clear previous elements layout
             DrawingCanvas.Children.Clear();
+            ClearBackgroundGrid();
         }
 
 
         // Initial drawing of canvas for current model layout
-        internal void NewLayout()
+        internal void InitialLayoutDisplay()
         {
             // Draw letters
             var arial = new FontFamily("Arial");
@@ -514,6 +515,12 @@ namespace Bonza.Editor
         // Grid currently drawn
         int minRowGrid, maxRowGrid, minColumnGrid, maxColumnGrid;
 
+        private void ClearBackgroundGrid()
+        {
+            BackgroundGrid.Children.Clear();
+            minRowGrid = int.MinValue;          // Force redraw after it's been cleared
+        }
+
         private void UpdateBackgroundGrid()
         {
             var matrix = MainMatrixTransform.Matrix;
@@ -524,8 +531,7 @@ namespace Bonza.Editor
             var s = Math.Sqrt(matrix.M11 * matrix.M11 + matrix.M12 * matrix.M12);
             ScaleTextBlock.Text = string.Format("{0:F2}", s);
 
-            BackgroundGrid.Children.Clear();
-            minRowGrid = int.MinValue;          // Force redraw after it's been cleared
+            ClearBackgroundGrid();
             if (model.Layout != null)
             {
                 (minRowGrid, maxRowGrid, minColumnGrid, maxColumnGrid) = model.Layout.GetBounds();
