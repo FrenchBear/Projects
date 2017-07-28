@@ -126,20 +126,20 @@ namespace Bonza.Generator
                 // Need free cell below
                 if (IsOccupiedSquare(row + wp.Word.Length, column)) return false;
 
-                bool prevousLetterMatch = false;
                 for (int i = 0; i < wp.Word.Length; i++)
                     if (GetLetter(row + i, column) == wp.Word[i])
-                    {   // If we have a match, we're almost good, need to verify that previous
-                        // letter was not a match to avoid overlapping a smaller word
-                        if (prevousLetterMatch) return false;
-                        prevousLetterMatch = true;
+                    {
+                        // It's Ok to already have a matching letter only if it only belongs to a crossing word (of opposite direction)
+                        // In this case, we don't need to check left and right cells
+                        foreach (WordPosition loopWP in GetWordPositionsFromSquare(row + i, column))
+                            if (loopWP.IsVertical == wp.IsVertical)
+                                return false;
                     }
                     else
                     {
                         // We need an empty cell, and a free cell on the left and on the right
                         if (IsOccupiedSquare(row + i, column - 1) || IsOccupiedSquare(row + i, column) || IsOccupiedSquare(row + i, column + 1))
                             return false;
-                        prevousLetterMatch = false;
                     }
             }
             else
@@ -149,23 +149,37 @@ namespace Bonza.Generator
                 // Free cell right
                 if (IsOccupiedSquare(row, column + wp.Word.Length)) return false;
 
-                bool prevousLetterMatch = false;
                 for (int i = 0; i < wp.Word.Length; i++)
                     if (GetLetter(row, column + i) == wp.Word[i])
-                    {   // If we have a match, we're almost good, need to verify that previous
-                        // letter was not a match to avoid overlapping a smaller word
-                        // ToDo: Wrong!!! Two consecutive letters can intersect a word in other orientation...
-                        if (prevousLetterMatch) return false;
-                        prevousLetterMatch = true;
+                    {
+                        // It's Ok to already have a matching letter only if it only belongs to a crossing word (of opposite direction)
+                        foreach (WordPosition loopWP in GetWordPositionsFromSquare(row, column + i))
+                            if (loopWP.IsVertical == wp.IsVertical)
+                                return false;
                     }
                     else
                     {
                         if (IsOccupiedSquare(row - 1, column + i) || IsOccupiedSquare(row, column + i) || IsOccupiedSquare(row + 1, column + i))
                             return false;
-                        prevousLetterMatch = false;
                     }
             }
             return true;
+        }
+
+        // Helper for CanPlaceWord, returns an enum of words covering square (row, column) in current layout
+        private IEnumerable<WordPosition> GetWordPositionsFromSquare(int row, int column)
+        {
+            foreach (var wp in m_WordPositionList)
+                if (wp.IsVertical)
+                {
+                    if (wp.StartColumn == column && row >= wp.StartRow && row < wp.StartRow + wp.Word.Length)
+                        yield return wp;
+                }
+                else
+                {
+                    if (wp.StartRow == row && column >= wp.StartColumn && column < wp.StartColumn + wp.Word.Length)
+                        yield return wp;
+                }
         }
 
         // Helper, returns the number of words that do not intersect with any other word
@@ -174,7 +188,7 @@ namespace Bonza.Generator
             List<WordPosition> tempList = new List<WordPosition>(m_WordPositionList);
 
             int blocksCount = 0;
-            for (;;)
+            for (; ; )
             {
                 if (tempList.Count == 0)
                     break;

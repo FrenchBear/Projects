@@ -28,17 +28,21 @@ namespace Bonza.Editor
 
 
         // Commands
-        public ICommand SaveCommand { get; private set; }
-        public ICommand ResetCommand { get; private set; }
-        public ICommand CenterCommand { get; private set; }
 
         // Menus
-        public ICommand NewCommand { get; private set; }
+        public ICommand NewLayoutCommand { get; private set; }
         public ICommand LoadCommand { get; private set; }
+        public ICommand RegenerateLayoutCommand { get; private set; }
+        public ICommand SaveCommand { get; private set; }
         public ICommand QuitCommand { get; private set; }
 
+        // Edit
         public ICommand UndoCommand { get; private set; }
 
+        // View
+        public ICommand RecenterLayoutViewCommand { get; private set; }
+
+        // About
         public ICommand AboutCommand { get; private set; }
 
 
@@ -46,16 +50,21 @@ namespace Bonza.Editor
         public BonzaViewModel(BonzaModel model, EditorWindow view)
         {
             // Binding commands with behavior
-            SaveCommand = new RelayCommand<object>(SaveExecute, SaveCanExecute);
-            ResetCommand = new RelayCommand<object>(ResetExecute, ResetCanExecute);
-            CenterCommand = new RelayCommand<object>(CenterExecute, CenterCanExecute);
 
-            NewCommand = new RelayCommand<object>(NewExecute);
+            // File
+            NewLayoutCommand = new RelayCommand<object>(NewLayoutExecute);
             LoadCommand = new RelayCommand<object>(LoadExecute, LoadCanExecute);
+            RegenerateLayoutCommand = new RelayCommand<object>(RegenerateLayoutExecute, RegenerateLayoutCanExecute);
+            SaveCommand = new RelayCommand<object>(SaveExecute, SaveCanExecute);
             QuitCommand = new RelayCommand<object>(QuitExecute);
 
+            // Edit
             UndoCommand = new RelayCommand<object>(UndoExecute, UndoCanExecute);
 
+            // View
+            RecenterLayoutViewCommand = new RelayCommand<object>(RecenterLayoutViewExecute, RecenterLayoutViewCanExecute);
+
+            // Help
             AboutCommand = new RelayCommand<object>(AboutExecute);
 
             // Initialize ViewModel
@@ -83,19 +92,33 @@ namespace Bonza.Editor
             }
         }
 
-        private string _Caption;
+        private string _Caption = App.AppName;
         public string Caption
         {
-            get { return _Caption; }
+            get
+            {
+                if (LayoutName == null)
+                    return App.AppName;
+                else
+                    return App.AppName + " - " + LayoutName;
+            }
+        }
+
+        private string _LayoutName = null;
+        public string LayoutName
+        {
+            get { return _LayoutName; }
             set
             {
-                if (_Caption != value)
+                if (_LayoutName != value)
                 {
-                    _Caption = value;
+                    _LayoutName = value;
+                    NotifyPropertyChanged(nameof(LayoutName));
                     NotifyPropertyChanged(nameof(Caption));
                 }
             }
         }
+
 
         // -------------------------------------------------
         // Undo support
@@ -122,7 +145,7 @@ namespace Bonza.Editor
 
         internal void ClearLayout()
         {
-            Caption = App.AppName;
+            LayoutName = null;
             ClearUndoStack();
             view.ClearLayout();
         }
@@ -131,7 +154,7 @@ namespace Bonza.Editor
         {
             view.InitialLayoutDisplay();
         }
-        
+
 
         // -------------------------------------------------
         // View helpers
@@ -192,9 +215,9 @@ namespace Bonza.Editor
             try
             {
                 view.ClearLayout();
-                Caption = App.AppName;
+                LayoutName = null; ;
                 model.LoadGrille(filename);
-                Caption = App.AppName + " - " + Path.GetFileName(filename);
+                LayoutName = Path.GetFileNameWithoutExtension(filename) + ".layout";
             }
             catch (Exception ex)
             {
@@ -203,12 +226,12 @@ namespace Bonza.Editor
         }
 
 
-        private bool ResetCanExecute(object obj)
+        private bool RegenerateLayoutCanExecute(object obj)
         {
             return model.Layout != null;
         }
 
-        private void ResetExecute(object obj)
+        private void RegenerateLayoutExecute(object obj)
         {
             try
             {
@@ -217,18 +240,18 @@ namespace Bonza.Editor
             }
             catch (Exception ex)
             {
-                Caption = App.AppName;
+                LayoutName = null;
                 MessageBox.Show("Problème lors de la réinitialisation du layout:\r\n" + ex.Message, App.AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
         }
 
 
-        private bool CenterCanExecute(object obj)
+        private bool RecenterLayoutViewCanExecute(object obj)
         {
             return model.Layout != null;
         }
 
-        private void CenterExecute(object obj)
+        private void RecenterLayoutViewExecute(object obj)
         {
             view.RescaleAndCenter(true);        // Use animations
         }
@@ -250,7 +273,7 @@ namespace Bonza.Editor
         // -------------------------------------------------
         // Commands
 
-        private void NewExecute(object obj)
+        private void NewLayoutExecute(object obj)
         {
             model.NewGrille();
         }

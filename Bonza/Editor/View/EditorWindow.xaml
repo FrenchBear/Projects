@@ -36,9 +36,10 @@
 
 
     <Window.InputBindings>
-        <KeyBinding Key="N" Modifiers="Control" Command="{Binding NewCommand}" />
+        <KeyBinding Key="N" Modifiers="Control" Command="{Binding NewLayoutCommand}" />
         <KeyBinding Key="O" Modifiers="Control" Command="{Binding LoadCommand}" />
         <KeyBinding Key="Z" Modifiers="Ctrl" Command="{Binding UndoCommand}" />
+        <KeyBinding Key="R" Modifiers="Ctrl" Command="{Binding RecenterLayoutViewCommand}" />
     </Window.InputBindings>
 
     
@@ -55,15 +56,22 @@
         <DockPanel Grid.ColumnSpan="2">
             <Menu DockPanel.Dock="Top" Padding="3"  >
                 <MenuItem Name="FileMenu" Header="_Fichier">
-                    <MenuItem Command="{Binding NewCommand}" Header="_Nouveau" >
+                    <MenuItem Command="{Binding NewLayoutCommand}" Header="_Nouveau layout" >
                         <MenuItem.Icon>
                             <Image Source="/Icons/new.ico" Stretch="None" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Command="{Binding LoadCommand}" Header="_Ouvrir une liste de mots..." >
+                    <MenuItem Command="{Binding LoadCommand}" Header="_Ouvrir une liste de mots et générer un nouveau layout..." >
                         <MenuItem.Icon>
                             <Image Source="/Icons/open.ico" Stretch="None" />
                         </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Command="{Binding RegenerateLayoutCommand}" Header="_Regénérer le layout" />
+                    <Separator/>
+                    <MenuItem Command="{Binding SaveCommand}" Header="_Enregistrer le layout..." >
+                        <!--<MenuItem.Icon>
+                            <Image Source="/Icons/save.ico" Stretch="None" />
+                        </MenuItem.Icon>-->
                     </MenuItem>
 
                     <Separator/>
@@ -83,6 +91,12 @@
                     </MenuItem>
                 </MenuItem>
 
+                <MenuItem Name="ViewMenu" Header="_View">
+                    <MenuItem Command="{Binding RecenterLayoutViewCommand}" Header="_Recentrer la vue du layout" InputGestureText="Ctrl+R" >
+                    </MenuItem>
+                </MenuItem>
+
+
                 <MenuItem Name="HelpMenu" Header="_?" >
                     <MenuItem Name="AboutCommand" Command="{Binding AboutCommand}" Header="À _propos de Bonza...">
                         <MenuItem.Icon>
@@ -93,10 +107,10 @@
             </Menu>
 
             <ToolBar DockPanel.Dock="Top" Margin="0,-1,0,1" ToolBarTray.IsLocked="True">
-                <Button Command="{Binding NewCommand}" ToolTip="Crée une nouvelle grille">
+                <Button Command="{Binding NewLayoutCommand}" ToolTip="Crée un nouveau layout vierge">
                     <Image Source="/Icons/new.ico" Stretch="None" Style="{StaticResource toolbarImageStyle}"/>
                 </Button>
-                <Button Command="{Binding LoadCommand}" ToolTip="Ouvre une liste de mots">
+                <Button Command="{Binding LoadCommand}" ToolTip="Crée une nouvelle grille et génère un layout à partir d'une liste de mots">
                     <Image Source="/Icons/open.ico" Stretch="None" Style="{StaticResource toolbarImageStyle}"/>
                 </Button>
 
@@ -106,6 +120,9 @@
                     <Image Source="/Icons/undo.ico" Stretch="None" Style="{StaticResource toolbarImageStyle}"/>
                 </Button>
 
+                <Separator/>
+
+                
             </ToolBar>
         </DockPanel>
 
@@ -113,9 +130,6 @@
             <StackPanel Orientation="Vertical" Margin="6,5,0,6">
                 <Label Content="Bonza Editor" FontWeight="Bold" FontSize="16" Margin="0,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="PowderBlue" Foreground="Blue" />
                 <Button Command="{Binding Path=LoadCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Load Words</Button>
-                <Button Command="{Binding Path=SaveCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Save</Button>
-                <Button Command="{Binding Path=ResetCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Reset Layout</Button>
-                <Button Command="{Binding Path=CenterCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Center View</Button>
                 <Label>Disjoint groups:</Label>
                 <TextBlock Text="{Binding WordsNotConnected}" />
             </StackPanel>
