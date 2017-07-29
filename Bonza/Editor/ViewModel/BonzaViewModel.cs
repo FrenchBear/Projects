@@ -42,6 +42,7 @@ namespace Bonza.Editor
         public ICommand DeleteCommand { get; private set; }
         public ICommand UndoCommand { get; private set; }
         public ICommand SwapCommand { get; private set; }
+        public ICommand AutoPlaceCommand { get; private set; }
 
         // View
         public ICommand RecenterLayoutViewCommand { get; private set; }
@@ -66,6 +67,7 @@ namespace Bonza.Editor
             DeleteCommand = new RelayCommand<object>(DeleteExecute, DeleteCanExecute);
             UndoCommand = new RelayCommand<object>(UndoExecute, UndoCanExecute);
             SwapCommand = new RelayCommand<object>(SwapExecute, SwapCanExecute);
+            AutoPlaceCommand = new RelayCommand<object>(AutoPlaceExecute, AutoPlaceCanExecute);
 
             // View
             RecenterLayoutViewCommand = new RelayCommand<object>(RecenterLayoutViewExecute, RecenterLayoutViewCanExecute);
@@ -346,6 +348,16 @@ namespace Bonza.Editor
             MessageBox.Show("Swap: ToDo");
         }
 
+
+        private bool AutoPlaceCanExecute(object obj)
+        {
+            return model.Layout != null && SelectedWordCount >= 1;
+        }
+
+        private void AutoPlaceExecute(object obj)
+        {
+            MessageBox.Show("AutoPlace: ToDo");
+        }
 
 
 

@@ -114,7 +114,7 @@ namespace Bonza.Editor
 
                 this.SetValue(Canvas.LeftProperty, UnitSize * wp.StartColumn);
                 this.SetValue(Canvas.TopProperty, UnitSize * wp.StartRow);
-                SetWordCanvasColor(this, NormalForegroundBrush, NormalBackgroundBrush);
+                SetWordCanvasColor(this, Brushes.White, Brushes.Black);
             }
         }
 
@@ -289,40 +289,8 @@ namespace Bonza.Editor
 
 
 
-        // Helper, this was originally in MainGrid_MouseDown handler, but when a right-click occurs,
-        // it is assumed than it will select automatically a non-selected word, so code got promoted to its own function...
         private void UpdateSelectionAfterClick(object sender, MouseButtonEventArgs e)
         {
-            if (DrawingCanvas.InputHitTest(e.GetPosition(DrawingCanvas)) is TextBlock hitTextBlock)
-            {
-                WordCanvas hitC = (hitTextBlock.Parent) as WordCanvas;
-                WordPosition hitWP = map.GetWordPositionFromCanvas(hitC);
-                Debug.Assert(hitWP != null);
-
-                // If Ctrl key is NOT pressed, clear previous selection
-                // But if we click again in something already selected, do not clear selection!
-                if (!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl))
-                    if (sel.WordPositionList != null && !sel.WordPositionList.Select(wp => map.GetCanvasFromWordPosition(wp)).Contains(hitC))
-                        sel.Clear();
-
-
-                // Add current word to selection
-                sel.Add(hitWP);
-
-                // If Shift key is pressed, selection is extended to connected words
-                if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
-                    //model.Layout.GetConnectedWordPositions(hitWP).ForEach(connected => AddWordPositionToSelection(connected));
-                    foreach (WordPosition connected in model.Layout.GetConnectedWordPositions(hitWP))
-                        sel.Add(connected);
-
-                // Remove and add again elements to move so they're displayed above non-moved elements
-                foreach (var c in sel.WordPositionList.Select(wp => map.GetCanvasFromWordPosition(wp)))
-                {
-                    DrawingCanvas.Children.Remove(c);
-                    DrawingCanvas.Children.Add(c);
-                    SetWordCanvasColor(c, Brushes.White, Brushes.DarkBlue);
-                }
-            }
 
         }
 
@@ -336,12 +304,10 @@ namespace Bonza.Editor
             MainGrid.MouseMove += MainGrid_MouseMoveWhenDown;
             previousMousePosition = e.GetPosition(MainGrid);
 
-            UpdateSelectionAfterClick(sender, e);
-
             // HitTest: Test if a word was clicked on, if true, hitTextBlock is a TextBloxk
             if (DrawingCanvas.InputHitTest(e.GetPosition(DrawingCanvas)) is TextBlock hitTextBlock)
                 // We'reinterested in its parent WordCanvas, that contains all the text blocks for the word
-                pmm = GetMouseDownMoveAction();
+                pmm = GetMouseDownMoveAction((hitTextBlock.Parent) as WordCanvas);
             else
             {
                 pmm = null;
@@ -354,8 +320,35 @@ namespace Bonza.Editor
         }
 
         // Separate from MainGrid_MouseDown to reduce complexity
-        private Action<Point> GetMouseDownMoveAction()
+        private Action<Point> GetMouseDownMoveAction(WordCanvas hitC)
         {
+            WordPosition hitWP = map.GetWordPositionFromCanvas(hitC);
+            Debug.Assert(hitWP != null);
+
+            // If Ctrl key is NOT pressed, clear previous selection
+            // But if we click again in something already selected, do not clear selection!
+            if (!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl))
+                if (sel.WordPositionList != null && !sel.WordPositionList.Select(wp => map.GetCanvasFromWordPosition(wp)).Contains(hitC))
+                    sel.Clear();
+
+
+            // Add current word to selection
+            sel.Add(hitWP);
+
+            // If Shift key is pressed, selection is extended to connected words
+            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+                //model.Layout.GetConnectedWordPositions(hitWP).ForEach(connected => AddWordPositionToSelection(connected));
+                foreach (WordPosition connected in model.Layout.GetConnectedWordPositions(hitWP))
+                    sel.Add(connected);
+
+            // Remove and add again elements to move so they're displayed above non-moved elements
+            foreach (var c in sel.WordPositionList.Select(wp => map.GetCanvasFromWordPosition(wp)))
+            {
+                DrawingCanvas.Children.Remove(c);
+                DrawingCanvas.Children.Add(c);
+                SetWordCanvasColor(c, Brushes.White, Brushes.DarkBlue);
+            }
+
             // Need a layout without moved word to validate placement
             model.BuildMoveTestLayout(sel.WordPositionList);
 
@@ -415,15 +408,9 @@ namespace Bonza.Editor
         // Relay from Window_MouseDown handler when it's actually a right click
         private void MainGrid_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            UpdateSelectionAfterClick(sender, e);
 
-            ContextMenu cm = null;
-            if (DrawingCanvas.InputHitTest(e.GetPosition(DrawingCanvas)) is TextBlock hitTextBlock)
-                cm = this.FindResource("WordCanvasMenu") as ContextMenu;
-            else
-                cm = this.FindResource("BackgroundCanvasMenu") as ContextMenu;
-
-            cm.PlacementTarget = sender as UIElement;
+            ContextMenu cm = this.FindResource("WordCanvasMenu") as ContextMenu;
+            cm.PlacementTarget = sender as Button;
             cm.IsOpen = true;
             e.Handled = true;
         }

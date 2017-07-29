@@ -150,5 +150,8 @@
   <ItemGroup>
     <Resource Include="Icons\delete.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\autoplace.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

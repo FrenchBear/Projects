@@ -33,6 +33,7 @@
             </Style.Triggers>
         </Style>
 
+
         <ContextMenu x:Key="WordCanvasMenu">
             <MenuItem Command="{Binding DeleteCommand}" Header="_Supprimer" InputGestureText="Suppr" >
                 <MenuItem.Icon>
@@ -45,8 +46,21 @@
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem Command="{Binding AutoPlaceCommand}" Header="_Place automatiquement le mot" >
+                <MenuItem.Icon>
+                    <Image Source="/Icons/autoplace.ico" />
+                </MenuItem.Icon>
             </MenuItem>
         </ContextMenu>
+
+
+        <ContextMenu x:Key="BackgroundCanvasMenu">
+            <MenuItem Command="{Binding RecenterLayoutViewCommand}" Header="_Recentrer la vue du layout" InputGestureText="Ctrl+R" >
+                <MenuItem.Icon>
+                    <Image Source="/Icons/recenter.ico" />
+                </MenuItem.Icon>
+            </MenuItem>
+        </ContextMenu>
+
     </Window.Resources>
 
 
@@ -58,7 +72,7 @@
         <KeyBinding Key="R" Modifiers="Ctrl" Command="{Binding RecenterLayoutViewCommand}" />
     </Window.InputBindings>
 
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -110,10 +124,15 @@
                             <Image Source="/Icons/delete.ico" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <Separator/>                    
+                    <Separator/>
                     <MenuItem Command="{Binding SwapCommand}" Header="_Change d'orientation du mot" >
                         <MenuItem.Icon>
                             <Image Source="/Icons/swap.ico" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Command="{Binding AutoPlaceCommand}" Header="_Place automatiquement le mot" >
+                        <MenuItem.Icon>
+                            <Image Source="/Icons/autoplace.ico" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
@@ -155,6 +174,9 @@
                 <Button Command="{Binding SwapCommand}" ToolTip="Change l'orientation du mot">
                     <Image Source="/Icons/swap.ico" Stretch="None" Style="{StaticResource toolbarImageStyle}"/>
                 </Button>
+                <Button Command="{Binding AutoPlaceCommand}" ToolTip="Place automatiquement le mot">
+                    <Image Source="/Icons/autoplace.ico" Stretch="None" Style="{StaticResource toolbarImageStyle}"/>
+                </Button>
 
                 <Separator/>
 
@@ -164,7 +186,7 @@
 
                 <Separator/>
 
-                
+
             </ToolBar>
         </DockPanel>
 
