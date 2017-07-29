@@ -130,7 +130,7 @@ namespace Bonza.Editor
 
         public class UndoStackClass
         {
-            private Stack<(List<WordPosition>, List<(int Top, int Left)>)> UndoStack;
+            private Stack<(List<WordPosition>, List<PositionOrientation>)> UndoStack;
 
             public void Clear()
             {
@@ -144,17 +144,17 @@ namespace Bonza.Editor
                 Debug.Assert(wordPositionList.Count >= 1);
 
                 // Memorize position in a separate list since WordPosition objects position will change
-                List<(int Top, int Left)> topLeftList = wordPositionList.Select(wp => (wp.StartRow, wp.StartColumn)).ToList();
+                List<PositionOrientation> topLeftList = wordPositionList.Select(wp => new PositionOrientation { StartRow = wp.StartRow, StartColumn = wp.StartColumn, IsVertical = wp.IsVertical }).ToList();
 
                 if (UndoStack == null)
-                    UndoStack = new Stack<(List<WordPosition>, List<(int, int)>)>();
+                    UndoStack = new Stack<(List<WordPosition>, List<PositionOrientation>)>();
                 // Since wordPositionList is a list belonging to view, we need to clone it
                 UndoStack.Push((new List<WordPosition>(wordPositionList), topLeftList));
             }
 
             public bool CanUndo => UndoStack != null && UndoStack.Count > 0;
 
-            public (List<WordPosition> wordPositionList, List<(int Top, int Left)> topLeftList) Pop()
+            public (List<WordPosition> wordPositionList, List<PositionOrientation> topLeftList) Pop()
             {
                 Debug.Assert(CanUndo);
                 return UndoStack.Pop();
@@ -191,14 +191,14 @@ namespace Bonza.Editor
         // View helpers
 
         // When a list of WordPositions have moved to their final location in view
-        internal void UpdateWordPositionLocation(List<WordPosition> wordPositionList, List<(int Top, int Left)> topLeftList, bool memorizeForUndo)
+        internal void UpdateWordPositionLocation(List<WordPosition> wordPositionList, List<PositionOrientation> topLeftList, bool memorizeForUndo)
         {
             if (wordPositionList == null) throw new ArgumentNullException(nameof(wordPositionList));
             if (topLeftList == null) throw new ArgumentNullException(nameof(topLeftList));
             Debug.Assert(wordPositionList.Count == topLeftList.Count);
 
             // If we don't really move, there is nothing more to do
-            bool isRealMove = wordPositionList[0].StartRow != topLeftList[0].Top || wordPositionList[0].StartColumn != topLeftList[0].Left;
+            bool isRealMove = wordPositionList[0].StartRow != topLeftList[0].StartRow || wordPositionList[0].StartColumn != topLeftList[0].StartColumn || wordPositionList[0].IsVertical != topLeftList[0].IsVertical;
             if (!isRealMove)
                 return;
 
@@ -207,7 +207,7 @@ namespace Bonza.Editor
                 UndoStack.Push(wordPositionList);
 
             for (int i = 0; i < wordPositionList.Count; i++)
-                model.UpdateWordPositionLocation(wordPositionList[i], topLeftList[i].Top, topLeftList[i].Left);
+                model.UpdateWordPositionLocation(wordPositionList[i], topLeftList[i]);
         }
 
 

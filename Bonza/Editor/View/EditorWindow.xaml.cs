@@ -3,7 +3,8 @@
 // 2017-07-22   PV  First version
 
 // ToDo: Esc cancel a move operation, clean properly
-// ToDo: let user change orientation of a word
+// ToDo: Let user change orientation of a word
+// ToDo: Contextual menu on selection or grid
 
 using System;
 using System.Collections.Generic;
@@ -397,7 +398,7 @@ namespace Bonza.Editor
                     // Note that during generation, current stringent rules must prevail
 
                     // Find out if it's possible to place the word here, provide color feed-back
-                    if (model.CanPlaceWordInMoveTestLayout(selectedWordPositionList[i], (top, left)))
+                    if (model.CanPlaceWordInMoveTestLayout(selectedWordPositionList[i], new PositionOrientation { StartRow = top, StartColumn = left, IsVertical= selectedWordPositionList[i].IsVertical }))
                         SetWordCanvasColor(selectedCanvasList[i], SelectedForegroundBrush, SelectedBackgroundBrush);
                     else
                         SetWordCanvasColor(selectedCanvasList[i], ProblemForegroundBrush, ProblemBackgroundBrush);
@@ -454,15 +455,17 @@ namespace Bonza.Editor
                 // End of visual feed-back, align on grid, and update ViewModel
                 // Not efficient to manage a single list of (top, left) tuple since in the snail pattern
                 // placement code, top is updated independently from left, and a tuple makes it heavy
-                List<(int Top, int Left)> topLeftList = new List<(int, int)>();
-                foreach (Canvas hitCanvas in selectedCanvasList)
+                List<PositionOrientation> topLeftList = new List<PositionOrientation>();
+                for (int il = 0; il < selectedWordPositionList.Count; il++)
                 {
+                    Canvas hitCanvas = selectedCanvasList[il];
+
                     SetWordCanvasColor(hitCanvas, SelectedForegroundBrush, SelectedBackgroundBrush);
 
                     // Round position to closest square on the grid
                     int top = (int)Math.Floor(((double)hitCanvas.GetValue(Canvas.TopProperty) / UnitSize) + 0.5);
                     int left = (int)Math.Floor(((double)hitCanvas.GetValue(Canvas.LeftProperty) / UnitSize) + 0.5);
-                    topLeftList.Add((top, left));
+                    topLeftList.Add(new PositionOrientation { StartRow = top, StartColumn = left, IsVertical = selectedWordPositionList[il].IsVertical });
                 }
 
                 // If position is not valid, look around until a valid position is found
@@ -480,18 +483,18 @@ namespace Bonza.Editor
                     int st = 1;
                     int sign = 1;
 
-                    for (; ; )
+                    for (;;)
                     {
                         for (int i = 0; i < st; i++)
                         {
                             for (int il = 0; il < selectedWordPositionList.Count; il++)
-                                topLeftList[il] = (topLeftList[il].Top, topLeftList[il].Left + sign);
+                                topLeftList[il] = new PositionOrientation { StartRow = topLeftList[il].StartRow, StartColumn = topLeftList[il].StartColumn + sign, IsVertical= selectedWordPositionList[il].IsVertical };
                             if (CanPlaceAllWords()) goto FoundValidPosition;
                         }
                         for (int i = 0; i < st; i++)
                         {
                             for (int il = 0; il < selectedWordPositionList.Count; il++)
-                                topLeftList[il] = (topLeftList[il].Top + sign, topLeftList[il].Left);
+                                topLeftList[il] = new PositionOrientation { StartRow = topLeftList[il].StartRow + sign, StartColumn = topLeftList[il].StartColumn, IsVertical = selectedWordPositionList[il].IsVertical };
                             if (CanPlaceAllWords()) goto FoundValidPosition;
                         }
                         sign = -sign;

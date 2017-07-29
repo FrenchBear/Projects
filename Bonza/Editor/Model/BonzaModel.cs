@@ -65,24 +65,28 @@ namespace Bonza.Editor
                     MoveTestLayout.AddWordPositionAndSquares(wp);
         }
 
-        internal bool CanPlaceWordInMoveTestLayout(WordPosition hitWordPosition, (int top, int left) position)
+        internal bool CanPlaceWordInMoveTestLayout(WordPosition hitWordPosition, PositionOrientation position)
         {
             WordPosition testWordPosition = new WordPosition
             {
                 Word = hitWordPosition.Word,
-                IsVertical = hitWordPosition.IsVertical,
-                StartRow = position.top,
-                StartColumn = position.left
+                IsVertical = position.IsVertical,
+                StartRow = position.StartRow,
+                StartColumn = position.StartColumn
             };
             return MoveTestLayout.CanPlaceWord(testWordPosition);
         }
 
 
         // Update a word in current Layout
-        internal void UpdateWordPositionLocation(WordPosition word, int row, int column)
+        internal void UpdateWordPositionLocation(WordPosition word, PositionOrientation po)
         {
-            word.StartRow = row;
-            word.StartColumn = column;
+            word.StartRow = po.StartRow;
+            word.StartColumn = po.StartColumn;
+            if (word.IsVertical = po.IsVertical)
+            {
+                // ToDo: Need to have a word redraw if orientation changed!!!
+            }
 
             // Need to recompute number of words not connected
             viewModel.WordsNotConnected = Layout.GetWordsNotConnected();
