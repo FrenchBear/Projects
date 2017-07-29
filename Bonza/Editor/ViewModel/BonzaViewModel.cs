@@ -80,7 +80,10 @@ namespace Bonza.Editor
         // -------------------------------------------------
         // Bindings
 
+        // Simple relay to model
+
         public IEnumerable<WordPosition> WordPositionList => model?.Layout?.WordPositionList;
+
 
         private int _WordsNotConnected;
         public int WordsNotConnected
@@ -122,6 +125,10 @@ namespace Bonza.Editor
                 }
             }
         }
+
+
+        //List<WordPosition> selectedWordPositionList;
+
 
 
         // -------------------------------------------------
