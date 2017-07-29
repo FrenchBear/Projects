@@ -1,15 +1,12 @@
-﻿// Class to support smooth matrix animation
+﻿// MaxtrixAnimation class
+// Support smooth matrix animation, missing in WPF
 // From http://pwlodek.blogspot.fr/2010/12/matrixanimation-for-wpf.html
 // 2017-07-25   PV
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+
 
 namespace Bonza.Editor
 {

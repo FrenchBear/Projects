@@ -19,7 +19,7 @@ namespace Bonza.Editor
     {
         // Model and View
         private BonzaModel model;
-        private EditorWindow view;
+        internal BonzaView view;
 
         // Implementation of INotifyPropertyChanged, standard since View is only linked through DataBinding
         public event PropertyChangedEventHandler PropertyChanged;
@@ -39,6 +39,7 @@ namespace Bonza.Editor
         public ICommand QuitCommand { get; private set; }
 
         // Edit
+        public ICommand DeleteCommand { get; private set; }
         public ICommand UndoCommand { get; private set; }
         public ICommand SwapCommand { get; private set; }
 
@@ -50,7 +51,7 @@ namespace Bonza.Editor
 
 
         // Constructor
-        public BonzaViewModel(BonzaModel model, EditorWindow view)
+        public BonzaViewModel(BonzaModel model, BonzaView view)
         {
             // Binding commands with behavior
 
@@ -62,6 +63,7 @@ namespace Bonza.Editor
             QuitCommand = new RelayCommand<object>(QuitExecute);
 
             // Edit
+            DeleteCommand = new RelayCommand<object>(DeleteExecute, DeleteCanExecute);
             UndoCommand = new RelayCommand<object>(UndoExecute, UndoCanExecute);
             SwapCommand = new RelayCommand<object>(SwapExecute, SwapCanExecute);
 
@@ -127,7 +129,19 @@ namespace Bonza.Editor
         }
 
 
-        //List<WordPosition> selectedWordPositionList;
+        private int _SelectedWordCount;
+        public int SelectedWordCount
+        {
+            get { return _SelectedWordCount; }
+            set
+            {
+                if (_SelectedWordCount != value)
+                {
+                    _SelectedWordCount = value;
+                    NotifyPropertyChanged(nameof(SelectedWordCount));
+                }
+            }
+        }
 
 
 
@@ -145,7 +159,7 @@ namespace Bonza.Editor
             }
 
             // Memorize current position of a list of WordPosition so it can be restored layer
-            public void Push(List<WordPosition> wordPositionList)
+            public void Push(IList<WordPosition> wordPositionList)
             {
                 if (wordPositionList == null) throw new ArgumentNullException(nameof(wordPositionList));
                 Debug.Assert(wordPositionList.Count >= 1);
@@ -198,7 +212,7 @@ namespace Bonza.Editor
         // View helpers
 
         // When a list of WordPositions have moved to their final location in view
-        internal void UpdateWordPositionLocation(List<WordPosition> wordPositionList, List<PositionOrientation> topLeftList, bool memorizeForUndo)
+        internal void UpdateWordPositionLocation(IList<WordPosition> wordPositionList, List<PositionOrientation> topLeftList, bool memorizeForUndo)
         {
             if (wordPositionList == null) throw new ArgumentNullException(nameof(wordPositionList));
             if (topLeftList == null) throw new ArgumentNullException(nameof(topLeftList));
@@ -300,6 +314,17 @@ namespace Bonza.Editor
 
 
 
+        private bool DeleteCanExecute(object obj)
+        {
+            return model.Layout != null && SelectedWordCount>0;
+        }
+
+        private void DeleteExecute(object obj)
+        {
+            MessageBox.Show("Delete: ToDo");
+        }
+
+
         private bool UndoCanExecute(object obj)
         {
             return model.Layout != null && UndoStack.CanUndo;
@@ -313,7 +338,7 @@ namespace Bonza.Editor
 
         private bool SwapCanExecute(object obj)
         {
-            return model.Layout != null;        // ToDo: Need to manage selection at viewmodel and check that selection.count==1
+            return model.Layout != null && SelectedWordCount == 1;
         }
 
         private void SwapExecute(object obj)

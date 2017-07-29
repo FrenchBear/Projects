@@ -64,11 +64,13 @@
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MaxtrixAnimation.cs" />
+    <Compile Include="View\BonzaView.Selection.cs" />
+    <Compile Include="View\BonzaView.Map.cs" />
     <Page Include="View\AboutWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\EditorWindow.xaml">
+    <Page Include="View\BonzaView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -79,8 +81,8 @@
     <Compile Include="Model\BonzaModel.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="ViewModel\BonzaViewModel.cs" />
-    <Compile Include="View\EditorWindow.xaml.cs">
-      <DependentUpon>EditorWindow.xaml</DependentUpon>
+    <Compile Include="View\BonzaView.xaml.cs">
+      <DependentUpon>BonzaView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -144,6 +146,9 @@
   <ItemGroup>
     <Resource Include="Icons\recenter.ico" />
     <Resource Include="Icons\swap.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\delete.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
