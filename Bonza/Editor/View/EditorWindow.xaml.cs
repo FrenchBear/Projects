@@ -617,25 +617,29 @@ namespace Bonza.Editor
 
                 for (int row = minRow; row <= maxRow; row++)
                 {
-                    Line l = new Line();
-                    l.X1 = minColumn * UnitSize;
-                    l.X2 = maxColumn * UnitSize;
-                    l.Y1 = row * UnitSize;
-                    l.Y2 = row * UnitSize;
-                    l.Stroke = Brushes.LightGray;
-                    l.StrokeThickness = row == 0 ? 3 : 1;
+                    Line l = new Line()
+                    {
+                        X1 = minColumn * UnitSize,
+                        X2 = maxColumn * UnitSize,
+                        Y1 = row * UnitSize,
+                        Y2 = row * UnitSize,
+                        Stroke = Brushes.LightGray,
+                        StrokeThickness = row == 0 ? 3 : 1
+                    };
                     BackgroundGrid.Children.Add(l);
                 }
 
                 for (int column = minColumn; column <= maxColumn; column++)
                 {
-                    Line l = new Line();
-                    l.X1 = column * UnitSize;
-                    l.X2 = column * UnitSize;
-                    l.Y1 = minRow * UnitSize;
-                    l.Y2 = maxRow * UnitSize;
-                    l.Stroke = Brushes.LightGray;
-                    l.StrokeThickness = column == 0 ? 3 : 1;
+                    Line l = new Line()
+                    {
+                        X1 = column * UnitSize,
+                        X2 = column * UnitSize,
+                        Y1 = minRow * UnitSize,
+                        Y2 = maxRow * UnitSize,
+                        Stroke = Brushes.LightGray,
+                        StrokeThickness = column == 0 ? 3 : 1
+                    };
                     BackgroundGrid.Children.Add(l);
                 }
             }

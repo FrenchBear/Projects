@@ -40,6 +40,7 @@ namespace Bonza.Editor
 
         // Edit
         public ICommand UndoCommand { get; private set; }
+        public ICommand SwapCommand { get; private set; }
 
         // View
         public ICommand RecenterLayoutViewCommand { get; private set; }
@@ -62,6 +63,7 @@ namespace Bonza.Editor
 
             // Edit
             UndoCommand = new RelayCommand<object>(UndoExecute, UndoCanExecute);
+            SwapCommand = new RelayCommand<object>(SwapExecute, SwapCanExecute);
 
             // View
             RecenterLayoutViewCommand = new RelayCommand<object>(RecenterLayoutViewExecute, RecenterLayoutViewCanExecute);
@@ -106,7 +108,7 @@ namespace Bonza.Editor
             }
         }
 
-        private string _LayoutName = null;
+        private string _LayoutName;
         public string LayoutName
         {
             get { return _LayoutName; }
@@ -128,7 +130,7 @@ namespace Bonza.Editor
 
         public class UndoStackClass
         {
-            private Stack<(List<WordPosition>, List<(int Top, int Left)>)> UndoStack = null;
+            private Stack<(List<WordPosition>, List<(int Top, int Left)>)> UndoStack;
 
             public void Clear()
             {
@@ -248,7 +250,7 @@ namespace Bonza.Editor
             try
             {
                 view.ClearLayout();
-                LayoutName = null; ;
+                LayoutName = null;
                 model.LoadGrille(filename);
                 LayoutName = Path.GetFileNameWithoutExtension(filename) + ".layout";
             }
@@ -300,6 +302,18 @@ namespace Bonza.Editor
         {
             PerformUndo();
         }
+
+
+        private bool SwapCanExecute(object obj)
+        {
+            return model.Layout != null;        // ToDo: Need to manage selection at viewmodel and check that selection.count==1
+        }
+
+        private void SwapExecute(object obj)
+        {
+            MessageBox.Show("Swap: ToDo");
+        }
+
 
 
 

@@ -89,10 +89,18 @@
                             <Image Source="/Icons/undo.ico" />
                         </MenuItem.Icon>
                     </MenuItem>
+                    <MenuItem Command="{Binding SwapCommand}" Header="_Change d'orientation du mor" >
+                        <MenuItem.Icon>
+                            <Image Source="/Icons/swap.ico" />
+                        </MenuItem.Icon>
+                    </MenuItem>
                 </MenuItem>
 
                 <MenuItem Name="ViewMenu" Header="_View">
                     <MenuItem Command="{Binding RecenterLayoutViewCommand}" Header="_Recentrer la vue du layout" InputGestureText="Ctrl+R" >
+                        <MenuItem.Icon>
+                            <Image Source="/Icons/recenter.ico" />
+                        </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>
 
@@ -107,17 +115,26 @@
             </Menu>
 
             <ToolBar DockPanel.Dock="Top" Margin="0,-1,0,1" ToolBarTray.IsLocked="True">
-                <Button Command="{Binding NewLayoutCommand}" ToolTip="Crée un nouveau layout vierge">
+                <Button Command="{Binding NewLayoutCommand}" ToolTip="Crée un nouveau layout vierge [Ctrl+N]">
                     <Image Source="/Icons/new.ico" Stretch="None" Style="{StaticResource toolbarImageStyle}"/>
                 </Button>
-                <Button Command="{Binding LoadCommand}" ToolTip="Crée une nouvelle grille et génère un layout à partir d'une liste de mots">
+                <Button Command="{Binding LoadCommand}" ToolTip="Crée une nouvelle grille et génère un layout à partir d'une liste de mots [Ctrl+O]">
                     <Image Source="/Icons/open.ico" Stretch="None" Style="{StaticResource toolbarImageStyle}"/>
                 </Button>
 
                 <Separator/>
                 
-                <Button Command="{Binding UndoCommand}" ToolTip="Annule la dernière modification">
+                <Button Command="{Binding UndoCommand}" ToolTip="Annule la dernière modification [Ctrl+Z]">
                     <Image Source="/Icons/undo.ico" Stretch="None" Style="{StaticResource toolbarImageStyle}"/>
+                </Button>
+                <Button Command="{Binding SwapCommand}" ToolTip="Change l'orientation du mot">
+                    <Image Source="/Icons/swap.ico" Stretch="None" Style="{StaticResource toolbarImageStyle}"/>
+                </Button>
+
+                <Separator/>
+
+                <Button Command="{Binding RecenterLayoutViewCommand}" ToolTip="Recentre la vue des mots [Ctrl+R]">
+                    <Image Source="/Icons/recenter.ico" Stretch="None" Style="{StaticResource toolbarImageStyle}"/>
                 </Button>
 
                 <Separator/>

@@ -16,7 +16,6 @@ namespace Bonza.Generator
 {
     public partial class Grille
     {
-        const bool TraceBuild = false;
         readonly Random rnd;        // Initialized in constructor
 
         WordPositionLayout Layout;
@@ -135,20 +134,20 @@ namespace Bonza.Generator
                 }
             }
 
+#if TraceBuild
             // Check that the number of squares is correct
-            if (TraceBuild)
-            {
-                (int minRow, int maxRow, int minColumn, int maxColumn) = Layout.GetBounds();
-                WriteLine($"\n{Layout.WordPositionList.Count} words and {Layout.SquaresCount} squares on a {maxRow - minRow + 1}x{maxColumn - minColumn + 1} grid in {sw.Elapsed}\n");
-            }
+            (int minRow, int maxRow, int minColumn, int maxColumn) = Layout.GetBounds();
+            WriteLine($"\n{Layout.WordPositionList.Count} words and {Layout.SquaresCount} squares on a {maxRow - minRow + 1}x{maxColumn - minColumn + 1} grid in {sw.Elapsed}\n");
+#endif
             return true;
         }
 
         // Add a WordPosition to current layout, and add squares to squares dictionary
         private void AddWordPositionToLayout(WordPosition wp)
         {
-            if (TraceBuild)
-                WriteLine(wp.ToString());
+#if TraceBuild
+            WriteLine(wp.ToString());
+#endif
 
             Layout.AddWordPositionAndSquares(wp);
         }

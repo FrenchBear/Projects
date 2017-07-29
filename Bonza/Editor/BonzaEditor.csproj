@@ -102,7 +102,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="fruits.layout">
+    <None Include="Data Files\fruits.layout">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
@@ -118,7 +118,7 @@
     <CodeAnalysisDictionary Include="CustomDictionary.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="fruits.txt" />
+    <None Include="Data Files\fruits.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Generator\Generator.csproj">
@@ -140,6 +140,10 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Bonza.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\recenter.ico" />
+    <Resource Include="Icons\swap.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
