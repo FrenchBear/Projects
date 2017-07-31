@@ -35,12 +35,12 @@
 
 
         <ContextMenu x:Key="WordCanvasMenu">
-            <MenuItem Command="{Binding DeleteCommand}" Header="_Supprimer" InputGestureText="Suppr" >
+            <MenuItem Command="{Binding DeleteCommand}" Header="_Supprime le mot" InputGestureText="Suppr" >
                 <MenuItem.Icon>
                     <Image Source="/Icons/delete.ico" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Command="{Binding SwapCommand}" Header="_Change d'orientation du mot" >
+            <MenuItem Command="{Binding SwapCommand}" Header="_Bascule l'orientation du mot" InputGestureText="Ctrl+B" >
                 <MenuItem.Icon>
                     <Image Source="/Icons/swap.ico" />
                 </MenuItem.Icon>
@@ -69,6 +69,7 @@
         <KeyBinding Key="O" Modifiers="Control" Command="{Binding LoadCommand}" />
         <KeyBinding Key="Delete" Command="{Binding DeleteCommand}" />
         <KeyBinding Key="Z" Modifiers="Ctrl" Command="{Binding UndoCommand}" />
+        <KeyBinding Key="B" Modifiers="Ctrl" Command="{Binding SwapCommand}" /> 
         <KeyBinding Key="R" Modifiers="Ctrl" Command="{Binding RecenterLayoutViewCommand}" />
     </Window.InputBindings>
 
@@ -119,13 +120,13 @@
                             <Image Source="/Icons/undo.ico" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Command="{Binding DeleteCommand}" Header="_Supprimer" InputGestureText="Suppr" >
+                    <MenuItem Command="{Binding DeleteCommand}" Header="_Supprimer le mot" InputGestureText="Suppr" >
                         <MenuItem.Icon>
                             <Image Source="/Icons/delete.ico" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator/>
-                    <MenuItem Command="{Binding SwapCommand}" Header="_Change d'orientation du mot" >
+                    <MenuItem Command="{Binding SwapCommand}" Header="_Bascule l'orientation du mot" InputGestureText="Ctrl+B" >
                         <MenuItem.Icon>
                             <Image Source="/Icons/swap.ico" />
                         </MenuItem.Icon>
@@ -168,10 +169,10 @@
                 <Button Command="{Binding UndoCommand}" ToolTip="Annule la dernière modification [Ctrl+Z]">
                     <Image Source="/Icons/undo.ico" Stretch="None" Style="{StaticResource toolbarImageStyle}"/>
                 </Button>
-                <Button Command="{Binding DeleteCommand}" ToolTip="Efface les mots sélectionnés [Suppr]">
+                <Button Command="{Binding DeleteCommand}" ToolTip="Supprime le mot [Suppr]">
                     <Image Source="/Icons/delete.ico" Stretch="None" Style="{StaticResource toolbarImageStyle}"/>
                 </Button>
-                <Button Command="{Binding SwapCommand}" ToolTip="Change l'orientation du mot">
+                <Button Command="{Binding SwapCommand}" ToolTip="Change l'orientation du mot [Ctrl+B]">
                     <Image Source="/Icons/swap.ico" Stretch="None" Style="{StaticResource toolbarImageStyle}"/>
                 </Button>
                 <Button Command="{Binding AutoPlaceCommand}" ToolTip="Place automatiquement le mot">

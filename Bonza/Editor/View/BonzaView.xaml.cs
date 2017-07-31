@@ -4,8 +4,8 @@
 
 // ToDo: Esc cancel a move operation, clean properly
 // ToDo: Let user change orientation of a word
-// ToDo: Contextual menu on selection or grid (delete, autoplace (if no intersection), swap orientation)
 // ToDo: Delete selection command
+// ToDo: Add a word or a group of words
 
 using System;
 using System.Collections.Generic;
@@ -35,8 +35,8 @@ namespace Bonza.Editor
         // Font size is 16 and padding are also hardcoded
         private const double UnitSize = 25;
 
-        private readonly Selection sel;    // Manages current selection
-        private readonly Map map;     // Mapping WordPosition <--> WordCanvas
+        internal readonly Selection sel;    // Manages current selection
+        internal readonly Map map;     // Mapping WordPosition <--> WordCanvas
 
 
         // --------------------------------------------------------------------
@@ -50,7 +50,7 @@ namespace Bonza.Editor
             model.SetViewModel(viewModel);
             DataContext = viewModel;
 
-            sel = new Selection(this);
+            sel = new Selection(this, viewModel);
             map = new Map();
 
             UpdateTransformationsFeedBack();
@@ -72,50 +72,6 @@ namespace Bonza.Editor
         void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             UpdateBackgroundGrid();
-        }
-
-
-        // --------------------------------------------------------------------
-        // WordCanvas class
-        // Virual representation of a word as a Canvas
-
-        class WordCanvas : Canvas
-        {
-            private readonly FontFamily arial = new FontFamily("Arial");
-
-            // Builds all visual letters of a WordPosition, include them as children TextBlocks
-            public WordCanvas(WordPosition wp)
-            {
-                for (int i = 0; i < wp.Word.Length; i++)
-                {
-                    TextBlock tb = new TextBlock()
-                    {
-                        TextAlignment = TextAlignment.Center,
-                        VerticalAlignment = VerticalAlignment.Center,
-                        Text = wp.Word.Substring(i, 1),
-                        FontFamily = arial,
-                        FontSize = 16,
-                        FontWeight = FontWeights.Bold,
-                        Padding = new Thickness(0, 3, 0, 0)
-                    };
-                    double top, left, width, height;
-                    top = wp.IsVertical ? UnitSize * i : 0;
-                    left = wp.IsVertical ? 0 : UnitSize * i;
-                    width = UnitSize;
-                    height = UnitSize;
-
-                    tb.SetValue(Canvas.LeftProperty, left);
-                    tb.SetValue(Canvas.TopProperty, top);
-                    tb.Width = width;
-                    tb.Height = height;
-
-                    this.Children.Add(tb);
-                }
-
-                this.SetValue(Canvas.LeftProperty, UnitSize * wp.StartColumn);
-                this.SetValue(Canvas.TopProperty, UnitSize * wp.StartRow);
-                SetWordCanvasColor(this, NormalForegroundBrush, NormalBackgroundBrush);
-            }
         }
 
         // --------------------------------------------------------------------
@@ -242,25 +198,14 @@ namespace Bonza.Editor
         // Color management
 
         // Some colors
-        private static readonly Brush NormalBackgroundBrush = Brushes.Black;
-        private static readonly Brush NormalForegroundBrush = Brushes.White;
+        internal static readonly Brush NormalBackgroundBrush = Brushes.Black;
+        internal static readonly Brush NormalForegroundBrush = Brushes.White;
 
-        private static readonly Brush SelectedBackgroundBrush = Brushes.DarkBlue;
-        private static readonly Brush SelectedForegroundBrush = Brushes.White;
+        internal static readonly Brush SelectedBackgroundBrush = Brushes.DarkBlue;
+        internal static readonly Brush SelectedForegroundBrush = Brushes.White;
 
-        private static readonly Brush ProblemBackgroundBrush = Brushes.DarkRed;
-        private static readonly Brush ProblemForegroundBrush = Brushes.White;
-
-
-        // Helper to set foreground/background on all TextBlock of a wordCanvas 
-        static void SetWordCanvasColor(WordCanvas wc, Brush foreground, Brush background)
-        {
-            foreach (TextBlock tb in wc.Children)
-            {
-                tb.Foreground = foreground;
-                tb.Background = background;
-            }
-        }
+        internal static readonly Brush ProblemBackgroundBrush = Brushes.DarkRed;
+        internal static readonly Brush ProblemForegroundBrush = Brushes.White;
 
 
 
@@ -316,11 +261,11 @@ namespace Bonza.Editor
                         sel.Add(connected);
 
                 // Remove and add again elements to move so they're displayed above non-moved elements
-                foreach (var c in sel.WordPositionList.Select(wp => map.GetCanvasFromWordPosition(wp)))
+                foreach (WordCanvas wc in sel.WordPositionList.Select(wp => map.GetCanvasFromWordPosition(wp)))
                 {
-                    DrawingCanvas.Children.Remove(c);
-                    DrawingCanvas.Children.Add(c);
-                    SetWordCanvasColor(c, Brushes.White, Brushes.DarkBlue);
+                    DrawingCanvas.Children.Remove(wc);
+                    DrawingCanvas.Children.Add(wc);
+                    wc.SetWordCanvasColor(Brushes.White, Brushes.DarkBlue);
                 }
             }
 
@@ -404,9 +349,9 @@ namespace Bonza.Editor
 
                     // Find out if it's possible to place the word here, provide color feed-back
                     if (model.CanPlaceWordInMoveTestLayout(sel.WordPositionList[i], new PositionOrientation { StartRow = top, StartColumn = left, IsVertical = sel.WordPositionList[i].IsVertical }))
-                        SetWordCanvasColor(wc, SelectedForegroundBrush, SelectedBackgroundBrush);
+                        wc.SetWordCanvasColor(SelectedForegroundBrush, SelectedBackgroundBrush);
                     else
-                        SetWordCanvasColor(wc, ProblemForegroundBrush, ProblemBackgroundBrush);
+                        wc.SetWordCanvasColor(ProblemForegroundBrush, ProblemBackgroundBrush);
                 }
             };
         }
@@ -481,8 +426,7 @@ namespace Bonza.Editor
                 for (int il = 0; il < sel.WordPositionList.Count; il++)
                 {
                     WordCanvas wc = map.GetCanvasFromWordPosition(sel.WordPositionList[il]);
-
-                    SetWordCanvasColor(wc, SelectedForegroundBrush, SelectedBackgroundBrush);
+                    wc.SetWordCanvasColor(SelectedForegroundBrush, SelectedBackgroundBrush);
 
                     // Round position to closest square on the grid
                     int top = (int)Math.Floor(((double)wc.GetValue(Canvas.TopProperty) / UnitSize) + 0.5);
@@ -555,25 +499,25 @@ namespace Bonza.Editor
 
             foreach (WordPosition wp in wordPositionList)
             {
-                WordCanvas ca = map.GetCanvasFromWordPosition(wp);
+                WordCanvas wc = map.GetCanvasFromWordPosition(wp);
 
                 DoubleAnimation daLeft = new DoubleAnimation();
                 double finalLeftValue = wp.StartColumn * UnitSize;
-                daLeft.From = (double)ca.GetValue(Canvas.LeftProperty);
+                daLeft.From = (double)wc.GetValue(Canvas.LeftProperty);
                 daLeft.To = finalLeftValue;
                 daLeft.Duration = new Duration(TimeSpan.FromSeconds(distance >= UnitSize ? 0.35 : 0.1));
-                daLeft.Completed += (sender, e) => { MoveWordAnimationEnd(ca, Canvas.LeftProperty, finalLeftValue); };
+                daLeft.Completed += (sender, e) => { MoveWordAnimationEnd(wc, Canvas.LeftProperty, finalLeftValue); };
                 System.Threading.Interlocked.Increment(ref moveWordAnimationInProgressCount);
-                ca.BeginAnimation(Canvas.LeftProperty, daLeft);
+                wc.BeginAnimation(Canvas.LeftProperty, daLeft);
 
                 DoubleAnimation daTop = new DoubleAnimation();
                 double finalTopValue = wp.StartRow * UnitSize;
-                daTop.From = (double)ca.GetValue(Canvas.TopProperty);
+                daTop.From = (double)wc.GetValue(Canvas.TopProperty);
                 daTop.To = finalTopValue;
                 daTop.Duration = new Duration(TimeSpan.FromSeconds(distance >= UnitSize ? 0.35 : 0.1));
-                daTop.Completed += (sender, e) => { MoveWordAnimationEnd(ca, Canvas.TopProperty, finalTopValue); };
+                daTop.Completed += (sender, e) => { MoveWordAnimationEnd(wc, Canvas.TopProperty, finalTopValue); };
                 System.Threading.Interlocked.Increment(ref moveWordAnimationInProgressCount);
-                ca.BeginAnimation(Canvas.TopProperty, daTop);
+                wc.BeginAnimation(Canvas.TopProperty, daTop);
             }
         }
 

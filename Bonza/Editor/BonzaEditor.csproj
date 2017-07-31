@@ -64,8 +64,9 @@
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MaxtrixAnimation.cs" />
-    <Compile Include="View\BonzaView.Selection.cs" />
-    <Compile Include="View\BonzaView.Map.cs" />
+    <Compile Include="View\Selection.cs" />
+    <Compile Include="View\Map.cs" />
+    <Compile Include="View\WordCanvas.cs" />
     <Page Include="View\AboutWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
