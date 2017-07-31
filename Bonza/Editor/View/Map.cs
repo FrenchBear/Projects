@@ -25,13 +25,13 @@ namespace Bonza.Editor
             }
 
             // Helper, mapping WordCanvas -> WordPosition or null
-            internal WordPosition GetWordPositionFromCanvas(WordCanvas wc)
+            internal WordPosition GetWordPositionFromWordCanvas(WordCanvas wc)
             {
                 return CanvasToWordPositionDictionary.TryGetValue(wc, out WordPosition wp) ? wp : null;
             }
 
             // Helper, mapping WordPosition -> WordCanvas or null
-            internal WordCanvas GetCanvasFromWordPosition(WordPosition wp)
+            internal WordCanvas GetWordCanvasFromWordPosition(WordPosition wp)
             {
                 foreach (var kv in CanvasToWordPositionDictionary)
                     if (kv.Value == wp)

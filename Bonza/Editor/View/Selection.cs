@@ -11,6 +11,7 @@ using Bonza.Generator;
 using System.Collections.ObjectModel;
 using System.Linq;
 using static Bonza.Editor.BonzaView;
+using System;
 
 namespace Bonza.Editor
 {
@@ -39,7 +40,7 @@ namespace Bonza.Editor
             if (m_WordPositionList == null)
                 return;
 
-            m_WordPositionList?.Select(wp => view.map.GetCanvasFromWordPosition(wp)).ForEach(ca => ca.SetWordCanvasColor(NormalForegroundBrush, NormalBackgroundBrush));
+            m_WordPositionList?.Select(wp => view.map.GetWordCanvasFromWordPosition(wp)).ForEach(ca => ca.SetColor(NormalForegroundBrush, NormalBackgroundBrush));
 
             // Optimization, by convention null means no selection
             m_WordPositionList = null;
@@ -55,11 +56,24 @@ namespace Bonza.Editor
             if (!m_WordPositionList.Contains(wp))
             {
                 m_WordPositionList.Add(wp);
-                WordCanvas wc = view.map.GetCanvasFromWordPosition(wp);
-                wc.SetWordCanvasColor(SelectedForegroundBrush, SelectedBackgroundBrush);
+                WordCanvas wc = view.map.GetWordCanvasFromWordPosition(wp);
+                wc.SetColor(SelectedForegroundBrush, SelectedBackgroundBrush);
 
                 viewModel.SelectedWordCount++;
             }
+        }
+
+        internal void SwapOrientation()
+        {
+            if (m_WordPositionList == null)
+                return;
+
+            // ToDo: Make sure that caller check that position is valid (recycle snail re-placement pattern)
+            // ToDo: Caller must support undo
+            // ToDo: Redraw background grid if needed (done at the end of position check/snail re-placement?)
+
+            // wc.SwapOrientation only relocate visually letters and update 
+            m_WordPositionList?.Select(wp => view.map.GetWordCanvasFromWordPosition(wp)).ForEach(wc => wc.SwapOrientation());
         }
     }
 

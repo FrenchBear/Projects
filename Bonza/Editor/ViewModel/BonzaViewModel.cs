@@ -41,7 +41,7 @@ namespace Bonza.Editor
         // Edit
         public ICommand DeleteCommand { get; private set; }
         public ICommand UndoCommand { get; private set; }
-        public ICommand SwapCommand { get; private set; }
+        public ICommand SwapOrientationCommand { get; private set; }
         public ICommand AutoPlaceCommand { get; private set; }
 
         // View
@@ -66,7 +66,7 @@ namespace Bonza.Editor
             // Edit
             DeleteCommand = new RelayCommand<object>(DeleteExecute, DeleteCanExecute);
             UndoCommand = new RelayCommand<object>(UndoExecute, UndoCanExecute);
-            SwapCommand = new RelayCommand<object>(SwapExecute, SwapCanExecute);
+            SwapOrientationCommand = new RelayCommand<object>(SwapOrientationExecute, SwapOrientationCanExecute);
             AutoPlaceCommand = new RelayCommand<object>(AutoPlaceExecute, AutoPlaceCanExecute);
 
             // View
@@ -338,14 +338,14 @@ namespace Bonza.Editor
         }
 
 
-        private bool SwapCanExecute(object obj)
+        private bool SwapOrientationCanExecute(object obj)
         {
             return model.Layout != null && SelectedWordCount == 1;
         }
 
-        private void SwapExecute(object obj)
+        private void SwapOrientationExecute(object obj)
         {
-            MessageBox.Show("Swap: ToDo");
+            view.sel.SwapOrientation();
         }
 
 
