@@ -8,10 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bonza.Generator
 {
@@ -40,15 +37,15 @@ namespace Bonza.Generator
         {
             int row = wp.StartRow;
             int column = wp.StartColumn;
-            for (int il = 0; il < wp.Word.Length; il++)
+            foreach (char c in wp.Word)
             {
                 if (GetSquare(row, column) == null)
                 {
-                    Square sq = new Square { Row = row, Column = column, Letter = wp.Word[il], IsInChunk = false };
+                    Square sq = new Square { Row = row, Column = column, Letter = c, IsInChunk = false };
                     m_Squares.Add((row, column), sq);
                 }
                 else
-                    Debug.Assert(GetSquare(row, column).Letter == wp.Word[il]);
+                    Debug.Assert(GetSquare(row, column).Letter == c);
                 if (wp.IsVertical) row++; else column++;
             }
         }
@@ -131,8 +128,8 @@ namespace Bonza.Generator
                     {
                         // It's Ok to already have a matching letter only if it only belongs to a crossing word (of opposite direction)
                         // In this case, we don't need to check left and right cells
-                        foreach (WordPosition loopWP in GetWordPositionsFromSquare(row + i, column))
-                            if (loopWP.IsVertical == wp.IsVertical)
+                        foreach (WordPosition loop in GetWordPositionsFromSquare(row + i, column))
+                            if (loop.IsVertical == wp.IsVertical)
                                 return false;
                     }
                     else
@@ -153,8 +150,8 @@ namespace Bonza.Generator
                     if (GetLetter(row, column + i) == wp.Word[i])
                     {
                         // It's Ok to already have a matching letter only if it only belongs to a crossing word (of opposite direction)
-                        foreach (WordPosition loopWP in GetWordPositionsFromSquare(row, column + i))
-                            if (loopWP.IsVertical == wp.IsVertical)
+                        foreach (WordPosition loop in GetWordPositionsFromSquare(row, column + i))
+                            if (loop.IsVertical == wp.IsVertical)
                                 return false;
                     }
                     else

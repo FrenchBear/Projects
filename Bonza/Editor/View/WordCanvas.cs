@@ -12,8 +12,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using Bonza.Generator;
 
-
-namespace Bonza.Editor
+namespace Bonza.Editor.View
 {
     public partial class BonzaView
     {
@@ -44,22 +43,21 @@ namespace Bonza.Editor
                         FontWeight = FontWeights.Bold,
                         Padding = new Thickness(0, 3, 0, 0)
                     };
-                    double top, left, width, height;
-                    top = wp.IsVertical ? UnitSize * i : 0;
-                    left = wp.IsVertical ? 0 : UnitSize * i;
-                    width = UnitSize;
-                    height = UnitSize;
 
-                    tb.SetValue(Canvas.LeftProperty, left);
-                    tb.SetValue(Canvas.TopProperty, top);
-                    tb.Width = width;
-                    tb.Height = height;
+                    var top = wp.IsVertical ? UnitSize * i : 0;
+                    var left = wp.IsVertical ? 0 : UnitSize * i;
 
-                    this.Children.Add(tb);
+
+                    tb.SetValue(LeftProperty, left);
+                    tb.SetValue(TopProperty, top);
+                    tb.Width = UnitSize;
+                    tb.Height = UnitSize;
+
+                    Children.Add(tb);
                 }
 
-                this.SetValue(Canvas.LeftProperty, UnitSize * wp.StartColumn);
-                this.SetValue(Canvas.TopProperty, UnitSize * wp.StartRow);
+                SetValue(LeftProperty, UnitSize * wp.StartColumn);
+                SetValue(TopProperty, UnitSize * wp.StartRow);
                 SetColor(NormalForegroundBrush, NormalBackgroundBrush);
             }
 
@@ -84,11 +82,10 @@ namespace Bonza.Editor
                 {
                     TextBlock tb = Children[i] as TextBlock;
 
-                    double top, left;
-                    top = wp.IsVertical ? UnitSize * i : 0;
-                    left = wp.IsVertical ? 0 : UnitSize * i;
-                    tb.SetValue(Canvas.LeftProperty, left);
-                    tb.SetValue(Canvas.TopProperty, top);
+                    double top = wp.IsVertical ? UnitSize * i : 0;
+                    double left = wp.IsVertical ? 0 : UnitSize * i;
+                    tb?.SetValue(LeftProperty, left);
+                    tb?.SetValue(TopProperty, top);
                 }
             }
         }

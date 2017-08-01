@@ -15,11 +15,11 @@ namespace Bonza.Generator
     public class WordPosition
     {
         public string Word;
-        public PositionOrientation PO;
+        public PositionOrientation PoOr;
 
-        public int StartRow { get => PO.StartRow; set { PO.StartRow = value; } }
-        public int StartColumn { get => PO.StartColumn; set { PO.StartColumn = value; } }
-        public bool IsVertical { get => PO.IsVertical; set { PO.IsVertical = value; } }
+        public int StartRow { get => PoOr.StartRow; set => PoOr.StartRow = value; }
+        public int StartColumn { get => PoOr.StartColumn; set => PoOr.StartColumn = value; }
+        public bool IsVertical { get => PoOr.IsVertical; set => PoOr.IsVertical = value; }
 
         public override string ToString() => "'" + Word + "' " + (IsVertical ? "V" : "H") + $"({StartRow}, {StartColumn})";
     }

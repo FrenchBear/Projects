@@ -4,17 +4,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 
 namespace Bonza.Generator
 {
     public static class ExtensionMethods
     {
-        static readonly Random rnd = new Random();
+        private static readonly Random Rnd = new Random();
 
         // Randomize the order of elements in a list
         // Takes a List<T> instead of an IList<T> to simplify the case with 1 element...
@@ -27,10 +23,9 @@ namespace Bonza.Generator
             {
                 // It's Ok to have p1==p2, for instance when shuffling a 2-element list 
                 // so that in 50% we return the original list, in 50% a swapped version
-                int p1, p2;
-                p1 = i; // rnd.Next(list.Count);
-                p2 = rnd.Next(list.Count);
-                T temp = shuffledList[p1];
+                var p1 = i;
+                var p2 = Rnd.Next(list.Count);
+                var temp = shuffledList[p1];
                 shuffledList[p1] = shuffledList[p2];
                 shuffledList[p2] = temp;
             }
@@ -46,7 +41,7 @@ namespace Bonza.Generator
             while (n > 1)
             {
                 n--;
-                int k = rnd.Next(n + 1);
+                int k = Rnd.Next(n + 1);
                 T value = list[k];
                 list[k] = list[n];
                 list[n] = value;
@@ -60,7 +55,7 @@ namespace Bonza.Generator
                 throw new ArgumentNullException(nameof(list));
             if (list.Count == 0)
                 throw new ArgumentException("Can't select a random element from a list of zero element");
-            return list[rnd.Next(list.Count)];
+            return list[Rnd.Next(list.Count)];
         }
 
         // Execute an action on every element of an enumeration

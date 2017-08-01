@@ -16,7 +16,7 @@ namespace Bonza.Generator
     {
         readonly List<Square> m_Squares = new List<Square>();
 
-        public int ChunkID { get; }
+        public int ChunkId { get; }
         public ReadOnlyCollection<Square> Squares => m_Squares.AsReadOnly();
         public int SquaresCount => m_Squares.Count;
         public bool IsDeleted { get; set; }
@@ -24,7 +24,7 @@ namespace Bonza.Generator
         // Get next ID on creation
         public Chunk(int newId)
         {
-            ChunkID = newId;
+            ChunkId = newId;
         }
 
         public (int minRow, int maxRow, int minColumn, int maxColumn) GetBounds()
@@ -50,9 +50,9 @@ namespace Bonza.Generator
             var sb = new StringBuilder();
 
             (int minRow, int maxRow, int minColumn, int maxColumn) = GetBounds();
-            sb.Append($"{ChunkID}[{SquaresCount}]: {maxRow - minRow + 1}x{maxColumn - minColumn + 1}:");
+            sb.Append($"{ChunkId}[{SquaresCount}]: {maxRow - minRow + 1}x{maxColumn - minColumn + 1}:");
             foreach (Square sq in Squares)
-                sb.Append(' ').Append(sq.ToString());
+                sb.Append(' ').Append(sq);
             return sb.ToString();
         }
 

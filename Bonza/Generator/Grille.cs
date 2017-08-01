@@ -6,9 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using static System.Console;
 using System.IO;
-using System.Diagnostics;
 using System.Globalization;
 
 
@@ -18,7 +16,7 @@ namespace Bonza.Generator
     {
         readonly Random rnd;        // Initialized in constructor
 
-        WordPositionLayout Layout;
+        WordPositionLayout layout;
 
 
         public Grille(int seed = 0)
@@ -29,7 +27,7 @@ namespace Bonza.Generator
         // Temporary, find something better!
         public WordPositionLayout GetLayout()
         {
-            return Layout;
+            return layout;
         }
 
         // Memorize the list of words to place as a class variable if later we call PlaceWordsAgain
@@ -42,7 +40,7 @@ namespace Bonza.Generator
             {
                 while (!sr.EndOfStream)
                 {
-                    string line = sr.ReadLine().Trim();
+                    string line = sr.ReadLine()?.Trim();
                     if (!string.IsNullOrWhiteSpace(line))
                         wordsList.Add(line);
                 }
@@ -66,49 +64,51 @@ namespace Bonza.Generator
             if (wordsTable.Any(w => w.Length <= 2))
                 throw new BonzaException("Mots de longueur <=2 non autorisés");
 
+#if TraceBuild
             Stopwatch sw = Stopwatch.StartNew();
-            List<string> Words = new List<string>();
+#endif
+            List<string> words = new List<string>();
 
-            // We start with a fresh new Layout
-            Layout = new WordPositionLayout();
+            // We start with a fresh new layout
+            layout = new WordPositionLayout();
 
             foreach (string word in wordsTable)
             {
                 // A small centered dot is visually better in the grid than a space in words containing spaces
                 string canonizedWord = word.ToUpper(CultureInfo.InvariantCulture).Replace(' ', '·');
-                if (Words.Contains(canonizedWord))
+                if (words.Contains(canonizedWord))
                     throw new BonzaException("Duplicate word in the list: " + word);
-                Words.Add(canonizedWord);
+                words.Add(canonizedWord);
             }
 
             // Chose random word and orientation to start, anchored at position (0, 0)
-            Words.ShuffleInPlace();
-            AddWordPositionToLayout(new WordPosition { Word = Words[0], StartColumn = 0, StartRow = 0, IsVertical = rnd.NextDouble() > 0.5 });
-            Words.RemoveAt(0);
+            words.ShuffleInPlace();
+            AddWordPositionToLayout(new WordPosition { Word = words[0], StartColumn = 0, StartRow = 0, IsVertical = rnd.NextDouble() > 0.5 });
+            words.RemoveAt(0);
 
             // Place remaining words
-            while (Words.Count > 0)
+            while (words.Count > 0)
             {
                 List<WordPosition> possibleWordPositions = new List<WordPosition>();
 
                 // Try to place one word from list words, after that we restart the outer loop
                 bool placed = false;
-                for (int i = 0; i < Words.Count && !placed; i++)
+                for (int i = 0; i < words.Count && !placed; i++)
                 {
-                    for (int j = 0; j < Layout.WordPositionList.Count; j++)
-                        TryPlace(Words[i], Layout.WordPositionList[j], possibleWordPositions);
+                    foreach (WordPosition wordPosition in layout.WordPositionList)
+                        TryPlace(words[i], wordPosition, possibleWordPositions);
 
                     if (possibleWordPositions.Count > 0)
                     {
                         List<WordPosition> selectedWordPositionList = null;
-                        (int minRow, int maxRow, int minColumn, int maxColumn) = Layout.GetBounds();
+                        (int minRow, int maxRow, int minColumn, int maxColumn) = layout.GetBounds();
                         int surface = int.MaxValue;
 
                         // Take position that minimize layout surface, random selection generates a 'diagonal' puzzle
                         // Adjust surface calculation to avoid too much extension in one direction
                         foreach (WordPosition wp in possibleWordPositions)
                         {
-                            (int newMinRow, int newMaxRow, int newMinCol, int newMaxCol) = Layout.ExtendBounds(minRow, maxRow, minColumn, maxColumn, wp);
+                            (int newMinRow, int newMaxRow, int newMinCol, int newMaxCol) = layout.ExtendBounds(minRow, maxRow, minColumn, maxColumn, wp);
                             int newSurface = ComputeAdjustedSurface(newMaxCol - newMinCol + 1, newMaxRow - newMinRow + 1);
                             if (newSurface < surface)
                             {
@@ -120,7 +120,7 @@ namespace Bonza.Generator
                         // Take a possibility among those who minimally extend surface, and add it to current layout
                         AddWordPositionToLayout(selectedWordPositionList.TakeRandom());
 
-                        Words.Remove(Words[i]);
+                        words.Remove(words[i]);
 
                         placed = true;
                     }
@@ -129,15 +129,15 @@ namespace Bonza.Generator
                 if (!placed)
                 {
                     // throw new BonzaException("Error during words placement, no possible way to place remaining words");
-                    Layout = null;
+                    layout = null;
                     return false;
                 }
             }
 
 #if TraceBuild
             // Check that the number of squares is correct
-            (int minRow, int maxRow, int minColumn, int maxColumn) = Layout.GetBounds();
-            WriteLine($"\n{Layout.WordPositionList.Count} words and {Layout.SquaresCount} squares on a {maxRow - minRow + 1}x{maxColumn - minColumn + 1} grid in {sw.Elapsed}\n");
+            (int minRow, int maxRow, int minColumn, int maxColumn) = layout.GetBounds();
+            WriteLine($"\n{layout.WordPositionList.Count} words and {layout.SquaresCount} squares on a {maxRow - minRow + 1}x{maxColumn - minColumn + 1} grid in {sw.Elapsed}\n");
 #endif
             return true;
         }
@@ -149,7 +149,7 @@ namespace Bonza.Generator
             WriteLine(wp.ToString());
 #endif
 
-            Layout.AddWordPositionAndSquares(wp);
+            layout.AddWordPositionAndSquares(wp);
         }
 
         // Adjusted surface calculation that penalize extensions that would make bounding 
@@ -202,15 +202,15 @@ namespace Bonza.Generator
                     foreach (int positionInWordToPlace in FindPositions(wordToPlace))           // positionsInWordToPlace)
                         foreach (int positionInPlacedWord in FindPositions(placedWord.Word))    // positionsInPlacedWord)
                         {
-                            WordPosition testWP = new WordPosition
+                            WordPosition test = new WordPosition
                             {
                                 Word = wordToPlace,
                                 IsVertical = !placedWord.IsVertical,
                                 StartRow = placedWord.IsVertical ? (placedWord.StartRow + positionInPlacedWord) : (placedWord.StartRow - positionInWordToPlace),
                                 StartColumn = placedWord.IsVertical ? (placedWord.StartColumn - positionInWordToPlace) : (placedWord.StartColumn + positionInPlacedWord)
                             };
-                            if (Layout.CanPlaceWord(testWP))
-                                possibleWordPositions.Add(testWP);
+                            if (layout.CanPlaceWord(test))
+                                possibleWordPositions.Add(test);
                         }
                 }
         }
@@ -231,7 +231,7 @@ namespace Bonza.Generator
         private void Print(TextWriter tw)
         {
             // First compute actual bounds
-            (int minRow, int maxRow, int minColumn, int maxColumn) = Layout.GetBounds();
+            (int minRow, int maxRow, int minColumn, int maxColumn) = layout.GetBounds();
 
             // Then print
             for (int row = minRow; row <= maxRow; row++)
@@ -240,7 +240,7 @@ namespace Bonza.Generator
                 {
                     bool found = false;
 
-                    foreach (WordPosition wp in Layout.WordPositionList)
+                    foreach (WordPosition wp in layout.WordPositionList)
                     {
                         if (wp.IsVertical && wp.StartColumn == col && row >= wp.StartRow && row < wp.StartRow + wp.Word.Length)
                         {
@@ -266,14 +266,14 @@ namespace Bonza.Generator
         // Save layout in a .json file
         public void SaveLayout(string outFile)
         {
-            Layout.SaveToFile(outFile);
+            layout.SaveToFile(outFile);
         }
 
         // Load layout from a .json file
         public void LoadLayout(string inFile)
         {
-            Layout = new WordPositionLayout();
-            Layout.LoadFromFile(inFile);
+            layout = new WordPositionLayout();
+            layout.LoadFromFile(inFile);
         }
 
     }

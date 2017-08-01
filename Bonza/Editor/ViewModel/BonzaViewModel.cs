@@ -4,27 +4,28 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using Bonza.Editor.Model;
 using Bonza.Generator;
 using Microsoft.Win32;
-using System.IO;
-using System.Diagnostics;
-using System.Linq;
-using System.Collections.ObjectModel;
 
-namespace Bonza.Editor
+namespace Bonza.Editor.ViewModel
 {
     class BonzaViewModel : INotifyPropertyChanged
     {
         // Model and View
-        private BonzaModel model;
-        internal BonzaView view;
+        private readonly BonzaModel model;
+        private readonly View.BonzaView view;
 
         // Implementation of INotifyPropertyChanged, standard since View is only linked through DataBinding
         public event PropertyChangedEventHandler PropertyChanged;
-        private void NotifyPropertyChanged(String name)
+        private void NotifyPropertyChanged(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -33,31 +34,31 @@ namespace Bonza.Editor
         // Commands
 
         // Menus
-        public ICommand NewLayoutCommand { get; private set; }
-        public ICommand LoadCommand { get; private set; }
-        public ICommand RegenerateLayoutCommand { get; private set; }
-        public ICommand SaveCommand { get; private set; }
-        public ICommand QuitCommand { get; private set; }
+        public ICommand NewLayoutCommand { get; }
+        public ICommand LoadCommand { get; }
+        public ICommand RegenerateLayoutCommand { get; }
+        public ICommand SaveCommand { get; }
+        public ICommand QuitCommand { get; }
 
         // Edit
-        public ICommand DeleteCommand { get; private set; }
-        public ICommand UndoCommand { get; private set; }
-        public ICommand SwapOrientationCommand { get; private set; }
-        public ICommand AutoPlaceCommand { get; private set; }
+        public ICommand DeleteCommand { get; }
+        public ICommand UndoCommand { get; }
+        public ICommand SwapOrientationCommand { get; }
+        public ICommand AutoPlaceCommand { get; }
 
         // View
-        public ICommand RecenterLayoutViewCommand { get; private set; }
+        public ICommand RecenterLayoutViewCommand { get; }
 
         // About
-        public ICommand AboutCommand { get; private set; }
+        public ICommand AboutCommand { get; }
 
 
         // Constructor
-        public BonzaViewModel(BonzaView view)
+        public BonzaViewModel(View.BonzaView view)
         {
             // Initialize ViewModel
             this.view = view;
-            this.model = new BonzaModel(this);
+            model = new BonzaModel(this);
 
 
             // Binding commands with behavior
@@ -105,21 +106,20 @@ namespace Bonza.Editor
         // -------------------------------------------------
         // Bindings
 
-        private int _WordsNotConnected;
+        private int m_WordsNotConnected;
         public int WordsNotConnected
         {
-            get { return _WordsNotConnected; }
+            get => m_WordsNotConnected;
             set
             {
-                if (_WordsNotConnected != value)
+                if (m_WordsNotConnected != value)
                 {
-                    _WordsNotConnected = value;
+                    m_WordsNotConnected = value;
                     NotifyPropertyChanged(nameof(WordsNotConnected));
                 }
             }
         }
 
-        private string _Caption = App.AppName;
         public string Caption
         {
             get
@@ -131,15 +131,15 @@ namespace Bonza.Editor
             }
         }
 
-        private string _LayoutName;
+        private string m_LayoutName;
         public string LayoutName
         {
-            get { return _LayoutName; }
+            get => m_LayoutName;
             set
             {
-                if (_LayoutName != value)
+                if (m_LayoutName != value)
                 {
-                    _LayoutName = value;
+                    m_LayoutName = value;
                     NotifyPropertyChanged(nameof(LayoutName));
                     NotifyPropertyChanged(nameof(Caption));
                 }
@@ -147,15 +147,15 @@ namespace Bonza.Editor
         }
 
 
-        private int _SelectedWordCount;
+        private int m_SelectedWordCount;
         public int SelectedWordCount
         {
-            get { return _SelectedWordCount; }
+            get => m_SelectedWordCount;
             set
             {
-                if (_SelectedWordCount != value)
+                if (m_SelectedWordCount != value)
                 {
-                    _SelectedWordCount = value;
+                    m_SelectedWordCount = value;
                     NotifyPropertyChanged(nameof(SelectedWordCount));
                 }
             }
@@ -169,11 +169,11 @@ namespace Bonza.Editor
 
         public class UndoStackClass
         {
-            private Stack<(List<WordPosition>, List<PositionOrientation>)> UndoStack;
+            private Stack<(List<WordPosition>, List<PositionOrientation>)> undoStack;
 
             public void Clear()
             {
-                UndoStack = null;
+                undoStack = null;
             }
 
             // Memorize current position of a list of WordPosition so it can be restored layer
@@ -185,18 +185,18 @@ namespace Bonza.Editor
                 // Memorize position in a separate list since WordPosition objects position will change
                 List<PositionOrientation> topLeftList = wordPositionList.Select(wp => new PositionOrientation { StartRow = wp.StartRow, StartColumn = wp.StartColumn, IsVertical = wp.IsVertical }).ToList();
 
-                if (UndoStack == null)
-                    UndoStack = new Stack<(List<WordPosition>, List<PositionOrientation>)>();
+                if (undoStack == null)
+                    undoStack = new Stack<(List<WordPosition>, List<PositionOrientation>)>();
                 // Since wordPositionList is a list belonging to view, we need to clone it
-                UndoStack.Push((new List<WordPosition>(wordPositionList), topLeftList));
+                undoStack.Push((new List<WordPosition>(wordPositionList), topLeftList));
             }
 
-            public bool CanUndo => UndoStack != null && UndoStack.Count > 0;
+            public bool CanUndo => undoStack != null && undoStack.Count > 0;
 
             public (List<WordPosition> wordPositionList, List<PositionOrientation> topLeftList) Pop()
             {
                 Debug.Assert(CanUndo);
-                return UndoStack.Pop();
+                return undoStack.Pop();
             }
         }
 
@@ -280,7 +280,7 @@ namespace Bonza.Editor
                 InitialDirectory = @"C:\Development\GitHub\Projects\Bonza\Lists"   // Path.Combine( Directory.GetCurrentDirectory(), @"..\Lists");
             };
             var result = dlg.ShowDialog();
-            if (result.HasValue && result.Value == true)
+            if (result.HasValue && result.Value)
                 LoadWordsList(dlg.FileName);
         }
 
@@ -361,7 +361,7 @@ namespace Bonza.Editor
 
         private void SwapOrientationExecute(object obj)
         {
-            view.sel.SwapOrientation();
+            view.Sel.SwapOrientation();
         }
 
 
@@ -388,13 +388,13 @@ namespace Bonza.Editor
         private void QuitExecute(object obj)
         {
             // ToDo: Add detection of unsaved changes once Save is implemented
-            System.Environment.Exit(0);
+            Environment.Exit(0);
         }
 
 
         private void AboutExecute(object obj)
         {
-            var aw = new AboutWindow();
+            var aw = new View.AboutWindow();
             aw.ShowDialog();
         }
 

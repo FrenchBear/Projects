@@ -1,15 +1,14 @@
-﻿<Window x:Class="Bonza.Editor.BonzaView"
+﻿<Window x:Class="Bonza.Editor.View.BonzaView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Bonza.Editor"
         mc:Ignorable="d"
         Title="{Binding Caption,FallbackValue='Bonza Editor'}" Height="768" Width="1024" Icon="/BonzaEditor;component/Bonza.ico">
 
     <Window.Resources>
         <!-- Gray out toolbar elements when disabled (why is it not automatic ??) -->
-        <Style TargetType="{x:Type Image}" x:Key="toolbarImageStyle">
+        <Style TargetType="{x:Type Image}" x:Key="ToolbarImageStyle">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}, AncestorLevel=1}, Path=IsEnabled}" Value="False">
                     <Setter Property="Opacity" Value="0.35"></Setter>
@@ -17,7 +16,7 @@
             </Style.Triggers>
         </Style>
 
-        <Style TargetType="{x:Type TextBlock}" x:Key="toolbarTextBlockStyle">
+        <!--<Style TargetType="{x:Type TextBlock}" x:Key="ToolbarTextBlockStyle">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}, AncestorLevel=1}, Path=IsEnabled}" Value="False">
                     <Setter Property="Opacity" Value="0.35"></Setter>
@@ -25,15 +24,16 @@
             </Style.Triggers>
         </Style>
 
-        <Style TargetType="{x:Type Button}" x:Key="toolbarButtonStyle">
+        <Style TargetType="{x:Type Button}" x:Key="ToolbarButtonStyle">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled}" Value="False">
                     <Setter Property="Opacity" Value="0.35"></Setter>
                 </DataTrigger>
             </Style.Triggers>
-        </Style>
+        </Style>-->
 
 
+        <!-- ReSharper disable once Xaml.RedundantResource -->
         <ContextMenu x:Key="WordCanvasMenu">
             <MenuItem Command="{Binding DeleteCommand}" Header="_Supprime le mot" InputGestureText="Suppr" >
                 <MenuItem.Icon>
@@ -53,6 +53,7 @@
         </ContextMenu>
 
 
+        <!-- ReSharper disable once Xaml.RedundantResource -->
         <ContextMenu x:Key="BackgroundCanvasMenu">
             <MenuItem Command="{Binding RecenterLayoutViewCommand}" Header="_Recentrer la vue du layout" InputGestureText="Ctrl+R" >
                 <MenuItem.Icon>
@@ -158,31 +159,31 @@
 
             <ToolBar DockPanel.Dock="Top" Margin="0,-1,0,1" ToolBarTray.IsLocked="True">
                 <Button Command="{Binding NewLayoutCommand}" ToolTip="Crée un nouveau layout vierge [Ctrl+N]">
-                    <Image Source="/Icons/new.ico" Stretch="None" Style="{StaticResource toolbarImageStyle}"/>
+                    <Image Source="/Icons/new.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}"/>
                 </Button>
                 <Button Command="{Binding LoadCommand}" ToolTip="Crée une nouvelle grille et génère un layout à partir d'une liste de mots [Ctrl+O]">
-                    <Image Source="/Icons/open.ico" Stretch="None" Style="{StaticResource toolbarImageStyle}"/>
+                    <Image Source="/Icons/open.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}"/>
                 </Button>
 
                 <Separator/>
 
                 <Button Command="{Binding UndoCommand}" ToolTip="Annule la dernière modification [Ctrl+Z]">
-                    <Image Source="/Icons/undo.ico" Stretch="None" Style="{StaticResource toolbarImageStyle}"/>
+                    <Image Source="/Icons/undo.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}"/>
                 </Button>
                 <Button Command="{Binding DeleteCommand}" ToolTip="Supprime le mot [Suppr]">
-                    <Image Source="/Icons/delete.ico" Stretch="None" Style="{StaticResource toolbarImageStyle}"/>
+                    <Image Source="/Icons/delete.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}"/>
                 </Button>
                 <Button Command="{Binding SwapOrientationCommand}" ToolTip="Change l'orientation du mot [Ctrl+B]">
-                    <Image Source="/Icons/swap.ico" Stretch="None" Style="{StaticResource toolbarImageStyle}"/>
+                    <Image Source="/Icons/swap.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}"/>
                 </Button>
                 <Button Command="{Binding AutoPlaceCommand}" ToolTip="Place automatiquement le mot">
-                    <Image Source="/Icons/autoplace.ico" Stretch="None" Style="{StaticResource toolbarImageStyle}"/>
+                    <Image Source="/Icons/autoplace.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}"/>
                 </Button>
 
                 <Separator/>
 
                 <Button Command="{Binding RecenterLayoutViewCommand}" ToolTip="Recentre la vue des mots [Ctrl+R]">
-                    <Image Source="/Icons/recenter.ico" Stretch="None" Style="{StaticResource toolbarImageStyle}"/>
+                    <Image Source="/Icons/recenter.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}"/>
                 </Button>
 
                 <Separator/>
@@ -191,7 +192,7 @@
             </ToolBar>
         </DockPanel>
 
-        <DockPanel Grid.Row="1">
+        <DockPanel Grid.Row="1" Grid.Column="0">
             <StackPanel Orientation="Vertical" Margin="6,5,0,6">
                 <Label Content="Bonza Editor" FontWeight="Bold" FontSize="16" Margin="0,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="PowderBlue" Foreground="Blue" />
                 <Button Command="{Binding Path=LoadCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Load Words</Button>
@@ -217,7 +218,7 @@
                   MouseMove="MainGrid_MouseMoveWhenUp" MouseDown="MainGrid_MouseDown" MouseUp="MainGrid_MouseUp" MouseWheel="MainGrid_MouseWheel" 
                   MouseRightButtonDown="MainGrid_MouseRightButtonDown"  >
                 <Canvas Name="ClippingCanvas" ClipToBounds="True">
-                    <Canvas Name="ZZDrawingCanvas" ClipToBounds="False" >
+                    <Canvas Name="TransformingCanvas" ClipToBounds="False" >
                         <Canvas Name="BackgroundGrid" ClipToBounds="False" />
                         <Canvas Name="DrawingCanvas" ClipToBounds="False" />
                         <Canvas.RenderTransform>

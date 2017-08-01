@@ -4,17 +4,14 @@
 // 2012-04-17   PV  First version
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Input;
 
 namespace Bonza.Editor
 {
     class RelayCommand<T> : ICommand
     {
-        readonly Predicate<T> canExecute;
-        readonly Action<T> execute;
+        private readonly Predicate<T> canExecute;
+        private readonly Action<T> execute;
 
         public RelayCommand(Action<T> execute, Predicate<T> canExecute)
         {
@@ -51,8 +48,8 @@ namespace Bonza.Editor
         /* From ICommand */
         public event EventHandler CanExecuteChanged
         {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
+            add => CommandManager.RequerySuggested += value;
+            remove => CommandManager.RequerySuggested -= value;
         }
     }
 }

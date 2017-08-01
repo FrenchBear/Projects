@@ -10,17 +10,17 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Windows;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Bonza.Generator;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
+using Bonza.Editor.ViewModel;
+using Bonza.Generator;
 
-
-namespace Bonza.Editor
+namespace Bonza.Editor.View
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -34,8 +34,8 @@ namespace Bonza.Editor
         // Font size is 16 and padding are also hardcoded
         private const double UnitSize = 25;
 
-        internal readonly Selection sel;    // Manages current selection
-        internal readonly Map map;     // Mapping WordPosition <--> WordCanvas
+        internal readonly Selection Sel;    // Manages current selection
+        internal readonly MapClass Map;     // Mapping WordPosition <--> WordCanvas
 
 
         // --------------------------------------------------------------------
@@ -47,8 +47,8 @@ namespace Bonza.Editor
             viewModel = new BonzaViewModel(this);
             DataContext = viewModel;
 
-            sel = new Selection(this, viewModel);
-            map = new Map();
+            Sel = new Selection(this, viewModel);
+            Map = new MapClass();
 
             UpdateTransformationsFeedBack();
 
@@ -91,12 +91,12 @@ namespace Bonza.Editor
             {
                 // Group letters in a WordCanvas to be able later to move them at once
                 WordCanvas wordCanvas = new WordCanvas(wp);
-                map.Add(wp, wordCanvas);
+                Map.Add(wp, wordCanvas);
 
                 DrawingCanvas.Children.Add(wordCanvas);
             }
 
-            sel.Clear();
+            Sel.Clear();
 
             // After initial drawing, rescale and center without animations
             // Also draw initial background grid
@@ -119,36 +119,36 @@ namespace Bonza.Editor
             maxRow += 3; maxColumn += 3;
 
             // Reverse-transform corners into WordCanvas coordinates
-            Point P1Grid = new Point(minColumn * UnitSize, minRow * UnitSize);
-            Point P2Grid = new Point(maxColumn * UnitSize, maxRow * UnitSize);
+            Point p1Grid = new Point(minColumn * UnitSize, minRow * UnitSize);
+            Point p2Grid = new Point(maxColumn * UnitSize, maxRow * UnitSize);
 
 
-            RescaleMatrix = MainMatrixTransform.Matrix;
+            rescaleMatrix = MainMatrixTransform.Matrix;
 
             // Set rotation to zero
             // get angle from transformation matrix:
             // | M11 M12 0 |   | s.cos θ -s.sin θ   0 |
             // | M21 M22 0 | = | s.sin θ  s.cos θ   0 |  (s = scale)
             // | dx  dy  1 |   | dx       dy        1 |
-            double θ = Math.Atan2(RescaleMatrix.M21, RescaleMatrix.M11);    // Just to use a variable named θ
-            RescaleMatrix.Rotate(θ / Math.PI * 180);            // It would certainly kill Microsoft to indicate on Rotate page or Intellisense tooltip that angle is in degrees...
+            double θ = Math.Atan2(rescaleMatrix.M21, rescaleMatrix.M11);    // Just to use a variable named θ
+            rescaleMatrix.Rotate(θ / Math.PI * 180);            // It would certainly kill Microsoft to indicate on Rotate page or Intellisense tooltip that angle is in degrees...
 
             // First adjust scale
-            Point P1Screen = RescaleMatrix.Transform(P1Grid);
-            Point P2Screen = RescaleMatrix.Transform(P2Grid);
-            double rescaleFactorX = ClippingCanvas.ActualWidth / (P2Screen.X - P1Screen.X);
-            double rescaleFactorY = ClippingCanvas.ActualHeight / (P2Screen.Y - P1Screen.Y);
+            Point p1Screen = rescaleMatrix.Transform(p1Grid);
+            Point p2Screen = rescaleMatrix.Transform(p2Grid);
+            double rescaleFactorX = ClippingCanvas.ActualWidth / (p2Screen.X - p1Screen.X);
+            double rescaleFactorY = ClippingCanvas.ActualHeight / (p2Screen.Y - p1Screen.Y);
             double rescaleFactor = Math.Min(rescaleFactorX, rescaleFactorY);
-            RescaleMatrix.Scale(rescaleFactor, rescaleFactor);
+            rescaleMatrix.Scale(rescaleFactor, rescaleFactor);
 
             // Then adjust location and center
-            P1Screen = RescaleMatrix.Transform(P1Grid);
-            P2Screen = RescaleMatrix.Transform(P2Grid);
-            double offX1 = -P1Screen.X;
-            double offX2 = ClippingCanvas.ActualWidth - P2Screen.X;
-            double offY1 = -P1Screen.Y;
-            double offY2 = ClippingCanvas.ActualHeight - P2Screen.Y;
-            RescaleMatrix.Translate((offX1 + offX2) / 2, (offY1 + offY2) / 2);
+            p1Screen = rescaleMatrix.Transform(p1Grid);
+            p2Screen = rescaleMatrix.Transform(p2Grid);
+            double offX1 = -p1Screen.X;
+            double offX2 = ClippingCanvas.ActualWidth - p2Screen.X;
+            double offY1 = -p1Screen.Y;
+            double offY2 = ClippingCanvas.ActualHeight - p2Screen.Y;
+            rescaleMatrix.Translate((offX1 + offX2) / 2, (offY1 + offY2) / 2);
 
             if (isWithAnimation)
             {
@@ -156,7 +156,7 @@ namespace Bonza.Editor
                 MatrixAnimation ma = new MatrixAnimation()
                 {
                     From = MainMatrixTransform.Matrix,
-                    To = RescaleMatrix,
+                    To = rescaleMatrix,
                     Duration = new Duration(TimeSpan.FromSeconds(0.35))
                 };
                 ma.Completed += MatrixAnimationCompleted;
@@ -167,8 +167,8 @@ namespace Bonza.Editor
                 MatrixAnimationEnd();
         }
 
-        bool isMatrixAnimationInProgress;
-        Matrix RescaleMatrix;
+        private bool isMatrixAnimationInProgress;
+        private Matrix rescaleMatrix;
 
         // Event handler when MatrixAnimation is completed, need to "free" animated properties otherwise
         // they're "hold" by animation
@@ -184,7 +184,7 @@ namespace Bonza.Editor
             MainMatrixTransform.BeginAnimation(MatrixTransform.MatrixProperty, null);
 
             // Final tasks
-            MainMatrixTransform.Matrix = RescaleMatrix;
+            MainMatrixTransform.Matrix = rescaleMatrix;
             UpdateTransformationsFeedBack();
             UpdateBackgroundGrid();
         }
@@ -233,32 +233,32 @@ namespace Bonza.Editor
 
         // Helper, this was originally in MainGrid_MouseDown handler, but when a right-click occurs,
         // it is assumed than it will select automatically a non-selected word, so code got promoted to its own function...
-        private void UpdateSelectionAfterClick(object sender, MouseButtonEventArgs e)
+        private void UpdateSelectionAfterClick(MouseButtonEventArgs e)
         {
             if (DrawingCanvas.InputHitTest(e.GetPosition(DrawingCanvas)) is TextBlock hitTextBlock)
             {
                 WordCanvas hitC = (hitTextBlock.Parent) as WordCanvas;
-                WordPosition hitWP = map.GetWordPositionFromWordCanvas(hitC);
-                Debug.Assert(hitWP != null);
+                WordPosition hit = Map.GetWordPositionFromWordCanvas(hitC);
+                Debug.Assert(hit != null);
 
                 // If Ctrl key is NOT pressed, clear previous selection
                 // But if we click again in something already selected, do not clear selection!
                 if (!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl))
-                    if (sel.WordPositionList != null && !sel.WordPositionList.Select(wp => map.GetWordCanvasFromWordPosition(wp)).Contains(hitC))
-                        sel.Clear();
+                    if (Sel.WordPositionList != null && !Sel.WordPositionList.Select(wp => Map.GetWordCanvasFromWordPosition(wp)).Contains(hitC))
+                        Sel.Clear();
 
 
                 // Add current word to selection
-                sel.Add(hitWP);
+                Sel.Add(hit);
 
                 // If Shift key is pressed, selection is extended to connected words
                 if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
                     //viewModel.Layout.GetConnectedWordPositions(hitWP).ForEach(connected => AddWordPositionToSelection(connected));
-                    foreach (WordPosition connected in viewModel.Layout.GetConnectedWordPositions(hitWP))
-                        sel.Add(connected);
+                    foreach (WordPosition connected in viewModel.Layout.GetConnectedWordPositions(hit))
+                        Sel.Add(connected);
 
                 // Remove and add again elements to move so they're displayed above non-moved elements
-                foreach (WordCanvas wc in sel.WordPositionList.Select(wp => map.GetWordCanvasFromWordPosition(wp)))
+                foreach (WordCanvas wc in Sel.WordPositionList.Select(wp => Map.GetWordCanvasFromWordPosition(wp)))
                 {
                     DrawingCanvas.Children.Remove(wc);
                     DrawingCanvas.Children.Add(wc);
@@ -278,16 +278,16 @@ namespace Bonza.Editor
             MainGrid.MouseMove += MainGrid_MouseMoveWhenDown;
             previousMousePosition = e.GetPosition(MainGrid);
 
-            UpdateSelectionAfterClick(sender, e);
+            UpdateSelectionAfterClick(e);
 
             // HitTest: Test if a word was clicked on, if true, hitTextBlock is a TextBloxk
-            if (DrawingCanvas.InputHitTest(e.GetPosition(DrawingCanvas)) is TextBlock hitTextBlock)
+            if (DrawingCanvas.InputHitTest(e.GetPosition(DrawingCanvas)) is TextBlock)
                 // We'reinterested in its parent WordCanvas, that contains all the text blocks for the word
                 pmm = GetMouseDownMoveAction();
             else
             {
                 pmm = null;
-                sel.Clear();
+                Sel.Clear();
             }
 
             // Be sure to call GetPosition before Capture, otherwise GetPosition returns 0 after Capture
@@ -299,14 +299,14 @@ namespace Bonza.Editor
         private Action<Point> GetMouseDownMoveAction()
         {
             // Need a layout without moved word to validate placement
-            viewModel.BuildMoveTestLayout(sel.WordPositionList);
+            viewModel.BuildMoveTestLayout(Sel.WordPositionList);
 
             // Reverse-transform mouse Grid coordinates into DrawingCanvas coordinates
             Matrix m = MainMatrixTransform.Matrix;
             m.Invert();     // To convert from screen transformed coordinates into ideal grid
                             // coordinates starting at (0,0) with a square side of UnitSize
-            List<Vector> clickOffsetList = new List<Vector>(sel.WordPositionList.Count);
-            foreach (WordCanvas wc in sel.WordPositionList.Select(wp => map.GetWordCanvasFromWordPosition(wp)))
+            List<Vector> clickOffsetList = new List<Vector>(Sel.WordPositionList.Count);
+            foreach (WordCanvas wc in Sel.WordPositionList.Select(wp => Map.GetWordCanvasFromWordPosition(wp)))
             {
                 Point canvasTopLeft = new Point((double)wc.GetValue(Canvas.LeftProperty), (double)wc.GetValue(Canvas.TopProperty));
                 // clickOffset memorizes the difference between (top,left) of WordCanvas and the clicked point
@@ -315,15 +315,15 @@ namespace Bonza.Editor
             }
 
             // When moving, P is current mouse in ideal grid coordinates
-            return P =>
+            return point =>
             {
                 // Just move selected WordCanvas
-                for (int i = 0; i < sel.WordPositionList.Count; i++)
+                for (int i = 0; i < Sel.WordPositionList.Count; i++)
                 {
-                    double preciseTop = P.Y + clickOffsetList[i].Y;
-                    double preciseLeft = P.X + clickOffsetList[i].X;
+                    double preciseTop = point.Y + clickOffsetList[i].Y;
+                    double preciseLeft = point.X + clickOffsetList[i].X;
 
-                    WordCanvas wc = map.GetWordCanvasFromWordPosition(sel.WordPositionList[i]);
+                    WordCanvas wc = Map.GetWordCanvasFromWordPosition(Sel.WordPositionList[i]);
                     wc.SetValue(Canvas.TopProperty, preciseTop);
                     wc.SetValue(Canvas.LeftProperty, preciseLeft);
 
@@ -345,7 +345,7 @@ namespace Bonza.Editor
                     // Note that during generation, current stringent rules must prevail
 
                     // Find out if it's possible to place the word here, provide color feed-back
-                    if (viewModel.CanPlaceWordInMoveTestLayout(sel.WordPositionList[i], new PositionOrientation { StartRow = top, StartColumn = left, IsVertical = sel.WordPositionList[i].IsVertical }))
+                    if (viewModel.CanPlaceWordInMoveTestLayout(Sel.WordPositionList[i], new PositionOrientation { StartRow = top, StartColumn = left, IsVertical = Sel.WordPositionList[i].IsVertical }))
                         wc.SetColor(SelectedForegroundBrush, SelectedBackgroundBrush);
                     else
                         wc.SetColor(ProblemForegroundBrush, ProblemBackgroundBrush);
@@ -357,14 +357,14 @@ namespace Bonza.Editor
         // Relay from Window_MouseDown handler when it's actually a right click
         private void MainGrid_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            UpdateSelectionAfterClick(sender, e);
+            UpdateSelectionAfterClick(e);
 
-            ContextMenu cm = null;
-            if (DrawingCanvas.InputHitTest(e.GetPosition(DrawingCanvas)) is TextBlock hitTextBlock)
-                cm = this.FindResource("WordCanvasMenu") as ContextMenu;
+            ContextMenu cm;
+            if (DrawingCanvas.InputHitTest(e.GetPosition(DrawingCanvas)) is TextBlock)
+                cm = FindResource("WordCanvasMenu") as ContextMenu;
             else
-                cm = this.FindResource("BackgroundCanvasMenu") as ContextMenu;
-
+                cm = FindResource("BackgroundCanvasMenu") as ContextMenu;
+            Debug.Assert(cm!=null);
             cm.PlacementTarget = sender as UIElement;
             cm.IsOpen = true;
             e.Handled = true;
@@ -400,10 +400,10 @@ namespace Bonza.Editor
         {
             Matrix matrix = MainMatrixTransform.Matrix;
             var a = Math.Atan2(matrix.M12, matrix.M11) / Math.PI * 180;
-            RotationTextBlock.Text = string.Format("{0:F1}°", a);
+            RotationTextBlock.Text = $"{a:F1}°";
             var s = Math.Sqrt(matrix.M11 * matrix.M11 + matrix.M12 * matrix.M12);
-            ScaleTextBlock.Text = string.Format("{0:F2}", s);
-            TranslationTextBlock.Text = string.Format("X:{0:F2} Y:{1:F2}", matrix.OffsetX, matrix.OffsetY);
+            ScaleTextBlock.Text = $"{s:F2}";
+            TranslationTextBlock.Text = $"X:{matrix.OffsetX:F2} Y:{matrix.OffsetY:F2}";
         }
 
 
@@ -420,23 +420,23 @@ namespace Bonza.Editor
                 // Not efficient to manage a single list of (top, left) tuple since in the snail pattern
                 // placement code, top is updated independently from left, and a tuple makes it heavy
                 List<PositionOrientation> topLeftList = new List<PositionOrientation>();
-                for (int il = 0; il < sel.WordPositionList.Count; il++)
+                foreach (WordPosition wp in Sel.WordPositionList)
                 {
-                    WordCanvas wc = map.GetWordCanvasFromWordPosition(sel.WordPositionList[il]);
+                    WordCanvas wc = Map.GetWordCanvasFromWordPosition(wp);
                     wc.SetColor(SelectedForegroundBrush, SelectedBackgroundBrush);
 
                     // Round position to closest square on the grid
                     int top = (int)Math.Floor(((double)wc.GetValue(Canvas.TopProperty) / UnitSize) + 0.5);
                     int left = (int)Math.Floor(((double)wc.GetValue(Canvas.LeftProperty) / UnitSize) + 0.5);
-                    topLeftList.Add(new PositionOrientation { StartRow = top, StartColumn = left, IsVertical = sel.WordPositionList[il].IsVertical });
+                    topLeftList.Add(new PositionOrientation { StartRow = top, StartColumn = left, IsVertical = wp.IsVertical });
                 }
 
                 // If position is not valid, look around until a valid position is found
                 // Examine surrounding cells in a "snail pattern" 
                 bool CanPlaceAllWords()
                 {
-                    for (int il = 0; il < sel.WordPositionList.Count; il++)
-                        if (!viewModel.CanPlaceWordInMoveTestLayout(sel.WordPositionList[il], topLeftList[il]))
+                    for (int il = 0; il < Sel.WordPositionList.Count; il++)
+                        if (!viewModel.CanPlaceWordInMoveTestLayout(Sel.WordPositionList[il], topLeftList[il]))
                             return false;
                     return true;
                 }
@@ -450,14 +450,14 @@ namespace Bonza.Editor
                     {
                         for (int i = 0; i < st; i++)
                         {
-                            for (int il = 0; il < sel.WordPositionList.Count; il++)
-                                topLeftList[il] = new PositionOrientation { StartRow = topLeftList[il].StartRow, StartColumn = topLeftList[il].StartColumn + sign, IsVertical = sel.WordPositionList[il].IsVertical };
+                            for (int il = 0; il < Sel.WordPositionList.Count; il++)
+                                topLeftList[il] = new PositionOrientation { StartRow = topLeftList[il].StartRow, StartColumn = topLeftList[il].StartColumn + sign, IsVertical = Sel.WordPositionList[il].IsVertical };
                             if (CanPlaceAllWords()) goto FoundValidPosition;
                         }
                         for (int i = 0; i < st; i++)
                         {
-                            for (int il = 0; il < sel.WordPositionList.Count; il++)
-                                topLeftList[il] = new PositionOrientation { StartRow = topLeftList[il].StartRow + sign, StartColumn = topLeftList[il].StartColumn, IsVertical = sel.WordPositionList[il].IsVertical };
+                            for (int il = 0; il < Sel.WordPositionList.Count; il++)
+                                topLeftList[il] = new PositionOrientation { StartRow = topLeftList[il].StartRow + sign, StartColumn = topLeftList[il].StartColumn, IsVertical = Sel.WordPositionList[il].IsVertical };
                             if (CanPlaceAllWords()) goto FoundValidPosition;
                         }
                         sign = -sign;
@@ -467,8 +467,8 @@ namespace Bonza.Editor
 
                 FoundValidPosition:
                 // Move to final, rounded position
-                viewModel.UpdateWordPositionLocation(sel.WordPositionList, topLeftList, true);     // Update WordPosition with new location
-                MoveWordPositionList(sel.WordPositionList);
+                viewModel.UpdateWordPositionLocation(Sel.WordPositionList, topLeftList, true);     // Update WordPosition with new location
+                MoveWordPositionList(Sel.WordPositionList);
             }
         }
 
@@ -486,7 +486,7 @@ namespace Bonza.Editor
             // Compute distance moved on 1st element to choose speed
             WordPosition wp1 = wordPositionList.FirstOrDefault();
             Debug.Assert(wp1 != null);
-            WordCanvas wc1 = map.GetWordCanvasFromWordPosition(wp1);
+            WordCanvas wc1 = Map.GetWordCanvasFromWordPosition(wp1);
             double deltaX = (double)wc1.GetValue(Canvas.LeftProperty) - (wp1.StartColumn * UnitSize);
             double deltaY = (double)wc1.GetValue(Canvas.TopProperty) - (wp1.StartRow * UnitSize);
             double distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -496,7 +496,7 @@ namespace Bonza.Editor
 
             foreach (WordPosition wp in wordPositionList)
             {
-                WordCanvas wc = map.GetWordCanvasFromWordPosition(wp);
+                WordCanvas wc = Map.GetWordCanvasFromWordPosition(wp);
 
                 DoubleAnimation daLeft = new DoubleAnimation();
                 double finalLeftValue = wp.StartColumn * UnitSize;
@@ -534,7 +534,7 @@ namespace Bonza.Editor
             var m = MainMatrixTransform.Matrix;
 
             // Ctrl+MouseWheel for rotation
-            if (System.Windows.Input.Keyboard.IsKeyDown(Key.LeftCtrl))
+            if (Keyboard.IsKeyDown(Key.LeftCtrl))
             {
                 double angle = e.Delta / 16.0;
                 m.RotateAt(angle, newPosition.X, newPosition.Y);
@@ -567,9 +567,9 @@ namespace Bonza.Editor
 
             // Update status bar
             var a = Math.Atan2(matrix.M12, matrix.M11) / Math.PI * 180;
-            RotationTextBlock.Text = string.Format("{0:F1}°", a);
+            RotationTextBlock.Text = $"{a:F1}°";
             var s = Math.Sqrt(matrix.M11 * matrix.M11 + matrix.M12 * matrix.M12);
-            ScaleTextBlock.Text = string.Format("{0:F2}", s);
+            ScaleTextBlock.Text = $"{s:F2}";
 
             ClearBackgroundGrid();
             if (viewModel.Layout != null)

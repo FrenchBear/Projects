@@ -7,15 +7,14 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
-
-namespace Bonza.Editor
+namespace Bonza.Editor.View
 {
     public class MatrixAnimation : MatrixAnimationBase
     {
         public Matrix? From
         {
-            set { SetValue(FromProperty, value); }
-            get { return (Matrix)GetValue(FromProperty); }
+            set => SetValue(FromProperty, value);
+            get => (Matrix)GetValue(FromProperty);
         }
 
         public static DependencyProperty FromProperty =
@@ -24,8 +23,8 @@ namespace Bonza.Editor
 
         public Matrix? To
         {
-            set { SetValue(ToProperty, value); }
-            get { return (Matrix)GetValue(ToProperty); }
+            set => SetValue(ToProperty, value);
+            get => (Matrix)GetValue(ToProperty);
         }
 
         public static DependencyProperty ToProperty =
@@ -34,8 +33,8 @@ namespace Bonza.Editor
 
         public IEasingFunction EasingFunction
         {
-            get { return (IEasingFunction)GetValue(EasingFunctionProperty); }
-            set { SetValue(EasingFunctionProperty, value); }
+            get => (IEasingFunction)GetValue(EasingFunctionProperty);
+            set => SetValue(EasingFunctionProperty, value);
         }
 
         public static readonly DependencyProperty EasingFunctionProperty =

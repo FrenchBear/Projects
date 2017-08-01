@@ -5,7 +5,7 @@
 using System.Reflection;
 using System.Windows;
 
-namespace Bonza.Editor
+namespace Bonza.Editor.View
 {
     /// <summary>
     /// Interaction logic for AboutWindow.xaml
@@ -16,7 +16,7 @@ namespace Bonza.Editor
         {
             InitializeComponent();
 
-            Assembly myAssembly = System.Reflection.Assembly.GetExecutingAssembly();
+            Assembly myAssembly = Assembly.GetExecutingAssembly();
             AssemblyTitleAttribute aTitleAttr = (AssemblyTitleAttribute)System.Attribute.GetCustomAttribute(myAssembly, typeof(AssemblyTitleAttribute));
             AssemblyDescriptionAttribute aDescAttr = (AssemblyDescriptionAttribute)System.Attribute.GetCustomAttribute(myAssembly, typeof(AssemblyDescriptionAttribute));
             string sAssemblyVersion = myAssembly.GetName().Version.ToString();

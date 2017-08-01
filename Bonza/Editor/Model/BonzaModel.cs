@@ -2,22 +2,16 @@
 // MVVM Model
 // 2017-07-22   PV  First version
 
-using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Bonza.Editor.ViewModel;
 using Bonza.Generator;
 
-
-namespace Bonza.Editor
+namespace Bonza.Editor.Model
 {
-    class BonzaModel
+    internal class BonzaModel
     {
-        private BonzaViewModel viewModel;
+        private readonly BonzaViewModel viewModel;
         private Grille grille;
         public WordPositionLayout Layout => grille?.GetLayout();
         public WordPositionLayout MoveTestLayout;
@@ -83,10 +77,7 @@ namespace Bonza.Editor
         {
             word.StartRow = po.StartRow;
             word.StartColumn = po.StartColumn;
-            if (word.IsVertical = po.IsVertical)
-            {
-                // ToDo: Need to have a word redraw if orientation changed!!!
-            }
+            word.IsVertical = po.IsVertical;
 
             // Need to recompute number of words not connected
             viewModel.WordsNotConnected = Layout.GetWordsNotConnected();
