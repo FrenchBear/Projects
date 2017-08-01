@@ -12,6 +12,7 @@ using Microsoft.Win32;
 using System.IO;
 using System.Diagnostics;
 using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace Bonza.Editor
 {
@@ -52,8 +53,13 @@ namespace Bonza.Editor
 
 
         // Constructor
-        public BonzaViewModel(BonzaModel model, BonzaView view)
+        public BonzaViewModel(BonzaView view)
         {
+            // Initialize ViewModel
+            this.view = view;
+            this.model = new BonzaModel(this);
+
+
             // Binding commands with behavior
 
             // File
@@ -74,20 +80,30 @@ namespace Bonza.Editor
 
             // Help
             AboutCommand = new RelayCommand<object>(AboutExecute);
-
-            // Initialize ViewModel
-            this.model = model;
-            this.view = view;
         }
 
 
         // -------------------------------------------------
-        // Bindings
+        // Simple relays to model
 
-        // Simple relay to model
+        public WordPositionLayout Layout => model?.Layout;
 
         public IEnumerable<WordPosition> WordPositionList => model?.Layout?.WordPositionList;
 
+        internal void BuildMoveTestLayout(ReadOnlyCollection<WordPosition> wordPositionList)
+        {
+            model.BuildMoveTestLayout(wordPositionList);
+        }
+
+        internal bool CanPlaceWordInMoveTestLayout(WordPosition wordPosition, PositionOrientation positionOrientation)
+        {
+            return model.CanPlaceWordInMoveTestLayout(wordPosition, positionOrientation);
+        }
+
+
+
+        // -------------------------------------------------
+        // Bindings
 
         private int _WordsNotConnected;
         public int WordsNotConnected
@@ -381,7 +397,6 @@ namespace Bonza.Editor
             var aw = new AboutWindow();
             aw.ShowDialog();
         }
-
 
     }
 }

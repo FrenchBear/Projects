@@ -22,9 +22,9 @@ namespace Bonza.Editor
         public WordPositionLayout Layout => grille?.GetLayout();
         public WordPositionLayout MoveTestLayout;
 
-        public void SetViewModel(BonzaViewModel vm)
+        public BonzaModel(BonzaViewModel viewModel)
         {
-            viewModel = vm;
+            this.viewModel = viewModel;
         }
 
         internal void NewGrille()
@@ -91,7 +91,6 @@ namespace Bonza.Editor
             // Need to recompute number of words not connected
             viewModel.WordsNotConnected = Layout.GetWordsNotConnected();
         }
-
 
     }
 }

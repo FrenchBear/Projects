@@ -27,7 +27,6 @@ namespace Bonza.Editor
     /// </summary>
     public partial class BonzaView : Window
     {
-        private readonly BonzaModel model;
         private readonly BonzaViewModel viewModel;
 
         // Size of the side of a square
@@ -45,9 +44,7 @@ namespace Bonza.Editor
         public BonzaView()
         {
             InitializeComponent();
-            model = new BonzaModel();
-            viewModel = new BonzaViewModel(model, this);
-            model.SetViewModel(viewModel);
+            viewModel = new BonzaViewModel(this);
             DataContext = viewModel;
 
             sel = new Selection(this, viewModel);
@@ -113,10 +110,10 @@ namespace Bonza.Editor
         // Adjust scale and origin to see the whole puzzle
         internal void RescaleAndCenter(bool isWithAnimation)
         {
-            if (model.Layout == null)
+            if (viewModel.Layout == null)
                 return;
 
-            (int minRow, int maxRow, int minColumn, int maxColumn) = model.Layout.GetBounds();
+            (int minRow, int maxRow, int minColumn, int maxColumn) = viewModel.Layout.GetBounds();
             // Add some extra margin
             minRow -= 2; minColumn -= 2;
             maxRow += 3; maxColumn += 3;
@@ -256,8 +253,8 @@ namespace Bonza.Editor
 
                 // If Shift key is pressed, selection is extended to connected words
                 if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
-                    //model.Layout.GetConnectedWordPositions(hitWP).ForEach(connected => AddWordPositionToSelection(connected));
-                    foreach (WordPosition connected in model.Layout.GetConnectedWordPositions(hitWP))
+                    //viewModel.Layout.GetConnectedWordPositions(hitWP).ForEach(connected => AddWordPositionToSelection(connected));
+                    foreach (WordPosition connected in viewModel.Layout.GetConnectedWordPositions(hitWP))
                         sel.Add(connected);
 
                 // Remove and add again elements to move so they're displayed above non-moved elements
@@ -302,7 +299,7 @@ namespace Bonza.Editor
         private Action<Point> GetMouseDownMoveAction()
         {
             // Need a layout without moved word to validate placement
-            model.BuildMoveTestLayout(sel.WordPositionList);
+            viewModel.BuildMoveTestLayout(sel.WordPositionList);
 
             // Reverse-transform mouse Grid coordinates into DrawingCanvas coordinates
             Matrix m = MainMatrixTransform.Matrix;
@@ -348,7 +345,7 @@ namespace Bonza.Editor
                     // Note that during generation, current stringent rules must prevail
 
                     // Find out if it's possible to place the word here, provide color feed-back
-                    if (model.CanPlaceWordInMoveTestLayout(sel.WordPositionList[i], new PositionOrientation { StartRow = top, StartColumn = left, IsVertical = sel.WordPositionList[i].IsVertical }))
+                    if (viewModel.CanPlaceWordInMoveTestLayout(sel.WordPositionList[i], new PositionOrientation { StartRow = top, StartColumn = left, IsVertical = sel.WordPositionList[i].IsVertical }))
                         wc.SetColor(SelectedForegroundBrush, SelectedBackgroundBrush);
                     else
                         wc.SetColor(ProblemForegroundBrush, ProblemBackgroundBrush);
@@ -439,7 +436,7 @@ namespace Bonza.Editor
                 bool CanPlaceAllWords()
                 {
                     for (int il = 0; il < sel.WordPositionList.Count; il++)
-                        if (!model.CanPlaceWordInMoveTestLayout(sel.WordPositionList[il], topLeftList[il]))
+                        if (!viewModel.CanPlaceWordInMoveTestLayout(sel.WordPositionList[il], topLeftList[il]))
                             return false;
                     return true;
                 }
@@ -482,7 +479,7 @@ namespace Bonza.Editor
             if (wordPositionList == null) throw new ArgumentNullException(nameof(wordPositionList));
 
             // If bounding rectangle is updated, need to redraw background grid
-            (int minRow, int maxRow, int minColumn, int maxColumn) = model.Layout.GetBounds();
+            (int minRow, int maxRow, int minColumn, int maxColumn) = viewModel.Layout.GetBounds();
             if (minRow != minRowGrid || minColumn != minColumnGrid || maxRow != maxRowGrid || maxColumn != maxColumnGrid)
                 UpdateBackgroundGrid();
 
@@ -575,9 +572,9 @@ namespace Bonza.Editor
             ScaleTextBlock.Text = string.Format("{0:F2}", s);
 
             ClearBackgroundGrid();
-            if (model.Layout != null)
+            if (viewModel.Layout != null)
             {
-                (minRowGrid, maxRowGrid, minColumnGrid, maxColumnGrid) = model.Layout.GetBounds();
+                (minRowGrid, maxRowGrid, minColumnGrid, maxColumnGrid) = viewModel.Layout.GetBounds();
                 // Add some extra margin
                 int minRow = minRowGrid - 2;
                 int minColumn = minColumnGrid - 2;

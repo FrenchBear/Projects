@@ -15,10 +15,6 @@ using System;
 
 namespace Bonza.Editor
 {
-    //public partial class BonzaView : Window
-    //{
-    // --------------------------------------------------------------------------------------------------------
-    // Current selection management
 
     class Selection
     {
@@ -77,5 +73,4 @@ namespace Bonza.Editor
         }
     }
 
-    //}
 }
