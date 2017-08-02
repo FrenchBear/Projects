@@ -92,7 +92,7 @@ namespace Bonza.Editor.ViewModel
 
         public IEnumerable<WordPosition> WordPositionList => model?.Layout?.WordPositionList;
 
-        internal void BuildMoveTestLayout(ReadOnlyCollection<WordPosition> wordPositionList)
+        internal void BuildMoveTestLayout(IEnumerable<WordPosition> wordPositionList)
         {
             model.BuildMoveTestLayout(wordPositionList);
         }
@@ -170,7 +170,9 @@ namespace Bonza.Editor.ViewModel
 
         public class UndoStackClass
         {
-            private Stack<(List<WordPosition>, List<PositionOrientation>)> undoStack;
+            // Can't memorize original position in List<WordPosition> since referenced WordPosition will change position during future edit
+            // So List<PositionOrientation> represents the position the List<WordPositon> must return to in case on undo
+            private Stack<(IList<WordAndCanvas>, IList<PositionOrientation>)> undoStack;
 
             public void Clear()
             {
@@ -178,23 +180,23 @@ namespace Bonza.Editor.ViewModel
             }
 
             // Memorize current position of a list of WordPosition so it can be restored layer
-            public void Push(IList<WordPosition> wordPositionList)
+            public void Push(IList<WordAndCanvas> wordAndCanvasList)
             {
-                if (wordPositionList == null) throw new ArgumentNullException(nameof(wordPositionList));
-                Debug.Assert(wordPositionList.Count >= 1);
+                if (wordAndCanvasList == null) throw new ArgumentNullException(nameof(wordAndCanvasList));
+                Debug.Assert(wordAndCanvasList.Count >= 1);
 
                 // Memorize position in a separate list since WordPosition objects position will change
-                List<PositionOrientation> topLeftList = wordPositionList.Select(wp => new PositionOrientation { StartRow = wp.StartRow, StartColumn = wp.StartColumn, IsVertical = wp.IsVertical }).ToList();
+                List<PositionOrientation> topLeftList = wordAndCanvasList.Select(wac => new PositionOrientation { StartRow = wac.WordPosition.StartRow, StartColumn = wac.WordPosition.StartColumn, IsVertical = wac.WordPosition.IsVertical }).ToList();
 
                 if (undoStack == null)
-                    undoStack = new Stack<(List<WordPosition>, List<PositionOrientation>)>();
+                    undoStack = new Stack<(IList<WordAndCanvas>, IList<PositionOrientation>)>();
                 // Since wordPositionList is a list belonging to view, we need to clone it
-                undoStack.Push((new List<WordPosition>(wordPositionList), topLeftList));
+                undoStack.Push((new List<WordAndCanvas>(wordAndCanvasList), topLeftList));
             }
 
             public bool CanUndo => undoStack != null && undoStack.Count > 0;
 
-            public (List<WordPosition> wordPositionList, List<PositionOrientation> topLeftList) Pop()
+            public (IList<WordAndCanvas> wordAndCanvasList, IList<PositionOrientation> topLeftList) Pop()
             {
                 Debug.Assert(CanUndo);
                 return undoStack.Pop();
@@ -206,9 +208,9 @@ namespace Bonza.Editor.ViewModel
 
         public void PerformUndo()
         {
-            var (wordPositionList, topLeftList) = UndoStack.Pop();
-            UpdateWordPositionLocation(wordPositionList, topLeftList, false);   // Coordinates in wordPositionList are updated
-            view.MoveWordPositionList(wordPositionList);
+            var (wordAndCanvasList, topLeftList) = UndoStack.Pop();
+            UpdateWordPositionLocation(wordAndCanvasList, topLeftList, false);   // Coordinates in wordPositionList are updated
+            view.MoveWordAndCanvasList(wordAndCanvasList);
         }
 
         // -------------------------------------------------
@@ -231,23 +233,25 @@ namespace Bonza.Editor.ViewModel
         // View helpers
 
         // When a list of WordPositions have moved to their final location in view
-        internal void UpdateWordPositionLocation(IList<WordPosition> wordPositionList, List<PositionOrientation> topLeftList, bool memorizeForUndo)
+        internal void UpdateWordPositionLocation(IList<WordAndCanvas> wordAndCanvasList, IList<PositionOrientation> topLeftList, bool memorizeForUndo)
         {
-            if (wordPositionList == null) throw new ArgumentNullException(nameof(wordPositionList));
+            if (wordAndCanvasList == null) throw new ArgumentNullException(nameof(wordAndCanvasList));
             if (topLeftList == null) throw new ArgumentNullException(nameof(topLeftList));
-            Debug.Assert(wordPositionList.Count == topLeftList.Count);
+            Debug.Assert(wordAndCanvasList.Count>0 && wordAndCanvasList.Count == topLeftList.Count);
 
             // If we don't really move, there is nothing more to do
-            bool isRealMove = wordPositionList[0].StartRow != topLeftList[0].StartRow || wordPositionList[0].StartColumn != topLeftList[0].StartColumn || wordPositionList[0].IsVertical != topLeftList[0].IsVertical;
-            if (!isRealMove)
+            var firstWP = wordAndCanvasList.First();
+            var firstTL = topLeftList.First();
+            if (firstWP.WordPosition.StartRow == firstTL.StartRow && firstWP.WordPosition.StartColumn == firstTL.StartColumn && firstWP.WordPosition.IsVertical == firstTL.IsVertical)
                 return;
 
             // Memorize position before move for undo, unless we're undoing or the move
             if (memorizeForUndo)
-                UndoStack.Push(wordPositionList);
+                UndoStack.Push(wordAndCanvasList);
 
-            for (int i = 0; i < wordPositionList.Count; i++)
-                model.UpdateWordPositionLocation(wordPositionList[i], topLeftList[i]);
+            foreach (var item in Enumerable.Zip(wordAndCanvasList, topLeftList, (wordPosition, topLeft) => (wordPosition, topLeft)))
+                // ToDo: Rename Item1 and Item2 once project can migrate to C# 7.1 (VS 2017 15.x)
+                model.UpdateWordPositionLocation(item.Item1.WordPosition, item.Item2);
         }
 
 

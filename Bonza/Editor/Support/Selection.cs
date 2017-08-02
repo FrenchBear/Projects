@@ -17,7 +17,7 @@ namespace Bonza.Editor.Support
 
     class Selection
     {
-        private List<WordPosition> m_WordPositionList;
+        private List<WordAndCanvas> m_WordAndCanvasList;
         private readonly BonzaView view;
         private readonly BonzaViewModel viewModel;
 
@@ -28,32 +28,35 @@ namespace Bonza.Editor.Support
         }
 
 
-        public ReadOnlyCollection<WordPosition> WordPositionList => m_WordPositionList?.AsReadOnly();
+        // ToDo: Remove this
+        //public IEnumerable<WordPosition> WordPositionList => m_WordAndCanvasList?.Select(wac => wac.WordPosition);
+
+        public ReadOnlyCollection<WordAndCanvas> WordAndCanvasList => m_WordAndCanvasList?.AsReadOnly();
+
 
         public void Clear()
         {
-            if (m_WordPositionList == null)
+            if (m_WordAndCanvasList == null)
                 return;
 
             // Before clearing selection, remove highlight
-            m_WordPositionList?.Select(wp => view.Map.GetWordCanvasFromWordPosition(wp)).ForEach(ca => ca.SetColor(App.NormalForegroundBrush, App.NormalBackgroundBrush));
+            m_WordAndCanvasList?.ForEach(wac => wac.WordCanvas.SetColor(App.NormalForegroundBrush, App.NormalBackgroundBrush));
 
             // Optimization, by convention null means no selection
-            m_WordPositionList = null;
+            m_WordAndCanvasList = null;
 
             viewModel.SelectedWordCount = 0;
         }
 
-        public void Add(WordPosition wp)
+        public void Add(WordAndCanvas wac)
         {
-            if (m_WordPositionList == null)
-                m_WordPositionList = new List<WordPosition>();
+            if (m_WordAndCanvasList == null)
+                m_WordAndCanvasList = new List<WordAndCanvas>();
 
-            if (!m_WordPositionList.Contains(wp))
+            if (!m_WordAndCanvasList.Contains(wac))
             {
-                m_WordPositionList.Add(wp);
-                WordCanvas wc = view.Map.GetWordCanvasFromWordPosition(wp);
-                wc.SetColor(App.SelectedForegroundBrush, App.SelectedBackgroundBrush);
+                m_WordAndCanvasList.Add(wac);
+                wac.WordCanvas.SetColor(App.SelectedForegroundBrush, App.SelectedBackgroundBrush);
 
                 viewModel.SelectedWordCount++;
             }
@@ -61,7 +64,7 @@ namespace Bonza.Editor.Support
 
         internal void SwapOrientation()
         {
-            if (m_WordPositionList == null)
+            if (m_WordAndCanvasList == null)
                 return;
 
             // ToDo: Make sure that caller check that position is valid (recycle snail re-placement pattern)
@@ -69,11 +72,10 @@ namespace Bonza.Editor.Support
             // ToDo: Redraw background grid if needed (done at the end of position check/snail re-placement?)
 
             // wc.SwapOrientation only relocate visually letters and update 
-            foreach (WordPosition wp in m_WordPositionList)
+            foreach (WordAndCanvas wac in m_WordAndCanvasList)
             {
-                WordCanvas wc = view.Map.GetWordCanvasFromWordPosition(wp);
-                wp.IsVertical = !wp.IsVertical;
-                wc.RebuildCanvasAfterOrientationSwap();
+                wac.WordPosition.IsVertical = !wac.WordPosition.IsVertical;
+                wac.WordCanvas.RebuildCanvasAfterOrientationSwap();
             }
         }
     }
