@@ -2,7 +2,6 @@
 // MVVM View
 // 2017-07-22   PV  First version
 
-// ToDo: Esc cancel a move operation (clean properly), and cancel selection
 // ToDo: Let user change orientation of a word
 // ToDo: Delete selection command
 // ToDo: Add a word or a group of words
@@ -70,12 +69,32 @@ namespace Bonza.Editor.View
             UpdateBackgroundGrid();
         }
 
+
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape)
             {
                 // Actually we should terminate a move in progress, but since it's short, for now we can ignore it
                 if (IsAnimationInProgress()) return;
+
+                // Move in progress?
+                if (pmm != null)
+                {
+                    MainGrid.MouseMove -= MainGrid_MouseMoveWhenDown;
+                    MainGrid.MouseMove += MainGrid_MouseMoveWhenUp;
+                    pmm = null;
+                    Mouse.Capture(null);
+
+                    // Restore position of selected WordCanvas
+                    foreach (var wac in Sel.WordAndCanvasList)
+                    {
+                        double top = wac.WordPosition.StartRow * UnitSize;
+                        double left = wac.WordPosition.StartColumn * UnitSize;
+                        wac.WordCanvas.SetValue(Canvas.TopProperty, top);
+                        wac.WordCanvas.SetValue(Canvas.LeftProperty, left);
+                    }
+                    return;
+                }
 
                 // CLear selection if any
                 if (Sel.WordAndCanvasList?.Count > 0)
@@ -210,6 +229,7 @@ namespace Bonza.Editor.View
         // Mouse click and drag management
 
         Point previousMousePosition;
+
         // null indicates background grid move, or delegate must be executed by MouseMove to perform move 
         // action, P is current mouse coordinates in non-transformed user space
         Action<Point> pmm;
@@ -277,7 +297,6 @@ namespace Bonza.Editor.View
             MainGrid.MouseMove -= MainGrid_MouseMoveWhenUp;
             MainGrid.MouseMove += MainGrid_MouseMoveWhenDown;
             previousMousePosition = e.GetPosition(MainGrid);
-
             UpdateSelectionAfterClick(e);
 
             // HitTest: Test if a word was clicked on, if true, hitTextBlock is a TextBloxk
@@ -314,7 +333,7 @@ namespace Bonza.Editor.View
                 clickOffsetList.Add(canvasTopLeft - m.Transform(previousMousePosition));
             }
 
-            // When moving, P is current mouse in ideal grid coordinates
+            // When moving, point is current mouse in ideal grid coordinates
             return point =>
             {
                 // Just move selected WordCanvas
@@ -364,7 +383,7 @@ namespace Bonza.Editor.View
                 cm = FindResource("WordCanvasMenu") as ContextMenu;
             else
                 cm = FindResource("BackgroundCanvasMenu") as ContextMenu;
-            Debug.Assert(cm!=null);
+            Debug.Assert(cm != null);
             cm.PlacementTarget = sender as UIElement;
             cm.IsOpen = true;
             e.Handled = true;
@@ -446,7 +465,7 @@ namespace Bonza.Editor.View
                     int st = 1;
                     int sign = 1;
 
-                    for (;;)
+                    for (; ; )
                     {
                         for (int i = 0; i < st; i++)
                         {
@@ -465,7 +484,7 @@ namespace Bonza.Editor.View
                     }
                 }
 
-                FoundValidPosition:
+            FoundValidPosition:
                 // Move to final, rounded position
                 viewModel.UpdateWordPositionLocation(Sel.WordAndCanvasList, topLeftList, true);     // Update WordPosition with new location
                 MoveWordAndCanvasList(Sel.WordAndCanvasList);
@@ -478,7 +497,7 @@ namespace Bonza.Editor.View
         internal void MoveWordAndCanvasList(IList<WordAndCanvas> wordAndCanvasList)
         {
             if (wordAndCanvasList == null) throw new ArgumentNullException(nameof(wordAndCanvasList));
-            if (wordAndCanvasList.Count==0) throw new ArgumentException(nameof(wordAndCanvasList));
+            if (wordAndCanvasList.Count == 0) throw new ArgumentException(nameof(wordAndCanvasList));
 
             // If bounding rectangle is updated, need to redraw background grid
             (int minRow, int maxRow, int minColumn, int maxColumn) = viewModel.Layout.GetBounds();
