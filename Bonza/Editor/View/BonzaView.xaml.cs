@@ -7,6 +7,7 @@
 // ToDo: Delete selection command
 // ToDo: Add a word or a group of words
 
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,7 +19,10 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Bonza.Editor.ViewModel;
+using Bonza.Editor.Support;
 using Bonza.Generator;
+using static Bonza.Editor.App;
+
 
 namespace Bonza.Editor.View
 {
@@ -29,13 +33,10 @@ namespace Bonza.Editor.View
     {
         private readonly BonzaViewModel viewModel;
 
-        // Size of the side of a square
-        // Background grid is drawn using lines of width 1 (or 3 for origin axes) [hardcoded]
-        // Font size is 16 and padding are also hardcoded
-        private const double UnitSize = 25;
-
         internal readonly Selection Sel;    // Manages current selection
         internal readonly MapClass Map;     // Mapping WordPosition <--> WordCanvas
+
+        private List<WordAndCanvas> WordAndCanvasList;
 
 
         // --------------------------------------------------------------------
@@ -47,6 +48,7 @@ namespace Bonza.Editor.View
             viewModel = new BonzaViewModel(this);
             DataContext = viewModel;
 
+            WordAndCanvasList = new List<WordAndCanvas>();
             Sel = new Selection(this, viewModel);
             Map = new MapClass();
 
@@ -80,6 +82,8 @@ namespace Bonza.Editor.View
             // Clear previous elements layout
             DrawingCanvas.Children.Clear();
             ClearBackgroundGrid();
+
+            WordAndCanvasList = new List<WordAndCanvas>();
         }
 
 
@@ -89,11 +93,12 @@ namespace Bonza.Editor.View
             // Draw letters
             foreach (WordPosition wp in viewModel.WordPositionList)
             {
-                // Group letters in a WordCanvas to be able later to move them at once
-                WordCanvas wordCanvas = new WordCanvas(wp);
-                Map.Add(wp, wordCanvas);
+                WordCanvas wc = new WordCanvas(wp);
+                WordAndCanvas wac = new WordAndCanvas(wp, wc);
 
-                DrawingCanvas.Children.Add(wordCanvas);
+                WordAndCanvasList.Add(wac);
+                
+                DrawingCanvas.Children.Add(wac.m_WordCanvas);
             }
 
             Sel.Clear();
@@ -188,21 +193,6 @@ namespace Bonza.Editor.View
             UpdateTransformationsFeedBack();
             UpdateBackgroundGrid();
         }
-
-
-
-        // --------------------------------------------------------------------
-        // Color management
-
-        // Some colors
-        internal static readonly Brush NormalBackgroundBrush = Brushes.Black;
-        internal static readonly Brush NormalForegroundBrush = Brushes.White;
-
-        internal static readonly Brush SelectedBackgroundBrush = Brushes.DarkBlue;
-        internal static readonly Brush SelectedForegroundBrush = Brushes.White;
-
-        internal static readonly Brush ProblemBackgroundBrush = Brushes.DarkRed;
-        internal static readonly Brush ProblemForegroundBrush = Brushes.White;
 
 
 

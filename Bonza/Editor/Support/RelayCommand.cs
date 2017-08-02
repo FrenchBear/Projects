@@ -3,10 +3,11 @@
 // A simple bonus is the generic interface to support parameter types less abstract than 'object'
 // 2012-04-17   PV  First version
 
+
 using System;
 using System.Windows.Input;
 
-namespace Bonza.Editor
+namespace Bonza.Editor.Support
 {
     class RelayCommand<T> : ICommand
     {

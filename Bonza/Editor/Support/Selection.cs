@@ -10,8 +10,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Bonza.Editor.ViewModel;
 using Bonza.Generator;
+using Bonza.Editor.View;
 
-namespace Bonza.Editor.View
+namespace Bonza.Editor.Support
 {
 
     class Selection
@@ -35,7 +36,7 @@ namespace Bonza.Editor.View
                 return;
 
             // Before clearing selection, remove highlight
-            m_WordPositionList?.Select(wp => view.Map.GetWordCanvasFromWordPosition(wp)).ForEach(ca => ca.SetColor(BonzaView.NormalForegroundBrush, BonzaView.NormalBackgroundBrush));
+            m_WordPositionList?.Select(wp => view.Map.GetWordCanvasFromWordPosition(wp)).ForEach(ca => ca.SetColor(App.NormalForegroundBrush, App.NormalBackgroundBrush));
 
             // Optimization, by convention null means no selection
             m_WordPositionList = null;
@@ -51,8 +52,8 @@ namespace Bonza.Editor.View
             if (!m_WordPositionList.Contains(wp))
             {
                 m_WordPositionList.Add(wp);
-                BonzaView.WordCanvas wc = view.Map.GetWordCanvasFromWordPosition(wp);
-                wc.SetColor(BonzaView.SelectedForegroundBrush, BonzaView.SelectedBackgroundBrush);
+                WordCanvas wc = view.Map.GetWordCanvasFromWordPosition(wp);
+                wc.SetColor(App.SelectedForegroundBrush, App.SelectedBackgroundBrush);
 
                 viewModel.SelectedWordCount++;
             }
@@ -60,12 +61,20 @@ namespace Bonza.Editor.View
 
         internal void SwapOrientation()
         {
+            if (m_WordPositionList == null)
+                return;
+
             // ToDo: Make sure that caller check that position is valid (recycle snail re-placement pattern)
             // ToDo: Caller must support undo
             // ToDo: Redraw background grid if needed (done at the end of position check/snail re-placement?)
 
             // wc.SwapOrientation only relocate visually letters and update 
-            m_WordPositionList?.Select(wp => view.Map.GetWordCanvasFromWordPosition(wp)).ForEach(wc => wc.SwapOrientation());
+            foreach (WordPosition wp in m_WordPositionList)
+            {
+                WordCanvas wc = view.Map.GetWordCanvasFromWordPosition(wp);
+                wp.IsVertical = !wp.IsVertical;
+                wc.RebuildCanvasAfterOrientationSwap();
+            }
         }
     }
 

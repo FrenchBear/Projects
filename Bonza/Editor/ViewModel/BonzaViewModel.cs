@@ -14,6 +14,7 @@ using System.Windows.Input;
 using Bonza.Editor.Model;
 using Bonza.Generator;
 using Microsoft.Win32;
+using Bonza.Editor.Support;
 
 namespace Bonza.Editor.ViewModel
 {

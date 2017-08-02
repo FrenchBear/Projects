@@ -3,9 +3,13 @@
 //
 // 2017-07-29   PV  First version, extracted from view
 
+// ToDo: Replace this class by a combination of WordPosition and WordCanvas
+
+
 using System.Collections.Generic;
 using System.Windows;
 using Bonza.Generator;
+using Bonza.Editor.Support;
 
 namespace Bonza.Editor.View
 {

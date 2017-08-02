@@ -3,11 +3,12 @@
 // From http://pwlodek.blogspot.fr/2010/12/matrixanimation-for-wpf.html
 // 2017-07-25   PV
 
+
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
-namespace Bonza.Editor.View
+namespace Bonza.Editor.Support
 {
     public class MatrixAnimation : MatrixAnimationBase
     {
