@@ -3,7 +3,6 @@
 // 2017-07-22   PV  First version
 
 // ToDo: Let user change orientation of a word
-// ToDo: Delete selection command
 // ToDo: Add a word or a group of words
 
 
@@ -150,7 +149,7 @@ namespace Bonza.Editor.View
             if (memorizeForUndo)
                 viewModel.UndoStack.MemorizeDelete(Sel.WordAndCanvasList);
 
-            // Delete in view and model
+            // Delete in View and ViewModel
             foreach (WordAndCanvas wac in Sel.WordAndCanvasList)
             {
                 DrawingCanvas.Children.Remove(wac.WordCanvas);
@@ -164,6 +163,33 @@ namespace Bonza.Editor.View
             // Finally redraw grid if needed
             UpdateBackgroundGrid();
         }
+
+
+        internal void AddWordAndCanvasList(IList<WordAndCanvas> wordAndCanvasList, bool memorizeForUndo)
+        {
+            // Clear selection first, if it exists
+            Sel.Clear();
+
+            // ToDo: Undo support
+            //if (memorizeForUndo)
+            //    viewModel.UndoStack.MemorizeAdd(wordAndCanvasList);
+
+            // Add to View and ViewModel
+            foreach (WordAndCanvas wac in wordAndCanvasList)
+            {
+                viewModel.AddWordPosition(wac.WordPosition);
+                WordAndCanvasList.Add(wac);
+                DrawingCanvas.Children.Add(wac.WordCanvas);
+            }
+
+            // Select all we've just restored
+            Sel.Add(wordAndCanvasList);
+
+            // Finally redraw grid if needed
+            UpdateBackgroundGrid();
+        }
+
+
 
 
 

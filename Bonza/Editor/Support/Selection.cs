@@ -63,6 +63,14 @@ namespace Bonza.Editor.Support
             }
         }
 
+        // Overload helper
+        internal void Add(IEnumerable<WordAndCanvas> wordAndCanvasList)
+        {
+            foreach (WordAndCanvas wac in wordAndCanvasList)
+                Add(wac);
+        }
+
+
         // Swaps a single word between orizontal and vertical orientation
         internal void SwapOrientation()
         {
@@ -88,6 +96,7 @@ namespace Bonza.Editor.Support
             m_WordAndCanvasList = null;
             viewModel.SelectedWordCount = 0;
         }
+
     }
 
 }

@@ -107,6 +107,13 @@ namespace Bonza.Editor.ViewModel
             model.RemoveWordPosition(wordPosition);
         }
 
+        internal void AddWordPosition(WordPosition wordPosition)
+        {
+            model.AddWordPosition(wordPosition);
+        }
+
+
+
 
         // -------------------------------------------------
         // Bindings
@@ -185,7 +192,7 @@ namespace Bonza.Editor.ViewModel
                     break;
 
                 case UndoActions.Delete:
-                    MessageBox.Show("ToDo: PerformUndo Delete");
+                    view.AddWordAndCanvasList(action.WordAndCanvasList, false);
                     break;
 
                 default:
@@ -231,9 +238,18 @@ namespace Bonza.Editor.ViewModel
             if (memorizeForUndo)
                 UndoStack.MemorizeMove(wordAndCanvasList);
 
+            // Move: Need to delete all, then add all again, otherwise if we move a word individually, it may collide with other
+            // of the list that han't been moved by this loop yet...
+            foreach (WordPosition wp in wordAndCanvasList.Select(wac => wac.WordPosition))
+                model.RemoveWordPosition(wp);
             foreach (var item in Enumerable.Zip(wordAndCanvasList, topLeftList, (wac, tl) => (WordAndCanvas: wac, topLeft: tl)))
-                // ToDo: Rename Item1 and Item2 once project can migrate to C# 7.1 (VS 2017 15.x)
-                model.UpdateWordPositionLocation(item.WordAndCanvas.WordPosition, item.topLeft);
+            {
+                item.WordAndCanvas.WordPosition.StartRow = item.topLeft.StartRow;
+                item.WordAndCanvas.WordPosition.StartColumn = item.topLeft.StartColumn;
+                item.WordAndCanvas.WordPosition.IsVertical = item.topLeft.IsVertical;
+
+                model.AddWordPosition(item.WordAndCanvas.WordPosition);
+            }
         }
 
 

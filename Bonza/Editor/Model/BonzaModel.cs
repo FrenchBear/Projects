@@ -74,19 +74,24 @@ namespace Bonza.Editor.Model
         }
 
 
-        // Update a word in current Layout
-        internal void UpdateWordPositionLocation(WordPosition word, PositionOrientation po)
-        {
-            Layout.UpdateWordPositionLocation(word, po);
+        //// Update a word in current Layout
+        //internal void UpdateWordPositionLocation(WordPosition word, PositionOrientation po)
+        //{
+        //    Layout.UpdateWordPositionLocation(word, po);
 
-            // Need to recompute number of words not connected
-            viewModel.WordsNotConnected = Layout.GetWordsNotConnected();
-        }
+        //    // Need to recompute number of words not connected
+        //    viewModel.WordsNotConnected = Layout.GetWordsNotConnected();
+        //}
 
         // Removes a word from current Layout
         internal void RemoveWordPosition(WordPosition wordPosition)
         {
-            Layout.RemoveWordPosition(wordPosition);
+            Layout.RemoveWordPositionAndSquares(wordPosition);
+        }
+
+        internal void AddWordPosition(WordPosition wordPosition)
+        {
+            Layout.AddWordPositionAndSquares(wordPosition);
         }
     }
 }

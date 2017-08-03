@@ -33,7 +33,7 @@ namespace Bonza.Generator
             AddSquares(wp);
         }
 
-        public void RemoveWordPosition(WordPosition wp)
+        public void RemoveWordPositionAndSquares(WordPosition wp)
         {
             if (wp == null)
                 throw new ArgumentNullException(nameof(wp));
@@ -43,6 +43,7 @@ namespace Bonza.Generator
             RemoveSquares(wp);
             m_WordPositionList.Remove(wp);
         }
+
 
         private void AddSquares(WordPosition wp)
         {
@@ -87,17 +88,17 @@ namespace Bonza.Generator
         }
 
 
-        // Update Word location, including squares
-        public void UpdateWordPositionLocation(WordPosition wp, PositionOrientation po)
-        {
-            RemoveSquares(wp);
+        //// Update Word location, including squares
+        //public void UpdateWordPositionLocation(WordPosition wp, PositionOrientation po)
+        //{
+        //    RemoveSquares(wp);
 
-            wp.StartRow = po.StartRow;
-            wp.StartColumn = po.StartColumn;
-            wp.IsVertical = po.IsVertical;
+        //    wp.StartRow = po.StartRow;
+        //    wp.StartColumn = po.StartColumn;
+        //    wp.IsVertical = po.IsVertical;
 
-            AddSquares(wp);
-        }
+        //    AddSquares(wp);
+        //}
 
 
         // Returns square at a given position, or null if there is nothing in current layout
