@@ -11,6 +11,8 @@ using System.Linq;
 using Bonza.Editor.ViewModel;
 using Bonza.Generator;
 using Bonza.Editor.View;
+using System;
+using System.Diagnostics;
 
 namespace Bonza.Editor.Support
 {
@@ -44,7 +46,6 @@ namespace Bonza.Editor.Support
 
             // Optimization, by convention null means no selection
             m_WordAndCanvasList = null;
-
             viewModel.SelectedWordCount = 0;
         }
 
@@ -62,10 +63,10 @@ namespace Bonza.Editor.Support
             }
         }
 
+        // Swaps a single word between orizontal and vertical orientation
         internal void SwapOrientation()
         {
-            if (m_WordAndCanvasList == null)
-                return;
+            Debug.Assert(m_WordAndCanvasList != null && m_WordAndCanvasList.Count == 1);
 
             // ToDo: Make sure that caller check that position is valid (recycle snail re-placement pattern)
             // ToDo: Caller must support undo
@@ -77,6 +78,15 @@ namespace Bonza.Editor.Support
                 wac.WordPosition.IsVertical = !wac.WordPosition.IsVertical;
                 wac.WordCanvas.RebuildCanvasAfterOrientationSwap();
             }
+        }
+
+        // Delete selection
+        internal void Delete()
+        {
+            Debug.Assert(m_WordAndCanvasList != null && m_WordAndCanvasList.Count > 0);
+
+            m_WordAndCanvasList = null;
+            viewModel.SelectedWordCount = 0;
         }
     }
 

@@ -2,6 +2,8 @@
 // MVVM Model
 // 2017-07-22   PV  First version
 
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bonza.Editor.ViewModel;
@@ -75,13 +77,16 @@ namespace Bonza.Editor.Model
         // Update a word in current Layout
         internal void UpdateWordPositionLocation(WordPosition word, PositionOrientation po)
         {
-            word.StartRow = po.StartRow;
-            word.StartColumn = po.StartColumn;
-            word.IsVertical = po.IsVertical;
+            Layout.UpdateWordPositionLocation(word, po);
 
             // Need to recompute number of words not connected
             viewModel.WordsNotConnected = Layout.GetWordsNotConnected();
         }
 
+        // Removes a word from current Layout
+        internal void RemoveWordPosition(WordPosition wordPosition)
+        {
+            Layout.RemoveWordPosition(wordPosition);
+        }
     }
 }

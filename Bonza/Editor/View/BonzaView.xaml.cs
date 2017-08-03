@@ -141,6 +141,33 @@ namespace Bonza.Editor.View
         }
 
 
+        // Remove all the words from selection
+        internal void DeleteSelection(bool memorizeForUndo)
+        {
+            Debug.Assert(Sel.WordAndCanvasList != null && Sel.WordAndCanvasList.Count > 0);
+
+            // Undo support
+            if (memorizeForUndo)
+                viewModel.UndoStack.MemorizeDelete(Sel.WordAndCanvasList);
+
+            // Delete in view and model
+            foreach (WordAndCanvas wac in Sel.WordAndCanvasList)
+            {
+                DrawingCanvas.Children.Remove(wac.WordCanvas);
+                WordAndCanvasList.Remove(wac);
+                viewModel.RemoveWordPosition(wac.WordPosition);
+            }
+
+            // Delete in selection
+            Sel.Delete();
+
+            // Finally redraw grid if needed
+            UpdateBackgroundGrid();
+        }
+
+
+
+
         // Adjust scale and origin to see the whole puzzle
         internal void RescaleAndCenter(bool isWithAnimation)
         {
@@ -148,9 +175,12 @@ namespace Bonza.Editor.View
                 return;
 
             (int minRow, int maxRow, int minColumn, int maxColumn) = viewModel.Layout.GetBounds();
-            // Add some extra margin
-            minRow -= 2; minColumn -= 2;
-            maxRow += 3; maxColumn += 3;
+            // Add some extra margin and always represent a 20x20 grid at minimum
+            minRow = Math.Min(-11, minRow - 3);
+            minColumn = Math.Min(-11, minColumn - 3);
+            maxRow = Math.Max(11, maxRow + 4);
+            maxColumn = Math.Max(11, maxColumn + 4);
+
 
             // Reverse-transform corners into WordCanvas coordinates
             Point p1Grid = new Point(minColumn * UnitSize, minRow * UnitSize);
@@ -222,7 +252,6 @@ namespace Bonza.Editor.View
             UpdateTransformationsFeedBack();
             UpdateBackgroundGrid();
         }
-
 
 
         // --------------------------------------------------------------------
@@ -596,11 +625,12 @@ namespace Bonza.Editor.View
             if (viewModel.Layout != null)
             {
                 (minRowGrid, maxRowGrid, minColumnGrid, maxColumnGrid) = viewModel.Layout.GetBounds();
-                // Add some extra margin
-                int minRow = minRowGrid - 2;
-                int minColumn = minColumnGrid - 2;
-                int maxRow = maxRowGrid + 3;
-                int maxColumn = maxColumnGrid + 3;
+
+                // Add some extra margin and always represent a 20x20 grid at minimum
+                int minRow = Math.Min(-10, minRowGrid - 2);
+                int minColumn = Math.Min(-10, minColumnGrid - 2);
+                int maxRow = Math.Max(10, maxRowGrid + 3);
+                int maxColumn = Math.Max(10, maxColumnGrid + 3);
 
                 for (int row = minRow; row <= maxRow; row++)
                 {

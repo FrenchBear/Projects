@@ -11,6 +11,7 @@ using Bonza.Generator;
 using Bonza.Editor.View;
 using static Bonza.Editor.App;
 
+
 namespace Bonza.Editor.Support
 {
     internal class WordCanvas : Canvas
