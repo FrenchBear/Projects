@@ -1,93 +1,113 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <DirectedGraph DataVirtualized="True" Layout="Sugiyama" ZoomLevel="-1" xmlns="http://schemas.microsoft.com/vs/2009/dgml">
   <Nodes>
-    <Node Id="(@3 Namespace=Bonza.Editor.Properties)" Category="CodeSchema_Namespace" Bounds="179.72110290482,93.1333092424157,179.516666666667,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="Bonza‎.Editor‎.Properties" />
-    <Node Id="@10" Category="CodeSchema_Class" Bounds="-170.209730428513,-95.2418907575842,166.726666666667,25" CodeSchemaProperty_IsGeneric="True" CodeSchemaProperty_IsInternal="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="RelayCommand‎&lt;T‎&gt;" />
-    <Node Id="@11" Category="CodeSchema_Class" Bounds="243.475269571487,-95.2418907575842,137.356666666667,25" CodeSchemaProperty_IsPublic="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="AboutWindow" />
-    <Node Id="@12" Category="CodeSchema_Class" Bounds="411.730269571487,-95.2418907575842,82.8466666666668,25" CodeSchemaProperty_IsPublic="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="App" />
-    <Node Id="@14" Category="CodeSchema_Class" Bounds="525.50860290482,-95.2418907575842,127.29,25" CodeSchemaProperty_IsInternal="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="BonzaModel" />
-    <Node Id="@16" Category="CodeSchema_Class" Bounds="75.8819362381534,-38.5543907575842,118.543333333333,25" CodeSchemaProperty_IsPublic="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="BonzaView" />
-    <Node Id="@17" Category="CodeSchema_Class" Bounds="132.85360290482,-151.929390757584,152.6,25" CodeSchemaProperty_IsInternal="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="BonzaViewModel" />
-    <Node Id="@18" Category="CodeSchema_Class" Bounds="60.5486029048203,18.1331092424158,149.21,25" CodeSchemaProperty_IsPublic="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="MatrixAnimation" />
-    <Node Id="@19" Category="CodeSchema_Class" Bounds="26.5686029048203,-95.2418907575842,109.17,25" CodeSchemaProperty_IsInternal="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="Selection" />
-    <Node Id="@2" Category="CodeSchema_Assembly" Bounds="179.110347226747,283.164859242416,154.34,25" CodeSchemaProperty_StrongName="TestGenerator, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" DelayedChildNodesState="Fetched" DelayedCrossGroupLinksState="Fetched" FetchedChildrenCount="1" FilePath="$(0c699a00-6e47-4559-a59f-3efb75e7fdb8.OutputPath)" Group="Collapsed" Label="TestGenerator.exe" UseManualLocation="True" />
-    <Node Id="@4" Category="CodeSchema_Assembly" Bounds="-210.209730428513,-231.929590757584,903.008333333333,370.063" CodeSchemaProperty_StrongName="BonzaEditor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" DelayedChildNodesState="Fetched" DelayedCrossGroupLinksState="Fetched" FetchedChildrenCount="2" FilePath="$(454ef9c3-ad96-45f0-b63a-79589d324554.OutputPath)" Group="Expanded" Label="BonzaEditor.exe" UseManualLocation="True">
+    <Node Id="(@1 Namespace=Bonza.Editor.Properties)" Category="CodeSchema_Namespace" Bounds="-280.006185615873,122.531393216801,179.516666666667,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="Bonza‎.Editor‎.Properties" />
+    <Node Id="@10" Category="CodeSchema_Class" Bounds="-28.4571666755009,110.831202072278,137.356666666667,25" CodeSchemaProperty_IsPublic="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="AboutWindow" />
+    <Node Id="@11" Category="CodeSchema_Class" Bounds="178.891668042966,55.7769211432199,127.29,25" CodeSchemaProperty_IsInternal="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="BonzaModel" />
+    <Node Id="@12" Category="CodeSchema_Class" Bounds="-28.4451468476963,55.8186365429094,118.543333333333,25" CodeSchemaProperty_IsPublic="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="BonzaView" />
+    <Node Id="@13" Category="CodeSchema_Class" Bounds="25.7219470662071,-59.2062874956853,152.6,25" CodeSchemaProperty_IsInternal="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="BonzaViewModel" />
+    <Node Id="@14" Category="CodeSchema_Class" Bounds="-94.4876445215344,-174.18196345709,149.21,25" CodeSchemaProperty_IsPublic="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="MatrixAnimation" />
+    <Node Id="@15" Category="CodeSchema_Class" Bounds="167.674439053342,-339.333813140704,109.17,25" CodeSchemaProperty_IsInternal="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="Selection" />
+    <Node Id="@16" Category="CodeSchema_Class" Bounds="-18.8438942799917,-339.333813140704,124.206666666667,25" CodeSchemaProperty_IsInternal="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="UndoAction" />
+    <Node Id="@17" Category="CodeSchema_Enum" Bounds="-94.4875371840636,-284.18196345709,125.3,25" CodeSchemaProperty_IsFinal="True" CodeSchemaProperty_IsInternal="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="UndoActions" />
+    <Node Id="@18" Category="CodeSchema_Class" Bounds="64.0461057200085,-394.333913140704,144.426666666667,25" CodeSchemaProperty_IsInternal="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="UndoStackClass" />
+    <Node Id="@19" Category="CodeSchema_Class" Bounds="61.8194390533418,-284.333713140704,148.88,25" CodeSchemaProperty_IsInternal="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="WordAndCanvas" />
+    <Node Id="@2" Category="CodeSchema_Assembly" Bounds="-300.006185615873,-474.334113140704,646.195785607038,705.236328918045" CodeSchemaProperty_StrongName="BonzaEditor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" DelayedChildNodesState="Fetched" DelayedCrossGroupLinksState="Fetched" FetchedChildrenCount="6" FilePath="$(454ef9c3-ad96-45f0-b63a-79589d324554.OutputPath)" Group="Expanded" Label="BonzaEditor.exe" UseManualLocation="True">
       <Category Ref="CodeMap_WpfProject" />
       <Category Ref="FileSystem.Category.FileOfType.exe" />
     </Node>
-    <Node Id="@6" Category="CodeSchema_Assembly" Bounds="176.75,228.164759242416,160.84,25" CodeSchemaProperty_StrongName="BonzaGenerator, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" FilePath="$(46505a9e-b84d-4664-bb02-515706791af3.OutputPath)" Group="Collapsed" Label="BonzaGenerator.dll" />
-    <Node Id="@8" Category="CodeSchema_Namespace" Bounds="-190.209730428513,-191.929490757584,863.008333333333,255.0627" DelayedChildNodesState="Fetched" DelayedCrossGroupLinksState="Fetched" FetchedChildrenCount="8" Group="Expanded" Label="Bonza‎.Editor" UseManualLocation="True" />
-    <Node Id="@9" Category="CodeSchema_Namespace" Bounds="2.16439701667045,3.65314666666663,130.68,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="TestGenerator" UseManualLocation="True" />
+    <Node Id="@20" Category="CodeSchema_Class" Bounds="72.5414165565496,-229.273819540704,127.283333333333,25" CodeSchemaProperty_IsInternal="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="WordCanvas" />
+    <Node Id="@3" Category="CodeSchema_Namespace" Bounds="30.3182216660089,185.902115777341,123.146666666667,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="Bonza‎.Editor" />
+    <Node Id="@4" Category="CodeSchema_Namespace" Bounds="158.895668042966,15.7849211432199,167.288502666667,84.988" DelayedChildNodesState="Fetched" DelayedCrossGroupLinksState="Fetched" FetchedChildrenCount="1" Group="Expanded" Label="Bonza‎.Editor‎.Model" UseManualLocation="True" />
+    <Node Id="@6" Category="CodeSchema_Namespace" Bounds="-114.487644521534,-434.334013140704,411.332083574876,305.152149683614" DelayedChildNodesState="Fetched" DelayedCrossGroupLinksState="Fetched" FetchedChildrenCount="8" Group="Expanded" Label="Bonza‎.Editor‎.Support" UseManualLocation="True" />
+    <Node Id="@7" Category="CodeSchema_Namespace" Bounds="-48.4610986237008,15.7849211232198,177.356666666667,140.0003" DelayedChildNodesState="Fetched" DelayedCrossGroupLinksState="Fetched" FetchedChildrenCount="2" Group="Expanded" Label="Bonza‎.Editor‎.View" UseManualLocation="True" />
+    <Node Id="@8" Category="CodeSchema_Namespace" Bounds="5.75539332916672,-99.215291484194,192.6,85.0002" DelayedChildNodesState="Fetched" DelayedCrossGroupLinksState="Fetched" FetchedChildrenCount="1" Group="Expanded" Label="Bonza‎.Editor‎.ViewModel" UseManualLocation="True" />
+    <Node Id="@9" Category="CodeSchema_Class" Bounds="84.7730128116124,-174.273719540704,166.726666666667,25" CodeSchemaProperty_IsGeneric="True" CodeSchemaProperty_IsInternal="True" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="Fetched" Group="Collapsed" Label="RelayCommand‎&lt;T‎&gt;" />
   </Nodes>
   <Links>
-    <Link Source="@14" Target="@17" Category="References" Bounds="268.164459228516,-124.76244354248,258.770477294922,31.0235366821289" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="8">
+    <Link Source="@11" Target="@13" Category="References" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="7">
       <Category Ref="CodeSchema_Calls" />
     </Link>
-    <Link Source="@14" Target="@6" Category="References" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="38">
+    <Link Source="@12" Target="@13" Category="References" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="18">
       <Category Ref="CodeSchema_Calls" />
       <Category Ref="CodeSchema_FieldRead" />
+    </Link>
+    <Link Source="@12" Target="@14" Category="CodeSchema_Calls" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="3" />
+    <Link Source="@12" Target="@15" Category="References" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="39">
+      <Category Ref="CodeSchema_Calls" />
+    </Link>
+    <Link Source="@12" Target="@18" Category="CodeSchema_Calls" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="2" />
+    <Link Source="@12" Target="@19" Category="References" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="86">
+      <Category Ref="CodeSchema_Calls" />
+    </Link>
+    <Link Source="@12" Target="@20" Category="References" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="24">
+      <Category Ref="CodeSchema_Calls" />
+      <Category Ref="CodeSchema_ReturnTypeLink" />
+    </Link>
+    <Link Source="@12" Target="@3" Category="CodeSchema_FieldRead" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="30" />
+    <Link Source="@13" Target="@10" Category="CodeSchema_Calls" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="1" />
+    <Link Source="@13" Target="@11" Category="References" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="19">
+      <Category Ref="CodeSchema_Calls" />
+    </Link>
+    <Link Source="@13" Target="@12" Category="References" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="12">
+      <Category Ref="CodeSchema_Calls" />
+    </Link>
+    <Link Source="@13" Target="@16" Category="CodeSchema_FieldRead" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="6" />
+    <Link Source="@13" Target="@18" Category="References" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="6">
+      <Category Ref="CodeSchema_Calls" />
+    </Link>
+    <Link Source="@13" Target="@19" Category="References" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="26">
+      <Category Ref="CodeSchema_Calls" />
+    </Link>
+    <Link Source="@13" Target="@3" Category="CodeSchema_FieldRead" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="4" />
+    <Link Source="@13" Target="@9" Category="CodeSchema_Calls" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="11" />
+    <Link Source="@15" Target="@13" Category="References" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="6">
+      <Category Ref="CodeSchema_Calls" />
+    </Link>
+    <Link Source="@15" Target="@19" Category="References" Bounds="163.386897402638,-314.333813140704,39.3271226423744,25.1511125353821" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="27">
+      <Category Ref="CodeSchema_Calls" />
+    </Link>
+    <Link Source="@15" Target="@3" Category="CodeSchema_FieldRead" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="4" />
+    <Link Source="@16" Target="@17" Category="References" Bounds="-7.56311024921455,-314.333813140704,33.8020466656979,24.8245067925452" IsSourceVirtualized="True" Weight="2" />
+    <Link Source="@16" Target="@19" Category="References" Bounds="64.3957642600232,-314.333813140704,42.9806732896233,25.4187239677055" IsSourceVirtualized="True" Weight="1" />
+    <Link Source="@18" Target="@16" Category="References" Bounds="72.142440557037,-369.333913140704,42.9806732896233,25.4187239677055" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="19">
+      <Category Ref="CodeSchema_Calls" />
       <Category Ref="CodeSchema_FieldWrite" />
       <Category Ref="CodeSchema_ReturnTypeLink" />
     </Link>
-    <Link Source="@16" Target="@17" Category="References" Bounds="141.32780456543,-120.700546264648,47.2171173095703,82.1461753845215" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="14">
+    <Link Source="@18" Target="@19" Category="References" Bounds="136.259439053342,-369.333913140704,0,76.0002000000001" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="16">
       <Category Ref="CodeSchema_Calls" />
     </Link>
-    <Link Source="@16" Target="@18" Category="CodeSchema_Calls" Bounds="135.153610229492,-13.5543508529663,0,22.687518119812" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="3" />
-    <Link Source="@16" Target="@19" Category="References" Bounds="66.3300704956055,-62.2974662780762,34.4244155883789,23.7430953979492" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="28">
-      <Category Ref="CodeSchema_Calls" />
-    </Link>
-    <Link Source="@16" Target="@6" Category="References" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="83">
-      <Category Ref="CodeSchema_Calls" />
-      <Category Ref="CodeSchema_FieldRead" />
-      <Category Ref="CodeSchema_ReturnTypeLink" />
-    </Link>
-    <Link Source="@17" Target="@10" Category="CodeSchema_Calls" Bounds="-26.9454593658447,-127.766151428223,162.030115127563,30.3899612426758" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="11" />
-    <Link Source="@17" Target="@11" Category="CodeSchema_Calls" Bounds="230.54280090332,-126.929443359375,49.5957183837891,27.5254440307617" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="1" />
-    <Link Source="@17" Target="@12" Category="CodeSchema_Calls" Bounds="260.293792724609,-126.929443359375,142.720886230469,33.8850784301758" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="5" />
-    <Link Source="@17" Target="@14" Category="References" Bounds="283.874389648438,-128.282775878906,233.122802734375,34.776741027832" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="16">
-      <Category Ref="CodeSchema_Calls" />
-    </Link>
-    <Link Source="@17" Target="@16" Category="References" Bounds="176.148681640625,-126.929443359375,33.0049285888672,85.0418891906738" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="9">
-      <Category Ref="CodeSchema_Calls" />
-      <Category Ref="CodeSchema_FieldRead" />
-    </Link>
-    <Link Source="@17" Target="@19" Category="CodeSchema_Calls" Bounds="116.220375061035,-126.929443359375,63.3852615356445,27.9014434814453" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="1" />
-    <Link Source="@17" Target="@6" Category="References" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="50">
+    <Link Source="@19" Target="@20" Category="References" Bounds="136.212898930795,-259.333713140704,0.0292054018604233,21.0599022541728" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="6">
       <Category Ref="CodeSchema_Calls" />
       <Category Ref="CodeSchema_ReturnTypeLink" />
     </Link>
-    <Link Source="@19" Target="@16" Category="References" Bounds="104.968376159668,-70.2418975830078,28.461540222168,22.8541259765625" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="37">
-      <Category Ref="CodeSchema_Calls" />
-      <Category Ref="CodeSchema_FieldRead" />
-      <Category Ref="CodeSchema_ReturnTypeLink" />
-    </Link>
-    <Link Source="@19" Target="@17" Category="References" Bounds="71.7616271972656,-125.202789306641,64.6120758056641,29.9608764648438" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="5">
-      <Category Ref="CodeSchema_Calls" />
-    </Link>
-    <Link Source="@19" Target="@6" Category="References" Bounds="87.9568178779501,-70.2418907575842,158.107594549394,290.501614262266" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="15">
-      <Category Ref="CodeSchema_Calls" />
-    </Link>
-    <Link Source="@2" Target="@6" Category="CodeMap_ProjectReference" Bounds="67.9086350206636,18.6666666666666,1.24183879851259,21.0157717237145" />
-    <Link Source="@2" Target="@9" Category="Contains" FetchingParent="@2" />
-    <Link Source="@4" Target="(@3 Namespace=Bonza.Editor.Properties)" Category="Contains" FetchingParent="@4" />
-    <Link Source="@4" Target="@6" Category="CodeMap_ProjectReference" Bounds="249.753036499023,82.3339385986328,7.41697692871094,30" />
-    <Link Source="@4" Target="@8" Category="Contains" FetchingParent="@4" />
-    <Link Source="@8" Target="@10" Category="Contains" FetchingParent="@8" />
-    <Link Source="@8" Target="@11" Category="Contains" FetchingParent="@8" />
-    <Link Source="@8" Target="@12" Category="Contains" FetchingParent="@8" />
-    <Link Source="@8" Target="@14" Category="Contains" FetchingParent="@8" />
-    <Link Source="@8" Target="@16" Category="Contains" FetchingParent="@8" />
-    <Link Source="@8" Target="@17" Category="Contains" FetchingParent="@8" />
-    <Link Source="@8" Target="@18" Category="Contains" FetchingParent="@8" />
-    <Link Source="@8" Target="@19" Category="Contains" FetchingParent="@8" />
-    <Link Source="@9" Target="@6" Category="CodeSchema_Calls" Bounds="66.6599398844195,28.6666666666666,0.659779938827413,41.0013650102944" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="2" />
+    <Link Source="@2" Target="(@1 Namespace=Bonza.Editor.Properties)" Category="Contains" FetchingParent="@2" />
+    <Link Source="@2" Target="@3" Category="Contains" FetchingParent="@2" />
+    <Link Source="@2" Target="@4" Category="Contains" FetchingParent="@2" />
+    <Link Source="@2" Target="@6" Category="Contains" FetchingParent="@2" />
+    <Link Source="@2" Target="@7" Category="Contains" FetchingParent="@2" />
+    <Link Source="@2" Target="@8" Category="Contains" FetchingParent="@2" />
+    <Link Source="@20" Target="@3" Category="CodeSchema_FieldRead" IsSourceVirtualized="True" IsTargetVirtualized="True" Weight="10" />
+    <Link Source="@4" Target="@11" Category="Contains" FetchingParent="@4" />
+    <Link Source="@6" Target="@14" Category="Contains" FetchingParent="@6" />
+    <Link Source="@6" Target="@15" Category="Contains" FetchingParent="@6" />
+    <Link Source="@6" Target="@16" Category="Contains" FetchingParent="@6" />
+    <Link Source="@6" Target="@17" Category="Contains" FetchingParent="@6" />
+    <Link Source="@6" Target="@18" Category="Contains" FetchingParent="@6" />
+    <Link Source="@6" Target="@19" Category="Contains" FetchingParent="@6" />
+    <Link Source="@6" Target="@20" Category="Contains" FetchingParent="@6" />
+    <Link Source="@6" Target="@9" Category="Contains" FetchingParent="@6" />
+    <Link Source="@7" Target="@10" Category="Contains" FetchingParent="@7" />
+    <Link Source="@7" Target="@12" Category="Contains" FetchingParent="@7" />
+    <Link Source="@8" Target="@13" Category="Contains" FetchingParent="@8" />
   </Links>
   <Categories>
-    <Category Id="CodeMap_ProjectReference" Label="Project Reference" CanBeDataDriven="True" CanLinkedNodesBeDataDriven="True" IncomingActionLabel="Referenced By" OutgoingActionLabel="References" />
     <Category Id="CodeMap_WpfProject" Label="WPF Project" CanBeDataDriven="True" IsProviderRoot="False" NavigationActionLabel="WPF Projects" />
     <Category Id="CodeSchema_Assembly" Label="Assembly" BasedOn="File" CanBeDataDriven="True" DefaultAction="Microsoft.Contains" Icon="CodeSchema_Assembly" NavigationActionLabel="Assemblies" />
     <Category Id="CodeSchema_Calls" Label="Calls" CanBeDataDriven="True" CanLinkedNodesBeDataDriven="True" IncomingActionLabel="Called By" OutgoingActionLabel="Calls" />
     <Category Id="CodeSchema_Class" Label="Class" BasedOn="CodeSchema_Type" CanBeDataDriven="True" DefaultAction="Node:Both:CodeSchema_Member" Icon="CodeSchema_Class" NavigationActionLabel="Classes" />
+    <Category Id="CodeSchema_Enum" Label="Enum" BasedOn="CodeSchema_Type" CanBeDataDriven="True" DefaultAction="Node:Both:CodeSchema_Member" Icon="CodeSchema_Enum" NavigationActionLabel="Enums" />
     <Category Id="CodeSchema_FieldRead" Label="Field Read" BasedOn="CodeSchema_FieldReference" CanBeDataDriven="True" CanLinkedNodesBeDataDriven="True" IncomingActionLabel="Read By" OutgoingActionLabel="Reads Fields" />
     <Category Id="CodeSchema_FieldReference" Label="Field Reference" CanBeDataDriven="True" CanLinkedNodesBeDataDriven="True" IncomingActionLabel="Referenced By" OutgoingActionLabel="References Fields" />
     <Category Id="CodeSchema_FieldWrite" Label="Field Write" BasedOn="CodeSchema_FieldReference" CanBeDataDriven="True" CanLinkedNodesBeDataDriven="True" IncomingActionLabel="Written By" OutgoingActionLabel="Writes Fields" />
@@ -103,6 +123,7 @@
     <Property Id="Bounds" DataType="System.Windows.Rect" />
     <Property Id="CanBeDataDriven" Label="CanBeDataDriven" Description="CanBeDataDriven" DataType="System.Boolean" />
     <Property Id="CanLinkedNodesBeDataDriven" Label="CanLinkedNodesBeDataDriven" Description="CanLinkedNodesBeDataDriven" DataType="System.Boolean" />
+    <Property Id="CodeSchemaProperty_IsFinal" Label="Is Final" Description="Flag to indicate the member is 'Final' and cannot be derived from" DataType="System.Boolean" />
     <Property Id="CodeSchemaProperty_IsGeneric" Label="Is Generic" Description="Flag to indicate the member is 'Generic'" DataType="System.Boolean" />
     <Property Id="CodeSchemaProperty_IsInternal" Label="Is Internal" Description="Flag to indicate the method is 'Internal'" DataType="System.Boolean" />
     <Property Id="CodeSchemaProperty_IsPublic" Label="Is Public" Description="Flag to indicate the scope is Public" DataType="System.Boolean" />
@@ -144,25 +165,26 @@
     <Name Id="Type" Label="Type" ValueType="System.Object" />
   </QualifiedNames>
   <IdentifierAliases>
-    <Alias n="1" Uri="Assembly=$(0c699a00-6e47-4559-a59f-3efb75e7fdb8.OutputPathUri)" />
+    <Alias n="1" Uri="Assembly=$(454ef9c3-ad96-45f0-b63a-79589d324554.OutputPathUri)" />
     <Alias n="2" Id="(@1)" />
-    <Alias n="3" Uri="Assembly=$(454ef9c3-ad96-45f0-b63a-79589d324554.OutputPathUri)" />
-    <Alias n="4" Id="(@3)" />
-    <Alias n="5" Uri="Assembly=$(46505a9e-b84d-4664-bb02-515706791af3.OutputPathUri)" />
-    <Alias n="6" Id="(@5)" />
-    <Alias n="7" Id="Namespace=Bonza.Editor" />
-    <Alias n="8" Id="(@3 @7)" />
-    <Alias n="9" Id="(@1 Namespace=TestGenerator)" />
-    <Alias n="10" Id="(@3 @7 Type=(Name=RelayCommand GenericParameterCount=1))" />
-    <Alias n="11" Id="(@3 @7 Type=AboutWindow)" />
-    <Alias n="12" Id="(@3 @7 Type=App)" />
-    <Alias n="13" Id="Type=BonzaModel" />
-    <Alias n="14" Id="(@3 @7 @13)" />
-    <Alias n="15" Id="Type=BonzaView" />
-    <Alias n="16" Id="(@3 @7 @15)" />
-    <Alias n="17" Id="(@3 @7 Type=BonzaViewModel)" />
-    <Alias n="18" Id="(@3 @7 Type=MatrixAnimation)" />
-    <Alias n="19" Id="(@3 @7 Type=Selection)" />
+    <Alias n="3" Id="(@1 Namespace=Bonza.Editor)" />
+    <Alias n="4" Id="(@1 Namespace=Bonza.Editor.Model)" />
+    <Alias n="5" Id="Namespace=Bonza.Editor.Support" />
+    <Alias n="6" Id="(@1 @5)" />
+    <Alias n="7" Id="(@1 Namespace=Bonza.Editor.View)" />
+    <Alias n="8" Id="(@1 Namespace=Bonza.Editor.ViewModel)" />
+    <Alias n="9" Id="(@1 @5 Type=(Name=RelayCommand GenericParameterCount=1))" />
+    <Alias n="10" Id="(@1 Namespace=Bonza.Editor.View Type=AboutWindow)" />
+    <Alias n="11" Id="(@1 Namespace=Bonza.Editor.Model Type=BonzaModel)" />
+    <Alias n="12" Id="(@1 Namespace=Bonza.Editor.View Type=BonzaView)" />
+    <Alias n="13" Id="(@1 Namespace=Bonza.Editor.ViewModel Type=BonzaViewModel)" />
+    <Alias n="14" Id="(@1 @5 Type=MatrixAnimation)" />
+    <Alias n="15" Id="(@1 @5 Type=Selection)" />
+    <Alias n="16" Id="(@1 @5 Type=UndoAction)" />
+    <Alias n="17" Id="(@1 @5 Type=UndoActions)" />
+    <Alias n="18" Id="(@1 @5 Type=UndoStackClass)" />
+    <Alias n="19" Id="(@1 @5 Type=WordAndCanvas)" />
+    <Alias n="20" Id="(@1 @5 Type=WordCanvas)" />
   </IdentifierAliases>
   <Styles>
     <Style TargetType="Node" GroupLabel="Results" ValueLabel="True">
@@ -382,12 +404,7 @@
     </Style>
   </Styles>
   <Paths>
-    <Path Id="0c699a00-6e47-4559-a59f-3efb75e7fdb8.OutputPath" Value="C:\Development\GitHub\Projects\Bonza\Output\TestGenerator.exe" />
-    <Path Id="0c699a00-6e47-4559-a59f-3efb75e7fdb8.OutputPathUri" Value="file:///C:/Development/GitHub/Projects/Bonza/Output/TestGenerator.exe" />
     <Path Id="454ef9c3-ad96-45f0-b63a-79589d324554.OutputPath" Value="C:\Development\GitHub\Projects\Bonza\Output\BonzaEditor.exe" />
     <Path Id="454ef9c3-ad96-45f0-b63a-79589d324554.OutputPathUri" Value="file:///C:/Development/GitHub/Projects/Bonza/Output/BonzaEditor.exe" />
-    <Path Id="46505a9e-b84d-4664-bb02-515706791af3.OutputPath" Value="C:\Development\GitHub\Projects\Bonza\Output\BonzaGenerator.dll" />
-    <Path Id="46505a9e-b84d-4664-bb02-515706791af3.OutputPathUri" Value="file:///C:/Development/GitHub/Projects/Bonza/Output/BonzaGenerator.dll" />
-    <Path Id="FxReferenceAssemblies" Value="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework" />
   </Paths>
 </DirectedGraph>

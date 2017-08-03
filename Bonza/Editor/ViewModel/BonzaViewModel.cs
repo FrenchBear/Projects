@@ -181,20 +181,20 @@ namespace Bonza.Editor.ViewModel
 
         public void PerformUndo()
         {
-            UndoAction action = UndoStack.Pop();
+            UndoStackClass.UndoAction action = UndoStack.Pop();
 
             switch(action.Action)
             {
-                case UndoActions.Move:
+                case UndoStackClass.UndoActions.Move:
                     UpdateWordPositionLocation(action.WordAndCanvasList, action.PositionOrientationList, false);   // Coordinates in wordPositionList are updated
                     view.MoveWordAndCanvasList(action.WordAndCanvasList);
                     break;
 
-                case UndoActions.Delete:
+                case UndoStackClass.UndoActions.Delete:
                     view.AddWordAndCanvasList(action.WordAndCanvasList, false);
                     break;
 
-                case UndoActions.Add:
+                case UndoStackClass.UndoActions.Add:
                     view.DeleteWordAndCanvasList(action.WordAndCanvasList, false);
                     break;
 
@@ -266,6 +266,7 @@ namespace Bonza.Editor.ViewModel
 
         private void SaveExecute(object obj)
         {
+            // ToDo: Implement save
             MessageBox.Show("Save: ToDo");
         }
 
@@ -380,6 +381,7 @@ namespace Bonza.Editor.ViewModel
 
         private void AutoPlaceExecute(object obj)
         {
+            // ToDo: Implement AutoPlace
             MessageBox.Show("AutoPlace: ToDo");
         }
 

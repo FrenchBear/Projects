@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -389,13 +390,9 @@ namespace Bonza.Editor.View
             m.Invert();     // To convert from screen transformed coordinates into ideal grid
                             // coordinates starting at (0,0) with a square side of UnitSize
             List<Vector> clickOffsetList = new List<Vector>(m_Sel.WordAndCanvasList.Count);
-            foreach (WordCanvas wc in m_Sel.WordAndCanvasList.Select(wac => wac.WordCanvas))
-            {
-                Point canvasTopLeft = new Point((double)wc.GetValue(Canvas.LeftProperty), (double)wc.GetValue(Canvas.TopProperty));
-                // clickOffset memorizes the difference between (top,left) of WordCanvas and the clicked point
-                // since when we move, we need that information to adjust WordCanvas position
-                clickOffsetList.Add(canvasTopLeft - m.Transform(previousMousePosition));
-            }
+            clickOffsetList.AddRange(m_Sel.WordAndCanvasList
+                .Select(wac => new Point((double)wac.WordCanvas.GetValue(Canvas.LeftProperty), (double)wac.WordCanvas.GetValue(Canvas.TopProperty)))
+                .Select(canvasTopLeft => canvasTopLeft - m.Transform(previousMousePosition)));
 
             // When moving, point is current mouse in ideal grid coordinates
             return point =>
@@ -568,11 +565,11 @@ namespace Bonza.Editor.View
             if (minRow != minRowGrid || minColumn != minColumnGrid || maxRow != maxRowGrid || maxColumn != maxColumnGrid)
                 UpdateBackgroundGrid();
 
-            // Compute distance moved on 1st element to choose speed
+            // Compute distance moved on 1st element to choose animation speed (duration)
             WordPosition wp1 = wordAndCanvasList.First().WordPosition;
             WordCanvas wc1 = wordAndCanvasList.First().WordCanvas;
-            double deltaX = (double)wc1.GetValue(Canvas.LeftProperty) - (wp1.StartColumn * UnitSize);
-            double deltaY = (double)wc1.GetValue(Canvas.TopProperty) - (wp1.StartRow * UnitSize);
+            double deltaX = (double)wc1.GetValue(Canvas.LeftProperty) - wp1.StartColumn * UnitSize;
+            double deltaY = (double)wc1.GetValue(Canvas.TopProperty) - wp1.StartRow * UnitSize;
             double distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
 
             // Could optimize if there is no actual displacement, for instance, after a click down
@@ -581,24 +578,18 @@ namespace Bonza.Editor.View
             foreach (WordAndCanvas wac in wordAndCanvasList)
             {
                 WordCanvas wc = wac.WordCanvas;
-                WordPosition wp = wac.WordPosition;
+                var duration = new Duration(TimeSpan.FromSeconds(distance >= UnitSize ? 0.35 : 0.1));
 
-                DoubleAnimation daLeft = new DoubleAnimation();
-                double finalLeftValue = wp.StartColumn * UnitSize;
-                daLeft.From = (double)wc.GetValue(Canvas.LeftProperty);
-                daLeft.To = finalLeftValue;
-                daLeft.Duration = new Duration(TimeSpan.FromSeconds(distance >= UnitSize ? 0.35 : 0.1));
+                double finalLeftValue = wac.WordPosition.StartColumn * UnitSize;
+                DoubleAnimation daLeft = new DoubleAnimation((double)wc.GetValue(Canvas.LeftProperty), finalLeftValue, duration);
                 daLeft.Completed += (sender, e) => { MoveWordAnimationEnd(wc, Canvas.LeftProperty, finalLeftValue); };
-                System.Threading.Interlocked.Increment(ref moveWordAnimationInProgressCount);
+                Interlocked.Increment(ref moveWordAnimationInProgressCount);
                 wc.BeginAnimation(Canvas.LeftProperty, daLeft);
 
-                DoubleAnimation daTop = new DoubleAnimation();
-                double finalTopValue = wp.StartRow * UnitSize;
-                daTop.From = (double)wc.GetValue(Canvas.TopProperty);
-                daTop.To = finalTopValue;
-                daTop.Duration = new Duration(TimeSpan.FromSeconds(distance >= UnitSize ? 0.35 : 0.1));
+                double finalTopValue = wac.WordPosition.StartRow * UnitSize;
+                DoubleAnimation daTop = new DoubleAnimation((double)wc.GetValue(Canvas.TopProperty), finalTopValue, duration);
                 daTop.Completed += (sender, e) => { MoveWordAnimationEnd(wc, Canvas.TopProperty, finalTopValue); };
-                System.Threading.Interlocked.Increment(ref moveWordAnimationInProgressCount);
+                Interlocked.Increment(ref moveWordAnimationInProgressCount);
                 wc.BeginAnimation(Canvas.TopProperty, daTop);
             }
         }

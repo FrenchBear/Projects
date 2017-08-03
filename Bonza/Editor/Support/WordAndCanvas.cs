@@ -1,6 +1,7 @@
 ﻿// Bonza Editor - WordAndCanvas class
 // Combination of a WordPositon and a WordCanvas, used by View and Selection
 
+using System.Windows.Media;
 using Bonza.Generator;
 
 
@@ -17,6 +18,16 @@ namespace Bonza.Editor.Support
         {
             WordPosition = wp;
             WordCanvas = wc;
+        }
+
+        internal void SetColor(Brush foreground, Brush background)
+        {
+            WordCanvas.SetColor(foreground, background);
+        }
+
+        internal void RebuildCanvasAfterOrientationSwap()
+        {
+            WordCanvas.RebuildCanvasAfterOrientationSwap();
         }
     }
 }

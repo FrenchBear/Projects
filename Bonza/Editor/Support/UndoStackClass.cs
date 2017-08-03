@@ -13,32 +13,33 @@ using Bonza.Generator;
 
 namespace Bonza.Editor.Support
 {
-    internal enum UndoActions
-    {
-        Move,
-        Delete,
-        Add
-    };
-
-    internal class UndoAction
-    {
-        internal readonly UndoActions Action;
-
-        internal IList<WordAndCanvas> WordAndCanvasList;
-        internal IList<PositionOrientation> PositionOrientationList;
-
-
-        internal UndoAction(UndoActions action)
-        {
-            Action = action;
-        }
-    }
-
-
     // Undo support
     // Encapsulated support in a specific class for easier debugging (and also because it's a good practice...)
     internal class UndoStackClass
     {
+        internal enum UndoActions
+        {
+            Move,
+            Delete,
+            Add
+        };
+
+        internal class UndoAction
+        {
+            internal readonly UndoActions Action;
+
+            internal IList<WordAndCanvas> WordAndCanvasList;
+            internal IList<PositionOrientation> PositionOrientationList;
+
+
+            internal UndoAction(UndoActions action)
+            {
+                Action = action;
+            }
+        }
+
+
+
         // Can't memorize original position in List<WordPosition> since referenced WordPosition will change position during future edit
         // So List<PositionOrientation> represents the position the List<WordPositon> must return to in case on undo
         private Stack<UndoAction> undoStack;

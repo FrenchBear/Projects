@@ -32,7 +32,7 @@ namespace Bonza.Editor.Support
                 return;
 
             // Before clearing selection, remove highlight
-            m_WordAndCanvasList?.ForEach(wac => wac.WordCanvas.SetColor(App.NormalForegroundBrush, App.NormalBackgroundBrush));
+            m_WordAndCanvasList?.ForEach(wac => wac.SetColor(App.NormalForegroundBrush, App.NormalBackgroundBrush));
 
             // Optimization, by convention null means no selection
             m_WordAndCanvasList = null;
@@ -47,7 +47,7 @@ namespace Bonza.Editor.Support
             if (!m_WordAndCanvasList.Contains(wac))
             {
                 m_WordAndCanvasList.Add(wac);
-                wac.WordCanvas.SetColor(App.SelectedForegroundBrush, App.SelectedBackgroundBrush);
+                wac.SetColor(App.SelectedForegroundBrush, App.SelectedBackgroundBrush);
 
                 viewModel.SelectedWordCount++;
             }
@@ -74,7 +74,7 @@ namespace Bonza.Editor.Support
             foreach (WordAndCanvas wac in m_WordAndCanvasList)
             {
                 wac.WordPosition.IsVertical = !wac.WordPosition.IsVertical;
-                wac.WordCanvas.RebuildCanvasAfterOrientationSwap();
+                wac.RebuildCanvasAfterOrientationSwap();
             }
         }
 

@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Windows;
 
 namespace Bonza.Generator
 {
@@ -88,19 +89,6 @@ namespace Bonza.Generator
         }
 
 
-        //// Update Word location, including squares
-        //public void UpdateWordPositionLocation(WordPosition wp, PositionOrientation po)
-        //{
-        //    RemoveSquares(wp);
-
-        //    wp.StartRow = po.StartRow;
-        //    wp.StartColumn = po.StartColumn;
-        //    wp.IsVertical = po.IsVertical;
-
-        //    AddSquares(wp);
-        //}
-
-
         // Returns square at a given position, or null if there is nothing in current layout
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Square GetSquare(int row, int column)
@@ -131,6 +119,7 @@ namespace Bonza.Generator
         }
 
         // Compute layout external bounds, note that cell (0,0) is always included in bounding rectangle
+        // ToDo: Use Int32Rect
         public (int minRow, int maxRow, int minColumn, int maxColumn) GetBounds()
         {
             int minRow = 0, maxRow = 0, minColumn = 0, maxColumn = 0;
