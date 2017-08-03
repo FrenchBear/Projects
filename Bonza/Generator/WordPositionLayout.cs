@@ -33,22 +33,73 @@ namespace Bonza.Generator
             AddSquares(wp);
         }
 
+        public void RemoveWordPositionAndSquares(WordPosition wp)
+        {
+            if (wp == null)
+                throw new ArgumentNullException(nameof(wp));
+            if (!m_WordPositionList.Contains(wp))
+                throw new ArgumentException("WordPosition not in the layout");
+
+            RemoveSquares(wp);
+            m_WordPositionList.Remove(wp);
+        }
+
+
         private void AddSquares(WordPosition wp)
         {
+            Debug.Assert(wp != null);
+
             int row = wp.StartRow;
             int column = wp.StartColumn;
             foreach (char c in wp.Word)
             {
                 if (GetSquare(row, column) == null)
                 {
-                    Square sq = new Square { Row = row, Column = column, Letter = c, IsInChunk = false };
+                    Square sq = new Square { Row = row, Column = column, Letter = c, IsInChunk = false, ShareCount = 1 };
                     m_Squares.Add((row, column), sq);
                 }
                 else
-                    Debug.Assert(GetSquare(row, column).Letter == c);
+                {
+                    Square sq = GetSquare(row, column);
+                    Debug.Assert(sq.Letter == c);
+                    sq.ShareCount++;
+                }
                 if (wp.IsVertical) row++; else column++;
             }
         }
+
+        private void RemoveSquares(WordPosition wp)
+        {
+            Debug.Assert(wp != null);
+
+            int row = wp.StartRow;
+            int column = wp.StartColumn;
+            for (int i = 0; i < wp.Word.Length; i++)
+            {
+                Square sq = GetSquare(row, column);
+                Debug.Assert(sq != null);
+                if (sq.ShareCount == 1)
+                    m_Squares.Remove((row, column));
+                else
+                    sq.ShareCount--;
+
+                if (wp.IsVertical) row++; else column++;
+            }
+        }
+
+
+        //// Update Word location, including squares
+        //public void UpdateWordPositionLocation(WordPosition wp, PositionOrientation po)
+        //{
+        //    RemoveSquares(wp);
+
+        //    wp.StartRow = po.StartRow;
+        //    wp.StartColumn = po.StartColumn;
+        //    wp.IsVertical = po.IsVertical;
+
+        //    AddSquares(wp);
+        //}
+
 
         // Returns square at a given position, or null if there is nothing in current layout
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -79,7 +130,7 @@ namespace Bonza.Generator
                 return '\0';
         }
 
-        // Compute layout external bounds
+        // Compute layout external bounds, note that cell (0,0) is always included in bounding rectangle
         public (int minRow, int maxRow, int minColumn, int maxColumn) GetBounds()
         {
             int minRow = 0, maxRow = 0, minColumn = 0, maxColumn = 0;
@@ -185,7 +236,7 @@ namespace Bonza.Generator
             List<WordPosition> tempList = new List<WordPosition>(m_WordPositionList);
 
             int blocksCount = 0;
-            for (; ; )
+            for (;;)
             {
                 if (tempList.Count == 0)
                     break;

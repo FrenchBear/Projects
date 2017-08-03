@@ -2,6 +2,7 @@
 // MVVM Model
 // 2017-07-22   PV  First version
 
+
 using System.Collections.Generic;
 using System.Linq;
 using Bonza.Editor.ViewModel;
@@ -53,9 +54,10 @@ namespace Bonza.Editor.Model
         // Build a copy of Layout without a specific WordPosition to validate placement
         internal void BuildMoveTestLayout(IEnumerable<WordPosition> movedWordPositionList)
         {
+            var wordPositionList = movedWordPositionList as IList<WordPosition> ?? movedWordPositionList.ToList();
             MoveTestLayout = new WordPositionLayout();
             foreach (var wp in Layout.WordPositionList)
-                if (!movedWordPositionList.Contains(wp))
+                if (!wordPositionList.Contains(wp))
                     MoveTestLayout.AddWordPositionAndSquares(wp);
         }
 
@@ -72,16 +74,24 @@ namespace Bonza.Editor.Model
         }
 
 
-        // Update a word in current Layout
-        internal void UpdateWordPositionLocation(WordPosition word, PositionOrientation po)
-        {
-            word.StartRow = po.StartRow;
-            word.StartColumn = po.StartColumn;
-            word.IsVertical = po.IsVertical;
+        //// Update a word in current Layout
+        //internal void UpdateWordPositionLocation(WordPosition word, PositionOrientation po)
+        //{
+        //    Layout.UpdateWordPositionLocation(word, po);
 
-            // Need to recompute number of words not connected
-            viewModel.WordsNotConnected = Layout.GetWordsNotConnected();
+        //    // Need to recompute number of words not connected
+        //    viewModel.WordsNotConnected = Layout.GetWordsNotConnected();
+        //}
+
+        // Removes a word from current Layout
+        internal void RemoveWordPosition(WordPosition wordPosition)
+        {
+            Layout.RemoveWordPositionAndSquares(wordPosition);
         }
 
+        internal void AddWordPosition(WordPosition wordPosition)
+        {
+            Layout.AddWordPositionAndSquares(wordPosition);
+        }
     }
 }
