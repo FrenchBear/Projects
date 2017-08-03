@@ -3,7 +3,6 @@
 // 2017-07-22   PV  First version
 
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bonza.Editor.ViewModel;
@@ -55,9 +54,10 @@ namespace Bonza.Editor.Model
         // Build a copy of Layout without a specific WordPosition to validate placement
         internal void BuildMoveTestLayout(IEnumerable<WordPosition> movedWordPositionList)
         {
+            var wordPositionList = movedWordPositionList as IList<WordPosition> ?? movedWordPositionList.ToList();
             MoveTestLayout = new WordPositionLayout();
             foreach (var wp in Layout.WordPositionList)
-                if (!movedWordPositionList.Contains(wp))
+                if (!wordPositionList.Contains(wp))
                     MoveTestLayout.AddWordPositionAndSquares(wp);
         }
 

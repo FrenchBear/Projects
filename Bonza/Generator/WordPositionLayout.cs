@@ -74,10 +74,10 @@ namespace Bonza.Generator
 
             int row = wp.StartRow;
             int column = wp.StartColumn;
-            foreach (char c in wp.Word)
+            for (int i = 0; i < wp.Word.Length; i++)
             {
                 Square sq = GetSquare(row, column);
-                Debug.Assert(sq!=null);
+                Debug.Assert(sq != null);
                 if (sq.ShareCount == 1)
                     m_Squares.Remove((row, column));
                 else
@@ -236,7 +236,7 @@ namespace Bonza.Generator
             List<WordPosition> tempList = new List<WordPosition>(m_WordPositionList);
 
             int blocksCount = 0;
-            for (; ; )
+            for (;;)
             {
                 if (tempList.Count == 0)
                     break;

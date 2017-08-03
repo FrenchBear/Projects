@@ -21,7 +21,6 @@ using Bonza.Editor.Support;
 using Bonza.Generator;
 using static Bonza.Editor.App;
 
-
 namespace Bonza.Editor.View
 {
     /// <summary>
@@ -30,8 +29,8 @@ namespace Bonza.Editor.View
     public partial class BonzaView : Window
     {
         private readonly BonzaViewModel viewModel;
-        internal readonly Selection Sel;                    // Manages current selection, internal since it's accessed from ViewModel
-        private List<WordAndCanvas> WordAndCanvasList;      // Current list of WordAndCanvas managed by view
+        private readonly Selection m_Sel;                     // Manages current selection, internal since it's accessed from ViewModel
+        private List<WordAndCanvas> m_WordAndCanvasList;    // Current list of WordAndCanvas managed by view
 
 
         // --------------------------------------------------------------------
@@ -43,8 +42,8 @@ namespace Bonza.Editor.View
             viewModel = new BonzaViewModel(this);
             DataContext = viewModel;
 
-            WordAndCanvasList = new List<WordAndCanvas>();
-            Sel = new Selection(this, viewModel);
+            m_WordAndCanvasList = new List<WordAndCanvas>();
+            m_Sel = new Selection(viewModel);
 
             UpdateTransformationsFeedBack();
 
@@ -85,7 +84,7 @@ namespace Bonza.Editor.View
                     Mouse.Capture(null);
 
                     // Restore position of selected WordCanvas
-                    foreach (var wac in Sel.WordAndCanvasList)
+                    foreach (var wac in m_Sel.WordAndCanvasList)
                     {
                         double top = wac.WordPosition.StartRow * UnitSize;
                         double left = wac.WordPosition.StartColumn * UnitSize;
@@ -96,8 +95,8 @@ namespace Bonza.Editor.View
                 }
 
                 // CLear selection if any
-                if (Sel.WordAndCanvasList?.Count > 0)
-                    Sel.Clear();
+                if (m_Sel.WordAndCanvasList?.Count > 0)
+                    m_Sel.Clear();
             }
         }
 
@@ -113,7 +112,7 @@ namespace Bonza.Editor.View
             DrawingCanvas.Children.Clear();
             ClearBackgroundGrid();
 
-            WordAndCanvasList = new List<WordAndCanvas>();
+            m_WordAndCanvasList = new List<WordAndCanvas>();
         }
 
 
@@ -126,10 +125,10 @@ namespace Bonza.Editor.View
                 WordCanvas wc = new WordCanvas(wp);
                 WordAndCanvas wac = new WordAndCanvas(wp, wc);
                 DrawingCanvas.Children.Add(wc);
-                WordAndCanvasList.Add(wac);
+                m_WordAndCanvasList.Add(wac);
             }
 
-            Sel.Clear();
+            m_Sel.Clear();
 
             // After initial drawing, rescale and center without animations
             // Also draw initial background grid
@@ -141,24 +140,33 @@ namespace Bonza.Editor.View
 
 
         // Remove all the words from selection
-        internal void DeleteSelection(bool memorizeForUndo)
+        internal void DeleteSelection()
         {
-            Debug.Assert(Sel.WordAndCanvasList != null && Sel.WordAndCanvasList.Count > 0);
+            Debug.Assert(m_Sel.WordAndCanvasList != null && m_Sel.WordAndCanvasList.Count > 0);
+
+            DeleteWordAndCanvasList(new List<WordAndCanvas>(m_Sel.WordAndCanvasList), true);
+        }
+
+        // More general Delete function, also used by Undo support
+        internal void DeleteWordAndCanvasList(IList<WordAndCanvas> wordAndCanvasList, bool memorizeForUndo)
+        {
+            Debug.Assert(m_Sel.WordAndCanvasList != null && m_Sel.WordAndCanvasList.Count > 0);
 
             // Undo support
             if (memorizeForUndo)
-                viewModel.UndoStack.MemorizeDelete(Sel.WordAndCanvasList);
+                viewModel.UndoStack.MemorizeDelete(wordAndCanvasList);
 
             // Delete in View and ViewModel
-            foreach (WordAndCanvas wac in Sel.WordAndCanvasList)
+            foreach (WordAndCanvas wac in wordAndCanvasList)
             {
+                // Delete in selection
+                if (m_Sel.WordAndCanvasList.Contains(wac))
+                    m_Sel.Delete(wac);
+
                 DrawingCanvas.Children.Remove(wac.WordCanvas);
-                WordAndCanvasList.Remove(wac);
+                m_WordAndCanvasList.Remove(wac);
                 viewModel.RemoveWordPosition(wac.WordPosition);
             }
-
-            // Delete in selection
-            Sel.Delete();
 
             // Finally redraw grid if needed
             UpdateBackgroundGrid();
@@ -168,29 +176,30 @@ namespace Bonza.Editor.View
         internal void AddWordAndCanvasList(IList<WordAndCanvas> wordAndCanvasList, bool memorizeForUndo)
         {
             // Clear selection first, if it exists
-            Sel.Clear();
+            m_Sel.Clear();
 
-            // ToDo: Undo support
-            //if (memorizeForUndo)
-            //    viewModel.UndoStack.MemorizeAdd(wordAndCanvasList);
+            if (memorizeForUndo)
+                viewModel.UndoStack.MemorizeAdd(m_WordAndCanvasList);
 
             // Add to View and ViewModel
             foreach (WordAndCanvas wac in wordAndCanvasList)
             {
                 viewModel.AddWordPosition(wac.WordPosition);
-                WordAndCanvasList.Add(wac);
+                m_WordAndCanvasList.Add(wac);
                 DrawingCanvas.Children.Add(wac.WordCanvas);
             }
 
             // Select all we've just restored
-            Sel.Add(wordAndCanvasList);
+            m_Sel.Add(wordAndCanvasList);
 
             // Finally redraw grid if needed
             UpdateBackgroundGrid();
         }
 
-
-
+        public void SwapOrientation()
+        {
+            m_Sel.SwapOrientation();
+        }
 
 
 
@@ -313,28 +322,28 @@ namespace Bonza.Editor.View
             if (DrawingCanvas.InputHitTest(e.GetPosition(DrawingCanvas)) is TextBlock hitTextBlock)
             {
                 WordCanvas hitC = (hitTextBlock.Parent) as WordCanvas;
-                WordAndCanvas hit = WordAndCanvasList.FirstOrDefault(wac => wac.WordCanvas == hitC);
+                WordAndCanvas hit = m_WordAndCanvasList.FirstOrDefault(wac => ReferenceEquals(wac.WordCanvas, hitC));
                 Debug.Assert(hit != null);
 
                 // If Ctrl key is NOT pressed, clear previous selection
                 // But if we click again in something already selected, do not clear selection!
                 if (!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl))
-                    if (Sel.WordAndCanvasList != null && !Sel.WordAndCanvasList.Contains(hit))
-                        Sel.Clear();
+                    if (m_Sel.WordAndCanvasList != null && !m_Sel.WordAndCanvasList.Contains(hit))
+                        m_Sel.Clear();
 
 
                 // Add current word to selection
-                Sel.Add(hit);
+                m_Sel.Add(hit);
 
                 // If Shift key is pressed, selection is extended to connected words
                 if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
                     //viewModel.Layout.GetConnectedWordPositions(hitWP).ForEach(connected => AddWordPositionToSelection(connected));
                     foreach (WordPosition connected in viewModel.Layout.GetConnectedWordPositions(hit.WordPosition))
-                        Sel.Add(WordAndCanvasList.FirstOrDefault(wac => wac.WordPosition == connected));
+                        m_Sel.Add(m_WordAndCanvasList.FirstOrDefault(wac => wac.WordPosition == connected));
 
                 // Remove and add again elements to move so they're displayed above non-moved elements
-                //foreach (WordCanvas wc in Sel.WordPositionList.Select(wp => Map.GetWordCanvasFromWordPosition(wp)))
-                foreach (WordCanvas wc in Sel.WordAndCanvasList.Select(wac => wac.WordCanvas))
+                //foreach (WordCanvas wc in m_Sel.WordPositionList.Select(wp => Map.GetWordCanvasFromWordPosition(wp)))
+                foreach (WordCanvas wc in m_Sel.WordAndCanvasList.Select(wac => wac.WordCanvas))
                 {
                     DrawingCanvas.Children.Remove(wc);
                     DrawingCanvas.Children.Add(wc);
@@ -361,7 +370,7 @@ namespace Bonza.Editor.View
             else
             {
                 pmm = null;
-                Sel.Clear();
+                m_Sel.Clear();
             }
 
             // Be sure to call GetPosition before Capture, otherwise GetPosition returns 0 after Capture
@@ -373,14 +382,14 @@ namespace Bonza.Editor.View
         private Action<Point> GetMouseDownMoveAction()
         {
             // Need a layout without moved word to validate placement
-            viewModel.BuildMoveTestLayout(Sel.WordAndCanvasList.Select(wac => wac.WordPosition));
+            viewModel.BuildMoveTestLayout(m_Sel.WordAndCanvasList.Select(wac => wac.WordPosition));
 
             // Reverse-transform mouse Grid coordinates into DrawingCanvas coordinates
             Matrix m = MainMatrixTransform.Matrix;
             m.Invert();     // To convert from screen transformed coordinates into ideal grid
                             // coordinates starting at (0,0) with a square side of UnitSize
-            List<Vector> clickOffsetList = new List<Vector>(Sel.WordAndCanvasList.Count);
-            foreach (WordCanvas wc in Sel.WordAndCanvasList.Select(wac => wac.WordCanvas))
+            List<Vector> clickOffsetList = new List<Vector>(m_Sel.WordAndCanvasList.Count);
+            foreach (WordCanvas wc in m_Sel.WordAndCanvasList.Select(wac => wac.WordCanvas))
             {
                 Point canvasTopLeft = new Point((double)wc.GetValue(Canvas.LeftProperty), (double)wc.GetValue(Canvas.TopProperty));
                 // clickOffset memorizes the difference between (top,left) of WordCanvas and the clicked point
@@ -392,12 +401,12 @@ namespace Bonza.Editor.View
             return point =>
             {
                 // Just move selected WordCanvas
-                for (int i = 0; i < Sel.WordAndCanvasList.Count; i++)
+                for (int i = 0; i < m_Sel.WordAndCanvasList.Count; i++)
                 {
                     double preciseTop = point.Y + clickOffsetList[i].Y;
                     double preciseLeft = point.X + clickOffsetList[i].X;
 
-                    WordCanvas wc = Sel.WordAndCanvasList[i].WordCanvas;
+                    WordCanvas wc = m_Sel.WordAndCanvasList[i].WordCanvas;
                     wc.SetValue(Canvas.TopProperty, preciseTop);
                     wc.SetValue(Canvas.LeftProperty, preciseLeft);
 
@@ -419,7 +428,7 @@ namespace Bonza.Editor.View
                     // Note that during generation, current stringent rules must prevail
 
                     // Find out if it's possible to place the word here, provide color feed-back
-                    if (viewModel.CanPlaceWordInMoveTestLayout(Sel.WordAndCanvasList[i].WordPosition, new PositionOrientation { StartRow = top, StartColumn = left, IsVertical = Sel.WordAndCanvasList[i].WordPosition.IsVertical }))
+                    if (viewModel.CanPlaceWordInMoveTestLayout(m_Sel.WordAndCanvasList[i].WordPosition, new PositionOrientation { StartRow = top, StartColumn = left, IsVertical = m_Sel.WordAndCanvasList[i].WordPosition.IsVertical }))
                         wc.SetColor(SelectedForegroundBrush, SelectedBackgroundBrush);
                     else
                         wc.SetColor(ProblemForegroundBrush, ProblemBackgroundBrush);
@@ -494,7 +503,7 @@ namespace Bonza.Editor.View
                 // Not efficient to manage a single list of (top, left) tuple since in the snail pattern
                 // placement code, top is updated independently from left, and a tuple makes it heavy
                 List<PositionOrientation> topLeftList = new List<PositionOrientation>();
-                foreach (WordAndCanvas wac in Sel.WordAndCanvasList)
+                foreach (WordAndCanvas wac in m_Sel.WordAndCanvasList)
                 {
                     WordCanvas wc = wac.WordCanvas;
                     wc.SetColor(SelectedForegroundBrush, SelectedBackgroundBrush);
@@ -509,8 +518,8 @@ namespace Bonza.Editor.View
                 // Examine surrounding cells in a "snail pattern" 
                 bool CanPlaceAllWords()
                 {
-                    for (int il = 0; il < Sel.WordAndCanvasList.Count; il++)
-                        if (!viewModel.CanPlaceWordInMoveTestLayout(Sel.WordAndCanvasList[il].WordPosition, topLeftList[il]))
+                    for (int il = 0; il < m_Sel.WordAndCanvasList.Count; il++)
+                        if (!viewModel.CanPlaceWordInMoveTestLayout(m_Sel.WordAndCanvasList[il].WordPosition, topLeftList[il]))
                             return false;
                     return true;
                 }
@@ -520,18 +529,18 @@ namespace Bonza.Editor.View
                     int st = 1;
                     int sign = 1;
 
-                    for (; ; )
+                    for (;;)
                     {
                         for (int i = 0; i < st; i++)
                         {
-                            for (int il = 0; il < Sel.WordAndCanvasList.Count; il++)
-                                topLeftList[il] = new PositionOrientation { StartRow = topLeftList[il].StartRow, StartColumn = topLeftList[il].StartColumn + sign, IsVertical = Sel.WordAndCanvasList[il].WordPosition.IsVertical };
+                            for (int il = 0; il < m_Sel.WordAndCanvasList.Count; il++)
+                                topLeftList[il] = new PositionOrientation { StartRow = topLeftList[il].StartRow, StartColumn = topLeftList[il].StartColumn + sign, IsVertical = m_Sel.WordAndCanvasList[il].WordPosition.IsVertical };
                             if (CanPlaceAllWords()) goto FoundValidPosition;
                         }
                         for (int i = 0; i < st; i++)
                         {
-                            for (int il = 0; il < Sel.WordAndCanvasList.Count; il++)
-                                topLeftList[il] = new PositionOrientation { StartRow = topLeftList[il].StartRow + sign, StartColumn = topLeftList[il].StartColumn, IsVertical = Sel.WordAndCanvasList[il].WordPosition.IsVertical };
+                            for (int il = 0; il < m_Sel.WordAndCanvasList.Count; il++)
+                                topLeftList[il] = new PositionOrientation { StartRow = topLeftList[il].StartRow + sign, StartColumn = topLeftList[il].StartColumn, IsVertical = m_Sel.WordAndCanvasList[il].WordPosition.IsVertical };
                             if (CanPlaceAllWords()) goto FoundValidPosition;
                         }
                         sign = -sign;
@@ -541,8 +550,8 @@ namespace Bonza.Editor.View
 
             FoundValidPosition:
                 // Move to final, rounded position
-                viewModel.UpdateWordPositionLocation(Sel.WordAndCanvasList, topLeftList, true);     // Update WordPosition with new location
-                MoveWordAndCanvasList(Sel.WordAndCanvasList);
+                viewModel.UpdateWordPositionLocation(m_Sel.WordAndCanvasList, topLeftList, true);     // Update WordPosition with new location
+                MoveWordAndCanvasList(m_Sel.WordAndCanvasList);
             }
         }
 

@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using Bonza.Generator;
@@ -17,7 +16,8 @@ namespace Bonza.Editor.Support
     internal enum UndoActions
     {
         Move,
-        Delete
+        Delete,
+        Add
     };
 
     internal class UndoAction
@@ -82,7 +82,23 @@ namespace Bonza.Editor.Support
             UndoAction a = new UndoAction(UndoActions.Delete)
             {
                 WordAndCanvasList = new List<WordAndCanvas>(wordAndCanvasList),
-                PositionOrientationList = null   // No need to memorize original position, sice words are about to be deleted and won't move
+                PositionOrientationList = null   // No need to memorize original position, since words are about to be deleted and won't move
+            };
+            undoStack.Push(a);
+        }
+
+        public void MemorizeAdd(IList<WordAndCanvas> wordAndCanvasList)
+        {
+            if (wordAndCanvasList == null) throw new ArgumentNullException(nameof(wordAndCanvasList));
+            Debug.Assert(wordAndCanvasList.Count >= 1);
+
+            if (undoStack == null)
+                undoStack = new Stack<UndoAction>();
+
+            UndoAction a = new UndoAction(UndoActions.Add)
+            {
+                WordAndCanvasList = new List<WordAndCanvas>(wordAndCanvasList),
+                PositionOrientationList = null   // No need to memorize original position, since undo will remove words
             };
             undoStack.Push(a);
         }

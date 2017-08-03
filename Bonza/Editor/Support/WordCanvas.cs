@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Bonza.Generator;
-using Bonza.Editor.View;
 using static Bonza.Editor.App;
 
 
@@ -43,8 +42,8 @@ namespace Bonza.Editor.Support
                 double width = UnitSize;
                 double height = UnitSize;
 
-                tb.SetValue(Canvas.LeftProperty, left);
-                tb.SetValue(Canvas.TopProperty, top);
+                tb.SetValue(LeftProperty, left);        // Canvas.LeftProperty
+                tb.SetValue(TopProperty, top);
                 tb.Width = width;
                 tb.Height = height;
 

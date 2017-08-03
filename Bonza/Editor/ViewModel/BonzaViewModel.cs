@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -195,6 +194,10 @@ namespace Bonza.Editor.ViewModel
                     view.AddWordAndCanvasList(action.WordAndCanvasList, false);
                     break;
 
+                case UndoActions.Add:
+                    view.DeleteWordAndCanvasList(action.WordAndCanvasList, false);
+                    break;
+
                 default:
                     Debug.Assert(false, "Unknown/Unsupported Undo Action");
                     break;
@@ -229,9 +232,9 @@ namespace Bonza.Editor.ViewModel
             Debug.Assert(wordAndCanvasList.Count>0 && wordAndCanvasList.Count == topLeftList.Count);
 
             // If we don't really move, there is nothing more to do
-            var firstWP = wordAndCanvasList.First();
-            var firstTL = topLeftList.First();
-            if (firstWP.WordPosition.StartRow == firstTL.StartRow && firstWP.WordPosition.StartColumn == firstTL.StartColumn && firstWP.WordPosition.IsVertical == firstTL.IsVertical)
+            var firstWac = wordAndCanvasList.First();
+            var firstTl = topLeftList.First();
+            if (firstWac.WordPosition.StartRow == firstTl.StartRow && firstWac.WordPosition.StartColumn == firstTl.StartColumn && firstWac.WordPosition.IsVertical == firstTl.IsVertical)
                 return;
 
             // Memorize position before move for undo, unless we're undoing or the move
@@ -242,7 +245,7 @@ namespace Bonza.Editor.ViewModel
             // of the list that han't been moved by this loop yet...
             foreach (WordPosition wp in wordAndCanvasList.Select(wac => wac.WordPosition))
                 model.RemoveWordPosition(wp);
-            foreach (var item in Enumerable.Zip(wordAndCanvasList, topLeftList, (wac, tl) => (WordAndCanvas: wac, topLeft: tl)))
+            foreach (var item in wordAndCanvasList.Zip(topLeftList, (wac, tl) => (WordAndCanvas: wac, topLeft: tl)))
             {
                 item.WordAndCanvas.WordPosition.StartRow = item.topLeft.StartRow;
                 item.WordAndCanvas.WordPosition.StartColumn = item.topLeft.StartColumn;
@@ -342,7 +345,7 @@ namespace Bonza.Editor.ViewModel
 
         private void DeleteExecute(object obj)
         {
-            view.DeleteSelection(true);
+            view.DeleteSelection();
         }
 
 
@@ -366,7 +369,7 @@ namespace Bonza.Editor.ViewModel
 
         private void SwapOrientationExecute(object obj)
         {
-            view.Sel.SwapOrientation();
+            view.SwapOrientation();
         }
 
 
