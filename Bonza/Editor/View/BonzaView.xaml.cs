@@ -281,7 +281,7 @@ namespace Bonza.Editor.View
             if (isWithAnimation)
             {
                 // Use an animation for a smooth transformation
-                MatrixAnimation ma = new MatrixAnimation()
+                MatrixAnimation ma = new MatrixAnimation
                 {
                     From = MainMatrixTransform.Matrix,
                     To = rescaleMatrix,
@@ -350,7 +350,7 @@ namespace Bonza.Editor.View
         {
             if (DrawingCanvas.InputHitTest(e.GetPosition(DrawingCanvas)) is TextBlock hitTextBlock)
             {
-                WordCanvas hitC = (hitTextBlock.Parent) as WordCanvas;
+                WordCanvas hitC = hitTextBlock.Parent as WordCanvas;
                 WordAndCanvas hit = m_WordAndCanvasList.FirstOrDefault(wac => ReferenceEquals(wac.WordCanvas, hitC));
                 Debug.Assert(hit != null);
 
@@ -522,8 +522,8 @@ namespace Bonza.Editor.View
                 foreach (WordAndCanvas wac in m_Sel.WordAndCanvasList)
                 {
                     WordCanvas wc = wac.WordCanvas;
-                    int top = (int)Math.Floor(((double)wc.GetValue(Canvas.TopProperty) / UnitSize) + 0.5);
-                    int left = (int)Math.Floor(((double)wc.GetValue(Canvas.LeftProperty) / UnitSize) + 0.5);
+                    int top = (int)Math.Floor((double)wc.GetValue(Canvas.TopProperty) / UnitSize + 0.5);
+                    int left = (int)Math.Floor((double)wc.GetValue(Canvas.LeftProperty) / UnitSize + 0.5);
                     topLeftList.Add(new PositionOrientation { StartRow = top, StartColumn = left, IsVertical = wac.WordPosition.IsVertical });
                 }
 
@@ -584,6 +584,8 @@ namespace Bonza.Editor.View
                     else
                         wac.WordCanvas.SetColor(NormalInvalidForeground, NormalInvalidBackground);
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(status), status, null);
             }
 
         }
@@ -599,7 +601,7 @@ namespace Bonza.Editor.View
                 for (int il = 0; il < wordAndCanvasList.Count; il++)
                 {
                     var placmentStatus = viewModel.CanPlaceWordAtPositionInLayout(layout, wordAndCanvasList[il].WordPosition, topLeftList[il]);
-                    if (placmentStatus == PlaceWordStatus.Invalid || (placmentStatus == PlaceWordStatus.TooClose && !isOnlyValidPlacement))
+                    if (placmentStatus == PlaceWordStatus.Invalid || placmentStatus == PlaceWordStatus.TooClose && !isOnlyValidPlacement)
                         return false;
                 }
                 return true;
@@ -737,7 +739,7 @@ namespace Bonza.Editor.View
 
                 for (int row = minRow; row <= maxRow; row++)
                 {
-                    Line l = new Line()
+                    Line l = new Line
                     {
                         X1 = minColumn * UnitSize,
                         X2 = maxColumn * UnitSize,
@@ -751,7 +753,7 @@ namespace Bonza.Editor.View
 
                 for (int column = minColumn; column <= maxColumn; column++)
                 {
-                    Line l = new Line()
+                    Line l = new Line
                     {
                         X1 = column * UnitSize,
                         X2 = column * UnitSize,

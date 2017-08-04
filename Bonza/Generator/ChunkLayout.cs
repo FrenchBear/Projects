@@ -35,8 +35,8 @@ namespace Bonza.Generator
                     foreach (Square sq1 in chunk.Squares)
                         foreach (Square sq2 in it.Squares)
                         {
-                            if ((sq1.Row == sq2.Row && (sq1.Column == sq2.Column - 1 || sq1.Column == sq2.Column + 1))
-                                 || (sq1.Column == sq2.Column && (sq1.Row == sq2.Row - 1 || sq1.Row == sq2.Row + 1)))
+                            if (sq1.Row == sq2.Row && (sq1.Column == sq2.Column - 1 || sq1.Column == sq2.Column + 1)
+                                 || sq1.Column == sq2.Column && (sq1.Row == sq2.Row - 1 || sq1.Row == sq2.Row + 1))
                             {
                                 l.Add(chunk);
                                 goto NextChunk;

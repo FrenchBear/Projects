@@ -26,7 +26,7 @@ namespace Bonza.Editor.Support
 
             for (int i = 0; i < wp.Word.Length; i++)
             {
-                TextBlock tb = new TextBlock()
+                TextBlock tb = new TextBlock
                 {
                     TextAlignment = TextAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,

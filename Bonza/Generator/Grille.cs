@@ -14,9 +14,8 @@ namespace Bonza.Generator
 {
     public partial class Grille
     {
-        readonly Random rnd;        // Initialized in constructor
-
-        WordPositionLayout layout;
+        private readonly Random rnd;        // Initialized in constructor
+        private WordPositionLayout layout;
 
 
         public Grille(int seed = 0)
@@ -33,7 +32,7 @@ namespace Bonza.Generator
         }
 
         // Memorize the list of words to place as a class variable if later we call PlaceWordsAgain
-        List<string> wordsList;
+        private List<string> wordsList;
         public bool PlaceWords(string filename)
         {
             // Will throw an exception in case of problem with file
@@ -65,7 +64,7 @@ namespace Bonza.Generator
                 throw new BonzaException("Au moins un mot requis");
             string shortWords = wordsTable.Where(w => w.Length <= 2)
                 .Aggregate("", (list, next) => string.IsNullOrEmpty(list) ? next : list + ", " + next);
-            if (!string.IsNullOrEmpty((shortWords)))
+            if (!string.IsNullOrEmpty(shortWords))
                 throw new BonzaException("Mot(s) de longueur <= 2 non autorisé(s): " + shortWords);
 
 #if TraceBuild
@@ -211,8 +210,8 @@ namespace Bonza.Generator
                             {
                                 Word = wordToPlace,
                                 IsVertical = !placedWord.IsVertical,
-                                StartRow = placedWord.IsVertical ? (placedWord.StartRow + positionInPlacedWord) : (placedWord.StartRow - positionInWordToPlace),
-                                StartColumn = placedWord.IsVertical ? (placedWord.StartColumn - positionInWordToPlace) : (placedWord.StartColumn + positionInPlacedWord)
+                                StartRow = placedWord.IsVertical ? placedWord.StartRow + positionInPlacedWord : placedWord.StartRow - positionInWordToPlace,
+                                StartColumn = placedWord.IsVertical ? placedWord.StartColumn - positionInWordToPlace : placedWord.StartColumn + positionInPlacedWord
                             };
                             if (layout.CanPlaceWord(test)==PlaceWordStatus.Valid)
                                 possibleWordPositions.Add(test);
@@ -253,7 +252,7 @@ namespace Bonza.Generator
                             found = true;
                             break;
                         }
-                        else if (!wp.IsVertical && wp.StartRow == row && col >= wp.StartColumn && col < wp.StartColumn + wp.Word.Length)
+                        if (!wp.IsVertical && wp.StartRow == row && col >= wp.StartColumn && col < wp.StartColumn + wp.Word.Length)
                         {
                             tw.Write(wp.Word[col - wp.StartColumn]);
                             found = true;

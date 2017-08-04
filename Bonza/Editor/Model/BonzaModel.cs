@@ -3,7 +3,6 @@
 // 2017-07-22   PV  First version
 
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bonza.Editor.ViewModel;
@@ -58,6 +57,7 @@ namespace Bonza.Editor.Model
         {
             var layout = new WordPositionLayout();
             foreach (var wp in Layout.WordPositionList)
+                // ReSharper disable once PossibleMultipleEnumeration
                 if (!movedWordPositionList.Contains(wp))
                     layout.AddWordPositionAndSquaresNoCheck(wp);
             return layout;

@@ -14,7 +14,7 @@ namespace Bonza.Generator
     // A group of letters taken from global layout
     public class Chunk
     {
-        readonly List<Square> m_Squares = new List<Square>();
+        private readonly List<Square> m_Squares = new List<Square>();
 
         public int ChunkId { get; }
         public ReadOnlyCollection<Square> Squares => m_Squares.AsReadOnly();

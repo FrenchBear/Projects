@@ -5,13 +5,12 @@
 
 using static System.Console;
 using System.Diagnostics;
-using Bonza.Generator;
 
 namespace Bonza.Generator.Tests
 {
-    class GeneratorTestsApp
+    public class GeneratorTestsApp
     {
-        static void Main()
+        public static void Main()
         {
             Stopwatch sw = Stopwatch.StartNew();
             for (int n = 0; n < 3; n++)

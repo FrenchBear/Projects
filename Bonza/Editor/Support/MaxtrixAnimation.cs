@@ -96,12 +96,12 @@ namespace Bonza.Editor.Support
             var to = To ?? defaultDestinationValue;
 
             var newMatrix = new Matrix(
-                    ((to.M11 - from.M11) * normalizedTime) + from.M11,
-                    ((to.M12 - from.M12) * normalizedTime) + from.M12,
-                    ((to.M21 - from.M21) * normalizedTime) + from.M21,
-                    ((to.M22 - from.M22) * normalizedTime) + from.M22,
-                    ((to.OffsetX - from.OffsetX) * normalizedTime) + from.OffsetX,
-                    ((to.OffsetY - from.OffsetY) * normalizedTime) + from.OffsetY);
+                    (to.M11 - from.M11) * normalizedTime + from.M11,
+                    (to.M12 - from.M12) * normalizedTime + from.M12,
+                    (to.M21 - from.M21) * normalizedTime + from.M21,
+                    (to.M22 - from.M22) * normalizedTime + from.M22,
+                    (to.OffsetX - from.OffsetX) * normalizedTime + from.OffsetX,
+                    (to.OffsetY - from.OffsetY) * normalizedTime + from.OffsetY);
 
             return newMatrix;
         }

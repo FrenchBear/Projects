@@ -16,5 +16,5 @@ namespace Bonza.Generator
         public BonzaException(string message) : base(message) { }
         public BonzaException(string message, Exception innerException) : base(message, innerException) { }
         protected BonzaException(SerializationInfo info, StreamingContext context) : base(info, context) { }
-    };
+    }
 }

@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using Bonza.Generator;
@@ -24,7 +23,7 @@ namespace Bonza.Editor.Support
             Delete,
             Add,
             SwapOrientation
-        };
+        }
 
         internal class UndoAction
         {

@@ -17,7 +17,7 @@ using Bonza.Editor.Support;
 
 namespace Bonza.Editor.ViewModel
 {
-    class BonzaViewModel : INotifyPropertyChanged
+    internal class BonzaViewModel : INotifyPropertyChanged
     {
         // Model and View
         private readonly BonzaModel model;
@@ -155,16 +155,9 @@ namespace Bonza.Editor.ViewModel
             }
         }
 
-        public string Caption
-        {
-            get
-            {
-                if (LayoutName == null)
-                    return App.AppName;
-                else
-                    return App.AppName + " - " + LayoutName;
-            }
-        }
+
+        public string Caption => LayoutName == null ? App.AppName : App.AppName + " - " + LayoutName;
+
 
         private string m_LayoutName;
         public string LayoutName
@@ -264,6 +257,7 @@ namespace Bonza.Editor.ViewModel
             else
             {
                 string s = "Isl=" + Layout.GetWordsNotConnected() + "  ";
+
                 switch (status)
                 {
                     case PlaceWordStatus.Valid:
@@ -272,9 +266,11 @@ namespace Bonza.Editor.ViewModel
                     case PlaceWordStatus.TooClose:
                         s += "TCl";
                         break;
-                    default:
+                    case PlaceWordStatus.Invalid:
                         s += "Inv";
                         break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(status), status, null);
                 }
 
                 LayoutStatus = s;
@@ -337,7 +333,7 @@ namespace Bonza.Editor.ViewModel
 
         private void LoadExecute(object obj)
         {
-            OpenFileDialog dlg = new OpenFileDialog()
+            OpenFileDialog dlg = new OpenFileDialog
             {
                 DefaultExt = ".txt",
                 Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*",

@@ -2,17 +2,16 @@
 //
 // 2017-08-04   PV      First version
 
+
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Bonza.Generator;
-using System.Windows;
 
 namespace Bonza.Generator.UnitTests
 {
     [TestClass]
     public class UnitTest1
     {
-        Grille g;
+        private Grille g;
 
         //[AssemblyInitialize()]
         //public static void AssemblyInit(TestContext context)
@@ -70,7 +69,7 @@ namespace Bonza.Generator.UnitTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(System.ArgumentException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void TestAddWordPositionAndSquares2()
         {
             Assert.IsTrue(PlaceWordStatus.Valid == g.Layout.AddWordPositionAndSquares(new WordPosition { StartRow = 0, StartColumn = 0, Word = "PIERRE", IsVertical = false }));
@@ -79,7 +78,7 @@ namespace Bonza.Generator.UnitTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(System.ArgumentException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void TestAddWordPositionAndSquares3()
         {
             WordPosition wp = new WordPosition { StartRow = 0, StartColumn = 0, Word = "PIERRE", IsVertical = false };

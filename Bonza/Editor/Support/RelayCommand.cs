@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace Bonza.Editor.Support
 {
-    class RelayCommand<T> : ICommand
+    internal class RelayCommand<T> : ICommand
     {
         private readonly Predicate<T> canExecute;
         private readonly Action<T> execute;

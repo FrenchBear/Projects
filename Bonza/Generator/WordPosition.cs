@@ -3,8 +3,6 @@
 // 2017-07-21   PV      Split from program.cs
 
 
-using System;
-
 namespace Bonza.Generator
 {
     public struct PositionOrientation
@@ -15,9 +13,9 @@ namespace Bonza.Generator
 
         public PositionOrientation(PositionOrientation copy)
         {
-            this.StartRow = copy.StartRow;
-            this.StartColumn = copy.StartColumn;
-            this.IsVertical = copy.IsVertical;
+            StartRow = copy.StartRow;
+            StartColumn = copy.StartColumn;
+            IsVertical = copy.IsVertical;
         }
     }
 

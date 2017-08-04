@@ -2,6 +2,7 @@
 // A class representing placed words on a virtual grid of 1-letter squares
 // 2017-07-24   PV      Moved as an external class during refactoring
 
+
 using Newtonsoft.Json;
 using System;
 using System.Linq;
@@ -10,7 +11,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
-using System.Windows;
 
 namespace Bonza.Generator
 {
@@ -116,10 +116,7 @@ namespace Bonza.Generator
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Square GetSquare(int row, int column)
         {
-            if (IsOccupiedSquare(row, column))
-                return m_Squares[(row, column)];
-            else
-                return null;
+            return IsOccupiedSquare(row, column) ? m_Squares[(row, column)] : null;
         }
 
         // Specialized helper for performance, returns true if there's no square at this position
@@ -135,10 +132,7 @@ namespace Bonza.Generator
         public char GetLetter(int row, int column)
         {
             //return GetSquare(row, column)?.Letter ?? '\0';
-            if (m_Squares.ContainsKey((row, column)))
-                return m_Squares[(row, column)].Letter;
-            else
-                return '\0';
+            return m_Squares.ContainsKey((row, column)) ? m_Squares[(row, column)].Letter : '\0';
         }
 
         // Compute layout external bounds, note that cell (0,0) is always included in bounding rectangle
