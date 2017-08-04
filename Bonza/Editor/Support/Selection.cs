@@ -31,11 +31,11 @@ namespace Bonza.Editor.Support
             if (m_WordAndCanvasList == null)
                 return;
 
-            // Before clearing selection, remove highlight
-            m_WordAndCanvasList?.ForEach(wac => wac.SetColor(App.NormalValidForeground, App.NormalValidBackground));
-
-            // Optimization, by convention null means no selection
+            // Remove highlight
+            var sauveHighlight = m_WordAndCanvasList;
             m_WordAndCanvasList = null;
+            viewModel.RecolorizeWordAndCanvasList(sauveHighlight);
+
             viewModel.SelectedWordCount = 0;
         }
 

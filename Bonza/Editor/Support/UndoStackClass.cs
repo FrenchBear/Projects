@@ -91,7 +91,9 @@ namespace Bonza.Editor.Support
 
         internal void MemorizeSwapOrientation(IList<WordAndCanvas> wordAndCanvasList)
         {
-            MemorizeUndoableAction(UndoActions.SwapOrientation, wordAndCanvasList, null);
+            // Memorize position in a separate list since WordPosition objects position will change
+            List<PositionOrientation> topLeftList = wordAndCanvasList.Select(wac => new PositionOrientation { StartRow = wac.WordPosition.StartRow, StartColumn = wac.WordPosition.StartColumn, IsVertical = wac.WordPosition.IsVertical }).ToList();
+            MemorizeUndoableAction(UndoActions.SwapOrientation, wordAndCanvasList, topLeftList);
         }
 
 

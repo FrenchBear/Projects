@@ -2,7 +2,6 @@
 // MVVM View
 // 2017-07-22   PV  First version
 
-// ToDo: Let user change orientation of a word
 // ToDo: Add a word or a group of words
 
 
@@ -30,7 +29,7 @@ namespace Bonza.Editor.View
     public partial class BonzaView : Window
     {
         private readonly BonzaViewModel viewModel;
-        private readonly Selection m_Sel;                     // Manages current selection, internal since it's accessed from ViewModel
+        private readonly Selection m_Sel;                   // Manages current selection, internal since it's accessed from ViewModel
         private List<WordAndCanvas> m_WordAndCanvasList;    // Current list of WordAndCanvas managed by view
 
 
@@ -50,7 +49,6 @@ namespace Bonza.Editor.View
 
             // Can only reference ActualWidth after Window is loaded
             Loaded += MainWindow_Loaded;
-            SizeChanged += MainWindow_SizeChanged;
             KeyDown += MainWindow_KeyDown;
             // ContentRendered += (sender, e) => Environment.Exit(0);       // For performance testing
         }
@@ -59,13 +57,7 @@ namespace Bonza.Editor.View
         {
             // For development tests
             viewModel.LoadWordsList(@"..\Lists\Fruits.txt");
-            //viewModel.LoadWordsList(@"..\Lists\Countries.txt");       // For performance testing
-        }
-
-        // On window resize, background grid need update
-        void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            UpdateBackgroundGrid();
+            //viewModel.LoadWordsList(@"..\Lists\Animals.txt");
         }
 
 
@@ -112,7 +104,7 @@ namespace Bonza.Editor.View
             // Clear previous elements layout
             DrawingCanvas.Children.Clear();
             ClearBackgroundGrid();
-
+            viewModel.UpdateStatus(PlaceWordStatus.Valid);
             m_WordAndCanvasList = new List<WordAndCanvas>();
         }
 
@@ -135,8 +127,7 @@ namespace Bonza.Editor.View
             // Also draw initial background grid
             RescaleAndCenter(false);
 
-            // Just as a safeguard
-            moveWordAnimationInProgressCount = 0;
+            FinalRefreshAfterUpdate();
         }
 
 
@@ -169,11 +160,7 @@ namespace Bonza.Editor.View
                 viewModel.RemoveWordPosition(wac.WordPosition);
             }
 
-            // Deleting a word may update status of remaining words
-            RecolorizeAllWords();
-
-            // Finally redraw grid if needed
-            UpdateBackgroundGrid();
+            FinalRefreshAfterUpdate();
         }
 
 
@@ -196,8 +183,7 @@ namespace Bonza.Editor.View
             // Select all we've just restored
             m_Sel.Add(wordAndCanvasList);
 
-            // Finally redraw grid if needed
-            UpdateBackgroundGrid();
+            FinalRefreshAfterUpdate();
         }
 
         // Swaps a single word between orizontal and vertical orientation
@@ -213,27 +199,35 @@ namespace Bonza.Editor.View
             WordAndCanvas wac = wordAndCanvasList.First();
 
             if (memorizeForUndo)
-                viewModel.UndoStack.MemorizeSwapOrientation(m_Sel.WordAndCanvasList);
-
-            // Need special support for that, since we can't change orientation directly, internal squares 
-            // must be handled specifically
-            viewModel.SwapWordPositionOrientation(wac.WordPosition);
-
-            // Do not accept Illegal placements, adjust to only valid placements
-            WordPositionLayout layout = viewModel.GetLayoutExcludingWordPosition(wac.WordPosition);
-            List<PositionOrientation> topLeftList = new List<PositionOrientation>
             {
-                new PositionOrientation(wac.WordPosition.PositionOrientation)
-            };
-            AdjustToSuitableLocationInLayout(layout, wordAndCanvasList, topLeftList, true);
+                viewModel.UndoStack.MemorizeSwapOrientation(wordAndCanvasList);
+                viewModel.RemoveWordPosition(wac.WordPosition);
 
-            // Move to final, rounded position
-            viewModel.UpdateWordPositionLocation(wordAndCanvasList, topLeftList, true);     // Update WordPosition with new location
-            wac.RebuildCanvasAfterOrientationSwap();            // Only relocate visually letters of the word
-            MoveWordAndCanvasList(wordAndCanvasList);     // Visual animation
+                wac.WordPosition.IsVertical = !wac.WordPosition.IsVertical;
 
-            RecolorizeAllWords();
+                // Do not accept Illegal placements, adjust to only valid placements
+                WordPositionLayout layout = viewModel.GetLayoutExcludingWordPosition(wac.WordPosition);
+                List<PositionOrientation> topLeftList = new List<PositionOrientation>
+                {
+                    new PositionOrientation(wac.WordPosition.PositionOrientation)
+                };
+                AdjustToSuitableLocationInLayout(layout, wordAndCanvasList, topLeftList, true);
+                wac.WordPosition.StartRow = topLeftList[0].StartRow;
+                wac.WordPosition.StartColumn = topLeftList[0].StartColumn;
+                viewModel.AddWordPosition(wac.WordPosition);
+            }
+            wac.RebuildCanvasAfterOrientationSwap();    // Only relocate visually letters of the word
+            MoveWordAndCanvasList(wordAndCanvasList);   // Visual animation
+
+            FinalRefreshAfterUpdate();
+        }
+
+        internal void FinalRefreshAfterUpdate()
+        {
             UpdateBackgroundGrid();
+
+            PlaceWordStatus status = RecolorizeAllWords();
+            viewModel.UpdateStatus(status);
         }
 
 
@@ -320,18 +314,18 @@ namespace Bonza.Editor.View
             // Final tasks
             MainMatrixTransform.Matrix = rescaleMatrix;
             UpdateTransformationsFeedBack();
-            UpdateBackgroundGrid();
+            //UpdateBackgroundGrid();
         }
 
 
         // --------------------------------------------------------------------
         // Mouse click and drag management
 
-        Point previousMousePosition;
+        private Point previousMousePosition;
 
         // null indicates background grid move, or delegate must be executed by MouseMove to perform move 
         // action, P is current mouse coordinates in non-transformed user space
-        Action<Point> pmm;
+        private Action<Point> pmm;
 
         private void MainGrid_MouseMoveWhenUp(object sender, MouseEventArgs e)
         {
@@ -340,7 +334,7 @@ namespace Bonza.Editor.View
 
 
         // Helper
-        private bool IsAnimationInProgress()
+        internal bool IsAnimationInProgress()
         {
             // ToDo: Actually terminate WordAnimation
             if (moveWordAnimationInProgressCount > 0) return true;
@@ -476,7 +470,7 @@ namespace Bonza.Editor.View
 
 
 
-        void MainGrid_MouseMoveWhenDown(object sender, MouseEventArgs e)
+        private void MainGrid_MouseMoveWhenDown(object sender, MouseEventArgs e)
         {
             var newPosition = e.GetPosition(MainGrid);
             Matrix m = MainMatrixTransform.Matrix;
@@ -520,6 +514,8 @@ namespace Bonza.Editor.View
 
             if (pmm != null)
             {
+                pmm = null;
+
                 // End of visual feed-back, align on grid, and update ViewModel
                 // Round position to closest square on the grid
                 List<PositionOrientation> topLeftList = new List<PositionOrientation>();
@@ -538,22 +534,34 @@ namespace Bonza.Editor.View
                 viewModel.UpdateWordPositionLocation(m_Sel.WordAndCanvasList, topLeftList, true);     // Update WordPosition with new location
                 MoveWordAndCanvasList(m_Sel.WordAndCanvasList);     // Visual animation
 
-                RecolorizeAllWords();
+                FinalRefreshAfterUpdate();
             }
         }
 
-        internal void RecolorizeAllWords()
+        internal PlaceWordStatus RecolorizeAllWords()
         {
-            foreach (WordAndCanvas wac in m_WordAndCanvasList)
+            return RecolorizeWordAndCanvasList(m_WordAndCanvasList);
+        }
+
+        internal PlaceWordStatus RecolorizeWordAndCanvasList(List<WordAndCanvas> wordAndCanvasList)
+        {
+            PlaceWordStatus result = PlaceWordStatus.Valid;
+            foreach (WordAndCanvas wac in wordAndCanvasList)
             {
                 var layout = viewModel.GetLayoutExcludingWordPosition(wac.WordPosition);
-                RecolorizeWord(wac, viewModel.CanPlaceWordInLayout(layout, wac));
+                PlaceWordStatus status = viewModel.CanPlaceWordInLayout(layout, wac);
+                RecolorizeWord(wac, status);
+                if (status == PlaceWordStatus.TooClose && result == PlaceWordStatus.Valid)
+                    result = PlaceWordStatus.TooClose;
+                else if (status == PlaceWordStatus.Invalid && result != PlaceWordStatus.Invalid)
+                    result = PlaceWordStatus.Invalid;
             }
+            return result;
         }
 
         private void RecolorizeWord(WordAndCanvas wac, PlaceWordStatus status)
         {
-            bool isInSelection = m_Sel.WordAndCanvasList.Contains(wac);
+            bool isInSelection = m_Sel.WordAndCanvasList?.Contains(wac) ?? false;
             switch (status)
             {
                 case PlaceWordStatus.Valid:
@@ -583,7 +591,7 @@ namespace Bonza.Editor.View
 
         // If position is not valid, look around until a valid position is found
         // Examine surrounding cells in a "snail pattern"
-        private void AdjustToSuitableLocationInLayout(WordPositionLayout layout, IList<WordAndCanvas> wordAndCanvasList, IList<PositionOrientation> topLeftList, bool OnlyValidPlacement)
+        private void AdjustToSuitableLocationInLayout(WordPositionLayout layout, IList<WordAndCanvas> wordAndCanvasList, IList<PositionOrientation> topLeftList, bool onlyValidPlacement)
         {
             // Internal helper to check all words
             bool CanPlaceAllWords(bool isOnlyValidPlacement)
@@ -597,12 +605,12 @@ namespace Bonza.Editor.View
                 return true;
             }
 
-            if (!CanPlaceAllWords(OnlyValidPlacement))
+            if (!CanPlaceAllWords(onlyValidPlacement))
             {
                 int st = 1;
                 int sign = 1;
 
-                for (; ; )
+                for (;;)
                 {
                     for (int i = 0; i < st; i++)
                     {
@@ -622,7 +630,7 @@ namespace Bonza.Editor.View
             }
         }
 
-        int moveWordAnimationInProgressCount;
+        private int moveWordAnimationInProgressCount;
 
         internal void MoveWordAndCanvasList(IList<WordAndCanvas> wordAndCanvasList)
         {
@@ -666,7 +674,7 @@ namespace Bonza.Editor.View
         private void MoveWordAnimationEnd(WordCanvas wc, DependencyProperty dp, double finalValue)
         {
             // Need to wait all animations end!
-            System.Threading.Interlocked.Decrement(ref moveWordAnimationInProgressCount);
+            Interlocked.Decrement(ref moveWordAnimationInProgressCount);
             wc.BeginAnimation(dp, null);
 
             // Set final value
@@ -698,7 +706,7 @@ namespace Bonza.Editor.View
 
 
         // Grid currently drawn
-        int minRowGrid, maxRowGrid, minColumnGrid, maxColumnGrid;
+        private int minRowGrid, maxRowGrid, minColumnGrid, maxColumnGrid;
 
         private void ClearBackgroundGrid()
         {

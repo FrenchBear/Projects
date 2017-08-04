@@ -3,8 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:Bonza.Editor.ViewModel"
         mc:Ignorable="d"
-        Title="{Binding Caption,FallbackValue='Bonza Editor'}" Height="768" Width="1024" Icon="/Bonza.Editor;component/Bonza.ico">
+        d:DataContext="{d:DesignInstance vm:BonzaViewModel}"
+        Title="{Binding Caption,FallbackValue='Bonza Editor'}" Height="768" Width="1024" Icon="/Bonza.Editor;component/Bonza.ico"
+        >
 
     <Window.Resources>
         <!-- Gray out toolbar elements when disabled (why is it not automatic ??) -->
@@ -196,8 +199,8 @@
             <StackPanel Orientation="Vertical" Margin="6,5,0,6">
                 <Label Content="Bonza Editor" FontWeight="Bold" FontSize="16" Margin="0,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="PowderBlue" Foreground="Blue" />
                 <Button Command="{Binding Path=LoadCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Load Words</Button>
-                <Label>Disjoint groups:</Label>
-                <TextBlock Text="{Binding WordsNotConnected}" />
+                <Label>Status:</Label>
+                <TextBlock Text="{Binding LayoutStatus}" />
             </StackPanel>
         </DockPanel>
 

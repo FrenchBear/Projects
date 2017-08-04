@@ -21,7 +21,6 @@ Buffalo
 Butterfly
 Camel
 Caribou
-Caribou
 Cat
 Caterpillar
 Cattle
@@ -145,7 +144,6 @@ Oryx
 Ostrich
 Otter
 Owl
-Ox
 Oyster
 Panther
 Parrot

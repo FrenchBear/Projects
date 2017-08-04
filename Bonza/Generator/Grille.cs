@@ -63,8 +63,10 @@ namespace Bonza.Generator
                 throw new ArgumentNullException(nameof(wordsTable));
             if (wordsTable.Length < 1)
                 throw new BonzaException("Au moins un mot requis");
-            if (wordsTable.Any(w => w.Length <= 2))
-                throw new BonzaException("Mots de longueur <=2 non autorisés");
+            string shortWords = wordsTable.Where(w => w.Length <= 2)
+                .Aggregate("", (list, next) => string.IsNullOrEmpty(list) ? next : list + ", " + next);
+            if (!string.IsNullOrEmpty((shortWords)))
+                throw new BonzaException("Mot(s) de longueur <= 2 non autorisé(s): " + shortWords);
 
 #if TraceBuild
             Stopwatch sw = Stopwatch.StartNew();
@@ -80,7 +82,7 @@ namespace Bonza.Generator
                 // A small centered dot is visually better in the grid than a space in words containing spaces
                 string canonizedWord = word.ToUpper(CultureInfo.InvariantCulture).Replace(' ', '·');
                 if (words.Contains(canonizedWord))
-                    throw new BonzaException("Duplicate word in the list: " + word);
+                    throw new BonzaException("Mot en double dans la liste: " + word);
                 words.Add(canonizedWord);
             }
 

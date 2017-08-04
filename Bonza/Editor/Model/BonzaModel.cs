@@ -88,14 +88,5 @@ namespace Bonza.Editor.Model
         {
             return Layout.AddWordPositionAndSquares(wordPosition);
         }
-
-        // Swap WordPosition orientation in current layout and update squares,
-        // but do not check whether location is valid or not
-        internal void SwapWordPositionOrientation(WordPosition wordPosition)
-        {
-            Layout.RemoveWordPositionAndSquares(wordPosition);
-            wordPosition.IsVertical = !wordPosition.IsVertical;
-            Layout.AddWordPositionAndSquaresNoCheck(wordPosition);
-        }
     }
 }

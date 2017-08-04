@@ -142,7 +142,7 @@ namespace Bonza.Generator
         }
 
         // Compute layout external bounds, note that cell (0,0) is always included in bounding rectangle
-        // ToDo: Use Int32Rect
+        // ToDo: Use BoundingRectangle
         public (int minRow, int maxRow, int minColumn, int maxColumn) GetBounds()
         {
             int minRow = 0, maxRow = 0, minColumn = 0, maxColumn = 0;

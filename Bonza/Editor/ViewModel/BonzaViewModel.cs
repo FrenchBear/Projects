@@ -126,27 +126,31 @@ namespace Bonza.Editor.ViewModel
             return layout.CanPlaceWord(wac.WordPosition);
         }
 
-        internal void SwapWordPositionOrientation(WordPosition wordPosition)
-        {
-            model.SwapWordPositionOrientation(wordPosition);
-        }
 
+
+        // -------------------------------------------------
+        // Selection helpers
+
+        public void RecolorizeWordAndCanvasList(List<WordAndCanvas> wordAndCanvasList)
+        {
+            view.RecolorizeWordAndCanvasList(wordAndCanvasList);
+        }
 
 
 
         // -------------------------------------------------
         // Bindings
 
-        private int m_WordsNotConnected;
-        public int WordsNotConnected
+        private string m_LayoutStatus;
+        public string LayoutStatus
         {
-            get => m_WordsNotConnected;
+            get => m_LayoutStatus;
             set
             {
-                if (m_WordsNotConnected != value)
+                if (m_LayoutStatus != value)
                 {
-                    m_WordsNotConnected = value;
-                    NotifyPropertyChanged(nameof(WordsNotConnected));
+                    m_LayoutStatus = value;
+                    NotifyPropertyChanged(nameof(LayoutStatus));
                 }
             }
         }
@@ -208,20 +212,18 @@ namespace Bonza.Editor.ViewModel
                 case UndoStackClass.UndoActions.Move:
                     UpdateWordPositionLocation(action.WordAndCanvasList, action.PositionOrientationList, false);   // Coordinates in wordPositionList are updated
                     view.MoveWordAndCanvasList(action.WordAndCanvasList);
-                    view.RecolorizeAllWords();
                     break;
 
                 case UndoStackClass.UndoActions.Delete:
                     view.AddWordAndCanvasList(action.WordAndCanvasList, false);
-                    view.RecolorizeAllWords();
                     break;
 
                 case UndoStackClass.UndoActions.Add:
                     view.DeleteWordAndCanvasList(action.WordAndCanvasList, false);
-                    view.RecolorizeAllWords();
                     break;
 
                 case UndoStackClass.UndoActions.SwapOrientation:
+                    UpdateWordPositionLocation(action.WordAndCanvasList, action.PositionOrientationList, false);   // Coordinates in wordPositionList are updated
                     view.SwapOrientation(action.WordAndCanvasList, false);
                     break;
 
@@ -229,6 +231,8 @@ namespace Bonza.Editor.ViewModel
                     Debug.Assert(false, "Unknown/Unsupported Undo Action");
                     break;
             }
+
+            view.FinalRefreshAfterUpdate();
         }
 
 
@@ -241,6 +245,7 @@ namespace Bonza.Editor.ViewModel
             UndoStack.Clear();
             view.ClearWordAndCanvas();
             view.RescaleAndCenter(false);
+            view.FinalRefreshAfterUpdate();
         }
 
         internal void InitialLayoutDisplay()
@@ -251,6 +256,31 @@ namespace Bonza.Editor.ViewModel
 
         // -------------------------------------------------
         // View helpers
+
+        internal void UpdateStatus(PlaceWordStatus status)
+        {
+            if (Layout == null)
+                LayoutStatus = "";
+            else
+            {
+                string s = "Isl=" + Layout.GetWordsNotConnected() + "  ";
+                switch (status)
+                {
+                    case PlaceWordStatus.Valid:
+                        s += "Val";
+                        break;
+                    case PlaceWordStatus.TooClose:
+                        s += "TCl";
+                        break;
+                    default:
+                        s += "Inv";
+                        break;
+                }
+
+                LayoutStatus = s;
+            }
+        }
+
 
         // When a list of WordPositions have moved to their final location in view
         internal void UpdateWordPositionLocation(IList<WordAndCanvas> wordAndCanvasList, IList<PositionOrientation> topLeftList, bool memorizeForUndo)
@@ -374,6 +404,8 @@ namespace Bonza.Editor.ViewModel
 
         private void DeleteExecute(object obj)
         {
+            if (view.IsAnimationInProgress())
+                return;
             view.DeleteSelection();
         }
 
@@ -386,6 +418,8 @@ namespace Bonza.Editor.ViewModel
 
         private void UndoExecute(object obj)
         {
+            if (view.IsAnimationInProgress())
+                return;
             PerformUndo();
         }
 
@@ -398,6 +432,8 @@ namespace Bonza.Editor.ViewModel
 
         private void SwapOrientationExecute(object obj)
         {
+            if (view.IsAnimationInProgress())
+                return;
             view.SwapOrientation();
         }
 
