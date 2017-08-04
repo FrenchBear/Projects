@@ -1,4 +1,4 @@
-﻿// BonzaEditor, clss BonzaView.Selection
+﻿// BonzaEditor, class BonzaView.Selection
 // Internal view class for better encapsulation, manages selection at view level
 //
 // 2017-07-29   PV  First version, extracted from view

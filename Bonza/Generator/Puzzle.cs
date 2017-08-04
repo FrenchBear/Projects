@@ -21,16 +21,16 @@ namespace Bonza.Generator
             puzzle = new ChunkLayout();
 
             // Find a starting letter on the first row
-            (int minRow, int _, int minColumn, int maxColumn) = layout.GetBounds();
+            BoundingRectangle r = Layout.GetBounds();
             int loopCol;
-            for (loopCol = minColumn; loopCol <= maxColumn; loopCol++)
-                if (layout.GetSquare(minRow, loopCol) != null)
+            for (loopCol = r.MinColumn; loopCol <= r.MaxColumn; loopCol++)
+                if (Layout.GetSquare(r.MinRow, loopCol) != null)
                     break;
-            Debug.Assert(loopCol <= maxColumn);
+            Debug.Assert(loopCol <= r.MaxColumn);
 
             // Start accumulation process from this initial square
             Stack<Square> myStack = new Stack<Square>();
-            myStack.Push(layout.GetSquare(minRow, loopCol));
+            myStack.Push(Layout.GetSquare(r.MinRow, loopCol));
 
             // We stop once all squares have been placed
             while (myStack.Count > 0)
@@ -49,16 +49,16 @@ namespace Bonza.Generator
                     {
                         int row = sq.Row;
                         int column = sq.Column;
-                        sq = layout.GetSquare(row + 1, column);
+                        sq = Layout.GetSquare(row + 1, column);
                         if (sq != null && !sq.IsInChunk)
                             connectedSquares.Enqueue(sq);
-                        sq = layout.GetSquare(row - 1, column);
+                        sq = Layout.GetSquare(row - 1, column);
                         if (sq != null && !sq.IsInChunk)
                             connectedSquares.Enqueue(sq);
-                        sq = layout.GetSquare(row, column + 1);
+                        sq = Layout.GetSquare(row, column + 1);
                         if (sq != null && !sq.IsInChunk)
                             connectedSquares.Enqueue(sq);
-                        sq = layout.GetSquare(row, column - 1);
+                        sq = Layout.GetSquare(row, column - 1);
                         if (sq != null && !sq.IsInChunk)
                             connectedSquares.Enqueue(sq);
 

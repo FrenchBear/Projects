@@ -4,9 +4,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Generator UnitTests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("eurofins")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Generator UnitTests")]
-[assembly: AssemblyCopyright("Copyright © eurofins 2017")]
+[assembly: AssemblyCopyright("Copyright ©2017 Pierre Violent")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

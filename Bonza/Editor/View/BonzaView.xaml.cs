@@ -186,7 +186,7 @@ namespace Bonza.Editor.View
             FinalRefreshAfterUpdate();
         }
 
-        // Swaps a single word between orizontal and vertical orientation
+        // Swaps a single word between horizontal and vertical orientation
         internal void SwapOrientation()
         {
             Debug.Assert(m_Sel.WordAndCanvasList != null && m_Sel.WordAndCanvasList.Count == 1);
@@ -238,28 +238,25 @@ namespace Bonza.Editor.View
             if (viewModel.Layout == null)
                 return;
 
-            (int minRow, int maxRow, int minColumn, int maxColumn) = viewModel.Layout.GetBounds();
+            BoundingRectangle r = viewModel.Layout.GetBounds();
             // Add some extra margin and always represent a 20x20 grid at minimum
-            minRow = Math.Min(-11, minRow - 3);
-            minColumn = Math.Min(-11, minColumn - 3);
-            maxRow = Math.Max(11, maxRow + 4);
-            maxColumn = Math.Max(11, maxColumn + 4);
+            r.MinRow = Math.Min(-11, r.MinRow - 3);
+            r.MinColumn = Math.Min(-11, r.MinColumn - 3);
+            r.MaxRow = Math.Max(11, r.MaxRow + 4);
+            r.MaxColumn = Math.Max(11, r.MaxColumn + 4);
 
 
             // Reverse-transform corners into WordCanvas coordinates
-            Point p1Grid = new Point(minColumn * UnitSize, minRow * UnitSize);
-            Point p2Grid = new Point(maxColumn * UnitSize, maxRow * UnitSize);
+            Point p1Grid = new Point(r.MinColumn * UnitSize, r.MinRow * UnitSize);
+            Point p2Grid = new Point(r.MaxColumn * UnitSize, r.MaxRow * UnitSize);
 
 
             rescaleMatrix = MainMatrixTransform.Matrix;
 
             // Set rotation to zero
-            // get angle from transformation matrix:
-            // | M11 M12 0 |   | s.cos θ -s.sin θ   0 |
-            // | M21 M22 0 | = | s.sin θ  s.cos θ   0 |  (s = scale)
-            // | dx  dy  1 |   | dx       dy        1 |
+            // Get angle from transformation matrix
             double θ = Math.Atan2(rescaleMatrix.M21, rescaleMatrix.M11);    // Just to use a variable named θ
-            rescaleMatrix.Rotate(θ / Math.PI * 180);            // It would certainly kill Microsoft to indicate on Rotate page or Intellisense tooltip that angle is in degrees...
+            rescaleMatrix.Rotate(θ / Math.PI * 180);        // It would certainly kill Microsoft to indicate on Rotate page or Intellisense tooltip that angle is in degrees...
 
             // First adjust scale
             Point p1Screen = rescaleMatrix.Transform(p1Grid);
@@ -323,7 +320,7 @@ namespace Bonza.Editor.View
 
         private Point previousMousePosition;
 
-        // null indicates background grid move, or delegate must be executed by MouseMove to perform move 
+        // null indicates background grid move, or delegate must be executed by MouseMove to perform move
         // action, P is current mouse coordinates in non-transformed user space
         private Action<Point> pmm;
 
@@ -396,7 +393,7 @@ namespace Bonza.Editor.View
 
             // HitTest: Test if a word was clicked on, if true, hitTextBlock is a TextBloxk
             if (DrawingCanvas.InputHitTest(e.GetPosition(DrawingCanvas)) is TextBlock)
-                // We'reinterested in its parent WordCanvas, that contains all the text blocks for the word
+                // We're interested in its parent WordCanvas, that contains all the text blocks for the word
                 pmm = GetMouseDownMoveAction();
             else
             {
@@ -640,8 +637,8 @@ namespace Bonza.Editor.View
             if (wordAndCanvasList.Count == 0) throw new ArgumentException(nameof(wordAndCanvasList));
 
             // If bounding rectangle is updated, need to redraw background grid
-            (int minRow, int maxRow, int minColumn, int maxColumn) = viewModel.Layout.GetBounds();
-            if (minRow != minRowGrid || minColumn != minColumnGrid || maxRow != maxRowGrid || maxColumn != maxColumnGrid)
+            BoundingRectangle r = viewModel.Layout.GetBounds();
+            if (!r.Equals(gridBounding))
                 UpdateBackgroundGrid();
 
             // Compute distance moved on 1st element to choose animation speed (duration)
@@ -708,12 +705,12 @@ namespace Bonza.Editor.View
 
 
         // Grid currently drawn
-        private int minRowGrid, maxRowGrid, minColumnGrid, maxColumnGrid;
+        private BoundingRectangle gridBounding;
 
         private void ClearBackgroundGrid()
         {
             BackgroundGrid.Children.Clear();
-            minRowGrid = int.MinValue;          // Force redraw after it's been cleared
+            gridBounding.MinRow = int.MinValue;          // Force redraw after it's been cleared
         }
 
         private void UpdateBackgroundGrid()
@@ -729,13 +726,13 @@ namespace Bonza.Editor.View
             ClearBackgroundGrid();
             if (viewModel.Layout != null)
             {
-                (minRowGrid, maxRowGrid, minColumnGrid, maxColumnGrid) = viewModel.Layout.GetBounds();
+                gridBounding = viewModel.Layout.GetBounds();
 
                 // Add some extra margin and always represent a 20x20 grid at minimum
-                int minRow = Math.Min(-10, minRowGrid - 2);
-                int minColumn = Math.Min(-10, minColumnGrid - 2);
-                int maxRow = Math.Max(10, maxRowGrid + 3);
-                int maxColumn = Math.Max(10, maxColumnGrid + 3);
+                int minRow = Math.Min(-10, gridBounding.MinRow - 2);
+                int minColumn = Math.Min(-10, gridBounding.MinColumn - 2);
+                int maxRow = Math.Max(10, gridBounding.MaxRow + 3);
+                int maxColumn = Math.Max(10, gridBounding.MaxColumn + 3);
 
                 for (int row = minRow; row <= maxRow; row++)
                 {

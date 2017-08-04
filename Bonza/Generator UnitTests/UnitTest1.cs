@@ -16,7 +16,7 @@ namespace Bonza.Generator.UnitTests
         //[AssemblyInitialize()]
         //public static void AssemblyInit(TestContext context)
         //{
-        //    MessageBox.Show("Assembly Init " + context.TestResultsDirectory);
+        //    MessageBox.Show("Assembly Initialize " + context.TestResultsDirectory);
         //}
 
         //[AssemblyCleanup()]

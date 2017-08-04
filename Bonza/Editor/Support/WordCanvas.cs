@@ -56,7 +56,7 @@ namespace Bonza.Editor.Support
         }
 
 
-        // Helper to set foreground/background on all TextBlock of a wordCanvas 
+        // Helper to set foreground/background on all TextBlock of a wordCanvas
         internal void SetColor(Brush foreground, Brush background)
         {
             foreach (TextBlock tb in Children)
@@ -68,7 +68,7 @@ namespace Bonza.Editor.Support
 
         // Update children (letter TextBlocks) placement after changing orientation
         // Just update visual representation
-        // Caller is responsible for all other tasks (check placment, redraw background grind if layout bounding rectangle has changed, undo support)
+        // Caller is responsible for all other tasks (check placement, redraw background grind if layout bounding rectangle has changed, undo support)
         internal void RebuildCanvasAfterOrientationSwap()
         {
             for (int i = 0; i < wp.Word.Length; i++)
@@ -83,4 +83,3 @@ namespace Bonza.Editor.Support
         }
     }
 }
- 

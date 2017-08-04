@@ -22,6 +22,12 @@ namespace Bonza.Generator
     }
 
 
+    public struct BoundingRectangle
+    {
+        public int MinRow, MaxRow, MinColumn, MaxColumn;
+    }
+
+
     public class WordPositionLayout
     {
         private List<WordPosition> m_WordPositionList = new List<WordPosition>();
@@ -136,34 +142,34 @@ namespace Bonza.Generator
         }
 
         // Compute layout external bounds, note that cell (0,0) is always included in bounding rectangle
-        // ToDo: Use BoundingRectangle
-        public (int minRow, int maxRow, int minColumn, int maxColumn) GetBounds()
+        public BoundingRectangle GetBounds()
         {
-            int minRow = 0, maxRow = 0, minColumn = 0, maxColumn = 0;
-            foreach (WordPosition wp in m_WordPositionList)
-                (minRow, maxRow, minColumn, maxColumn) = ExtendBounds(minRow, maxRow, minColumn, maxColumn, wp);
-            return (minRow, maxRow, minColumn, maxColumn);
+            BoundingRectangle r = new BoundingRectangle();
+            //foreach (WordPosition wp in m_WordPositionList)
+            //    r = ExtendBounds(r, wp);
+            //return m_WordPositionList.Aggregate(r, (current, wp) => ExtendBounds(current, wp));
+            return m_WordPositionList.Aggregate(r, ExtendBounds);
         }
 
-        // Return layout (minRow, maxRow, minColumn, maxColumn) extended with a WordPosition added
-        public (int newMinRow, int newMaxRow, int newMinColumn, int newMaxColumn) ExtendBounds(int minRow, int maxRow, int minColumn, int maxColumn, WordPosition wp)
+        // Return layout bounds extended with a WordPosition added
+        public BoundingRectangle ExtendBounds(BoundingRectangle r, WordPosition wp)
         {
-            int newMinRow, newMaxRow, newMinColumn, newMaxColumn;
+            BoundingRectangle newR = new BoundingRectangle();
             if (wp.IsVertical)
             {
-                newMinRow = Math.Min(minRow, wp.StartRow);
-                newMaxRow = Math.Max(maxRow, wp.StartRow + wp.Word.Length - 1);
-                newMinColumn = Math.Min(minColumn, wp.StartColumn);
-                newMaxColumn = Math.Max(maxColumn, wp.StartColumn);
+                newR.MinRow = Math.Min(r.MinRow, wp.StartRow);
+                newR.MaxRow = Math.Max(r.MaxRow, wp.StartRow + wp.Word.Length - 1);
+                newR.MinColumn = Math.Min(r.MinColumn, wp.StartColumn);
+                newR.MaxColumn = Math.Max(r.MaxColumn, wp.StartColumn);
             }
             else
             {
-                newMinRow = Math.Min(minRow, wp.StartRow);
-                newMaxRow = Math.Max(maxRow, wp.StartRow);
-                newMinColumn = Math.Min(minColumn, wp.StartColumn);
-                newMaxColumn = Math.Max(maxColumn, wp.StartColumn + wp.Word.Length - 1);
+                newR.MinRow = Math.Min(r.MinRow, wp.StartRow);
+                newR.MaxRow = Math.Max(r.MaxRow, wp.StartRow);
+                newR.MinColumn = Math.Min(r.MinColumn, wp.StartColumn);
+                newR.MaxColumn = Math.Max(r.MaxColumn, wp.StartColumn + wp.Word.Length - 1);
             }
-            return (newMinRow, newMaxRow, newMinColumn, newMaxColumn);
+            return newR;
         }
 
 
@@ -323,6 +329,7 @@ namespace Bonza.Generator
                 if (word1.StartColumn != word2.StartColumn) return false;
 
                 // On the same column, check that one row ends before the other starts
+                // ReSharper disable once ConvertIfStatementToReturnStatement
                 if (word1.StartRow + word1.Word.Length - 1 < word2.StartRow
                     || word2.StartRow + word2.Word.Length - 1 < word1.StartRow)
                     return false;
@@ -330,12 +337,14 @@ namespace Bonza.Generator
                 // They overlap, it's not really an intersection but still count as one
                 return true;
             }
-            else if (!word1.IsVertical && !word2.IsVertical)
+
+            if (!word1.IsVertical && !word2.IsVertical)
             {
                 // Both horizontal, different row, no problem
                 if (word1.StartRow != word2.StartRow) return false;
 
                 // On the same row, check that one column ends before the other starts
+                // ReSharper disable once ConvertIfStatementToReturnStatement
                 if (word1.StartColumn + word1.Word.Length - 1 < word2.StartColumn
                     || word2.StartColumn + word2.Word.Length - 1 < word1.StartColumn)
                     return false;
@@ -343,7 +352,8 @@ namespace Bonza.Generator
                 // Overlap of two horizontal words
                 return true;
             }
-            else if (!word1.IsVertical && word2.IsVertical)
+
+            if (!word1.IsVertical && word2.IsVertical)
             {
                 // word1 horizontal, word2 vertical
                 // if word2 column does not overlap with word1 columns, no problem
@@ -351,13 +361,14 @@ namespace Bonza.Generator
                     return false;
 
                 // If word2 rows do now overlap with word1 row, no problem
+                // ReSharper disable once ConvertIfStatementToReturnStatement
                 if (word1.StartRow < word2.StartRow || word1.StartRow > word2.StartRow + word2.Word.Length - 1)
                     return false;
 
                 // Otherwise we have an intersection
                 return true;
             }
-            else
+
             {
                 // word1 vertical, word2 horizontal
                 // if word1 column does not overlap with word2 columns, no problem
@@ -365,6 +376,7 @@ namespace Bonza.Generator
                     return false;
 
                 // If word1 rows do now overlap with word2 row, no problem
+                // ReSharper disable once ConvertIfStatementToReturnStatement
                 if (word2.StartRow < word1.StartRow || word2.StartRow > word1.StartRow + word1.Word.Length - 1)
                     return false;
 
