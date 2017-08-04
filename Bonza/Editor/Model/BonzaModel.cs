@@ -3,6 +3,7 @@
 // 2017-07-22   PV  First version
 
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bonza.Editor.ViewModel;
@@ -63,11 +64,12 @@ namespace Bonza.Editor.Model
         }
 
 
-        internal PlaceWordStatus CanPlaceWordAtPositionInLayout(WordPositionLayout layout, WordPosition hitWordPosition, PositionOrientation position)
+        // Check if a WordPosition can be placed at specific location in given layout
+        internal PlaceWordStatus CanPlaceWordAtPositionInLayout(WordPositionLayout layout, WordPosition wordPosition, PositionOrientation position)
         {
             WordPosition testWordPosition = new WordPosition
             {
-                Word = hitWordPosition.Word,
+                Word = wordPosition.Word,
                 IsVertical = position.IsVertical,
                 StartRow = position.StartRow,
                 StartColumn = position.StartColumn
@@ -85,6 +87,15 @@ namespace Bonza.Editor.Model
         internal PlaceWordStatus AddWordPosition(WordPosition wordPosition)
         {
             return Layout.AddWordPositionAndSquares(wordPosition);
+        }
+
+        // Swap WordPosition orientation in current layout and update squares,
+        // but do not check whether location is valid or not
+        internal void SwapWordPositionOrientation(WordPosition wordPosition)
+        {
+            Layout.RemoveWordPositionAndSquares(wordPosition);
+            wordPosition.IsVertical = !wordPosition.IsVertical;
+            Layout.AddWordPositionAndSquaresNoCheck(wordPosition);
         }
     }
 }

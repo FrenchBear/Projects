@@ -126,6 +126,13 @@ namespace Bonza.Editor.ViewModel
             return layout.CanPlaceWord(wac.WordPosition);
         }
 
+        internal void SwapWordPositionOrientation(WordPosition wordPosition)
+        {
+            model.SwapWordPositionOrientation(wordPosition);
+        }
+
+
+
 
         // -------------------------------------------------
         // Bindings
@@ -212,6 +219,10 @@ namespace Bonza.Editor.ViewModel
                 case UndoStackClass.UndoActions.Add:
                     view.DeleteWordAndCanvasList(action.WordAndCanvasList, false);
                     view.RecolorizeAllWords();
+                    break;
+
+                case UndoStackClass.UndoActions.SwapOrientation:
+                    view.SwapOrientation(action.WordAndCanvasList, false);
                     break;
 
                 default:

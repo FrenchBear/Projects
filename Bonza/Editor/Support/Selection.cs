@@ -61,23 +61,6 @@ namespace Bonza.Editor.Support
         }
 
 
-        // Swaps a single word between orizontal and vertical orientation
-        internal void SwapOrientation()
-        {
-            Debug.Assert(m_WordAndCanvasList != null && m_WordAndCanvasList.Count == 1);
-
-            // ToDo: Make sure that caller check that position is valid (recycle snail re-placement pattern)
-            // ToDo: Caller must support undo
-            // ToDo: Redraw background grid if needed (done at the end of position check/snail re-placement?)
-
-            // wc.SwapOrientation only relocate visually letters and update 
-            foreach (WordAndCanvas wac in m_WordAndCanvasList)
-            {
-                wac.WordPosition.IsVertical = !wac.WordPosition.IsVertical;
-                wac.RebuildCanvasAfterOrientationSwap();
-            }
-        }
-
         // Delete selection
         internal void Delete(WordAndCanvas wac)
         {

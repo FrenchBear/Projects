@@ -200,9 +200,40 @@ namespace Bonza.Editor.View
             UpdateBackgroundGrid();
         }
 
-        public void SwapOrientation()
+        // Swaps a single word between orizontal and vertical orientation
+        internal void SwapOrientation()
         {
-            m_Sel.SwapOrientation();
+            Debug.Assert(m_Sel.WordAndCanvasList != null && m_Sel.WordAndCanvasList.Count == 1);
+            SwapOrientation(m_Sel.WordAndCanvasList, true);
+        }
+
+        internal void SwapOrientation(IList<WordAndCanvas> wordAndCanvasList, bool memorizeForUndo)
+        {
+            Debug.Assert(wordAndCanvasList != null && wordAndCanvasList.Count == 1);
+            WordAndCanvas wac = wordAndCanvasList.First();
+
+            if (memorizeForUndo)
+                viewModel.UndoStack.MemorizeSwapOrientation(m_Sel.WordAndCanvasList);
+
+            // Need special support for that, since we can't change orientation directly, internal squares 
+            // must be handled specifically
+            viewModel.SwapWordPositionOrientation(wac.WordPosition);
+
+            // Do not accept Illegal placements, adjust to only valid placements
+            WordPositionLayout layout = viewModel.GetLayoutExcludingWordPosition(wac.WordPosition);
+            List<PositionOrientation> topLeftList = new List<PositionOrientation>
+            {
+                new PositionOrientation(wac.WordPosition.PositionOrientation)
+            };
+            AdjustToSuitableLocationInLayout(layout, wordAndCanvasList, topLeftList, true);
+
+            // Move to final, rounded position
+            viewModel.UpdateWordPositionLocation(wordAndCanvasList, topLeftList, true);     // Update WordPosition with new location
+            wac.RebuildCanvasAfterOrientationSwap();            // Only relocate visually letters of the word
+            MoveWordAndCanvasList(wordAndCanvasList);     // Visual animation
+
+            RecolorizeAllWords();
+            UpdateBackgroundGrid();
         }
 
 
@@ -304,14 +335,14 @@ namespace Bonza.Editor.View
 
         private void MainGrid_MouseMoveWhenUp(object sender, MouseEventArgs e)
         {
-            // ToDo, for example, provide word hovering visual feed-back
+            // Maybe provide word hovering visual feed-back? Or a tooltip with debug info?
         }
 
 
         // Helper
         private bool IsAnimationInProgress()
         {
-            // ToDo Maybe: terminate WordAnimation
+            // ToDo: Actually terminate WordAnimation
             if (moveWordAnimationInProgressCount > 0) return true;
             if (isMatrixAnimationInProgress) MatrixAnimationEnd();
             return false;
@@ -501,7 +532,7 @@ namespace Bonza.Editor.View
                 }
 
                 // Do not accept Illegal placements, adjust to only valid placements
-                AdjustToSuitableLocation(m_Sel.WordAndCanvasList, topLeftList, true);
+                AdjustToSuitableLocationInLayout(m_FixedLayout, m_Sel.WordAndCanvasList, topLeftList, true);
 
                 // Move to final, rounded position
                 viewModel.UpdateWordPositionLocation(m_Sel.WordAndCanvasList, topLeftList, true);     // Update WordPosition with new location
@@ -552,15 +583,14 @@ namespace Bonza.Editor.View
 
         // If position is not valid, look around until a valid position is found
         // Examine surrounding cells in a "snail pattern"
-        // Important: Works on TestLayout only
-        private void AdjustToSuitableLocation(IList<WordAndCanvas> wordAndCanvasList, IList<PositionOrientation> topLeftList, bool OnlyValidPlacement)
+        private void AdjustToSuitableLocationInLayout(WordPositionLayout layout, IList<WordAndCanvas> wordAndCanvasList, IList<PositionOrientation> topLeftList, bool OnlyValidPlacement)
         {
             // Internal helper to check all words
             bool CanPlaceAllWords(bool isOnlyValidPlacement)
             {
                 for (int il = 0; il < wordAndCanvasList.Count; il++)
                 {
-                    var placmentStatus = viewModel.CanPlaceWordAtPositionInLayout(m_FixedLayout, wordAndCanvasList[il].WordPosition, topLeftList[il]);
+                    var placmentStatus = viewModel.CanPlaceWordAtPositionInLayout(layout, wordAndCanvasList[il].WordPosition, topLeftList[il]);
                     if (placmentStatus == PlaceWordStatus.Invalid || (placmentStatus == PlaceWordStatus.TooClose && !isOnlyValidPlacement))
                         return false;
                 }

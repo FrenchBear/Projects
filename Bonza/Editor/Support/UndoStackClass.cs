@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using Bonza.Generator;
@@ -21,7 +22,8 @@ namespace Bonza.Editor.Support
         {
             Move,
             Delete,
-            Add
+            Add,
+            SwapOrientation
         };
 
         internal class UndoAction
@@ -50,58 +52,46 @@ namespace Bonza.Editor.Support
         }
 
 
-        // Memorize current position of a list of WordPosition during a Move operation
-        internal void MemorizeMove(IList<WordAndCanvas> wordAndCanvasList)
+        private void MemorizeUndoableAction(UndoActions action, IList<WordAndCanvas> wordAndCanvasList, IList<PositionOrientation> topLeftList)
         {
             if (wordAndCanvasList == null) throw new ArgumentNullException(nameof(wordAndCanvasList));
             Debug.Assert(wordAndCanvasList.Count >= 1);
 
-            // Memorize position in a separate list since WordPosition objects position will change
-            List<PositionOrientation> topLeftList = wordAndCanvasList.Select(wac => new PositionOrientation { StartRow = wac.WordPosition.StartRow, StartColumn = wac.WordPosition.StartColumn, IsVertical = wac.WordPosition.IsVertical }).ToList();
-
             if (undoStack == null)
                 undoStack = new Stack<UndoAction>();
 
-            UndoAction a = new UndoAction(UndoActions.Move)
+            UndoAction a = new UndoAction(action)
             {
-                // Since wordPositionList is a list belonging to view, we need to clone it
                 WordAndCanvasList = new List<WordAndCanvas>(wordAndCanvasList),
                 PositionOrientationList = topLeftList
             };
             undoStack.Push(a);
         }
 
+        // Memorize current position of a list of WordPosition during a Move operation
+        internal void MemorizeMove(IList<WordAndCanvas> wordAndCanvasList)
+        {
+            if (wordAndCanvasList == null) throw new ArgumentNullException(nameof(wordAndCanvasList));
+            // Memorize position in a separate list since WordPosition objects position will change
+            List<PositionOrientation> topLeftList = wordAndCanvasList.Select(wac => new PositionOrientation { StartRow = wac.WordPosition.StartRow, StartColumn = wac.WordPosition.StartColumn, IsVertical = wac.WordPosition.IsVertical }).ToList();
+
+            MemorizeUndoableAction(UndoActions.Move, wordAndCanvasList, topLeftList);
+        }
+
         // Memorize a list of Words about to be deleted
         internal void MemorizeDelete(IList<WordAndCanvas> wordAndCanvasList)
         {
-            if (wordAndCanvasList == null) throw new ArgumentNullException(nameof(wordAndCanvasList));
-            Debug.Assert(wordAndCanvasList.Count >= 1);
-
-            if (undoStack == null)
-                undoStack = new Stack<UndoAction>();
-
-            UndoAction a = new UndoAction(UndoActions.Delete)
-            {
-                WordAndCanvasList = new List<WordAndCanvas>(wordAndCanvasList),
-                PositionOrientationList = null   // No need to memorize original position, since words are about to be deleted and won't move
-            };
-            undoStack.Push(a);
+            MemorizeUndoableAction(UndoActions.Delete, wordAndCanvasList, null);
         }
 
         public void MemorizeAdd(IList<WordAndCanvas> wordAndCanvasList)
         {
-            if (wordAndCanvasList == null) throw new ArgumentNullException(nameof(wordAndCanvasList));
-            Debug.Assert(wordAndCanvasList.Count >= 1);
+            MemorizeUndoableAction(UndoActions.Add, wordAndCanvasList, null);
+        }
 
-            if (undoStack == null)
-                undoStack = new Stack<UndoAction>();
-
-            UndoAction a = new UndoAction(UndoActions.Add)
-            {
-                WordAndCanvasList = new List<WordAndCanvas>(wordAndCanvasList),
-                PositionOrientationList = null   // No need to memorize original position, since undo will remove words
-            };
-            undoStack.Push(a);
+        internal void MemorizeSwapOrientation(IList<WordAndCanvas> wordAndCanvasList)
+        {
+            MemorizeUndoableAction(UndoActions.SwapOrientation, wordAndCanvasList, null);
         }
 
 
