@@ -91,14 +91,19 @@ namespace Bonza.Editor.ViewModel
 
         public IEnumerable<WordPosition> WordPositionList => model?.Layout?.WordPositionList;
 
-        internal void BuildMoveTestLayout(IEnumerable<WordPosition> wordPositionList)
+        internal WordPositionLayout GetLayoutExcludingWordPositionList(IEnumerable<WordPosition> wordPositionList)
         {
-            model.BuildMoveTestLayout(wordPositionList);
+            return model.GetLayoutExcludingWordPositionList(wordPositionList);
         }
 
-        internal bool CanPlaceWordInMoveTestLayout(WordPosition wordPosition, PositionOrientation positionOrientation)
+        internal WordPositionLayout GetLayoutExcludingWordPosition(WordPosition wordPosition)
         {
-            return model.CanPlaceWordInMoveTestLayout(wordPosition, positionOrientation);
+            return model.GetLayoutExcludingWordPositionList(new List<WordPosition> { wordPosition });
+        }
+
+        internal PlaceWordStatus CanPlaceWordAtPositionInLayout(WordPositionLayout layout, WordPosition wordPosition, PositionOrientation positionOrientation)
+        {
+            return model.CanPlaceWordAtPositionInLayout(layout, wordPosition, positionOrientation);
         }
 
         internal void RemoveWordPosition(WordPosition wordPosition)
@@ -111,7 +116,15 @@ namespace Bonza.Editor.ViewModel
             model.AddWordPosition(wordPosition);
         }
 
+        internal PlaceWordStatus CanPlaceWord(WordAndCanvas wac)
+        {
+            return Layout.CanPlaceWord(wac.WordPosition);
+        }
 
+        internal PlaceWordStatus CanPlaceWordInLayout(WordPositionLayout layout, WordAndCanvas wac)
+        {
+            return layout.CanPlaceWord(wac.WordPosition);
+        }
 
 
         // -------------------------------------------------
@@ -179,23 +192,26 @@ namespace Bonza.Editor.ViewModel
         // Should implement singleton pattern
         public UndoStackClass UndoStack = new UndoStackClass();
 
-        public void PerformUndo()
+        internal void PerformUndo()
         {
             UndoStackClass.UndoAction action = UndoStack.Pop();
 
-            switch(action.Action)
+            switch (action.Action)
             {
                 case UndoStackClass.UndoActions.Move:
                     UpdateWordPositionLocation(action.WordAndCanvasList, action.PositionOrientationList, false);   // Coordinates in wordPositionList are updated
                     view.MoveWordAndCanvasList(action.WordAndCanvasList);
+                    view.RecolorizeAllWords();
                     break;
 
                 case UndoStackClass.UndoActions.Delete:
                     view.AddWordAndCanvasList(action.WordAndCanvasList, false);
+                    view.RecolorizeAllWords();
                     break;
 
                 case UndoStackClass.UndoActions.Add:
                     view.DeleteWordAndCanvasList(action.WordAndCanvasList, false);
+                    view.RecolorizeAllWords();
                     break;
 
                 default:
@@ -212,12 +228,13 @@ namespace Bonza.Editor.ViewModel
         {
             LayoutName = null;
             UndoStack.Clear();
-            view.ClearLayout();
+            view.ClearWordAndCanvas();
+            view.RescaleAndCenter(false);
         }
 
         internal void InitialLayoutDisplay()
         {
-            view.InitialLayoutDisplay();
+            view.InitialWordAndCanvasDisplay();
         }
 
 
@@ -229,7 +246,7 @@ namespace Bonza.Editor.ViewModel
         {
             if (wordAndCanvasList == null) throw new ArgumentNullException(nameof(wordAndCanvasList));
             if (topLeftList == null) throw new ArgumentNullException(nameof(topLeftList));
-            Debug.Assert(wordAndCanvasList.Count>0 && wordAndCanvasList.Count == topLeftList.Count);
+            Debug.Assert(wordAndCanvasList.Count > 0 && wordAndCanvasList.Count == topLeftList.Count);
 
             // If we don't really move, there is nothing more to do
             var firstWac = wordAndCanvasList.First();
@@ -295,7 +312,7 @@ namespace Bonza.Editor.ViewModel
         {
             try
             {
-                view.ClearLayout();
+                view.ClearWordAndCanvas();
                 LayoutName = null;
                 model.LoadGrille(filename);
                 LayoutName = Path.GetFileNameWithoutExtension(filename) + ".layout";
@@ -316,7 +333,7 @@ namespace Bonza.Editor.ViewModel
         {
             try
             {
-                view.ClearLayout();
+                view.ClearWordAndCanvas();
                 model.ResetLayout();
             }
             catch (Exception ex)
@@ -341,7 +358,7 @@ namespace Bonza.Editor.ViewModel
 
         private bool DeleteCanExecute(object obj)
         {
-            return model.Layout != null && SelectedWordCount>0;
+            return model.Layout != null && SelectedWordCount > 0;
         }
 
         private void DeleteExecute(object obj)
@@ -387,12 +404,10 @@ namespace Bonza.Editor.ViewModel
 
 
 
-        // -------------------------------------------------
-        // Commands
-
         private void NewLayoutExecute(object obj)
         {
             model.NewGrille();
+            ClearLayout();
         }
 
         private void QuitExecute(object obj)

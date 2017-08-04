@@ -14,8 +14,7 @@ namespace Bonza.Editor.Model
     {
         private readonly BonzaViewModel viewModel;
         private Grille grille;
-        public WordPositionLayout Layout => grille?.GetLayout();
-        public WordPositionLayout MoveTestLayout;
+        public WordPositionLayout Layout => grille?.Layout;
 
         public BonzaModel(BonzaViewModel viewModel)
         {
@@ -25,12 +24,13 @@ namespace Bonza.Editor.Model
         internal void NewGrille()
         {
             grille = new Grille();
-            viewModel.ClearLayout();
+            grille.NewLayout();
         }
 
         internal void LoadGrille(string wordsFile)
         {
             grille = new Grille();
+            grille.NewLayout();
             viewModel.ClearLayout();
             int i;
             for (i = 0; i < 5 && !grille.PlaceWords(wordsFile); i++) { }
@@ -41,6 +41,7 @@ namespace Bonza.Editor.Model
 
         internal void ResetLayout()
         {
+            grille.NewLayout();
             viewModel.ClearLayout();
             int i;
             for (i = 0; i < 5 && !grille.PlaceWordsAgain(); i++) { }
@@ -51,17 +52,18 @@ namespace Bonza.Editor.Model
 
 
 
-        // Build a copy of Layout without a specific WordPosition to validate placement
-        internal void BuildMoveTestLayout(IEnumerable<WordPosition> movedWordPositionList)
+        // Build a copy of Layout without a specific list of WordPosition to validate placement
+        internal WordPositionLayout GetLayoutExcludingWordPositionList(IEnumerable<WordPosition> movedWordPositionList)
         {
-            var wordPositionList = movedWordPositionList as IList<WordPosition> ?? movedWordPositionList.ToList();
-            MoveTestLayout = new WordPositionLayout();
+            var layout = new WordPositionLayout();
             foreach (var wp in Layout.WordPositionList)
-                if (!wordPositionList.Contains(wp))
-                    MoveTestLayout.AddWordPositionAndSquares(wp);
+                if (!movedWordPositionList.Contains(wp))
+                    layout.AddWordPositionAndSquaresNoCheck(wp);
+            return layout;
         }
 
-        internal bool CanPlaceWordInMoveTestLayout(WordPosition hitWordPosition, PositionOrientation position)
+
+        internal PlaceWordStatus CanPlaceWordAtPositionInLayout(WordPositionLayout layout, WordPosition hitWordPosition, PositionOrientation position)
         {
             WordPosition testWordPosition = new WordPosition
             {
@@ -70,18 +72,9 @@ namespace Bonza.Editor.Model
                 StartRow = position.StartRow,
                 StartColumn = position.StartColumn
             };
-            return MoveTestLayout.CanPlaceWord(testWordPosition);
+            return layout.CanPlaceWord(testWordPosition);
         }
 
-
-        //// Update a word in current Layout
-        //internal void UpdateWordPositionLocation(WordPosition word, PositionOrientation po)
-        //{
-        //    Layout.UpdateWordPositionLocation(word, po);
-
-        //    // Need to recompute number of words not connected
-        //    viewModel.WordsNotConnected = Layout.GetWordsNotConnected();
-        //}
 
         // Removes a word from current Layout
         internal void RemoveWordPosition(WordPosition wordPosition)
@@ -89,9 +82,9 @@ namespace Bonza.Editor.Model
             Layout.RemoveWordPositionAndSquares(wordPosition);
         }
 
-        internal void AddWordPosition(WordPosition wordPosition)
+        internal PlaceWordStatus AddWordPosition(WordPosition wordPosition)
         {
-            Layout.AddWordPositionAndSquares(wordPosition);
+            return Layout.AddWordPositionAndSquares(wordPosition);
         }
     }
 }

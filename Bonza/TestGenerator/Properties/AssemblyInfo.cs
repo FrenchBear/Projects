@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("TestGenerator")]
+[assembly: AssemblyTitle("Generator.Tests")]
 [assembly: AssemblyDescription("Simple text-based testing application for BonzaGenerator")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]

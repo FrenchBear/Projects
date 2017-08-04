@@ -15,15 +15,25 @@ namespace Bonza.Editor
         // Font size is 16 and padding are also hardcoded
         internal static readonly double UnitSize = 25.0;
 
+
         // Some colors
-        internal static readonly Brush NormalBackgroundBrush = Brushes.Black;
-        internal static readonly Brush NormalForegroundBrush = Brushes.White;
+        internal static readonly Brush NormalValidBackground = Brushes.Black;
+        internal static readonly Brush NormalValidForeground = Brushes.White;
 
-        internal static readonly Brush SelectedBackgroundBrush = Brushes.DarkBlue;
-        internal static readonly Brush SelectedForegroundBrush = Brushes.White;
+        internal static readonly Brush NormalTooCloseBackground = Brushes.SlateGray;
+        internal static readonly Brush NormalTooCloseForeground = Brushes.White;
 
-        internal static readonly Brush ProblemBackgroundBrush = Brushes.DarkRed;
-        internal static readonly Brush ProblemForegroundBrush = Brushes.White;
+        internal static readonly Brush NormalInvalidBackground = Brushes.DarkRed;
+        internal static readonly Brush NormalInvalidForeground = Brushes.White;
+
+        internal static readonly Brush SelectedValidBackground = Brushes.DarkBlue;
+        internal static readonly Brush SelectedValidForeground = Brushes.White;
+
+        internal static readonly Brush SelectedTooCloseBackground = Brushes.MediumVioletRed;
+        internal static readonly Brush SelectedTooCloseForeground = Brushes.White;
+
+        internal static readonly Brush SelectedInvalidBackground = Brushes.DarkRed;
+        internal static readonly Brush SelectedInvalidForeground = Brushes.White;
 
     }
 }

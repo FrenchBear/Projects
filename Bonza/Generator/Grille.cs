@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Globalization;
-
+using System.Diagnostics;
 
 namespace Bonza.Generator
 {
@@ -25,9 +25,11 @@ namespace Bonza.Generator
         }
 
         // Temporary, find something better!
-        public WordPositionLayout GetLayout()
+        public WordPositionLayout Layout => layout;
+
+        public void NewLayout()
         {
-            return layout;
+            layout = new WordPositionLayout();
         }
 
         // Memorize the list of words to place as a class variable if later we call PlaceWordsAgain
@@ -69,8 +71,9 @@ namespace Bonza.Generator
 #endif
             List<string> words = new List<string>();
 
-            // We start with a fresh new layout
-            layout = new WordPositionLayout();
+            // We need a fresh new layout
+            Debug.Assert(layout != null);
+            Debug.Assert(layout.WordPositionList.Count == 0);
 
             foreach (string word in wordsTable)
             {
@@ -149,7 +152,7 @@ namespace Bonza.Generator
             WriteLine(wp.ToString());
 #endif
 
-            layout.AddWordPositionAndSquares(wp);
+            layout.AddWordPositionAndSquaresNoCheck(wp);
         }
 
         // Adjusted surface calculation that penalize extensions that would make bounding 
@@ -209,7 +212,7 @@ namespace Bonza.Generator
                                 StartRow = placedWord.IsVertical ? (placedWord.StartRow + positionInPlacedWord) : (placedWord.StartRow - positionInWordToPlace),
                                 StartColumn = placedWord.IsVertical ? (placedWord.StartColumn - positionInWordToPlace) : (placedWord.StartColumn + positionInPlacedWord)
                             };
-                            if (layout.CanPlaceWord(test))
+                            if (layout.CanPlaceWord(test)==PlaceWordStatus.Valid)
                                 possibleWordPositions.Add(test);
                         }
                 }

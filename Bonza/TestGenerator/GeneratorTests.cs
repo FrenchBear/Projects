@@ -1,14 +1,15 @@
 ﻿// Bonza.cs
-// Test generation of a Bonza-like crossword
+// Simple text-based tests of generation of a Bonza-like crossword
 // 2017-06  PV
 
-using static System.Console;
-using Bonza.Generator;
-using System.Diagnostics;
 
-namespace TestGenerator
+using static System.Console;
+using System.Diagnostics;
+using Bonza.Generator;
+
+namespace Bonza.Generator.Tests
 {
-    class TestGeneratorApp
+    class GeneratorTestsApp
     {
         static void Main()
         {

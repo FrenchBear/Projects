@@ -7,8 +7,8 @@
     <ProjectGuid>{0C699A00-6E47-4559-A59F-3EFB75E7FDB8}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TestGenerator</RootNamespace>
-    <AssemblyName>TestGenerator</AssemblyName>
+    <RootNamespace>Bonza.Generator.Tests</RootNamespace>
+    <AssemblyName>Bonza.Generator.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -44,7 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="GeneratorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

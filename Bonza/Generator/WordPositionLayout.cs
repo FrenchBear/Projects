@@ -4,6 +4,7 @@
 
 using Newtonsoft.Json;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -13,6 +14,14 @@ using System.Windows;
 
 namespace Bonza.Generator
 {
+    public enum PlaceWordStatus
+    {
+        Valid,          // Placement is good
+        TooClose,       // No overlap, but word touches another word in an incorrect way
+        Invalid         // Overlap or touching a word of same orientation
+    }
+
+
     public class WordPositionLayout
     {
         private List<WordPosition> m_WordPositionList = new List<WordPosition>();
@@ -22,15 +31,29 @@ namespace Bonza.Generator
 
         public int SquaresCount => m_Squares.Count;
 
-        public void AddWordPositionAndSquares(WordPosition wp)
+
+        // Safe version
+        public PlaceWordStatus AddWordPositionAndSquares(WordPosition wp)
         {
             if (wp == null)
                 throw new ArgumentNullException(nameof(wp));
             if (m_WordPositionList.Contains(wp))
                 throw new ArgumentException("WordPosition already in the layout");
-            m_WordPositionList.Add(wp);
+            if (m_WordPositionList.Any(wordPosition => string.Compare(wordPosition.Word, wp.Word, StringComparison.OrdinalIgnoreCase) == 0))
+                throw new ArgumentException("Word already in layout list of words");
 
-            // Add new squares
+            var res = CanPlaceWord(wp);
+            if (res != PlaceWordStatus.Invalid)
+                AddWordPositionAndSquaresNoCheck(wp);
+            return res;
+        }
+
+
+
+        // Fast version, do not check that placement is correct
+        public void AddWordPositionAndSquaresNoCheck(WordPosition wp)
+        {
+            m_WordPositionList.Add(wp);
             AddSquares(wp);
         }
 
@@ -149,59 +172,78 @@ namespace Bonza.Generator
             return (newMinRow, newMaxRow, newMinColumn, newMaxColumn);
         }
 
+
         // Try to place a word in current layout, following rules of puzzle layout
         // Return true of it's possible, false otherwise
-        public bool CanPlaceWord(WordPosition wp)
+        public PlaceWordStatus CanPlaceWord(WordPosition wp)
         {
             int row = wp.StartRow;
             int column = wp.StartColumn;
 
+            PlaceWordStatus result = PlaceWordStatus.Valid;
+
             if (wp.IsVertical)
             {
                 // Need free cell above
-                if (IsOccupiedSquare(row - 1, column)) return false;
+                if (IsOccupiedSquare(row - 1, column)) result = PlaceWordStatus.TooClose;
                 // Need free cell below
-                if (IsOccupiedSquare(row + wp.Word.Length, column)) return false;
+                if (IsOccupiedSquare(row + wp.Word.Length, column)) result = PlaceWordStatus.TooClose;
 
                 for (int i = 0; i < wp.Word.Length; i++)
-                    if (GetLetter(row + i, column) == wp.Word[i])
+                {
+                    char l = GetLetter(row + i, column);
+                    if (l == wp.Word[i])
                     {
                         // It's Ok to already have a matching letter only if it only belongs to a crossing word (of opposite direction)
                         // In this case, we don't need to check left and right cells
                         foreach (WordPosition loop in GetWordPositionsFromSquare(row + i, column))
                             if (loop.IsVertical == wp.IsVertical)
-                                return false;
+                                return PlaceWordStatus.Invalid;
                     }
                     else
                     {
-                        // We need an empty cell, and a free cell on the left and on the right
-                        if (IsOccupiedSquare(row + i, column - 1) || IsOccupiedSquare(row + i, column) || IsOccupiedSquare(row + i, column + 1))
-                            return false;
+                        // We need an empty cell for this letter
+                        if (l != '\0')
+                            return PlaceWordStatus.Invalid;
+
+                        // We need a free cell on the left and on the right, or else we're too close
+                        if (IsOccupiedSquare(row + i, column - 1) || IsOccupiedSquare(row + i, column + 1))
+                            result = PlaceWordStatus.TooClose;
                     }
+                }
             }
             else
             {
                 // Free cell left
-                if (IsOccupiedSquare(row, column - 1)) return false;
+                if (IsOccupiedSquare(row, column - 1)) result = PlaceWordStatus.TooClose;
                 // Free cell right
-                if (IsOccupiedSquare(row, column + wp.Word.Length)) return false;
+                if (IsOccupiedSquare(row, column + wp.Word.Length)) result = PlaceWordStatus.TooClose;
 
                 for (int i = 0; i < wp.Word.Length; i++)
-                    if (GetLetter(row, column + i) == wp.Word[i])
+                {
+                    char l = GetLetter(row, column + i);
+                    if (l == wp.Word[i])
                     {
                         // It's Ok to already have a matching letter only if it only belongs to a crossing word (of opposite direction)
                         foreach (WordPosition loop in GetWordPositionsFromSquare(row, column + i))
                             if (loop.IsVertical == wp.IsVertical)
-                                return false;
+                                return PlaceWordStatus.Invalid;
                     }
                     else
                     {
-                        if (IsOccupiedSquare(row - 1, column + i) || IsOccupiedSquare(row, column + i) || IsOccupiedSquare(row + 1, column + i))
-                            return false;
+                        // We need an empty cell for this letter
+                        if (l != '\0')
+                            return PlaceWordStatus.Invalid;
+
+                        // We need a free cell above and below, or else we're too close
+                        if (IsOccupiedSquare(row - 1, column + i) || IsOccupiedSquare(row + 1, column + i))
+                            result = PlaceWordStatus.TooClose;
                     }
+                }
             }
-            return true;
+            return result;
         }
+
 
         // Helper for CanPlaceWord, returns an enum of words covering square (row, column) in current layout
         private IEnumerable<WordPosition> GetWordPositionsFromSquare(int row, int column)
@@ -225,7 +267,7 @@ namespace Bonza.Generator
             List<WordPosition> tempList = new List<WordPosition>(m_WordPositionList);
 
             int blocksCount = 0;
-            for (;;)
+            for (; ; )
             {
                 if (tempList.Count == 0)
                     break;
