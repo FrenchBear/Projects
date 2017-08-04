@@ -107,7 +107,7 @@ namespace Bonza.Editor.View
         // Entry points for ViewModel
 
         // Clears the grid, before loading a new list of words or reorganizing layout
-        internal void ClearLayout()
+        internal void ClearWordAndCanvas()
         {
             // Clear previous elements layout
             DrawingCanvas.Children.Clear();
@@ -118,7 +118,7 @@ namespace Bonza.Editor.View
 
 
         // Initial drawing of for current model layout
-        internal void InitialLayoutDisplay()
+        internal void InitialWordAndCanvasDisplay()
         {
             // Draw letters
             foreach (WordPosition wp in viewModel.WordPositionList)
@@ -168,6 +168,9 @@ namespace Bonza.Editor.View
                 m_WordAndCanvasList.Remove(wac);
                 viewModel.RemoveWordPosition(wac.WordPosition);
             }
+
+            // Deleting a word may update status of remaining words
+            RecolorizeAllWords();
 
             // Finally redraw grid if needed
             UpdateBackgroundGrid();
@@ -326,6 +329,8 @@ namespace Bonza.Editor.View
                 WordAndCanvas hit = m_WordAndCanvasList.FirstOrDefault(wac => ReferenceEquals(wac.WordCanvas, hitC));
                 Debug.Assert(hit != null);
 
+                //Debug.WriteLine("Hit " + hit.WordPosition.ToString());
+
                 // If Ctrl key is NOT pressed, clear previous selection
                 // But if we click again in something already selected, do not clear selection!
                 if (!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl))
@@ -379,11 +384,15 @@ namespace Bonza.Editor.View
             Mouse.Capture(MainGrid);
         }
 
+
+        // Layout of WordPosition that do not move
+        private WordPositionLayout m_FixedLayout;
+
         // Separate from MainGrid_MouseDown to reduce complexity
         private Action<Point> GetMouseDownMoveAction()
         {
             // Need a layout without moved word to validate placement
-            viewModel.BuildMoveTestLayout(m_Sel.WordAndCanvasList.Select(wac => wac.WordPosition));
+            m_FixedLayout = viewModel.GetLayoutExcludingWordPositionList(m_Sel.WordAndCanvasList.Select(wac => wac.WordPosition));
 
             // Reverse-transform mouse Grid coordinates into DrawingCanvas coordinates
             Matrix m = MainMatrixTransform.Matrix;
@@ -411,24 +420,8 @@ namespace Bonza.Editor.View
                     int top = (int)Math.Floor(preciseTop / UnitSize + 0.5);
                     int left = (int)Math.Floor(preciseLeft / UnitSize + 0.5);
 
-                    // ToDo: MoveTestLayout is not Ok if we remove all words from selection from TestLayout,
-                    // some words of the selection will be considered incorrectly placed
-                    // Need to find a solution to that!
-                    // If we remove just selected word from TestLayout, word will collide with ghosts of
-                    // other words being moved => Not Ok
-                    // Maybe the test of validity can only be done if there is a real move: as long
-                    // we remain at original position (after rounding), by definition we know it's Ok
-                    // or the test may not be done on separate words, but just on a list of squares...
-                    // Need more thinking...
-                    // Other option, temp placement rules are more flexible and allow for temporary
-                    // invalid placements, validity is checked later
-                    // Note that during generation, current stringent rules must prevail
-
-                    // Find out if it's possible to place the word here, provide color feed-back
-                    if (viewModel.CanPlaceWordInMoveTestLayout(m_Sel.WordAndCanvasList[i].WordPosition, new PositionOrientation { StartRow = top, StartColumn = left, IsVertical = m_Sel.WordAndCanvasList[i].WordPosition.IsVertical }))
-                        wc.SetColor(SelectedForegroundBrush, SelectedBackgroundBrush);
-                    else
-                        wc.SetColor(ProblemForegroundBrush, ProblemBackgroundBrush);
+                    PlaceWordStatus status = viewModel.CanPlaceWordAtPositionInLayout(m_FixedLayout, m_Sel.WordAndCanvasList[i].WordPosition, new PositionOrientation { StartRow = top, StartColumn = left, IsVertical = m_Sel.WordAndCanvasList[i].WordPosition.IsVertical });
+                    RecolorizeWord(m_Sel.WordAndCanvasList[i], status);
                 }
             };
         }
@@ -497,61 +490,107 @@ namespace Bonza.Editor.View
             if (pmm != null)
             {
                 // End of visual feed-back, align on grid, and update ViewModel
-                // Not efficient to manage a single list of (top, left) tuple since in the snail pattern
-                // placement code, top is updated independently from left, and a tuple makes it heavy
+                // Round position to closest square on the grid
                 List<PositionOrientation> topLeftList = new List<PositionOrientation>();
                 foreach (WordAndCanvas wac in m_Sel.WordAndCanvasList)
                 {
                     WordCanvas wc = wac.WordCanvas;
-                    wc.SetColor(SelectedForegroundBrush, SelectedBackgroundBrush);
-
-                    // Round position to closest square on the grid
                     int top = (int)Math.Floor(((double)wc.GetValue(Canvas.TopProperty) / UnitSize) + 0.5);
                     int left = (int)Math.Floor(((double)wc.GetValue(Canvas.LeftProperty) / UnitSize) + 0.5);
                     topLeftList.Add(new PositionOrientation { StartRow = top, StartColumn = left, IsVertical = wac.WordPosition.IsVertical });
                 }
 
-                // If position is not valid, look around until a valid position is found
-                // Examine surrounding cells in a "snail pattern" 
-                bool CanPlaceAllWords()
-                {
-                    for (int il = 0; il < m_Sel.WordAndCanvasList.Count; il++)
-                        if (!viewModel.CanPlaceWordInMoveTestLayout(m_Sel.WordAndCanvasList[il].WordPosition, topLeftList[il]))
-                            return false;
-                    return true;
-                }
+                // Do not accept Illegal placements, adjust to only valid placements
+                AdjustToSuitableLocation(m_Sel.WordAndCanvasList, topLeftList, true);
 
-                if (!CanPlaceAllWords())
-                {
-                    int st = 1;
-                    int sign = 1;
-
-                    for (;;)
-                    {
-                        for (int i = 0; i < st; i++)
-                        {
-                            for (int il = 0; il < m_Sel.WordAndCanvasList.Count; il++)
-                                topLeftList[il] = new PositionOrientation { StartRow = topLeftList[il].StartRow, StartColumn = topLeftList[il].StartColumn + sign, IsVertical = m_Sel.WordAndCanvasList[il].WordPosition.IsVertical };
-                            if (CanPlaceAllWords()) goto FoundValidPosition;
-                        }
-                        for (int i = 0; i < st; i++)
-                        {
-                            for (int il = 0; il < m_Sel.WordAndCanvasList.Count; il++)
-                                topLeftList[il] = new PositionOrientation { StartRow = topLeftList[il].StartRow + sign, StartColumn = topLeftList[il].StartColumn, IsVertical = m_Sel.WordAndCanvasList[il].WordPosition.IsVertical };
-                            if (CanPlaceAllWords()) goto FoundValidPosition;
-                        }
-                        sign = -sign;
-                        st++;
-                    }
-                }
-
-            FoundValidPosition:
                 // Move to final, rounded position
                 viewModel.UpdateWordPositionLocation(m_Sel.WordAndCanvasList, topLeftList, true);     // Update WordPosition with new location
-                MoveWordAndCanvasList(m_Sel.WordAndCanvasList);
+                MoveWordAndCanvasList(m_Sel.WordAndCanvasList);     // Visual animation
+
+                RecolorizeAllWords();
             }
         }
 
+        internal void RecolorizeAllWords()
+        {
+            foreach (WordAndCanvas wac in m_WordAndCanvasList)
+            {
+                var layout = viewModel.GetLayoutExcludingWordPosition(wac.WordPosition);
+                RecolorizeWord(wac, viewModel.CanPlaceWordInLayout(layout, wac));
+            }
+        }
+
+        private void RecolorizeWord(WordAndCanvas wac, PlaceWordStatus status)
+        {
+            bool isInSelection = m_Sel.WordAndCanvasList.Contains(wac);
+            switch (status)
+            {
+                case PlaceWordStatus.Valid:
+                    if (isInSelection)
+                        wac.WordCanvas.SetColor(SelectedValidForeground, SelectedValidBackground);
+                    else
+                        wac.WordCanvas.SetColor(NormalValidForeground, NormalValidBackground);
+                    break;
+
+                case PlaceWordStatus.TooClose:
+                    if (isInSelection)
+                        wac.WordCanvas.SetColor(SelectedTooCloseForeground, SelectedTooCloseBackground);
+                    else
+                        wac.WordCanvas.SetColor(NormalTooCloseForeground, NormalTooCloseBackground);
+                    break;
+
+                case PlaceWordStatus.Invalid:
+                    if (isInSelection)
+                        wac.WordCanvas.SetColor(SelectedInvalidForeground, SelectedInvalidBackground);
+                    else
+                        wac.WordCanvas.SetColor(NormalInvalidForeground, NormalInvalidBackground);
+                    break;
+            }
+
+        }
+
+
+        // If position is not valid, look around until a valid position is found
+        // Examine surrounding cells in a "snail pattern"
+        // Important: Works on TestLayout only
+        private void AdjustToSuitableLocation(IList<WordAndCanvas> wordAndCanvasList, IList<PositionOrientation> topLeftList, bool OnlyValidPlacement)
+        {
+            // Internal helper to check all words
+            bool CanPlaceAllWords(bool isOnlyValidPlacement)
+            {
+                for (int il = 0; il < wordAndCanvasList.Count; il++)
+                {
+                    var placmentStatus = viewModel.CanPlaceWordAtPositionInLayout(m_FixedLayout, wordAndCanvasList[il].WordPosition, topLeftList[il]);
+                    if (placmentStatus == PlaceWordStatus.Invalid || (placmentStatus == PlaceWordStatus.TooClose && !isOnlyValidPlacement))
+                        return false;
+                }
+                return true;
+            }
+
+            if (!CanPlaceAllWords(OnlyValidPlacement))
+            {
+                int st = 1;
+                int sign = 1;
+
+                for (; ; )
+                {
+                    for (int i = 0; i < st; i++)
+                    {
+                        for (int il = 0; il < wordAndCanvasList.Count; il++)
+                            topLeftList[il] = new PositionOrientation { StartRow = topLeftList[il].StartRow, StartColumn = topLeftList[il].StartColumn + sign, IsVertical = m_Sel.WordAndCanvasList[il].WordPosition.IsVertical };
+                        if (CanPlaceAllWords(true)) return;
+                    }
+                    for (int i = 0; i < st; i++)
+                    {
+                        for (int il = 0; il < wordAndCanvasList.Count; il++)
+                            topLeftList[il] = new PositionOrientation { StartRow = topLeftList[il].StartRow + sign, StartColumn = topLeftList[il].StartColumn, IsVertical = m_Sel.WordAndCanvasList[il].WordPosition.IsVertical };
+                        if (CanPlaceAllWords(true)) return;
+                    }
+                    sign = -sign;
+                    st++;
+                }
+            }
+        }
 
         int moveWordAnimationInProgressCount;
 

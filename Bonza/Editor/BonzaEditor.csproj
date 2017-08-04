@@ -7,7 +7,7 @@
     <ProjectGuid>{454EF9C3-AD96-45F0-B63A-79589D324554}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>Bonza.Editor</RootNamespace>
-    <AssemblyName>BonzaEditor</AssemblyName>
+    <AssemblyName>Bonza.Editor</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>

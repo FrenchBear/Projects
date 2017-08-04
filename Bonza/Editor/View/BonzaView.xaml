@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="{Binding Caption,FallbackValue='Bonza Editor'}" Height="768" Width="1024" Icon="/BonzaEditor;component/Bonza.ico">
+        Title="{Binding Caption,FallbackValue='Bonza Editor'}" Height="768" Width="1024" Icon="/Bonza.Editor;component/Bonza.ico">
 
     <Window.Resources>
         <!-- Gray out toolbar elements when disabled (why is it not automatic ??) -->

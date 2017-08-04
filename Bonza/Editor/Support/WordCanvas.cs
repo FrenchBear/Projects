@@ -52,7 +52,7 @@ namespace Bonza.Editor.Support
 
             SetValue(LeftProperty, UnitSize * wp.StartColumn);
             SetValue(TopProperty, UnitSize * wp.StartRow);
-            SetColor(NormalForegroundBrush, NormalBackgroundBrush);
+            SetColor(NormalValidForeground, NormalValidBackground);
         }
 
 
