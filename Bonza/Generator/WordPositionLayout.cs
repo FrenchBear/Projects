@@ -12,6 +12,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text;
 #if !NETCOREAPP1_1
 using Newtonsoft.Json;
 #endif
@@ -23,31 +24,6 @@ namespace Bonza.Generator
         Valid,          // Placement is good
         TooClose,       // No overlap, but word touches another word in an incorrect way
         Invalid         // Overlap or touching a word of same orientation
-    }
-
-
-    public struct BoundingRectangle
-    {
-        public int MinRow, MaxRow, MinColumn, MaxColumn;
-
-        public BoundingRectangle(int minRow, int maxRow, int minColumn, int maxColumn)
-        {
-            MinRow = minRow;
-            MaxRow = maxRow;
-            MinColumn = minColumn;
-            MaxColumn = maxColumn;
-        }
-    }
-
-    public struct Position
-    {
-        public int Row, Column;
-
-        public Position(int row, int column)
-        {
-            Row = row;
-            Column = column;
-        }
     }
 
 
@@ -425,6 +401,16 @@ namespace Bonza.Generator
             m_Squares = new Dictionary<Position, Square>();
             foreach (var wp in m_WordPositionList)
                 AddSquares(wp);
+        }
+
+        public void SaveLayoutAsCode(string outfile)
+        {
+            using (Stream s = new FileStream(outfile, FileMode.Create))
+            using (StreamWriter sw = new StreamWriter(s, Encoding.UTF8))
+            {
+                foreach (WordPosition wp in m_WordPositionList)
+                    sw.WriteLine($"g.Layout.AddWordPositionAndSquares(new WordPosition {{ StartRow = {wp.StartRow}, StartColumn = {wp.StartColumn}, Word = \"{wp.Word}\", IsVertical = {wp.IsVertical} }});");
+            }
         }
 #endif
     }

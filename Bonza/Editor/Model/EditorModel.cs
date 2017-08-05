@@ -1,5 +1,6 @@
 ﻿// BonzaEditor - WPF Tool to prepare Bonza-style puzzles
-// MVVM Model
+// Editor Model, access to Generator class
+//
 // 2017-07-22   PV  First version
 
 
@@ -10,13 +11,13 @@ using Bonza.Generator;
 
 namespace Bonza.Editor.Model
 {
-    internal class BonzaModel
+    internal class EditorModel
     {
-        private readonly BonzaViewModel viewModel;
+        private readonly EditorViewModel viewModel;
         private Grille grille;
         public WordPositionLayout Layout => grille?.Layout;
 
-        public BonzaModel(BonzaViewModel viewModel)
+        public EditorModel(EditorViewModel viewModel)
         {
             this.viewModel = viewModel;
         }

@@ -1,11 +1,11 @@
-﻿<Window x:Class="Bonza.Editor.View.BonzaView"
+﻿<Window x:Class="Bonza.Editor.View.EditorView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:Bonza.Editor.ViewModel"
         mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance vm:BonzaViewModel}"
+        d:DataContext="{d:DesignInstance vm:EditorViewModel}"
         Title="{Binding Caption,FallbackValue='Bonza Editor'}" Height="768" Width="1024" Icon="/Bonza.Editor;component/Bonza.ico"
         >
 
@@ -71,9 +71,12 @@
     <Window.InputBindings>
         <KeyBinding Key="N" Modifiers="Control" Command="{Binding NewLayoutCommand}" />
         <KeyBinding Key="O" Modifiers="Control" Command="{Binding LoadCommand}" />
+        <KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveCommand}" />
+        <KeyBinding Key="OEMPlus" Modifiers="Shift" Command="{Binding AddWordsCommand}" />  <!-- French Keyboard, Shift is required!! -->
+        <KeyBinding Key="Add" Command="{Binding AddWordsCommand}" />     <!--  Numeric keyboard Plus -->
         <KeyBinding Key="Delete" Command="{Binding DeleteCommand}" />
         <KeyBinding Key="Z" Modifiers="Ctrl" Command="{Binding UndoCommand}" />
-        <KeyBinding Key="B" Modifiers="Ctrl" Command="{Binding SwapOrientationCommand}" /> 
+        <KeyBinding Key="B" Modifiers="Ctrl" Command="{Binding SwapOrientationCommand}" />
         <KeyBinding Key="R" Modifiers="Ctrl" Command="{Binding RecenterLayoutViewCommand}" />
     </Window.InputBindings>
 
@@ -91,22 +94,28 @@
         <DockPanel Grid.ColumnSpan="2">
             <Menu DockPanel.Dock="Top" Padding="3"  >
                 <MenuItem Name="FileMenu" Header="_Fichier">
-                    <MenuItem Command="{Binding NewLayoutCommand}" Header="_Nouveau layout" >
+                    <MenuItem Command="{Binding NewLayoutCommand}" InputGestureText="Ctrl+N" Header="_Nouveau layout" >
                         <MenuItem.Icon>
                             <Image Source="/Icons/new.ico" Stretch="None" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Command="{Binding LoadCommand}" Header="_Ouvrir une liste de mots et générer un nouveau layout..." >
+                    <MenuItem Command="{Binding LoadCommand}" InputGestureText="Ctrl+O" Header="_Ouvrir une liste de mots et générer un nouveau layout..." >
                         <MenuItem.Icon>
                             <Image Source="/Icons/open.ico" Stretch="None" />
                         </MenuItem.Icon>
                     </MenuItem>
+                    <Separator/>
+                    <MenuItem Command="{Binding AddWordsCommand}" InputGestureText="+" Header="_Ajouter des mots au layout">
+                        <MenuItem.Icon>
+                            <Image Source="/Icons/addwords.ico" Stretch="None" />
+                        </MenuItem.Icon>
+                    </MenuItem>
                     <MenuItem Command="{Binding RegenerateLayoutCommand}" Header="_Regénérer le layout" />
                     <Separator/>
-                    <MenuItem Command="{Binding SaveCommand}" Header="_Enregistrer le layout..." >
-                        <!--<MenuItem.Icon>
+                    <MenuItem Command="{Binding SaveCommand}" InputGestureText="Ctrl+S" Header="_Enregistrer le layout..." >
+                        <MenuItem.Icon>
                             <Image Source="/Icons/save.ico" Stretch="None" />
-                        </MenuItem.Icon>-->
+                        </MenuItem.Icon>
                     </MenuItem>
 
                     <Separator/>
@@ -160,12 +169,21 @@
                 </MenuItem>
             </Menu>
 
-            <ToolBar DockPanel.Dock="Top" Margin="0,-1,0,1" ToolBarTray.IsLocked="True">
+            <ToolBar DockPanel.Dock="Top" Margin="0,-1,0.333,1" ToolBarTray.IsLocked="True">
                 <Button Command="{Binding NewLayoutCommand}" ToolTip="Crée un nouveau layout vierge [Ctrl+N]">
                     <Image Source="/Icons/new.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}"/>
                 </Button>
                 <Button Command="{Binding LoadCommand}" ToolTip="Crée une nouvelle grille et génère un layout à partir d'une liste de mots [Ctrl+O]">
                     <Image Source="/Icons/open.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}"/>
+                </Button>
+                <Button Command="{Binding SaveCommand}" ToolTip="Enregistre le layout dans un fichier [Ctrl+S]">
+                    <Image Source="/Icons/save.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}"/>
+                </Button>
+
+                <Separator/>
+
+                <Button Command="{Binding AddWordsCommand}" ToolTip="Ajouter des mots au layout [+]">
+                    <Image Source="/Icons/addwords.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}"/>
                 </Button>
 
                 <Separator/>
@@ -217,8 +235,8 @@
                 <TextBlock Name="TranslationTextBlock" Width="80"/>
             </StatusBar>
 
-            <Grid Name="MainGrid" Background="AntiqueWhite" 
-                  MouseMove="MainGrid_MouseMoveWhenUp" MouseDown="MainGrid_MouseDown" MouseUp="MainGrid_MouseUp" MouseWheel="MainGrid_MouseWheel" 
+            <Grid Name="MainGrid" Background="AntiqueWhite"
+                  MouseMove="MainGrid_MouseMoveWhenUp" MouseDown="MainGrid_MouseDown" MouseUp="MainGrid_MouseUp" MouseWheel="MainGrid_MouseWheel"
                   MouseRightButtonDown="MainGrid_MouseRightButtonDown"  >
                 <Canvas Name="ClippingCanvas" ClipToBounds="True">
                     <Canvas Name="TransformingCanvas" ClipToBounds="False" >

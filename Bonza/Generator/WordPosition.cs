@@ -5,20 +5,6 @@
 
 namespace Bonza.Generator
 {
-    public struct PositionOrientation
-    {
-        public int StartRow { get; set; }
-        public int StartColumn { get; set; }
-        public bool IsVertical { get; set; }
-
-        public PositionOrientation(PositionOrientation copy)
-        {
-            StartRow = copy.StartRow;
-            StartColumn = copy.StartColumn;
-            IsVertical = copy.IsVertical;
-        }
-    }
-
     public class WordPosition
     {
         public string Word;

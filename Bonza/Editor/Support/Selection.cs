@@ -1,4 +1,4 @@
-﻿// BonzaEditor, class BonzaView.Selection
+﻿// BonzaEditor, class EditorView.Selection
 // Internal view class for better encapsulation, manages selection at view level
 //
 // 2017-07-29   PV  First version, extracted from view
@@ -15,9 +15,9 @@ namespace Bonza.Editor.Support
     internal class Selection
     {
         private List<WordAndCanvas> m_WordAndCanvasList;
-        private readonly BonzaViewModel viewModel;
+        private readonly EditorViewModel viewModel;
 
-        public Selection(BonzaViewModel viewModel)
+        public Selection(EditorViewModel viewModel)
         {
             this.viewModel = viewModel;
         }

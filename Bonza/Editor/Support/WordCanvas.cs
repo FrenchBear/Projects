@@ -1,4 +1,4 @@
-﻿// BonzaEditor - class BonzaView.WordCanvas
+﻿// BonzaEditor - class EditorView.WordCanvas
 // A specialization of Canvas to represent visually a WordPosition
 //
 // 2017-07-22   PV  First version

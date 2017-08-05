@@ -1,6 +1,8 @@
 ﻿// BonzaEditor - WPF Tool to prepare Bonza-style puzzles
-// MVVM ViewModel
+// ViewModel of main Editor window
+//
 // 2017-07-22   PV  First version
+
 
 using System;
 using System.Collections.Generic;
@@ -17,11 +19,11 @@ using Bonza.Editor.Support;
 
 namespace Bonza.Editor.ViewModel
 {
-    internal class BonzaViewModel : INotifyPropertyChanged
+    internal class EditorViewModel : INotifyPropertyChanged
     {
         // Model and View
-        private readonly BonzaModel model;
-        private readonly View.BonzaView view;
+        private readonly EditorModel model;
+        private readonly View.EditorView view;
 
         // Implementation of INotifyPropertyChanged, standard since View is only linked through DataBinding
         public event PropertyChangedEventHandler PropertyChanged;
@@ -36,6 +38,7 @@ namespace Bonza.Editor.ViewModel
         // Menus
         public ICommand NewLayoutCommand { get; }
         public ICommand LoadCommand { get; }
+        public ICommand AddWordsCommand { get; }
         public ICommand RegenerateLayoutCommand { get; }
         public ICommand SaveCommand { get; }
         public ICommand QuitCommand { get; }
@@ -54,11 +57,11 @@ namespace Bonza.Editor.ViewModel
 
 
         // Constructor
-        public BonzaViewModel(View.BonzaView view)
+        public EditorViewModel(View.EditorView view)
         {
             // Initialize ViewModel
             this.view = view;
-            model = new BonzaModel(this);
+            model = new EditorModel(this);
 
 
             // Binding commands with behavior
@@ -66,6 +69,7 @@ namespace Bonza.Editor.ViewModel
             // File
             NewLayoutCommand = new RelayCommand<object>(NewLayoutExecute);
             LoadCommand = new RelayCommand<object>(LoadExecute, LoadCanExecute);
+            AddWordsCommand = new RelayCommand<object>(AddWordsExecute);
             RegenerateLayoutCommand = new RelayCommand<object>(RegenerateLayoutExecute, RegenerateLayoutCanExecute);
             SaveCommand = new RelayCommand<object>(SaveExecute, SaveCanExecute);
             QuitCommand = new RelayCommand<object>(QuitExecute);
@@ -315,13 +319,22 @@ namespace Bonza.Editor.ViewModel
 
         private bool SaveCanExecute(object obj)
         {
-            return false;       // For now
+            return true;       // For now
         }
 
+        // Temp version that saves layout as C# code
         private void SaveExecute(object obj)
         {
-            // ToDo: Implement save
-            MessageBox.Show("Save: ToDo");
+            SaveFileDialog dlg = new SaveFileDialog()
+            {
+                DefaultExt = ".cs",
+                Filter = "C# files (*.cs)|*.cs|All Files (*.*)|*.*",
+                OverwritePrompt = true,
+                InitialDirectory = @"C:\Temp"
+            };
+            var result = dlg.ShowDialog();
+            if (result.HasValue && result.Value)
+                model.Layout.SaveLayoutAsCode(dlg.FileName);
         }
 
 
@@ -344,6 +357,14 @@ namespace Bonza.Editor.ViewModel
             if (result.HasValue && result.Value)
                 LoadWordsList(dlg.FileName);
         }
+
+
+        private void AddWordsExecute(object obj)
+        {
+            var aww = new View.AddWordsView();
+            aww.ShowDialog();
+        }
+
 
         public void LoadWordsList(string filename)
         {

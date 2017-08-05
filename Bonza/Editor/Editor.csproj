@@ -62,6 +62,7 @@
     </ApplicationDefinition>
     <Compile Include="Support\WordAndCanvas.cs" />
     <Compile Include="Support\UndoStackClass.cs" />
+    <Compile Include="ViewModel\AddWordsViewModel.cs" />
     <Compile Include="View\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
@@ -72,7 +73,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\BonzaView.xaml">
+    <Page Include="View\AddWordsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\EditorView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -80,11 +85,14 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Model\BonzaModel.cs" />
+    <Compile Include="Model\EditorModel.cs" />
     <Compile Include="Support\RelayCommand.cs" />
-    <Compile Include="ViewModel\BonzaViewModel.cs" />
-    <Compile Include="View\BonzaView.xaml.cs">
-      <DependentUpon>BonzaView.xaml</DependentUpon>
+    <Compile Include="ViewModel\EditorViewModel.cs" />
+    <Compile Include="View\AddWordsView.xaml.cs">
+      <DependentUpon>AddWordsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\EditorView.xaml.cs">
+      <DependentUpon>EditorView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -154,6 +162,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\autoplace.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\save.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\addwords.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

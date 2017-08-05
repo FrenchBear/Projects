@@ -1,9 +1,9 @@
 ﻿// BonzaEditor - WPF Tool to prepare Bonza-style puzzles
-// MVVM View
+// Editor View, main surface to interact and edit layout
+//
 // 2017-07-22   PV  First version
 
-// ToDo: Add a word or a group of words
-
+// ToDo: Ctrl+A selects all words
 
 using System;
 using System.Collections.Generic;
@@ -26,9 +26,9 @@ namespace Bonza.Editor.View
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class BonzaView : Window
+    public partial class EditorView : Window
     {
-        private readonly BonzaViewModel viewModel;
+        private readonly EditorViewModel viewModel;
         private readonly Selection m_Sel;                   // Manages current selection, internal since it's accessed from ViewModel
         private List<WordAndCanvas> m_WordAndCanvasList;    // Current list of WordAndCanvas managed by view
 
@@ -36,10 +36,10 @@ namespace Bonza.Editor.View
         // --------------------------------------------------------------------
         // Constructor and Window events
 
-        public BonzaView()
+        public EditorView()
         {
             InitializeComponent();
-            viewModel = new BonzaViewModel(this);
+            viewModel = new EditorViewModel(this);
             DataContext = viewModel;
 
             m_WordAndCanvasList = new List<WordAndCanvas>();

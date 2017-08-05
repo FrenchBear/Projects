@@ -47,10 +47,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BonzaException.cs" />
+    <Compile Include="BoundingRectangle.cs" />
     <Compile Include="Chunk.cs" />
     <Compile Include="ChunkLayout.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Grille.cs" />
+    <Compile Include="Position.cs" />
+    <Compile Include="PositionOrientation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Puzzle.cs" />
     <Compile Include="Square.cs" />
