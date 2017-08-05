@@ -359,6 +359,7 @@ namespace Bonza.Editor.ViewModel
         private void AddWordsExecute(object obj)
         {
             var aww = new View.AddWordsView(model);
+            aww.Owner = view;
             aww.ShowDialog();
             if (aww.wordsList == null) return;
 

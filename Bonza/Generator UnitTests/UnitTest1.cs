@@ -4,6 +4,7 @@
 
 
 using System;
+using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Bonza.Generator.UnitTests
@@ -73,7 +74,7 @@ namespace Bonza.Generator.UnitTests
         {
             Assert.IsTrue(PlaceWordStatus.Valid == g.Layout.AddWordPositionAndSquares(new WordPosition("PIERRE", "Pierre", new PositionOrientation(0, 0, false))));
             // Word already in the list of words, must raise ArgumentException
-            Assert.IsTrue(PlaceWordStatus.Valid == g.Layout.AddWordPositionAndSquares(new WordPosition("PIERRE", "Pierre", new PositionOrientation(-1, 1, true))));
+            g.Layout.AddWordPositionAndSquares(new WordPosition("PIERRE", "Pierre", new PositionOrientation(-1, 1, true)));
         }
 
         [TestMethod]
@@ -87,5 +88,18 @@ namespace Bonza.Generator.UnitTests
             g.Layout.AddWordPositionAndSquares(wp);
         }
 
+        [TestMethod]
+        public void TestBoundingRectangle()
+        {
+            g.Layout.AddWordPositionAndSquares(new WordPosition("THURSDAY", "thursday", new PositionOrientation(0, 0, true)));
+            g.Layout.AddWordPositionAndSquares(new WordPosition("MONDAY", "monday", new PositionOrientation(5, -3, false)));
+            g.Layout.AddWordPositionAndSquares(new WordPosition("TUESDAY", "tuesday", new PositionOrientation(2, -1, false)));
+            g.Layout.AddWordPositionAndSquares(new WordPosition("WEDNESDAY", "wednesday", new PositionOrientation(-4, 3, true)));
+
+            BoundingRectangle r1 = g.Layout.GetBounds();
+            BoundingRectangle r2 = new BoundingRectangle(-4, 7, -3, 5);
+            Assert.AreEqual(r1, r2);
+            Assert.IsTrue(r1.MinRow == -4 && r1.MaxRow == 7 && r1.MinColumn == -3 && r1.MaxColumn == 5);
+        }
     }
 }

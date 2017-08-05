@@ -410,16 +410,14 @@ namespace Bonza.Generator
             }
         }
 
-#if !NETCOREAPP1_1
         public void SaveLayoutAsCode(string outfile)
         {
             using (Stream s = new FileStream(outfile, FileMode.Create))
             using (StreamWriter sw = new StreamWriter(s, Encoding.UTF8))
             {
                 foreach (WordPosition wp in m_WordPositionList)
-                    sw.WriteLine($"g.Layout.AddWordPositionAndSquares(new WordPosition {{ StartRow = {wp.StartRow}, StartColumn = {wp.StartColumn}, Word = \"{wp.Word}\", OriginalWord = \"{wp.OriginalWord}\", IsVertical = {wp.IsVertical} }});");
+                    sw.WriteLine($"g.Layout.AddWordPositionAndSquares(new WordPosition(\"{wp.Word}\", \"{wp.OriginalWord}\", new PositionOrientation({wp.StartRow}, {wp.StartColumn}, {wp.IsVertical.ToString().ToLower()})));");
             }
         }
-#endif
     }
 }
