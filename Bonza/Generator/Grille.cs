@@ -21,6 +21,7 @@ namespace Bonza.Generator
         public Grille(int seed = 0)
         {
             rnd = new Random(seed);
+            NewLayout();
         }
 
         public void NewLayout()
@@ -34,7 +35,8 @@ namespace Bonza.Generator
         {
             // Will throw an exception in case of problem with file
             wordsList = new List<string>();
-            using (StreamReader sr = new StreamReader(filename, Encoding.UTF8))
+            using (Stream s = new FileStream(filename, FileMode.Open))
+            using (StreamReader sr = new StreamReader(s, Encoding.UTF8))
             {
                 while (!sr.EndOfStream)
                 {
@@ -76,7 +78,7 @@ namespace Bonza.Generator
             foreach (string word in wordsTable)
             {
                 // A small centered dot is visually better in the grid than a space in words containing spaces
-                string canonizedWord = word.ToUpper(CultureInfo.InvariantCulture).Replace(' ', '·');
+                string canonizedWord = word.ToUpper().Replace(' ', '·');
                 if (words.Contains(canonizedWord))
                     throw new BonzaException("Mot en double dans la liste: " + word);
                 words.Add(canonizedWord);
@@ -153,7 +155,7 @@ namespace Bonza.Generator
             Layout.AddWordPositionAndSquaresNoCheck(wp);
         }
 
-        // Adjusted surface calculation that penalize extensions that would make bounding 
+        // Adjusted surface calculation that penalize extensions that would make bounding
         // rectangle width/height unbalanced: compute surface x (difference width-height)²
         private int ComputeAdjustedSurface(int width, int height)
         {
@@ -223,7 +225,8 @@ namespace Bonza.Generator
         // Write a text representation of current layout in a file
         public void Print(string outFile)
         {
-            using (TextWriter tw = new StreamWriter(outFile, false, Encoding.UTF8))
+            using (Stream s = new FileStream(outFile, FileMode.CreateNew))
+            using (TextWriter tw = new StreamWriter(s, Encoding.UTF8))
                 Print(tw);
         }
 
@@ -264,6 +267,7 @@ namespace Bonza.Generator
             }
         }
 
+#if !NETCOREAPP1_1
         // Save layout in a .json file
         public void SaveLayout(string outFile)
         {
@@ -276,6 +280,7 @@ namespace Bonza.Generator
             Layout = new WordPositionLayout();
             Layout.LoadFromFile(inFile);
         }
+#endif
 
     }
 }

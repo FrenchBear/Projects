@@ -3,14 +3,13 @@
 // The sum of all chunks is the Layout
 //
 // 2017-07-22   PV      Split from program.cs
-// 2017-08-05   PV      Update for .Net Core
 
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 #if !NETCOREAPP1_1
-using System.IO;
 using Newtonsoft.Json;
 #endif
 
@@ -64,7 +63,6 @@ namespace Bonza.Generator
             chunk.IsDeleted = true;
         }
 
-#if !NETCOREAPP1_1
         // Save chunks in a .json file
         internal void SaveToFile(string outFile)
         {
@@ -78,7 +76,6 @@ namespace Bonza.Generator
             string text = File.ReadAllText(inFile);
             m_Chunks = JsonConvert.DeserializeObject<List<Chunk>>(text);
         }
-#endif
 
     }
 }

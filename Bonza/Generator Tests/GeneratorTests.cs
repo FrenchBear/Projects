@@ -13,15 +13,15 @@ namespace Bonza.Generator.Tests
         public static void Main()
         {
             Stopwatch sw = Stopwatch.StartNew();
-            for (int n = 0; n < 3; n++)
-            {
+            //for (int n = 0; n < 3; n++)
+            //{
                 Grille g = new Grille();
                 int i;
-                for (i = 0; i < 5 && !g.PlaceWords(@"..\Lists\Prénoms.txt"); i++) { }
+                for (i = 0; i < 5 && !g.PlaceWords(@"..\Lists\Fruits.txt"); i++) { }
                 Debug.Assert(i < 5);
-            }
-            WriteLine("Temps 3 générations: " + sw.Elapsed);
-            //g.Print();
+            //}
+            WriteLine("Temps: " + sw.Elapsed);
+            g.Print();
             //g.Print("C:\\temp\\out.txt");
             //g.SaveLayout("c:\\temp\\fruits.layout");
             //g.BuildPuzzle(5);

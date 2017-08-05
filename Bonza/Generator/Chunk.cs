@@ -27,30 +27,27 @@ namespace Bonza.Generator
             ChunkId = newId;
         }
 
-        public (int minRow, int maxRow, int minColumn, int maxColumn) GetBounds()
+        public BoundingRectangle GetBounds()
         {
-            int minRow = int.MaxValue;
-            int maxRow = int.MinValue;
-            int minColumn = int.MaxValue;
-            int maxColumn = int.MinValue;
+            BoundingRectangle r = new BoundingRectangle(int.MaxValue,int.MinValue,int.MaxValue,int.MinValue);
 
             foreach (Square sq in Squares)
             {
-                minRow = Math.Min(minRow, sq.Row);
-                maxRow = Math.Max(maxRow, sq.Row);
-                minColumn = Math.Min(minColumn, sq.Column);
-                maxColumn = Math.Max(maxColumn, sq.Column);
+                r.MinRow = Math.Min(r.MinRow, sq.Row);
+                r.MaxRow = Math.Max(r.MaxRow, sq.Row);
+                r.MinColumn = Math.Min(r.MinColumn, sq.Column);
+                r.MaxColumn = Math.Max(r.MaxColumn, sq.Column);
             }
 
-            return (minRow, maxRow, minColumn, maxColumn);
+            return r;
         }
 
         public override string ToString()
         {
             var sb = new StringBuilder();
 
-            (int minRow, int maxRow, int minColumn, int maxColumn) = GetBounds();
-            sb.Append($"{ChunkId}[{SquaresCount}]: {maxRow - minRow + 1}x{maxColumn - minColumn + 1}:");
+            BoundingRectangle r = GetBounds();
+            sb.Append($"{ChunkId}[{SquaresCount}]: {r.MaxRow - r.MinRow + 1}x{r.MaxColumn - r.MinColumn + 1}:");
             foreach (Square sq in Squares)
                 sb.Append(' ').Append(sq);
             return sb.ToString();

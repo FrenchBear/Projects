@@ -148,7 +148,6 @@ namespace Bonza.Generator
             }
         }
 
-#if !NETCOREAPP1_1
         // Save chunks in a .json file
         public void SavePuzzle(string outFile)
         {
@@ -160,6 +159,6 @@ namespace Bonza.Generator
         {
             puzzle.LoadFromFile(inFile);
         }
-#endif
+
     }
 }

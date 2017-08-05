@@ -1,9 +1,10 @@
 ﻿// WordPositionLayout.cs
 // A class representing placed words on a virtual grid of 1-letter squares
+//
 // 2017-07-24   PV      Moved as an external class during refactoring
+// 2017-08-05   PV      Struct Position for .Net Core
 
 
-using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -11,6 +12,9 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
+#if !NETCOREAPP1_1
+using Newtonsoft.Json;
+#endif
 
 namespace Bonza.Generator
 {
@@ -25,13 +29,32 @@ namespace Bonza.Generator
     public struct BoundingRectangle
     {
         public int MinRow, MaxRow, MinColumn, MaxColumn;
+
+        public BoundingRectangle(int minRow, int maxRow, int minColumn, int maxColumn)
+        {
+            MinRow = minRow;
+            MaxRow = maxRow;
+            MinColumn = minColumn;
+            MaxColumn = maxColumn;
+        }
+    }
+
+    public struct Position
+    {
+        public int Row, Column;
+
+        public Position(int row, int column)
+        {
+            Row = row;
+            Column = column;
+        }
     }
 
 
     public class WordPositionLayout
     {
         private List<WordPosition> m_WordPositionList = new List<WordPosition>();
-        private Dictionary<(int, int), Square> m_Squares = new Dictionary<(int, int), Square>();
+        private Dictionary<Position, Square> m_Squares = new Dictionary<Position, Square>();
 
         public ReadOnlyCollection<WordPosition> WordPositionList => m_WordPositionList.AsReadOnly();
 
@@ -86,7 +109,7 @@ namespace Bonza.Generator
                 if (GetSquare(row, column) == null)
                 {
                     Square sq = new Square { Row = row, Column = column, Letter = c, IsInChunk = false, ShareCount = 1 };
-                    m_Squares.Add((row, column), sq);
+                    m_Squares.Add(new Position(row, column), sq);
                 }
                 else
                 {
@@ -109,7 +132,7 @@ namespace Bonza.Generator
                 Square sq = GetSquare(row, column);
                 Debug.Assert(sq != null);
                 if (sq.ShareCount == 1)
-                    m_Squares.Remove((row, column));
+                    m_Squares.Remove(new Position(row, column));
                 else
                     sq.ShareCount--;
 
@@ -122,14 +145,14 @@ namespace Bonza.Generator
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Square GetSquare(int row, int column)
         {
-            return IsOccupiedSquare(row, column) ? m_Squares[(row, column)] : null;
+            return IsOccupiedSquare(row, column) ? m_Squares[new Position(row, column)] : null;
         }
 
         // Specialized helper for performance, returns true if there's no square at this position
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool IsOccupiedSquare(int row, int column)
         {
-            return m_Squares.ContainsKey((row, column));
+            return m_Squares.ContainsKey(new Position(row, column));
         }
 
 
@@ -138,7 +161,7 @@ namespace Bonza.Generator
         public char GetLetter(int row, int column)
         {
             //return GetSquare(row, column)?.Letter ?? '\0';
-            return m_Squares.ContainsKey((row, column)) ? m_Squares[(row, column)].Letter : '\0';
+            return m_Squares.ContainsKey(new Position(row, column)) ? m_Squares[new Position(row, column)].Letter : '\0';
         }
 
         // Compute layout external bounds, note that cell (0,0) is always included in bounding rectangle
@@ -267,7 +290,7 @@ namespace Bonza.Generator
             List<WordPosition> tempList = new List<WordPosition>(m_WordPositionList);
 
             int blocksCount = 0;
-            for (; ; )
+            for (;;)
             {
                 if (tempList.Count == 0)
                     break;
@@ -385,7 +408,7 @@ namespace Bonza.Generator
             }
         }
 
-
+#if !NETCOREAPP1_1
         // Save layout in a .json file
         public void SaveToFile(string outFile)
         {
@@ -399,9 +422,10 @@ namespace Bonza.Generator
             string text = File.ReadAllText(inFile);
             m_WordPositionList = JsonConvert.DeserializeObject<List<WordPosition>>(text);
 
-            m_Squares = new Dictionary<(int, int), Square>();
+            m_Squares = new Dictionary<Position, Square>();
             foreach (var wp in m_WordPositionList)
                 AddSquares(wp);
         }
+#endif
     }
 }
