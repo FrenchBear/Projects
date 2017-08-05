@@ -1,10 +1,13 @@
-﻿// Bonza.cs
-// Simple text-based tests of generation of a Bonza-like crossword
-// 2017-06  PV
+﻿// Generator Tests
+// Simple text-based tests of generation and performances of a Bonza-like crossword
+//
+// 2017-06      PV
+// 2017-08-05   PV      testGeneration and TestPerformances; Output forced to UTF-8
 
 
 using static System.Console;
 using System.Diagnostics;
+using System.Text;
 
 namespace Bonza.Generator.Tests
 {
@@ -12,24 +15,45 @@ namespace Bonza.Generator.Tests
     {
         public static void Main()
         {
+            OutputEncoding = Encoding.UTF8;         // For Dot Net Core
+
+            TestGeneration();
+            //TestPerformances();
+
+            WriteLine();
+            Write("(Pause)");
+            ReadLine();
+        }
+
+        public static void TestGeneration()
+        {
             Stopwatch sw = Stopwatch.StartNew();
-            //for (int n = 0; n < 3; n++)
-            //{
-                Grille g = new Grille();
-                int i;
-                for (i = 0; i < 5 && !g.PlaceWords(@"..\Lists\Fruits.txt"); i++) { }
-                Debug.Assert(i < 5);
+            Grille g = new Grille();
+            int i;
+            for (i = 0; i < 5 && !g.PlaceWords(@"..\Lists\Fruits.txt"); i++) { }
+            Debug.Assert(i < 5);
             //}
-            WriteLine("Temps: " + sw.Elapsed);
+            WriteLine("Generation time: " + sw.Elapsed);
             g.Print();
             //g.Print("C:\\temp\\out.txt");
             //g.SaveLayout("c:\\temp\\fruits.layout");
             //g.BuildPuzzle(5);
             //g.SavePuzzle("c:\\temp\\fruits.chunks");
+        }
 
-            WriteLine();
-            Write("(Pause)");
-            ReadLine();
+        public static void TestPerformances()
+        {
+            const int loops = 1;
+
+            Stopwatch sw = Stopwatch.StartNew();
+            for (int n = 0; n < loops; n++)
+            {
+                Grille g = new Grille();
+                int i;
+                for (i = 0; i < 5 && !g.PlaceWords(@"..\Lists\Prénoms.txt"); i++) { }
+                Debug.Assert(i < 5);
+            }
+            WriteLine($"Total time for {loops} generations: " + sw.Elapsed);
         }
     }
 
