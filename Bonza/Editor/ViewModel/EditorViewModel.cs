@@ -245,9 +245,9 @@ namespace Bonza.Editor.ViewModel
             view.FinalRefreshAfterUpdate();
         }
 
-        internal void InitialLayoutDisplay()
+        internal void AddCanvasForWordPositionList(IEnumerable<WordPosition> wordPositionList)
         {
-            view.InitialWordAndCanvasDisplay();
+            view.AddCanvasForWordPositionList(wordPositionList);
         }
 
 
@@ -300,15 +300,12 @@ namespace Bonza.Editor.ViewModel
                 UndoStack.MemorizeMove(wordAndCanvasList);
 
             // Move: Need to delete all, then add all again, otherwise if we move a word individually, it may collide with other
-            // of the list that han't been moved by this loop yet...
+            // of the list that hasn't been moved by this loop yet...
             foreach (WordPosition wp in wordAndCanvasList.Select(wac => wac.WordPosition))
                 model.RemoveWordPosition(wp);
             foreach (var item in wordAndCanvasList.Zip(topLeftList, (wac, tl) => (WordAndCanvas: wac, topLeft: tl)))
             {
-                item.WordAndCanvas.WordPosition.StartRow = item.topLeft.StartRow;
-                item.WordAndCanvas.WordPosition.StartColumn = item.topLeft.StartColumn;
-                item.WordAndCanvas.WordPosition.IsVertical = item.topLeft.IsVertical;
-
+                item.WordAndCanvas.WordPosition.PositionOrientation = new PositionOrientation(item.topLeft.StartRow, item.topLeft.StartColumn, item.topLeft.IsVertical);
                 model.AddWordPosition(item.WordAndCanvas.WordPosition);
             }
         }
@@ -361,8 +358,18 @@ namespace Bonza.Editor.ViewModel
 
         private void AddWordsExecute(object obj)
         {
-            var aww = new View.AddWordsView();
+            var aww = new View.AddWordsView(model);
             aww.ShowDialog();
+            if (aww.wordsList == null) return;
+
+            List<WordPosition> wordPositionList = model.AddWordsList(aww.wordsList);
+            if (wordPositionList==null)
+            {
+                MessageBox.Show("L'ajout des mots a échoué.", App.AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return;
+            }
+
+            view.AddCanvasForWordPositionList(wordPositionList);
         }
 
 
@@ -424,6 +431,7 @@ namespace Bonza.Editor.ViewModel
             if (view.IsAnimationInProgress())
                 return;
             view.DeleteSelection();
+            view.FinalRefreshAfterUpdate();
         }
 
 

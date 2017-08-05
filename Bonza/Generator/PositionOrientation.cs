@@ -36,6 +36,13 @@ namespace Bonza.Generator
         public int StartColumn { get; set; }
         public bool IsVertical { get; set; }
 
+        public PositionOrientation(int startRow, int startColumn, bool isVertical)
+        {
+            StartRow = startRow;
+            StartColumn = startColumn;
+            IsVertical = isVertical;
+        }
+
         public PositionOrientation(PositionOrientation copy)
         {
             StartRow = copy.StartRow;

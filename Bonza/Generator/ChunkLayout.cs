@@ -9,10 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-#if !NETCOREAPP1_1
-using System.IO;
-using Newtonsoft.Json;
-#endif
 
 
 namespace Bonza.Generator
@@ -63,22 +59,6 @@ namespace Bonza.Generator
             m_Chunks.Remove(chunk);
             chunk.IsDeleted = true;
         }
-
-#if !NETCOREAPP1_1
-        // Save chunks in a .json file
-        internal void SaveToFile(string outFile)
-        {
-            string json = JsonConvert.SerializeObject(m_Chunks, Formatting.Indented);
-            File.WriteAllText(outFile, json);
-        }
-
-        // Load chunks from a .json file
-        public void LoadFromFile(string inFile)
-        {
-            string text = File.ReadAllText(inFile);
-            m_Chunks = JsonConvert.DeserializeObject<List<Chunk>>(text);
-        }
-#endif
 
     }
 }

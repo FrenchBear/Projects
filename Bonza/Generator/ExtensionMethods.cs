@@ -21,7 +21,7 @@ namespace Bonza.Generator
             var shuffledList = new List<T>(list);
             for (int i = 0; i < list.Count; i++)
             {
-                // It's Ok to have p1==p2, for instance when shuffling a 2-element list 
+                // It's Ok to have p1==p2, for instance when shuffling a 2-element list
                 // so that in 50% we return the original list, in 50% a swapped version
                 var p1 = i;
                 var p2 = Rnd.Next(list.Count);

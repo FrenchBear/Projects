@@ -25,19 +25,18 @@ namespace Bonza.Editor.Model
         internal void NewGrille()
         {
             grille = new Grille();
-            grille.NewLayout();
         }
 
         internal void LoadGrille(string wordsFile)
         {
             grille = new Grille();
-            grille.NewLayout();
             viewModel.ClearLayout();
             int i;
-            for (i = 0; i < 5 && !grille.PlaceWords(wordsFile); i++) { }
+            for (i = 0; i < 5; i++)
+                if (grille.AddWordsFromFile(wordsFile)) break;
             if (i == 5)
                 throw new BonzaException("Impossible de placer les mots malgré 5 tentatives");
-            viewModel.InitialLayoutDisplay();
+            viewModel.AddCanvasForWordPositionList(Layout.WordPositionList);
         }
 
         internal void ResetLayout()
@@ -48,9 +47,8 @@ namespace Bonza.Editor.Model
             for (i = 0; i < 5 && !grille.PlaceWordsAgain(); i++) { }
             if (i == 5)
                 throw new BonzaException("Impossible de générer un nouveau layout malgré 5 tentatives");
-            viewModel.InitialLayoutDisplay();
+            viewModel.AddCanvasForWordPositionList(Layout.WordPositionList);
         }
-
 
 
         // Build a copy of Layout without a specific list of WordPosition to validate placement
@@ -68,13 +66,7 @@ namespace Bonza.Editor.Model
         // Check if a WordPosition can be placed at specific location in given layout
         internal PlaceWordStatus CanPlaceWordAtPositionInLayout(WordPositionLayout layout, WordPosition wordPosition, PositionOrientation position)
         {
-            WordPosition testWordPosition = new WordPosition
-            {
-                Word = wordPosition.Word,
-                IsVertical = position.IsVertical,
-                StartRow = position.StartRow,
-                StartColumn = position.StartColumn
-            };
+            WordPosition testWordPosition = new WordPosition(wordPosition.Word, wordPosition.OriginalWord, position);
             return layout.CanPlaceWord(testWordPosition);
         }
 
@@ -88,6 +80,16 @@ namespace Bonza.Editor.Model
         internal PlaceWordStatus AddWordPosition(WordPosition wordPosition)
         {
             return Layout.AddWordPositionAndSquares(wordPosition);
+        }
+
+        public string CheckWordsList(List<string> wordsList)
+        {
+            return grille.CheckWordsList(wordsList);
+        }
+
+        public List<WordPosition> AddWordsList(List<string> wordsList)
+        {
+            return grille.AddWordsList(wordsList);
         }
     }
 }

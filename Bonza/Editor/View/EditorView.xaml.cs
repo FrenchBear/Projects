@@ -3,7 +3,6 @@
 //
 // 2017-07-22   PV  First version
 
-// ToDo: Ctrl+A selects all words
 
 using System;
 using System.Collections.Generic;
@@ -91,6 +90,11 @@ namespace Bonza.Editor.View
                 if (m_Sel.WordAndCanvasList?.Count > 0)
                     m_Sel.Clear();
             }
+            else if (e.Key == Key.A && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
+            {
+                // Select all
+                m_Sel.Add(m_WordAndCanvasList);
+            }
         }
 
 
@@ -106,22 +110,24 @@ namespace Bonza.Editor.View
             ClearBackgroundGrid();
             viewModel.UpdateStatus(PlaceWordStatus.Valid);
             m_WordAndCanvasList = new List<WordAndCanvas>();
+            m_Sel.Clear();
         }
 
 
         // Initial drawing of for current model layout
-        internal void InitialWordAndCanvasDisplay()
+        internal void AddCanvasForWordPositionList(IEnumerable<WordPosition> wordPositionList)
         {
             // Draw letters
-            foreach (WordPosition wp in viewModel.WordPositionList)
+            foreach (WordPosition wp in wordPositionList)
             {
+                // Debug
+                Debug.Assert(!string.IsNullOrWhiteSpace(wp.OriginalWord));
+
                 WordCanvas wc = new WordCanvas(wp);
                 WordAndCanvas wac = new WordAndCanvas(wp, wc);
                 DrawingCanvas.Children.Add(wc);
                 m_WordAndCanvasList.Add(wac);
             }
-
-            m_Sel.Clear();
 
             // After initial drawing, rescale and center without animations
             // Also draw initial background grid
@@ -161,6 +167,10 @@ namespace Bonza.Editor.View
             }
 
             FinalRefreshAfterUpdate();
+
+            // If everything has been deleter, recenter automatically
+            if (m_WordAndCanvasList.Count == 0)
+                RescaleAndCenter(true);
         }
 
 
@@ -212,8 +222,7 @@ namespace Bonza.Editor.View
                     new PositionOrientation(wac.WordPosition.PositionOrientation)
                 };
                 AdjustToSuitableLocationInLayout(layout, wordAndCanvasList, topLeftList, true);
-                wac.WordPosition.StartRow = topLeftList[0].StartRow;
-                wac.WordPosition.StartColumn = topLeftList[0].StartColumn;
+                wac.WordPosition.PositionOrientation = topLeftList[0];
                 viewModel.AddWordPosition(wac.WordPosition);
             }
             wac.RebuildCanvasAfterOrientationSwap();    // Only relocate visually letters of the word

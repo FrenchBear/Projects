@@ -30,7 +30,10 @@ namespace Bonza.Generator.Tests
             Stopwatch sw = Stopwatch.StartNew();
             Grille g = new Grille();
             int i;
-            for (i = 0; i < 5 && !g.PlaceWords(@"..\Lists\Fruits.txt"); i++) { }
+            for (i = 0; i < 5; i++)
+            {
+                if (g.AddWordsFromFile(@"..\Lists\Fruits.txt")) break;
+            }
             Debug.Assert(i < 5);
             //}
             WriteLine("Generation time: " + sw.Elapsed);
@@ -50,7 +53,7 @@ namespace Bonza.Generator.Tests
             {
                 Grille g = new Grille();
                 int i;
-                for (i = 0; i < 5 && !g.PlaceWords(@"..\Lists\Prénoms.txt"); i++) { }
+                for (i = 0; i < 5 && !g.AddWordsFromFile(@"..\Lists\Prénoms.txt"); i++) { }
                 Debug.Assert(i < 5);
             }
             WriteLine($"Total time for {loops} generations: " + sw.Elapsed);

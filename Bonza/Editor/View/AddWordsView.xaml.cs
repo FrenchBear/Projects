@@ -4,6 +4,7 @@
 // 2017-08-05   PV  First version
 
 
+using System.Collections.Generic;
 using Bonza.Editor.ViewModel;
 using System.Windows;
 
@@ -14,21 +15,15 @@ namespace Bonza.Editor.View
     /// </summary>
     public partial class AddWordsView : Window
     {
-        private readonly AddWordsViewModel viewModel;
+        internal List<string> wordsList;
 
-        public AddWordsView()
+        internal AddWordsView(Model.EditorModel model)
         {
             InitializeComponent();
 
-            viewModel = new AddWordsViewModel(this);
-            DataContext = viewModel;
+            DataContext = new AddWordsViewModel(this, model);
 
             Loaded += (sender, args) => { InputTextBlock.Focus(); };
-        }
-
-        public void Test()
-        {
-            viewModel.InputText = viewModel.InputText + "Hello\r\nKitty";
         }
     }
 }

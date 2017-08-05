@@ -48,7 +48,6 @@ namespace Bonza.Generator.UnitTests
         public void Initialize()
         {
             g = new Grille();
-            g.NewLayout();
         }
 
         // Use TestCleanup to run code after each test has run
@@ -62,28 +61,28 @@ namespace Bonza.Generator.UnitTests
         [TestMethod]
         public void TestAddWordPositionAndSquares1()
         {
-            Assert.IsTrue(PlaceWordStatus.Valid == g.Layout.AddWordPositionAndSquares(new WordPosition { StartRow = 0, StartColumn = 0, Word = "PIERRE", IsVertical = false }));
-            Assert.IsTrue(PlaceWordStatus.Valid == g.Layout.AddWordPositionAndSquares(new WordPosition { StartRow = -1, StartColumn = 1, Word = "VIOLENT", IsVertical = true }));
-            Assert.IsTrue(PlaceWordStatus.TooClose == g.Layout.AddWordPositionAndSquares(new WordPosition { StartRow = 1, StartColumn = 0, Word = "BOB", IsVertical = false }));
-            Assert.IsTrue(PlaceWordStatus.Invalid == g.Layout.AddWordPositionAndSquares(new WordPosition { StartRow = 3, StartColumn = 0, Word = "JOE", IsVertical = false }));
+            Assert.IsTrue(PlaceWordStatus.Valid == g.Layout.AddWordPositionAndSquares(new WordPosition("PIERRE", "Pierre", new PositionOrientation(0, 0, false))));
+            Assert.IsTrue(PlaceWordStatus.Valid == g.Layout.AddWordPositionAndSquares(new WordPosition("VIOLENT", "Violent", new PositionOrientation(-1, 1, true))));
+            Assert.IsTrue(PlaceWordStatus.TooClose == g.Layout.AddWordPositionAndSquares(new WordPosition("BOB", "Bob", new PositionOrientation(1, 0, false))));
+            Assert.IsTrue(PlaceWordStatus.Invalid == g.Layout.AddWordPositionAndSquares(new WordPosition("JOE", "Joe", new PositionOrientation(3, 0, false))));
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void TestAddWordPositionAndSquares2()
         {
-            Assert.IsTrue(PlaceWordStatus.Valid == g.Layout.AddWordPositionAndSquares(new WordPosition { StartRow = 0, StartColumn = 0, Word = "PIERRE", IsVertical = false }));
+            Assert.IsTrue(PlaceWordStatus.Valid == g.Layout.AddWordPositionAndSquares(new WordPosition("PIERRE", "Pierre", new PositionOrientation(0, 0, false))));
             // Word already in the list of words, must raise ArgumentException
-            Assert.IsTrue(PlaceWordStatus.Valid == g.Layout.AddWordPositionAndSquares(new WordPosition { StartRow = -1, StartColumn = 1, Word = "PIERRE", IsVertical = true }));
+            Assert.IsTrue(PlaceWordStatus.Valid == g.Layout.AddWordPositionAndSquares(new WordPosition("PIERRE", "Pierre", new PositionOrientation(-1, 1, true))));
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void TestAddWordPositionAndSquares3()
         {
-            WordPosition wp = new WordPosition { StartRow = 0, StartColumn = 0, Word = "PIERRE", IsVertical = false };
+            WordPosition wp = new WordPosition("PIERRE", "Pierre", new PositionOrientation(0, 0, false));
             Assert.IsTrue(PlaceWordStatus.Valid == g.Layout.AddWordPositionAndSquares(wp));
-            Assert.IsTrue(PlaceWordStatus.Valid == g.Layout.AddWordPositionAndSquares(new WordPosition { StartRow = -1, StartColumn = 1, Word = "VIOLENT", IsVertical = true }));
+            Assert.IsTrue(PlaceWordStatus.Valid == g.Layout.AddWordPositionAndSquares(new WordPosition("VIOLENT", "Violent", new PositionOrientation(-1, 1, true))));
             // WordPosition already placed, must raise ArgumentException
             g.Layout.AddWordPositionAndSquares(wp);
         }

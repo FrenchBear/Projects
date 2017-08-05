@@ -18,8 +18,10 @@ namespace Bonza.Editor.ViewModel
 {
     internal class AddWordsViewModel : INotifyPropertyChanged
     {
-        // Access to View
+        // Access to View and model (EditorModel, not AddWordsModel that doesn't exist)
         private readonly View.AddWordsView view;
+        private readonly Model.EditorModel model;
+
 
         // Implementation of INotifyPropertyChanged, standard since View is only linked through DataBinding
         public event PropertyChangedEventHandler PropertyChanged;
@@ -36,13 +38,15 @@ namespace Bonza.Editor.ViewModel
         public ICommand CancelCommand { get; }
 
 
-        public AddWordsViewModel(View.AddWordsView view)
+
+        public AddWordsViewModel(View.AddWordsView view, Model.EditorModel model)
         {
-            // Initialize ViewModel
+            // Initialize Model and ViewModel
             this.view = view;
+            this.model = model;
 
             // Binding commands with behavior
-            OkCommand = new RelayCommand<object>(OkExecute);
+            OkCommand = new RelayCommand<object>(OkExecute, OkCanExecute);
             CancelCommand = new RelayCommand<object>(CancelExecute);
         }
 
@@ -60,18 +64,72 @@ namespace Bonza.Editor.ViewModel
                 {
                     m_InputText = value;
                     NotifyPropertyChanged(nameof(InputText));
+
+                    PrepareAndValidateWordList();
+                }
+            }
+        }
+
+        private bool m_IsAutoPlace;
+        public bool IsAutoPlace
+        {
+            get => m_IsAutoPlace;
+            set
+            {
+                if (m_IsAutoPlace != value)
+                {
+                    m_IsAutoPlace = value;
+                    NotifyPropertyChanged(nameof(IsAutoPlace));
                 }
             }
         }
 
 
+        private string m_StatusText;
+        public string StatusText
+        {
+            get => m_StatusText;
+            set
+            {
+                if (m_StatusText != value)
+                {
+                    m_StatusText = value;
+                    NotifyPropertyChanged(nameof(StatusText));
+                }
+            }
+        }
+
+
+        private readonly List<string> wordsList = new List<string>();
+
+        private void PrepareAndValidateWordList()
+        {
+            wordsList.Clear();
+            foreach (var w in m_InputText.Split('\n'))
+                if (!string.IsNullOrWhiteSpace(w.Trim()))
+                    wordsList.Add(w.Trim());
+
+            if (wordsList.Count == 0)
+            {
+                StatusText = "Liste vide";
+                return;
+            }
+
+            StatusText = model.CheckWordsList(wordsList);
+        }
+
 
         // -------------------------------------------------
         // Commands
 
+        private bool OkCanExecute(object obj)
+        {
+            return wordsList.Count > 0 && string.IsNullOrEmpty(StatusText);
+        }
+
         private void OkExecute(object obj)
         {
-            MessageBox.Show("ToDo: Add\n" + m_InputText);
+            view.wordsList = wordsList;
             view.Close();
         }
 

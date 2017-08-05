@@ -3,6 +3,7 @@
 //
 // 2017-07-24   PV      Moved as an external class during refactoring
 // 2017-08-05   PV      Struct Position for .Net Core
+// 2017-08-05   PV      WordsList
 
 
 using System;
@@ -13,9 +14,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
-#if !NETCOREAPP1_1
-using Newtonsoft.Json;
-#endif
 
 namespace Bonza.Generator
 {
@@ -29,12 +27,32 @@ namespace Bonza.Generator
 
     public class WordPositionLayout
     {
-        private List<WordPosition> m_WordPositionList = new List<WordPosition>();
-        private Dictionary<Position, Square> m_Squares = new Dictionary<Position, Square>();
+        private readonly List<WordPosition> m_WordPositionList = new List<WordPosition>();
+        private readonly Dictionary<Position, Square> m_Squares = new Dictionary<Position, Square>();
+        private readonly List<string> m_WordsList = new List<string>();
 
         public ReadOnlyCollection<WordPosition> WordPositionList => m_WordPositionList.AsReadOnly();
+        public ReadOnlyCollection<string> WordsList => m_WordsList.AsReadOnly();
 
-        public int SquaresCount => m_Squares.Count;
+
+        // Default constructor
+        // Needed because we have another constructor defined
+        public WordPositionLayout()
+        {
+        }
+
+        // Copy constructor
+        // m_WordPositionsList contains the same references as tho copied layout
+        // m_Squares contains new copies of copied layout squares
+        // m_WordsList is a new copy of original list
+        internal WordPositionLayout(WordPositionLayout copy)
+        {
+            m_WordPositionList.AddRange(copy.m_WordPositionList);
+            m_WordsList = new List<string>(copy.m_WordsList);
+            using (var e = copy.m_Squares.GetEnumerator())
+                while (e.MoveNext())
+                    m_Squares.Add(e.Current.Key, new Square(e.Current.Value));
+        }
 
 
         // Safe version
@@ -47,6 +65,9 @@ namespace Bonza.Generator
             if (m_WordPositionList.Any(wordPosition => string.Compare(wordPosition.Word, wp.Word, StringComparison.OrdinalIgnoreCase) == 0))
                 throw new ArgumentException("Word already in layout list of words");
 
+            // Debug
+            Debug.Assert(!string.IsNullOrWhiteSpace(wp.OriginalWord));
+
             var res = CanPlaceWord(wp);
             if (res != PlaceWordStatus.Invalid)
                 AddWordPositionAndSquaresNoCheck(wp);
@@ -54,26 +75,31 @@ namespace Bonza.Generator
         }
 
 
-
-        // Fast version, do not check that placement is correct
+        // Low-level function to add a WordPosition to Layout, do not check that placement is correct
         public void AddWordPositionAndSquaresNoCheck(WordPosition wp)
         {
             m_WordPositionList.Add(wp);
+            m_WordsList.Add(wp.OriginalWord);
             AddSquares(wp);
         }
 
+        // Low-level removal function
         public void RemoveWordPositionAndSquares(WordPosition wp)
         {
             if (wp == null)
                 throw new ArgumentNullException(nameof(wp));
             if (!m_WordPositionList.Contains(wp))
                 throw new ArgumentException("WordPosition not in the layout");
+            if (!m_WordsList.Contains(wp.OriginalWord))
+                throw new ArgumentException("Original word not in the layout");
 
             RemoveSquares(wp);
             m_WordPositionList.Remove(wp);
+            m_WordsList.Remove(wp.OriginalWord);
         }
 
 
+        // Private helper
         private void AddSquares(WordPosition wp)
         {
             Debug.Assert(wp != null);
@@ -84,7 +110,7 @@ namespace Bonza.Generator
             {
                 if (GetSquare(row, column) == null)
                 {
-                    Square sq = new Square { Row = row, Column = column, Letter = c, IsInChunk = false, ShareCount = 1 };
+                    Square sq = new Square( row, column,  c,  false, 1 );
                     m_Squares.Add(new Position(row, column), sq);
                 }
                 else
@@ -385,31 +411,13 @@ namespace Bonza.Generator
         }
 
 #if !NETCOREAPP1_1
-        // Save layout in a .json file
-        public void SaveToFile(string outFile)
-        {
-            string json = JsonConvert.SerializeObject(m_WordPositionList, Formatting.Indented);
-            File.WriteAllText(outFile, json);
-        }
-
-        // Load layout from a .json file
-        public void LoadFromFile(string inFile)
-        {
-            string text = File.ReadAllText(inFile);
-            m_WordPositionList = JsonConvert.DeserializeObject<List<WordPosition>>(text);
-
-            m_Squares = new Dictionary<Position, Square>();
-            foreach (var wp in m_WordPositionList)
-                AddSquares(wp);
-        }
-
         public void SaveLayoutAsCode(string outfile)
         {
             using (Stream s = new FileStream(outfile, FileMode.Create))
             using (StreamWriter sw = new StreamWriter(s, Encoding.UTF8))
             {
                 foreach (WordPosition wp in m_WordPositionList)
-                    sw.WriteLine($"g.Layout.AddWordPositionAndSquares(new WordPosition {{ StartRow = {wp.StartRow}, StartColumn = {wp.StartColumn}, Word = \"{wp.Word}\", IsVertical = {wp.IsVertical} }});");
+                    sw.WriteLine($"g.Layout.AddWordPositionAndSquares(new WordPosition {{ StartRow = {wp.StartRow}, StartColumn = {wp.StartColumn}, Word = \"{wp.Word}\", OriginalWord = \"{wp.OriginalWord}\", IsVertical = {wp.IsVertical} }});");
             }
         }
 #endif

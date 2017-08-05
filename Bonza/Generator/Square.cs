@@ -9,6 +9,26 @@ namespace Bonza.Generator
 {
     public class Square
     {
+        // Copy constructor
+        public Square(Square copy)
+        {
+            Row = copy.Row;
+            Column = copy.Column;
+            Letter = copy.Letter;
+            IsInChunk = copy.IsInChunk;
+            ShareCount = copy.ShareCount;
+        }
+
+        // Specialized constructor
+        public Square(int row, int column, char letter, bool isInChunk, int shareCount)
+        {
+            Row = row;
+            Column = column;
+            Letter = letter;
+            IsInChunk = isInChunk;
+            ShareCount = shareCount;
+        }
+
         public int Row { get; set; }
         public int Column { get; set; }
         public char Letter { get; set; }

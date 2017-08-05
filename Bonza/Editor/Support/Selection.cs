@@ -4,6 +4,7 @@
 // 2017-07-29   PV  First version, extracted from view
 
 
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Bonza.Editor.ViewModel;
@@ -41,6 +42,9 @@ namespace Bonza.Editor.Support
 
         public void Add(WordAndCanvas wac)
         {
+            // Debug
+            Debug.Assert(!string.IsNullOrEmpty(wac.WordPosition.OriginalWord));
+
             if (m_WordAndCanvasList == null)
                 m_WordAndCanvasList = new List<WordAndCanvas>();
 
@@ -64,7 +68,8 @@ namespace Bonza.Editor.Support
         // Delete selection
         internal void Delete(WordAndCanvas wac)
         {
-            Debug.Assert(wac != null);
+            if (wac==null)
+                throw  new ArgumentNullException(nameof(wac));
 
             if (m_WordAndCanvasList != null && m_WordAndCanvasList.Contains(wac))
             {
