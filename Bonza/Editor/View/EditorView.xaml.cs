@@ -120,9 +120,6 @@ namespace Bonza.Editor.View
             // Draw letters
             foreach (WordPosition wp in wordPositionList)
             {
-                // Debug
-                Debug.Assert(!string.IsNullOrWhiteSpace(wp.OriginalWord));
-
                 WordCanvas wc = new WordCanvas(wp);
                 WordAndCanvas wac = new WordAndCanvas(wp, wc);
                 DrawingCanvas.Children.Add(wc);

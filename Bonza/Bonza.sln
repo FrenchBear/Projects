@@ -32,7 +32,6 @@ Global
 		{F70D6151-E5D0-406B-BDE8-12EF618504F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F70D6151-E5D0-406B-BDE8-12EF618504F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F70D6151-E5D0-406B-BDE8-12EF618504F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F70D6151-E5D0-406B-BDE8-12EF618504F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -5,6 +5,7 @@
 // 2017-08-05   PV      testGeneration and TestPerformances; Output forced to UTF-8
 
 
+using System;
 using static System.Console;
 using System.Diagnostics;
 using System.Text;
@@ -17,8 +18,8 @@ namespace Bonza.Generator.Tests
         {
             OutputEncoding = Encoding.UTF8;         // For Dot Net Core
 
-            TestGeneration();
-            //TestPerformances();
+            //TestGeneration();
+            TestPerformances();
 
             WriteLine();
             Write("(Pause)");
@@ -57,6 +58,8 @@ namespace Bonza.Generator.Tests
                 Debug.Assert(i < 5);
             }
             WriteLine($"Total time for {loops} generations: " + sw.Elapsed);
+
+            Environment.Exit(0);
         }
     }
 

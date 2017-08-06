@@ -42,9 +42,6 @@ namespace Bonza.Editor.Support
 
         public void Add(WordAndCanvas wac)
         {
-            // Debug
-            Debug.Assert(!string.IsNullOrEmpty(wac.WordPosition.OriginalWord));
-
             if (m_WordAndCanvasList == null)
                 m_WordAndCanvasList = new List<WordAndCanvas>();
 

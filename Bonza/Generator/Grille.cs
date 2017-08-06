@@ -63,7 +63,7 @@ namespace Bonza.Generator
             // AddWordsList keeps a backup of Layout and restore it if placement failed...
             // but since we call it after reinitializing the layout, it won't work for us
             WordPositionLayout backupLayout = new WordPositionLayout(Layout);
-            var wordsList = Layout.WordsList.ToList();
+            var wordsList = Layout.WordPositionList.Select(wp => wp.OriginalWord).ToList();
             NewLayout();
             if (AddWordsList(wordsList) == null)
             {
@@ -91,7 +91,7 @@ namespace Bonza.Generator
                 result = $"Mot{S(shortWords.Length)} de longueur <= 2 non autorisé{S(shortWords.Length)}: " + shortWords;
 
             // Check for duplicates, start with current list of words
-            HashSet<string> wordsSet = new HashSet<string>(Layout.WordsList.Select(CanonizeWord));
+            HashSet<string> wordsSet = new HashSet<string>(Layout.WordPositionList.Select(wp => CanonizeWord(wp.OriginalWord)));
             List<string> duplicates = null;
             foreach (string w in words)
                 if (w.Length > 2)
@@ -163,7 +163,6 @@ namespace Bonza.Generator
                     shuffledList.Remove(placedWord);
             }
 
-            Debug.Assert(Layout.WordsList.Count == Layout.WordPositionList.Count);
             return placedWordPositionList;
         }
 

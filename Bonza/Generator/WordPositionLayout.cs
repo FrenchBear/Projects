@@ -10,6 +10,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -34,10 +35,8 @@ namespace Bonza.Generator
     {
         private readonly List<WordPosition> m_WordPositionList = new List<WordPosition>();
         private readonly Dictionary<Position, Square> m_Squares = new Dictionary<Position, Square>();
-        private readonly List<string> m_WordsList = new List<string>();
 
         public ReadOnlyCollection<WordPosition> WordPositionList => m_WordPositionList.AsReadOnly();
-        public ReadOnlyCollection<string> WordsList => m_WordsList.AsReadOnly();
 
 
         // Default constructor
@@ -53,7 +52,6 @@ namespace Bonza.Generator
         internal WordPositionLayout(WordPositionLayout copy)
         {
             m_WordPositionList.AddRange(copy.m_WordPositionList);
-            m_WordsList = new List<string>(copy.m_WordsList);
             using (var e = copy.m_Squares.GetEnumerator())
                 while (e.MoveNext())
                     m_Squares.Add(e.Current.Key, new Square(e.Current.Value));
@@ -70,9 +68,6 @@ namespace Bonza.Generator
             if (m_WordPositionList.Any(wordPosition => string.Compare(wordPosition.Word, wp.Word, StringComparison.OrdinalIgnoreCase) == 0))
                 throw new ArgumentException("Word already in layout list of words");
 
-            // Debug
-            Debug.Assert(!string.IsNullOrWhiteSpace(wp.OriginalWord));
-
             var res = CanPlaceWord(wp);
             if (res != PlaceWordStatus.Invalid)
                 AddWordPositionAndSquaresNoCheck(wp);
@@ -84,7 +79,6 @@ namespace Bonza.Generator
         public void AddWordPositionAndSquaresNoCheck(WordPosition wp)
         {
             m_WordPositionList.Add(wp);
-            m_WordsList.Add(wp.OriginalWord);
             AddSquares(wp);
         }
 
@@ -95,12 +89,9 @@ namespace Bonza.Generator
                 throw new ArgumentNullException(nameof(wp));
             if (!m_WordPositionList.Contains(wp))
                 throw new ArgumentException("WordPosition not in the layout");
-            if (!m_WordsList.Contains(wp.OriginalWord))
-                throw new ArgumentException("Original word not in the layout");
 
             RemoveSquares(wp);
             m_WordPositionList.Remove(wp);
-            m_WordsList.Remove(wp.OriginalWord);
         }
 
 
@@ -152,7 +143,9 @@ namespace Bonza.Generator
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Square GetSquare(int row, int column)
         {
-            return IsOccupiedSquare(row, column) ? m_Squares[new Position(row, column)] : null;
+            //return IsOccupiedSquare(row, column) ? m_Squares[new Position(row, column)] : null;
+            m_Squares.TryGetValue(new Position(row, column), out Square sq);
+            return sq;
         }
 
         // Specialized helper for performance, returns true if there's no square at this position
@@ -167,8 +160,9 @@ namespace Bonza.Generator
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public char GetLetter(int row, int column)
         {
-            //return GetSquare(row, column)?.Letter ?? '\0';
-            return m_Squares.ContainsKey(new Position(row, column)) ? m_Squares[new Position(row, column)].Letter : '\0';
+            //return m_Squares.ContainsKey(new Position(row, column)) ? m_Squares[new Position(row, column)].Letter : '\0';
+            m_Squares.TryGetValue(new Position(row, column), out Square sq);
+            return sq?.Letter ?? '\0';
         }
 
         // Compute layout external bounds, note that cell (0,0) is always included in bounding rectangle
