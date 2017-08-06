@@ -448,7 +448,7 @@ namespace Bonza.Editor.View
                     int top = (int)Math.Floor(preciseTop / UnitSize + 0.5);
                     int left = (int)Math.Floor(preciseLeft / UnitSize + 0.5);
 
-                    PlaceWordStatus status = viewModel.CanPlaceWordAtPositionInLayout(m_FixedLayout, m_Sel.WordAndCanvasList[i].WordPosition, new PositionOrientation { StartRow = top, StartColumn = left, IsVertical = m_Sel.WordAndCanvasList[i].WordPosition.IsVertical });
+                    PlaceWordStatus status = viewModel.CanPlaceWordAtPositionInLayout(m_FixedLayout, m_Sel.WordAndCanvasList[i].WordPosition, new PositionOrientation(new Position(top, left), m_Sel.WordAndCanvasList[i].WordPosition.IsVertical));
                     RecolorizeWord(m_Sel.WordAndCanvasList[i], status);
                 }
             };
@@ -527,7 +527,7 @@ namespace Bonza.Editor.View
                     WordCanvas wc = wac.WordCanvas;
                     int top = (int)Math.Floor((double)wc.GetValue(Canvas.TopProperty) / UnitSize + 0.5);
                     int left = (int)Math.Floor((double)wc.GetValue(Canvas.LeftProperty) / UnitSize + 0.5);
-                    topLeftList.Add(new PositionOrientation { StartRow = top, StartColumn = left, IsVertical = wac.WordPosition.IsVertical });
+                    topLeftList.Add(new PositionOrientation(new Position(top, left), wac.WordPosition.IsVertical));
                 }
 
                 // Do not accept Illegal placements, adjust to only valid placements
@@ -620,13 +620,13 @@ namespace Bonza.Editor.View
                     for (int i = 0; i < st; i++)
                     {
                         for (int il = 0; il < wordAndCanvasList.Count; il++)
-                            topLeftList[il] = new PositionOrientation { StartRow = topLeftList[il].StartRow, StartColumn = topLeftList[il].StartColumn + sign, IsVertical = m_Sel.WordAndCanvasList[il].WordPosition.IsVertical };
+                            topLeftList[il] = new PositionOrientation(new Position(topLeftList[il].Start.Row, topLeftList[il].Start.Column + sign), m_Sel.WordAndCanvasList[il].WordPosition.IsVertical);
                         if (CanPlaceAllWords(true)) return;
                     }
                     for (int i = 0; i < st; i++)
                     {
                         for (int il = 0; il < wordAndCanvasList.Count; il++)
-                            topLeftList[il] = new PositionOrientation { StartRow = topLeftList[il].StartRow + sign, StartColumn = topLeftList[il].StartColumn, IsVertical = m_Sel.WordAndCanvasList[il].WordPosition.IsVertical };
+                            topLeftList[il] = new PositionOrientation(new Position(topLeftList[il].Start.Row + sign, topLeftList[il].Start.Column), m_Sel.WordAndCanvasList[il].WordPosition.IsVertical);
                         if (CanPlaceAllWords(true)) return;
                     }
                     sign = -sign;

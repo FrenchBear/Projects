@@ -72,7 +72,7 @@ namespace Bonza.Editor.Support
         {
             if (wordAndCanvasList == null) throw new ArgumentNullException(nameof(wordAndCanvasList));
             // Memorize position in a separate list since WordPosition objects position will change
-            List<PositionOrientation> topLeftList = wordAndCanvasList.Select(wac => new PositionOrientation { StartRow = wac.WordPosition.StartRow, StartColumn = wac.WordPosition.StartColumn, IsVertical = wac.WordPosition.IsVertical }).ToList();
+            List<PositionOrientation> topLeftList = wordAndCanvasList.Select(wac => new PositionOrientation(new PositionOrientation(wac.WordPosition.PositionOrientation))).ToList();
 
             MemorizeUndoableAction(UndoActions.Move, wordAndCanvasList, topLeftList);
         }
@@ -91,7 +91,7 @@ namespace Bonza.Editor.Support
         internal void MemorizeSwapOrientation(IList<WordAndCanvas> wordAndCanvasList)
         {
             // Memorize position in a separate list since WordPosition objects position will change
-            List<PositionOrientation> topLeftList = wordAndCanvasList.Select(wac => new PositionOrientation { StartRow = wac.WordPosition.StartRow, StartColumn = wac.WordPosition.StartColumn, IsVertical = wac.WordPosition.IsVertical }).ToList();
+            List<PositionOrientation> topLeftList = wordAndCanvasList.Select(wac => new PositionOrientation(wac.WordPosition.PositionOrientation)).ToList();
             MemorizeUndoableAction(UndoActions.SwapOrientation, wordAndCanvasList, topLeftList);
         }
 

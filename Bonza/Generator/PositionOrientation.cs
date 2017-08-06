@@ -1,55 +1,37 @@
 ﻿// Bonza class PositionOrientation
-// A location and a boolean
+// Regroups a Position and an orientation flag
 //
 // 2017-08-05   PV      Extracted
+// 2017-08-06   PV      refactoring
+
 
 namespace Bonza.Generator
 {
-    public struct PositionOrientation2
+    /// <summary>Regroups a Position and an orientation flag.</summary>
+    public struct PositionOrientation
     {
         public Position Start;
         public bool IsVertical;
 
-        public PositionOrientation2(int startRow, int startColumn, bool isVertical) : this()
+
+        public PositionOrientation(int startRow, int startColumn, bool isVertical) : this()
         {
             Start = new Position(startRow, startColumn);
             IsVertical = isVertical;
         }
 
-        public PositionOrientation2(Position start, bool isVertical) : this()
+        public PositionOrientation(Position start, bool isVertical) : this()
         {
             Start = start;
             IsVertical = isVertical;
         }
 
-        public PositionOrientation2(PositionOrientation2 copy) : this()
+        public PositionOrientation(PositionOrientation copy) : this()
         {
             Start = copy.Start;
             IsVertical = copy.IsVertical;
         }
 
     }
-
-    public struct PositionOrientation
-    {
-        public int StartRow { get; set; }
-        public int StartColumn { get; set; }
-        public bool IsVertical { get; set; }
-
-        public PositionOrientation(int startRow, int startColumn, bool isVertical)
-        {
-            StartRow = startRow;
-            StartColumn = startColumn;
-            IsVertical = isVertical;
-        }
-
-        public PositionOrientation(PositionOrientation copy)
-        {
-            StartRow = copy.StartRow;
-            StartColumn = copy.StartColumn;
-            IsVertical = copy.IsVertical;
-        }
-    }
-
 
 }

@@ -16,9 +16,9 @@ namespace Bonza.Generator
         public PositionOrientation PositionOrientation { get => m_PositionOrientation; set => m_PositionOrientation=value; }
 
 
-        // Extra accessors for 'old' code
-        public int StartRow => PositionOrientation.StartRow;
-        public int StartColumn => PositionOrientation.StartColumn;
+        // Extra read only accessors for 'old' code
+        public int StartRow => PositionOrientation.Start.Row;
+        public int StartColumn => PositionOrientation.Start.Column;
 
         public bool IsVertical
         {

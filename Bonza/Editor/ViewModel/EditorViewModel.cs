@@ -292,7 +292,7 @@ namespace Bonza.Editor.ViewModel
             // If we don't really move, there is nothing more to do
             var firstWac = wordAndCanvasList.First();
             var firstTl = topLeftList.First();
-            if (firstWac.WordPosition.StartRow == firstTl.StartRow && firstWac.WordPosition.StartColumn == firstTl.StartColumn && firstWac.WordPosition.IsVertical == firstTl.IsVertical)
+            if (firstWac.WordPosition.StartRow == firstTl.Start.Row && firstWac.WordPosition.StartColumn == firstTl.Start.Column && firstWac.WordPosition.IsVertical == firstTl.IsVertical)
                 return;
 
             // Memorize position before move for undo, unless we're undoing or the move
@@ -305,7 +305,7 @@ namespace Bonza.Editor.ViewModel
                 model.RemoveWordPosition(wp);
             foreach (var item in wordAndCanvasList.Zip(topLeftList, (wac, tl) => (WordAndCanvas: wac, topLeft: tl)))
             {
-                item.WordAndCanvas.WordPosition.PositionOrientation = new PositionOrientation(item.topLeft.StartRow, item.topLeft.StartColumn, item.topLeft.IsVertical);
+                item.WordAndCanvas.WordPosition.PositionOrientation = new PositionOrientation(item.topLeft.Start.Row, item.topLeft.Start.Column, item.topLeft.IsVertical);
                 model.AddWordPosition(item.WordAndCanvas.WordPosition);
             }
         }

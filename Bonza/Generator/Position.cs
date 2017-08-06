@@ -21,5 +21,12 @@ namespace Bonza.Generator
             Row = row;
             Column = column;
         }
+
+
+        public override string ToString()
+        {
+            return $"Pos({Row}, {Column})";
+        }
     }
+
 }

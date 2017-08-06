@@ -17,5 +17,12 @@ namespace Bonza.Generator
             Min = min;
             Max = max;
         }
+
+        public override string ToString()
+        {
+            return $"Bounds[{Min}-{Max}]";
+        }
+
     }
+
 }
