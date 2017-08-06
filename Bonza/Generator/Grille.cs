@@ -194,6 +194,32 @@ namespace Bonza.Generator
             if (possibleWordPositions.Count == 0)
                 return null;
 
+#if false
+            // ==========================================================================================================================================
+            // Old version, bugged
+
+            WordPosition selectedWordPosition = null;
+            (int minRow, int maxRow, int minColumn, int maxColumn) = Layout.GetBoundsOld();
+            int surface = int.MaxValue;
+
+            // Take position that minimize layout surface, random selection generates a 'diagonal' puzzle
+            // Adjust surface calculation to avoid too much extension in one direction
+            foreach (WordPosition wp in possibleWordPositions)
+            {
+                (int newMinRow, int newMaxRow, int newMinCol, int newMaxCol) = Layout.ExtendBoundsOld(minRow, maxRow, minColumn, maxColumn, wp);
+                int newSurface = ComputeAdjustedSurface(newMaxCol - newMinCol + 1, newMaxRow - newMinRow + 1);
+                if (newSurface < surface)
+                {
+                    surface = newSurface;
+                    selectedWordPosition = wp;
+                }
+            }
+
+            // Position is now selected, we can add it to current layout
+            Layout.AddWordPositionAndSquaresNoCheck(selectedWordPosition);
+            return selectedWordPosition;
+            // ==========================================================================================================================================
+#else
             // Optimization
             if (possibleWordPositions.Count == 1)
             {
@@ -220,6 +246,7 @@ namespace Bonza.Generator
             int index = (int)(selectedWordPositionList.Count * 0.15 * rnd.NextDouble());
             Layout.AddWordPositionAndSquaresNoCheck(selectedWordPositionList[index].WordPosition);
             return selectedWordPositionList[index].WordPosition;
+#endif
         }
 
 

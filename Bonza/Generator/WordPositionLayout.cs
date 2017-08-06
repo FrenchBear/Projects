@@ -163,6 +163,44 @@ namespace Bonza.Generator
             return sq?.Letter ?? '\0';
         }
 
+
+
+        // ==========================================================================================================================================
+        // Old code for perf comparison
+
+        // Compute layout external bounds
+        public (int minRow, int maxRow, int minColumn, int maxColumn) GetBoundsOld()
+        {
+            int minRow = 0, maxRow = 0, minColumn = 0, maxColumn = 0;
+            foreach (WordPosition wp in m_WordPositionList)
+                (minRow, maxRow, minColumn, maxColumn) = ExtendBoundsOld(minRow, maxRow, minColumn, maxColumn, wp);
+            return (minRow, maxRow, minColumn, maxColumn);
+        }
+
+        // Return layout (minRow, maxRow, minColumn, maxColumn) extended with a WordPosition added
+        public (int newMinRow, int newMaxRow, int newMinColumn, int newMaxColumn) ExtendBoundsOld(int minRow, int maxRow, int minColumn, int maxColumn, WordPosition wp)
+        {
+            int newMinRow, newMaxRow, newMinColumn, newMaxColumn;
+            if (wp.IsVertical)
+            {
+                newMinRow = Math.Min(minRow, wp.StartRow);
+                newMaxRow = Math.Max(maxRow, wp.StartRow + wp.Word.Length - 1);
+                newMinColumn = Math.Min(minColumn, wp.StartColumn);
+                newMaxColumn = Math.Max(maxColumn, wp.StartColumn);
+            }
+            else
+            {
+                newMinRow = Math.Min(minRow, wp.StartRow);
+                newMaxRow = Math.Max(maxRow, wp.StartRow);
+                newMinColumn = Math.Min(minColumn, wp.StartColumn);
+                newMaxColumn = Math.Max(maxColumn, wp.StartColumn + wp.Word.Length - 1);
+            }
+            return (newMinRow, newMaxRow, newMinColumn, newMaxColumn);
+        }
+
+        // ==========================================================================================================================================
+
+
         // Compute layout external bounds, note that cell (0,0) is always included in bounding rectangle
         public BoundingRectangle GetBounds()
         {
