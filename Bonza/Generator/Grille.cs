@@ -209,7 +209,7 @@ namespace Bonza.Generator
             foreach (WordPosition wp in possibleWordPositions)
             {
                 BoundingRectangle newR = Layout.ExtendBounds(r, wp);
-                int newSurface = ComputeAdjustedSurface(newR.MaxColumn - newR.MinColumn + 1, newR.MaxRow - newR.MinRow + 1);
+                int newSurface = ComputeAdjustedSurface(newR.Max.Column - newR.Min.Column + 1, newR.Max.Row - newR.Min.Row + 1);
                 selectedWordPositionList.Add(new WordPositionSurface(wp, newSurface));
             }
 
@@ -331,9 +331,9 @@ namespace Bonza.Generator
             BoundingRectangle r = Layout.GetBounds();
 
             // Then print
-            for (int row = r.MinRow; row <= r.MaxRow; row++)
+            for (int row = r.Min.Row; row <= r.Max.Row; row++)
             {
-                for (int col = r.MinColumn; col <= r.MaxColumn; col++)
+                for (int col = r.Min.Column; col <= r.Max.Column; col++)
                 {
                     bool found = false;
 

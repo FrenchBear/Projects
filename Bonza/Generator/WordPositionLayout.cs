@@ -184,21 +184,15 @@ namespace Bonza.Generator
         // Return layout bounds extended with a WordPosition added
         public BoundingRectangle ExtendBounds(BoundingRectangle r, WordPosition wp)
         {
-            BoundingRectangle newR = new BoundingRectangle();
+            BoundingRectangle newR;
             if (wp.IsVertical)
-            {
-                newR.MinRow = Math.Min(r.MinRow, wp.StartRow);
-                newR.MaxRow = Math.Max(r.MaxRow, wp.StartRow + wp.Word.Length - 1);
-                newR.MinColumn = Math.Min(r.MinColumn, wp.StartColumn);
-                newR.MaxColumn = Math.Max(r.MaxColumn, wp.StartColumn);
-            }
+                newR = new BoundingRectangle(
+                    new Position(Math.Min(r.Min.Row, wp.StartRow), Math.Min(r.Min.Column, wp.StartColumn)),
+                    new Position(Math.Max(r.Max.Row, wp.StartRow + wp.Word.Length - 1), Math.Max(r.Max.Column, wp.StartColumn)));
             else
-            {
-                newR.MinRow = Math.Min(r.MinRow, wp.StartRow);
-                newR.MaxRow = Math.Max(r.MaxRow, wp.StartRow);
-                newR.MinColumn = Math.Min(r.MinColumn, wp.StartColumn);
-                newR.MaxColumn = Math.Max(r.MaxColumn, wp.StartColumn + wp.Word.Length - 1);
-            }
+                newR = new BoundingRectangle(
+                    new Position(Math.Min(r.Min.Row, wp.StartRow), Math.Min(r.Min.Column, wp.StartColumn)),
+                    new Position(Math.Max(r.Max.Row, wp.StartRow), Math.Max(r.Max.Column, wp.StartColumn + wp.Word.Length - 1)));
             return newR;
         }
 

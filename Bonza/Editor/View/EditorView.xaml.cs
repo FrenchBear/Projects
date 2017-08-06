@@ -249,15 +249,12 @@ namespace Bonza.Editor.View
 
             BoundingRectangle r = viewModel.Layout.GetBounds();
             // Add some extra margin and always represent a 20x20 grid at minimum
-            r.MinRow = Math.Min(-11, r.MinRow - 3);
-            r.MinColumn = Math.Min(-11, r.MinColumn - 3);
-            r.MaxRow = Math.Max(11, r.MaxRow + 4);
-            r.MaxColumn = Math.Max(11, r.MaxColumn + 4);
-
+            r.Min = new Position(Math.Min(-11, r.Min.Row - 3), Math.Min(-11, r.Min.Column - 3));
+            r.Max = new Position(Math.Max(11, r.Max.Row + 4), Math.Max(11, r.Max.Column + 4));
 
             // Reverse-transform corners into WordCanvas coordinates
-            Point p1Grid = new Point(r.MinColumn * UnitSize, r.MinRow * UnitSize);
-            Point p2Grid = new Point(r.MaxColumn * UnitSize, r.MaxRow * UnitSize);
+            Point p1Grid = new Point(r.Min.Column * UnitSize, r.Min.Row * UnitSize);
+            Point p2Grid = new Point(r.Max.Column * UnitSize, r.Max.Row * UnitSize);
 
 
             rescaleMatrix = MainMatrixTransform.Matrix;
@@ -719,7 +716,7 @@ namespace Bonza.Editor.View
         private void ClearBackgroundGrid()
         {
             BackgroundGrid.Children.Clear();
-            gridBounding.MinRow = int.MinValue;          // Force redraw after it's been cleared
+            gridBounding.Min = new Position(int.MinValue, int.MinValue);          // Force redraw after it's been cleared
         }
 
         private void UpdateBackgroundGrid()
@@ -738,10 +735,10 @@ namespace Bonza.Editor.View
                 gridBounding = viewModel.Layout.GetBounds();
 
                 // Add some extra margin and always represent a 20x20 grid at minimum
-                int minRow = Math.Min(-10, gridBounding.MinRow - 2);
-                int minColumn = Math.Min(-10, gridBounding.MinColumn - 2);
-                int maxRow = Math.Max(10, gridBounding.MaxRow + 3);
-                int maxColumn = Math.Max(10, gridBounding.MaxColumn + 3);
+                int minRow = Math.Min(-10, gridBounding.Min.Row - 2);
+                int minColumn = Math.Min(-10, gridBounding.Min.Column - 2);
+                int maxRow = Math.Max(10, gridBounding.Max.Row + 3);
+                int maxColumn = Math.Max(10, gridBounding.Max.Column + 3);
 
                 for (int row = minRow; row <= maxRow; row++)
                 {

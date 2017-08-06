@@ -91,15 +91,15 @@ namespace Bonza.Generator.UnitTests
         [TestMethod]
         public void TestBoundingRectangle()
         {
-            g.Layout.AddWordPositionAndSquares(new WordPosition("THURSDAY", "thursday", new PositionOrientation(0, 0, true)));
-            g.Layout.AddWordPositionAndSquares(new WordPosition("MONDAY", "monday", new PositionOrientation(5, -3, false)));
-            g.Layout.AddWordPositionAndSquares(new WordPosition("TUESDAY", "tuesday", new PositionOrientation(2, -1, false)));
-            g.Layout.AddWordPositionAndSquares(new WordPosition("WEDNESDAY", "wednesday", new PositionOrientation(-4, 3, true)));
+            g.Layout.AddWordPositionAndSquares(new WordPosition("THURSDAY", "Thursday", new PositionOrientation(0, 0, true)));
+            g.Layout.AddWordPositionAndSquares(new WordPosition("MONDAY", "Monday", new PositionOrientation(5, -3, false)));
+            g.Layout.AddWordPositionAndSquares(new WordPosition("TUESDAY", "Tuesday", new PositionOrientation(2, -1, false)));
+            g.Layout.AddWordPositionAndSquares(new WordPosition("WEDNESDAY", "Wednesday", new PositionOrientation(-4, 3, true)));
 
             BoundingRectangle r1 = g.Layout.GetBounds();
-            BoundingRectangle r2 = new BoundingRectangle(-4, 7, -3, 5);
+            BoundingRectangle r2 = new BoundingRectangle(new Position(-4, -3), new Position(7, 5));
             Assert.AreEqual(r1, r2);
-            Assert.IsTrue(r1.MinRow == -4 && r1.MaxRow == 7 && r1.MinColumn == -3 && r1.MaxColumn == 5);
+            Assert.IsTrue(r1.Min.Row == -4 && r1.Max.Row == 7 && r1.Min.Column == -3 && r1.Max.Column == 5);
         }
     }
 }

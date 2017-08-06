@@ -23,14 +23,14 @@ namespace Bonza.Generator
             // Find a starting letter on the first row
             BoundingRectangle r = Layout.GetBounds();
             int loopCol;
-            for (loopCol = r.MinColumn; loopCol <= r.MaxColumn; loopCol++)
-                if (Layout.GetSquare(r.MinRow, loopCol) != null)
+            for (loopCol = r.Min.Column; loopCol <= r.Max.Column; loopCol++)
+                if (Layout.GetSquare(r.Min.Row, loopCol) != null)
                     break;
-            Debug.Assert(loopCol <= r.MaxColumn);
+            Debug.Assert(loopCol <= r.Max.Column);
 
             // Start accumulation process from this initial square
             Stack<Square> myStack = new Stack<Square>();
-            myStack.Push(Layout.GetSquare(r.MinRow, loopCol));
+            myStack.Push(Layout.GetSquare(r.Min.Row, loopCol));
 
             // We stop once all squares have been placed
             while (myStack.Count > 0)

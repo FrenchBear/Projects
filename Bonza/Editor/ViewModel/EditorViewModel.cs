@@ -68,9 +68,9 @@ namespace Bonza.Editor.ViewModel
 
             // File
             NewLayoutCommand = new RelayCommand<object>(NewLayoutExecute);
-            LoadCommand = new RelayCommand<object>(LoadExecute, LoadCanExecute);
+            LoadCommand = new RelayCommand<object>(LoadExecute);
             AddWordsCommand = new RelayCommand<object>(AddWordsExecute);
-            RegenerateLayoutCommand = new RelayCommand<object>(RegenerateLayoutExecute, RegenerateLayoutCanExecute);
+            RegenerateLayoutCommand = new RelayCommand<object>(RegenerateLayoutExecute);
             SaveCommand = new RelayCommand<object>(SaveExecute, SaveCanExecute);
             QuitCommand = new RelayCommand<object>(QuitExecute);
 
@@ -81,7 +81,7 @@ namespace Bonza.Editor.ViewModel
             AutoPlaceCommand = new RelayCommand<object>(AutoPlaceExecute, AutoPlaceCanExecute);
 
             // View
-            RecenterLayoutViewCommand = new RelayCommand<object>(RecenterLayoutViewExecute, RecenterLayoutViewCanExecute);
+            RecenterLayoutViewCommand = new RelayCommand<object>(RecenterLayoutViewExecute);
 
             // Help
             AboutCommand = new RelayCommand<object>(AboutExecute);
@@ -335,12 +335,6 @@ namespace Bonza.Editor.ViewModel
         }
 
 
-
-        private bool LoadCanExecute(object obj)
-        {
-            return true;
-        }
-
         private void LoadExecute(object obj)
         {
             OpenFileDialog dlg = new OpenFileDialog
@@ -390,13 +384,11 @@ namespace Bonza.Editor.ViewModel
         }
 
 
-        private bool RegenerateLayoutCanExecute(object obj)
-        {
-            return model.Layout != null;
-        }
-
         private void RegenerateLayoutExecute(object obj)
         {
+            if (view.IsAnimationInProgress())
+                return;
+
             try
             {
                 view.ClearWordAndCanvas();
@@ -409,11 +401,6 @@ namespace Bonza.Editor.ViewModel
             }
         }
 
-
-        private bool RecenterLayoutViewCanExecute(object obj)
-        {
-            return model.Layout != null;
-        }
 
         private void RecenterLayoutViewExecute(object obj)
         {
@@ -439,7 +426,7 @@ namespace Bonza.Editor.ViewModel
 
         private bool UndoCanExecute(object obj)
         {
-            return model.Layout != null && UndoStack.CanUndo;
+            return UndoStack.CanUndo;
         }
 
         private void UndoExecute(object obj)
@@ -453,7 +440,7 @@ namespace Bonza.Editor.ViewModel
 
         private bool SwapOrientationCanExecute(object obj)
         {
-            return model.Layout != null && SelectedWordCount == 1;
+            return SelectedWordCount == 1;
         }
 
         private void SwapOrientationExecute(object obj)
