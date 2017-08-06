@@ -53,7 +53,7 @@ namespace Bonza.Generator
                         wordsList.Add(line);
                 }
             }
-            return AddWordsList(wordsList) != null;
+            return AddWordsList(wordsList, false) != null;
         }
 
         /// <summary>Shuffle words after reinitializing layout.</summary>
@@ -65,7 +65,7 @@ namespace Bonza.Generator
             WordPositionLayout backupLayout = new WordPositionLayout(Layout);
             var wordsList = Layout.WordPositionList.Select(wp => wp.OriginalWord).ToList();
             NewLayout();
-            if (AddWordsList(wordsList) == null)
+            if (AddWordsList(wordsList, false) == null)
             {
                 Layout = backupLayout;
                 return false;
@@ -124,14 +124,16 @@ namespace Bonza.Generator
 
         /// <summary>Core placement function, adds a list of words to current layout</summary>
         /// <param name="wordsToAddList">List of words to place</param>
+        /// <param name="withLayoutBackup">If true, current layout is backed up, and restored if placement of all words failed</param>
         /// <returns>Returns a list of WordPosition for placed words in case of success, or false if placement failed, current layout is preserved in this case</returns>
-        public List<WordPosition> AddWordsList(List<string> wordsToAddList)
+        public List<WordPosition> AddWordsList(List<string> wordsToAddList, bool withLayoutBackup)
         {
             if (wordsToAddList == null)
                 throw new ArgumentNullException(nameof(wordsToAddList));
 
             // Keep a copy of current layout to restore if placement fails at some point
-            WordPositionLayout backupLayout = new WordPositionLayout(Layout);
+            WordPositionLayout backupLayout = null;
+            if (withLayoutBackup) backupLayout = new WordPositionLayout(Layout);
 
             string checkMessage = CheckWordsList(wordsToAddList);
             if (!string.IsNullOrEmpty(checkMessage))
@@ -155,7 +157,7 @@ namespace Bonza.Generator
                 // If at the end of this loop no canonizedWord has been placed, we have a problem...
                 if (placedWords.Count == 0)
                 {
-                    Layout = backupLayout;      // Restore initial layout
+                    if (withLayoutBackup) Layout = backupLayout;      // Restore initial layout
                     return null;
                 }
                 // On the other hand, if pass was successful, remove all placed words and go for a new pass
@@ -180,7 +182,7 @@ namespace Bonza.Generator
             // place it at position (0, 0)
             if (Layout.WordPositionList.Count == 0)
             {
-                WordPosition wp = new WordPosition(canonizedWord, originalWord, new PositionOrientation(0,0, rnd.NextDouble() > 0.5));
+                WordPosition wp = new WordPosition(canonizedWord, originalWord, new PositionOrientation(0, 0, rnd.NextDouble() > 0.5));
                 Layout.AddWordPositionAndSquaresNoCheck(wp);
                 return wp;
             }

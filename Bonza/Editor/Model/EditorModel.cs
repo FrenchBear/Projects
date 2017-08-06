@@ -89,7 +89,8 @@ namespace Bonza.Editor.Model
 
         public List<WordPosition> AddWordsList(List<string> wordsList)
         {
-            return grille.AddWordsList(wordsList);
+            // Use backup option to avoid half updating layout
+            return grille.AddWordsList(wordsList, true);
         }
     }
 }

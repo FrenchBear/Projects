@@ -59,7 +59,7 @@ namespace Bonza.Generator.Tests
             }
             WriteLine($"Total time for {loops} generations: " + sw.Elapsed);
 
-            Environment.Exit(0);
+            //Environment.Exit(0);
         }
     }
 

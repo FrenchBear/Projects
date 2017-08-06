@@ -48,7 +48,7 @@ namespace Bonza.Generator.UnitTests
         [TestInitialize()]
         public void Initialize()
         {
-            g = new Grille();
+            g = new Grille(123);        // Use seed to be reproducible
         }
 
         // Use TestCleanup to run code after each test has run

@@ -10,7 +10,6 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -48,7 +47,6 @@ namespace Bonza.Generator
         // Copy constructor
         // m_WordPositionsList contains the same references as tho copied layout
         // m_Squares contains new copies of copied layout squares
-        // m_WordsList is a new copy of original list
         internal WordPositionLayout(WordPositionLayout copy)
         {
             m_WordPositionList.AddRange(copy.m_WordPositionList);
