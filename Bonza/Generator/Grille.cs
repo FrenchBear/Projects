@@ -6,35 +6,39 @@
 
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-using System.Globalization;
 using System.Diagnostics;
 
 namespace Bonza.Generator
 {
     public partial class Grille
     {
+        /// <summary>X</summary>
         public WordPositionLayout Layout { get; private set; }
         private readonly Random rnd;        // Initialized in constructor
 
 
+        /// <summary>Creation of a new grille with an empty layout.</summary>
+        /// <param name="seed">Default value of 0 gets a different layout each time.  Use a specific value for reproducible behavior.</param>
         public Grille(int seed = 0)
         {
             rnd = new Random(seed);
             NewLayout();
         }
 
+        /// <summary>Complete reinitialization of layout, WordPosition and Words</summary>
         public void NewLayout()
         {
             Layout = new WordPositionLayout();
         }
 
-        // Helper, Adds a list of words from a file
-        // Will raise an exception if there is a problem with the file, or if some words are rejected
+        /// <summary>
+        /// Adds a list of words from a file to current layout.
+        /// Will raise an exception if there is a problem with the file, or if some words are rejected, initial layout preserved in this case.
+        /// </summary>
         public bool AddWordsFromFile(string filename)
         {
             // Will throw an exception in case of problem with file
@@ -52,19 +56,32 @@ namespace Bonza.Generator
             return AddWordsList(wordsList) != null;
         }
 
-        // ToDo: Rewrite
+        /// <summary>Shuffle words after reinitializing layout.</summary>
+        /// <returns>Returns true if new placement is successful, or false if placement failed (current layout is preserved in this case)</returns>
         public bool PlaceWordsAgain()
         {
-            //return AddWordsList(m_LayoutWordsList.ToArray());
+            // AddWordsList keeps a backup of Layout and restore it if placement failed...
+            // but since we call it after reinitializing the layout, it won't work for us
+            WordPositionLayout backupLayout = new WordPositionLayout(Layout);
+            var wordsList = Layout.WordsList.ToList();
+            NewLayout();
+            if (AddWordsList(wordsList) == null)
+            {
+                Layout = backupLayout;
+                return false;
+            }
             return true;
         }
 
-        // Helper to validate words before adding them
-        // This function will return a string error message, while adding the same words will raise an exception
+        /// <summary>Validate a list of words before adding them to current layout, returning a description of errors.</summary>
+        /// <param name="words">List of words to check</param>
+        /// <returns>Returns an empty string if no problem is detected, or a descriptive error message</returns>
+        /// <remarks>Adding the same words will raise an exception with the same text.</remarks>
         public string CheckWordsList(IList<string> words)
         {
             if (words == null) throw new ArgumentNullException(nameof(words));
 
+            // Plural case helper (French)
             string S(int n) => n > 1 ? "s" : "";
 
             string result = string.Empty;
@@ -74,12 +91,12 @@ namespace Bonza.Generator
                 result = $"Mot{S(shortWords.Length)} de longueur <= 2 non autorisé{S(shortWords.Length)}: " + shortWords;
 
             // Check for duplicates, start with current list of words
-            HashSet<string> wordsSet = new HashSet<string>(Layout.WordsList.Select(CanonizedWord));
+            HashSet<string> wordsSet = new HashSet<string>(Layout.WordsList.Select(CanonizeWord));
             List<string> duplicates = null;
             foreach (string w in words)
                 if (w.Length > 2)
                 {
-                    string cw = CanonizedWord(w);
+                    string cw = CanonizeWord(w);
                     if (wordsSet.Contains(cw))
                     {
                         if (duplicates == null) duplicates = new List<string>();
@@ -98,10 +115,16 @@ namespace Bonza.Generator
             return result;
         }
 
-        private static string CanonizedWord(string word) => word.ToUpper().Replace(' ', '·');
+
+        /// <summary>Returns canonized form of a word that will be displayed.</summary>
+        /// <param name="word">Word to canonize</param>
+        /// <returns>Canonized form, for instance "NON·SEQUITUR" for word "Non Sequitur"</returns>
+        private static string CanonizeWord(string word) => word.ToUpper().Replace(' ', '·');
 
 
-        // Returns False if placement failed, true in case of success
+        /// <summary>Core placement function, adds a list of words to current layout</summary>
+        /// <param name="wordsToAddList">List of words to place</param>
+        /// <returns>Returns a list of WordPosition for placed words in case of success, or false if placement failed, current layout is preserved in this case</returns>
         public List<WordPosition> AddWordsList(List<string> wordsToAddList)
         {
             if (wordsToAddList == null)
@@ -144,21 +167,22 @@ namespace Bonza.Generator
             return placedWordPositionList;
         }
 
-        // Core function, adds a canonizedWord to current layout and place it
-        // Returns null if the canonizedWord couldn't be placed
+        /// <summary>Internal core function, adds a word to current layout and place it.</summary>
+        /// <param name="originalWord">Word to place</param>
+        /// <returns>Returns WordPosition of placed word, or null if the word couldn't be placed</returns>
         private WordPosition AddWord(string originalWord)
         {
             // We need layout
             if (Layout == null) NewLayout();
 
-            string canonizedWord = CanonizedWord(originalWord);
+            string canonizedWord = CanonizeWord(originalWord);
 
             // If it's the first canonizedWord of the layout, chose random canonizedWord and orientation to start,
             // place it at position (0, 0)
             if (Layout.WordPositionList.Count == 0)
             {
                 WordPosition wp = new WordPosition(canonizedWord, originalWord, new PositionOrientation(0,0, rnd.NextDouble() > 0.5));
-                AddWordPositionToLayout(wp);
+                Layout.AddWordPositionAndSquaresNoCheck(wp);
                 return wp;
             }
 
@@ -173,7 +197,7 @@ namespace Bonza.Generator
             if (possibleWordPositions.Count == 1)
             {
                 WordPosition wp = possibleWordPositions.First();
-                AddWordPositionToLayout(wp);
+                Layout.AddWordPositionAndSquaresNoCheck(wp);
                 return wp;
             }
 
@@ -193,10 +217,12 @@ namespace Bonza.Generator
             // Chose a random candidate among the 15% best
             selectedWordPositionList.Sort(Comparer<WordPositionSurface>.Create((wps1, wps2) => wps1.Surface - wps2.Surface));
             int index = (int)(selectedWordPositionList.Count * 0.15 * rnd.NextDouble());
-            AddWordPositionToLayout(selectedWordPositionList[index].WordPosition);
+            Layout.AddWordPositionAndSquaresNoCheck(selectedWordPositionList[index].WordPosition);
             return selectedWordPositionList[index].WordPosition;
         }
 
+
+        /// <summary>Internal class to sort possible WordPositions placement by surface to select the best.</summary>
         private class WordPositionSurface
         {
             internal readonly WordPosition WordPosition;
@@ -210,21 +236,21 @@ namespace Bonza.Generator
         }
 
 
-        // Add a WordPosition to current layout, and add squares to squares dictionary
-        private void AddWordPositionToLayout(WordPosition wp)
-        {
-            Layout.AddWordPositionAndSquaresNoCheck(wp);
-        }
-
-        // Adjusted surface calculation that penalize extensions that would make bounding
-        // rectangle width/height unbalanced: compute surface x (difference width-height)²
+        /// <summary>Adjusted surface calculation that penalize extensions that would make bounding rectangle width/height unbalanced</summary>
+        /// <param name="width">Bounding rectangle width</param>
+        /// <param name="height">Bounding rectangle height</param>
+        /// <returns>Empirically adjusted: surface x (difference width-height)</returns>
         private int ComputeAdjustedSurface(int width, int height)
         {
             return width * height * (width - height) * (width - height);
         }
 
-        // Try to connect canonizedWordToPlace to placedWord
-        // Adds all possible solutions as WordPosition objects to provided possibleWordPositions
+
+        /// <summary>Find all the ways to add WordToPlace to placedWord.</summary>
+        /// <param name="canonizedWordToPlace">Canonized form of Word to place (ex: NON·SEQUITUR)</param>
+        /// <param name="originalWordToPlace">Original form of Word to place (ex: Non Sequitur)</param>
+        /// <param name="placedWord">WordPosition to connect to</param>
+        /// <param name="possibleWordPositions">A list into all possible possibilities are added</param>
         private void TryPlace(string canonizedWordToPlace, string originalWordToPlace, WordPosition placedWord, List<WordPosition> possibleWordPositions)
         {
             // Build a dictionary of (letter, count) for each canonizedWord
@@ -282,19 +308,23 @@ namespace Bonza.Generator
         }
 
 
-        // Write a text representation of current layout on stdout
+
+
+        /// <summary>Writes a text representation of current layout on stdout.</summary>
         public void Print() => Print(Console.Out);
 
-        // Write a text representation of current layout in a file
-        public void Print(string outFile)
+
+        /// <summary>Writes a text representation of current layout in a file.</summary>
+        /// <param name="filename">Name of file to write.</param>
+        public void Print(string filename)
         {
-            using (Stream s = new FileStream(outFile, FileMode.CreateNew))
+            using (Stream s = new FileStream(filename, FileMode.CreateNew))
             using (TextWriter tw = new StreamWriter(s, Encoding.UTF8))
                 Print(tw);
         }
 
-        // Write a text representation of current layout on provided TextWriter
-        // Internal helper
+        /// <summary>Internal low-level text output generation, writes a text representation of current layout.</summary>
+        /// <param name="tw">TextWriter to write to.</param>
         private void Print(TextWriter tw)
         {
             // First compute actual bounds

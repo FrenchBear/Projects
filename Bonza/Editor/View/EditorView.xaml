@@ -74,6 +74,7 @@
         <KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveCommand}" />
         <KeyBinding Key="OEMPlus" Modifiers="Shift" Command="{Binding AddWordsCommand}" />  <!-- French Keyboard, Shift is required!! -->
         <KeyBinding Key="Add" Command="{Binding AddWordsCommand}" />     <!--  Numeric keyboard Plus -->
+        <KeyBinding Key="F5" Command="{Binding RegenerateLayoutCommand}" />
         <KeyBinding Key="Delete" Command="{Binding DeleteCommand}" />
         <KeyBinding Key="Z" Modifiers="Ctrl" Command="{Binding UndoCommand}" />
         <KeyBinding Key="B" Modifiers="Ctrl" Command="{Binding SwapOrientationCommand}" />
@@ -105,12 +106,12 @@
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator/>
-                    <MenuItem Command="{Binding AddWordsCommand}" InputGestureText="+" Header="_Ajouter des mots au layout">
+                    <MenuItem Command="{Binding AddWordsCommand}" InputGestureText="+" Header="_Ajouter des mots au layout...">
                         <MenuItem.Icon>
                             <Image Source="/Icons/addwords.ico" Stretch="None" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Command="{Binding RegenerateLayoutCommand}" Header="_Regénérer le layout" />
+                    <MenuItem Command="{Binding RegenerateLayoutCommand}" InputGestureText="F5" Header="_Regénérer le layout" />
                     <Separator/>
                     <MenuItem Command="{Binding SaveCommand}" InputGestureText="Ctrl+S" Header="_Enregistrer le layout..." >
                         <MenuItem.Icon>

@@ -17,14 +17,19 @@ using System.Text;
 
 namespace Bonza.Generator
 {
+    /// <summary>Describes possible results of a WordPosition placement.</summary>
     public enum PlaceWordStatus
     {
-        Valid,          // Placement is good
-        TooClose,       // No overlap, but word touches another word in an incorrect way
-        Invalid         // Overlap or touching a word of same orientation
+        /// <summary>Placement is good.</summary>
+        Valid,
+        /// <summary>No overlap, but word touches another word in an incorrect way.</summary>
+        TooClose,
+        /// <summary>Overlap or touches a word of same orientation.</summary>
+        Invalid
     }
 
 
+    /// <summary>Management of a layout, that is, lists of WordPosition, Squares and Words.  Does not handle placement.</summary>
     public class WordPositionLayout
     {
         private readonly List<WordPosition> m_WordPositionList = new List<WordPosition>();

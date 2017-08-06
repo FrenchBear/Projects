@@ -41,10 +41,10 @@ namespace Bonza.Editor.Model
 
         internal void ResetLayout()
         {
-            grille.NewLayout();
             viewModel.ClearLayout();
             int i;
-            for (i = 0; i < 5 && !grille.PlaceWordsAgain(); i++) { }
+            for (i = 0; i < 5 ; i++)
+                if (grille.PlaceWordsAgain()) break;
             if (i == 5)
                 throw new BonzaException("Impossible de générer un nouveau layout malgré 5 tentatives");
             viewModel.AddCanvasForWordPositionList(Layout.WordPositionList);
