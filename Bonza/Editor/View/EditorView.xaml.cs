@@ -44,8 +44,6 @@ namespace Bonza.Editor.View
             m_WordAndCanvasList = new List<WordAndCanvas>();
             m_Sel = new Selection(viewModel);
 
-            UpdateTransformationsFeedBack();
-
             // Can only reference ActualWidth after Window is loaded
             Loaded += MainWindow_Loaded;
             KeyDown += MainWindow_KeyDown;
@@ -55,7 +53,7 @@ namespace Bonza.Editor.View
         public void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             // For development tests
-            viewModel.LoadWordsList(@"..\Lists\Fruits.txt");
+            viewModel.AddWordsFromFile(@"..\Lists\Fruits.txt");
             // viewModel.LoadWordsList(@"..\Lists\Animals.txt");
             FinalRefreshAfterUpdate();
             RescaleAndCenter(false);
@@ -127,12 +125,6 @@ namespace Bonza.Editor.View
                 DrawingCanvas.Children.Add(wc);
                 m_WordAndCanvasList.Add(wac);
             }
-
-            //// After initial drawing, rescale and center without animations
-            //// Also draw initial background grid
-            //RescaleAndCenter(false);
-
-            //FinalRefreshAfterUpdate();
         }
 
 
@@ -315,8 +307,6 @@ namespace Bonza.Editor.View
 
             // Final tasks
             MainMatrixTransform.Matrix = rescaleMatrix;
-            UpdateTransformationsFeedBack();
-            //UpdateBackgroundGrid();
         }
 
 
@@ -484,7 +474,6 @@ namespace Bonza.Editor.View
                 previousMousePosition = newPosition;
                 m.Translate(delta.X, delta.Y);
                 MainMatrixTransform.Matrix = m;
-                UpdateTransformationsFeedBack();
                 UpdateBackgroundGrid();
             }
             else
@@ -494,18 +483,6 @@ namespace Bonza.Editor.View
                 pmm(m.Transform(newPosition));
             }
         }
-
-        // Update status bar
-        private void UpdateTransformationsFeedBack()
-        {
-            Matrix matrix = MainMatrixTransform.Matrix;
-            var a = Math.Atan2(matrix.M12, matrix.M11) / Math.PI * 180;
-            RotationTextBlock.Text = $"{a:F1}°";
-            var s = Math.Sqrt(matrix.M11 * matrix.M11 + matrix.M12 * matrix.M12);
-            ScaleTextBlock.Text = $"{s:F2}";
-            TranslationTextBlock.Text = $"X:{matrix.OffsetX:F2} Y:{matrix.OffsetY:F2}";
-        }
-
 
 
         private void MainGrid_MouseUp(object sender, MouseButtonEventArgs e)
@@ -704,7 +681,6 @@ namespace Bonza.Editor.View
             }
             MainMatrixTransform.Matrix = m;
 
-            UpdateTransformationsFeedBack();
             UpdateBackgroundGrid();
         }
 
@@ -721,12 +697,6 @@ namespace Bonza.Editor.View
         private void UpdateBackgroundGrid()
         {
             var matrix = MainMatrixTransform.Matrix;
-
-            // Update status bar
-            var a = Math.Atan2(matrix.M12, matrix.M11) / Math.PI * 180;
-            RotationTextBlock.Text = $"{a:F1}°";
-            var s = Math.Sqrt(matrix.M11 * matrix.M11 + matrix.M12 * matrix.M12);
-            ScaleTextBlock.Text = $"{s:F2}";
 
             var bounds = viewModel.Layout.GetBounds();
             // Add some extra margin and always represent a 20x20 grid at minimum

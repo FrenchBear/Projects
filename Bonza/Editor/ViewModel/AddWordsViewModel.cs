@@ -70,21 +70,6 @@ namespace Bonza.Editor.ViewModel
             }
         }
 
-        private bool m_IsAutoPlace;
-        public bool IsAutoPlace
-        {
-            get => m_IsAutoPlace;
-            set
-            {
-                if (m_IsAutoPlace != value)
-                {
-                    m_IsAutoPlace = value;
-                    NotifyPropertyChanged(nameof(IsAutoPlace));
-                }
-            }
-        }
-
-
         private string m_StatusText;
         public string StatusText
         {

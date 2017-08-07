@@ -4,6 +4,7 @@
 // 2017-07-22   PV  First version
 
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bonza.Editor.ViewModel;
@@ -30,13 +31,14 @@ namespace Bonza.Editor.Model
 
         internal void LoadGrille(string wordsFile)
         {
-            grille = new Grille();
-            viewModel.ClearLayout();
+            //grille = new Grille();
+            //viewModel.ClearLayout();
             int i;
             for (i = 0; i < 5; i++)
                 if (grille.AddWordsFromFile(wordsFile)) break;
             if (i == 5)
                 throw new BonzaException("Impossible de placer les mots malgré 5 tentatives");
+
             viewModel.AddCanvasForWordPositionList(Layout.WordPositionList);
         }
 
@@ -44,11 +46,10 @@ namespace Bonza.Editor.Model
         {
             viewModel.ClearLayout();
             int i;
-            for (i = 0; i < 5 ; i++)
+            for (i = 0; i < 5; i++)
                 if (grille.PlaceWordsAgain()) break;
             if (i == 5)
                 throw new BonzaException("Impossible de générer un nouveau layout malgré 5 tentatives");
-            viewModel.AddCanvasForWordPositionList(Layout.WordPositionList);
         }
 
 
@@ -68,7 +69,7 @@ namespace Bonza.Editor.Model
         internal PlaceWordStatus CanPlaceWordAtPositionInLayout(WordPositionLayout layout, WordPosition wordPosition, PositionOrientation position)
         {
             WordPosition testWordPosition = new WordPosition(wordPosition.Word, wordPosition.OriginalWord, position);
-            return layout.CanPlaceWord(testWordPosition, true );
+            return layout.CanPlaceWord(testWordPosition, true);
         }
 
 

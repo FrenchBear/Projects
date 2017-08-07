@@ -87,12 +87,8 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="120"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
 
-        <DockPanel Grid.ColumnSpan="2">
+        <DockPanel >
             <Menu DockPanel.Dock="Top" Padding="3"  >
                 <MenuItem Name="FileMenu" Header="_Fichier">
                     <MenuItem Command="{Binding NewLayoutCommand}" InputGestureText="Ctrl+N" Header="_Nouveau layout" >
@@ -214,29 +210,12 @@
             </ToolBar>
         </DockPanel>
 
-        <DockPanel Grid.Row="1" Grid.Column="0">
-            <StackPanel Orientation="Vertical" Margin="6,5,0,6">
-                <Label Content="Bonza Editor" FontWeight="Bold" FontSize="16" Margin="0,0,0,10" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="PowderBlue" Foreground="Blue" />
-                <Button Command="{Binding Path=LoadCommand}" VerticalAlignment="Top" Margin="0,0,0,10">_Load Words</Button>
-                <Label>Status:</Label>
-                <TextBlock Text="{Binding LayoutStatus}" />
-            </StackPanel>
-        </DockPanel>
-
-        <DockPanel Grid.Row="1" Grid.Column="1" Margin="6,4,6,6">
+        <DockPanel Grid.Row="1" Margin="6,4,6,6">
             <StatusBar DockPanel.Dock="Bottom">
-                <TextBlock>Drag: Move canvas, point or line; Wheel: Rotate canvas; Ctrl+Wheel: Rescale canvas</TextBlock>
-            </StatusBar>
-            <StatusBar DockPanel.Dock="Bottom">
-                <TextBlock>Rotation:</TextBlock>
-                <TextBlock Name="RotationTextBlock" Width="80"/>
-                <TextBlock>Scale:</TextBlock>
-                <TextBlock Name="ScaleTextBlock" Width="80"/>
-                <TextBlock>Translation:</TextBlock>
-                <TextBlock Name="TranslationTextBlock" Width="80"/>
+                <TextBlock Name="StatusText" Text="{Binding StatusText}" />
             </StatusBar>
 
-            <Grid Name="MainGrid" Background="AntiqueWhite"
+            <Grid Name="MainGrid" Background="LavenderBlush"
                   MouseMove="MainGrid_MouseMoveWhenUp" MouseDown="MainGrid_MouseDown" MouseUp="MainGrid_MouseUp" MouseWheel="MainGrid_MouseWheel"
                   MouseRightButtonDown="MainGrid_MouseRightButtonDown"  >
                 <Canvas Name="ClippingCanvas" ClipToBounds="True">

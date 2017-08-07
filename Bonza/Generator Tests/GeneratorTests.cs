@@ -57,7 +57,7 @@ namespace Bonza.Generator.Tests
                 for (i = 0; i < 5 && !g.AddWordsFromFile(@"..\Lists\Prénoms.txt"); i++) { }
                 Debug.Assert(i < 5);
             }
-            WriteLine($"Total time for {loops} generations: " + sw.Elapsed);
+            WriteLine($"Total time for {loops} generation(s): " + sw.Elapsed);
 
             //Environment.Exit(0);
         }

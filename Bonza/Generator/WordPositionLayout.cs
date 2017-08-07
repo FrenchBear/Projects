@@ -186,7 +186,7 @@ namespace Bonza.Generator
 		}
 
 		// Try to place a word in current layout, following rules of puzzle layout
-		// If withTooClose if false, a too close contition returns Invalid
+		// If withTooClose if false, a too close condition returns Invalid
 		// Part of public interface
 		public PlaceWordStatus CanPlaceWord(WordPosition wp, bool withTooClose)
 		{

@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using Bonza.Editor.Model;
@@ -145,16 +146,16 @@ namespace Bonza.Editor.ViewModel
         // -------------------------------------------------
         // Bindings
 
-        private string m_LayoutStatus;
-        public string LayoutStatus
+        private string m_StatusText;
+        public string StatusText
         {
-            get => m_LayoutStatus;
+            get => m_StatusText;
             set
             {
-                if (m_LayoutStatus != value)
+                if (m_StatusText != value)
                 {
-                    m_LayoutStatus = value;
-                    NotifyPropertyChanged(nameof(LayoutStatus));
+                    m_StatusText = value;
+                    NotifyPropertyChanged(nameof(StatusText));
                 }
             }
         }
@@ -257,7 +258,7 @@ namespace Bonza.Editor.ViewModel
         internal void UpdateStatus(PlaceWordStatus status)
         {
             if (Layout == null)
-                LayoutStatus = "";
+                StatusText = "";
             else
             {
                 string s = "Isl=" + Layout.GetWordsNotConnected() + "  ";
@@ -277,7 +278,7 @@ namespace Bonza.Editor.ViewModel
                         throw new ArgumentOutOfRangeException(nameof(status), status, null);
                 }
 
-                LayoutStatus = s;
+                StatusText = s;
             }
         }
 
@@ -342,50 +343,80 @@ namespace Bonza.Editor.ViewModel
                 DefaultExt = ".txt",
                 Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*",
                 CheckFileExists = true,
-                InitialDirectory = @"C:\Development\GitHub\Projects\Bonza\Lists"   // Path.Combine( Directory.GetCurrentDirectory(), @"..\Lists");
+                InitialDirectory = @"C:\Development\GitHub\Projects\Bonza\Lists"
             };
             var result = dlg.ShowDialog();
-            if (result.HasValue && result.Value)
-            {
-                LoadWordsList(dlg.FileName);
-                view.RescaleAndCenter(false);
-            }
+            if (result.HasValue)
+                AddWordsFromFile(dlg.FileName);
         }
-
 
         private void AddWordsExecute(object obj)
         {
             var aww = new View.AddWordsView(model)
             {
-                Owner = view        // Make sure that AddWordsView window is always on the top of Edito,
+                Owner = view        // Make sure that AddWordsView window is always on the top of Editor
             };
             aww.ShowDialog();
             if (aww.wordsList == null) return;
+            AddWordsList(aww.wordsList);
+        }
 
-            List<WordPosition> wordPositionList = model.AddWordsList(aww.wordsList);
-            if (wordPositionList==null)
+        private bool AddWordsList(List<string> wordsList)
+        {
+            if (wordsList == null)
+                throw new ArgumentNullException(nameof(wordsList));
+
+            string checkStatus = model.CheckWordsList(wordsList);
+            if (!string.IsNullOrEmpty(checkStatus))
             {
-                MessageBox.Show("L'ajout des mots a échoué.", App.AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                return;
+                MessageBox.Show("Problème avec la liste de mots:\n" + checkStatus, App.AppName, MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return false;
             }
 
+
+            Stopwatch sw = Stopwatch.StartNew();
+            List<WordPosition> wordPositionList = model.AddWordsList(wordsList);
+            if (wordPositionList == null)
+            {
+                MessageBox.Show("L'ajout des mots a échoué.", App.AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return false;
+            }
+            sw.Stop();
+
             view.AddCanvasForWordPositionList(wordPositionList);
+            view.FinalRefreshAfterUpdate();
+            StatusText = $"{wordsList.Count} mots placés en " + sw.Elapsed.ToString(@"hh\:mm\:ss\.fff");
+            view.RescaleAndCenter(true);
+
+            return true;
         }
 
 
-        public void LoadWordsList(string filename)
+        public void AddWordsFromFile(string filename)
         {
             try
             {
-                //view.ClearWordAndCanvas();
-                LayoutName = null;
-                model.LoadGrille(filename);
-                LayoutName = Path.GetFileNameWithoutExtension(filename) + ".layout";
+                var wordsList = new List<string>();
+                using (Stream s = new FileStream(filename, FileMode.Open))
+                using (StreamReader sr = new StreamReader(s, Encoding.UTF8))
+                {
+                    while (!sr.EndOfStream)
+                    {
+                        string line = sr.ReadLine()?.Trim();
+                        if (!string.IsNullOrWhiteSpace(line))
+                            wordsList.Add(line);
+                    }
+                }
+                if (!AddWordsList(wordsList))
+                    return;
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Problème avec le fichier de mots " + filename + ":\r\n" + ex.Message, App.AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
+
+            LayoutName = Path.GetFileNameWithoutExtension(filename) + ".layout";
         }
 
 
@@ -397,7 +428,14 @@ namespace Bonza.Editor.ViewModel
             try
             {
                 view.ClearWordAndCanvas();
+                Stopwatch sw = Stopwatch.StartNew();
                 model.ResetLayout();
+                sw.Stop();
+
+                view.AddCanvasForWordPositionList(Layout.WordPositionList);
+                view.FinalRefreshAfterUpdate();
+                StatusText = $"{Layout.WordPositionList.Count} mots placés en " + sw.Elapsed.ToString(@"hh\:mm\:ss\.fff");
+                view.RescaleAndCenter(false);
             }
             catch (Exception ex)
             {
