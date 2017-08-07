@@ -9,6 +9,8 @@ using System;
 using static System.Console;
 using System.Diagnostics;
 using System.Text;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Bonza.Generator.Tests
 {
@@ -19,7 +21,12 @@ namespace Bonza.Generator.Tests
             OutputEncoding = Encoding.UTF8;         // For Dot Net Core
 
             //TestGeneration();
-            TestPerformances();
+            var t1 = TestPerformances();
+            var t2 = TestPerformances();
+            var t3 = TestPerformances();
+            var median = (new List<TimeSpan> { t1, t2, t3 }).OrderBy(x => x).Skip(1).First();
+            WriteLine();
+            WriteLine("Median: " + median);
 
             WriteLine();
             Write("(Pause)");
@@ -28,38 +35,28 @@ namespace Bonza.Generator.Tests
 
         public static void TestGeneration()
         {
+            const string file = "Prénoms";
             Stopwatch sw = Stopwatch.StartNew();
             Grille g = new Grille();
             int i;
             for (i = 0; i < 5; i++)
             {
-                if (g.AddWordsFromFile(@"..\Lists\Fruits.txt")) break;
+                if (g.AddWordsFromFile(@"..\Lists\" + file + ".txt")) break;
             }
             Debug.Assert(i < 5);
             //}
             WriteLine("Generation time: " + sw.Elapsed);
-            g.Print();
-            //g.Print("C:\\temp\\out.txt");
-            //g.SaveLayout("c:\\temp\\fruits.layout");
-            //g.BuildPuzzle(5);
-            //g.SavePuzzle("c:\\temp\\fruits.chunks");
+            g.Print("C:\\temp\\" + file + ".txt");
         }
 
-        public static void TestPerformances()
+        public static TimeSpan TestPerformances()
         {
-            const int loops = 1;
-
             Stopwatch sw = Stopwatch.StartNew();
-            for (int n = 0; n < loops; n++)
-            {
-                Grille g = new Grille();
-                int i;
-                for (i = 0; i < 5 && !g.AddWordsFromFile(@"..\Lists\Prénoms.txt"); i++) { }
-                Debug.Assert(i < 5);
-            }
-            WriteLine($"Total time for {loops} generation(s): " + sw.Elapsed);
-
-            //Environment.Exit(0);
+            var g = new Bonza.Generator.Grille(123);
+            g.AddWordsFromFile(@"..\Lists\Prénoms.txt");
+            sw.Stop();
+            WriteLine("Time: " + sw.Elapsed);
+            return sw.Elapsed;
         }
     }
 

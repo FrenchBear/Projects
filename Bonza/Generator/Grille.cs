@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Diagnostics;
 
 namespace Bonza.Generator
 {
@@ -151,6 +152,7 @@ namespace Bonza.Generator
                     {
                         placedWords.Add(word);
                         placedWordPositionList.Add(wp);
+                        Debug.WriteLine($"Placed {placedWordPositionList.Count}/{wordsToAddList.Count}: {wp.Word}");
                     }
                 }
                 // If at the end of this loop no canonizedWord has been placed, we have a problem...
@@ -186,39 +188,41 @@ namespace Bonza.Generator
                 return wp;
             }
 
+            BoundingRectangle r = Layout.GetBounds();
+
             // Find first all positions where the canonizedWord can be added to current layout;
-            List<WordPosition> possibleWordPositions = new List<WordPosition>();
+            List<WordPositionSurface> possibleWordPositions = new List<WordPositionSurface>();
             foreach (WordPosition wordPosition in Layout.WordPositionList)
-                TryPlace(canonizedWord, originalWord, wordPosition, possibleWordPositions);
+                foreach (WordPosition wp in TryPlace(canonizedWord, originalWord, wordPosition))    //, possibleWordPositions))
+                {
+                    BoundingRectangle newR = Layout.ExtendBounds(r, wp);
+                    if (newR.Equals(r))
+                    {
+                        // Serious optimisation, no need to continue if we found a solution that does not extand layout
+                        // Bias: Will favor first letters??
+                        Layout.AddWordPositionNoCheck(wp);
+                        return wp;
+                    }
+                    int newSurface = ComputeAdjustedSurface(newR.Max.Column - newR.Min.Column + 1, newR.Max.Row - newR.Min.Row + 1);
+                    possibleWordPositions.Add(new WordPositionSurface(wp, newSurface));
+                }
             if (possibleWordPositions.Count == 0)
                 return null;
 
             // Optimization
             if (possibleWordPositions.Count == 1)
             {
-                WordPosition wp = possibleWordPositions.First();
+                WordPosition wp = possibleWordPositions.First().WordPosition;
                 Layout.AddWordPositionNoCheck(wp);
                 return wp;
             }
 
-            // Select a "best position" among those that minimize layout surface extension
-            List<WordPositionSurface> selectedWordPositionList = new List<WordPositionSurface>();
-            BoundingRectangle r = Layout.GetBounds();
-
-            // Adjust surface calculation to avoid too much extension in one direction
-            foreach (WordPosition wp in possibleWordPositions)
-            {
-                BoundingRectangle newR = Layout.ExtendBounds(r, wp);
-                int newSurface = ComputeAdjustedSurface(newR.Max.Column - newR.Min.Column + 1, newR.Max.Row - newR.Min.Row + 1);
-                selectedWordPositionList.Add(new WordPositionSurface(wp, newSurface));
-            }
-
             // Take a possibility among those who minimally extend surface, and add it to current layout
             // Chose a random candidate among the 15% best
-            selectedWordPositionList.Sort(Comparer<WordPositionSurface>.Create((wps1, wps2) => wps1.Surface - wps2.Surface));
-            int index = (int)(selectedWordPositionList.Count * 0.15 * rnd.NextDouble());
-            Layout.AddWordPositionNoCheck(selectedWordPositionList[index].WordPosition);
-            return selectedWordPositionList[index].WordPosition;
+            possibleWordPositions.Sort(Comparer<WordPositionSurface>.Create((wps1, wps2) => wps1.Surface - wps2.Surface));
+            int index = (int)(possibleWordPositions.Count * 0.15 * rnd.NextDouble());
+            Layout.AddWordPositionNoCheck(possibleWordPositions[index].WordPosition);
+            return possibleWordPositions[index].WordPosition;
         }
 
 
@@ -250,21 +254,20 @@ namespace Bonza.Generator
         /// <param name="canonizedWordToPlace">Canonized form of Word to place (ex: NON·SEQUITUR)</param>
         /// <param name="originalWordToPlace">Original form of Word to place (ex: Non Sequitur)</param>
         /// <param name="placedWord">WordPosition to connect to</param>
-        /// <param name="possibleWordPositions">A list into all possible possibilities are added</param>
-        private void TryPlace(string canonizedWordToPlace, string originalWordToPlace, WordPosition placedWord, List<WordPosition> possibleWordPositions)
+        private IEnumerable<WordPosition> TryPlace(string canonizedWordToPlace, string originalWordToPlace, WordPosition placedWord)    //, List<WordPosition> possibleWordPositions)
         {
             // Build a dictionary of (letter, count) for each canonizedWord
-            HashSet<char> wordToPlaceLetters = BreakLetters(canonizedWordToPlace);
-            HashSet<char> placedWordLetters = BreakLetters(placedWord.Word);
+            List<char> wordToPlaceLetters = BreakLetters(canonizedWordToPlace).Shuffle();
+            List<char> placedWordLetters = BreakLetters(placedWord.Word);
 
             // Internal helper function, returns a dictionary of (letter, count) for canonizedWord w
-            HashSet<char> BreakLetters(string w)
+            List<char> BreakLetters(string w)
             {
                 var set = new HashSet<char>();
                 foreach (char letter in w)
                     if (!set.Contains(letter))
                         set.Add(letter);
-                return set;
+                return set.ToList();
             }
 
             // For each letter of canonizedWordToPlace, look if placedWord contains this letter at least once
@@ -289,8 +292,8 @@ namespace Bonza.Generator
                     }
 
                     // Look for all possible combinations of letter in both words if it's possible to place canonizedWordToPlace.
-                    foreach (int positionInWordToPlace in FindPositions(canonizedWordToPlace))           // positionsInWordToPlace)
-                        foreach (int positionInPlacedWord in FindPositions(placedWord.Word))    // positionsInPlacedWord)
+                    foreach (int positionInWordToPlace in FindPositions(canonizedWordToPlace))              // positionsInWordToPlace)
+                        foreach (int positionInPlacedWord in FindPositions(placedWord.Word))                // positionsInPlacedWord)
                         {
                             WordPosition test = new WordPosition(canonizedWordToPlace, originalWordToPlace,
                                 new PositionOrientation(
@@ -302,9 +305,10 @@ namespace Bonza.Generator
                                         : placedWord.StartColumn + positionInPlacedWord,
                                     !placedWord.IsVertical));
                             if (Layout.CanPlaceWord(test, false) == PlaceWordStatus.Valid)
-                                possibleWordPositions.Add(test);
+                                yield return test;
                         }
                 }
+            yield break;
         }
 
 
