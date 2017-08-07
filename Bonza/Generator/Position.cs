@@ -1,8 +1,9 @@
-// Bonza class Position
+﻿// Bonza class Position
 // A simple pair of int coordinates to represent cell coordinates on layout
 //
 // 2017-08-05   PV      Extracted
-// 2017-08-06   PV      Made it immutable
+// 2017-08-07   PV      Performance refactoring, made it immutable
+
 
 namespace Bonza.Generator
 {
@@ -28,5 +29,4 @@ namespace Bonza.Generator
             return $"Pos({Row}, {Column})";
         }
     }
-
 }

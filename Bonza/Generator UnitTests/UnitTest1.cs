@@ -4,6 +4,7 @@
 
 
 using System;
+using System.Linq;
 using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -72,15 +73,6 @@ namespace Bonza.Generator.UnitTests
         [ExpectedException(typeof(ArgumentException))]
         public void TestAddWordPositionAndSquares2()
         {
-            Assert.IsTrue(PlaceWordStatus.Valid == g.Layout.AddWordPositionAndSquares(new WordPosition("PIERRE", "Pierre", new PositionOrientation(0, 0, false))));
-            // Word already in the list of words, must raise ArgumentException
-            g.Layout.AddWordPositionAndSquares(new WordPosition("PIERRE", "Pierre", new PositionOrientation(-1, 1, true)));
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void TestAddWordPositionAndSquares3()
-        {
             WordPosition wp = new WordPosition("PIERRE", "Pierre", new PositionOrientation(0, 0, false));
             Assert.IsTrue(PlaceWordStatus.Valid == g.Layout.AddWordPositionAndSquares(wp));
             Assert.IsTrue(PlaceWordStatus.Valid == g.Layout.AddWordPositionAndSquares(new WordPosition("VIOLENT", "Violent", new PositionOrientation(-1, 1, true))));
@@ -97,9 +89,24 @@ namespace Bonza.Generator.UnitTests
             g.Layout.AddWordPositionAndSquares(new WordPosition("WEDNESDAY", "Wednesday", new PositionOrientation(-4, 3, true)));
 
             BoundingRectangle r1 = g.Layout.GetBounds();
-            BoundingRectangle r2 = new BoundingRectangle(new Position(-4, -3), new Position(7, 5));
+            BoundingRectangle r2 = new BoundingRectangle(-4, 7, -3, 5);
             Assert.AreEqual(r1, r2);
             Assert.IsTrue(r1.Min.Row == -4 && r1.Max.Row == 7 && r1.Min.Column == -3 && r1.Max.Column == 5);
+        }
+
+        [TestMethod]
+        public void TestCoverage()
+        {
+            g.AddWordsFromFile(@"..\Lists\Prénoms.txt");
+            WordPosition Pierre = g.Layout.WordPositionList.First(wp => string.Compare(wp.OriginalWord, "Pierre", StringComparison.OrdinalIgnoreCase) == 0);
+            g.Layout.RemoveWordPositionAndSquares(Pierre);
+            g.Layout.AddWordPositionAndSquares(Pierre);
+            g.PlaceWordsAgain();
+            int n = g.Layout.GetWordsNotConnected();
+            WordPosition w1 = g.Layout.WordPositionList.First(wp => string.Compare(wp.OriginalWord, "Barthélémy", StringComparison.OrdinalIgnoreCase) == 0);
+            var l = g.Layout.GetConnectedWordPositions(w1);
+            g.Print(@"C:\temp\Prénoms.Layout.txt");
+            g.Layout.SaveLayoutAsCode(@"C:\temp\Prénoms.Layout.cs");
         }
     }
 }

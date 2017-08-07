@@ -3,6 +3,7 @@
 //
 // 2017-07-21   PV      Split from program.cs
 // 2017-08-05   PV      Deep rewrite of AddWordsFromFile/AddWordsList/AddWord
+// 2017-08-07	PV		Performance refactoring
 
 
 using System;
@@ -10,13 +11,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-using System.Diagnostics;
 
 namespace Bonza.Generator
 {
     public partial class Grille
     {
-        /// <summary>X</summary>
         public WordPositionLayout Layout { get; private set; }
         private readonly Random rnd;        // Initialized in constructor
 
@@ -53,7 +52,7 @@ namespace Bonza.Generator
                         wordsList.Add(line);
                 }
             }
-            return AddWordsList(wordsList, false) != null;
+            return AddWordsList(wordsList, true) != null;
         }
 
         /// <summary>Shuffle words after reinitializing layout.</summary>
@@ -90,8 +89,8 @@ namespace Bonza.Generator
             if (!string.IsNullOrEmpty(shortWords))
                 result = $"Mot{S(shortWords.Length)} de longueur <= 2 non autorisé{S(shortWords.Length)}: " + shortWords;
 
-            // Check for duplicates, start with current list of words
-            HashSet<string> wordsSet = new HashSet<string>(Layout.WordPositionList.Select(wp => CanonizeWord(wp.OriginalWord)));
+            // Check for duplicates, start with current list of words (canonized)
+            HashSet<string> wordsSet = new HashSet<string>(Layout.WordPositionList.Select(wp => wp.Word));
             List<string> duplicates = null;
             foreach (string w in words)
                 if (w.Length > 2)
@@ -168,12 +167,12 @@ namespace Bonza.Generator
             return placedWordPositionList;
         }
 
-        /// <summary>Internal core function, adds a word to current layout and place it.</summary>
-        /// <param name="originalWord">Word to place</param>
-        /// <returns>Returns WordPosition of placed word, or null if the word couldn't be placed</returns>
+
+        // Core function, adds a canonizedWord to current layout and place it
+        // Returns null if the canonizedWord couldn't be placed
         private WordPosition AddWord(string originalWord)
         {
-            // We need layout
+            // We need layout, only of a previous call invalidated current layout (ToDo: Don't allow null for layout)
             if (Layout == null) NewLayout();
 
             string canonizedWord = CanonizeWord(originalWord);
@@ -279,7 +278,7 @@ namespace Bonza.Generator
                     {
                         var list = new List<int>(3);
                         int p = 0;
-                        for (;;)
+                        for (; ; )
                         {
                             int q = word.IndexOf(letter, p);
                             if (q < 0) break;
@@ -302,7 +301,7 @@ namespace Bonza.Generator
                                         ? placedWord.StartColumn - positionInWordToPlace
                                         : placedWord.StartColumn + positionInPlacedWord,
                                     !placedWord.IsVertical));
-                            if (Layout.CanPlaceWord(test) == PlaceWordStatus.Valid)
+                            if (Layout.CanPlaceWord(test, false) == PlaceWordStatus.Valid)
                                 possibleWordPositions.Add(test);
                         }
                 }
@@ -319,7 +318,7 @@ namespace Bonza.Generator
         /// <param name="filename">Name of file to write.</param>
         public void Print(string filename)
         {
-            using (Stream s = new FileStream(filename, FileMode.CreateNew))
+            using (Stream s = new FileStream(filename, FileMode.Create))
             using (TextWriter tw = new StreamWriter(s, Encoding.UTF8))
                 Print(tw);
         }

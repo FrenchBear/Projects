@@ -120,14 +120,14 @@ namespace Bonza.Editor.ViewModel
             model.AddWordPosition(wordPosition);
         }
 
-        internal PlaceWordStatus CanPlaceWord(WordAndCanvas wac)
+        internal PlaceWordStatus CanPlaceWord(WordAndCanvas wac, bool withTooClose)
         {
-            return Layout.CanPlaceWord(wac.WordPosition);
+            return Layout.CanPlaceWord(wac.WordPosition, withTooClose);
         }
 
         internal PlaceWordStatus CanPlaceWordInLayout(WordPositionLayout layout, WordAndCanvas wac)
         {
-            return layout.CanPlaceWord(wac.WordPosition);
+            return layout.CanPlaceWord(wac.WordPosition, true);
         }
 
 
@@ -292,7 +292,7 @@ namespace Bonza.Editor.ViewModel
             // If we don't really move, there is nothing more to do
             var firstWac = wordAndCanvasList.First();
             var firstTl = topLeftList.First();
-            if (firstWac.WordPosition.StartRow == firstTl.Start.Row && firstWac.WordPosition.StartColumn == firstTl.Start.Column && firstWac.WordPosition.IsVertical == firstTl.IsVertical)
+            if (firstWac.WordPosition.StartRow == firstTl.StartRow && firstWac.WordPosition.StartColumn == firstTl.StartColumn && firstWac.WordPosition.IsVertical == firstTl.IsVertical)
                 return;
 
             // Memorize position before move for undo, unless we're undoing or the move
@@ -305,7 +305,7 @@ namespace Bonza.Editor.ViewModel
                 model.RemoveWordPosition(wp);
             foreach (var item in wordAndCanvasList.Zip(topLeftList, (wac, tl) => (WordAndCanvas: wac, topLeft: tl)))
             {
-                item.WordAndCanvas.WordPosition.PositionOrientation = new PositionOrientation(item.topLeft.Start.Row, item.topLeft.Start.Column, item.topLeft.IsVertical);
+                item.WordAndCanvas.WordPosition.SetNewPositionOrientation(new PositionOrientation(item.topLeft.StartRow, item.topLeft.StartColumn, item.topLeft.IsVertical));
                 model.AddWordPosition(item.WordAndCanvas.WordPosition);
             }
         }
@@ -346,14 +346,19 @@ namespace Bonza.Editor.ViewModel
             };
             var result = dlg.ShowDialog();
             if (result.HasValue && result.Value)
+            {
                 LoadWordsList(dlg.FileName);
+                view.RescaleAndCenter(false);
+            }
         }
 
 
         private void AddWordsExecute(object obj)
         {
-            var aww = new View.AddWordsView(model);
-            aww.Owner = view;
+            var aww = new View.AddWordsView(model)
+            {
+                Owner = view        // Make sure that AddWordsView window is always on the top of Edito,
+            };
             aww.ShowDialog();
             if (aww.wordsList == null) return;
 
@@ -372,7 +377,7 @@ namespace Bonza.Editor.ViewModel
         {
             try
             {
-                view.ClearWordAndCanvas();
+                //view.ClearWordAndCanvas();
                 LayoutName = null;
                 model.LoadGrille(filename);
                 LayoutName = Path.GetFileNameWithoutExtension(filename) + ".layout";

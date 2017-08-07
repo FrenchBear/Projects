@@ -33,6 +33,7 @@ namespace Bonza.Generator
         }
 
 
+        /*
         // Shuffle any (I)List with an extension method based on the Fisher-Yates shuffle
         // https://stackoverflow.com/questions/273313/randomize-a-listt
         public static void ShuffleInPlace<T>(this IList<T> list)
@@ -64,5 +65,6 @@ namespace Bonza.Generator
             foreach (var item in collection)
                 action(item);
         }
+        */
     }
 }

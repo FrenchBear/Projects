@@ -20,6 +20,7 @@ namespace Bonza.Editor.Model
         public EditorModel(EditorViewModel viewModel)
         {
             this.viewModel = viewModel;
+            NewGrille();
         }
 
         internal void NewGrille()
@@ -67,7 +68,7 @@ namespace Bonza.Editor.Model
         internal PlaceWordStatus CanPlaceWordAtPositionInLayout(WordPositionLayout layout, WordPosition wordPosition, PositionOrientation position)
         {
             WordPosition testWordPosition = new WordPosition(wordPosition.Word, wordPosition.OriginalWord, position);
-            return layout.CanPlaceWord(testWordPosition);
+            return layout.CanPlaceWord(testWordPosition, true );
         }
 
 

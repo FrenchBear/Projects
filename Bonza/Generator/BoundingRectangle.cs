@@ -2,7 +2,7 @@
 // A simple rectangle with int coordinates to represent layout bounds
 //
 // 2017-08-05   PV      Extracted
-// 2017-08-06   PV      Refactoring
+// 2017-08-06   PV      performance efactoring; Immutable; Constructor BoundingRectangle(Position min, Position max) is too slow
 
 
 namespace Bonza.Generator
@@ -10,14 +10,16 @@ namespace Bonza.Generator
     /// <summary>A simple rectangle with int coordinates to represent layout bounds.</summary>
     public struct BoundingRectangle
     {
-        public Position Min, Max;
+        public Position Min { get; }
+        public Position Max { get; }
 
-        public BoundingRectangle(Position min, Position max) : this()
+        public BoundingRectangle(int minRow, int maxRow, int minColumn, int maxColumn) : this()
         {
-            Min = min;
-            Max = max;
+            Min = new Position(minRow, minColumn);
+            Max = new Position(maxRow, maxColumn);
         }
 
+        
         public override string ToString()
         {
             return $"Bounds[{Min}-{Max}]";

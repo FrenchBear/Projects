@@ -3,21 +3,19 @@
 //
 // 2017-07-21   PV      Split from program.cs
 // 2017-08-03   PV      Manage ShareCount
+// 2017-08-07   PV      Performance refactoring
 
 
 namespace Bonza.Generator
 {
     public class Square
     {
-        // Copy constructor
-        public Square(Square copy)
-        {
-            Row = copy.Row;
-            Column = copy.Column;
-            Letter = copy.Letter;
-            IsInChunk = copy.IsInChunk;
-            ShareCount = copy.ShareCount;
-        }
+        public int Row { get; }
+        public int Column { get; }
+        public char Letter { get; }
+        public bool IsInChunk { get; set; }     // Temp property when chunks are built
+        public int ShareCount { get; set; }     // To manage squares removal
+
 
         // Specialized constructor
         public Square(int row, int column, char letter, bool isInChunk, int shareCount)
@@ -29,11 +27,16 @@ namespace Bonza.Generator
             ShareCount = shareCount;
         }
 
-        public int Row { get; set; }
-        public int Column { get; set; }
-        public char Letter { get; set; }
-        public bool IsInChunk { get; set; }     // Temp property when chunks are built
-        public int ShareCount { get; set; }     // To manage squares removal
+        // Copy constructor
+        public Square(Square copy)
+        {
+            Row = copy.Row;
+            Column = copy.Column;
+            Letter = copy.Letter;
+            IsInChunk = copy.IsInChunk;
+            ShareCount = copy.ShareCount;
+        }
+
 
         public override string ToString() => $"{Letter}({Row}, {Column}) ";
     }

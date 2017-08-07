@@ -56,7 +56,9 @@ namespace Bonza.Editor.View
         {
             // For development tests
             viewModel.LoadWordsList(@"..\Lists\Fruits.txt");
-            //viewModel.LoadWordsList(@"..\Lists\Animals.txt");
+            // viewModel.LoadWordsList(@"..\Lists\Animals.txt");
+            FinalRefreshAfterUpdate();
+            RescaleAndCenter(false);
         }
 
 
@@ -126,11 +128,11 @@ namespace Bonza.Editor.View
                 m_WordAndCanvasList.Add(wac);
             }
 
-            // After initial drawing, rescale and center without animations
-            // Also draw initial background grid
-            RescaleAndCenter(false);
+            //// After initial drawing, rescale and center without animations
+            //// Also draw initial background grid
+            //RescaleAndCenter(false);
 
-            FinalRefreshAfterUpdate();
+            //FinalRefreshAfterUpdate();
         }
 
 
@@ -219,7 +221,7 @@ namespace Bonza.Editor.View
                     new PositionOrientation(wac.WordPosition.PositionOrientation)
                 };
                 AdjustToSuitableLocationInLayout(layout, wordAndCanvasList, topLeftList, true);
-                wac.WordPosition.PositionOrientation = topLeftList[0];
+                wac.WordPosition.SetNewPositionOrientation(topLeftList[0]);
                 viewModel.AddWordPosition(wac.WordPosition);
             }
             wac.RebuildCanvasAfterOrientationSwap();    // Only relocate visually letters of the word
@@ -246,8 +248,8 @@ namespace Bonza.Editor.View
 
             BoundingRectangle r = viewModel.Layout.GetBounds();
             // Add some extra margin and always represent a 20x20 grid at minimum
-            r.Min = new Position(Math.Min(-11, r.Min.Row - 3), Math.Min(-11, r.Min.Column - 3));
-            r.Max = new Position(Math.Max(11, r.Max.Row + 4), Math.Max(11, r.Max.Column + 4));
+            r = new BoundingRectangle(Math.Min(-11, r.Min.Row - 3), Math.Max(11, r.Max.Row + 4), Math.Min(-11, r.Min.Column - 3), Math.Max(11, r.Max.Column + 4));
+
 
             // Reverse-transform corners into WordCanvas coordinates
             Point p1Grid = new Point(r.Min.Column * UnitSize, r.Min.Row * UnitSize);
@@ -445,7 +447,7 @@ namespace Bonza.Editor.View
                     int top = (int)Math.Floor(preciseTop / UnitSize + 0.5);
                     int left = (int)Math.Floor(preciseLeft / UnitSize + 0.5);
 
-                    PlaceWordStatus status = viewModel.CanPlaceWordAtPositionInLayout(m_FixedLayout, m_Sel.WordAndCanvasList[i].WordPosition, new PositionOrientation(new Position(top, left), m_Sel.WordAndCanvasList[i].WordPosition.IsVertical));
+                    PlaceWordStatus status = viewModel.CanPlaceWordAtPositionInLayout(m_FixedLayout, m_Sel.WordAndCanvasList[i].WordPosition, new PositionOrientation(top, left, m_Sel.WordAndCanvasList[i].WordPosition.IsVertical));
                     RecolorizeWord(m_Sel.WordAndCanvasList[i], status);
                 }
             };
@@ -524,7 +526,7 @@ namespace Bonza.Editor.View
                     WordCanvas wc = wac.WordCanvas;
                     int top = (int)Math.Floor((double)wc.GetValue(Canvas.TopProperty) / UnitSize + 0.5);
                     int left = (int)Math.Floor((double)wc.GetValue(Canvas.LeftProperty) / UnitSize + 0.5);
-                    topLeftList.Add(new PositionOrientation(new Position(top, left), wac.WordPosition.IsVertical));
+                    topLeftList.Add(new PositionOrientation(top, left, wac.WordPosition.IsVertical));
                 }
 
                 // Do not accept Illegal placements, adjust to only valid placements
@@ -612,18 +614,18 @@ namespace Bonza.Editor.View
                 int st = 1;
                 int sign = 1;
 
-                for (;;)
+                for (; ; )
                 {
                     for (int i = 0; i < st; i++)
                     {
                         for (int il = 0; il < wordAndCanvasList.Count; il++)
-                            topLeftList[il] = new PositionOrientation(new Position(topLeftList[il].Start.Row, topLeftList[il].Start.Column + sign), m_Sel.WordAndCanvasList[il].WordPosition.IsVertical);
+                            topLeftList[il] = new PositionOrientation(topLeftList[il].StartRow, topLeftList[il].StartColumn + sign, m_Sel.WordAndCanvasList[il].WordPosition.IsVertical);
                         if (CanPlaceAllWords(true)) return;
                     }
                     for (int i = 0; i < st; i++)
                     {
                         for (int il = 0; il < wordAndCanvasList.Count; il++)
-                            topLeftList[il] = new PositionOrientation(new Position(topLeftList[il].Start.Row + sign, topLeftList[il].Start.Column), m_Sel.WordAndCanvasList[il].WordPosition.IsVertical);
+                            topLeftList[il] = new PositionOrientation(topLeftList[il].StartRow + sign, topLeftList[il].StartColumn, m_Sel.WordAndCanvasList[il].WordPosition.IsVertical);
                         if (CanPlaceAllWords(true)) return;
                     }
                     sign = -sign;
@@ -713,7 +715,7 @@ namespace Bonza.Editor.View
         private void ClearBackgroundGrid()
         {
             BackgroundGrid.Children.Clear();
-            gridBounding.Min = new Position(int.MinValue, int.MinValue);          // Force redraw after it's been cleared
+            gridBounding = new BoundingRectangle(int.MaxValue, int.MaxValue, int.MinValue, int.MinValue);
         }
 
         private void UpdateBackgroundGrid()
@@ -726,23 +728,25 @@ namespace Bonza.Editor.View
             var s = Math.Sqrt(matrix.M11 * matrix.M11 + matrix.M12 * matrix.M12);
             ScaleTextBlock.Text = $"{s:F2}";
 
-            ClearBackgroundGrid();
-            if (viewModel.Layout != null)
+            var bounds = viewModel.Layout.GetBounds();
+            // Add some extra margin and always represent a 20x20 grid at minimum
+            var r = new BoundingRectangle(
+                Math.Min(-10, bounds.Min.Row - 2),
+                Math.Max(10, bounds.Max.Row + 3),
+                Math.Min(-10, bounds.Min.Column - 2),
+                Math.Max(10, bounds.Max.Column + 3));
+
+            if (!r.Equals(gridBounding))
             {
-                gridBounding = viewModel.Layout.GetBounds();
+                ClearBackgroundGrid();
+                gridBounding = r;
 
-                // Add some extra margin and always represent a 20x20 grid at minimum
-                int minRow = Math.Min(-10, gridBounding.Min.Row - 2);
-                int minColumn = Math.Min(-10, gridBounding.Min.Column - 2);
-                int maxRow = Math.Max(10, gridBounding.Max.Row + 3);
-                int maxColumn = Math.Max(10, gridBounding.Max.Column + 3);
-
-                for (int row = minRow; row <= maxRow; row++)
+                for (int row = r.Min.Row; row <= r.Max.Row; row++)
                 {
                     Line l = new Line
                     {
-                        X1 = minColumn * UnitSize,
-                        X2 = maxColumn * UnitSize,
+                        X1 = r.Min.Column * UnitSize,
+                        X2 = r.Max.Column * UnitSize,
                         Y1 = row * UnitSize,
                         Y2 = row * UnitSize,
                         Stroke = Brushes.LightGray,
@@ -751,14 +755,14 @@ namespace Bonza.Editor.View
                     BackgroundGrid.Children.Add(l);
                 }
 
-                for (int column = minColumn; column <= maxColumn; column++)
+                for (int column = r.Min.Column; column <= r.Max.Column; column++)
                 {
                     Line l = new Line
                     {
                         X1 = column * UnitSize,
                         X2 = column * UnitSize,
-                        Y1 = minRow * UnitSize,
-                        Y2 = maxRow * UnitSize,
+                        Y1 = r.Min.Row * UnitSize,
+                        Y2 = r.Max.Row * UnitSize,
                         Stroke = Brushes.LightGray,
                         StrokeThickness = column == 0 ? 3 : 1
                     };

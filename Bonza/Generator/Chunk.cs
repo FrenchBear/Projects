@@ -29,15 +29,16 @@ namespace Bonza.Generator
 
         public BoundingRectangle GetBounds()
         {
-            BoundingRectangle r = new BoundingRectangle(new Position(int.MinValue, int.MinValue), new Position(int.MaxValue, int.MaxValue));
-
+            int minRow = int.MaxValue, minColumn = int.MaxValue, maxRow = int.MinValue, maxColumn = int.MinValue;
             foreach (Square sq in Squares)
             {
-                r.Min = new Position(Math.Min(r.Min.Row, sq.Row), Math.Min(r.Min.Column, sq.Column));
-                r.Max = new Position(Math.Max(r.Max.Row, sq.Row), Math.Max(r.Max.Column, sq.Column));
+                minRow = Math.Min(minRow, sq.Row);
+                maxRow = Math.Max(maxRow, sq.Row);
+                minColumn = Math.Min(minColumn, sq.Column);
+                maxColumn = Math.Max(maxColumn, sq.Column);
             }
 
-            return r;
+            return new BoundingRectangle(minRow, maxRow, minColumn, maxColumn);
         }
 
         public override string ToString()
