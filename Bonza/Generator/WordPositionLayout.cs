@@ -58,7 +58,7 @@ namespace Bonza.Generator
 
 
 		// Safe version, public
-		public PlaceWordStatus AddWordPositionAndSquares(WordPosition wp)
+		public PlaceWordStatus AddWordPosition(WordPosition wp)
 		{
 			if (wp == null)
 				throw new ArgumentNullException(nameof(wp));
@@ -67,20 +67,20 @@ namespace Bonza.Generator
 
 			var res = CanPlaceWord(wp, true);
 			if (res != PlaceWordStatus.Invalid)
-				AddWordPositionAndSquaresNoCheck(wp);
+				AddWordPositionNoCheck(wp);
 			return res;
 		}
 
 
 		// Low-level function to add a WordPosition to Layout, do not check that placement is correct
-		public void AddWordPositionAndSquaresNoCheck(WordPosition wp)
+		public void AddWordPositionNoCheck(WordPosition wp)
 		{
 			m_WordPositionList.Add(wp);
 			AddSquares(wp);
 		}
 
 		// Low-level removal function, public
-		public void RemoveWordPositionAndSquares(WordPosition wp)
+		public void RemoveWordPosition(WordPosition wp)
 		{
 			if (wp == null)
 				throw new ArgumentNullException(nameof(wp));
@@ -425,7 +425,7 @@ namespace Bonza.Generator
 			using (StreamWriter sw = new StreamWriter(s, Encoding.UTF8))
 			{
 				foreach (WordPosition wp in m_WordPositionList)
-					sw.WriteLine($"g.Layout.AddWordPositionAndSquares(new WordPosition(\"{wp.Word}\", \"{wp.OriginalWord}\", new PositionOrientation({wp.StartRow}, {wp.StartColumn}, {wp.IsVertical.ToString().ToLower()})));");
+					sw.WriteLine($"g.Layout.AddWordPosition(new WordPosition(\"{wp.Word}\", \"{wp.OriginalWord}\", new PositionOrientation({wp.StartRow}, {wp.StartColumn}, {wp.IsVertical.ToString().ToLower()})));");
 			}
 		}
 	}

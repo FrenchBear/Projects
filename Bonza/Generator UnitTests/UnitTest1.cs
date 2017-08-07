@@ -63,10 +63,10 @@ namespace Bonza.Generator.UnitTests
         [TestMethod]
         public void TestAddWordPositionAndSquares1()
         {
-            Assert.IsTrue(PlaceWordStatus.Valid == g.Layout.AddWordPositionAndSquares(new WordPosition("PIERRE", "Pierre", new PositionOrientation(0, 0, false))));
-            Assert.IsTrue(PlaceWordStatus.Valid == g.Layout.AddWordPositionAndSquares(new WordPosition("VIOLENT", "Violent", new PositionOrientation(-1, 1, true))));
-            Assert.IsTrue(PlaceWordStatus.TooClose == g.Layout.AddWordPositionAndSquares(new WordPosition("BOB", "Bob", new PositionOrientation(1, 0, false))));
-            Assert.IsTrue(PlaceWordStatus.Invalid == g.Layout.AddWordPositionAndSquares(new WordPosition("JOE", "Joe", new PositionOrientation(3, 0, false))));
+            Assert.IsTrue(PlaceWordStatus.Valid == g.Layout.AddWordPosition(new WordPosition("PIERRE", "Pierre", new PositionOrientation(0, 0, false))));
+            Assert.IsTrue(PlaceWordStatus.Valid == g.Layout.AddWordPosition(new WordPosition("VIOLENT", "Violent", new PositionOrientation(-1, 1, true))));
+            Assert.IsTrue(PlaceWordStatus.TooClose == g.Layout.AddWordPosition(new WordPosition("BOB", "Bob", new PositionOrientation(1, 0, false))));
+            Assert.IsTrue(PlaceWordStatus.Invalid == g.Layout.AddWordPosition(new WordPosition("JOE", "Joe", new PositionOrientation(3, 0, false))));
         }
 
         [TestMethod]
@@ -74,19 +74,19 @@ namespace Bonza.Generator.UnitTests
         public void TestAddWordPositionAndSquares2()
         {
             WordPosition wp = new WordPosition("PIERRE", "Pierre", new PositionOrientation(0, 0, false));
-            Assert.IsTrue(PlaceWordStatus.Valid == g.Layout.AddWordPositionAndSquares(wp));
-            Assert.IsTrue(PlaceWordStatus.Valid == g.Layout.AddWordPositionAndSquares(new WordPosition("VIOLENT", "Violent", new PositionOrientation(-1, 1, true))));
+            Assert.IsTrue(PlaceWordStatus.Valid == g.Layout.AddWordPosition(wp));
+            Assert.IsTrue(PlaceWordStatus.Valid == g.Layout.AddWordPosition(new WordPosition("VIOLENT", "Violent", new PositionOrientation(-1, 1, true))));
             // WordPosition already placed, must raise ArgumentException
-            g.Layout.AddWordPositionAndSquares(wp);
+            g.Layout.AddWordPosition(wp);
         }
 
         [TestMethod]
         public void TestBoundingRectangle()
         {
-            g.Layout.AddWordPositionAndSquares(new WordPosition("THURSDAY", "Thursday", new PositionOrientation(0, 0, true)));
-            g.Layout.AddWordPositionAndSquares(new WordPosition("MONDAY", "Monday", new PositionOrientation(5, -3, false)));
-            g.Layout.AddWordPositionAndSquares(new WordPosition("TUESDAY", "Tuesday", new PositionOrientation(2, -1, false)));
-            g.Layout.AddWordPositionAndSquares(new WordPosition("WEDNESDAY", "Wednesday", new PositionOrientation(-4, 3, true)));
+            g.Layout.AddWordPosition(new WordPosition("THURSDAY", "Thursday", new PositionOrientation(0, 0, true)));
+            g.Layout.AddWordPosition(new WordPosition("MONDAY", "Monday", new PositionOrientation(5, -3, false)));
+            g.Layout.AddWordPosition(new WordPosition("TUESDAY", "Tuesday", new PositionOrientation(2, -1, false)));
+            g.Layout.AddWordPosition(new WordPosition("WEDNESDAY", "Wednesday", new PositionOrientation(-4, 3, true)));
 
             BoundingRectangle r1 = g.Layout.GetBounds();
             BoundingRectangle r2 = new BoundingRectangle(-4, 7, -3, 5);
@@ -99,8 +99,8 @@ namespace Bonza.Generator.UnitTests
         {
             g.AddWordsFromFile(@"..\Lists\Prénoms.txt");
             WordPosition Pierre = g.Layout.WordPositionList.First(wp => string.Compare(wp.OriginalWord, "Pierre", StringComparison.OrdinalIgnoreCase) == 0);
-            g.Layout.RemoveWordPositionAndSquares(Pierre);
-            g.Layout.AddWordPositionAndSquares(Pierre);
+            g.Layout.RemoveWordPosition(Pierre);
+            g.Layout.AddWordPosition(Pierre);
             g.PlaceWordsAgain();
             int n = g.Layout.GetWordsNotConnected();
             WordPosition w1 = g.Layout.WordPositionList.First(wp => string.Compare(wp.OriginalWord, "Barthélémy", StringComparison.OrdinalIgnoreCase) == 0);

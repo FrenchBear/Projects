@@ -60,7 +60,7 @@ namespace Bonza.Editor.Model
             foreach (var wp in Layout.WordPositionList)
                 // ReSharper disable once PossibleMultipleEnumeration
                 if (!movedWordPositionList.Contains(wp))
-                    layout.AddWordPositionAndSquaresNoCheck(wp);
+                    layout.AddWordPositionNoCheck(wp);
             return layout;
         }
 
@@ -76,12 +76,12 @@ namespace Bonza.Editor.Model
         // Removes a word from current Layout
         internal void RemoveWordPosition(WordPosition wordPosition)
         {
-            Layout.RemoveWordPositionAndSquares(wordPosition);
+            Layout.RemoveWordPosition(wordPosition);
         }
 
         internal PlaceWordStatus AddWordPosition(WordPosition wordPosition)
         {
-            return Layout.AddWordPositionAndSquares(wordPosition);
+            return Layout.AddWordPosition(wordPosition);
         }
 
         public string CheckWordsList(List<string> wordsList)

@@ -182,7 +182,7 @@ namespace Bonza.Generator
             if (Layout.WordPositionList.Count == 0)
             {
                 WordPosition wp = new WordPosition(canonizedWord, originalWord, new PositionOrientation(0, 0, rnd.NextDouble() > 0.5));
-                Layout.AddWordPositionAndSquaresNoCheck(wp);
+                Layout.AddWordPositionNoCheck(wp);
                 return wp;
             }
 
@@ -197,7 +197,7 @@ namespace Bonza.Generator
             if (possibleWordPositions.Count == 1)
             {
                 WordPosition wp = possibleWordPositions.First();
-                Layout.AddWordPositionAndSquaresNoCheck(wp);
+                Layout.AddWordPositionNoCheck(wp);
                 return wp;
             }
 
@@ -217,7 +217,7 @@ namespace Bonza.Generator
             // Chose a random candidate among the 15% best
             selectedWordPositionList.Sort(Comparer<WordPositionSurface>.Create((wps1, wps2) => wps1.Surface - wps2.Surface));
             int index = (int)(selectedWordPositionList.Count * 0.15 * rnd.NextDouble());
-            Layout.AddWordPositionAndSquaresNoCheck(selectedWordPositionList[index].WordPosition);
+            Layout.AddWordPositionNoCheck(selectedWordPositionList[index].WordPosition);
             return selectedWordPositionList[index].WordPosition;
         }
 
