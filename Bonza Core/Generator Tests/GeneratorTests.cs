@@ -22,23 +22,23 @@ namespace Bonza.Generator.Tests
 
             TestGeneration();
 
-            //var t1 = TestPerformances();
-            //var t2 = TestPerformances();
-            //var t3 = TestPerformances();
-            //var median = (new List<TimeSpan> { t1, t2, t3 }).OrderBy(x => x).Skip(1).First();
-            //WriteLine();
-            //WriteLine("Median: " + median);
+            // var t1 = TestPerformances();
+            // var t2 = TestPerformances();
+            // var t3 = TestPerformances();
+            // var median = (new List<TimeSpan> { t1, t2, t3 }).OrderBy(x => x).Skip(1).First();
+            // WriteLine();
+            // WriteLine("Median: " + median);
 
-            WriteLine();
-            Write("(Pause)");
-            ReadLine();
+            // Console.WriteLine();
+            // Console.WriteLine("(Pause)");
+            // Console.ReadLine();
         }
 
         public static void TestGeneration()
         {
             const string file = "Fruits";
             Stopwatch sw = Stopwatch.StartNew();
-            Grille g = new Grille();
+            Grille g = new Grille(123);
             int i;
             for (i = 0; i < 5; i++)
             {
