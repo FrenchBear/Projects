@@ -171,7 +171,7 @@ namespace Bonza.Generator
 
 
         // Core function, adds a canonizedWord to current layout and place it
-        // Returns null if the canonizedWord couldn't be placed
+        // Returns WordPosition of placed word, or null if the canonizedWord couldn't be placed
         private WordPosition AddWord(string originalWord)
         {
             // We need layout, only of a previous call invalidated current layout (ToDo: Don't allow null for layout)
@@ -196,13 +196,14 @@ namespace Bonza.Generator
                 foreach (WordPosition wp in TryPlace(canonizedWord, originalWord, wordPosition))    //, possibleWordPositions))
                 {
                     BoundingRectangle newR = Layout.ExtendBounds(r, wp);
+//#if TryPlaceOptimization
+                    // Serious optimisation, no need to continue if we found a solution that does not extand layout
                     if (newR.Equals(r))
                     {
-                        // Serious optimisation, no need to continue if we found a solution that does not extand layout
-                        // Bias: Will favor first letters??
                         Layout.AddWordPositionNoCheck(wp);
                         return wp;
                     }
+//#endif
                     int newSurface = ComputeAdjustedSurface(newR.Max.Column - newR.Min.Column + 1, newR.Max.Row - newR.Min.Row + 1);
                     possibleWordPositions.Add(new WordPositionSurface(wp, newSurface));
                 }
@@ -250,11 +251,11 @@ namespace Bonza.Generator
         }
 
 
-        /// <summary>Find all the ways to add WordToPlace to placedWord.</summary>
+        /// <summary>Find all the ways to add WordToPlace to placedWord, iterator returning an enumeration of matching WordPosition</summary>
         /// <param name="canonizedWordToPlace">Canonized form of Word to place (ex: NON·SEQUITUR)</param>
         /// <param name="originalWordToPlace">Original form of Word to place (ex: Non Sequitur)</param>
         /// <param name="placedWord">WordPosition to connect to</param>
-        private IEnumerable<WordPosition> TryPlace(string canonizedWordToPlace, string originalWordToPlace, WordPosition placedWord)    //, List<WordPosition> possibleWordPositions)
+        private IEnumerable<WordPosition> TryPlace(string canonizedWordToPlace, string originalWordToPlace, WordPosition placedWord)
         {
             // Build a dictionary of (letter, count) for each canonizedWord
             List<char> wordToPlaceLetters = BreakLetters(canonizedWordToPlace).Shuffle();

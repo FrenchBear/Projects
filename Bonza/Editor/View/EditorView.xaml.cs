@@ -222,6 +222,21 @@ namespace Bonza.Editor.View
             FinalRefreshAfterUpdate();
         }
 
+
+        internal void AutoPlace()
+        {
+            Debug.Assert(m_Sel.WordAndCanvasList != null && m_Sel.WordAndCanvasList.Count == 1);
+
+            // ToDo: Nice compact code, but this doesn't work for Undo
+            // ToDo: Also support Undo when adding words
+            // ToDo: Tweak PlaceWord optimization to avoir always replacing a word in the same place after moving it
+            WordPosition wp = m_Sel.WordAndCanvasList[0].WordPosition;
+            DeleteSelection();
+            viewModel.AddWordsList(new List<string> { wp.OriginalWord });
+        }
+
+
+
         internal void FinalRefreshAfterUpdate()
         {
             UpdateBackgroundGrid();
@@ -442,7 +457,6 @@ namespace Bonza.Editor.View
                 }
             };
         }
-
 
         // Relay from Window_MouseDown handler when it's actually a right click
         private void MainGrid_MouseRightButtonDown(object sender, MouseButtonEventArgs e)

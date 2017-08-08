@@ -361,7 +361,7 @@ namespace Bonza.Editor.ViewModel
             AddWordsList(aww.wordsList);
         }
 
-        private bool AddWordsList(List<string> wordsList)
+        internal bool AddWordsList(List<string> wordsList)
         {
             if (wordsList == null)
                 throw new ArgumentNullException(nameof(wordsList));
@@ -501,8 +501,10 @@ namespace Bonza.Editor.ViewModel
 
         private void AutoPlaceExecute(object obj)
         {
-            // ToDo: Implement AutoPlace
-            MessageBox.Show("AutoPlace: ToDo");
+            if (view.IsAnimationInProgress())
+                return;
+            // Delegate work to view since we have no access to Sel here
+            view.AutoPlace();
         }
 
 
