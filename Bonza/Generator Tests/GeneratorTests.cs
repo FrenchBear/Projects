@@ -20,13 +20,14 @@ namespace Bonza.Generator.Tests
         {
             OutputEncoding = Encoding.UTF8;         // For Dot Net Core
 
-            //TestGeneration();
-            var t1 = TestPerformances();
-            var t2 = TestPerformances();
-            var t3 = TestPerformances();
-            var median = (new List<TimeSpan> { t1, t2, t3 }).OrderBy(x => x).Skip(1).First();
-            WriteLine();
-            WriteLine("Median: " + median);
+            TestGeneration();
+
+            //var t1 = TestPerformances();
+            //var t2 = TestPerformances();
+            //var t3 = TestPerformances();
+            //var median = (new List<TimeSpan> { t1, t2, t3 }).OrderBy(x => x).Skip(1).First();
+            //WriteLine();
+            //WriteLine("Median: " + median);
 
             WriteLine();
             Write("(Pause)");
@@ -35,7 +36,7 @@ namespace Bonza.Generator.Tests
 
         public static void TestGeneration()
         {
-            const string file = "Prénoms";
+            const string file = "Fruits";
             Stopwatch sw = Stopwatch.StartNew();
             Grille g = new Grille();
             int i;
@@ -46,7 +47,9 @@ namespace Bonza.Generator.Tests
             Debug.Assert(i < 5);
             //}
             WriteLine("Generation time: " + sw.Elapsed);
-            g.Print("C:\\temp\\" + file + ".txt");
+            g.Print();
+            //g.Print("C:\\temp\\" + file + ".txt");
+            //g.Layout.SaveLayoutAsCode("C:\\temp\\" + file + ".cs");
         }
 
         public static TimeSpan TestPerformances()
