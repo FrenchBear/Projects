@@ -14,6 +14,7 @@ namespace Bonza.Editor
         // Background grid is drawn using lines of width 1 (or 3 for origin axes) [hardcoded]
         // Font size is 16 and padding are also hardcoded
         internal const double UnitSize = 25.0;
+        internal const double MarginSize = 1.0;
 
 
         // Some colors

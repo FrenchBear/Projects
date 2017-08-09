@@ -361,7 +361,7 @@ namespace Bonza.Editor.ViewModel
             AddWordsList(aww.wordsList);
         }
 
-        internal bool AddWordsList(List<string> wordsList)
+        internal IList<WordAndCanvas> AddWordsList(List<string> wordsList)
         {
             if (wordsList == null)
                 throw new ArgumentNullException(nameof(wordsList));
@@ -371,7 +371,7 @@ namespace Bonza.Editor.ViewModel
             {
                 MessageBox.Show("Problème avec la liste de mots:\n" + checkStatus, App.AppName, MessageBoxButton.OK,
                     MessageBoxImage.Error);
-                return false;
+                return null;
             }
 
 
@@ -380,16 +380,16 @@ namespace Bonza.Editor.ViewModel
             if (wordPositionList == null)
             {
                 MessageBox.Show("L'ajout des mots a échoué.", App.AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                return false;
+                return null;
             }
             sw.Stop();
 
-            view.AddCanvasForWordPositionList(wordPositionList);
+            IList<WordAndCanvas> wordAndCanvasList = view.AddCanvasForWordPositionList(wordPositionList);
             view.FinalRefreshAfterUpdate();
             StatusText = $"{wordsList.Count} mots placés en " + sw.Elapsed.ToString(@"hh\:mm\:ss\.fff");
             view.RescaleAndCenter(true);
 
-            return true;
+            return wordAndCanvasList;
         }
 
 
@@ -408,7 +408,7 @@ namespace Bonza.Editor.ViewModel
                             wordsList.Add(line);
                     }
                 }
-                if (!AddWordsList(wordsList))
+                if (AddWordsList(wordsList)!=null)
                     return;
             }
             catch (Exception ex)
@@ -517,7 +517,6 @@ namespace Bonza.Editor.ViewModel
 
         private void QuitExecute(object obj)
         {
-            // ToDo: Add detection of unsaved changes once Save is implemented
             Environment.Exit(0);
         }
 

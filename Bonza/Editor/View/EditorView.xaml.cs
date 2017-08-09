@@ -115,8 +115,10 @@ namespace Bonza.Editor.View
 
 
         // Initial drawing of for current model layout
-        internal void AddCanvasForWordPositionList(IEnumerable<WordPosition> wordPositionList)
+        internal IList<WordAndCanvas> AddCanvasForWordPositionList(IEnumerable<WordPosition> wordPositionList)
         {
+            List<WordAndCanvas> wordAndCanvasList = new List<WordAndCanvas>();
+
             // Draw letters
             foreach (WordPosition wp in wordPositionList)
             {
@@ -124,7 +126,10 @@ namespace Bonza.Editor.View
                 WordAndCanvas wac = new WordAndCanvas(wp, wc);
                 DrawingCanvas.Children.Add(wc);
                 m_WordAndCanvasList.Add(wac);
+                wordAndCanvasList.Add(wac);
             }
+
+            return wordAndCanvasList;
         }
 
 
@@ -139,7 +144,7 @@ namespace Bonza.Editor.View
         // More general Delete function, also used by Undo support
         internal void DeleteWordAndCanvasList(IList<WordAndCanvas> wordAndCanvasList, bool memorizeForUndo)
         {
-            Debug.Assert(m_Sel.WordAndCanvasList != null && m_Sel.WordAndCanvasList.Count > 0);
+            Debug.Assert(wordAndCanvasList != null && wordAndCanvasList.Count > 0);
 
             // Undo support
             if (memorizeForUndo)
@@ -229,10 +234,12 @@ namespace Bonza.Editor.View
 
             // ToDo: Nice compact code, but this doesn't work for Undo
             // ToDo: Also support Undo when adding words
-            // ToDo: Tweak PlaceWord optimization to avoir always replacing a word in the same place after moving it
-            WordPosition wp = m_Sel.WordAndCanvasList[0].WordPosition;
+            // ToDo: Tweak PlaceWord optimization to avoid always replacing a word in the same place after moving it
+            // Do: Keep the same WordAndCanvas and at the end, just process it as a simple move (which it is)
+            // This will provide animation and undo support autmatically
+            WordAndCanvas before = m_Sel.WordAndCanvasList[0];
             DeleteSelection();
-            viewModel.AddWordsList(new List<string> { wp.OriginalWord });
+            WordAndCanvas after = viewModel.AddWordsList(new List<string> { before.WordPosition.OriginalWord })?.First();
         }
 
 

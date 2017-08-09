@@ -42,6 +42,36 @@ namespace Bonza.Editor.Support
                 double width = UnitSize;
                 double height = UnitSize;
 
+                if (wp.IsVertical)
+                {
+                    left += MarginSize;
+                    width -= 2 * MarginSize;
+                    if (i==0)
+                    {
+                        top += MarginSize;
+                        height -= MarginSize;
+                    }
+                    else if (i==wp.Word.Length-1)
+                    {
+                        height -= MarginSize;
+                    }
+                }
+                else
+                {
+                    top += MarginSize;
+                    height -= 2 * MarginSize;
+                    if (i==0)
+                    {
+                        left += MarginSize;
+                        width -= MarginSize;
+                    }
+                    else if (i == wp.Word.Length - 1)
+                    {
+                        width -= MarginSize;
+                    }
+                }
+
+
                 tb.SetValue(LeftProperty, left);        // Canvas.LeftProperty
                 tb.SetValue(TopProperty, top);
                 tb.Width = width;

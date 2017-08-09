@@ -22,7 +22,7 @@ namespace Bonza.Editor.Support
             Move,
             Delete,
             Add,
-            SwapOrientation
+            SwapOrientation,
         }
 
         internal class UndoAction
@@ -94,7 +94,6 @@ namespace Bonza.Editor.Support
             List<PositionOrientation> topLeftList = wordAndCanvasList.Select(wac => new PositionOrientation(wac.WordPosition.PositionOrientation)).ToList();
             MemorizeUndoableAction(UndoActions.SwapOrientation, wordAndCanvasList, topLeftList);
         }
-
 
         internal bool CanUndo => undoStack != null && undoStack.Count > 0;
 
