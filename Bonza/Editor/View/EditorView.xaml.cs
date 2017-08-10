@@ -207,7 +207,7 @@ namespace Bonza.Editor.View
                 viewModel.UndoStack.MemorizeSwapOrientation(wordAndCanvasList);
                 viewModel.RemoveWordPosition(wac.WordPosition);
 
-                wac.WordPosition.IsVertical = !wac.WordPosition.IsVertical;
+                wac.WordPosition.SetNewPositionOrientation(new PositionOrientation(wac.WordPosition.StartRow, wac.WordPosition.StartColumn, !wac.WordPosition.IsVertical));
 
                 // Do not accept Illegal placements, adjust to only valid placements
                 WordPositionLayout layout = viewModel.GetLayoutExcludingWordPosition(wac.WordPosition);

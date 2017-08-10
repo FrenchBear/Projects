@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-using System.Diagnostics;
 
 namespace Bonza.Generator
 {
@@ -225,6 +224,7 @@ namespace Bonza.Generator
 
 
         /// <summary>Internal class to sort possible WordPositions placement by surface to select the best.</summary>
+        /// <remarks>Not immutable because WordPosition is not immutable...  Though it shouldn't be modifiable???</remarks>
         private class WordPositionSurface
         {
             internal readonly WordPosition WordPosition;

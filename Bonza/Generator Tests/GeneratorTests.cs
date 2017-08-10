@@ -20,14 +20,14 @@ namespace Bonza.Generator.Tests
         {
             OutputEncoding = Encoding.UTF8;         // For Dot Net Core
 
-            TestGeneration();
+            //TestGeneration();
 
-            //var t1 = TestPerformances();
-            //var t2 = TestPerformances();
-            //var t3 = TestPerformances();
-            //var median = (new List<TimeSpan> { t1, t2, t3 }).OrderBy(x => x).Skip(1).First();
-            //WriteLine();
-            //WriteLine("Median: " + median);
+            var t1 = TestPerformances();
+            var t2 = TestPerformances();
+            var t3 = TestPerformances();
+            var median = (new List<TimeSpan> { t1, t2, t3 }).OrderBy(x => x).Skip(1).First();
+            WriteLine();
+            WriteLine("Median: " + median);
 
             WriteLine();
             Write("(Pause)");

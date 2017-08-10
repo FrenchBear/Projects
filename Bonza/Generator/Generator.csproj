@@ -48,6 +48,7 @@
     <Compile Include="ChunkLayout.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Grille.cs" />
+    <Compile Include="Immutable.cs" />
     <Compile Include="Position.cs" />
     <Compile Include="PositionOrientation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

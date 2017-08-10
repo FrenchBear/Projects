@@ -3,17 +3,19 @@
 //
 // 2017-08-05   PV      Extracted
 // 2017-08-06   PV      Performance refactoring
+// 2017-08-10   PV      Made it immutable
 
 using System;
 
 namespace Bonza.Generator
 {
     /// <summary>Regroups a Position and an orientation flag.</summary>
+    [Immutable]
     public struct PositionOrientation
     {
-        public int StartRow { get; set; }
-        public int StartColumn { get; set; }
-        public bool IsVertical { get; set; }
+        public int StartRow { get; }
+        public int StartColumn { get; }
+        public bool IsVertical { get; }
 
         public PositionOrientation(int startRow, int startColumn, bool isVertical)
         {
@@ -29,10 +31,6 @@ namespace Bonza.Generator
             IsVertical = copy.IsVertical;
         }
 
-        internal void SetIsVertical(bool value)
-        {
-            IsVertical=value;
-        }
     }
 
 
