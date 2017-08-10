@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -64,8 +63,7 @@ namespace Bonza.Editor.View
         {
             if (e.Key == Key.Escape)
             {
-                // Actually we should terminate a move in progress, but since it's short, for now we can ignore it
-                if (IsAnimationInProgress()) return;
+                EndAnimationsInProgress();
 
                 // Move in progress?
                 if (pmm != null)
@@ -304,27 +302,27 @@ namespace Bonza.Editor.View
                     Duration = new Duration(TimeSpan.FromSeconds(0.35))
                 };
                 ma.Completed += MatrixAnimationCompleted;
-                isMatrixAnimationInProgress = true;
+                IsMatrixAnimationInProgress = true;
                 MainMatrixTransform.BeginAnimation(MatrixTransform.MatrixProperty, ma);
             }
             else
-                MatrixAnimationEnd();
+                EndMatrixAnimation();
         }
 
-        private bool isMatrixAnimationInProgress;
+        private bool IsMatrixAnimationInProgress;
         private Matrix rescaleMatrix;
 
         // Event handler when MatrixAnimation is completed, need to "free" animated properties otherwise
         // they're "hold" by animation
         private void MatrixAnimationCompleted(object sender, EventArgs e)
         {
-            MatrixAnimationEnd();
+            EndMatrixAnimation();
         }
 
         // Terminate transformation in a clean way, "freeing" animated properties
-        private void MatrixAnimationEnd()
+        private void EndMatrixAnimation()
         {
-            isMatrixAnimationInProgress = false;
+            IsMatrixAnimationInProgress = false;
             MainMatrixTransform.BeginAnimation(MatrixTransform.MatrixProperty, null);
 
             // Final tasks
@@ -347,13 +345,11 @@ namespace Bonza.Editor.View
         }
 
 
-        // Helper
-        internal bool IsAnimationInProgress()
+        // Terminate immediately animations in progress, set final values
+        internal void EndAnimationsInProgress()
         {
-            // ToDo: Actually terminate WordAnimation
-            if (moveWordAnimationInProgressCount > 0) return true;
-            if (isMatrixAnimationInProgress) MatrixAnimationEnd();
-            return false;
+            if (IsMoveWordAnimationInProgress) EndMoveWordAnimation();
+            if (IsMatrixAnimationInProgress) EndMatrixAnimation();
         }
 
 
@@ -400,8 +396,7 @@ namespace Bonza.Editor.View
 
         private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            // Ignore event if there are animations in progress, could actually force-terminate them, but they're quick anyway
-            if (IsAnimationInProgress()) return;
+            EndAnimationsInProgress();
 
             MainGrid.MouseMove -= MainGrid_MouseMoveWhenUp;
             MainGrid.MouseMove += MainGrid_MouseMoveWhenDown;
@@ -612,7 +607,7 @@ namespace Bonza.Editor.View
                 int st = 1;
                 int sign = 1;
 
-                for (; ; )
+                for (;;)
                 {
                     for (int i = 0; i < st; i++)
                     {
@@ -632,8 +627,6 @@ namespace Bonza.Editor.View
             }
         }
 
-        private int moveWordAnimationInProgressCount;
-
         internal void MoveWordAndCanvasList(IList<WordAndCanvas> wordAndCanvasList)
         {
             if (wordAndCanvasList == null) throw new ArgumentNullException(nameof(wordAndCanvasList));
@@ -650,31 +643,68 @@ namespace Bonza.Editor.View
             double deltaX = (double)wc1.GetValue(Canvas.LeftProperty) - wp1.StartColumn * UnitSize;
             double deltaY = (double)wc1.GetValue(Canvas.TopProperty) - wp1.StartRow * UnitSize;
             double distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+            // If distance is nul, for instance after a selection click, we're done
+            if (distance <= 0.0001) return;
 
-            // Could optimize if there is no actual displacement, for instance, after a click down
-            // and up without moving the mouse
-
+            // Group animations in a storyboard
+            var sb = new Storyboard();
+            var duration = new Duration(TimeSpan.FromSeconds(distance >= UnitSize ? 0.35 : 0.1));
+            //sb.Duration = duration;
+            finalMoveWordAnimationData = new List<(Canvas, DependencyProperty, double)>();
             foreach (WordAndCanvas wac in wordAndCanvasList)
             {
                 WordCanvas wc = wac.WordCanvas;
-                var duration = new Duration(TimeSpan.FromSeconds(distance >= UnitSize ? 0.35 : 0.1));
 
                 double finalLeftValue = wac.WordPosition.StartColumn * UnitSize;
-                DoubleAnimation daLeft = new DoubleAnimation((double)wc.GetValue(Canvas.LeftProperty), finalLeftValue, duration);
-                daLeft.Completed += (sender, e) => { MoveWordAnimationEnd(wc, Canvas.LeftProperty, finalLeftValue); };
-                Interlocked.Increment(ref moveWordAnimationInProgressCount);
-                wc.BeginAnimation(Canvas.LeftProperty, daLeft);
+                DoubleAnimation daLeft = new DoubleAnimation();
+                daLeft.Duration = duration;
+                daLeft.From = (double)wc.GetValue(Canvas.LeftProperty);
+                daLeft.To = finalLeftValue;
+                //daLeft.Completed += (sender, e) => { MoveWordAnimationEnd(wc, Canvas.LeftProperty, finalLeftValue); };
+                finalMoveWordAnimationData.Add((wc, Canvas.LeftProperty, finalLeftValue));
+               //wc.BeginAnimation(Canvas.LeftProperty, daLeft);
+                Storyboard.SetTarget(daLeft, wc);
+                Storyboard.SetTargetProperty(daLeft, new PropertyPath("Left"));
+                sb.Children.Add(daLeft);
 
                 double finalTopValue = wac.WordPosition.StartRow * UnitSize;
-                DoubleAnimation daTop = new DoubleAnimation((double)wc.GetValue(Canvas.TopProperty), finalTopValue, duration);
-                daTop.Completed += (sender, e) => { MoveWordAnimationEnd(wc, Canvas.TopProperty, finalTopValue); };
-                Interlocked.Increment(ref moveWordAnimationInProgressCount);
-                wc.BeginAnimation(Canvas.TopProperty, daTop);
+                DoubleAnimation daTop = new DoubleAnimation();
+                daTop.Duration = duration;
+                daTop.From = (double)wc.GetValue(Canvas.TopProperty);
+                daTop.To = finalTopValue;
+                //daTop.Completed += (sender, e) => { MoveWordAnimationEnd(wc, Canvas.TopProperty, finalTopValue); };
+                finalMoveWordAnimationData.Add((wc, Canvas.TopProperty, finalTopValue));
+                //wc.BeginAnimation(Canvas.TopProperty, daTop);
+                Storyboard.SetTarget(daTop, wc);
+                Storyboard.SetTargetProperty(daTop, new PropertyPath("Top"));
+                sb.Children.Add(daTop);
+            }
+            IsMoveWordAnimationInProgress = true;
+            sb.Completed += Sb_Completed;
+            sb.Begin();
+        }
+
+        private void Sb_Completed(object sender, EventArgs e)
+        {
+            EndMoveWordAnimation();
+        }
+
+        private bool IsMoveWordAnimationInProgress;
+        private List<(Canvas, DependencyProperty, double)> finalMoveWordAnimationData;
+        private void EndMoveWordAnimation()
+        {
+            IsMoveWordAnimationInProgress = false;
+            foreach (var item in finalMoveWordAnimationData)
+            {
+                item.Item1.BeginAnimation(item.Item2, null);
+                item.Item1.SetValue(item.Item2, item.Item3);
             }
         }
 
+        /*
         private void MoveWordAnimationEnd(WordCanvas wc, DependencyProperty dp, double finalValue)
         {
+            Debug.WriteLine("MoveWordAnimationEnd");
             // Need to wait all animations end!
             Interlocked.Decrement(ref moveWordAnimationInProgressCount);
             wc.BeginAnimation(dp, null);
@@ -682,6 +712,7 @@ namespace Bonza.Editor.View
             // Set final value
             wc.SetValue(dp, finalValue);
         }
+        */
 
         private void MainGrid_MouseWheel(object sender, MouseWheelEventArgs e)
         {

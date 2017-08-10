@@ -152,7 +152,7 @@ namespace Bonza.Generator
                     {
                         placedWords.Add(word);
                         placedWordPositionList.Add(wp);
-                        Debug.WriteLine($"Placed {placedWordPositionList.Count}/{wordsToAddList.Count}: {wp.Word}");
+                        //Debug.WriteLine($"Placed {placedWordPositionList.Count}/{wordsToAddList.Count}: {wp.Word}");
                     }
                 }
                 // If at the end of this loop no canonizedWord has been placed, we have a problem...
@@ -174,9 +174,6 @@ namespace Bonza.Generator
         // Returns WordPosition of placed word, or null if the canonizedWord couldn't be placed
         private WordPosition AddWord(string originalWord)
         {
-            // We need layout, only of a previous call invalidated current layout (ToDo: Don't allow null for layout)
-            if (Layout == null) NewLayout();
-
             string canonizedWord = CanonizeWord(originalWord);
 
             // If it's the first canonizedWord of the layout, chose random canonizedWord and orientation to start,

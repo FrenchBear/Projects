@@ -422,8 +422,7 @@ namespace Bonza.Editor.ViewModel
 
         private void RegenerateLayoutExecute(object obj)
         {
-            if (view.IsAnimationInProgress())
-                return;
+            view.EndAnimationsInProgress();
 
             try
             {
@@ -459,8 +458,7 @@ namespace Bonza.Editor.ViewModel
 
         private void DeleteExecute(object obj)
         {
-            if (view.IsAnimationInProgress())
-                return;
+            view.EndAnimationsInProgress();
             view.DeleteSelection();
             view.FinalRefreshAfterUpdate();
         }
@@ -474,8 +472,7 @@ namespace Bonza.Editor.ViewModel
 
         private void UndoExecute(object obj)
         {
-            if (view.IsAnimationInProgress())
-                return;
+            view.EndAnimationsInProgress();
             PerformUndo();
         }
 
@@ -488,8 +485,7 @@ namespace Bonza.Editor.ViewModel
 
         private void SwapOrientationExecute(object obj)
         {
-            if (view.IsAnimationInProgress())
-                return;
+            view.EndAnimationsInProgress();
             view.SwapOrientation();
         }
 
@@ -501,8 +497,7 @@ namespace Bonza.Editor.ViewModel
 
         private void AutoPlaceExecute(object obj)
         {
-            if (view.IsAnimationInProgress())
-                return;
+            view.EndAnimationsInProgress();
             // Delegate work to view since we have no access to Sel here
             view.AutoPlace();
         }
