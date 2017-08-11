@@ -52,7 +52,7 @@ namespace Bonza.Generator
                         wordsList.Add(line);
                 }
             }
-            return AddWordsList(wordsList, true) != null;
+            return PlaceWordsList(wordsList, true) != null;
         }
 
         /// <summary>Shuffle words after reinitializing layout.</summary>
@@ -64,7 +64,7 @@ namespace Bonza.Generator
             WordPositionLayout backupLayout = new WordPositionLayout(Layout);
             var wordsList = Layout.WordPositionList.Select(wp => wp.OriginalWord).ToList();
             NewLayout();
-            if (AddWordsList(wordsList, false) == null)
+            if (PlaceWordsList(wordsList, false) == null)
             {
                 Layout = backupLayout;
                 return false;
@@ -125,7 +125,7 @@ namespace Bonza.Generator
         /// <param name="wordsToAddList">List of words to place</param>
         /// <param name="withLayoutBackup">If true, current layout is backed up, and restored if placement of all words failed</param>
         /// <returns>Returns a list of WordPosition for placed words in case of success, or false if placement failed, current layout is preserved in this case</returns>
-        public List<WordPosition> AddWordsList(List<string> wordsToAddList, bool withLayoutBackup)
+        public List<WordPosition> PlaceWordsList(List<string> wordsToAddList, bool withLayoutBackup)
         {
             if (wordsToAddList == null)
                 throw new ArgumentNullException(nameof(wordsToAddList));
@@ -146,7 +146,7 @@ namespace Bonza.Generator
                 List<string> placedWords = new List<string>();
                 foreach (string word in shuffledList)
                 {
-                    WordPosition wp = AddWord(word);
+                    WordPosition wp = PlaceWord(word);
                     if (wp != null)
                     {
                         placedWords.Add(word);
@@ -171,55 +171,98 @@ namespace Bonza.Generator
 
         // Core function, adds a canonizedWord to current layout and place it
         // Returns WordPosition of placed word, or null if the canonizedWord couldn't be placed
-        private WordPosition AddWord(string originalWord)
+        private WordPosition PlaceWord(string originalWord)
         {
-            string canonizedWord = CanonizeWord(originalWord);
+            var l = FindWordPossiblePlacements(originalWord, PlaceWordOptimizations.High);
+            if (l == null || l.Count == 0) return null;
 
-            // If it's the first canonizedWord of the layout, chose random canonizedWord and orientation to start,
-            // place it at position (0, 0)
-            if (Layout.WordPositionList.Count == 0)
-            {
-                WordPosition wp = new WordPosition(canonizedWord, originalWord, new PositionOrientation(0, 0, rnd.NextDouble() > 0.5));
-                Layout.AddWordPositionNoCheck(wp);
-                return wp;
-            }
+            WordPosition wp = l.TakeRandom();
+            Layout.AddWordPositionNoCheck(wp);
+            return wp;
 
-            BoundingRectangle r = Layout.GetBounds();
-
-            // Find first all positions where the canonizedWord can be added to current layout;
-            List<WordPositionSurface> possibleWordPositions = new List<WordPositionSurface>();
-            foreach (WordPosition wordPosition in Layout.WordPositionList)
-                foreach (WordPosition wp in TryPlace(canonizedWord, originalWord, wordPosition))    //, possibleWordPositions))
-                {
-                    BoundingRectangle newR = Layout.ExtendBounds(r, wp);
-//#if TryPlaceOptimization
-                    // Serious optimisation, no need to continue if we found a solution that does not extand layout
-                    if (newR.Equals(r))
-                    {
-                        Layout.AddWordPositionNoCheck(wp);
-                        return wp;
-                    }
-//#endif
-                    int newSurface = ComputeAdjustedSurface(newR.Max.Column - newR.Min.Column + 1, newR.Max.Row - newR.Min.Row + 1);
-                    possibleWordPositions.Add(new WordPositionSurface(wp, newSurface));
-                }
-            if (possibleWordPositions.Count == 0)
-                return null;
-
-            // Optimization
-            if (possibleWordPositions.Count == 1)
-            {
-                WordPosition wp = possibleWordPositions.First().WordPosition;
-                Layout.AddWordPositionNoCheck(wp);
-                return wp;
-            }
-
+            /*
             // Take a possibility among those who minimally extend surface, and add it to current layout
             // Chose a random candidate among the 15% best
             possibleWordPositions.Sort(Comparer<WordPositionSurface>.Create((wps1, wps2) => wps1.Surface - wps2.Surface));
             int index = (int)(possibleWordPositions.Count * 0.15 * rnd.NextDouble());
             Layout.AddWordPositionNoCheck(possibleWordPositions[index].WordPosition);
             return possibleWordPositions[index].WordPosition;
+            */
+        }
+
+
+        /// <summary>
+        /// Placement strategies for FindWordPossiblePlacements.
+        /// </summary>
+        public enum PlaceWordOptimizations
+        {
+            Aggressive,         // Returns first wp that does not extend surface, otherwise the position that minimally extend surface
+            High,               // Returns all possible places that do not extend surface, otherwise the position that minimally extend surface
+            Standard,           // Returns all possible solutions that do not extend surface by more than 15%, otherwise all solutions
+            None                // Returns all possible solutions, mostly used as a base reference when visually comparing results of other levels
+        }
+
+
+        private IList<WordPosition> FindWordPossiblePlacements(string originalWord, PlaceWordOptimizations optimization)
+        { 
+            string canonizedWord = CanonizeWord(originalWord);
+
+            // If it's the first canonizedWord of the layout, chose random orientation and place it at position (0, 0)
+            if (Layout.WordPositionList.Count == 0)
+            {
+                WordPosition wp = new WordPosition(canonizedWord, originalWord, new PositionOrientation(0, 0, rnd.NextDouble() > 0.5));
+                return new List<WordPosition> { wp };
+            }
+
+            // Get current layout since we'll prefer placements that minimiza layout extension to keep words grouped
+            BoundingRectangle r = Layout.GetBounds();
+            int surface = ComputeAdjustedSurface(r.Max.Column - r.Min.Column + 1, r.Max.Row - r.Min.Row + 1);
+
+            // ToDo: Actually with this mechanism, WordPositionSurface is useless since we don't sort
+            // Just maintain current maximum for high optimization level
+
+            // Find first all positions where the canonizedWord can be added to current layout;
+            List<WordPositionSurface> possibleWordPositions = new List<WordPositionSurface>();
+            List<WordPosition> possibleWordPositionsBelowThreshold = new List<WordPosition>();
+            foreach (WordPosition wordPosition in Layout.WordPositionList)
+                foreach (WordPosition wp in TryPlace(canonizedWord, originalWord, wordPosition))
+                {
+                    BoundingRectangle newR = Layout.ExtendBounds(r, wp);
+                    if (newR.Equals(r))
+                    {
+                        if (optimization == PlaceWordOptimizations.Aggressive )
+                            return new List<WordPosition> { wp };
+                        if (optimization == PlaceWordOptimizations.High)
+                            possibleWordPositionsBelowThreshold.Add(wp);
+                    }
+                    int newSurface = ComputeAdjustedSurface(newR.Max.Column - newR.Min.Column + 1, newR.Max.Row - newR.Min.Row + 1);
+                    WordPositionSurface wps = new WordPositionSurface(wp, newSurface);
+                    possibleWordPositions.Add(wps);
+                    switch(optimization)
+                    {
+                        case PlaceWordOptimizations.Aggressive:
+                        case PlaceWordOptimizations.High:
+                            if (possibleWordPositions.Count > 0 && possibleWordPositions[0].Surface > newSurface)
+                                possibleWordPositions.RemoveAt(0);
+                            if (possibleWordPositions.Count == 0)
+                                possibleWordPositions.Add(wps);
+                            break;
+
+                        case PlaceWordOptimizations.Standard:
+                            if (newSurface<surface*1.15)
+                                possibleWordPositionsBelowThreshold.Add(wp);
+                            possibleWordPositions.Add(wps);
+                            break;
+
+                        default:
+                            possibleWordPositions.Add(wps);
+                            break;
+                    }
+                }
+
+            if (possibleWordPositionsBelowThreshold.Count > 0)
+                return possibleWordPositionsBelowThreshold;
+            return possibleWordPositions.Select(wps => wps.WordPosition).ToList();
         }
 
 

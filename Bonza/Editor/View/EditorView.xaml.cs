@@ -646,38 +646,37 @@ namespace Bonza.Editor.View
             // If distance is nul, for instance after a selection click, we're done
             if (distance <= 0.0001) return;
 
-            // Group animations in a storyboard
+            // Group animations in a storyboard to simplify premature ending
             var sb = new Storyboard();
             var duration = new Duration(TimeSpan.FromSeconds(distance >= UnitSize ? 0.35 : 0.1));
-            //sb.Duration = duration;
             finalMoveWordAnimationData = new List<(Canvas, DependencyProperty, double)>();
             foreach (WordAndCanvas wac in wordAndCanvasList)
             {
                 WordCanvas wc = wac.WordCanvas;
 
                 double finalLeftValue = wac.WordPosition.StartColumn * UnitSize;
-                DoubleAnimation daLeft = new DoubleAnimation();
-                daLeft.Duration = duration;
-                daLeft.From = (double)wc.GetValue(Canvas.LeftProperty);
-                daLeft.To = finalLeftValue;
-                //daLeft.Completed += (sender, e) => { MoveWordAnimationEnd(wc, Canvas.LeftProperty, finalLeftValue); };
-                finalMoveWordAnimationData.Add((wc, Canvas.LeftProperty, finalLeftValue));
-               //wc.BeginAnimation(Canvas.LeftProperty, daLeft);
+                DoubleAnimation daLeft = new DoubleAnimation
+                {
+                    Duration = duration,
+                    From = (double)wc.GetValue(Canvas.LeftProperty),
+                    To = finalLeftValue
+                };
                 Storyboard.SetTarget(daLeft, wc);
                 Storyboard.SetTargetProperty(daLeft, new PropertyPath("Left"));
                 sb.Children.Add(daLeft);
+                finalMoveWordAnimationData.Add((wc, Canvas.LeftProperty, finalLeftValue));
 
                 double finalTopValue = wac.WordPosition.StartRow * UnitSize;
-                DoubleAnimation daTop = new DoubleAnimation();
-                daTop.Duration = duration;
-                daTop.From = (double)wc.GetValue(Canvas.TopProperty);
-                daTop.To = finalTopValue;
-                //daTop.Completed += (sender, e) => { MoveWordAnimationEnd(wc, Canvas.TopProperty, finalTopValue); };
-                finalMoveWordAnimationData.Add((wc, Canvas.TopProperty, finalTopValue));
-                //wc.BeginAnimation(Canvas.TopProperty, daTop);
+                DoubleAnimation daTop = new DoubleAnimation
+                {
+                    Duration = duration,
+                    From = (double)wc.GetValue(Canvas.TopProperty),
+                    To = finalTopValue
+                };
                 Storyboard.SetTarget(daTop, wc);
                 Storyboard.SetTargetProperty(daTop, new PropertyPath("Top"));
                 sb.Children.Add(daTop);
+                finalMoveWordAnimationData.Add((wc, Canvas.TopProperty, finalTopValue));
             }
             IsMoveWordAnimationInProgress = true;
             sb.Completed += Sb_Completed;
@@ -700,20 +699,6 @@ namespace Bonza.Editor.View
                 item.Item1.SetValue(item.Item2, item.Item3);
             }
         }
-
-        /*
-        private void MoveWordAnimationEnd(WordCanvas wc, DependencyProperty dp, double finalValue)
-        {
-            Debug.WriteLine("MoveWordAnimationEnd");
-            // Need to wait all animations end!
-            Interlocked.Decrement(ref moveWordAnimationInProgressCount);
-            wc.BeginAnimation(dp, null);
-
-            // Set final value
-            wc.SetValue(dp, finalValue);
-        }
-        */
-
         private void MainGrid_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             var newPosition = e.GetPosition(MainGrid);
