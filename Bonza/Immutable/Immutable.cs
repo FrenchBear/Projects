@@ -1,4 +1,7 @@
-﻿// From https://blogs.msdn.microsoft.com/kevinpilchbisson/2007/11/20/enforcing-immutability-in-code/
+﻿// Immutable.cs - Support of Immutable class attribute
+// From https://blogs.msdn.microsoft.com/kevinpilchbisson/2007/11/20/enforcing-immutability-in-code/
+// ToDo: Move it in a separate reusable assemby
+
 // 2017-08-10   PV
 
 
@@ -224,7 +227,6 @@ public static class ReflectionHelper
     /// <summary>
     /// Find all types in 'assembly' that derive from 'baseType'
     /// </summary>
-    /// <owner>jayBaz</owner>
     internal static IEnumerable<Type> FindAllTypesThatDeriveFrom<TBase>(Assembly assembly)
     {
         return from type in assembly.GetTypes()
@@ -235,7 +237,6 @@ public static class ReflectionHelper
     /// <summary>
     /// Check if the given type has the given attribute on it.  Don't look at base classes.
     /// </summary>
-    /// <owner>jayBaz</owner>
     public static bool TypeHasAttribute<TAttribute>(Type type)
         where TAttribute : Attribute
     {

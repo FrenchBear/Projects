@@ -179,15 +179,6 @@ namespace Bonza.Generator
             WordPosition wp = l.TakeRandom();
             Layout.AddWordPositionNoCheck(wp);
             return wp;
-
-            /*
-            // Take a possibility among those who minimally extend surface, and add it to current layout
-            // Chose a random candidate among the 15% best
-            possibleWordPositions.Sort(Comparer<WordPositionSurface>.Create((wps1, wps2) => wps1.Surface - wps2.Surface));
-            int index = (int)(possibleWordPositions.Count * 0.15 * rnd.NextDouble());
-            Layout.AddWordPositionNoCheck(possibleWordPositions[index].WordPosition);
-            return possibleWordPositions[index].WordPosition;
-            */
         }
 
 
@@ -218,12 +209,10 @@ namespace Bonza.Generator
             BoundingRectangle r = Layout.GetBounds();
             int surface = ComputeAdjustedSurface(r.Max.Column - r.Min.Column + 1, r.Max.Row - r.Min.Row + 1);
 
-            // ToDo: Actually with this mechanism, WordPositionSurface is useless since we don't sort
-            // Just maintain current maximum for high optimization level
-
             // Find first all positions where the canonizedWord can be added to current layout;
-            List<WordPositionSurface> possibleWordPositions = new List<WordPositionSurface>();
+            List<WordPosition> possibleWordPositions = new List<WordPosition>();
             List<WordPosition> possibleWordPositionsBelowThreshold = new List<WordPosition>();
+            int minSurface = int.MaxValue;
             foreach (WordPosition wordPosition in Layout.WordPositionList)
                 foreach (WordPosition wp in TryPlace(canonizedWord, originalWord, wordPosition))
                 {
@@ -236,49 +225,51 @@ namespace Bonza.Generator
                             possibleWordPositionsBelowThreshold.Add(wp);
                     }
                     int newSurface = ComputeAdjustedSurface(newR.Max.Column - newR.Min.Column + 1, newR.Max.Row - newR.Min.Row + 1);
-                    WordPositionSurface wps = new WordPositionSurface(wp, newSurface);
-                    possibleWordPositions.Add(wps);
+                    possibleWordPositions.Add(wp);
                     switch(optimization)
                     {
                         case PlaceWordOptimizations.Aggressive:
                         case PlaceWordOptimizations.High:
-                            if (possibleWordPositions.Count > 0 && possibleWordPositions[0].Surface > newSurface)
+                            if (possibleWordPositions.Count > 0 && minSurface > newSurface)
+                            {
                                 possibleWordPositions.RemoveAt(0);
+                                minSurface = newSurface;
+                            }
                             if (possibleWordPositions.Count == 0)
-                                possibleWordPositions.Add(wps);
+                                possibleWordPositions.Add(wp);
                             break;
 
                         case PlaceWordOptimizations.Standard:
                             if (newSurface<surface*1.15)
                                 possibleWordPositionsBelowThreshold.Add(wp);
-                            possibleWordPositions.Add(wps);
+                            possibleWordPositions.Add(wp);
                             break;
 
                         default:
-                            possibleWordPositions.Add(wps);
+                            possibleWordPositions.Add(wp);
                             break;
                     }
                 }
 
             if (possibleWordPositionsBelowThreshold.Count > 0)
                 return possibleWordPositionsBelowThreshold;
-            return possibleWordPositions.Select(wps => wps.WordPosition).ToList();
+            return possibleWordPositions;
         }
 
 
-        /// <summary>Internal class to sort possible WordPositions placement by surface to select the best.</summary>
-        /// <remarks>Not immutable because WordPosition is not immutable...  Though it shouldn't be modifiable???</remarks>
-        private class WordPositionSurface
-        {
-            internal readonly WordPosition WordPosition;
-            internal readonly int Surface;
+        ///// <summary>Internal class to sort possible WordPositions placement by surface to select the best.</summary>
+        ///// <remarks>Not immutable because WordPosition is not immutable...  Though it shouldn't be modifiable???</remarks>
+        //private class WordPositionSurface
+        //{
+        //    internal readonly WordPosition WordPosition;
+        //    internal readonly int Surface;
 
-            public WordPositionSurface(WordPosition wordPosition, int surface)
-            {
-                WordPosition = wordPosition;
-                Surface = surface;
-            }
-        }
+        //    public WordPositionSurface(WordPosition wordPosition, int surface)
+        //    {
+        //        WordPosition = wordPosition;
+        //        Surface = surface;
+        //    }
+        //}
 
 
         /// <summary>Adjusted surface calculation that penalize extensions that would make bounding rectangle width/height unbalanced</summary>

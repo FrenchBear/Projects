@@ -62,6 +62,10 @@
       <Project>{46505a9e-b84d-4664-bb02-515706791af3}</Project>
       <Name>Generator</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Immutable\Immutable.csproj">
+      <Project>{88ea74f1-fc39-4177-b6e0-e5e5d2892a62}</Project>
+      <Name>Immutable</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
