@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
     <AssemblyName>Bonza.Generator.Tests</AssemblyName>
     <RootNamespace>Bonza.Generator.Tests</RootNamespace>
   </PropertyGroup>
