@@ -42,15 +42,44 @@ namespace Bonza.Generator
         {
             // Will throw an exception in case of problem with file
             var wordsList = new List<string>();
-            using (Stream s = new FileStream(filename, FileMode.Open))
-            using (StreamReader sr = new StreamReader(s, Encoding.UTF8))
+
+            // Better pattern than using() using()
+            //using (Stream s = new FileStream(filename, FileMode.Open))
+            //using (StreamReader sr = new StreamReader(s, Encoding.UTF8))
+            //{
+            //    while (!sr.EndOfStream)
+            //    {
+            //        string line = sr.ReadLine()?.Trim();
+            //        if (!string.IsNullOrWhiteSpace(line))
+            //            wordsList.Add(line);
+            //    }
+            //}
+
+            Stream s = null;
+            StreamReader sr = null;
+            try
             {
-                while (!sr.EndOfStream)
+                s = new FileStream(filename, FileMode.Open);
+                try
                 {
-                    string line = sr.ReadLine()?.Trim();
-                    if (!string.IsNullOrWhiteSpace(line))
-                        wordsList.Add(line);
+                    sr = new StreamReader(s, Encoding.UTF8);
+
+                    while (!sr.EndOfStream)
+                    {
+                        string line = sr.ReadLine()?.Trim();
+                        if (!string.IsNullOrWhiteSpace(line))
+                            wordsList.Add(line);
+                    }
+
                 }
+                finally
+                {
+                    if (sr != null) sr.Dispose();
+                }
+            }
+            finally
+            {
+                if (s != null) s.Dispose();
             }
             return PlaceWordsList(wordsList, true) != null;
         }

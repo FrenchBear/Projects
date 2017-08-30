@@ -8,6 +8,7 @@
 namespace Bonza.Generator
 {
     /// <summary>A simple rectangle with int coordinates to represent layout bounds.</summary>
+    [Immutable]
     public struct BoundingRectangle
     {
         public Position Min { get; }

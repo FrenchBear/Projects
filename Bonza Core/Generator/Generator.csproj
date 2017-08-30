@@ -6,4 +6,12 @@
     <RootNamespace>Bonza.Generator</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Immutable\Immutable.csproj" />
+  </ItemGroup>
+
 </Project>

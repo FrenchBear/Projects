@@ -8,6 +8,7 @@
 namespace Bonza.Generator
 {
     /// <summary>A simple pair of int coordinates to represent cell coordinates on layout.</summary>
+    [Immutable]
     public struct Position
     {
         /// <summary>Row, increasing when going down (similar to text screen coordinates).</summary>

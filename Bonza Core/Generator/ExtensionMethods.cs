@@ -48,9 +48,10 @@ namespace Bonza.Generator
                 list[n] = value;
             }
         }
+        */
 
         // Return a random element from a list
-        public static T TakeRandom<T>(this List<T> list)
+        public static T TakeRandom<T>(this IList<T> list)
         {
             if (list == null)
                 throw new ArgumentNullException(nameof(list));
@@ -65,6 +66,5 @@ namespace Bonza.Generator
             foreach (var item in collection)
                 action(item);
         }
-        */
     }
 }

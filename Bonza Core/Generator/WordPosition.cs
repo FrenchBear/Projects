@@ -17,14 +17,12 @@ namespace Bonza.Generator
         public string OriginalWord { get; }         // Original word that was added
 
         private PositionOrientation m_PositionOrientation;
-        public PositionOrientation PositionOrientation { get => m_PositionOrientation; }
+        public PositionOrientation PositionOrientation => m_PositionOrientation;
 
         // Extra accessors for 'old' code
         public int StartRow => m_PositionOrientation.StartRow;
         public int StartColumn => m_PositionOrientation.StartColumn;
-        public bool IsVertical { get => m_PositionOrientation.IsVertical; set => m_PositionOrientation.IsVertical = value; }
-
-
+        public bool IsVertical => m_PositionOrientation.IsVertical;
 
         public WordPosition(string word, string originalWord, PositionOrientation positionOrientation)
         {
@@ -35,11 +33,12 @@ namespace Bonza.Generator
 
         public override string ToString() => "'" + Word + "' " + (IsVertical ? "V" : "H") + $"({StartRow}, {StartColumn})";
 
+        // Not immutable because of this
         public void SetNewPositionOrientation(PositionOrientation positionOrientation)
         {
             m_PositionOrientation = positionOrientation;
         }
-    }
 
+    }
 
 }
