@@ -3,13 +3,16 @@
 //
 // 2017-08-05   PV      Extracted
 // 2017-08-07   PV      Performance refactoring, made it immutable
+// 2017-08-30   PG      getHashCode, Equals, IEquatable
 
+
+using System;
 
 namespace Bonza.Generator
 {
     /// <summary>A simple pair of int coordinates to represent cell coordinates on layout.</summary>
     [Immutable]
-    public struct Position
+    public struct Position : IEquatable<Position>
     {
         /// <summary>Row, increasing when going down (similar to text screen coordinates).</summary>
         public int Row { get; }
@@ -29,5 +32,35 @@ namespace Bonza.Generator
         {
             return $"Pos({Row}, {Column})";
         }
+
+
+        public override int GetHashCode()
+        {
+            return Row ^ Column;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is Position))
+                return false;
+
+            return Equals((Position)obj);
+        }
+
+        public bool Equals(Position other)
+        {
+            return Row == other.Row && Column == other.Column;
+        }
+
+        public static bool operator ==(Position position1, Position position2)
+        {
+            return position1.Equals(position2);
+        }
+
+        public static bool operator !=(Position position1, Position position2)
+        {
+            return !position1.Equals(position2);
+        }
+
     }
 }

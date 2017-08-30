@@ -5,6 +5,10 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <AssemblyName>Bonza.Generator.Tests</AssemblyName>
     <RootNamespace>Bonza.Generator.Tests</RootNamespace>
+    <Description>Simple text-based testing application for BonzaGenerator</Description>
+    <Authors>Pierre Violent</Authors>
+    <Company>Chepiok.Net</Company>
+    <Copyright>Copyright ©2017 Pierre Violent</Copyright>
   </PropertyGroup>
 
   <ItemGroup>

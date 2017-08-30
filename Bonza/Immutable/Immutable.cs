@@ -1,6 +1,5 @@
 ﻿// Immutable.cs - Support of Immutable class attribute
 // From https://blogs.msdn.microsoft.com/kevinpilchbisson/2007/11/20/enforcing-immutability-in-code/
-// ToDo: Move it in a separate reusable assemby
 
 // 2017-08-10   PV
 
