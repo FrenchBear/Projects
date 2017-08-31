@@ -15,14 +15,14 @@ namespace Bonza.Generator
 {
     public class ChunkLayout
     {
-        private List<Chunk> m_Chunks = new List<Chunk>();
+        private readonly List<Chunk> m_Chunks = new List<Chunk>();
 
         public ReadOnlyCollection<Chunk> Chunks => m_Chunks.AsReadOnly();
         public int ChunksCount => m_Chunks.Count;
         public int SquaresCount => m_Chunks.Sum(ch => ch.SquaresCount);
 
 
-        public List<Chunk> GetAdjacentChunks(Chunk it)
+        public IList<Chunk> GetAdjacentChunks(Chunk it)
         {
             if (it == null) throw new ArgumentNullException(nameof(it));
             var l = new List<Chunk>();

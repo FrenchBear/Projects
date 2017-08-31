@@ -3,7 +3,7 @@
 //
 // 2017-08-05   PV      Extracted
 // 2017-08-07   PV      Performance refactoring, made it immutable
-// 2017-08-30   PG      getHashCode, Equals, IEquatable
+// 2017-08-30   PV      getHashCode, Equals, IEquatable
 
 
 using System;

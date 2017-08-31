@@ -38,49 +38,52 @@ namespace Bonza.Generator
         /// Adds a list of words from a file to current layout.
         /// Will raise an exception if there is a problem with the file, or if some words are rejected, initial layout preserved in this case.
         /// </summary>
-        public bool AddWordsFromFile(string filename)
+        public bool AddWordsFromFile(string fileName)
         {
             // Will throw an exception in case of problem with file
             var wordsList = new List<string>();
 
-            // Better pattern than using() using()
-            //using (Stream s = new FileStream(filename, FileMode.Open))
-            //using (StreamReader sr = new StreamReader(s, Encoding.UTF8))
+            // Since analyzer is *never* happy and still protest with following code on
+            // if (s != null) s.Dispose(); with
+            // Warning CA2202  Object 's' can be disposed more than once in method 'Grille.AddWordsFromFile(string)'.To avoid generating a System.ObjectDisposedException you should not call Dispose more than one time on an object.: Lines: 82 Generator C:\Development\GitHub\Projects\Bonza\Generator\Grille.cs    82  Active
+            // The hell, with it, back to the one-using version now that .Net code knows it
+
+            //Stream s = null;
+            //StreamReader sr = null;
+            //try
             //{
-            //    while (!sr.EndOfStream)
+            //    s = new FileStream(fileName, FileMode.Open);
+            //    try
             //    {
-            //        string line = sr.ReadLine()?.Trim();
-            //        if (!string.IsNullOrWhiteSpace(line))
-            //            wordsList.Add(line);
+            //        sr = new StreamReader(s, Encoding.UTF8);
+
+            //        while (!sr.EndOfStream)
+            //        {
+            //            string line = sr.ReadLine()?.Trim();
+            //            if (!string.IsNullOrWhiteSpace(line))
+            //                wordsList.Add(line);
+            //        }
+
+            //    }
+            //    finally
+            //    {
+            //        if (sr != null) sr.Dispose();
             //    }
             //}
-
-            Stream s = null;
-            StreamReader sr = null;
-            try
+            //finally
+            //{
+            //    if (s != null) s.Dispose();
+            //}
+            using (StreamReader sr = new StreamReader(fileName, Encoding.UTF8))
             {
-                s = new FileStream(filename, FileMode.Open);
-                try
+                while (!sr.EndOfStream)
                 {
-                    sr = new StreamReader(s, Encoding.UTF8);
-
-                    while (!sr.EndOfStream)
-                    {
-                        string line = sr.ReadLine()?.Trim();
-                        if (!string.IsNullOrWhiteSpace(line))
-                            wordsList.Add(line);
-                    }
-
-                }
-                finally
-                {
-                    if (sr != null) sr.Dispose();
+                    string line = sr.ReadLine()?.Trim();
+                    if (!string.IsNullOrWhiteSpace(line))
+                        wordsList.Add(line);
                 }
             }
-            finally
-            {
-                if (s != null) s.Dispose();
-            }
+
             return PlaceWordsList(wordsList, true) != null;
         }
 
@@ -91,7 +94,7 @@ namespace Bonza.Generator
             // AddWordsList keeps a backup of Layout and restore it if placement failed...
             // but since we call it after reinitializing the layout, it won't work for us
             WordPositionLayout backupLayout = new WordPositionLayout(Layout);
-            var wordsList = Layout.WordPositionList.Select(wp => wp.OriginalWord).ToList();
+            var wordsList = Layout.WordPositionList.Select(wordPosition => wordPosition.OriginalWord).ToList();
             NewLayout();
             if (PlaceWordsList(wordsList, false) == null)
             {
@@ -105,7 +108,7 @@ namespace Bonza.Generator
         /// <param name="words">List of words to check</param>
         /// <returns>Returns an empty string if no problem is detected, or a descriptive error message</returns>
         /// <remarks>Adding the same words will raise an exception with the same text.</remarks>
-        public string CheckWordsList(IList<string> words)
+        public string CheckWordsList(IEnumerable<string> words)
         {
             if (words == null) throw new ArgumentNullException(nameof(words));
 
@@ -119,7 +122,7 @@ namespace Bonza.Generator
                 result = $"Mot{S(shortWords.Length)} de longueur <= 2 non autorisé{S(shortWords.Length)}: " + shortWords;
 
             // Check for duplicates, start with current list of words (canonized)
-            HashSet<string> wordsSet = new HashSet<string>(Layout.WordPositionList.Select(wp => wp.Word));
+            HashSet<string> wordsSet = new HashSet<string>(Layout.WordPositionList.Select(wordPosition => wordPosition.Word));
             List<string> duplicates = null;
             foreach (string w in words)
                 if (w.Length > 2)
@@ -154,7 +157,7 @@ namespace Bonza.Generator
         /// <param name="wordsToAddList">List of words to place</param>
         /// <param name="withLayoutBackup">If true, current layout is backed up, and restored if placement of all words failed</param>
         /// <returns>Returns a list of WordPosition for placed words in case of success, or false if placement failed, current layout is preserved in this case</returns>
-        public List<WordPosition> PlaceWordsList(List<string> wordsToAddList, bool withLayoutBackup)
+        public IEnumerable<WordPosition> PlaceWordsList(IEnumerable<string> wordsToAddList, bool withLayoutBackup)
         {
             if (wordsToAddList == null)
                 throw new ArgumentNullException(nameof(wordsToAddList));
@@ -175,12 +178,12 @@ namespace Bonza.Generator
                 List<string> placedWords = new List<string>();
                 foreach (string word in shuffledList)
                 {
-                    WordPosition wp = PlaceWord(word);
-                    if (wp != null)
+                    WordPosition wordPosition = PlaceWord(word);
+                    if (wordPosition != null)
                     {
                         placedWords.Add(word);
-                        placedWordPositionList.Add(wp);
-                        //Debug.WriteLine($"Placed {placedWordPositionList.Count}/{wordsToAddList.Count}: {wp.Word}");
+                        placedWordPositionList.Add(wordPosition);
+                        //Debug.WriteLine($"Placed {placedWordPositionList.Count}/{wordsToAddList.Count}: {wordPosition.Word}");
                     }
                 }
                 // If at the end of this loop no canonizedWord has been placed, we have a problem...
@@ -202,40 +205,40 @@ namespace Bonza.Generator
         // Returns WordPosition of placed word, or null if the canonizedWord couldn't be placed
         private WordPosition PlaceWord(string originalWord)
         {
-            var l = FindWordPossiblePlacements(originalWord, PlaceWordOptimizations.High);
+            var l = FindWordPossiblePlacements(originalWord, PlaceWordOptimization.High);
             if (l == null || l.Count == 0) return null;
 
-            WordPosition wp = l.TakeRandom();
-            Layout.AddWordPositionNoCheck(wp);
-            return wp;
+            WordPosition wordPosition = l.TakeRandom();
+            Layout.AddWordPositionNoCheck(wordPosition);
+            return wordPosition;
         }
 
 
         /// <summary>
         /// Placement strategies for FindWordPossiblePlacements.
         /// </summary>
-        public enum PlaceWordOptimizations
+        public enum PlaceWordOptimization
         {
-            Aggressive,         // Returns first wp that does not extend surface, otherwise the position that minimally extend surface
+            Aggressive,         // Returns first wordPosition that does not extend surface, otherwise the position that minimally extend surface
             High,               // Returns all possible places that do not extend surface, otherwise the position that minimally extend surface
             Standard,           // Returns all possible solutions that do not extend surface by more than 15%, otherwise all solutions
             None                // Returns all possible solutions, mostly used as a base reference when visually comparing results of other levels
         }
 
 
-        private IList<WordPosition> FindWordPossiblePlacements(string originalWord, PlaceWordOptimizations optimization)
+        private IList<WordPosition> FindWordPossiblePlacements(string originalWord, PlaceWordOptimization optimization)
         { 
             string canonizedWord = CanonizeWord(originalWord);
 
             // If it's the first canonizedWord of the layout, chose random orientation and place it at position (0, 0)
             if (Layout.WordPositionList.Count == 0)
             {
-                WordPosition wp = new WordPosition(canonizedWord, originalWord, new PositionOrientation(0, 0, rnd.NextDouble() > 0.5));
-                return new List<WordPosition> { wp };
+                WordPosition wordPosition = new WordPosition(canonizedWord, originalWord, new PositionOrientation(0, 0, rnd.NextDouble() > 0.5));
+                return new List<WordPosition> { wordPosition };
             }
 
             // Get current layout since we'll prefer placements that minimiza layout extension to keep words grouped
-            BoundingRectangle r = Layout.GetBounds();
+            BoundingRectangle r = Layout.Bounds;
             int surface = ComputeAdjustedSurface(r.Max.Column - r.Min.Column + 1, r.Max.Row - r.Min.Row + 1);
 
             // Find first all positions where the canonizedWord can be added to current layout;
@@ -243,39 +246,39 @@ namespace Bonza.Generator
             List<WordPosition> possibleWordPositionsBelowThreshold = new List<WordPosition>();
             int minSurface = int.MaxValue;
             foreach (WordPosition wordPosition in Layout.WordPositionList)
-                foreach (WordPosition wp in TryPlace(canonizedWord, originalWord, wordPosition))
+                foreach (WordPosition placedWordPosition in TryPlace(canonizedWord, originalWord, wordPosition))
                 {
-                    BoundingRectangle newR = Layout.ExtendBounds(r, wp);
+                    BoundingRectangle newR = Layout.ExtendBounds(r, placedWordPosition);
                     if (newR.Equals(r))
                     {
-                        if (optimization == PlaceWordOptimizations.Aggressive )
-                            return new List<WordPosition> { wp };
-                        if (optimization == PlaceWordOptimizations.High)
-                            possibleWordPositionsBelowThreshold.Add(wp);
+                        if (optimization == PlaceWordOptimization.Aggressive )
+                            return new List<WordPosition> { placedWordPosition };
+                        if (optimization == PlaceWordOptimization.High)
+                            possibleWordPositionsBelowThreshold.Add(placedWordPosition);
                     }
                     int newSurface = ComputeAdjustedSurface(newR.Max.Column - newR.Min.Column + 1, newR.Max.Row - newR.Min.Row + 1);
-                    possibleWordPositions.Add(wp);
+                    possibleWordPositions.Add(placedWordPosition);
                     switch(optimization)
                     {
-                        case PlaceWordOptimizations.Aggressive:
-                        case PlaceWordOptimizations.High:
+                        case PlaceWordOptimization.Aggressive:
+                        case PlaceWordOptimization.High:
                             if (possibleWordPositions.Count > 0 && minSurface > newSurface)
                             {
                                 possibleWordPositions.RemoveAt(0);
                                 minSurface = newSurface;
                             }
                             if (possibleWordPositions.Count == 0)
-                                possibleWordPositions.Add(wp);
+                                possibleWordPositions.Add(placedWordPosition);
                             break;
 
-                        case PlaceWordOptimizations.Standard:
+                        case PlaceWordOptimization.Standard:
                             if (newSurface<surface*1.15)
-                                possibleWordPositionsBelowThreshold.Add(wp);
-                            possibleWordPositions.Add(wp);
+                                possibleWordPositionsBelowThreshold.Add(placedWordPosition);
+                            possibleWordPositions.Add(placedWordPosition);
                             break;
 
                         default:
-                            possibleWordPositions.Add(wp);
+                            possibleWordPositions.Add(placedWordPosition);
                             break;
                     }
                 }
@@ -305,7 +308,7 @@ namespace Bonza.Generator
         /// <param name="width">Bounding rectangle width</param>
         /// <param name="height">Bounding rectangle height</param>
         /// <returns>Empirically adjusted: surface x (difference width-height)</returns>
-        private int ComputeAdjustedSurface(int width, int height)
+        private static int ComputeAdjustedSurface(int width, int height)
         {
             return width * height * (width - height) * (width - height);
         }
@@ -380,11 +383,10 @@ namespace Bonza.Generator
 
 
         /// <summary>Writes a text representation of current layout in a file.</summary>
-        /// <param name="filename">Name of file to write.</param>
-        public void Print(string filename)
+        /// <param name="fileName">Name of file to write.</param>
+        public void Print(string fileName)
         {
-            using (Stream s = new FileStream(filename, FileMode.Create))
-            using (TextWriter tw = new StreamWriter(s, Encoding.UTF8))
+            using (TextWriter tw = new StreamWriter(fileName, false, Encoding.UTF8))
                 Print(tw);
         }
 
@@ -393,7 +395,7 @@ namespace Bonza.Generator
         private void Print(TextWriter tw)
         {
             // First compute actual bounds
-            BoundingRectangle r = Layout.GetBounds();
+            BoundingRectangle r = Layout.Bounds;
 
             // Then print
             for (int row = r.Min.Row; row <= r.Max.Row; row++)
@@ -402,17 +404,17 @@ namespace Bonza.Generator
                 {
                     bool found = false;
 
-                    foreach (WordPosition wp in Layout.WordPositionList)
+                    foreach (WordPosition wordPosition in Layout.WordPositionList)
                     {
-                        if (wp.IsVertical && wp.StartColumn == col && row >= wp.StartRow && row < wp.StartRow + wp.Word.Length)
+                        if (wordPosition.IsVertical && wordPosition.StartColumn == col && row >= wordPosition.StartRow && row < wordPosition.StartRow + wordPosition.Word.Length)
                         {
-                            tw.Write(wp.Word[row - wp.StartRow]);
+                            tw.Write(wordPosition.Word[row - wordPosition.StartRow]);
                             found = true;
                             break;
                         }
-                        if (!wp.IsVertical && wp.StartRow == row && col >= wp.StartColumn && col < wp.StartColumn + wp.Word.Length)
+                        if (!wordPosition.IsVertical && wordPosition.StartRow == row && col >= wordPosition.StartColumn && col < wordPosition.StartColumn + wordPosition.Word.Length)
                         {
-                            tw.Write(wp.Word[col - wp.StartColumn]);
+                            tw.Write(wordPosition.Word[col - wordPosition.StartColumn]);
                             found = true;
                             break;
                         }

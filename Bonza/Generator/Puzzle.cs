@@ -21,7 +21,7 @@ namespace Bonza.Generator
             puzzle = new ChunkLayout();
 
             // Find a starting letter on the first row
-            BoundingRectangle r = Layout.GetBounds();
+            BoundingRectangle r = Layout.Bounds;
             int loopCol;
             for (loopCol = r.Min.Column; loopCol <= r.Max.Column; loopCol++)
                 if (Layout.GetSquare(r.Min.Row, loopCol) != null)

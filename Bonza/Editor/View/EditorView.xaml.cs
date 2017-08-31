@@ -258,7 +258,7 @@ namespace Bonza.Editor.View
             if (viewModel.Layout == null)
                 return;
 
-            BoundingRectangle r = viewModel.Layout.GetBounds();
+            BoundingRectangle r = viewModel.Layout.Bounds;
             // Add some extra margin and always represent a 20x20 grid at minimum
             r = new BoundingRectangle(Math.Min(-11, r.Min.Row - 3), Math.Max(11, r.Max.Row + 4), Math.Min(-11, r.Min.Column - 3), Math.Max(11, r.Max.Column + 4));
 
@@ -633,7 +633,7 @@ namespace Bonza.Editor.View
             if (wordAndCanvasList.Count == 0) throw new ArgumentException(nameof(wordAndCanvasList));
 
             // If bounding rectangle is updated, need to redraw background grid
-            BoundingRectangle r = viewModel.Layout.GetBounds();
+            BoundingRectangle r = viewModel.Layout.Bounds;
             if (!r.Equals(gridBounding))
                 UpdateBackgroundGrid();
 
@@ -735,7 +735,7 @@ namespace Bonza.Editor.View
         {
             var matrix = MainMatrixTransform.Matrix;
 
-            var bounds = viewModel.Layout.GetBounds();
+            var bounds = viewModel.Layout.Bounds;
             // Add some extra margin and always represent a 20x20 grid at minimum
             var r = new BoundingRectangle(
                 Math.Min(-10, bounds.Min.Row - 2),

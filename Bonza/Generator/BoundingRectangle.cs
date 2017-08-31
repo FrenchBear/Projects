@@ -2,7 +2,8 @@
 // A simple rectangle with int coordinates to represent layout bounds
 //
 // 2017-08-05   PV      Extracted
-// 2017-08-06   PV      performance efactoring; Immutable; Constructor BoundingRectangle(Position min, Position max) is too slow
+// 2017-08-06   PV      Performance refactoring; Immutable; Constructor BoundingRectangle(Position min, Position max) is too slow
+// 2017-08-30   PV      getHashCode, Equals, IEquatable
 
 
 using System;

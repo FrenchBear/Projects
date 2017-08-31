@@ -63,6 +63,10 @@ namespace Bonza.Generator
         // Execute an action on every element of an enumeration
         public static void ForEach<T>(this IEnumerable<T> collection, Action<T> action)
         {
+            if (collection == null)
+                throw new ArgumentNullException(nameof(collection));
+            if (action == null)
+                throw new ArgumentNullException(nameof(action));
             foreach (var item in collection)
                 action(item);
         }

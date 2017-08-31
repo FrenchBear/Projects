@@ -261,7 +261,7 @@ namespace Bonza.Editor.ViewModel
                 StatusText = "";
             else
             {
-                string s = "Isl=" + Layout.GetWordsNotConnected() + "  ";
+                string s = "Isl=" + Layout.WordsNotConnectedCount() + "  ";
 
                 switch (status)
                 {
@@ -302,8 +302,8 @@ namespace Bonza.Editor.ViewModel
 
             // Move: Need to delete all, then add all again, otherwise if we move a word individually, it may collide with other
             // of the list that hasn't been moved by this loop yet...
-            foreach (WordPosition wp in wordAndCanvasList.Select(wac => wac.WordPosition))
-                model.RemoveWordPosition(wp);
+            foreach (WordPosition wordPosition in wordAndCanvasList.Select(wac => wac.WordPosition))
+                model.RemoveWordPosition(wordPosition);
             foreach (var item in wordAndCanvasList.Zip(topLeftList, (wac, tl) => (WordAndCanvas: wac, topLeft: tl)))
             {
                 item.WordAndCanvas.WordPosition.SetNewPositionOrientation(new PositionOrientation(item.topLeft.StartRow, item.topLeft.StartColumn, item.topLeft.IsVertical));
@@ -376,7 +376,7 @@ namespace Bonza.Editor.ViewModel
 
 
             Stopwatch sw = Stopwatch.StartNew();
-            List<WordPosition> wordPositionList = model.AddWordsList(wordsList);
+            IEnumerable<WordPosition> wordPositionList = model.AddWordsList(wordsList);
             if (wordPositionList == null)
             {
                 MessageBox.Show("L'ajout des mots a échoué.", App.AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
@@ -393,12 +393,12 @@ namespace Bonza.Editor.ViewModel
         }
 
 
-        public void AddWordsFromFile(string filename)
+        public void AddWordsFromFile(string fileName)
         {
             try
             {
                 var wordsList = new List<string>();
-                using (Stream s = new FileStream(filename, FileMode.Open))
+                using (Stream s = new FileStream(fileName, FileMode.Open))
                 using (StreamReader sr = new StreamReader(s, Encoding.UTF8))
                 {
                     while (!sr.EndOfStream)
@@ -413,10 +413,10 @@ namespace Bonza.Editor.ViewModel
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Problème avec le fichier de mots " + filename + ":\r\n" + ex.Message, App.AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                MessageBox.Show("Problème avec le fichier de mots " + fileName + ":\r\n" + ex.Message, App.AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
 
-            LayoutName = Path.GetFileNameWithoutExtension(filename) + ".layout";
+            LayoutName = Path.GetFileNameWithoutExtension(fileName) + ".layout";
         }
 
 

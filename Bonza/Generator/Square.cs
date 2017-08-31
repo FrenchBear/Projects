@@ -6,6 +6,8 @@
 // 2017-08-07   PV      Performance refactoring
 
 
+using System;
+
 namespace Bonza.Generator
 {
     public class Square
@@ -30,6 +32,8 @@ namespace Bonza.Generator
         // Copy constructor
         public Square(Square copy)
         {
+            if (copy == null)
+                throw new ArgumentNullException(nameof(copy));
             Row = copy.Row;
             Column = copy.Column;
             Letter = copy.Letter;
