@@ -39,4 +39,7 @@ p = puzzle([
 "X...3.X"])
 
 print(str(p))
+print()
+p.solve()
+print(str(p))
 

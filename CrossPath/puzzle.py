@@ -1,6 +1,8 @@
 # puzzle.py - Class to handle a crosspath puzzle and its resolution
 # Internally puzzle is handled as a list of list of characters in p
 
+import math
+
 """
 Cell values:
 1-9	Extension center 
@@ -32,7 +34,81 @@ class puzzle(object):
     def __repr__(self):
         return self.__str__()
 
+    def GetExtensionsToCell(self, rTarget, cTarget):
+        assert self.p[rTarget][cTarget]=="."
+        l = []
+        # search for horizontal extensions
+        for c in range(self.columns):
+            v = self.p[rTarget][c] 
+            if v>="1" and v<="9":
+                vnum = int(v)
+                if c<cTarget:
+                    delta = 1
+                    previousExtension="E"
+                else:
+                    delta = -1
+                    previousExtension="W"
+                c1 = c
+                while vnum>0:
+                    vnum -= 1
+                    c1 += delta
+                    if c1==cTarget:
+                        l.append((rTarget, c, 0, delta, previousExtension))
+                        break
+                    if c1>=self.columns: break
+                    if self.p[rTarget][c1]!="." and self.p[rTarget][c1]!=previousExtension: break
+        # search for vertical extensions
+        for r in range(self.rows):
+            v = self.p[r][cTarget] 
+            if v>="1" and v<="9":
+                vnum = int(v)
+                if r<rTarget:
+                    delta = 1
+                    previousExtension="S"
+                else:
+                    delta = -1
+                    previousExtension="N"
+                r1 = r
+                while vnum>0:
+                    vnum -= 1
+                    r1 += delta
+                    if r1==rTarget:
+                        l.append((r, cTarget, delta, 0, previousExtension))
+                        break
+                    if r1>=self.rows: break
+                    if self.p[r1][cTarget]!="." and self.p[r1][cTarget]!=previousExtension: break
+            
+        return l
+
+
     def solve(self):
-        for r in range(rows):
-            for c in range(columns):
-                if self.p[r][c]=="."
+        doAgain = True
+        while doAgain:
+            doAgain = False
+            for r in range(self.rows):
+                for c in range(self.columns):
+                    if self.p[r][c]==".":
+                        l = self.GetExtensionsToCell(r, c)
+                        if len(l)==1:
+                            # Apply extension l[0]
+                            print((r, c), ": ", l[0])
+                            rSource = l[0][0]
+                            cSource = l[0][1]
+                            rDelta = l[0][2]
+                            cDelta = l[0][3]
+                            extChar = l[0][4]
+                            v = int(self.p[rSource][cSource])
+                            while True:
+                                rSource += rDelta
+                                cSource += cDelta
+                                if self.p[rSource][cSource]==".":
+                                    self.p[rSource][cSource] = extChar
+                                    v -= 1
+                                if rSource==r and cSource==c:
+                                    rSource = l[0][0]
+                                    cSource = l[0][1]
+                                    self.p[rSource][cSource] = str(v)
+                                    break
+                            doAgain = True
+                            break
+                if doAgain: break
