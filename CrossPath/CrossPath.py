@@ -1,4 +1,4 @@
-# CrooPath solver
+# CrossPath solver
 # 2017-09-14    PV
 
 from puzzle import *
@@ -12,34 +12,41 @@ from puzzle import *
 .4....4
 X...3.X
 
-
 Cellule
 1-9	Centre de réserve d’extension
-0	Centre de réserve d’extension épuisé
 .	libre
-N	extension vers le haut (Nord)
-S	extension vers le bas (Sud)
-W	extension vers la gauche (West)
-E	extension vers la droite (Est)
 X	cellule bloquée
-
-Stratégie
-- Tant qu'il existe des cellules joignables par une seule extension, mettre en oeuvre cette extension
-- S'il existe des cellules extensibles d'une seule manière, mettre en oeuvre cette extension
-(Ne pas tenir compte des extensions qui pourraient poser problème)
 """
 
-p = puzzle([
+medium_10 = [
 ".6....2",
 ".....X.",
 "..1.4..",
 "...4.X.",
 "3.4....",
 ".4....4",
-"X...3.X"])
+"X...3.X"]
+
+
+master_1 = [
+"...5....XXX",
+"..6.....3..",
+"2..1.X.....",
+".2....3..3.",
+"X...5..6X.3",
+"3....2...5.",
+".XX.X.5...X",
+"...9...XX..",
+"4...3..3...",
+".X...X...1.",
+"..2X.XX...6"]
+
+
+#p = puzzle(medium_10)
+p = puzzle(master_1)
 
 print(str(p))
 print()
-p.solve()
+p.solve(False)
 print(str(p))
 
