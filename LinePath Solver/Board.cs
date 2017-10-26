@@ -42,55 +42,76 @@ namespace LinePath_Solver
 
         public void Solve0()
         {
-            SolveSE(0, Lines[0].startRow, Lines[0].startColumn, Lines[0].endRow, Lines[0].endColumn);
+            SolveLine(0, 0);
         }
 
-        private bool SolveSE(int level, int row, int column, int endRow, int endColumn)
+        private bool SolveLine(int line, int level)
+        {
+            if (line == Lines.Length)
+            {
+                // Consider it a solution if all point have a connectivity of 2 (except the end of lines)
+                if (level == Side * Side - Lines.Length)
+                {
+                    Print();
+                    return true;
+                }
+                return false;
+            }
+
+            return SolveSE(line, level, Lines[line].startRow, Lines[line].startColumn, Lines[line].endRow, Lines[line].endColumn);
+        }
+
+        private bool SolveSE(int line, int level, int row, int column, int endRow, int endColumn)
         {
             Debug.Assert(level <= Side * Side);
-            Print();
 
+            // Reached target for current line?
             if (row == endRow && column == endColumn)
-            {
-                Print();
-                return true;
-            }
+                return SolveLine(line + 1, level);
 
             // Right
-            if (column < Side - 1 && !GetHzWall(row, column) && ((row == endRow && column + 1 == endColumn) || !IsEndPoint(row, column + 1)))
-            {
-                SetHzWall(row, column);
-                bool res = SolveSE(level + 1, row, column + 1, endRow, endColumn);
-                ResetHzWall(row, column);
-                if (res) return true;
-            }
+            if (column < Side - 1 && !GetHzWall(row, column))
+                if ((row == endRow && column + 1 == endColumn) || !IsEndPoint(row, column + 1))
+                    if (Connectivity(row, column + 1) == 0)
+                    {
+                        SetHzWall(row, column);
+                        bool res = SolveSE(line, level + 1, row, column + 1, endRow, endColumn);
+                        ResetHzWall(row, column);
+                        if (res) return true;
+                    }
 
             // Left
-            if (column > 0 && !GetHzWall(row, column - 1))  // && ((row == endRow && column - 1 == endColumn) || !IsEndPoint(row, column - 1)))
-            {
-                SetHzWall(row, column - 1);
-                bool res = SolveSE(level + 1, row, column - 1, endRow, endColumn);
-                ResetHzWall(row, column - 1);
-                if (res) return true;
-            }
+            if (column > 0 && !GetHzWall(row, column - 1))
+                if ((row == endRow && column - 1 == endColumn) || !IsEndPoint(row, column - 1))
+                    if (Connectivity(row, column - 1) == 0)
+                    {
+                        SetHzWall(row, column - 1);
+                        bool res = SolveSE(line, level + 1, row, column - 1, endRow, endColumn);
+                        ResetHzWall(row, column - 1);
+                        if (res) return true;
+                    }
 
             // Up
-            if (row > 0 && !GetVtWall(row, column)) // && ((row - 1 == endRow && column == endColumn) || !IsEndPoint(row - 1, column)))
-            {
-                SetVtWall(row - 1, column);
-                bool res = SolveSE(level + 1, row - 1, column, endRow, endColumn);
-                ResetVtWall(row - 1, column);
-                if (res) return true;
-            }
+            if (row > 0 && !GetVtWall(row, column))
+                if ((row - 1 == endRow && column == endColumn) || !IsEndPoint(row - 1, column))
+                    if (Connectivity(row - 1, column) == 0)
+                    {
+                        SetVtWall(row - 1, column);
+                        bool res = SolveSE(line, level + 1, row - 1, column, endRow, endColumn);
+                        ResetVtWall(row - 1, column);
+                        if (res) return true;
+                    }
 
             // Down
-            if (row < Side - 1 && !GetVtWall(row, column))  // && ((row + 1 == endRow && column == endColumn) || !IsEndPoint(row + 1, column)))
-            {
-                SetVtWall(row, column);
-                bool res = SolveSE(level + 1, row + 1, column, endRow, endColumn);
-                ResetVtWall(row, column);
-                if (res) return true;
-            }
+            if (row < Side - 1 && !GetVtWall(row, column))
+                if ((row + 1 == endRow && column == endColumn) || !IsEndPoint(row + 1, column))
+                    if (Connectivity(row + 1, column) == 0)
+                    {
+                        SetVtWall(row, column);
+                        bool res = SolveSE(line, level + 1, row + 1, column, endRow, endColumn);
+                        ResetVtWall(row, column);
+                        if (res) return true;
+                    }
 
             return false;
         }
@@ -141,6 +162,18 @@ namespace LinePath_Solver
             VtWallBits &= ~Bit(row, column);
             Walls--;
             Debug.Assert(Walls >= 0);
+        }
+
+        // Number of walls linked to a point
+        private int Connectivity(int row, int column)
+        {
+            Debug.Assert(row >= 0 && row < Side && column >= 0 && column < Side);
+            int c = 0;
+            if (row > 0 && GetVtWall(row - 1, column)) c++;         // Top
+            if (column > 0 && GetHzWall(row, column - 1)) c++;      // Left
+            if (row < Side - 1 && GetVtWall(row, column)) c++;      // Bottom
+            if (column < Side - 1 && GetHzWall(row, column)) c++;   // Right
+            return c;
         }
 
         private bool IsEndPoint(int row, int column)
