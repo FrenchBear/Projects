@@ -53,7 +53,7 @@ namespace LinePath_Solver
                 if (level == Side * Side - Lines.Length)
                 {
                     Print();
-                    return true;
+                    return false;        // Stop at 1st solution returning true
                 }
                 return false;
             }
@@ -200,15 +200,18 @@ namespace LinePath_Solver
             {
                 for (int column = 0; column < Side; column++)
                 {
+                    Console.ForegroundColor = GetColor(row, column);
                     Write(IsEndPoint(row, column) ? "■" : "▪");
                     if (column < Side - 1)
                         Write(GetHzWall(row, column) ? "──" : "  ");
                 }
                 WriteLine();
+
                 if (row < Side - 1)
                 {
                     for (int column = 0; column < Side; column++)
                     {
+                        Console.ForegroundColor = GetColor(row, column);
                         Write(GetVtWall(row, column) ? "│" : " ");
                         if (column < Side)
                             Write("  ");
@@ -216,7 +219,64 @@ namespace LinePath_Solver
                     WriteLine();
                 }
             }
+            Console.ForegroundColor = ConsoleColor.White;
             WriteLine();
+        }
+
+        private ConsoleColor GetColor(int row, int column)
+        {
+            int lastRow = -1, lastColumn = -1;
+            for (; ; )
+            {
+                // If we have reach an end, we can return color
+                for (int i = 0; i < Lines.Length; i++)
+                {
+                    if (Lines[i].startRow == row && Lines[i].startColumn == column) return GetColor(i);
+                    if (Lines[i].endRow == row && Lines[i].endColumn == column) return GetColor(i);
+                }
+
+                // Go to next connected cell avoiding previous one
+                if (row > 0 && GetVtWall(row - 1, column) && (row - 1 != lastRow || column != lastColumn))
+                {
+                    lastRow = row;
+                    lastColumn = column;
+                    row = row - 1;
+                }
+                else if (row < Side - 1 && GetVtWall(row, column) && (row + 1 != lastRow || column != lastColumn))
+                {
+                    lastRow = row;
+                    lastColumn = column;
+                    row = row + 1;
+                }
+                else if (column > 0 && GetHzWall(row, column - 1) && (row != lastRow || column - 1 != lastColumn))
+                {
+                    lastRow = row;
+                    lastColumn = column;
+                    column = column - 1;
+                }
+                else if (column < Side - 1 && GetHzWall(row, column) && (row != lastRow || column + 1 != lastColumn))
+                {
+                    lastRow = row;
+                    lastColumn = column;
+                    column = column + 1;
+                }
+                else
+                    Debugger.Break();
+            }
+        }
+
+        private ConsoleColor GetColor(int i)
+        {
+            switch (i)
+            {
+                case 0: return ConsoleColor.Green;
+                case 1: return ConsoleColor.Red;
+                case 2: return ConsoleColor.Magenta;
+                case 3: return ConsoleColor.Cyan;
+                case 4: return ConsoleColor.Yellow;
+                case 5: return ConsoleColor.Gray;
+                default: return ConsoleColor.White;
+            }
         }
     }
 }

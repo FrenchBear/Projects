@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("LinePath Solver")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Tool to find solutions of Android LineDoku app LinePath game")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("eurofins")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("LinePath Solver")]
-[assembly: AssemblyCopyright("Copyright © eurofins 2017")]
+[assembly: AssemblyCopyright("Copyright ©2017 Pierre Violent")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
