@@ -50,12 +50,12 @@ namespace LinePath_Solver
             if (line == Lines.Length)
             {
                 // Consider it a solution if all point have a connectivity of 2 (except the end of lines)
-                if (level == Side * Side - Lines.Length)
-                {
+                //if (level == Side * Side - Lines.Length)
+                //{
                     Print();
-                    return false;        // Stop at 1st solution returning true
-                }
-                return false;
+                    return true;        // Stop at 1st solution returning true
+                //}
+                //return false;
             }
 
             return SolveSE(line, level, Lines[line].startRow, Lines[line].startColumn, Lines[line].endRow, Lines[line].endColumn);
@@ -63,7 +63,7 @@ namespace LinePath_Solver
 
         private bool SolveSE(int line, int level, int row, int column, int endRow, int endColumn)
         {
-            Debug.Assert(level <= Side * Side);
+            // Debug.Assert(level <= Side * Side);
 
             // Reached target for current line?
             if (row == endRow && column == endColumn)
@@ -120,54 +120,54 @@ namespace LinePath_Solver
 
         private bool GetHzWall(int row, int column)
         {
-            Debug.Assert(row >= 0 && row <= Side && column >= 0 && column < Side);
+            // Debug.Assert(row >= 0 && row <= Side && column >= 0 && column < Side);
             return (HzWallBits & Bit(row, column)) != 0;
         }
 
         private void SetHzWall(int row, int column)
         {
-            Debug.Assert(row >= 0 && row <= Side && column >= 0 && column < Side);
-            Debug.Assert(!GetHzWall(row, column));
+            // Debug.Assert(row >= 0 && row <= Side && column >= 0 && column < Side);
+            // Debug.Assert(!GetHzWall(row, column));
             HzWallBits |= Bit(row, column);
             Walls++;
         }
 
         private void ResetHzWall(int row, int column)
         {
-            Debug.Assert(row >= 0 && row <= Side && column >= 0 && column < Side);
-            Debug.Assert(GetHzWall(row, column));
+            // Debug.Assert(row >= 0 && row <= Side && column >= 0 && column < Side);
+            // Debug.Assert(GetHzWall(row, column));
             HzWallBits &= ~Bit(row, column);
             Walls--;
-            Debug.Assert(Walls >= 0);
+            // Debug.Assert(Walls >= 0);
         }
 
         private bool GetVtWall(int row, int column)
         {
-            Debug.Assert(row >= 0 && row < Side && column >= 0 && column <= Side);
+            // Debug.Assert(row >= 0 && row < Side && column >= 0 && column <= Side);
             return (VtWallBits & Bit(row, column)) != 0;
         }
 
         private void SetVtWall(int row, int column)
         {
-            Debug.Assert(row >= 0 && row < Side && column >= 0 && column <= Side);
-            Debug.Assert(!GetVtWall(row, column));
+            // Debug.Assert(row >= 0 && row < Side && column >= 0 && column <= Side);
+            // Debug.Assert(!GetVtWall(row, column));
             VtWallBits |= Bit(row, column);
             Walls++;
         }
 
         private void ResetVtWall(int row, int column)
         {
-            Debug.Assert(row >= 0 && row < Side && column >= 0 && column <= Side);
-            Debug.Assert(GetVtWall(row, column));
+            // Debug.Assert(row >= 0 && row < Side && column >= 0 && column <= Side);
+            // Debug.Assert(GetVtWall(row, column));
             VtWallBits &= ~Bit(row, column);
             Walls--;
-            Debug.Assert(Walls >= 0);
+            // Debug.Assert(Walls >= 0);
         }
 
         // Number of walls linked to a point
         private int Connectivity(int row, int column)
         {
-            Debug.Assert(row >= 0 && row < Side && column >= 0 && column < Side);
+            // Debug.Assert(row >= 0 && row < Side && column >= 0 && column < Side);
             int c = 0;
             if (row > 0 && GetVtWall(row - 1, column)) c++;         // Top
             if (column > 0 && GetHzWall(row, column - 1)) c++;      // Left
@@ -275,6 +275,10 @@ namespace LinePath_Solver
                 case 3: return ConsoleColor.Cyan;
                 case 4: return ConsoleColor.Yellow;
                 case 5: return ConsoleColor.Gray;
+                case 6: return ConsoleColor.DarkGreen;
+                case 7: return ConsoleColor.DarkYellow;
+                case 8: return ConsoleColor.DarkRed;
+                case 9: return ConsoleColor.DarkMagenta;
                 default: return ConsoleColor.White;
             }
         }

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("LinePath Solver")]
-[assembly: AssemblyDescription("Tool to find solutions of Android LineDoku app LinePath game")]
+[assembly: AssemblyDescription("Tool to find solutions of Android Linedoku app LinePath game")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("LinePath Solver")]
