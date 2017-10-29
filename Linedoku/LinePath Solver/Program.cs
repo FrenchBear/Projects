@@ -23,7 +23,7 @@ namespace LinePath_Solver
 
             //B.Test2();
             //B.Print();
-            B.Solve(true);
+            B.Solve(false);
 
             Console.WriteLine("Duration: " + sw.Elapsed);
 

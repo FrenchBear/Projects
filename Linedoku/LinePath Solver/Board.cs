@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Board
+// Represent a LinePath grid and associated method
+// 2017-10-27   PV
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -19,21 +23,21 @@ namespace LinePath_Solver
         private ulong VtWallBitsHi, VtWallBitsLo;
         private int Walls;
 
-        private int[,] PointLine;
+        private Cell[,] Grid;
 
         public Board(int side, (int startRow, int startColumn, int endRow, int endColumn)[] lines)
         {
             Side = side;
             Lines = lines;
 
-            PointLine = new int[Side, Side];
+            Grid = new Cell[Side, Side];
             // All points are white at the beginning
             for (int row = 0; row < Side; row++)
                 for (int column = 0; column < Side; column++)
-                    PointLine[row, column] = -1;
+                    Grid[row, column].line = -1;
             // Except start of lines that are colored
             for (int i = 0; i < Lines.Length; i++)
-                PointLine[Lines[i].startRow, Lines[i].startColumn] = i;
+                Grid[Lines[i].startRow, Lines[i].startColumn].line = (sbyte)i;
 
             // The rest is initialized at 0
         }
@@ -103,7 +107,7 @@ namespace LinePath_Solver
         /// <param name="line">Index of line to place</param>
         /// <param name="level">Nomber of strokes already used, used to check if a solution implements full connectivity</param>
         /// <returns>True if a solution has been found and we should terminate, false to indicate a dead end, unwind and continue exploration</returns>
-        private bool SolveLine(int line, int level)
+        private bool SolveLine(sbyte line, int level)
         {
             // All lines must be placed for a solution
             if (line == Lines.Length)
@@ -133,16 +137,15 @@ namespace LinePath_Solver
         /// <param name="endColumn">Target column to reach</param>
         /// <returns>true if a solution has been found, and no need to continue, false means no solution found, 
         /// unwind recursive call stack and continue</returns>
-        private bool SolveSE(int line, int level, int row, int column, int endRow, int endColumn)
+        private bool SolveSE(sbyte line, int level, int row, int column, int endRow, int endColumn)
         {
             // // Debug.Assert(level <= Side * Side);
 
-            if (level == 17) Print();
             if (IsShiftPressed()) Print();
 
             // Reached target for current line?
             if (row == endRow && column == endColumn)
-                return SolveLine(line + 1, level);
+                return SolveLine(++line, level);
 
             bool res;
 
@@ -309,34 +312,23 @@ namespace LinePath_Solver
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void SetPointLine(int row, int column, int line)
+        private void SetPointLine(int row, int column, sbyte line)
         {
-            Debug.Assert(PointLine[row, column] == -1);
-            PointLine[row, column] = line;
+            Debug.Assert(Grid[row, column].line == -1);
+            Grid[row, column].line = line;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void ResetPointLine(int row, int column, int line)
+        private void ResetPointLine(int row, int column, sbyte line)
         {
-            Debug.Assert(PointLine[row, column] == line);
-            PointLine[row, column] = -1;
+            Debug.Assert(Grid[row, column].line == line);
+            Grid[row, column].line = -1;
         }
 
 
-        //private bool IsEndPoint(int row, int column)
-        //{
-        //    //Lines.Any(l => (l.startRow == row && l.startColumn == column) || (l.endRow == row && l.endColumn == column));
-        //    for (int i = 0; i < Lines.Length; i++)
-        //    {
-        //        if (Lines[i].startRow == row && Lines[i].startColumn == column) return true;
-        //        if (Lines[i].endRow == row && Lines[i].endColumn == column) return true;
-        //    }
-        //    return false;
-        //}
-
-        private int EndPointOfLine(int row, int column)
+        private sbyte EndPointOfLine(int row, int column)
         {
-            for (int i = 0; i < Lines.Length; i++)
+            for (sbyte i = 0; i < Lines.Length; i++)
             {
                 if (Lines[i].startRow == row && Lines[i].startColumn == column) return i;
                 if (Lines[i].endRow == row && Lines[i].endColumn == column) return i;
@@ -346,13 +338,6 @@ namespace LinePath_Solver
 
         internal void Print()
         {
-            /*
-            WriteLine($"Size: {Side}");
-            WriteLine($"Lines: {Lines.Count()}");
-            foreach (var line in Lines)
-                WriteLine($"  ({line.startRow}, {line.startColumn}) -> ({line.endRow}, {line.endColumn})");
-            */
-
             for (int row = 0; row < Side; row++)
             {
                 for (int column = 0; column < Side; column++)
@@ -378,19 +363,6 @@ namespace LinePath_Solver
             }
             Console.ForegroundColor = ConsoleColor.White;
             WriteLine();
-
-            /*
-            for (int row = 0; row < Side; row++)
-                for (int column = 0; column < Side - 1; column++)
-                    if (GetHzWall(row, column))
-                        Write($"SetHzWall({row}, {column});");
-            WriteLine();
-            for (int row = 0; row < Side - 1; row++)
-                for (int column = 0; column < Side; column++)
-                    if (GetVtWall(row, column))
-                        Write($"SetVtWall({row}, {column});");
-            WriteLine();
-            */
         }
 
         private ConsoleColor GetColor(int row, int column)
@@ -412,9 +384,9 @@ namespace LinePath_Solver
             }
         }
 
-        private int GetColorIndex(int row, int column)  // int lastRow = -1, int lastColumn = -1)
+        private sbyte GetColorIndex(int row, int column)  // int lastRow = -1, int lastColumn = -1)
         {
-            int ix = PointLine[row, column];
+            sbyte ix = Grid[row, column].line;
             if (ix >= 0) return ix;
             return EndPointOfLine(row, column);
 

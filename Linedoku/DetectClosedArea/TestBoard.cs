@@ -12,66 +12,70 @@ namespace DetectClosedArea
     class TestBoard
     {
         private readonly int Side;
-        private int[,] PointLine;
+        private Cell[,] Grid;
 
         internal TestBoard(int side)
         {
             Side = side;
 
-            PointLine = new int[Side, Side];
+            Grid = new Cell[Side, Side];
             // All points are white at the beginning
             for (int row = 0; row < Side; row++)
                 for (int column = 0; column < Side; column++)
-                    PointLine[row, column] = -1;
+                    Grid[row, column].line = -1;
         }
 
         internal void Fill()
         {
-            PointLine[1, 1] = 0;
-            PointLine[2, 1] = 0;
-            PointLine[2, 0] = 0;
-            PointLine[3, 0] = 0;
-            PointLine[3, 1] = 0;
-            PointLine[3, 2] = 0;
-            PointLine[3, 3] = 0;
-            PointLine[2, 3] = 0;
-            PointLine[1, 3] = 0;
-            PointLine[0, 3] = 0;
-            PointLine[0, 4] = 0;
-            PointLine[0, 5] = 0;
-            PointLine[1, 5] = 0;
-            PointLine[2, 5] = 0;
-            PointLine[3, 5] = 0;
-            PointLine[3, 6] = 0;
-            PointLine[4, 6] = 0;
-            PointLine[5, 6] = 0;
-            PointLine[5, 5] = 0;
-            PointLine[5, 4] = 0;
-            PointLine[5, 3] = 0;
-            PointLine[6, 3] = 0;
+            Grid[1, 1].line = 0;
+            Grid[2, 1].line = 0;
+            Grid[2, 0].line = 0;
+            Grid[3, 0].line = 0;
+            Grid[3, 1].line = 0;
+            Grid[3, 2].line = 0;
+            Grid[3, 3].line = 0;
+            Grid[2, 3].line = 0;
+            Grid[1, 3].line = 0;
+            Grid[0, 3].line = 0;
+            Grid[0, 4].line = 0;
+            Grid[0, 5].line = 0;
+            Grid[1, 5].line = 0;
+            Grid[2, 5].line = 0;
+            Grid[3, 5].line = 0;
+            Grid[3, 6].line = 0;
+            Grid[4, 6].line = 0;
+            Grid[5, 6].line = 0;
+            Grid[5, 5].line = 0;
+            Grid[5, 4].line = 0;
+            Grid[5, 3].line = 0;
+            Grid[6, 3].line = 0;
         }
 
 
-        private int[,] AreaId;
-
         internal void FindAreas(int line)
         {
-            // -1 means no area identified yet
-            // 0 this is line
-            // 1, 2, ... Areas
-            AreaId = new int[Side, Side];
+            // Paint:
+            // Unpainted = No area identified yet
+            // Border = Cell of line color
+            // Interior = Cell of any other color than line color
+
+            // Start with all cells unpainted
             for (int row = 0; row < Side; row++)
                 for (int column = 0; column < Side; column++)
-                    AreaId[row, column] = -1;
+                    Grid[row, column].paint = PaintStatus.Unpainted;
+
             int areaCount = 0;
+            // Then explore all cells, and start coloring a new area each time we find an unpainted cell
             for (int row = 0; row < Side; row++)
                 for (int column = 0; column < Side; column++)
-                    if (AreaId[row, column] == -1)
+                    if (Grid[row, column].paint == PaintStatus.Unpainted)
                     {
-                        if (PointLine[row, column] == line)
-                            AreaId[row, column] = 0;
+                        if (Grid[row, column].line == line)
+                            // If cell line is current line then flag its paint as border and we're done
+                            Grid[row, column].paint = PaintStatus.Border;
                         else
                         {
+                            // Let's flow the pait until we hit borders!
                             areaCount++;
                             ColorizeArea(row, column, line, areaCount);
                         }
@@ -91,16 +95,18 @@ namespace DetectClosedArea
             {
                 (int r, int c) = paintStack.Pop();
 
-                Debug.Assert(AreaId[r, c] == -1 || AreaId[r, c] == area);
-                // If AreaId[r, c] == area, it's already been explored, no need to do it again
-                if (AreaId[r, c] == -1)
+                // Check that we can't spread paint over a border
+                Debug.Assert(Grid[r, c].paint == PaintStatus.Unpainted || Grid[r, c].paint == PaintStatus.Interior);
+
+                // If Grid[r, c] == area, it's already been explored, no need to do it again
+                if (Grid[r, c].paint == PaintStatus.Unpainted)
                 {
-                    WriteLine($"[{r}, {c}] -> {area}");
-                    AreaId[r, c] = area;
-                    if (r > 0 && AreaId[r - 1, c] == -1 && PointLine[r-1, c] != line) paintStack.Push((r - 1, c));
-                    if (c > 0 && AreaId[r, c - 1] == -1 && PointLine[r, c-1] != line) paintStack.Push((r, c - 1));
-                    if (r < Side - 1 && AreaId[r + 1, c] == -1 && PointLine[r+1, c] != line) paintStack.Push((r + 1, c));
-                    if (c < Side - 1 && AreaId[r, c + 1] == -1 && PointLine[r, c + 1] != line) paintStack.Push((r, c + 1));
+                    WriteLine($"[{r}, {c}] -> {PaintStatus.Interior}");
+                    Grid[r, c].paint = PaintStatus.Interior;
+                    if (r > 0 && Grid[r - 1, c].paint == PaintStatus.Unpainted && Grid[r-1, c].line != line) paintStack.Push((r - 1, c));
+                    if (c > 0 && Grid[r, c - 1].paint == PaintStatus.Unpainted && Grid[r, c-1].line != line) paintStack.Push((r, c - 1));
+                    if (r < Side - 1 && Grid[r + 1, c].paint == PaintStatus.Unpainted && Grid[r+1, c].line != line) paintStack.Push((r + 1, c));
+                    if (c < Side - 1 && Grid[r, c + 1].paint == PaintStatus.Unpainted && Grid[r, c + 1].line != line) paintStack.Push((r, c + 1));
                 }
             }
         }
@@ -144,7 +150,7 @@ namespace DetectClosedArea
 
         private int GetColorIndex(int row, int column)  // int lastRow = -1, int lastColumn = -1)
         {
-            return PointLine[row, column];
+            return Grid[row, column].line;
         }
     }
 }
