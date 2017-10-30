@@ -16,30 +16,33 @@ namespace LinePath_Solver
 {
     internal class Board
     {
-        private readonly int Side;
-        private (int startRow, int startColumn, int endRow, int endColumn)[] Lines;
-
-        private ulong HzWallBitsHi, HzWallBitsLo;
-        private ulong VtWallBitsHi, VtWallBitsLo;
+        private readonly byte Side;
+        private (byte startRow, byte startColumn, byte endRow, byte endColumn)[] Lines;
         private int Walls;
+        private Cell[] Grid;
 
-        private Cell[,] Grid;
+        private byte Δ(byte row, byte column) => (byte)((row << 4) + column);
 
-        public Board(int side, (int startRow, int startColumn, int endRow, int endColumn)[] lines)
+        public Board(byte side, (byte startRow, byte startColumn, byte endRow, byte endColumn)[] lines)
         {
             Side = side;
             Lines = lines;
 
-            Grid = new Cell[Side, Side];
+            Grid = new Cell[Side * 16];
             // All points are white at the beginning
-            for (int row = 0; row < Side; row++)
-                for (int column = 0; column < Side; column++)
-                    Grid[row, column].line = -1;
-            // Except start of lines that are colored
-            for (int i = 0; i < Lines.Length; i++)
-                Grid[Lines[i].startRow, Lines[i].startColumn].line = (sbyte)i;
+            for (byte row = 0; row < Side; row++)
+                for (byte column = 0; column < Side; column++)
+                    Grid[Δ(row, column)].Line = -1;
+            // Except start and end of lines that are colored
+            for (sbyte line = 0; line < Lines.Length; line++)
+            {
+                Grid[Δ(Lines[line].startRow, Lines[line].startColumn)].Line = line;
+                Grid[Δ(Lines[line].startRow, Lines[line].startColumn)].IsStartLine = true;
+                Grid[Δ(Lines[line].endRow, Lines[line].endColumn)].Line = line;
+                Grid[Δ(Lines[line].endRow, Lines[line].endColumn)].IsEndLine = true;
+            }
 
-            // The rest is initialized at 0
+            // The rest is initialized at 0 or false
         }
 
 
@@ -49,20 +52,20 @@ namespace LinePath_Solver
         public void TestWalls()
         {
             Debug.Assert(Walls == 0);
-            for (int row = 0; row < Side; row++)
-                for (int column = 0; column < Side - 1; column++)
+            for (byte row = 0; row < Side; row++)
+                for (byte column = 0; column < Side - 1; column++)
                     SetHzWall(row, column);
             Debug.Assert(Walls == Side * (Side - 1));
-            for (int row = 0; row < Side - 1; row++)
-                for (int column = 0; column < Side; column++)
+            for (byte row = 0; row < Side - 1; row++)
+                for (byte column = 0; column < Side; column++)
                     SetVtWall(row, column);
             Debug.Assert(Walls == 2 * Side * (Side - 1));
-            for (int row = 0; row < Side; row++)
-                for (int column = 0; column < Side - 1; column++)
+            for (byte row = 0; row < Side; row++)
+                for (byte column = 0; column < Side - 1; column++)
                     ResetHzWall(row, column);
             Debug.Assert(Walls == Side * (Side - 1));
-            for (int row = 0; row < Side - 1; row++)
-                for (int column = 0; column < Side; column++)
+            for (byte row = 0; row < Side - 1; row++)
+                for (byte column = 0; column < Side; column++)
                     ResetVtWall(row, column);
             Debug.Assert(Walls == 0);
 
@@ -109,6 +112,8 @@ namespace LinePath_Solver
         /// <returns>True if a solution has been found and we should terminate, false to indicate a dead end, unwind and continue exploration</returns>
         private bool SolveLine(sbyte line, int level)
         {
+            if (IsShiftPressed()) Print();
+
             // All lines must be placed for a solution
             if (line == Lines.Length)
             {
@@ -137,11 +142,9 @@ namespace LinePath_Solver
         /// <param name="endColumn">Target column to reach</param>
         /// <returns>true if a solution has been found, and no need to continue, false means no solution found, 
         /// unwind recursive call stack and continue</returns>
-        private bool SolveSE(sbyte line, int level, int row, int column, int endRow, int endColumn)
+        private bool SolveSE(sbyte line, int level, byte row, byte column, int endRow, int endColumn)
         {
             // // Debug.Assert(level <= Side * Side);
-
-            if (IsShiftPressed()) Print();
 
             // Reached target for current line?
             if (row == endRow && column == endColumn)
@@ -151,196 +154,178 @@ namespace LinePath_Solver
 
             // Right
             if (column < Side - 1 && !GetHzWall(row, column))
-                if ((row == endRow && column + 1 == endColumn) || EndPointOfLine(row, column + 1) < 0)
-                    if (Connectivity(row, column + 1) == 0)
+            {
+                byte cp1 = (byte)(column + 1);
+                if ((row == endRow && cp1 == endColumn) || EndPointOfLine(row, cp1) < 0)
+                    if (IsUnconnected(row, cp1))
                     {
                         SetHzWall(row, column);
-                        SetPointLine(row, column + 1, line);
-                        res = SolveSE(line, level + 1, row, column + 1, endRow, endColumn);
+                        SetPointLine(row, cp1, line);
+                        res = SolveSE(line, level + 1, row, cp1, endRow, endColumn);
                         ResetHzWall(row, column);
-                        ResetPointLine(row, column + 1, line);
+                        ResetPointLine(row, cp1);
                         if (res) return true;
                     }
+            }
 
             // Left
-            if (column > 0 && !GetHzWall(row, column - 1))
-                if ((row == endRow && column - 1 == endColumn) || EndPointOfLine(row, column - 1) < 0)
-                    if (Connectivity(row, column - 1) == 0)
+            byte cm1 = (byte)(column - 1);
+            if (column > 0 && !GetHzWall(row, cm1))
+                if ((row == endRow && cm1 == endColumn) || EndPointOfLine(row, cm1) < 0)
+                    if (IsUnconnected(row, cm1))
                     {
-                        SetHzWall(row, column - 1);
-                        SetPointLine(row, column - 1, line);
-                        res = SolveSE(line, level + 1, row, column - 1, endRow, endColumn);
-                        ResetPointLine(row, column - 1, line);
-                        ResetHzWall(row, column - 1);
+                        SetHzWall(row, cm1);
+                        SetPointLine(row, cm1, line);
+                        res = SolveSE(line, level + 1, row, cm1, endRow, endColumn);
+                        ResetPointLine(row, cm1);
+                        ResetHzWall(row, cm1);
                         if (res) return true;
                     }
 
             // Up
-            if (row > 0 && !GetVtWall(row, column))
-                if ((row - 1 == endRow && column == endColumn) || EndPointOfLine(row - 1, column) < 0)
-                    if (Connectivity(row - 1, column) == 0)
+            byte rm1 = (byte)(row - 1);
+            if (row > 0 && !GetVtWall(rm1, column))
+                if ((rm1 == endRow && column == endColumn) || EndPointOfLine(rm1, column) < 0)
+                    if (IsUnconnected(rm1, column))
                     {
-                        SetVtWall(row - 1, column);
-                        SetPointLine(row - 1, column, line);
-                        res = SolveSE(line, level + 1, row - 1, column, endRow, endColumn);
-                        ResetVtWall(row - 1, column);
-                        ResetPointLine(row - 1, column, line);
+                        SetVtWall(rm1, column);
+                        SetPointLine(rm1, column, line);
+                        res = SolveSE(line, level + 1, rm1, column, endRow, endColumn);
+                        ResetVtWall(rm1, column);
+                        ResetPointLine(rm1, column);
                         if (res) return true;
                     }
 
             // Down
             if (row < Side - 1 && !GetVtWall(row, column))
-                if ((row + 1 == endRow && column == endColumn) || EndPointOfLine(row + 1, column) < 0)
-                    if (Connectivity(row + 1, column) == 0)
+            {
+                byte rp1 = (byte)(row + 1);
+                if ((rp1 == endRow && column == endColumn) || EndPointOfLine(rp1, column) < 0)
+                    if (IsUnconnected(rp1, column))
                     {
                         SetVtWall(row, column);
-                        SetPointLine(row + 1, column, line);
-                        res = SolveSE(line, level + 1, row + 1, column, endRow, endColumn);
+                        SetPointLine(rp1, column, line);
+                        res = SolveSE(line, level + 1, rp1, column, endRow, endColumn);
                         ResetVtWall(row, column);
-                        ResetPointLine(row + 1, column, line);
+                        ResetPointLine(rp1, column);
                         if (res) return true;
                     }
+            }
 
             return false;
         }
 
 
-        /// <summary>
-        /// Returns bit index of a cell from its coordinates = 2^(Side*row+column)
-        /// </summary>
-        /// <param name="row"></param>
-        /// <param name="column"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private (bool isHigh, ulong mask) WallMask(int row, int column)
-        {
-            int bit = Side * row + column;
-            // Debug.Assert(bit >= 0 && bit < 128);
-            if (bit < 64)
-                return (false, 1ul << bit);
-            else
-                return (true, 1ul << (bit - 64));
-        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private bool GetHzWall(int row, int column)
+        private bool GetHzWall(byte row, byte column)
         {
             // Debug.Assert(row >= 0 && row <= Side && column >= 0 && column < Side);
-            (bool isHigh, ulong mask) = WallMask(row, column);
-            if (isHigh)
-                return (HzWallBitsHi & mask) != 0;
-            else
-                return (HzWallBitsLo & mask) != 0;
+            return Grid[Δ(row, column)].HzWall;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void SetHzWall(int row, int column)
+        private void SetHzWall(byte row, byte column)
         {
             // Debug.Assert(row >= 0 && row <= Side && column >= 0 && column < Side);
             // Debug.Assert(!GetHzWall(row, column));
-            (bool isHigh, ulong mask) = WallMask(row, column);
-            if (isHigh)
-                HzWallBitsHi |= mask;
-            else
-                HzWallBitsLo |= mask;
+            Grid[Δ(row, column)].HzWall = true;
             Walls++;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void ResetHzWall(int row, int column)
+        private void ResetHzWall(byte row, byte column)
         {
             // Debug.Assert(row >= 0 && row <= Side && column >= 0 && column < Side);
             // Debug.Assert(GetHzWall(row, column));
-            (bool isHigh, ulong mask) = WallMask(row, column);
-            if (isHigh)
-                HzWallBitsHi &= ~mask;
-            else
-                HzWallBitsLo &= ~mask;
+            Grid[Δ(row, column)].HzWall = false;
             Walls--;
             // Debug.Assert(Walls >= 0);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private bool GetVtWall(int row, int column)
+        private bool GetVtWall(byte row, byte column)
         {
             // Debug.Assert(row >= 0 && row < Side && column >= 0 && column <= Side);
-            (bool isHigh, ulong mask) = WallMask(row, column);
-            if (isHigh)
-                return (VtWallBitsHi & mask) != 0;
-            else
-                return (VtWallBitsLo & mask) != 0;
+            return Grid[Δ(row, column)].VtWall;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void SetVtWall(int row, int column)
+        private void SetVtWall(byte row, byte column)
         {
             // Debug.Assert(row >= 0 && row < Side && column >= 0 && column <= Side);
             // Debug.Assert(!GetVtWall(row, column));
-            (bool isHigh, ulong mask) = WallMask(row, column);
-            if (isHigh)
-                VtWallBitsHi |= mask;
-            else
-                VtWallBitsLo |= mask;
+            Grid[Δ(row, column)].VtWall = true;
             Walls++;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void ResetVtWall(int row, int column)
+        private void ResetVtWall(byte row, byte column)
         {
             // Debug.Assert(row >= 0 && row < Side && column >= 0 && column <= Side);
             // Debug.Assert(GetVtWall(row, column));
-            (bool isHigh, ulong mask) = WallMask(row, column);
-            if (isHigh)
-                VtWallBitsHi &= ~mask;
-            else
-                VtWallBitsLo &= ~mask;
+            Grid[Δ(row, column)].VtWall = false;
             Walls--;
             // Debug.Assert(Walls >= 0);
         }
 
         // Number of walls linked to a point
-        private int Connectivity(int row, int column)
+        private bool IsUnconnected(byte row, byte column)
         {
             // Debug.Assert(row >= 0 && row < Side && column >= 0 && column < Side);
-            int c = 0;
-            if (row > 0 && GetVtWall(row - 1, column)) c++;         // Top
-            if (column > 0 && GetHzWall(row, column - 1)) c++;      // Left
-            if (row < Side - 1 && GetVtWall(row, column)) c++;      // Bottom
-            if (column < Side - 1 && GetHzWall(row, column)) c++;   // Right
-            return c;
+            if (row > 0 && GetVtWall((byte)(row - 1), column)) return false;         // Top
+            if (column > 0 && GetHzWall(row, (byte)(column - 1))) return false;      // Left
+            if (row < Side - 1 && GetVtWall(row, column)) return false;      // Bottom
+            if (column < Side - 1 && GetHzWall(row, column)) return false;   // Right
+            return true;
         }
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void SetPointLine(int row, int column, sbyte line)
+        private void SetPointLine(byte row, byte column, sbyte line)
         {
-            Debug.Assert(Grid[row, column].line == -1);
-            Grid[row, column].line = line;
+            //if (!Grid[Δ(row, column].IsEndLine)
+            Grid[Δ(row, column)].Line = line;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void ResetPointLine(int row, int column, sbyte line)
+        private void ResetPointLine(byte row, byte column)
         {
-            Debug.Assert(Grid[row, column].line == line);
-            Grid[row, column].line = -1;
+            if (!Grid[Δ(row, column)].IsEndLine)
+                Grid[Δ(row, column)].Line = -1;
         }
 
 
-        private sbyte EndPointOfLine(int row, int column)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private sbyte EndPointOfLine(byte row, byte column)
         {
-            for (sbyte i = 0; i < Lines.Length; i++)
-            {
-                if (Lines[i].startRow == row && Lines[i].startColumn == column) return i;
-                if (Lines[i].endRow == row && Lines[i].endColumn == column) return i;
-            }
-            return -1;
+            Cell c = Grid[Δ(row, column)];
+            return (c.IsStartLine || c.IsEndLine) ? c.Line : (sbyte)-1;
         }
+        //{
+        //    Cell c = Grid[Δ(row, column];
+        //    if (c.IsStartLine || c.IsEndLine) return c.line;
+        //for (sbyte i = 0; i < Lines.Length; i++)
+        //{
+        //    if (Lines[i].startRow == row && Lines[i].startColumn == column)
+        //    {
+        //        Debug.Assert(c.IsStartLine && c.line == i);
+        //        return i;
+        //    }
+        //    if (Lines[i].endRow == row && Lines[i].endColumn == column)
+        //    {
+        //        Debug.Assert(c.IsEndLine && c.line == i);
+        //        return i;
+        //    }
+        //}
+        //    return -1;
+        //}
 
         internal void Print()
         {
-            for (int row = 0; row < Side; row++)
+            for (byte row = 0; row < Side; row++)
             {
-                for (int column = 0; column < Side; column++)
+                for (byte column = 0; column < Side; column++)
                 {
                     Console.ForegroundColor = GetColor(row, column);
                     Write(EndPointOfLine(row, column) >= 0 ? "■" : "▪");
@@ -351,7 +336,7 @@ namespace LinePath_Solver
 
                 if (row < Side - 1)
                 {
-                    for (int column = 0; column < Side; column++)
+                    for (byte column = 0; column < Side; column++)
                     {
                         Console.ForegroundColor = GetColor(row, column);
                         Write(GetVtWall(row, column) ? "│" : " ");
@@ -365,7 +350,7 @@ namespace LinePath_Solver
             WriteLine();
         }
 
-        private ConsoleColor GetColor(int row, int column)
+        private ConsoleColor GetColor(byte row, byte column)
         {
             int i = GetColorIndex(row, column);
             switch (i)
@@ -384,48 +369,13 @@ namespace LinePath_Solver
             }
         }
 
-        private sbyte GetColorIndex(int row, int column)  // int lastRow = -1, int lastColumn = -1)
-        {
-            sbyte ix = Grid[row, column].line;
-            if (ix >= 0) return ix;
-            return EndPointOfLine(row, column);
-
-            //for (; ; )
-            //{
-            //    // If we have reach an end, we can return color
-            //    for (int i = 0; i < Lines.Length; i++)
-            //    {
-            //        if (Lines[i].startRow == row && Lines[i].startColumn == column) return i;
-            //        if (Lines[i].endRow == row && Lines[i].endColumn == column) return i;
-            //    }
-
-            //    if (Connectivity(row, column) == 0)
-            //        return -1;
-
-            //    // Go to next connected cell avoiding previous one
-            //    if (row > 0 && GetVtWall(row - 1, column) && (row - 1 != lastRow || column != lastColumn))
-            //    {
-            //        int c = GetColorIndex(row - 1, column, row, column);
-            //        if (c >= 0) return c;
-            //    }
-            //    if (row < Side - 1 && GetVtWall(row, column) && (row + 1 != lastRow || column != lastColumn))
-            //    {
-            //        int c = GetColorIndex(row + 1, column, row, column);
-            //        if (c >= 0) return c;
-            //    }
-            //    if (column > 0 && GetHzWall(row, column - 1) && (row != lastRow || column - 1 != lastColumn))
-            //    {
-            //        int c = GetColorIndex(row, column - 1, row, column);
-            //        if (c >= 0) return c;
-            //    }
-            //    if (column < Side - 1 && GetHzWall(row, column) && (row != lastRow || column + 1 != lastColumn))
-            //    {
-            //        int c = GetColorIndex(row, column + 1, row, column);
-            //        if (c >= 0) return c;
-            //    }
-            //    return -1;
-            //}
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private sbyte GetColorIndex(byte row, byte column) => Grid[Δ(row, column)].Line;
+        //{
+        //    sbyte ix = Grid[Δ(row, column].line;
+        //    if (ix >= 0) return ix;
+        //    return EndPointOfLine(row, column);
+        //}
 
 
         internal bool IsShiftPressed()

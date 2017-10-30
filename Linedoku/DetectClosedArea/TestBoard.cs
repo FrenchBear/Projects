@@ -54,10 +54,6 @@ namespace DetectClosedArea
 
         internal void FindAreas(int line)
         {
-            // Paint:
-            // Unpainted = No area identified yet
-            // Border = Cell of line color
-            // Interior = Cell of any other color than line color
 
             // Start with all cells unpainted
             for (int row = 0; row < Side; row++)

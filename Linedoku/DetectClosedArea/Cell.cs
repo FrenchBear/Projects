@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace DetectClosedArea
 {
+    // Paint:
+    // Unpainted = No area identified yet
+    // Border = Cell of line color
+    // Interior = Cell of any other color than line color
     enum PaintStatus : byte
     {
         Unpainted, Interior, Border

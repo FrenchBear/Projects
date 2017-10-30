@@ -20,12 +20,15 @@ namespace LinePath_Solver
         Unpainted, Interior, Border
     }
 
-    [StructLayout(LayoutKind.Explicit)]
+    //[StructLayout(LayoutKind.Explicit)]
     struct Cell
     {
-        [FieldOffset(0)] public bool HzWall;
-        [FieldOffset(1)] public bool VtWall;
-        [FieldOffset(2)] public sbyte line;
-        [FieldOffset(3)] public PaintStatus paint;
+        //[FieldOffset(0)]
+        public bool HzWall;
+        public bool VtWall;
+        public bool IsStartLine;
+        public bool IsEndLine;
+        public sbyte Line;
+        //public PaintStatus Paint;
     }
 }
