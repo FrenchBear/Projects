@@ -17,11 +17,11 @@ using static System.Console;
 
 namespace LinePath_Solver
 {
-    internal partial class Board
+    internal partial class Program
     {
         // Checks if current layout is compatible with a solution by checking closed areas surrounded by line (or grid borders).
         // Returns false if this grid cannot be solved because of no start/end point in a closed area or not both start and end point of same color
-        internal bool CheckClosedAreas(sbyte line)
+        internal static bool CheckClosedAreas(sbyte line)
         {
             // Start with all cells unpainted
             for (byte row = 0; row < Side; row++)
@@ -43,14 +43,14 @@ namespace LinePath_Solver
         }
 
 
-        private byte[] rowStack = new byte[121], columnStack = new byte[121];
-        private byte z;
+        private static byte[] rowStack = new byte[121], columnStack = new byte[121];
+        private static byte z;
 
         // Paints area staring at (row, column) and all adjacent unpainted points recursively, only stopping at cells belonging to line
         // Flags all painted cells with paint=Interior
         // Returns false if this area contains no start or end point, or if there is an odd number of start/end point for a given line
         // which means the puzzle won't have a solution, no need to further explore
-        private bool ColorizeArea(byte row, byte column, sbyte line)
+        private static bool ColorizeArea(byte row, byte column, sbyte line)
         {
             rowStack[0] = row;
             columnStack[0] = column;
