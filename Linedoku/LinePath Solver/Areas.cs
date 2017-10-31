@@ -42,20 +42,26 @@ namespace LinePath_Solver
             return true;
         }
 
+
+        private byte[] rowStack = new byte[121], columnStack = new byte[121];
+        private byte z;
+
         // Paints area staring at (row, column) and all adjacent unpainted points recursively, only stopping at cells belonging to line
         // Flags all painted cells with paint=Interior
         // Returns false if this area contains no start or end point, or if there is an odd number of start/end point for a given line
         // which means the puzzle won't have a solution, no need to further explore
         private bool ColorizeArea(byte row, byte column, sbyte line)
         {
-            Stack<(byte row, byte column)> paintStack = new Stack<(byte row, byte column)>();
-            paintStack.Push((row, column));
+            rowStack[0] = row;
+            columnStack[0] = column;
+            z = 1;
 
             int flagsStartEnd = 0;
             bool containsStartOrEnd = false;
-            while (paintStack.Count > 0)
+            while (z > 0)
             {
-                (byte r, byte c) = paintStack.Pop();
+                byte r = rowStack[--z];
+                byte c = columnStack[z];
                 byte δ = Δ(r, c);
 
                 // Check that we can't spread paint over a border
@@ -74,10 +80,10 @@ namespace LinePath_Solver
                     byte cm1 = (byte)(c - 1);
                     byte rp1 = (byte)(r + 1);
                     byte cp1 = (byte)(c + 1);
-                    if (r > 0 && Grid[Δ(rm1, c)].Paint == PaintStatus.Unpainted && Grid[Δ(rm1, c)].Line != line) paintStack.Push((rm1, c));
-                    if (c > 0 && Grid[Δ(r, cm1)].Paint == PaintStatus.Unpainted && Grid[Δ(r, cm1)].Line != line) paintStack.Push((r, cm1));
-                    if (r < Side - 1 && Grid[Δ(rp1, c)].Paint == PaintStatus.Unpainted && Grid[Δ(rp1, c)].Line != line) paintStack.Push((rp1, c));
-                    if (c < Side - 1 && Grid[Δ(r, cp1)].Paint == PaintStatus.Unpainted && Grid[Δ(r, cp1)].Line != line) paintStack.Push((r, cp1));
+                    if (r > 0 && Grid[Δ(rm1, c)].Paint == PaintStatus.Unpainted && Grid[Δ(rm1, c)].Line != line) { rowStack[z] = rm1; columnStack[z++] = c; }
+                    if (c > 0 && Grid[Δ(r, cm1)].Paint == PaintStatus.Unpainted && Grid[Δ(r, cm1)].Line != line) { rowStack[z] = r; columnStack[z++] = cm1; }
+                    if (r < Side - 1 && Grid[Δ(rp1, c)].Paint == PaintStatus.Unpainted && Grid[Δ(rp1, c)].Line != line) { rowStack[z] = rp1; columnStack[z++] = c; }
+                    if (c < Side - 1 && Grid[Δ(r, cp1)].Paint == PaintStatus.Unpainted && Grid[Δ(r, cp1)].Line != line) { rowStack[z] = r; columnStack[z++] = cp1; }
                 }
             }
 

@@ -107,6 +107,7 @@ namespace LinePath_Solver
         private bool FirstSolutionOnly;             // If true, stops after 1st solution
 
         private int Placements;
+        private bool AreasChecked;
 
         /// <summary>
         /// Solver starting placement of lines from a given index and next ones (recursively) until
@@ -120,7 +121,10 @@ namespace LinePath_Solver
             if ((++Placements & 0xffff) == 0)
             {
                 if ((Placements >> 16) == 100)
+                {
                     Write("\n");
+                    Placements = 0;
+                }
                 else
                     Write(".");
             }
@@ -140,7 +144,8 @@ namespace LinePath_Solver
             }
 
             // Check if placed line closed areas are OK
-            if (line > 0 && !CheckClosedAreas((sbyte)(line - 1))) return false;
+            //if (line > 0 && !CheckClosedAreas((sbyte)(line - 1))) return false;
+            AreasChecked = false;
 
             // Place next line
             return SolveSE(line, level, Lines[line].startRow, Lines[line].startColumn, Lines[line].endRow, Lines[line].endColumn);
@@ -167,7 +172,15 @@ namespace LinePath_Solver
                 return SolveLine(++line, level);
 
             if (row == 0 || row == Sidem1 || column == 0 || column == Sidem1)
-                if (!CheckClosedAreas(line)) return false;
+            {
+                if (!AreasChecked)
+                {
+                    if (!CheckClosedAreas(line)) return false;
+                    AreasChecked = true;
+                }
+            }
+            else
+                AreasChecked = false;
 
 
             bool res;
