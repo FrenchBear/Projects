@@ -29,6 +29,6 @@ namespace LinePath_Solver
         public bool IsStartLine;
         public bool IsEndLine;
         public sbyte Line;
-        //public PaintStatus Paint;
+        public PaintStatus Paint;
     }
 }

@@ -14,11 +14,12 @@ using static System.Console;
 
 namespace LinePath_Solver
 {
-    internal class Board
+    internal partial class Board
     {
-        private readonly byte Side;
+        private readonly byte Side, Sidem1;
         private (byte startRow, byte startColumn, byte endRow, byte endColumn)[] Lines;
-        private int Walls;
+        private byte Walls;
+        private byte FinalLevel;
         private Cell[] Grid;
 
         private byte Δ(byte row, byte column) => (byte)((row << 4) + column);
@@ -26,7 +27,9 @@ namespace LinePath_Solver
         public Board(byte side, (byte startRow, byte startColumn, byte endRow, byte endColumn)[] lines)
         {
             Side = side;
+            Sidem1 = (byte)(Side - 1);
             Lines = lines;
+            FinalLevel = (byte)(Side * Side - Lines.Length);        // Number of walls to draw
 
             Grid = new Cell[Side * 16];
             // All points are white at the beginning
@@ -53,18 +56,18 @@ namespace LinePath_Solver
         {
             Debug.Assert(Walls == 0);
             for (byte row = 0; row < Side; row++)
-                for (byte column = 0; column < Side - 1; column++)
+                for (byte column = 0; column < Sidem1; column++)
                     SetHzWall(row, column);
-            Debug.Assert(Walls == Side * (Side - 1));
-            for (byte row = 0; row < Side - 1; row++)
+            Debug.Assert(Walls == Side * (Sidem1));
+            for (byte row = 0; row < Sidem1; row++)
                 for (byte column = 0; column < Side; column++)
                     SetVtWall(row, column);
-            Debug.Assert(Walls == 2 * Side * (Side - 1));
+            Debug.Assert(Walls == 2 * Side * (Sidem1));
             for (byte row = 0; row < Side; row++)
-                for (byte column = 0; column < Side - 1; column++)
+                for (byte column = 0; column < Sidem1; column++)
                     ResetHzWall(row, column);
-            Debug.Assert(Walls == Side * (Side - 1));
-            for (byte row = 0; row < Side - 1; row++)
+            Debug.Assert(Walls == Side * (Sidem1));
+            for (byte row = 0; row < Sidem1; row++)
                 for (byte column = 0; column < Side; column++)
                     ResetVtWall(row, column);
             Debug.Assert(Walls == 0);
@@ -103,15 +106,24 @@ namespace LinePath_Solver
         private bool FullConnectivity = true;       // If true, all cells must be connected
         private bool FirstSolutionOnly;             // If true, stops after 1st solution
 
+        private int Placements;
+
         /// <summary>
         /// Solver starting placement of lines from a given index and next ones (recursively) until
         /// a solution is found
         /// </summary>
         /// <param name="line">Index of line to place</param>
-        /// <param name="level">Nomber of strokes already used, used to check if a solution implements full connectivity</param>
+        /// <param name="level">Number of strokes already used, used to check if a solution implements full connectivity</param>
         /// <returns>True if a solution has been found and we should terminate, false to indicate a dead end, unwind and continue exploration</returns>
-        private bool SolveLine(sbyte line, int level)
+        private bool SolveLine(sbyte line, byte level)
         {
+            if ((++Placements & 0xffff) == 0)
+            {
+                if ((Placements >> 16) == 100)
+                    Write("\n");
+                else
+                    Write(".");
+            }
             if (IsShiftPressed()) Print();
 
             // All lines must be placed for a solution
@@ -119,7 +131,7 @@ namespace LinePath_Solver
             {
                 // Consider it a solution if all points have a connectivity of 2 (except the end of lines)
                 // Unless FullConnectivity is false, in which case all lines placed is just enough
-                if (!FullConnectivity || level == Side * Side - Lines.Length)
+                if (!FullConnectivity || level == FinalLevel)
                 {
                     Print();
                     return FirstSolutionOnly;        // Stop at 1st solution returning true
@@ -127,8 +139,12 @@ namespace LinePath_Solver
                 return false;
             }
 
+            // Check if placed line closed areas are OK
+            if (line > 0 && !CheckClosedAreas((sbyte)(line - 1))) return false;
+
             // Place next line
             return SolveSE(line, level, Lines[line].startRow, Lines[line].startColumn, Lines[line].endRow, Lines[line].endColumn);
+
         }
 
         /// <summary>
@@ -142,7 +158,7 @@ namespace LinePath_Solver
         /// <param name="endColumn">Target column to reach</param>
         /// <returns>true if a solution has been found, and no need to continue, false means no solution found, 
         /// unwind recursive call stack and continue</returns>
-        private bool SolveSE(sbyte line, int level, byte row, byte column, int endRow, int endColumn)
+        private bool SolveSE(sbyte line, byte level, byte row, byte column, int endRow, int endColumn)
         {
             // // Debug.Assert(level <= Side * Side);
 
@@ -150,10 +166,14 @@ namespace LinePath_Solver
             if (row == endRow && column == endColumn)
                 return SolveLine(++line, level);
 
+            if (row == 0 || row == Sidem1 || column == 0 || column == Sidem1)
+                if (!CheckClosedAreas(line)) return false;
+
+
             bool res;
 
             // Right
-            if (column < Side - 1 && !GetHzWall(row, column))
+            if (column < Sidem1 && !GetHzWall(row, column))
             {
                 byte cp1 = (byte)(column + 1);
                 if ((row == endRow && cp1 == endColumn) || EndPointOfLine(row, cp1) < 0)
@@ -161,7 +181,7 @@ namespace LinePath_Solver
                     {
                         SetHzWall(row, column);
                         SetPointLine(row, cp1, line);
-                        res = SolveSE(line, level + 1, row, cp1, endRow, endColumn);
+                        res = SolveSE(line, (byte)(level + 1), row, cp1, endRow, endColumn);
                         ResetHzWall(row, column);
                         ResetPointLine(row, cp1);
                         if (res) return true;
@@ -176,7 +196,7 @@ namespace LinePath_Solver
                     {
                         SetHzWall(row, cm1);
                         SetPointLine(row, cm1, line);
-                        res = SolveSE(line, level + 1, row, cm1, endRow, endColumn);
+                        res = SolveSE(line, (byte)(level + 1), row, cm1, endRow, endColumn);
                         ResetPointLine(row, cm1);
                         ResetHzWall(row, cm1);
                         if (res) return true;
@@ -190,14 +210,14 @@ namespace LinePath_Solver
                     {
                         SetVtWall(rm1, column);
                         SetPointLine(rm1, column, line);
-                        res = SolveSE(line, level + 1, rm1, column, endRow, endColumn);
+                        res = SolveSE(line, (byte)(level + 1), rm1, column, endRow, endColumn);
                         ResetVtWall(rm1, column);
                         ResetPointLine(rm1, column);
                         if (res) return true;
                     }
 
             // Down
-            if (row < Side - 1 && !GetVtWall(row, column))
+            if (row < Sidem1 && !GetVtWall(row, column))
             {
                 byte rp1 = (byte)(row + 1);
                 if ((rp1 == endRow && column == endColumn) || EndPointOfLine(rp1, column) < 0)
@@ -205,7 +225,7 @@ namespace LinePath_Solver
                     {
                         SetVtWall(row, column);
                         SetPointLine(rp1, column, line);
-                        res = SolveSE(line, level + 1, rp1, column, endRow, endColumn);
+                        res = SolveSE(line, (byte)(level + 1), rp1, column, endRow, endColumn);
                         ResetVtWall(row, column);
                         ResetPointLine(rp1, column);
                         if (res) return true;
@@ -275,8 +295,8 @@ namespace LinePath_Solver
             // Debug.Assert(row >= 0 && row < Side && column >= 0 && column < Side);
             if (row > 0 && GetVtWall((byte)(row - 1), column)) return false;         // Top
             if (column > 0 && GetHzWall(row, (byte)(column - 1))) return false;      // Left
-            if (row < Side - 1 && GetVtWall(row, column)) return false;      // Bottom
-            if (column < Side - 1 && GetHzWall(row, column)) return false;   // Right
+            if (row < Sidem1 && GetVtWall(row, column)) return false;      // Bottom
+            if (column < Sidem1 && GetHzWall(row, column)) return false;   // Right
             return true;
         }
 
@@ -323,18 +343,19 @@ namespace LinePath_Solver
 
         internal void Print()
         {
+            WriteLine();
             for (byte row = 0; row < Side; row++)
             {
                 for (byte column = 0; column < Side; column++)
                 {
                     Console.ForegroundColor = GetColor(row, column);
                     Write(EndPointOfLine(row, column) >= 0 ? "■" : "▪");
-                    if (column < Side - 1)
+                    if (column < Sidem1)
                         Write(GetHzWall(row, column) ? "──" : "  ");
                 }
                 WriteLine();
 
-                if (row < Side - 1)
+                if (row < Sidem1)
                 {
                     for (byte column = 0; column < Side; column++)
                     {
