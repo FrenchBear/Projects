@@ -17,32 +17,44 @@ namespace LinePath_Solver
     partial class Program
     {
         private static byte Side, Sidem1;
-        private static (byte startRow, byte startColumn, byte endRow, byte endColumn)[] Lines;
-        private static byte Walls;
-        private static byte FinalLevel;
+        private static Line[] Lines;
+        private static byte FinalWallsCount;
         private static Cell[] Grid;
+        private static long SolveSECalls;
 
         private static byte Δ(byte row, byte column) => (byte)((row << 4) + column);
 
-        static void Board(byte side, (byte startRow, byte startColumn, byte endRow, byte endColumn)[] lines)
+        static void Board(byte side, Line[] lines)
         {
             Side = side;
             Sidem1 = (byte)(Side - 1);
             Lines = lines;
-            FinalLevel = (byte)(Side * Side - Lines.Length);        // Number of walls to draw
+            FinalWallsCount = (byte)(Side * Side - Lines.Length);        // Number of walls to draw
 
             Grid = new Cell[Side * 16];
             // All points are white at the beginning
             for (byte row = 0; row < Side; row++)
                 for (byte column = 0; column < Side; column++)
+                {
                     Grid[Δ(row, column)].Line = -1;
+                    //Grid[Δ(row, column)].EndPointOfLine = -1;
+                }
             // Except start and end of lines that are colored
-            for (sbyte line = 0; line < Lines.Length; line++)
+            for (sbyte line = (sbyte)Lines.Length; --line >=0 ; )
             {
-                Grid[Δ(Lines[line].startRow, Lines[line].startColumn)].Line = line;
-                Grid[Δ(Lines[line].startRow, Lines[line].startColumn)].IsStartLine = true;
-                Grid[Δ(Lines[line].endRow, Lines[line].endColumn)].Line = line;
-                Grid[Δ(Lines[line].endRow, Lines[line].endColumn)].IsEndLine = true;
+                byte δStart = Δ(Lines[line].startRow, Lines[line].startColumn);
+                byte δEnd = Δ(Lines[line].endRow, Lines[line].endColumn);
+                Grid[δStart].Line = line;
+                Grid[δStart].IsStartLine = true;
+                //Grid[δStart].EndPointOfLine = line;
+                Grid[δEnd].Line = line;
+                Grid[δEnd].IsEndLine = true;
+                //Grid[δEnd].EndPointOfLine = line;
+                Lines[line].MinWalls = (byte)(Math.Abs(Lines[line].endRow - Lines[line].startRow) + Math.Abs(Lines[line].endColumn - Lines[line].startColumn));
+                if (line == (sbyte)(Lines.Length - 1))
+                    Lines[line].MaxWalls = (byte)(Side * Side - Lines.Length);
+                else
+                    Lines[line].MaxWalls = (byte)(Lines[line + 1].MaxWalls - Lines[line + 1].MinWalls);
             }
 
             // The rest is initialized at 0 or false
@@ -54,23 +66,18 @@ namespace LinePath_Solver
         /// </summary>
         public void TestWalls()
         {
-            Debug.Assert(Walls == 0);
             for (byte row = 0; row < Side; row++)
                 for (byte column = 0; column < Sidem1; column++)
                     SetHzWall(row, column);
-            Debug.Assert(Walls == Side * (Sidem1));
             for (byte row = 0; row < Sidem1; row++)
                 for (byte column = 0; column < Side; column++)
                     SetVtWall(row, column);
-            Debug.Assert(Walls == 2 * Side * (Sidem1));
             for (byte row = 0; row < Side; row++)
                 for (byte column = 0; column < Sidem1; column++)
                     ResetHzWall(row, column);
-            Debug.Assert(Walls == Side * (Sidem1));
             for (byte row = 0; row < Sidem1; row++)
                 for (byte column = 0; column < Side; column++)
                     ResetVtWall(row, column);
-            Debug.Assert(Walls == 0);
 
             //    SetHzWall(0, 1); SetHzWall(0, 2); SetHzWall(0, 3);
             //    SetHzWall(1, 0); SetHzWall(1, 1); SetHzWall(1, 3);
@@ -114,9 +121,9 @@ namespace LinePath_Solver
         /// a solution is found
         /// </summary>
         /// <param name="line">Index of line to place</param>
-        /// <param name="level">Number of strokes already used, used to check if a solution implements full connectivity</param>
+        /// <param name="walls">Number of strokes already used, used to check if a solution implements full connectivity</param>
         /// <returns>True if a solution has been found and we should terminate, false to indicate a dead end, unwind and continue exploration</returns>
-        private static bool SolveLine(sbyte line, byte level)
+        static bool SolveLine(sbyte line, byte walls)
         {
             if ((++Placements & 0xffff) == 0)
             {
@@ -135,7 +142,7 @@ namespace LinePath_Solver
             {
                 // Consider it a solution if all points have a connectivity of 2 (except the end of lines)
                 // Unless FullConnectivity is false, in which case all lines placed is just enough
-                if (!FullConnectivity || level == FinalLevel)
+                if (!FullConnectivity || walls == FinalWallsCount)
                 {
                     Print();
                     return FirstSolutionOnly;        // Stop at 1st solution returning true
@@ -148,7 +155,7 @@ namespace LinePath_Solver
             AreasChecked = false;
 
             // Place next line
-            return SolveSE(line, level, Lines[line].startRow, Lines[line].startColumn, Lines[line].endRow, Lines[line].endColumn);
+            return SolveSE(line, walls, Lines[line].startRow, Lines[line].startColumn, Lines[line].endRow, Lines[line].endColumn);
 
         }
 
@@ -156,20 +163,24 @@ namespace LinePath_Solver
         /// Place a line knowing starting point (actually, current exploration point during recursive call) and end point 
         /// </summary>
         /// <param name="line">Index of line being placed</param>
-        /// <param name="level">Number of segments already draw</param>
+        /// <param name="walls">Number of segments already draw</param>
         /// <param name="row">Start or current row</param>
         /// <param name="column">Start or current column</param>
         /// <param name="endRow">Target row to reach</param>
         /// <param name="endColumn">Target column to reach</param>
         /// <returns>true if a solution has been found, and no need to continue, false means no solution found, 
         /// unwind recursive call stack and continue</returns>
-        private static bool SolveSE(sbyte line, byte level, byte row, byte column, int endRow, int endColumn)
+        private static bool SolveSE(sbyte line, byte walls, byte row, byte column, int endRow, int endColumn)
         {
-            // // Debug.Assert(level <= Side * Side);
+            SolveSECalls++;
 
             // Reached target for current line?
             if (row == endRow && column == endColumn)
-                return SolveLine(++line, level);
+                return SolveLine(++line, walls);
+
+            // If we've already drawn maximum number of walls permitted for a line, no need to continue
+            if (walls >= Lines[line].MaxWalls)
+                return false;
 
             if (row == 0 || row == Sidem1 || column == 0 || column == Sidem1)
             {
@@ -182,8 +193,8 @@ namespace LinePath_Solver
             else
                 AreasChecked = false;
 
-
             bool res;
+            byte wp1 = (byte)(walls + 1);
 
             // Right
             if (column < Sidem1 && !GetHzWall(row, column))
@@ -195,7 +206,7 @@ namespace LinePath_Solver
                         SetHzWall(row, column);
                         SetPointLine(row, cp1, line);
                         bool ac = AreasChecked;
-                        res = SolveSE(line, (byte)(level + 1), row, cp1, endRow, endColumn);
+                        res = SolveSE(line, wp1, row, cp1, endRow, endColumn);
                         AreasChecked = ac;
                         ResetHzWall(row, column);
                         ResetPointLine(row, cp1);
@@ -212,7 +223,7 @@ namespace LinePath_Solver
                         SetHzWall(row, cm1);
                         SetPointLine(row, cm1, line);
                         bool ac = AreasChecked;
-                        res = SolveSE(line, (byte)(level + 1), row, cm1, endRow, endColumn);
+                        res = SolveSE(line, wp1, row, cm1, endRow, endColumn);
                         AreasChecked = ac;
                         ResetPointLine(row, cm1);
                         ResetHzWall(row, cm1);
@@ -228,7 +239,7 @@ namespace LinePath_Solver
                         SetVtWall(rm1, column);
                         SetPointLine(rm1, column, line);
                         bool ac = AreasChecked;
-                        res = SolveSE(line, (byte)(level + 1), rm1, column, endRow, endColumn);
+                        res = SolveSE(line, wp1, rm1, column, endRow, endColumn);
                         AreasChecked = ac;
                         ResetVtWall(rm1, column);
                         ResetPointLine(rm1, column);
@@ -245,7 +256,7 @@ namespace LinePath_Solver
                         SetVtWall(row, column);
                         SetPointLine(rp1, column, line);
                         bool ac = AreasChecked;
-                        res = SolveSE(line, (byte)(level + 1), rp1, column, endRow, endColumn);
+                        res = SolveSE(line, wp1, rp1, column, endRow, endColumn);
                         AreasChecked = ac;
                         ResetVtWall(row, column);
                         ResetPointLine(rp1, column);
@@ -271,7 +282,6 @@ namespace LinePath_Solver
             // Debug.Assert(row >= 0 && row <= Side && column >= 0 && column < Side);
             // Debug.Assert(!GetHzWall(row, column));
             Grid[Δ(row, column)].HzWall = true;
-            Walls++;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -280,7 +290,6 @@ namespace LinePath_Solver
             // Debug.Assert(row >= 0 && row <= Side && column >= 0 && column < Side);
             // Debug.Assert(GetHzWall(row, column));
             Grid[Δ(row, column)].HzWall = false;
-            Walls--;
             // Debug.Assert(Walls >= 0);
         }
 
@@ -297,7 +306,6 @@ namespace LinePath_Solver
             // Debug.Assert(row >= 0 && row < Side && column >= 0 && column <= Side);
             // Debug.Assert(!GetVtWall(row, column));
             Grid[Δ(row, column)].VtWall = true;
-            Walls++;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -306,7 +314,6 @@ namespace LinePath_Solver
             // Debug.Assert(row >= 0 && row < Side && column >= 0 && column <= Side);
             // Debug.Assert(GetVtWall(row, column));
             Grid[Δ(row, column)].VtWall = false;
-            Walls--;
             // Debug.Assert(Walls >= 0);
         }
 
@@ -340,6 +347,7 @@ namespace LinePath_Solver
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static sbyte EndPointOfLine(byte row, byte column)
         {
+            //return Grid[Δ(row, column)].EndPointOfLine;
             Cell c = Grid[Δ(row, column)];
             return (c.IsStartLine || c.IsEndLine) ? c.Line : (sbyte)-1;
         }

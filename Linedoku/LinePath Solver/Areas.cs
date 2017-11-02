@@ -19,10 +19,15 @@ namespace LinePath_Solver
 {
     internal partial class Program
     {
+        internal static long CheckClosedAreasCalls;
+
+
         // Checks if current layout is compatible with a solution by checking closed areas surrounded by line (or grid borders).
         // Returns false if this grid cannot be solved because of no start/end point in a closed area or not both start and end point of same color
         internal static bool CheckClosedAreas(sbyte line)
         {
+            CheckClosedAreasCalls++;
+
             // Start with all cells unpainted
             for (byte row = 0; row < Side; row++)
                 for (byte column = 0; column < Side; column++)
