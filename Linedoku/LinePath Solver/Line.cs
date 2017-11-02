@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LinePath_Solver
+namespace ColorFlow_Solver
 {
     struct Line
     {

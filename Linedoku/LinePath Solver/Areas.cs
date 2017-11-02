@@ -1,4 +1,4 @@
-﻿// LinePath Solver, Areas
+﻿// ColorFlow Solver, Areas
 // Functions to detect closed areas and whether they are OK for a possible solution
 // A closed area is defined by a border color, that is a line, from 0 to Lines.Length-1
 // If a closed area contains no start/end line cell, it is not valid
@@ -15,16 +15,13 @@ using System.Threading.Tasks;
 using static System.Console;
 
 
-namespace LinePath_Solver
+namespace ColorFlow_Solver
 {
     internal partial class Program
     {
-        internal static long CheckClosedAreasCalls;
-
-
         // Checks if current layout is compatible with a solution by checking closed areas surrounded by line (or grid borders).
         // Returns false if this grid cannot be solved because of no start/end point in a closed area or not both start and end point of same color
-        internal static bool CheckClosedAreas(sbyte line)
+        internal static bool CheckClosedAreas(byte line)
         {
             CheckClosedAreasCalls++;
 
@@ -37,12 +34,15 @@ namespace LinePath_Solver
             for (byte row = 0; row < Side; row++)
                 for (byte column = 0; column < Side; column++)
                     if (Grid[Δ(row, column)].Paint == PaintStatus.Unpainted)
-                        if (Grid[Δ(row, column)].Line == line)
-                            // If cell line is current line then flag its paint as border and we're done
+                        if (Grid[Δ(row, column)].Line <= line)
+                            // If cell line is current line or lower then flag its paint as border and we're done
                             Grid[Δ(row, column)].Paint = PaintStatus.Border;
                         else
+                        {
+                            //LogWriteLine($"New area [{row}, {column}], line={line}");
                             // Let's flow the paint until we hit borders!
-                            return ColorizeArea(row, column, line);
+                            if (!ColorizeArea(row, column, line)) return false;
+                        }
 
             return true;
         }
@@ -55,7 +55,7 @@ namespace LinePath_Solver
         // Flags all painted cells with paint=Interior
         // Returns false if this area contains no start or end point, or if there is an odd number of start/end point for a given line
         // which means the puzzle won't have a solution, no need to further explore
-        private static bool ColorizeArea(byte row, byte column, sbyte line)
+        private static bool ColorizeArea(byte row, byte column, byte line)
         {
             rowStack[0] = row;
             columnStack[0] = column;
@@ -63,6 +63,7 @@ namespace LinePath_Solver
 
             int flagsStartEnd = 0;
             bool containsStartOrEnd = false;
+            bool touchEndOfCurrentLine = false;
             while (z > 0)
             {
                 byte r = rowStack[--z];
@@ -75,6 +76,8 @@ namespace LinePath_Solver
                 // If Grid[Δ(r, c] == area, it's already been explored, no need to do it again
                 if (Grid[δ].Paint == PaintStatus.Unpainted)
                 {
+                    //LogWriteLine($"  AddPointToArea({r}, {c})");
+
                     if (Grid[δ].IsStartLine || Grid[δ].IsEndLine)
                     {
                         flagsStartEnd ^= 1 << Grid[δ].Line;       // To be valid, each line must have 0 or 2 ends in area, so 2 xor on the line nth bit in flags must be 0 at the end
@@ -85,14 +88,24 @@ namespace LinePath_Solver
                     byte cm1 = (byte)(c - 1);
                     byte rp1 = (byte)(r + 1);
                     byte cp1 = (byte)(c + 1);
-                    if (r > 0 && Grid[Δ(rm1, c)].Paint == PaintStatus.Unpainted && Grid[Δ(rm1, c)].Line != line) { rowStack[z] = rm1; columnStack[z++] = c; }
-                    if (c > 0 && Grid[Δ(r, cm1)].Paint == PaintStatus.Unpainted && Grid[Δ(r, cm1)].Line != line) { rowStack[z] = r; columnStack[z++] = cm1; }
-                    if (r < Side - 1 && Grid[Δ(rp1, c)].Paint == PaintStatus.Unpainted && Grid[Δ(rp1, c)].Line != line) { rowStack[z] = rp1; columnStack[z++] = c; }
-                    if (c < Side - 1 && Grid[Δ(r, cp1)].Paint == PaintStatus.Unpainted && Grid[Δ(r, cp1)].Line != line) { rowStack[z] = r; columnStack[z++] = cp1; }
+
+                    touchEndOfCurrentLine = touchEndOfCurrentLine || (r > 0 && EndOfLine(rm1, c) == line);
+                    touchEndOfCurrentLine = touchEndOfCurrentLine || (c > 0 && EndOfLine(r, cm1) == line);
+                    touchEndOfCurrentLine = touchEndOfCurrentLine || (r < Sidem1 && EndOfLine(rp1, c) == line);
+                    touchEndOfCurrentLine = touchEndOfCurrentLine || (c < Sidem1 && EndOfLine(r, cp1) == line);
+
+                    if (r > 0 && Grid[Δ(rm1, c)].Paint == PaintStatus.Unpainted && Grid[Δ(rm1, c)].Line > line) { rowStack[z] = rm1; columnStack[z++] = c; }
+                    if (c > 0 && Grid[Δ(r, cm1)].Paint == PaintStatus.Unpainted && Grid[Δ(r, cm1)].Line > line) { rowStack[z] = r; columnStack[z++] = cm1; }
+                    if (r < Sidem1 && Grid[Δ(rp1, c)].Paint == PaintStatus.Unpainted && Grid[Δ(rp1, c)].Line > line) { rowStack[z] = rp1; columnStack[z++] = c; }
+                    if (c < Sidem1 && Grid[Δ(r, cp1)].Paint == PaintStatus.Unpainted && Grid[Δ(r, cp1)].Line > line) { rowStack[z] = r; columnStack[z++] = cp1; }
                 }
             }
 
-            return flagsStartEnd == 0 && containsStartOrEnd;
+            //LogWriteLine($" End area: flagsStartEnd={flagsStartEnd}, containsStartOrEnd={containsStartOrEnd}, touchEndOfCurrentLine={touchEndOfCurrentLine}");
+            bool ret= flagsStartEnd == 0 && containsStartOrEnd;
+            if (!ret)
+                ret = IsUnconnected(Lines[line].endRow, Lines[line].endColumn);
+            return ret;
         }
 
     }

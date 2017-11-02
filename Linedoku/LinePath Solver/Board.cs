@@ -1,5 +1,5 @@
 ﻿// Board
-// Represent a LinePath grid and associated method
+// Represent a ColorFlow grid and associated method
 // 2017-10-27   PV
 
 using System;
@@ -12,15 +12,17 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Console;
 
-namespace LinePath_Solver
+namespace ColorFlow_Solver
 {
     partial class Program
     {
-        private static byte Side, Sidem1;
-        private static Line[] Lines;
-        private static byte FinalWallsCount;
-        private static Cell[] Grid;
-        private static long SolveSECalls;
+        static byte Side, Sidem1;
+        static Line[] Lines;
+        static Cell[] Grid;
+        static byte FinalWallsCount;
+        static int Solutions;
+        static long CheckClosedAreasCalls;
+        static long SolveSECalls;
 
         private static byte Δ(byte row, byte column) => (byte)((row << 4) + column);
 
@@ -31,25 +33,25 @@ namespace LinePath_Solver
             Lines = lines;
             FinalWallsCount = (byte)(Side * Side - Lines.Length);        // Number of walls to draw
 
+            Solutions = 0;
+            CheckClosedAreasCalls = 0;
+            SolveSECalls = 0;
+
             Grid = new Cell[Side * 16];
             // All points are white at the beginning
             for (byte row = 0; row < Side; row++)
                 for (byte column = 0; column < Side; column++)
-                {
-                    Grid[Δ(row, column)].Line = -1;
-                    //Grid[Δ(row, column)].EndPointOfLine = -1;
-                }
+                    Grid[Δ(row, column)].Line = byte.MaxValue;
+
             // Except start and end of lines that are colored
-            for (sbyte line = (sbyte)Lines.Length; --line >=0 ; )
+            for (byte line = (byte)Lines.Length; --line != byte.MaxValue;)
             {
                 byte δStart = Δ(Lines[line].startRow, Lines[line].startColumn);
                 byte δEnd = Δ(Lines[line].endRow, Lines[line].endColumn);
                 Grid[δStart].Line = line;
                 Grid[δStart].IsStartLine = true;
-                //Grid[δStart].EndPointOfLine = line;
                 Grid[δEnd].Line = line;
                 Grid[δEnd].IsEndLine = true;
-                //Grid[δEnd].EndPointOfLine = line;
                 Lines[line].MinWalls = (byte)(Math.Abs(Lines[line].endRow - Lines[line].startRow) + Math.Abs(Lines[line].endColumn - Lines[line].startColumn));
                 if (line == (sbyte)(Lines.Length - 1))
                     Lines[line].MaxWalls = (byte)(Side * Side - Lines.Length);
@@ -58,45 +60,6 @@ namespace LinePath_Solver
             }
 
             // The rest is initialized at 0 or false
-        }
-
-
-        /// <summary>
-        /// Just a simple test building a solution manually to test Print()
-        /// </summary>
-        public void TestWalls()
-        {
-            for (byte row = 0; row < Side; row++)
-                for (byte column = 0; column < Sidem1; column++)
-                    SetHzWall(row, column);
-            for (byte row = 0; row < Sidem1; row++)
-                for (byte column = 0; column < Side; column++)
-                    SetVtWall(row, column);
-            for (byte row = 0; row < Side; row++)
-                for (byte column = 0; column < Sidem1; column++)
-                    ResetHzWall(row, column);
-            for (byte row = 0; row < Sidem1; row++)
-                for (byte column = 0; column < Side; column++)
-                    ResetVtWall(row, column);
-
-            //    SetHzWall(0, 1); SetHzWall(0, 2); SetHzWall(0, 3);
-            //    SetHzWall(1, 0); SetHzWall(1, 1); SetHzWall(1, 3);
-            //    SetHzWall(2, 0); SetHzWall(2, 2); SetHzWall(2, 3);
-            //    SetHzWall(3, 2);
-            //    SetHzWall(4, 1);
-
-            //    SetVtWall(0, 0); SetVtWall(2, 0); SetVtWall(3, 0);
-            //    SetVtWall(3, 1);
-            //    SetVtWall(1, 2); SetVtWall(3, 2);
-            //    SetVtWall(3, 3);
-            //    SetVtWall(0, 4); SetVtWall(2, 4); SetVtWall(3, 4);
-        }
-
-        internal void Test2()
-        {
-            SetHzWall(0, 0); SetHzWall(0, 1); SetHzWall(0, 2); SetHzWall(0, 3); SetHzWall(0, 4); SetHzWall(0, 5); SetHzWall(0, 6); SetHzWall(0, 7); SetHzWall(0, 8); SetHzWall(0, 9); SetHzWall(1, 0); SetHzWall(1, 1); SetHzWall(1, 2); SetHzWall(1, 3); SetHzWall(1, 4); SetHzWall(1, 5); SetHzWall(1, 7); SetHzWall(1, 8); SetHzWall(1, 9); SetHzWall(2, 6); SetHzWall(2, 7); SetHzWall(2, 8); SetHzWall(3, 0); SetHzWall(3, 1); SetHzWall(3, 2); SetHzWall(3, 3); SetHzWall(3, 4); SetHzWall(3, 5); SetHzWall(3, 6); SetHzWall(3, 7); SetHzWall(3, 8); SetHzWall(4, 0); SetHzWall(4, 1); SetHzWall(4, 2); SetHzWall(4, 3); SetHzWall(4, 4); SetHzWall(4, 5); SetHzWall(4, 6); SetHzWall(4, 7); SetHzWall(4, 8); SetHzWall(4, 9); SetHzWall(5, 0); SetHzWall(5, 1); SetHzWall(5, 2); SetHzWall(5, 3); SetHzWall(5, 4); SetHzWall(5, 5); SetHzWall(5, 6); SetHzWall(5, 7); SetHzWall(5, 8); SetHzWall(5, 9); SetHzWall(6, 0); SetHzWall(6, 1); SetHzWall(6, 2); SetHzWall(6, 3); SetHzWall(6, 4); SetHzWall(6, 5); SetHzWall(6, 6); SetHzWall(6, 7); SetHzWall(7, 1); SetHzWall(7, 2); SetHzWall(7, 3); SetHzWall(7, 5); SetHzWall(7, 8); SetHzWall(7, 9); SetHzWall(8, 1); SetHzWall(8, 4); SetHzWall(8, 6); SetHzWall(8, 7); SetHzWall(8, 8); SetHzWall(8, 9); SetHzWall(9, 2); SetHzWall(9, 4); SetHzWall(9, 5); SetHzWall(9, 6); SetHzWall(9, 7); SetHzWall(10, 3); SetHzWall(10, 4); SetHzWall(10, 5); SetHzWall(10, 6); SetHzWall(10, 7);
-            SetVtWall(0, 0); SetVtWall(0, 10); SetVtWall(1, 6); SetVtWall(2, 9); SetVtWall(3, 0); SetVtWall(4, 10); SetVtWall(5, 0); SetVtWall(6, 8); SetVtWall(7, 1); SetVtWall(7, 4); SetVtWall(7, 5); SetVtWall(7, 6); SetVtWall(7, 10); SetVtWall(8, 2); SetVtWall(9, 3); SetVtWall(9, 8);
-            Print();
         }
 
 
@@ -123,7 +86,7 @@ namespace LinePath_Solver
         /// <param name="line">Index of line to place</param>
         /// <param name="walls">Number of strokes already used, used to check if a solution implements full connectivity</param>
         /// <returns>True if a solution has been found and we should terminate, false to indicate a dead end, unwind and continue exploration</returns>
-        static bool SolveLine(sbyte line, byte walls)
+        static bool SolveLine(byte line, byte walls)
         {
             if ((++Placements & 0xffff) == 0)
             {
@@ -135,8 +98,6 @@ namespace LinePath_Solver
                 else
                     Write(".");
             }
-            if (IsShiftPressed()) Print();
-
             // All lines must be placed for a solution
             if (line == Lines.Length)
             {
@@ -144,14 +105,19 @@ namespace LinePath_Solver
                 // Unless FullConnectivity is false, in which case all lines placed is just enough
                 if (!FullConnectivity || walls == FinalWallsCount)
                 {
-                    Print();
+                    Solutions++;
+                    PrintBoard($"Solution #{Solutions}, elapsed={stw.Elapsed}, SolveSE={SolveSECalls:N0}, CheckClosedAreas={CheckClosedAreasCalls:N0}");
                     return FirstSolutionOnly;        // Stop at 1st solution returning true
                 }
                 return false;
             }
 
-            // Check if placed line closed areas are OK
-            //if (line > 0 && !CheckClosedAreas((sbyte)(line - 1))) return false;
+            // After finishing a line, check closed areas, even if line doesn't touch borders
+            if (!CheckClosedAreas((byte)(line - 1)))
+                return false;
+
+            if (IsShiftPressed()) PrintBoard($"Partial snapshot, elapsed={stw.Elapsed}, SolveSE={SolveSECalls:N0}, CheckClosedAreas={CheckClosedAreasCalls:N0}");
+
             AreasChecked = false;
 
             // Place next line
@@ -170,7 +136,7 @@ namespace LinePath_Solver
         /// <param name="endColumn">Target column to reach</param>
         /// <returns>true if a solution has been found, and no need to continue, false means no solution found, 
         /// unwind recursive call stack and continue</returns>
-        private static bool SolveSE(sbyte line, byte walls, byte row, byte column, int endRow, int endColumn)
+        private static bool SolveSE(byte line, byte walls, byte row, byte column, int endRow, int endColumn)
         {
             SolveSECalls++;
 
@@ -182,25 +148,27 @@ namespace LinePath_Solver
             if (walls >= Lines[line].MaxWalls)
                 return false;
 
+            bool res;
             if (row == 0 || row == Sidem1 || column == 0 || column == Sidem1)
             {
                 if (!AreasChecked)
                 {
-                    if (!CheckClosedAreas(line)) return false;
+                    res = CheckClosedAreas(line);
+                    //PrintBoard($"CheckClosedAreas({line}) -> {res}");
+                    if (!res) return false;
                     AreasChecked = true;
                 }
             }
             else
                 AreasChecked = false;
 
-            bool res;
             byte wp1 = (byte)(walls + 1);
 
             // Right
             if (column < Sidem1 && !GetHzWall(row, column))
             {
                 byte cp1 = (byte)(column + 1);
-                if ((row == endRow && cp1 == endColumn) || EndPointOfLine(row, cp1) < 0)
+                if ((row == endRow && cp1 == endColumn) || ExtremityOfLine(row, cp1) == byte.MaxValue)
                     if (IsUnconnected(row, cp1))
                     {
                         SetHzWall(row, column);
@@ -217,7 +185,7 @@ namespace LinePath_Solver
             // Left
             byte cm1 = (byte)(column - 1);
             if (column > 0 && !GetHzWall(row, cm1))
-                if ((row == endRow && cm1 == endColumn) || EndPointOfLine(row, cm1) < 0)
+                if ((row == endRow && cm1 == endColumn) || ExtremityOfLine(row, cm1) == byte.MaxValue)
                     if (IsUnconnected(row, cm1))
                     {
                         SetHzWall(row, cm1);
@@ -233,7 +201,7 @@ namespace LinePath_Solver
             // Up
             byte rm1 = (byte)(row - 1);
             if (row > 0 && !GetVtWall(rm1, column))
-                if ((rm1 == endRow && column == endColumn) || EndPointOfLine(rm1, column) < 0)
+                if ((rm1 == endRow && column == endColumn) || ExtremityOfLine(rm1, column) == byte.MaxValue)
                     if (IsUnconnected(rm1, column))
                     {
                         SetVtWall(rm1, column);
@@ -250,7 +218,7 @@ namespace LinePath_Solver
             if (row < Sidem1 && !GetVtWall(row, column))
             {
                 byte rp1 = (byte)(row + 1);
-                if ((rp1 == endRow && column == endColumn) || EndPointOfLine(rp1, column) < 0)
+                if ((rp1 == endRow && column == endColumn) || ExtremityOfLine(rp1, column) == byte.MaxValue)
                     if (IsUnconnected(rp1, column))
                     {
                         SetVtWall(row, column);
@@ -330,9 +298,8 @@ namespace LinePath_Solver
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void SetPointLine(byte row, byte column, sbyte line)
+        private static void SetPointLine(byte row, byte column, byte line)
         {
-            //if (!Grid[Δ(row, column].IsEndLine)
             Grid[Δ(row, column)].Line = line;
         }
 
@@ -340,48 +307,59 @@ namespace LinePath_Solver
         private static void ResetPointLine(byte row, byte column)
         {
             if (!Grid[Δ(row, column)].IsEndLine)
-                Grid[Δ(row, column)].Line = -1;
+                Grid[Δ(row, column)].Line = byte.MaxValue;
         }
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static sbyte EndPointOfLine(byte row, byte column)
+        private static byte ExtremityOfLine(byte row, byte column)
         {
-            //return Grid[Δ(row, column)].EndPointOfLine;
-            Cell c = Grid[Δ(row, column)];
-            return (c.IsStartLine || c.IsEndLine) ? c.Line : (sbyte)-1;
+            //Cell c = Grid[Δ(row, column)];
+            //return (c.IsStartLine || c.IsEndLine) ? c.Line : byte.MaxValue;
+            byte δ = Δ(row, column);
+            return (Grid[δ].IsStartLine || Grid[δ].IsEndLine) ? Grid[δ].Line : byte.MaxValue;
         }
- 
 
 
-        internal static void Print()
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static byte EndOfLine(byte row, byte column)
         {
-            WriteLine();
+            //Cell c = Grid[Δ(row, column)];
+            //return (c.IsEndLine) ? c.Line : byte.MaxValue;
+            byte δ = Δ(row, column);
+            return Grid[δ].IsEndLine ? Grid[δ].Line : byte.MaxValue;
+        }
+
+
+        internal static void PrintBoard(string header)
+        {
+            LogWriteLine();
+            LogWriteLine(header);
             for (byte row = 0; row < Side; row++)
             {
                 for (byte column = 0; column < Side; column++)
                 {
                     Console.ForegroundColor = GetColor(row, column);
-                    Write(EndPointOfLine(row, column) >= 0 ? "■" : "▪");
+                    LogWrite(ExtremityOfLine(row, column) < byte.MaxValue ? "■" : "▪");
                     if (column < Sidem1)
-                        Write(GetHzWall(row, column) ? "──" : "  ");
+                        LogWrite(GetHzWall(row, column) ? "──" : "  ");
                 }
-                WriteLine();
+                LogWriteLine();
 
                 if (row < Sidem1)
                 {
                     for (byte column = 0; column < Side; column++)
                     {
                         Console.ForegroundColor = GetColor(row, column);
-                        Write(GetVtWall(row, column) ? "│" : " ");
+                        LogWrite(GetVtWall(row, column) ? "│" : " ");
                         if (column < Side)
-                            Write("  ");
+                            LogWrite("  ");
                     }
-                    WriteLine();
+                    LogWriteLine();
                 }
             }
-            Console.ForegroundColor = ConsoleColor.White;
-            WriteLine();
+            Console.ForegroundColor = ConsoleColor.Gray;
+            LogWriteLine();
         }
 
         private static ConsoleColor GetColor(byte row, byte column)
@@ -404,7 +382,7 @@ namespace LinePath_Solver
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static sbyte GetColorIndex(byte row, byte column) => Grid[Δ(row, column)].Line;
+        private static byte GetColorIndex(byte row, byte column) => Grid[Δ(row, column)].Line;
 
 
         internal static bool IsShiftPressed()
@@ -412,7 +390,6 @@ namespace LinePath_Solver
             return System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftShift) ||
                    System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightShift);
         }
-
 
     }
 }

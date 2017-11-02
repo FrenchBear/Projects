@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("LinePath Solver")]
-[assembly: AssemblyDescription("Tool to find solutions of Android Linedoku app LinePath game")]
+[assembly: AssemblyTitle("ColorFlow Solver")]
+[assembly: AssemblyDescription("Tool to find solutions of Android Linedoku app ColorFlow game")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("LinePath Solver")]
+[assembly: AssemblyProduct("ColorFlow Solver")]
 [assembly: AssemblyCopyright("Copyright ©2017 Pierre Violent")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

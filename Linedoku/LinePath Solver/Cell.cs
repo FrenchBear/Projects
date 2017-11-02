@@ -1,5 +1,5 @@
 ﻿// Cell
-// Represent a LinePath cell in the grid
+// Represent a ColorFlow cell in the grid
 // 2017-10-27   PV
 
 using System;
@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LinePath_Solver
+namespace ColorFlow_Solver
 {
     // Paint:
     // Unpainted = No area identified yet
@@ -28,8 +28,7 @@ namespace LinePath_Solver
         public bool VtWall;
         public bool IsStartLine;
         public bool IsEndLine;
-        public sbyte Line;
-        //public sbyte EndPointOfLine;
+        public byte Line;
         public PaintStatus Paint;
     }
 }
