@@ -1,0 +1,41 @@
+
+Solution #1, elapsed=00:00:00.0303593, SolveSE=64, CheckClosedAreas=15
+■  ■──▪──▪──▪
+│           │  
+▪──▪──▪  ■──▪
+      │        
+▪──■  ▪──▪──▪
+│           │  
+▪  ■  ▪──▪  ▪
+│  │  │  │  │  
+■  ▪──▪  ■  ■
+
+
+Solution #2, elapsed=00:00:00.0456562, SolveSE=111, CheckClosedAreas=30
+■  ■──▪──▪──▪
+│           │  
+▪──▪──▪  ■  ▪
+      │  │  │  
+▪──■  ▪  ▪──▪
+│     │        
+▪  ■  ▪──▪──▪
+│  │        │  
+■  ▪──▪──■  ■
+
+
+Solution #3, elapsed=00:00:00.0536306, SolveSE=134, CheckClosedAreas=38
+■  ■──▪──▪──▪
+│           │  
+▪──▪──▪  ■──▪
+      │        
+▪──■  ▪  ▪──▪
+│     │  │  │  
+▪  ■  ▪──▪  ▪
+│  │        │  
+■  ▪──▪──■  ■
+
+
+Total duration:            00:00:00.0589193
+Solutions:                 3
+Calls to SolveSE:          139
+Calls to CheckClosedAreas: 40
