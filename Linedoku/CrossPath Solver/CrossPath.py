@@ -38,11 +38,21 @@ test_4 = [
 "3...",
 ]
 
+medium_36 = [
+"X.1.X..",
+".2...3.",
+"..2.X.4",
+"...7...",
+".XX.2..",
+"3.....5",
+".3...1.",
+]
 
 
 #p = puzzle(medium_10)
 #p = puzzle(master_1)
-p = puzzle(test_4)
+#p = puzzle(test_4)
+p = puzzle(medium_36)
 
 print(str(p))
 print()
