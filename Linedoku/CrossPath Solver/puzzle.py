@@ -1,4 +1,4 @@
-# puzzle.py - Class to handle a crosspath puzzle and its resolution
+# puzzle.py - Class to handle a CrossPath puzzle and its resolution
 # Internally puzzle is handled as a list of list of characters in p
 # 2017-09-14    PV
 
