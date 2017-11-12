@@ -4,11 +4,11 @@
 // 2017-07-22   PV  First version
 // 2017-08-03   PV  Isolated in a separate file, UndoAction(s)
 
+using Bonza.Generator;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Bonza.Generator;
 
 
 namespace Bonza.Editor.Support
@@ -102,7 +102,5 @@ namespace Bonza.Editor.Support
             Debug.Assert(CanUndo);
             return undoStack.Pop();
         }
-
     }
-
 }

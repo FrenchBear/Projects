@@ -4,8 +4,8 @@
 // 2017-08-05   PV  First version
 
 
-using System.Collections.Generic;
 using Bonza.Editor.ViewModel;
+using System.Collections.Generic;
 using System.Windows;
 
 namespace Bonza.Editor.View

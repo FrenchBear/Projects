@@ -42,7 +42,7 @@ namespace Bonza.Generator
                             }
                         }
                 }
-            NextChunk:;
+                NextChunk:;
             }
             return l;
         }
@@ -59,6 +59,5 @@ namespace Bonza.Generator
             m_Chunks.Remove(chunk);
             chunk.IsDeleted = true;
         }
-
     }
 }

@@ -4,15 +4,13 @@
 // 2017-07-29   PV  First version, extracted from view
 
 
+using Bonza.Editor.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Bonza.Editor.ViewModel;
-using System.Diagnostics;
 
 namespace Bonza.Editor.Support
 {
-
     internal class Selection
     {
         private List<WordAndCanvas> m_WordAndCanvasList;
@@ -65,8 +63,8 @@ namespace Bonza.Editor.Support
         // Delete selection
         internal void Delete(WordAndCanvas wac)
         {
-            if (wac==null)
-                throw  new ArgumentNullException(nameof(wac));
+            if (wac == null)
+                throw new ArgumentNullException(nameof(wac));
 
             if (m_WordAndCanvasList != null && m_WordAndCanvasList.Contains(wac))
             {
@@ -74,7 +72,5 @@ namespace Bonza.Editor.Support
                 viewModel.SelectedWordCount = m_WordAndCanvasList.Count;
             }
         }
-
     }
-
 }

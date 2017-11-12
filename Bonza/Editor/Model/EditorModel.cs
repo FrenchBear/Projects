@@ -4,11 +4,10 @@
 // 2017-07-22   PV  First version
 
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Bonza.Editor.ViewModel;
 using Bonza.Generator;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Bonza.Editor.Model
 {

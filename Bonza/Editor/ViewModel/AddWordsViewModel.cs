@@ -4,15 +4,10 @@
 // 2017-08-05   PV  First version
 
 
-using System;
+using Bonza.Editor.Support;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
-using Bonza.Editor.Support;
 
 namespace Bonza.Editor.ViewModel
 {
@@ -20,6 +15,7 @@ namespace Bonza.Editor.ViewModel
     {
         // Access to View and model (EditorModel, not AddWordsModel that doesn't exist)
         private readonly View.AddWordsView view;
+
         private readonly Model.EditorModel model;
 
 
@@ -55,6 +51,7 @@ namespace Bonza.Editor.ViewModel
         // Bindings
 
         private string m_InputText;
+
         public string InputText
         {
             get => m_InputText;
@@ -71,6 +68,7 @@ namespace Bonza.Editor.ViewModel
         }
 
         private string m_StatusText;
+
         public string StatusText
         {
             get => m_StatusText;

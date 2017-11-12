@@ -6,11 +6,11 @@
 
 
 using System;
-using static System.Console;
-using System.Diagnostics;
-using System.Text;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Text;
+using static System.Console;
 
 namespace Bonza.Generator.Tests
 {
@@ -62,5 +62,4 @@ namespace Bonza.Generator.Tests
             return sw.Elapsed;
         }
     }
-
 }

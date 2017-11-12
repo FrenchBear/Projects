@@ -15,21 +15,20 @@ using System.Runtime.Serialization;
 [Serializable]
 public sealed class ImmutableAttribute : Attribute
 {
-
     // in some cases, a type is immutable but can't be proven as such.
     // in these cases, the developer can mark the type with [Immutable(true)]
     // and the code below will take it on faith that the type is immutable,
     // instead of testing explicitly.
     //
-    // A common example is a type that contains a List<T>, but doesn't 
+    // A common example is a type that contains a List<T>, but doesn't
     // modify it after construction.
     //
-    // TODO: replace this with a per-field attribute, to allow the 
+    // TODO: replace this with a per-field attribute, to allow the
     // immutability test to run over the rest of the type.
     public bool OnFaith;
 
     /// <summary>
-    /// Ensures that all types in 'assemblies' that are marked 
+    /// Ensures that all types in 'assemblies' that are marked
     /// [Immutable] follow the rules for immutability.
     /// </summary>
     /// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
@@ -46,12 +45,12 @@ public sealed class ImmutableAttribute : Attribute
         }
     }
 
-    static bool IsMarkedImmutable(Type type)
+    private static bool IsMarkedImmutable(Type type)
     {
         return ReflectionHelper.TypeHasAttribute<ImmutableAttribute>(type);
     }
 
-    class WritableFieldException : ImmutableFailureException
+    private class WritableFieldException : ImmutableFailureException
     {
         protected WritableFieldException(SerializationInfo serializationInfo, StreamingContext streamingContext)
             : base(serializationInfo, streamingContext)
@@ -64,13 +63,13 @@ public sealed class ImmutableAttribute : Attribute
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", MessageId = "System.String.Format(System.String,System.Object,System.Object)")]
-        static string FormatMessage(FieldInfo fieldInfo)
+        private static string FormatMessage(FieldInfo fieldInfo)
         {
             return string.Format("'{0}' is mutable because field '{1}' is not marked 'readonly'.", fieldInfo.DeclaringType, fieldInfo.Name);
         }
     }
 
-    class MutableFieldException : ImmutableFailureException
+    private class MutableFieldException : ImmutableFailureException
     {
         protected MutableFieldException(SerializationInfo serializationInfo, StreamingContext streamingContext)
             : base(serializationInfo, streamingContext)
@@ -83,13 +82,13 @@ public sealed class ImmutableAttribute : Attribute
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", MessageId = "System.String.Format(System.String,System.Object,System.Object,System.Object)")]
-        static string FormatMessage(FieldInfo fieldInfo)
+        private static string FormatMessage(FieldInfo fieldInfo)
         {
             return string.Format("'{0}' is mutable because '{1}' of type '{2}' is mutable.", fieldInfo.DeclaringType, fieldInfo.Name, fieldInfo.FieldType);
         }
     }
 
-    class MutableBaseException : ImmutableFailureException
+    private class MutableBaseException : ImmutableFailureException
     {
         protected MutableBaseException(SerializationInfo serializationInfo, StreamingContext streamingContext)
             : base(serializationInfo, streamingContext)
@@ -102,7 +101,7 @@ public sealed class ImmutableAttribute : Attribute
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", MessageId = "System.String.Format(System.String,System.Object,System.Object)")]
-        static string FormatMessage(Type type)
+        private static string FormatMessage(Type type)
         {
             return string.Format("'{0}' is mutable because its base type ('[{1}]') is mutable.", type, type.BaseType);
         }
@@ -181,7 +180,7 @@ public sealed class ImmutableAttribute : Attribute
         }
     }
 
-    static bool IsWhiteListed(Type type)
+    private static bool IsWhiteListed(Type type)
     {
         if (type == typeof(Object))
         {
@@ -249,7 +248,7 @@ public static class ReflectionHelper
     }
 
     /// <summary>
-    /// A typesafe wrapper for Attribute.GetCustomAttribute
+    /// A type safe wrapper for Attribute.GetCustomAttribute
     /// </summary>
     /// <remarks>TODO: add overloads for Assembly, Module, and ParameterInfo</remarks>
     internal static TAttribute GetCustomAttribute<TAttribute>(MemberInfo element)

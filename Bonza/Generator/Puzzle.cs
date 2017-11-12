@@ -45,7 +45,7 @@ namespace Bonza.Generator
 
                     Queue<Square> connectedSquares = new Queue<Square>();
                     // Examine 4 possible candidates around current square
-                    for (;;)
+                    for (; ; )
                     {
                         int row = sq.Row;
                         int column = sq.Column;
@@ -87,7 +87,7 @@ namespace Bonza.Generator
             List<Chunk> smallChunks = puzzle.Chunks.Where(chunk => chunk.Squares.Count <= 2).ToList();
             foreach (var chunk in smallChunks)
                 if (!chunk.IsDeleted)
-                    for (;;)
+                    for (; ; )
                     {
                         var adjacentChunk = puzzle.GetAdjacentChunks(chunk).OrderBy(ch => ch.Squares.Count).FirstOrDefault();
                         if (adjacentChunk == null) break;
@@ -147,6 +147,5 @@ namespace Bonza.Generator
                     return false;
             }
         }
-
     }
 }

@@ -4,10 +4,10 @@
 // 2017-07-22   PV  First version
 
 
+using Bonza.Generator;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using Bonza.Generator;
 using static Bonza.Editor.App;
 
 
@@ -46,12 +46,12 @@ namespace Bonza.Editor.Support
                 {
                     left += MarginSize;
                     width -= 2 * MarginSize;
-                    if (i==0)
+                    if (i == 0)
                     {
                         top += MarginSize;
                         height -= MarginSize;
                     }
-                    else if (i==wp.Word.Length-1)
+                    else if (i == wp.Word.Length - 1)
                     {
                         height -= MarginSize;
                     }
@@ -60,7 +60,7 @@ namespace Bonza.Editor.Support
                 {
                     top += MarginSize;
                     height -= 2 * MarginSize;
-                    if (i==0)
+                    if (i == 0)
                     {
                         left += MarginSize;
                         width -= MarginSize;

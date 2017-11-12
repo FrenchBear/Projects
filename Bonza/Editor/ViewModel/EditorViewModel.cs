@@ -4,6 +4,10 @@
 // 2017-07-22   PV  First version
 
 
+using Bonza.Editor.Model;
+using Bonza.Editor.Support;
+using Bonza.Generator;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,10 +17,6 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
-using Bonza.Editor.Model;
-using Bonza.Generator;
-using Microsoft.Win32;
-using Bonza.Editor.Support;
 
 namespace Bonza.Editor.ViewModel
 {
@@ -24,10 +24,12 @@ namespace Bonza.Editor.ViewModel
     {
         // Model and View
         private readonly EditorModel model;
+
         private readonly View.EditorView view;
 
         // Implementation of INotifyPropertyChanged, standard since View is only linked through DataBinding
         public event PropertyChangedEventHandler PropertyChanged;
+
         private void NotifyPropertyChanged(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
@@ -38,6 +40,7 @@ namespace Bonza.Editor.ViewModel
 
         // Menus
         public ICommand NewLayoutCommand { get; }
+
         public ICommand LoadCommand { get; }
         public ICommand AddWordsCommand { get; }
         public ICommand RegenerateLayoutCommand { get; }
@@ -46,6 +49,7 @@ namespace Bonza.Editor.ViewModel
 
         // Edit
         public ICommand DeleteCommand { get; }
+
         public ICommand UndoCommand { get; }
         public ICommand SwapOrientationCommand { get; }
         public ICommand AutoPlaceCommand { get; }
@@ -147,6 +151,7 @@ namespace Bonza.Editor.ViewModel
         // Bindings
 
         private string m_StatusText;
+
         public string StatusText
         {
             get => m_StatusText;
@@ -165,6 +170,7 @@ namespace Bonza.Editor.ViewModel
 
 
         private string m_LayoutName;
+
         public string LayoutName
         {
             get => m_LayoutName;
@@ -181,6 +187,7 @@ namespace Bonza.Editor.ViewModel
 
 
         private int m_SelectedWordCount;
+
         public int SelectedWordCount
         {
             get => m_SelectedWordCount;
@@ -268,12 +275,15 @@ namespace Bonza.Editor.ViewModel
                     case PlaceWordStatus.Valid:
                         s += "Val";
                         break;
+
                     case PlaceWordStatus.TooClose:
                         s += "TCl";
                         break;
+
                     case PlaceWordStatus.Invalid:
                         s += "Inv";
                         break;
+
                     default:
                         throw new ArgumentOutOfRangeException(nameof(status), status, null);
                 }
@@ -408,7 +418,7 @@ namespace Bonza.Editor.ViewModel
                             wordsList.Add(line);
                     }
                 }
-                if (AddWordsList(wordsList)!=null)
+                if (AddWordsList(wordsList) != null)
                     return;
             }
             catch (Exception ex)
@@ -521,6 +531,5 @@ namespace Bonza.Editor.ViewModel
             var aw = new View.AboutWindow();
             aw.ShowDialog();
         }
-
     }
 }

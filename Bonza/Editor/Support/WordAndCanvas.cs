@@ -1,8 +1,8 @@
 ﻿// Bonza Editor - WordAndCanvas class
 // Combination of a WordPositon and a WordCanvas, used by View and Selection
 
-using System.Windows.Media;
 using Bonza.Generator;
+using System.Windows.Media;
 
 
 namespace Bonza.Editor.Support

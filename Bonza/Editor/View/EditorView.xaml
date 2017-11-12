@@ -6,8 +6,7 @@
         xmlns:vm="clr-namespace:Bonza.Editor.ViewModel"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance vm:EditorViewModel}"
-        Title="{Binding Caption,FallbackValue='Bonza Editor'}" Height="768" Width="1024" Icon="/Bonza.Editor;component/Bonza.ico"
-        >
+        Title="{Binding Caption,FallbackValue='Bonza Editor'}" Height="768" Width="1024" Icon="/Bonza.Editor;component/Bonza.ico">
 
     <Window.Resources>
         <!-- Gray out toolbar elements when disabled (why is it not automatic ??) -->
@@ -38,17 +37,17 @@
 
         <!-- ReSharper disable once Xaml.RedundantResource -->
         <ContextMenu x:Key="WordCanvasMenu">
-            <MenuItem Command="{Binding DeleteCommand}" Header="_Supprime le mot" InputGestureText="Suppr" >
+            <MenuItem Command="{Binding DeleteCommand}" Header="_Supprime le mot" InputGestureText="Suppr">
                 <MenuItem.Icon>
                     <Image Source="/Icons/delete.ico" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Command="{Binding SwapOrientationCommand}" Header="_Bascule l'orientation du mot" InputGestureText="Ctrl+B" >
+            <MenuItem Command="{Binding SwapOrientationCommand}" Header="_Bascule l'orientation du mot" InputGestureText="Ctrl+B">
                 <MenuItem.Icon>
                     <Image Source="/Icons/swap.ico" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Command="{Binding AutoPlaceCommand}" Header="_Place automatiquement le mot" >
+            <MenuItem Command="{Binding AutoPlaceCommand}" Header="_Place automatiquement le mot">
                 <MenuItem.Icon>
                     <Image Source="/Icons/autoplace.ico" />
                 </MenuItem.Icon>
@@ -58,13 +57,12 @@
 
         <!-- ReSharper disable once Xaml.RedundantResource -->
         <ContextMenu x:Key="BackgroundCanvasMenu">
-            <MenuItem Command="{Binding RecenterLayoutViewCommand}" Header="_Recentrer la vue du layout" InputGestureText="Ctrl+R" >
+            <MenuItem Command="{Binding RecenterLayoutViewCommand}" Header="_Recentrer la vue du layout" InputGestureText="Ctrl+R">
                 <MenuItem.Icon>
                     <Image Source="/Icons/recenter.ico" />
                 </MenuItem.Icon>
             </MenuItem>
         </ContextMenu>
-
     </Window.Resources>
 
 
@@ -88,34 +86,34 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <DockPanel >
-            <Menu DockPanel.Dock="Top" Padding="3"  >
+        <DockPanel>
+            <Menu DockPanel.Dock="Top" Padding="3">
                 <MenuItem Name="FileMenu" Header="_Fichier">
-                    <MenuItem Command="{Binding NewLayoutCommand}" InputGestureText="Ctrl+N" Header="_Nouveau layout" >
+                    <MenuItem Command="{Binding NewLayoutCommand}" InputGestureText="Ctrl+N" Header="_Nouveau layout">
                         <MenuItem.Icon>
                             <Image Source="/Icons/new.ico" Stretch="None" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Command="{Binding LoadCommand}" InputGestureText="Ctrl+O" Header="_Ouvrir une liste de mots et générer un nouveau layout..." >
+                    <MenuItem Command="{Binding LoadCommand}" InputGestureText="Ctrl+O" Header="_Ouvrir une liste de mots et générer un nouveau layout...">
                         <MenuItem.Icon>
                             <Image Source="/Icons/open.ico" Stretch="None" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <Separator/>
+                    <Separator />
                     <MenuItem Command="{Binding AddWordsCommand}" InputGestureText="+" Header="_Ajouter des mots au layout...">
                         <MenuItem.Icon>
                             <Image Source="/Icons/addwords.ico" Stretch="None" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Command="{Binding RegenerateLayoutCommand}" InputGestureText="F5" Header="_Regénérer le layout" />
-                    <Separator/>
-                    <MenuItem Command="{Binding SaveCommand}" InputGestureText="Ctrl+S" Header="_Enregistrer le layout..." >
+                    <Separator />
+                    <MenuItem Command="{Binding SaveCommand}" InputGestureText="Ctrl+S" Header="_Enregistrer le layout...">
                         <MenuItem.Icon>
                             <Image Source="/Icons/save.ico" Stretch="None" />
                         </MenuItem.Icon>
                     </MenuItem>
 
-                    <Separator/>
+                    <Separator />
 
                     <MenuItem Name="CloseCommand" Command="{Binding QuitCommand}" InputGestureText="Alt+F4" Header="_Quitter">
                         <MenuItem.Icon>
@@ -125,23 +123,23 @@
                 </MenuItem>
 
                 <MenuItem Name="EditMenu" Header="_Edition">
-                    <MenuItem Command="{Binding UndoCommand}" Header="_Annuler" InputGestureText="Ctrl+Z" >
+                    <MenuItem Command="{Binding UndoCommand}" Header="_Annuler" InputGestureText="Ctrl+Z">
                         <MenuItem.Icon>
                             <Image Source="/Icons/undo.ico" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Command="{Binding DeleteCommand}" Header="_Supprimer le mot" InputGestureText="Suppr" >
+                    <MenuItem Command="{Binding DeleteCommand}" Header="_Supprimer le mot" InputGestureText="Suppr">
                         <MenuItem.Icon>
                             <Image Source="/Icons/delete.ico" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <Separator/>
-                    <MenuItem Command="{Binding SwapOrientationCommand}" Header="_Bascule l'orientation du mot" InputGestureText="Ctrl+B" >
+                    <Separator />
+                    <MenuItem Command="{Binding SwapOrientationCommand}" Header="_Bascule l'orientation du mot" InputGestureText="Ctrl+B">
                         <MenuItem.Icon>
                             <Image Source="/Icons/swap.ico" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Command="{Binding AutoPlaceCommand}" Header="_Place automatiquement le mot" >
+                    <MenuItem Command="{Binding AutoPlaceCommand}" Header="_Place automatiquement le mot">
                         <MenuItem.Icon>
                             <Image Source="/Icons/autoplace.ico" />
                         </MenuItem.Icon>
@@ -149,7 +147,7 @@
                 </MenuItem>
 
                 <MenuItem Name="ViewMenu" Header="_View">
-                    <MenuItem Command="{Binding RecenterLayoutViewCommand}" Header="_Recentrer la vue du layout" InputGestureText="Ctrl+R" >
+                    <MenuItem Command="{Binding RecenterLayoutViewCommand}" Header="_Recentrer la vue du layout" InputGestureText="Ctrl+R">
                         <MenuItem.Icon>
                             <Image Source="/Icons/recenter.ico" />
                         </MenuItem.Icon>
@@ -157,7 +155,7 @@
                 </MenuItem>
 
 
-                <MenuItem Name="HelpMenu" Header="_?" >
+                <MenuItem Name="HelpMenu" Header="_?">
                     <MenuItem Name="AboutCommand" Command="{Binding AboutCommand}" Header="À _propos de Bonza...">
                         <MenuItem.Icon>
                             <Image Source="/Icons/about.ico" />
@@ -168,45 +166,43 @@
 
             <ToolBar DockPanel.Dock="Top" Margin="0,-1,0.333,1" ToolBarTray.IsLocked="True">
                 <Button Command="{Binding NewLayoutCommand}" ToolTip="Crée un nouveau layout vierge [Ctrl+N]">
-                    <Image Source="/Icons/new.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}"/>
+                    <Image Source="/Icons/new.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
                 </Button>
                 <Button Command="{Binding LoadCommand}" ToolTip="Crée une nouvelle grille et génère un layout à partir d'une liste de mots [Ctrl+O]">
-                    <Image Source="/Icons/open.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}"/>
+                    <Image Source="/Icons/open.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
                 </Button>
                 <Button Command="{Binding SaveCommand}" ToolTip="Enregistre le layout dans un fichier [Ctrl+S]">
-                    <Image Source="/Icons/save.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}"/>
+                    <Image Source="/Icons/save.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
                 </Button>
 
-                <Separator/>
+                <Separator />
 
                 <Button Command="{Binding AddWordsCommand}" ToolTip="Ajouter des mots au layout [+]">
-                    <Image Source="/Icons/addwords.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}"/>
+                    <Image Source="/Icons/addwords.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
                 </Button>
 
-                <Separator/>
+                <Separator />
 
                 <Button Command="{Binding UndoCommand}" ToolTip="Annule la dernière modification [Ctrl+Z]">
-                    <Image Source="/Icons/undo.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}"/>
+                    <Image Source="/Icons/undo.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
                 </Button>
                 <Button Command="{Binding DeleteCommand}" ToolTip="Supprime le mot [Suppr]">
-                    <Image Source="/Icons/delete.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}"/>
+                    <Image Source="/Icons/delete.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
                 </Button>
                 <Button Command="{Binding SwapOrientationCommand}" ToolTip="Change l'orientation du mot [Ctrl+B]">
-                    <Image Source="/Icons/swap.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}"/>
+                    <Image Source="/Icons/swap.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
                 </Button>
                 <Button Command="{Binding AutoPlaceCommand}" ToolTip="Place automatiquement le mot">
-                    <Image Source="/Icons/autoplace.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}"/>
+                    <Image Source="/Icons/autoplace.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
                 </Button>
 
-                <Separator/>
+                <Separator />
 
                 <Button Command="{Binding RecenterLayoutViewCommand}" ToolTip="Recentre la vue des mots [Ctrl+R]">
-                    <Image Source="/Icons/recenter.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}"/>
+                    <Image Source="/Icons/recenter.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
                 </Button>
 
-                <Separator/>
-
-
+                <Separator />
             </ToolBar>
         </DockPanel>
 
@@ -217,18 +213,17 @@
 
             <Grid Name="MainGrid" Background="LavenderBlush"
                   MouseMove="MainGrid_MouseMoveWhenUp" MouseDown="MainGrid_MouseDown" MouseUp="MainGrid_MouseUp" MouseWheel="MainGrid_MouseWheel"
-                  MouseRightButtonDown="MainGrid_MouseRightButtonDown"  >
+                  MouseRightButtonDown="MainGrid_MouseRightButtonDown">
                 <Canvas Name="ClippingCanvas" ClipToBounds="True">
-                    <Canvas Name="TransformingCanvas" ClipToBounds="False" >
+                    <Canvas Name="TransformingCanvas" ClipToBounds="False">
                         <Canvas Name="BackgroundGrid" ClipToBounds="False" />
                         <Canvas Name="DrawingCanvas" ClipToBounds="False" />
                         <Canvas.RenderTransform>
-                            <MatrixTransform x:Name="MainMatrixTransform"/>
+                            <MatrixTransform x:Name="MainMatrixTransform" />
                         </Canvas.RenderTransform>
                     </Canvas>
                 </Canvas>
             </Grid>
         </DockPanel>
-
     </Grid>
 </Window>

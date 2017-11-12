@@ -8,9 +8,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.IO;
 
 namespace Bonza.Generator
 {
@@ -227,7 +227,7 @@ namespace Bonza.Generator
 
 
         private IList<WordPosition> FindWordPossiblePlacements(string originalWord, PlaceWordOptimization optimization)
-        { 
+        {
             string canonizedWord = CanonizeWord(originalWord);
 
             // If it's the first canonizedWord of the layout, chose random orientation and place it at position (0, 0)
@@ -237,7 +237,7 @@ namespace Bonza.Generator
                 return new List<WordPosition> { wordPosition };
             }
 
-            // Get current layout since we'll prefer placements that minimiza layout extension to keep words grouped
+            // Get current layout since we'll prefer placements that minimize layout extension to keep words grouped
             BoundingRectangle r = Layout.Bounds;
             int surface = ComputeAdjustedSurface(r.Max.Column - r.Min.Column + 1, r.Max.Row - r.Min.Row + 1);
 
@@ -251,14 +251,14 @@ namespace Bonza.Generator
                     BoundingRectangle newR = Layout.ExtendBounds(r, placedWordPosition);
                     if (newR.Equals(r))
                     {
-                        if (optimization == PlaceWordOptimization.Aggressive )
+                        if (optimization == PlaceWordOptimization.Aggressive)
                             return new List<WordPosition> { placedWordPosition };
                         if (optimization == PlaceWordOptimization.High)
                             possibleWordPositionsBelowThreshold.Add(placedWordPosition);
                     }
                     int newSurface = ComputeAdjustedSurface(newR.Max.Column - newR.Min.Column + 1, newR.Max.Row - newR.Min.Row + 1);
                     possibleWordPositions.Add(placedWordPosition);
-                    switch(optimization)
+                    switch (optimization)
                     {
                         case PlaceWordOptimization.Aggressive:
                         case PlaceWordOptimization.High:
@@ -272,7 +272,7 @@ namespace Bonza.Generator
                             break;
 
                         case PlaceWordOptimization.Standard:
-                            if (newSurface<surface*1.15)
+                            if (newSurface < surface * 1.15)
                                 possibleWordPositionsBelowThreshold.Add(placedWordPosition);
                             possibleWordPositions.Add(placedWordPosition);
                             break;
@@ -378,7 +378,7 @@ namespace Bonza.Generator
 
 
 
-        /// <summary>Writes a text representation of current layout on stdout.</summary>
+        /// <summary>Writes a text representation of current layout on standard output.</summary>
         public void Print() => Print(Console.Out);
 
 
@@ -426,6 +426,5 @@ namespace Bonza.Generator
                 tw.WriteLine();
             }
         }
-
     }
 }
