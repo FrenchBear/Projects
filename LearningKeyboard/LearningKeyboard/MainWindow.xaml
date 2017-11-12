@@ -10,8 +10,8 @@
         <!-- Dummy Style, anything you won't use goes -->
         <Style TargetType="{x:Type Rectangle}" />
         <ResourceDictionary x:Key="Brown" Source="ColorSchemes/BrownColors.xaml" />
-        <ResourceDictionary x:Key="Rainbow" Source="ColorSchemes/RainbowColors.xaml"/>
-        <ResourceDictionary x:Key="Pastel" Source="ColorSchemes/PastelColors.xaml"/>
+        <ResourceDictionary x:Key="Rainbow" Source="ColorSchemes/RainbowColors.xaml" />
+        <ResourceDictionary x:Key="Pastel" Source="ColorSchemes/PastelColors.xaml" />
     </Window.Resources>
 
     <Grid>
@@ -23,16 +23,16 @@
             MouseLeftButtonDown="MyCanvas_MouseLeftButtonDown">
 
             <Button Name="CloseButton" Width="17" Height="18" Content="r" FontFamily="Marlett" Background="Gray" Foreground="White"
-                Click="CloseButton_Click" 
+                Click="CloseButton_Click"
                 IsTabStop="False" Focusable="False" />
             <Button x:Name="AboutButton" Width="17" Height="18" FontSize="10" Content="?" FontFamily="Segoe UI" Background="Gray" Foreground="White"
-                Click="AboutButton_Click" Canvas.Top="25" 
-                IsTabStop="False" Focusable="False"  />
+                Click="AboutButton_Click" Canvas.Top="25"
+                IsTabStop="False" Focusable="False" />
             <Button x:Name="SettingsButton" Width="17" Height="18" FontSize="10" Content="⚙" FontFamily="Segoe UI" Background="Gray" Foreground="White"
-                Click="SettingsButton_Click" Canvas.Top="50" 
+                Click="SettingsButton_Click" Canvas.Top="50"
                 IsTabStop="False" Focusable="False" />
         </Canvas>
-        <WrapPanel Name="CombinationsWrapPanel" Grid.Column="1" Background="PeachPuff" Orientation="Vertical" 
+        <WrapPanel Name="CombinationsWrapPanel" Grid.Column="1" Background="PeachPuff" Orientation="Vertical"
                    TextBlock.FontFamily="Segoe UI" TextBlock.FontSize="14" />
     </Grid>
 </Window>

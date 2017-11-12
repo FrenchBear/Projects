@@ -1,11 +1,11 @@
 ﻿<UserControl x:Class="LearningKeyboard.NewKey"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              Width="40" Height="40"
              SizeChanged="UserControl_SizeChanged"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="40" d:DesignWidth="40">
 
     <!--<Button Background="{Binding Background, ElementName=myBindingTarget}" />-->
@@ -14,21 +14,20 @@
 
             <TextBlock Name="SimpleTextTB" TextAlignment="Center"
                        Canvas.Top="8" Canvas.Left="0" Height="19"  Width="38"
-                       Text="{Binding SimpleText}"/>
+                       Text="{Binding SimpleText}" />
 
             <TextBlock Name="NormalTextTB" TextAlignment="Center"
                        Canvas.Top="19" Canvas.Left="0" Width="19" Height="19"
-                       Text="{Binding NormalText,FallbackValue=r}" Background="{Binding NormalTextBackground}"/>
+                       Text="{Binding NormalText,FallbackValue=r}" Background="{Binding NormalTextBackground}" />
             <TextBlock Name="ShiftTextTB" TextAlignment="Center"
                        Canvas.Top="0" Canvas.Left="0" Width="19" Height="19"
-                       Text="{Binding ShiftText,FallbackValue=R}" Background="{Binding ShiftTextBackground}"/>
-            <TextBlock Name="AltGrTextTB" TextAlignment="Center" 
+                       Text="{Binding ShiftText,FallbackValue=R}" Background="{Binding ShiftTextBackground}" />
+            <TextBlock Name="AltGrTextTB" TextAlignment="Center"
                        Canvas.Top="19" Canvas.Left="19" Width="19" Height="19"
-                       Text="{Binding AltGrText,FallbackValue=√}" Background="{Binding AltGrTextBackground}"/>
+                       Text="{Binding AltGrText,FallbackValue=√}" Background="{Binding AltGrTextBackground}" />
             <TextBlock Name="ShiftAltGrTextTB" TextAlignment="Center"
                        Canvas.Top="0" Canvas.Left="19" Width="19" Height="19"
-                       Text="{Binding ShiftAltGrText,FallbackValue=®}" Background="{Binding ShiftAltGrTextBackground}"/>
+                       Text="{Binding ShiftAltGrText,FallbackValue=®}" Background="{Binding ShiftAltGrTextBackground}" />
         </Canvas>
-
     </Border>
 </UserControl>

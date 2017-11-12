@@ -4,8 +4,6 @@
 // 2017-09-19   PV
 
 
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using static LearningKeyboard.NativeMethods;
@@ -13,8 +11,7 @@ using static LearningKeyboard.NativeMethods;
 
 namespace LearningKeyboard
 {
-
-    class KeyboardKey : NewKey
+    internal class KeyboardKey : NewKey
     {
         private readonly string dispoNF;    // Key ref in NF-Z-71-300
         private readonly int scanCode;
@@ -57,7 +54,7 @@ namespace LearningKeyboard
 
 
         // The apparently useless calls to GetCharsFromKeys
-        // clean internal buffer state, perturbed by previous dicratical
+        // clean internal buffer state, perturbed by previous diacritical
         // characters such as ~ or ^
         private static (string, bool) GetCharsFromKeys2(Keys vk, bool shift, bool altGr)
         {

@@ -4,9 +4,7 @@
 // 2017-09-19   PV
 
 
-using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -166,6 +164,7 @@ namespace LearningKeyboard
         }
 
         private NewKeyStyle DefaultKeyStyle = (NewKeyStyle)0;
+
         public NewKeyStyle KeyStyle
         {
             get { return (NewKeyStyle)GetValue(KeyStyleProperty); }
@@ -268,6 +267,7 @@ namespace LearningKeyboard
 
 
         private Brush _NormalTextBackground = Brushes.Transparent;
+
         public Brush NormalTextBackground
         {
             get { return _NormalTextBackground; }
@@ -282,6 +282,7 @@ namespace LearningKeyboard
         }
 
         private Brush _ShiftTextBackground = Brushes.Transparent;
+
         public Brush ShiftTextBackground
         {
             get { return _ShiftTextBackground; }
@@ -296,6 +297,7 @@ namespace LearningKeyboard
         }
 
         private Brush _AltGrTextBackground = Brushes.Transparent;
+
         public Brush AltGrTextBackground
         {
             get { return _AltGrTextBackground; }
@@ -310,6 +312,7 @@ namespace LearningKeyboard
         }
 
         private Brush _ShiftAltGrTextBackground = Brushes.Transparent;
+
         public Brush ShiftAltGrTextBackground
         {
             get { return _ShiftAltGrTextBackground; }
@@ -419,10 +422,12 @@ namespace LearningKeyboard
                             KeyStyle = NewKeyStyle.Simple;
                             SimpleTextTB.Text = NormalText;
                             break;
+
                         case KeyState.Shift:
                             KeyStyle = NewKeyStyle.Simple;
                             SimpleTextTB.Text = ShiftText;
                             break;
+
                         default:
                             KeyStyle = NewKeyStyle.Normal;
                             SimpleTextTB.Text = "";
@@ -450,7 +455,6 @@ namespace LearningKeyboard
             ActiveText(ShiftTextTB, _NewKeyState == KeyState.Shift, isPressed);
             ActiveText(AltGrTextTB, _NewKeyState == KeyState.AltGr, isPressed);
             ActiveText(ShiftAltGrTextTB, _NewKeyState == KeyState.ShiftAltGr, isPressed);
-
         }
 
         private void ActiveText(TextBlock tb, bool isActive, bool isPressed)
@@ -466,6 +470,5 @@ namespace LearningKeyboard
                 tb.FontWeight = FontWeights.Regular;
             }
         }
-
     }
 }

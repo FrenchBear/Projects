@@ -1,4 +1,8 @@
-﻿using System;
+﻿// CharFromKey
+// Helper class to generate the list of dead keys combinations
+// 2017-09  PV
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,11 +19,11 @@ namespace LearningKeyboard
 
         /// <summary>
         /// Returns a list of tuples (string Key, string NewKey) giving new generated key
-        /// when dicratical key passed in parameter is combined with Key
+        /// when diacritical key passed in parameter is combined with Key
         /// </summary>
-        /// <param name="vkDic">Virtual key of dicratical</param>
-        /// <param name="shiftDic">Shift state to get dicratical</param>
-        /// <param name="altGrDic">AltGr state to get dicratical</param>
+        /// <param name="vkDic">Virtual key of diacritical</param>
+        /// <param name="shiftDic">Shift state to get diacritical</param>
+        /// <param name="altGrDic">AltGr state to get diacritical</param>
         internal static List<Tuple<string, string>> GetDeadKeyCombinations(Keys vkDic, bool shiftDic, bool altGrDic)
         {
             var l = new List<Tuple<string, string>>();
@@ -31,7 +35,7 @@ namespace LearningKeyboard
                 {
                     s1 = GetCharsFromKeys2Simplified(k.vk, shift, altGr);
                     s1d = GetCharsFromKeys2AfterDiacritical(vkDic, shiftDic, altGrDic, k.vk, shift, altGr);
-                    if (s1.Length == 1 && s1d.Length == 1 && !l.Any(t => t.Item1==s1)) l.Add(new Tuple<string, string>(s1, s1d));
+                    if (s1.Length == 1 && s1d.Length == 1 && !l.Any(t => t.Item1 == s1)) l.Add(new Tuple<string, string>(s1, s1d));
                 }
             }
             return l;
@@ -53,7 +57,7 @@ namespace LearningKeyboard
         }
 
         // The apparently useless calls to GetCharsFromKeys
-        // clean internal buffer state, perturbed by previous dicratical
+        // clean internal buffer state, perturbed by previous diacritical
         // characters such as ~ or ^
         private static (string, bool) GetCharsFromKeys2(Keys vk, bool shift, bool altGr)
         {
@@ -84,6 +88,5 @@ namespace LearningKeyboard
                 isDeadKey = false;
             return buf.ToString().Substring(0, n);
         }
-
     }
 }

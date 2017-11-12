@@ -1,5 +1,5 @@
 ﻿// Learning Keyboard
-// Visual Keyboard to learn typing 
+// Visual Keyboard to learn typing
 // 2017-09-18   PV
 // 2017-10-20   PV      TextRendering and TextFormatting
 
@@ -58,7 +58,8 @@ namespace LearningKeyboard
             }
         }
 
-        Dictionary<Tuple<Keys, bool, bool>, List<Tuple<string, string>>> dicCombi = new Dictionary<Tuple<Keys, bool, bool>, List<Tuple<string, string>>>();
+        private Dictionary<Tuple<Keys, bool, bool>, List<Tuple<string, string>>> dicCombi = new Dictionary<Tuple<Keys, bool, bool>, List<Tuple<string, string>>>();
+
         private void PrepareDicraticalCombinations()
         {
             foreach (var key in AllKeys.Values)
@@ -70,7 +71,7 @@ namespace LearningKeyboard
             }
         }
 
-        private  void PrepareDicraticalCombinationsOneKey(Keys vkDic, bool shiftDic, bool altGrDic)
+        private void PrepareDicraticalCombinationsOneKey(Keys vkDic, bool shiftDic, bool altGrDic)
         {
             var combinations = GetDeadKeyCombinations(vkDic, shiftDic, altGrDic);
             var dki = new Tuple<Keys, bool, bool>(vkDic, shiftDic, altGrDic);
@@ -182,7 +183,6 @@ namespace LearningKeyboard
                     k.NewKeyState = ks;
                 }
             }
-
         }
 
         private string ColorScheme;
@@ -294,11 +294,11 @@ namespace LearningKeyboard
             AboutButton.SetValue(Canvas.LeftProperty, (double)MyCanvas.Width - bo - CloseButton.Width);
             SettingsButton.SetValue(Canvas.TopProperty, (double)bo + 2 * (4 + AboutButton.Height));
             SettingsButton.SetValue(Canvas.LeftProperty, (double)MyCanvas.Width - bo - SettingsButton.Width);
-
         }
 
 
-        static Brush DarkerBrush = new SolidColorBrush(Color.FromArgb(64, 40, 40, 40));
+        private static Brush DarkerBrush = new SolidColorBrush(Color.FromArgb(64, 40, 40, 40));
+
         private void ApplyColorScheme()
         {
             ResourceDictionary rd = (Resources?[ColorScheme] ?? Resources["Brown"]) as ResourceDictionary;
@@ -320,7 +320,6 @@ namespace LearningKeyboard
                 if (k.IsAltGrDeadKey) k.AltGrTextBackground = DarkerBrush;
                 if (k.IsShiftAltGrDeadKey) k.ShiftAltGrTextBackground = DarkerBrush;
             }
-
         }
 
 

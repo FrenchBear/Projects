@@ -72,9 +72,7 @@ namespace Gma.System.MouseKeyHook
             var scanCode = checked((int) (flags & maskScanCode));
             const int fuState = 0;
 
-            char[] chars;
-
-            KeyboardNativeMethods.TryGetCharFromKeyboardState(virtualKeyCode, scanCode, fuState, out chars);
+            KeyboardNativeMethods.TryGetCharFromKeyboardState(virtualKeyCode, scanCode, fuState, out char[] chars);
             if (chars == null) yield break;
             foreach (var ch in chars)
             {
@@ -106,8 +104,7 @@ namespace Gma.System.MouseKeyHook
             }
             else
             {
-                char[] chars;
-                KeyboardNativeMethods.TryGetCharFromKeyboardState(virtualKeyCode, scanCode, fuState, out chars);
+                KeyboardNativeMethods.TryGetCharFromKeyboardState(virtualKeyCode, scanCode, fuState, out char[] chars);
                 if (chars == null) yield break;
                 foreach (var current in chars)
                 {
