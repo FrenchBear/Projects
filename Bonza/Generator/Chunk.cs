@@ -67,5 +67,4 @@ namespace Bonza.Generator
             m_Squares.AddRange(squares);
         }
     }
-
 }

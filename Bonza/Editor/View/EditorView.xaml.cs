@@ -4,6 +4,9 @@
 // 2017-07-22   PV  First version
 
 
+using Bonza.Editor.Support;
+using Bonza.Editor.ViewModel;
+using Bonza.Generator;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,9 +17,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
-using Bonza.Editor.ViewModel;
-using Bonza.Editor.Support;
-using Bonza.Generator;
 using static Bonza.Editor.App;
 
 namespace Bonza.Editor.View
@@ -234,7 +234,7 @@ namespace Bonza.Editor.View
             // ToDo: Also support Undo when adding words
             // ToDo: Tweak PlaceWord optimization to avoid always replacing a word in the same place after moving it
             // Do: Keep the same WordAndCanvas and at the end, just process it as a simple move (which it is)
-            // This will provide animation and undo support autmatically
+            // This will provide animation and undo support automatically
             WordAndCanvas before = m_Sel.WordAndCanvasList[0];
             DeleteSelection();
             WordAndCanvas after = viewModel.AddWordsList(new List<string> { before.WordPosition.OriginalWord })?.First();
@@ -579,10 +579,10 @@ namespace Bonza.Editor.View
                     else
                         wac.WordCanvas.SetColor(NormalInvalidForeground, NormalInvalidBackground);
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(status), status, null);
             }
-
         }
 
 
@@ -607,7 +607,7 @@ namespace Bonza.Editor.View
                 int st = 1;
                 int sign = 1;
 
-                for (;;)
+                for (; ; )
                 {
                     for (int i = 0; i < st; i++)
                     {
@@ -690,6 +690,7 @@ namespace Bonza.Editor.View
 
         private bool IsMoveWordAnimationInProgress;
         private List<(Canvas, DependencyProperty, double)> finalMoveWordAnimationData;
+
         private void EndMoveWordAnimation()
         {
             IsMoveWordAnimationInProgress = false;
@@ -699,6 +700,7 @@ namespace Bonza.Editor.View
                 item.Item1.SetValue(item.Item2, item.Item3);
             }
         }
+
         private void MainGrid_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             var newPosition = e.GetPosition(MainGrid);
@@ -777,6 +779,5 @@ namespace Bonza.Editor.View
                 }
             }
         }
-
     }
 }

@@ -6,11 +6,9 @@
 // 2017-08-07   PV      Performance refactoring, StartRow and StartColumn must use m_PositionOrientation instead of PositionOrientation
 
 
-using System;
 
 namespace Bonza.Generator
 {
-
     public class WordPosition
     {
         public string Word { get; }                 // Canonized form, uppercase
@@ -21,6 +19,7 @@ namespace Bonza.Generator
 
         // Extra accessors for 'old' code
         public int StartRow => m_PositionOrientation.StartRow;
+
         public int StartColumn => m_PositionOrientation.StartColumn;
         public bool IsVertical => m_PositionOrientation.IsVertical;
 
@@ -38,7 +37,5 @@ namespace Bonza.Generator
         {
             m_PositionOrientation = positionOrientation;
         }
-
     }
-
 }

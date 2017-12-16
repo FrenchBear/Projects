@@ -17,7 +17,7 @@
             <TextBlock x:Name="AssemblyVersion" Margin="0,6,0,0" />
             <TextBlock x:Name="AssemblyCopyright" Margin="0,6,0,0" />
         </StackPanel>
-        <Button Grid.Row="2" Content="OK" HorizontalAlignment="Right" Width="55" 
+        <Button Grid.Row="2" Content="OK" HorizontalAlignment="Right" Width="55"
             Click="OKButton_Click" IsCancel="True" IsDefault="True" />
     </Grid>
 </Window>

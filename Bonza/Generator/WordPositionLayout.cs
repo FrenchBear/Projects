@@ -19,8 +19,10 @@ namespace Bonza.Generator
     {
         /// <summary>Placement is good.</summary>
         Valid,
+
         /// <summary>No overlap, but word touches another word in an incorrect way.</summary>
         TooClose,
+
         /// <summary>Overlap or touches a word of same orientation.</summary>
         Invalid
     }
@@ -32,7 +34,7 @@ namespace Bonza.Generator
         private readonly List<WordPosition> m_WordPositionList = new List<WordPosition>();
         private readonly Dictionary<int, Square> m_Squares = new Dictionary<int, Square>();
 
-        // Builds m_Squares index for performance (rather than a ValueTuple<int,int> or worse perfoamnce-wise, a Position)
+        // Builds m_Squares index for performance (rather than a ValueTuple<int,int> or worse performance-wise, a Position)
         internal static int Index(int row, int column) => (((short)row) << 16) + (short)column;
 
 

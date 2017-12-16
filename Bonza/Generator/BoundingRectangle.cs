@@ -56,7 +56,5 @@ namespace Bonza.Generator
         {
             return !br1.Equals(br2);
         }
-
     }
-
 }

@@ -11,8 +11,16 @@ namespace Bonza.Generator
     // To avoid use of generic Exception and make code analyzer complain about it!
     public class BonzaException : Exception
     {
-        public BonzaException() { }
-        public BonzaException(string message) : base(message) { }
-        public BonzaException(string message, Exception innerException) : base(message, innerException) { }
+        public BonzaException()
+        {
+        }
+
+        public BonzaException(string message) : base(message)
+        {
+        }
+
+        public BonzaException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
     }
 }

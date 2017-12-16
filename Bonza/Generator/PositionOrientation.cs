@@ -13,7 +13,7 @@ namespace Bonza.Generator
 {
     /// <summary>Regroups a Position and an orientation flag.</summary>
     [Immutable]
-    public struct PositionOrientation:IEquatable<PositionOrientation>
+    public struct PositionOrientation : IEquatable<PositionOrientation>
     {
         public int StartRow { get; }
         public int StartColumn { get; }
@@ -36,7 +36,7 @@ namespace Bonza.Generator
 
         public override string ToString()
         {
-            return $"PosOrient({StartRow}, {StartColumn}, {(IsVertical?"V":"H")})";
+            return $"PosOrient({StartRow}, {StartColumn}, {(IsVertical ? "V" : "H")})";
         }
 
 
@@ -56,7 +56,7 @@ namespace Bonza.Generator
 
         public bool Equals(PositionOrientation other)
         {
-            return StartRow == other.StartRow && StartColumn == other.StartColumn && IsVertical==other.IsVertical;
+            return StartRow == other.StartRow && StartColumn == other.StartColumn && IsVertical == other.IsVertical;
         }
 
         public static bool operator ==(PositionOrientation po1, PositionOrientation po2)
@@ -68,8 +68,5 @@ namespace Bonza.Generator
         {
             return !po1.Equals(po2);
         }
-
     }
-
-
 }

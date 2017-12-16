@@ -1,0 +1,12 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:LearningKeyboard">
+    <SolidColorBrush x:Key="L5" Color="DarkSalmon" />
+    <SolidColorBrush x:Key="L4" Color="Tan" />
+    <SolidColorBrush x:Key="L3" Color="Wheat" />
+    <SolidColorBrush x:Key="L2" Color="LightGoldenrodYellow" />
+    <SolidColorBrush x:Key="R2" Color="Khaki" />
+    <SolidColorBrush x:Key="R3" Color="Wheat" />
+    <SolidColorBrush x:Key="R4" Color="Tan" />
+    <SolidColorBrush x:Key="R5" Color="DarkSalmon" />
+</ResourceDictionary>

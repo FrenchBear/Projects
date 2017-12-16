@@ -61,6 +61,5 @@ namespace Bonza.Generator
         {
             return !position1.Equals(position2);
         }
-
     }
 }

@@ -8,7 +8,7 @@
         d:DataContext="{d:DesignInstance vm:AddWordsViewModel}"
         Title="Bonza - Ajouter des mots" Height="300" Width="300"
         Icon="/Bonza.Editor;component/Icons/addwords.ico"
-        ShowInTaskbar="False" ResizeMode="CanResize" >
+        ShowInTaskbar="False" ResizeMode="CanResize">
 
     <Grid Margin="6">
         <Grid.RowDefinitions>
