@@ -2,11 +2,12 @@
 // Visual Keyboard to learn typing
 // 2017-09-18   PV
 // 2017-10-20   PV      TextRendering and TextFormatting
-
+// 2017-12-22   PV      1.1.1 AlwaysOnTop option
 
 using Gma.System.MouseKeyHook;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -37,10 +38,10 @@ namespace LearningKeyboard
             ApplyColorScheme();
             Subscribe();
 
-            Activated += (s, e) => { Topmost = true; };
-            Deactivated += (s, e) => { Topmost = true; Activate(); };
+            AlwaysOnTop = (bool)Properties.Settings.Default["AlwaysOnTop"];
+            Activated += (s, e) => { if (AlwaysOnTop) Topmost = true; };
+            Deactivated += (s, e) => { if (AlwaysOnTop) { Topmost = true; Activate(); } };
         }
-
 
         private void ApplyWPFTextOptions()
         {
@@ -188,6 +189,7 @@ namespace LearningKeyboard
         private string ColorScheme;
         private string TextRendering;
         private string TextFormatting;
+        private bool AlwaysOnTop;
 
         private void DrawKeyboard()
         {
@@ -362,7 +364,7 @@ namespace LearningKeyboard
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            var st = new SettingsWindow(ColorScheme, TextFormatting, TextRendering);
+            var st = new SettingsWindow(ColorScheme, TextFormatting, TextRendering, AlwaysOnTop);
             if (st.ShowDialog().Value)
             {
                 if (st.ColorScheme != ColorScheme)
@@ -376,6 +378,8 @@ namespace LearningKeyboard
                     TextRendering = st.TextRendering;
                     ApplyWPFTextOptions();
                 }
+                AlwaysOnTop = st.AlwaysOnTop;
+                Topmost = AlwaysOnTop;
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿// LearningKeyboard Settings Window
 // 2017-09-21   PV
 // 2017-10-20   PV      TextRendering and TextFormatting
+// 2017-12-22   PV      AlwaysOnTop
 
 using System;
 using System.Windows;
@@ -16,14 +17,16 @@ namespace LearningKeyboard
         internal string ColorScheme;
         internal string TextFormatting;
         internal string TextRendering;
+        internal bool AlwaysOnTop;
 
 
-        internal SettingsWindow(string colorScheme, string textFormatting, string textRendering)
+        internal SettingsWindow(string colorScheme, string textFormatting, string textRendering, bool alwaysOnTop)
         {
             InitializeComponent();
             ColorScheme = colorScheme;
             TextRendering = textRendering;
             TextFormatting = textFormatting;
+            AlwaysOnTop = alwaysOnTop;
 
             Loaded += (s, e) =>
             {
@@ -45,6 +48,7 @@ namespace LearningKeyboard
                     case "Grayscale": TextRenderingGrayscaleOption.IsChecked = true; break;
                     case "ClearType": TextRenderingClearTypeOption.IsChecked = true; break;
                 }
+                AlwaysOnTopCheckBox.IsChecked = AlwaysOnTop;
             };
         }
 
@@ -69,10 +73,15 @@ namespace LearningKeyboard
             else if (TextRenderingGrayscaleOption.IsChecked.Value) TextRendering = "Grayscale";
             else if (TextRenderingClearTypeOption.IsChecked.Value) TextRendering = "ClearType";
 
+            AlwaysOnTop = AlwaysOnTopCheckBox.IsChecked ?? false;
+
             Properties.Settings.Default["ColorScheme"] = ColorScheme;
             Properties.Settings.Default["TextFormatting"] = TextFormatting;
             Properties.Settings.Default["TextRendering"] = TextRendering;
+            Properties.Settings.Default["AlwaysOnTop"] = AlwaysOnTop;
             Properties.Settings.Default.Save();
+
+
 
             DialogResult = true;
         }

@@ -40,7 +40,7 @@
                             <StackPanel.Resources>
                                 <ResourceDictionary Source="ColorSchemes/BrownColors.xaml" />
                             </StackPanel.Resources>
-                            <TextBlock Text="Brown" Width="50" />
+                            <Label Content="_Brown" Padding="0" Width="50" />
                             <TextBlock Text="A" Background="{StaticResource L5}" Style="{StaticResource Key}" />
                             <TextBlock Text="Z" Background="{StaticResource L4}" Style="{StaticResource Key}" />
                             <TextBlock Text="E" Background="{StaticResource L3}" Style="{StaticResource Key}" />
@@ -57,7 +57,7 @@
                             <StackPanel.Resources>
                                 <ResourceDictionary Source="ColorSchemes/RainbowColors.xaml" />
                             </StackPanel.Resources>
-                            <TextBlock Text="Rainbow" Width="50" />
+                            <Label Content="_Rainbow" Width="50" Padding="0"/>
                             <TextBlock Text="A" Background="{StaticResource L5}" Style="{StaticResource Key}" />
                             <TextBlock Text="Z" Background="{StaticResource L4}" Style="{StaticResource Key}" />
                             <TextBlock Text="E" Background="{StaticResource L3}" Style="{StaticResource Key}" />
@@ -74,7 +74,7 @@
                             <StackPanel.Resources>
                                 <ResourceDictionary Source="ColorSchemes/PastelColors.xaml" />
                             </StackPanel.Resources>
-                            <TextBlock Text="Pastel" Width="50" />
+                            <Label Content="Pastel" Width="50" Padding="0" />
                             <TextBlock Text="A" Background="{StaticResource L5}" Style="{StaticResource Key}" />
                             <TextBlock Text="Z" Background="{StaticResource L4}" Style="{StaticResource Key}" />
                             <TextBlock Text="E" Background="{StaticResource L3}" Style="{StaticResource Key}" />
@@ -93,8 +93,8 @@
                     <TextBlock Text="WPF Text Formatting Mode" Margin="2,0,2,2" FontWeight="DemiBold" />
                 </GroupBox.Header>
                 <StackPanel Orientation="Vertical">
-                    <RadioButton Name="TextFormattingIdealOption" Content="Ideal" MouseDoubleClick="Option_MouseDoubleClick" />
-                    <RadioButton Name="TextFormattingDisplayOption" Content="Display" MouseDoubleClick="Option_MouseDoubleClick" />
+                    <RadioButton Name="TextFormattingIdealOption" Content="_Ideal" MouseDoubleClick="Option_MouseDoubleClick" />
+                    <RadioButton Name="TextFormattingDisplayOption" Content="_Display" MouseDoubleClick="Option_MouseDoubleClick" />
                 </StackPanel>
             </GroupBox>
 
@@ -103,12 +103,15 @@
                     <TextBlock Text="WPF Text Rendering Mode" Margin="2,0,2,2" FontWeight="DemiBold" />
                 </GroupBox.Header>
                 <StackPanel Orientation="Vertical">
-                    <RadioButton Name="TextRenderingAutoOption" Content="Auto" MouseDoubleClick="Option_MouseDoubleClick" />
-                    <RadioButton Name="TextRenderingAliasedOption" Content="Aliased" MouseDoubleClick="Option_MouseDoubleClick" />
-                    <RadioButton Name="TextRenderingGrayscaleOption" Content="Grayscale" MouseDoubleClick="Option_MouseDoubleClick" />
-                    <RadioButton Name="TextRenderingClearTypeOption" Content="ClearType" MouseDoubleClick="Option_MouseDoubleClick" />
+                    <RadioButton Name="TextRenderingAutoOption" Content="_Auto" MouseDoubleClick="Option_MouseDoubleClick" />
+                    <RadioButton Name="TextRenderingAliasedOption" Content="Alia_sed" MouseDoubleClick="Option_MouseDoubleClick" />
+                    <RadioButton Name="TextRenderingGrayscaleOption" Content="_Grayscale" MouseDoubleClick="Option_MouseDoubleClick" />
+                    <RadioButton Name="TextRenderingClearTypeOption" Content="_ClearType" MouseDoubleClick="Option_MouseDoubleClick" />
                 </StackPanel>
             </GroupBox>
+            <CheckBox Name="AlwaysOnTopCheckBox" >
+                <Label Content="Always on _top" Padding="0" />
+            </CheckBox> 
         </StackPanel>
 
         <StackPanel Grid.Column="1">

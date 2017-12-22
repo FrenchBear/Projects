@@ -11,5 +11,8 @@
     <Setting Name="TextFormatting" Type="System.String" Scope="User">
       <Value Profile="(Default)">Ideal</Value>
     </Setting>
+    <Setting Name="AlwaysOnTop" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
