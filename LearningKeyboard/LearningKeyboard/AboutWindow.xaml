@@ -2,7 +2,7 @@
     x:Class="LearningKeyboard.AboutWindow" x:ClassModifier="internal"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="About LearningKeyboard" Icon="/LearningKeyboard.ico" ResizeMode="NoResize" SizeToContent="WidthAndHeight"
+    Title="About LearningKeyboard" Icon="/Resources/LearningKeyboard.ico" ResizeMode="NoResize" SizeToContent="WidthAndHeight"
     Activated="Window_Activated">
 
     <Grid Margin="12" TextBlock.FontFamily="Segoe UI">

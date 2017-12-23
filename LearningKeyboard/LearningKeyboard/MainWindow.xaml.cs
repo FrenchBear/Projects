@@ -8,6 +8,8 @@ using Gma.System.MouseKeyHook;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -25,6 +27,9 @@ namespace LearningKeyboard
         private bool control;
         private bool alt;
 
+        private NotifyIcon NotificationIcon;
+
+
         public MainWindow()
         {
             InitializeComponent();
@@ -39,8 +44,43 @@ namespace LearningKeyboard
             Subscribe();
 
             AlwaysOnTop = (bool)Properties.Settings.Default["AlwaysOnTop"];
-            Activated += (s, e) => { if (AlwaysOnTop) Topmost = true; };
+            Activated += (s, e) => { Topmost |= AlwaysOnTop; };
             Deactivated += (s, e) => { if (AlwaysOnTop) { Topmost = true; Activate(); } };
+
+            AddNotifiationIcon();
+            Closed += (s, e) => { NotificationIcon.Visible = false; NotificationIcon.Dispose(); };
+        }
+
+        private void AddNotifiationIcon()
+        {
+            NotificationIcon = new System.Windows.Forms.NotifyIcon
+            {
+                Icon = new System.Drawing.Icon(System.Windows.Application.GetResourceStream(new Uri("Resources/LearningKeyboard.ico", UriKind.Relative)).Stream),
+                Visible = true
+            };
+            NotificationIcon.DoubleClick +=
+                delegate (object sender, EventArgs args)
+                {
+                    Topmost = true;
+                    Topmost = false;
+                };
+
+
+            Assembly myAssembly = Assembly.GetExecutingAssembly();
+            AssemblyTitleAttribute aTitleAttr = (AssemblyTitleAttribute)Attribute.GetCustomAttribute(myAssembly, typeof(AssemblyTitleAttribute));
+            string sAssemblyVersion = myAssembly.GetName().Version.ToString();
+            NotificationIcon.Text = aTitleAttr.Title+" "+sAssemblyVersion;
+        }
+
+        private static Stream GetInternalConfigFile(string fileName)
+        {
+            // Internal resource
+            Type type = typeof(KeyboardKey);      // Trick to get base namespace instead of hardcoding the string Eurofins.SharedComponents.RounLib
+            string streamName = type.FullName.Substring(0, type.FullName.LastIndexOf('.')) + ".Resources." + fileName;
+            Stream manifestStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(streamName);
+            if (manifestStream == null)
+                throw new ArgumentException("Invalid internal resource name " + fileName);
+            return manifestStream;
         }
 
         private void ApplyWPFTextOptions()
@@ -203,7 +243,7 @@ namespace LearningKeyboard
             int rm = bo + 15 * m + 14 * sp + ms;     // Right margin
 
             int xc = 0, yc = 0;
-            Func<int, int> nextX = (int w) => { int xs = xc; xc += w + sp; return xs; };
+            int nextX(int w) { int xs = xc; xc += w + sp; return xs; }
 
             xc = bo;
             yc = bo;
