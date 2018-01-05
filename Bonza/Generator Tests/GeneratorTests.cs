@@ -56,7 +56,7 @@ namespace Bonza.Generator.Tests
         {
             Stopwatch sw = Stopwatch.StartNew();
             var g = new Bonza.Generator.Grille(123);
-            g.AddWordsFromFile(@"..\Lists\Prénoms.txt");
+            g.AddWordsFromFile(@"..\Lists\Villes5K.txt");
             sw.Stop();
             WriteLine("Time: " + sw.Elapsed);
             return sw.Elapsed;

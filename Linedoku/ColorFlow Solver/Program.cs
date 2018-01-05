@@ -31,8 +31,8 @@ namespace ColorFlow_Solver
                 stw = Stopwatch.StartNew();
 
                 //Board(5, new Line[] { new Line(0, 0, 4, 4), new Line(0, 1, 1, 3), new Line(2, 1, 4, 0), new Line(3, 1, 4, 3) });
-                Board(7, new Line[] { new Line(0, 0, 4, 5), new Line(1, 0, 3, 3), new Line(2, 4, 6, 3), new Line(3, 2, 4, 2), new Line(5, 5, 6, 4) });
-                //Board(9, new Line[] { new Line(0, 0, 4, 5), new Line(1, 3, 3, 8), new Line(1, 7, 5, 6), new Line(2, 0, 2, 5), new Line(3, 0, 8, 4), new Line(4, 8, 8, 5), new Line(6, 2, 7, 7) });
+                //Board(7, new Line[] { new Line(0, 0, 4, 5), new Line(1, 0, 3, 3), new Line(2, 4, 6, 3), new Line(3, 2, 4, 2), new Line(5, 5, 6, 4) });
+                Board(9, new Line[] { new Line(0, 0, 4, 5), new Line(1, 3, 3, 8), new Line(1, 7, 5, 6), new Line(2, 0, 2, 5), new Line(3, 0, 8, 4), new Line(4, 8, 8, 5), new Line(6, 2, 7, 7) });
                 //Board(11, new Line[] { new Line(0, 0, 5, 5), new Line(1, 0, 2, 5), new Line(1, 3, 7, 9), new Line(1, 7, 3, 10), new Line(2, 10, 6, 9), new Line(5, 4, 10, 10), new Line(6, 1, 8, 3), new Line(7, 5, 9, 5), new Line(9, 1, 10, 9) });
 
                 Solve(false);
