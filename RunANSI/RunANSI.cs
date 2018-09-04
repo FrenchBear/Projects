@@ -83,6 +83,8 @@ namespace RunANSI
 
         public static int Main(string[] args)
         {
+            bool TimeExec = false;
+
             StringBuilder sb = new StringBuilder();
             int iCmdArg = -1;
             for (int i = 0; i < args.Length; i++)
@@ -102,7 +104,14 @@ namespace RunANSI
                             WriteLine(aTitleAttr.Title + " " + sAssemblyVersion);
                             WriteLine(aDescAttr.Description);
                             WriteLine(aCopyrightAttr.Copyright);
+
+                            WriteLine("\nUsage: RunANSI [-h] [-t] [-v] command [command options...]");
+                            WriteLine("RunANSI options:\n-h  Show this text\n-t  Time command execution and show it at the end\n-v  Verbose mode, show errors when configuring console options");
                             return 0;
+
+                        case 't':
+                            TimeExec = true;
+                            break;
 
                         case 'v':
                             SilentMode = false;
@@ -147,11 +156,14 @@ namespace RunANSI
             };
             int exitCode;
 
+            Stopwatch sw = null;
             try
             {
+                if (TimeExec) sw = Stopwatch.StartNew();
                 using (Process proc = Process.Start(start))
                 {
                     proc.WaitForExit();
+                    if (TimeExec) sw.Stop();
                     exitCode = proc.ExitCode;
                 }
             }
@@ -161,6 +173,8 @@ namespace RunANSI
                 return 1;
             }
 
+            if (TimeExec)
+                Console.WriteLine("Duration: " + sw.Elapsed.ToString());
             return exitCode;
         }
         private static string ProtectSpace(string s) => s.IndexOf(' ') >= 0 ? "\"" + s + "\"" : s;
