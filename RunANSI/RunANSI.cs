@@ -3,6 +3,7 @@
 //
 // 2018-08-29   PV
 // 2018-09-04   PV      1.1 Check for missing argument; process its own options; silent by default, option -v to show messages
+// 2018-09-09   PV      1.2 Case insensitive RunANSI options and also accept / as option prefix
 
 using System;
 using System.Diagnostics;
@@ -16,7 +17,7 @@ namespace RunANSI
 {
     public class Program
     {
-        private static bool SilentMode = true;
+        private static bool Verbose = false;
 
         private const int STD_INPUT_HANDLE = -10;
         private const int STD_OUTPUT_HANDLE = -11;
@@ -50,7 +51,7 @@ namespace RunANSI
             //}
             if (!GetConsoleMode(iStdOut, out uint outConsoleMode))
             {
-                if (!SilentMode)
+                if (Verbose)
                     WriteLine("failed to get output console mode");
                 return;
             }
@@ -66,7 +67,7 @@ namespace RunANSI
             //}
             if (!SetConsoleMode(iStdOut, outConsoleMode))
             {
-                if (!SilentMode)
+                if (Verbose)
                     WriteLine($"failed to set output console mode, error code: {GetLastError()}");
                 return;
             }
@@ -89,11 +90,11 @@ namespace RunANSI
             int iCmdArg = -1;
             for (int i = 0; i < args.Length; i++)
             {
-                if (iCmdArg < 0 && args[i][0] == '-')
-                {
+                if (iCmdArg < 0 && (args[i][0] == '-' || args[i][0] == '/'))
                     switch (args[i][1])
                     {
                         case 'h':
+                        case 'H':
                         case '?':
                             Assembly myAssembly = System.Reflection.Assembly.GetExecutingAssembly();
                             AssemblyTitleAttribute aTitleAttr = (AssemblyTitleAttribute)Attribute.GetCustomAttribute(myAssembly, typeof(AssemblyTitleAttribute));
@@ -110,19 +111,19 @@ namespace RunANSI
                             return 0;
 
                         case 't':
+                        case 'T':
                             TimeExec = true;
                             break;
 
                         case 'v':
-                            SilentMode = false;
+                        case 'V':
+                            Verbose = true;
                             break;
 
                         default:
                             WriteLine($"RunANSI: Option {args[i]} ignored, use -h for help");
                             break;
                     }
-
-                }
                 else
                 {
                     if (iCmdArg < 0)
@@ -138,15 +139,20 @@ namespace RunANSI
                     }
                 }
             }
+
             if (iCmdArg < 0)
             {
                 WriteLine("RunANSI: Need at least one argument, the name of the application to run");
                 return 1;
             }
 
-            // Main goal of this application
+
+            // Main goal of this application, do not protest by default if it doesn't work, such as
+            // when stdout is redirected to a file
             SetVTMode();
 
+
+            // Launch user command
             ProcessStartInfo start = new ProcessStartInfo
             {
                 Arguments = sb.ToString(),
@@ -155,6 +161,12 @@ namespace RunANSI
                 WindowStyle = ProcessWindowStyle.Normal
             };
             int exitCode;
+
+            if (Verbose)
+            {
+                WriteLine($"Command to execute: <{args[iCmdArg]}>");
+                WriteLine($"Options: <{sb.ToString()}>");
+            }
 
             Stopwatch sw = null;
             try
