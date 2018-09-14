@@ -1,0 +1,30 @@
+﻿<Window
+x:Class="UniSearchNS.AboutWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:UniSearchNS"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" 
+    SizeToContent="WidthAndHeight" d:DesignWidth="450" d:DesignHeight="220" ResizeMode="NoResize"
+    FontSize="13" FontFamily="Segoe UI"
+    Icon="Unicorn.ico" Title="About UniSearch">
+
+    <Grid Margin="12">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Image Stretch="Uniform" Width="64" Source="/Unicorn.png" Margin="0,0,12,0" VerticalAlignment="Top" />
+        <StackPanel Orientation="Vertical" Grid.Column="1">
+            <TextBlock Name="AssemblyTitle" FontWeight="Bold" />
+            <TextBlock Name="AssemblyDescription" Margin="0,6,0,0" TextWrapping="Wrap" />
+            <TextBlock Name="AssemblyVersion" Margin="0,3,0,0" />
+            <TextBlock Name="AssemblyCopyright" Margin="0,3,0,0" />
+        </StackPanel>
+        <Button Width="50" Content="OK" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="0,18,0,0" Padding="2" VerticalAlignment="Bottom" Click="OKButton_Click" IsCancel="True" IsDefault="True" />
+    </Grid>
+</Window>
