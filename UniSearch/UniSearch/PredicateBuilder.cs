@@ -276,26 +276,37 @@ namespace UniSearchNS
                 }
 
                 // Otherwise search a part of Name
-                else if (isRE || isWW)
-                {
-                    try
-                    {
-                        if (isAS)
-                            wordFilter = Regex.IsMatch(cr.Name, word, isCS ? 0 : RegexOptions.IgnoreCase);
-                        else
-                            wordFilter = Regex.IsMatch(RemoveDiacritics(cr.Name), word, isCS ? 0 : RegexOptions.IgnoreCase);
-                    }
-                    catch (Exception)
-                    {
-                        wordFilter = true;
-                    }
-                }
                 else
                 {
-                    if (isAS)
-                        wordFilter = cr.Name.IndexOf(word, isCS ? StringComparison.CurrentCulture : StringComparison.InvariantCultureIgnoreCase) >= 0;
+                    bool isWWLocal = isWW;
+                    // Full word search
+                    if (word.StartsWith("W:", StringComparison.OrdinalIgnoreCase))
+                    {
+                        isWWLocal = true;
+                        word = @"\b" + Regex.Escape(word.Substring(2)) + @"\b";
+                    }
+
+                    if (isRE || isWWLocal)
+                    {
+                        try
+                        {
+                            if (isAS)
+                                wordFilter = Regex.IsMatch(cr.Name, word, isCS ? 0 : RegexOptions.IgnoreCase);
+                            else
+                                wordFilter = Regex.IsMatch(RemoveDiacritics(cr.Name), word, isCS ? 0 : RegexOptions.IgnoreCase);
+                        }
+                        catch (Exception)
+                        {
+                            wordFilter = true;
+                        }
+                    }
                     else
-                        wordFilter = RemoveDiacritics(cr.Name).IndexOf(word, isCS ? StringComparison.CurrentCulture : StringComparison.InvariantCultureIgnoreCase) >= 0;
+                    {
+                        if (isAS)
+                            wordFilter = cr.Name.IndexOf(word, isCS ? StringComparison.CurrentCulture : StringComparison.InvariantCultureIgnoreCase) >= 0;
+                        else
+                            wordFilter = RemoveDiacritics(cr.Name).IndexOf(word, isCS ? StringComparison.CurrentCulture : StringComparison.InvariantCultureIgnoreCase) >= 0;
+                    }
                 }
 
                 if (!(wordFilter ^ invertFlag))

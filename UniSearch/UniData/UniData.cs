@@ -85,7 +85,7 @@ namespace UniData
         public string Level2Name { get; private set; }
         public string Level3Name { get; private set; }
 
-        public string BlockNameRange => $"{BlockName} {Begin:X4}..{End:X4}";
+        public string BlockNameAndRange => $"{BlockName} {Begin:X4}..{End:X4}";
 
 
         internal BlockRecord(int Begin, int End, string BlockName, string Level1Name, string Level2Name, string Level3Name)

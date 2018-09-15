@@ -55,7 +55,7 @@
         <TextBlock Grid.Row="8" Grid.Column="1" Text="  Level 1  " FontWeight="SemiBold" />
         <TextBlock Grid.Row="8" Grid.Column="2" Text="{Binding SelectedChar.BlockRecord.Level1Name}" />
         <TextBlock Grid.Row="9" Grid.Column="1" Text="  Block " FontWeight="SemiBold" />
-        <TextBlock Grid.Row="9" Grid.Column="2" Text="{Binding SelectedChar.BlockRecord.BlockNameRange}" />
+        <TextBlock Grid.Row="9" Grid.Column="2" Text="{Binding SelectedChar.BlockRecord.BlockNameAndRange}" />
 
         <TextBlock Grid.Row="10" Grid.Column="1" Text="Encoding" FontWeight="Bold" Margin="0,12,0,0"/>
         <TextBlock Grid.Row="11" Grid.Column="1" Text="  UTF-8" FontWeight="SemiBold" />

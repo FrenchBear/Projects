@@ -80,11 +80,11 @@
                     <TextBox Name="CharacterFilterTextBox" Text="{Binding CharNameFilter, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" />
                 </DockPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                    <Label Content="Actions " />
-                    <Button Content=" _Copy selected chars " Margin="0,0,12,0" 
-                            Command="{Binding CopyCharsCommand}" CommandParameter="{Binding ElementName=CharListView, Path=SelectedItems}"/>
-                    <Button Content=" Copy selected _lines " Margin="0,0,12,0" 
-                            Command="{Binding CopyLinesCommand}" CommandParameter="{Binding ElementName=CharListView, Path=SelectedItems}"/>
+                    <Label Content="Copy " />
+                    <Button Content=" _Chars " Margin="0,0,6,0"  Command="{Binding CopyRecordsCommand}" CommandParameter="0"/>
+                    <Button Content=" _Lines " Margin="0,0,6,0"  Command="{Binding CopyRecordsCommand}" CommandParameter="1"/>
+                    <Button Content=" _Details " Margin="0,0,18,0" Command="{Binding CopyRecordsCommand}" CommandParameter="2"/>
+                    <Button Content=" _Image " Margin="0,0,6,0" Command="{Binding CopyImageCommand}" />
                 </StackPanel>
             </StackPanel>
 
@@ -124,7 +124,13 @@
                 </Grid.ColumnDefinitions>
 
                 <Border BorderThickness="2" BorderBrush="Black" Padding="6" Grid.RowSpan="5" VerticalAlignment="Top" Margin="0,3,12,0">
-                    <Image Name="CharImage" Source="{Binding SelectedCharImage}" MinWidth="90" MaxWidth="160" Height="80" Stretch="Uniform" StretchDirection="DownOnly" />
+                    <Image Name="CharImage" Source="{Binding SelectedCharImage}" MinWidth="90" MaxWidth="160" Height="80" Stretch="Uniform" StretchDirection="DownOnly" >
+                        <Image.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Copy image" Command="{Binding CopyImageCommand}" />
+                            </ContextMenu>
+                        </Image.ContextMenu>
+                    </Image>
                 </Border>
 
 
@@ -135,7 +141,7 @@
                 <TextBlock Grid.Row="2" Grid.Column="1" Text="Level 1" FontWeight="SemiBold" />
                 <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding SelectedChar.BlockRecord.Level1Name}" />
                 <TextBlock Grid.Row="3" Grid.Column="1" Text="Block" FontWeight="SemiBold" />
-                <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding SelectedChar.BlockRecord.BlockNameRange}" />
+                <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding SelectedChar.BlockRecord.BlockNameAndRange}" />
                 <TextBlock Grid.Row="4" Grid.Column="1" Text="Categories " FontWeight="SemiBold" />
                 <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding SelectedChar.CategoryRecord.Categories}" />
             </Grid>
@@ -152,9 +158,18 @@
                     <GridView>
                         <GridViewColumn Header="Character" CellTemplate="{StaticResource CharacterCellTemplate}"/>
                         <GridViewColumn Header="Codepoint   " DisplayMemberBinding="{Binding CodepointHexa}" />
-                        <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
+                        <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" />
                     </GridView>
                 </ListView.View>
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="_Copy chars" InputGestureText="Ctrl+C" Command="{Binding CopyRecordsCommand}" CommandParameter="0" />
+                        <MenuItem Header="Copy _lines" Command="{Binding CopyRecordsCommand}" CommandParameter="1" />
+                        <MenuItem Header="Copy _details" Command="{Binding CopyRecordsCommand}" CommandParameter="2" />
+                        <MenuItem Header="Copy _image" Command="{Binding CopyImageCommand}" />
+                    </ContextMenu>
+                </ListView.ContextMenu>
+
             </ListView>
         </DockPanel>
 

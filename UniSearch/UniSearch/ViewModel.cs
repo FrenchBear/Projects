@@ -1,4 +1,6 @@
 ﻿// UniSearch ViewModel
+// Interaction and commands support
+//
 // 2018-12-09   PV
 
 using System;
@@ -26,8 +28,7 @@ namespace UniSearchNS
         // Private variables
         private readonly SearchWindow window;       // Access to main window
         private Dictionary<int, CheckableNode> BlocksCheckableNodesDictionary;
-
-        private CheckableNode root;
+        private readonly CheckableNode root;        // TreeView root
 
 
         // INotifyPropertyChanged interface
@@ -38,8 +39,8 @@ namespace UniSearchNS
 
 
         // Commands public interface
-        public ICommand CopyCharsCommand { get; private set; }
-        public ICommand CopyLinesCommand { get; private set; }
+        public ICommand CopyRecordsCommand { get; private set; }
+        public ICommand CopyImageCommand { get; private set; }
         public ICommand ShowLevelCommand { get; private set; }
         public ICommand FlipVisibleCommand { get; private set; }
 
@@ -50,8 +51,8 @@ namespace UniSearchNS
             window = w;
 
             // Binding commands with behavior
-            CopyCharsCommand = new RelayCommand<object>(CopyCharsExecute, CanCopyChars);
-            CopyLinesCommand = new RelayCommand<object>(CopyLinesExecute, CanCopyLines);
+            CopyRecordsCommand = new RelayCommand<object>(CopyRecordsExecute, CanCopyRecords);
+            CopyImageCommand = new RelayCommand<object>(CopyImageExecute, CanCopyRecords);
             ShowLevelCommand = new RelayCommand<object>(ShowLevelExecute);
             FlipVisibleCommand = new RelayCommand<object>(FlipVisibleExecute);
 
@@ -359,7 +360,7 @@ namespace UniSearchNS
 
         // Commands
 
-        private bool CanCopyChars(object obj)
+        private bool CanCopyRecords(object obj)
         {
             // Trick to refresh selection count
             SelChars = window.CharListView.SelectedItems.Count;
@@ -367,38 +368,40 @@ namespace UniSearchNS
             return SelectedChar != null;
         }
 
-        private void CopyCharsExecute(object param)
+        private void CopyRecordsExecute(object param)
         {
-            System.Collections.IList items = (System.Collections.IList)param;
-            var selectedCharRecords = items.Cast<CharacterRecord>();
-            CopyCharRecords(true, selectedCharRecords);
-        }
+            var selectedCharRecords = window.CharListView.SelectedItems.Cast<CharacterRecord>();
 
-
-        private bool CanCopyLines(object obj)
-        {
-            return SelectedChar != null;
-        }
-
-        // With Shift, copies all file paths
-        private void CopyLinesExecute(object param)
-        {
-            System.Collections.IList items = (System.Collections.IList)param;
-            var selectedCharRecords = items.Cast<CharacterRecord>();
-            CopyCharRecords(false, selectedCharRecords);
-        }
-
-        private static void CopyCharRecords(bool isJustCharacter, IEnumerable<CharacterRecord> selectedCharRecords)
-        {
             var sb = new StringBuilder();
             foreach (CharacterRecord r in selectedCharRecords.OrderBy(cr => cr.Codepoint))
-                if (isJustCharacter)
-                    sb.Append(r.Character);
-                else
-                    sb.AppendLine(r.Character + "\t" + r.CodepointHexa + "\t" + r.Name);
+                switch (param)
+                {
+                    case "0":
+                        sb.Append(r.Character);
+                        break;
+
+                    case "1":
+                        sb.AppendLine(r.Character + "\t" + r.CodepointHexa + "\t" + r.Name);
+                        break;
+
+                    case "2":
+                        sb.AppendLine(r.Character + "\t" + r.CodepointHexa + "\t" + r.Name + "\t" + r.CategoryRecord.Categories + "\t" + r.Age + "\t" + r.BlockRecord.BlockNameAndRange + "\t" + r.UTF16 + "\t" + r.UTF8);
+                        break;
+                }
             System.Windows.Clipboard.Clear();
             System.Windows.Clipboard.SetText(sb.ToString());
         }
+
+
+        private void CopyImageExecute(object param)
+        {
+            if (SelectedChar!=null)
+            {
+                System.Windows.Clipboard.Clear();
+                System.Windows.Clipboard.SetImage(SelectedCharImage);
+            }
+        }
+
 
 
         void ActionAllNodes(CheckableNode n, Action<CheckableNode> a)
