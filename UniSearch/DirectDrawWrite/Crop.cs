@@ -1,14 +1,12 @@
 ﻿// DirectDrawWrite
-// Draws a text using DirectDraw/DirectWrire, and returns a cropped image as a byte[] for BGRA32bpp bitmap
+// Draws a text using DirectDraw/DirectWrite, and returns a cropped image as a byte[] for BGRA32bpp bitmap
+// Isolated in a separate assembly since it uses unsafe code
+//
 // 2018-09-14   PV
 
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -71,6 +69,11 @@ namespace DirectDrawWrite
             // Crop image while generating WritableBitmap at the same time
             int cropWidth = right - left + 1;
             int cropHeight = bottom - top + 1;
+
+            // Special case if bitmap is all white
+            if (cropWidth < 0 || cropHeight < 0)
+                return null;
+
             Int32Rect sourceRect = new Int32Rect(left, top, cropWidth, cropHeight);
             WriteableBitmap bitmap = new WriteableBitmap(cropWidth, cropHeight, 96, 96, PixelFormats.Bgra32, null);
             bitmap.WritePixels(sourceRect, pixels, width * (bitmap.Format.BitsPerPixel / 8), 0, 0);

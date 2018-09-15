@@ -238,7 +238,7 @@ namespace UniSearchNS
                 }
 
 
-                // If searched word is eactly 1 unicode character, test directly character itself
+                // If searched word is exactly 1 Unicode character, test directly character itself
                 // Don't care if searched word is denormalized
                 if (UnicodeData.CharacterLength(word) == 1)
                     switch (this.options & 3)

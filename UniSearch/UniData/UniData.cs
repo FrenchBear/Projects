@@ -83,7 +83,7 @@ namespace UniData
         // Used by binding
         public BlockRecord Block => UnicodeData.BlockRecords[BlockBegin];
 
-        public string CodepointHexa => $"U+${Codepoint:X4}";
+        public string CodepointHexa => $"U+{Codepoint:X4}";
 
 
         internal CharacterRecord(int Codepoint, string Name, string Category, bool IsPrintable)
@@ -129,7 +129,7 @@ namespace UniData
 
     public static class UnicodeData
     {
-        // Real internal dictionaries used to store unicode data
+        // Real internal dictionaries used to store Unicode data
         private static readonly Dictionary<int, CharacterRecord> char_map = new Dictionary<int, CharacterRecord>(65536);
         private static readonly Dictionary<int, BlockRecord> block_map = new Dictionary<int, BlockRecord>();
 
@@ -300,7 +300,7 @@ namespace UniData
         // Test
         //Debug.Assert(UnicodeData.CharacterLength("Aé♫𝄞🐗") == 5);
 
-        // Returns number of unicode characters in a (valid) unicode string
+        // Returns number of Unicode characters in a (valid) UTF-16 encoded string
         public static int CharacterLength(string s)
         {
             int l = 0;

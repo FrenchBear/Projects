@@ -119,19 +119,25 @@
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="Level 3  " FontWeight="SemiBold" />
-                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedChar.Block.Level3Name}" />
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="Level 2  " FontWeight="SemiBold" />
-                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedChar.Block.Level2Name}" />
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="Level 1  " FontWeight="SemiBold" />
-                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedChar.Block.Level1Name}" />
-                <TextBlock Grid.Row="3" Grid.Column="0" Text="Block " FontWeight="SemiBold" />
-                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedChar.Block.BlockNameRange}" />
-                <TextBlock Grid.Row="4" Grid.Column="0" Text="Since " FontWeight="SemiBold" />
-                <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedChar.Age}" />
+                <Border BorderThickness="2" BorderBrush="Black" Padding="6" Grid.RowSpan="5" VerticalAlignment="Top" Margin="0,3,12,0">
+                    <Image Name="CharImage" Source="{Binding SelectedCharImage}" MinWidth="90" MaxWidth="160" Height="80" Stretch="Uniform" StretchDirection="DownOnly" />
+                </Border>
+
+
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="Level 3  " FontWeight="SemiBold" />
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding SelectedChar.Block.Level3Name}" />
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="Level 2  " FontWeight="SemiBold" />
+                <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding SelectedChar.Block.Level2Name}" />
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="Level 1  " FontWeight="SemiBold" />
+                <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding SelectedChar.Block.Level1Name}" />
+                <TextBlock Grid.Row="3" Grid.Column="1" Text="Block " FontWeight="SemiBold" />
+                <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding SelectedChar.Block.BlockNameRange}" />
+                <TextBlock Grid.Row="4" Grid.Column="1" Text="Since " FontWeight="SemiBold" />
+                <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding SelectedChar.Age}" />
             </Grid>
 
 

@@ -16,12 +16,14 @@ using System.Windows.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using UniData;
+using System.Windows.Media.Imaging;
+using DirectDrawWrite;
 
 namespace UniSearchNS
 {
     internal class ViewModel : INotifyPropertyChanged
     {
-        // Parivate variables
+        // Private variables
         private readonly SearchWindow window;       // Access to main window
         private Dictionary<int, CheckableNode> BlocksCheckableNodesDictionary;
 
@@ -55,15 +57,13 @@ namespace UniSearchNS
 
 
             // Get Unicode data
-            CharactersRecordsList = UnicodeData.CharacterRecords.Values;
+            CharactersRecordsList = UnicodeData.CharacterRecords.Values.OrderBy(cr => cr.Codepoint).ToArray();
             ReadOnlyDictionary<int, BlockRecord>.ValueCollection BlockRecordsList = UnicodeData.BlockRecords.Values;
 
- 
-            //NotifyPropertyChanged(nameof(CharactersRecordsList));   // Avoid a propn for a single use
 
-            // root is *not* added to the treeview on purpose
+            // root is *not* added to the TreeView on purpose
             root = new CheckableNode("root", 4);
-            // Dic of CheckableNodes indexed by Begin block value
+            // Dictionary of CheckableNodes indexed by Begin block value
             BlocksCheckableNodesDictionary = new Dictionary<int, CheckableNode>();
 
             foreach (var l3 in BlockRecordsList.GroupBy(b => b.Level3Name).OrderBy(g => g.Key))
@@ -102,7 +102,7 @@ namespace UniSearchNS
 
             // Unselect some pretty useless blocks
             // ToDo: Maybe UniData should not even load the supplementary private areas?
-            // ToDo: Uncheck East Asian scripts, but need support to access L2 block
+            // ToDo: Unselect East Asian scripts, but need support to access L2 block
             BlocksCheckableNodesDictionary[0x0000].IsChecked = false;       // ASCII Controls C0
             BlocksCheckableNodesDictionary[0x0080].IsChecked = false;       // ASCII Controls C1
             BlocksCheckableNodesDictionary[0xE0100].IsChecked = false;      // Variation Selectors Supplement; Variation Selectors; Specials; Symbols and Punctuation
@@ -114,7 +114,7 @@ namespace UniSearchNS
             BlocksCheckableNodesDictionary[0xDC00].IsChecked = false;       //  Low Surrogates; ; Surrogates; Symbols and Punctuation
             BlocksCheckableNodesDictionary[0xE000].IsChecked = false;       //  Private Use Area; ; Private Use; Symbols and Punctuation
 
-            // To compute bound values based on initial blocks filterint
+            // To compute bound values based on initial blocks filtering
             FilterCharList();
             RefreshSelBlocks();
             RefreshFilBlocks();
@@ -123,7 +123,7 @@ namespace UniSearchNS
 
         // Bindable properties
         public List<CheckableNode> roots { get; set; }      // For TreeView binding
-        public ReadOnlyDictionary<int, CharacterRecord>.ValueCollection CharactersRecordsList { get; set; }
+        public CharacterRecord[] CharactersRecordsList { get; set; }
 
 
         private string _CharNameFilter;
@@ -168,11 +168,28 @@ namespace UniSearchNS
                 {
                     _SelectedChar = value;
                     NotifyPropertyChanged(nameof(SelectedChar));
+                    NotifyPropertyChanged(nameof(SelectedCharImage));
                 }
             }
         }
 
-        public int NumChars => CharactersRecordsList.Count;
+        public BitmapSource SelectedCharImage
+        {
+            get
+            {
+                if (SelectedChar == null)
+                    return null;
+                else
+                {
+                    string s = SelectedChar.Character;
+                    if (s.StartsWith("U+", StringComparison.Ordinal))
+                        s = "U+ " + s.Substring(2);
+                    return D2DDrawText.GetBitmapSource(s);
+                }
+            }
+        }
+
+        public int NumChars => UnicodeData.CharacterRecords.Count;
 
         public int NumBlocks => BlocksCheckableNodesDictionary.Count;
 

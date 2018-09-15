@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// CharDetailWindow
+// Show more information on a character after a double-click on the list
+//
+// 2018-09-15   PV
+
+
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using DirectDrawWrite;
 
 namespace UniSearchNS
 {
@@ -24,8 +17,8 @@ namespace UniSearchNS
         {
             InitializeComponent();
 
+            // Use same DataContext than main window to keep things simple
             DataContext = vm;
-            CharImage.Source = D2DDrawText.GetBitmapSource(vm.SelectedChar.Character);
         }
     }
 }

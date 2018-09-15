@@ -6,7 +6,7 @@ namespace UniSearchNS
 {
     public class CheckableNode : INotifyPropertyChanged
     {
-        // Parivate variables
+        // Private variables
         private bool? _isChecked = false;
         private CheckableNode _parent;
 
