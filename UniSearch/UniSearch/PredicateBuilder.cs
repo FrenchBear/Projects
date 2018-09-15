@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -273,6 +274,38 @@ namespace UniSearchNS
                 else if (word.StartsWith("GC:", StringComparison.OrdinalIgnoreCase))
                 {
                     wordFilter = cr.CategoryRecord.CategoriesList.Any(s => string.Compare(s, word.Substring(3), true) == 0);
+                }
+
+                // Age filter
+                else if (word.StartsWith("Age:", StringComparison.OrdinalIgnoreCase) || word.StartsWith("A:", StringComparison.OrdinalIgnoreCase))
+                {
+                    double age = double.Parse(cr.Age, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture.NumberFormat);
+                    word = word.Substring(word.IndexOf(':')+1);
+                    string op = "";
+                    foreach (string o in new string[] { ">=", ">", "<=", "<", "=" })
+                        if (word.StartsWith(o, StringComparison.Ordinal))
+                        {
+                            op = o;
+                            word = word.Substring(o.Length);
+                            break;
+                        }
+
+                    if (word.Length > 0 && double.TryParse(word, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture.NumberFormat, out double v))
+                        switch (op)
+                        {
+                            case ">": wordFilter = age > v; break;
+                            case ">=": wordFilter = age >= v; break;
+                            case "<": wordFilter = age < v; break;
+                            case "<=": wordFilter = age <= v; break;
+                            default: wordFilter = Math.Abs(age - v) < 0.001; break;
+                        }
+                }
+
+                // Block filter
+                else if (word.StartsWith("Block:", StringComparison.OrdinalIgnoreCase) || word.StartsWith("B:", StringComparison.OrdinalIgnoreCase))
+                {
+                    word = word.Substring(word.IndexOf(':') + 1);
+                    wordFilter = cr.BlockRecord.BlockName.IndexOf(word, 0, StringComparison.OrdinalIgnoreCase) >= 0;
                 }
 
                 // Otherwise search a part of Name

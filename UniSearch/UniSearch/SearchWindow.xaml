@@ -15,7 +15,7 @@
 
         <Style x:Key="TreeViewItemStyle" TargetType="TreeViewItem">
             <!-- ToDo: Binding to IsInistallySelected probably useless -->
-            <Setter Property="IsSelected" Value="{Binding IsInitiallySelected, Mode=OneTime}" />
+            <!--<Setter Property="IsSelected" Value="{Binding IsInitiallySelected, Mode=OneTime}" />-->
             <Setter Property="KeyboardNavigation.AcceptsReturn" Value="True" />
             <Setter Property="dw:VirtualToggleButton.IsVirtualToggleButton" Value="True" />
             <Setter Property="dw:VirtualToggleButton.IsChecked" Value="{Binding IsChecked}" />

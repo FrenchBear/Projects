@@ -3,9 +3,8 @@
 //
 // 2018-09-11   PV
 //
-// ToDo: Manage General Category.  Maybe script? PropertyValueAliases.txt and Scripts.txt
-// ToDo: Add unit tests
-
+// ToDo: Manage script PropertyValueAliases.txt and Scripts.txt
+// ToDo: Add more tests
 
 
 using System;

@@ -102,13 +102,17 @@ namespace UniSearchNS
             roots = root.Children;
 
             // Unselect some pretty useless blocks
-            // ToDo: Maybe UniData should not even load the supplementary private areas?
-            // ToDo: Unselect East Asian scripts, but need support to access L2 block
             BlocksCheckableNodesDictionary[0x0000].IsChecked = false;       // ASCII Controls C0
             BlocksCheckableNodesDictionary[0x0080].IsChecked = false;       // ASCII Controls C1
             BlocksCheckableNodesDictionary[0xE0100].IsChecked = false;      // Variation Selectors Supplement; Variation Selectors; Specials; Symbols and Punctuation
             BlocksCheckableNodesDictionary[0xF0000].IsChecked = false;      // Supplementary Private Use Area-A; ; Private Use; Symbols and Punctuation
             BlocksCheckableNodesDictionary[0x100000].IsChecked = false;     // Supplementary Private Use Area-B; ; Private Use; Symbols and Punctuation
+            ActionAllNodes(root, n => {
+                if (n.Name == "East Asian Scripts") n.IsChecked = false;
+                if (n.Name.IndexOf("CJK", StringComparison.Ordinal) >= 0) n.IsChecked = false;
+                if (n.Name == "Specials") n.IsChecked = false;
+            });
+
 
             BlocksCheckableNodesDictionary[0xD800].IsChecked = false;       //  High Surrogates; ; Surrogates; Symbols and Punctuation
             BlocksCheckableNodesDictionary[0xDB80].IsChecked = false;       //  High Private Use Surrogates; ; Surrogates; Symbols and Punctuation
@@ -290,7 +294,6 @@ namespace UniSearchNS
         }
 
         // Temporarily public during transition to MVVM pattern
-        // ToDo: Make it private
         public void StartOrResetDispatcherTimer()
         {
             if (dispatcherTimer == null)
