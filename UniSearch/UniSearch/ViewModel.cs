@@ -309,7 +309,7 @@ namespace UniSearchNS
             CollectionView view = CollectionViewSource.GetDefaultView(CharactersRecordsList) as CollectionView;
 
             // Block part of the filtering predicate
-            Predicate<object> bp = (object o) => BlocksCheckableNodesDictionary[((CharacterRecord)o).BlockBegin].IsChecked.Value;
+            Predicate<object> bp = (object o) => BlocksCheckableNodesDictionary[((CharacterRecord)o).Block].IsChecked.Value;
 
             // Character part of the filtering predicate
             if (string.IsNullOrEmpty(CharNameFilter))

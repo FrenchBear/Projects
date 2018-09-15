@@ -46,13 +46,13 @@
 
         <TextBlock Grid.Row="5" Grid.Column="1" Text="Block" FontWeight="Bold" Margin="0,12,0,0"/>
         <TextBlock Grid.Row="6" Grid.Column="1" Text="  Level 3  " FontWeight="SemiBold" />
-        <TextBlock Grid.Row="6" Grid.Column="2" Text="{Binding SelectedChar.Block.Level3Name}" />
+        <TextBlock Grid.Row="6" Grid.Column="2" Text="{Binding SelectedChar.BlockRecord.Level3Name}" />
         <TextBlock Grid.Row="7" Grid.Column="1" Text="  Level 2  " FontWeight="SemiBold" />
-        <TextBlock Grid.Row="7" Grid.Column="2" Text="{Binding SelectedChar.Block.Level2Name}" />
+        <TextBlock Grid.Row="7" Grid.Column="2" Text="{Binding SelectedChar.BlockRecord.Level2Name}" />
         <TextBlock Grid.Row="8" Grid.Column="1" Text="  Level 1  " FontWeight="SemiBold" />
-        <TextBlock Grid.Row="8" Grid.Column="2" Text="{Binding SelectedChar.Block.Level1Name}" />
+        <TextBlock Grid.Row="8" Grid.Column="2" Text="{Binding SelectedChar.BlockRecord.Level1Name}" />
         <TextBlock Grid.Row="9" Grid.Column="1" Text="  Block " FontWeight="SemiBold" />
-        <TextBlock Grid.Row="9" Grid.Column="2" Text="{Binding SelectedChar.Block.BlockNameRange}" />
+        <TextBlock Grid.Row="9" Grid.Column="2" Text="{Binding SelectedChar.BlockRecord.BlockNameRange}" />
     </Grid>
 
 

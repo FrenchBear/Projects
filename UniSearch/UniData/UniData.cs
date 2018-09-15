@@ -6,50 +6,6 @@
 // ToDo: Manage General Category.  Maybe script? PropertyValueAliases.txt and Scripts.txt
 // ToDo: Add unit tests
 
-/*
-# General_Category (gc)
-
-gc ; C                                ; Other                            # Cc | Cf | Cn | Co | Cs
-gc ; Cc                               ; Control                          ; cntrl
-gc ; Cf                               ; Format
-gc ; Cn                               ; Unassigned
-gc ; Co                               ; Private_Use
-gc ; Cs                               ; Surrogate
-gc ; L                                ; Letter                           # Ll | Lm | Lo | Lt | Lu
-gc ; LC                               ; Cased_Letter                     # Ll | Lt | Lu
-gc ; Ll                               ; Lowercase_Letter
-gc ; Lm                               ; Modifier_Letter
-gc ; Lo                               ; Other_Letter
-gc ; Lt                               ; Titlecase_Letter
-gc ; Lu                               ; Uppercase_Letter
-gc ; M                                ; Mark                             ; Combining_Mark                   # Mc | Me | Mn
-gc ; Mc                               ; Spacing_Mark
-gc ; Me                               ; Enclosing_Mark
-gc ; Mn                               ; Nonspacing_Mark
-gc ; N                                ; Number                           # Nd | Nl | No
-gc ; Nd                               ; Decimal_Number                   ; digit
-gc ; Nl                               ; Letter_Number
-gc ; No                               ; Other_Number
-gc ; P                                ; Punctuation                      ; punct                            # Pc | Pd | Pe | Pf | Pi | Po | Ps
-gc ; Pc                               ; Connector_Punctuation
-gc ; Pd                               ; Dash_Punctuation
-gc ; Pe                               ; Close_Punctuation
-gc ; Pf                               ; Final_Punctuation
-gc ; Pi                               ; Initial_Punctuation
-gc ; Po                               ; Other_Punctuation
-gc ; Ps                               ; Open_Punctuation
-gc ; S                                ; Symbol                           # Sc | Sk | Sm | So
-gc ; Sc                               ; Currency_Symbol
-gc ; Sk                               ; Modifier_Symbol
-gc ; Sm                               ; Math_Symbol
-gc ; So                               ; Other_Symbol
-gc ; Z                                ; Separator                        # Zl | Zp | Zs
-gc ; Zl                               ; Line_Separator
-gc ; Zp                               ; Paragraph_Separator
-gc ; Zs                               ; Space_Separator
-# @missing: 0000..10FFFF; General_Category; Unassigned
-*/
-
 
 
 using System;
@@ -71,7 +27,8 @@ namespace UniData
         public string Name { get; private set; }
         public string Category { get; private set; }
         public string Age { get; internal set; }
-        public int BlockBegin { get; internal set; }
+        public int Block { get; internal set; } = -1;       // -1 for tests
+
 
         // When True, Character method will return an hex codepoint representation instead of the actual string
         private readonly bool IsPrintable;
@@ -80,8 +37,10 @@ namespace UniData
         // 'Safe version' of UnicodeData.CPtoString
         public string Character => IsPrintable ? UnicodeData.CPtoString(Codepoint) : CodepointHexa;
 
+
         // Used by binding
-        public BlockRecord Block => UnicodeData.BlockRecords[BlockBegin];
+        public BlockRecord BlockRecord => UnicodeData.BlockRecords[Block];
+        public CategoryRecord CategoryRecord => UnicodeData.CategoryRecords[Category];
 
         public string CodepointHexa => $"U+{Codepoint:X4}";
 
@@ -94,7 +53,7 @@ namespace UniData
             this.IsPrintable = IsPrintable;
         }
 
-        public override string ToString() => $"CharacterRecord(CP=${Codepoint:X4}, Name={Name}, GC={Category})";
+        public override string ToString() => $"CharacterRecord(CP=U+{Codepoint:X4}, Name={Name}, Category={Category}, IsPrintable={IsPrintable})";
     }
 
 
@@ -126,11 +85,34 @@ namespace UniData
         }
     }
 
+    public class CategoryRecord
+    {
+        public string Code { get; private set; }
+        public string Name { get; private set; }
+        public string Include { get; private set; }
+
+        public List<string> CategoriesList { get; private set; }
+
+        public string Categories => CategoriesList.Aggregate((prev, c) => prev + ", " + c);
+
+
+        public CategoryRecord(string code, string name, string include = "")
+        {
+            this.Code = code;
+            this.Name = name;
+            this.Include = include;
+            CategoriesList = new List<string> { code };
+        }
+
+        public override string ToString() => $"CategoryRecord(Code={Code}, Name={Name}, Include={Include})";
+    }
+
 
     public static class UnicodeData
     {
         // Real internal dictionaries used to store Unicode data
         private static readonly Dictionary<int, CharacterRecord> char_map = new Dictionary<int, CharacterRecord>(65536);
+        private static readonly Dictionary<string, CategoryRecord> cat_map = new Dictionary<string, CategoryRecord>();
         private static readonly Dictionary<int, BlockRecord> block_map = new Dictionary<int, BlockRecord>();
 
 
@@ -138,10 +120,12 @@ namespace UniData
 
         public static ReadOnlyDictionary<int, BlockRecord> BlockRecords => new ReadOnlyDictionary<int, BlockRecord>(block_map);
 
+        public static ReadOnlyDictionary<string, CategoryRecord> CategoryRecords => new ReadOnlyDictionary<string, CategoryRecord>(cat_map);
+
 
         static UnicodeData()
         {
-            // First read blocks
+            // Read blocks
             using (var tr = new StreamReader("UCD/MetaBlocks.txt", Encoding.UTF8))
                 while (!tr.EndOfStream)
                 {
@@ -155,40 +139,57 @@ namespace UniData
                     block_map.Add(begin, br);
                 }
 
-
-            /*
-            // Efficient search of the block a character belongs to using binary search
-            var SortedBlocksArray = block_map.Values.OrderBy(br => br.Begin).ToArray();
-
-            // Returns first codepoint of the found block, or -1 if no matching block is found (should not happen)
-            int GetBlockBegin(int Codepoint)
+            // Initialize Categories
+            foreach (var cat in new CategoryRecord[] {
+                new CategoryRecord("", "Unassigned"),
+                new CategoryRecord("C", "Other", "Cc|Cf|Cn|Co|Cs"),
+                new CategoryRecord("Cc", "Control"),
+                new CategoryRecord("Cf", "Format"),
+                new CategoryRecord("Cn", "Unassigned"),
+                new CategoryRecord("Co", "Private_Use"),
+                new CategoryRecord("Cs", "Surrogate"),
+                new CategoryRecord("L", "Letter", "Ll|Lm|Lo|Lt|Lu"),
+                new CategoryRecord("LC", "Cased_Letter", "Ll|Lt|Lu"),
+                new CategoryRecord("Ll", "Lowercase_Letter"),
+                new CategoryRecord("Lm", "Modifier_Letter"),
+                new CategoryRecord("Lo", "Other_Letter"),
+                new CategoryRecord("Lt", "Titlecase_Letter"),
+                new CategoryRecord("Lu", "Uppercase_Letter"),
+                new CategoryRecord("M", "Mark", "Mc|Me|Mn"),
+                new CategoryRecord("Mc", "Spacing_Mark"),
+                new CategoryRecord("Me", "Enclosing_Mark"),
+                new CategoryRecord("Mn", "Nonspacing_Mark"),
+                new CategoryRecord("N", "Number", "Nd|Nl|No"),
+                new CategoryRecord("Nd", "Decimal_Number"),
+                new CategoryRecord("Nl", "Letter_Number"),
+                new CategoryRecord("No", "Other_Number"),
+                new CategoryRecord("P", "Punctuation", "Pc|Pd|Pe|Pf|Pi|Po|Ps"),
+                new CategoryRecord("Pc", "Connector_Punctuation"),
+                new CategoryRecord("Pd", "Dash_Punctuation"),
+                new CategoryRecord("Pe", "Close_Punctuation"),
+                new CategoryRecord("Pf", "Final_Punctuation"),
+                new CategoryRecord("Pi", "Initial_Punctuation"),
+                new CategoryRecord("Po", "Other_Punctuation"),
+                new CategoryRecord("Ps", "Open_Punctuation"),
+                new CategoryRecord("S", "Symbol", "Sc|Sk|Sm|So"),
+                new CategoryRecord("Sc", "Currency_Symbol"),
+                new CategoryRecord("Sk", "Modifier_Symbol"),
+                new CategoryRecord("Sm", "Math_Symbol"),
+                new CategoryRecord("So", "Other_Symbol"),
+                new CategoryRecord("Z", "Separator", "Zl|Zp|Zs"),
+                new CategoryRecord("Zl", "Line_Separator"),
+                new CategoryRecord("Zp", "Paragraph_Separator"),
+                new CategoryRecord("Zs", "Space_Separator"),})
             {
-                bool InBlock(int n) => Codepoint >= SortedBlocksArray[n].Begin && Codepoint <= SortedBlocksArray[n].End;
-
-                int lower = 0;
-                int upper = SortedBlocksArray.Length - 1;
-                for (; ; )
-                {
-                    if (upper == lower)
-                        return InBlock(upper) ? SortedBlocksArray[upper].Begin : -1;
-                    else if (upper - lower == 1)
-                    {
-                        if (InBlock(lower)) return SortedBlocksArray[lower].Begin;
-                        if (InBlock(upper)) return SortedBlocksArray[upper].Begin;
-                        return -1;
-                    }
-                    int middle = (lower + upper) / 2;
-                    if (InBlock(middle)) return SortedBlocksArray[middle].Begin;
-                    if (Codepoint < SortedBlocksArray[middle].Begin)
-                        upper = middle - 1;
-                    else
-                        lower = middle + 1;
-                }
+                cat_map.Add(cat.Code, cat);
             }
-            */
+            // Second pass, fill AllCategories
+            foreach (CategoryRecord cr in cat_map.Values)
+                foreach (string other in cr.Include.Split('|'))
+                    cat_map[other].CategoriesList.Add(cr.Code);
 
 
-            // Read character blocks
+            // Read characters
             string[] unicodedata = File.ReadAllLines("UCD/UnicodeData.txt", Encoding.UTF8);
             for (int i = 0; i < unicodedata.Length; i++)
             {
@@ -218,7 +219,7 @@ namespace UniData
 
 
             // Add missing non-characters
-            void AddNonCharacter(int codepoint) => char_map.Add(codepoint, new CharacterRecord(codepoint, $"<NOT A CHARACTER-{codepoint:X4}>", "?", false));
+            void AddNonCharacter(int codepoint) => char_map.Add(codepoint, new CharacterRecord(codepoint, $"<NOT A CHARACTER-{codepoint:X4}>", "", false));
             // 2 last characters of each plane
             for (int plane = 0; plane <= 16; plane++)
             {
@@ -234,7 +235,7 @@ namespace UniData
             foreach (var br in block_map.Values)
                 for (int ch = br.Begin; ch <= br.End; ch++)
                     if (char_map.ContainsKey(ch))
-                        char_map[ch].BlockBegin = br.Begin;
+                        char_map[ch].Block = br.Begin;
 
             // Read age
             using (var tr = new StreamReader("UCD/DerivedAge.txt", Encoding.UTF8))
@@ -259,12 +260,22 @@ namespace UniData
                 }
 
 
-            /*
-            // Check that all characters are assigned to a block --> Passed
-            foreach (var cr in char_map.Values)
-                Debug.Assert(cr.BlockBegin >= 0);
-            */
+            // For development
+            //InternalTests();
         }
+
+        private static void InternalTests()
+        {
+            foreach (var cr in char_map.Values)
+            {
+                // Check that all characters are assigned to a valid block
+                Debug.Assert(BlockRecords.ContainsKey(cr.Block));
+                // Check that all characters are assigned to a valid category
+                Debug.Assert(CategoryRecords.ContainsKey(cr.Category));
+
+            }
+        }
+
 
         public static int GetCPFromName(string name)
         {

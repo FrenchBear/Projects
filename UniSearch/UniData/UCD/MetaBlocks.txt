@@ -290,13 +290,27 @@ FFF0..FFFF;Specials;;Specials;Symbols and Punctuation
 1F800..1F8FF;Supplemental Arrows-C;Arrows;Mathematical Symbols;Symbols and Punctuation
 1F900..1F9FF;Supplemental Symbols and Pictographs;;Emoji & Pictographs;Symbols and Punctuation
 1FA00..1FA6F;Chess Symbols;Game Symbols;Other Symbols;Symbols and Punctuation
+1FFFE..1FFFF;Specials End of Plane 1;;Specials;Symbols and Punctuation
 20000..2A6DF;CJK Unified Ideographs Extension B;CJK Unified Ideographs (Han);East Asian Scripts;Scripts
 2A700..2B73F;CJK Unified Ideographs Extension C;CJK Unified Ideographs (Han);East Asian Scripts;Scripts
 2B740..2B81F;CJK Unified Ideographs Extension D;CJK Unified Ideographs (Han);East Asian Scripts;Scripts
 2B820..2CEAF;CJK Unified Ideographs Extension E;CJK Unified Ideographs (Han);East Asian Scripts;Scripts
 2CEB0..2EBEF;CJK Unified Ideographs Extension F;CJK Unified Ideographs (Han);East Asian Scripts;Scripts
 2F800..2FA1F;CJK Compatibility Ideographs Supplement;CJK Compatibility Ideographs;East Asian Scripts;Scripts
+2FFFE..2FFFF;Specials End of Plane 2;;Specials;Symbols and Punctuation
+3FFFE..3FFFF;Specials End of Plane 3;;Specials;Symbols and Punctuation
+4FFFE..4FFFF;Specials End of Plane 4;;Specials;Symbols and Punctuation
+5FFFE..5FFFF;Specials End of Plane 5;;Specials;Symbols and Punctuation
+6FFFE..6FFFF;Specials End of Plane 6;;Specials;Symbols and Punctuation
+7FFFE..7FFFF;Specials End of Plane 7;;Specials;Symbols and Punctuation
+8FFFE..8FFFF;Specials End of Plane 8;;Specials;Symbols and Punctuation
+9FFFE..9FFFF;Specials End of Plane 9;;Specials;Symbols and Punctuation
+AFFFE..AFFFF;Specials End of Plane 10;;Specials;Symbols and Punctuation
+BFFFE..BFFFF;Specials End of Plane 11;;Specials;Symbols and Punctuation
+CFFFE..CFFFF;Specials End of Plane 12;;Specials;Symbols and Punctuation
+DFFFE..DFFFF;Specials End of Plane 13;;Specials;Symbols and Punctuation
 E0000..E007F;Tags;;Specials;Symbols and Punctuation
 E0100..E01EF;Variation Selectors Supplement;Variation Selectors;Specials;Symbols and Punctuation
+EFFFE..EFFFF;Specials End of Plane 14;;Specials;Symbols and Punctuation
 F0000..FFFFF;Supplementary Private Use Area-A;;Private Use;Symbols and Punctuation
 100000..10FFFF;Supplementary Private Use Area-B;;Private Use;Symbols and Punctuation
