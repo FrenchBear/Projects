@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using UniData;
@@ -238,63 +239,71 @@ namespace UniSearchNS
                 }
 
 
+                bool wordFilter = true;
+
                 // If searched word is exactly 1 Unicode character, test directly character itself
                 // Don't care if searched word is denormalized
                 if (UnicodeData.CharacterLength(word) == 1)
+                {
                     switch (this.options & 3)
                     {
-                        default:    // CI AI
-                            return invertFlag ^ (RemoveDiacritics(cr.Character).ToUpperInvariant() == RemoveDiacritics(word).ToUpperInvariant());
+                        case 0:    // CI AI
+                            wordFilter = RemoveDiacritics(cr.Character).ToUpperInvariant() == RemoveDiacritics(word).ToUpperInvariant();
+                            break;
                         case 1:     // CS AI
-                            return invertFlag ^ (RemoveDiacritics(cr.Character) == RemoveDiacritics(word));
+                            wordFilter = RemoveDiacritics(cr.Character) == RemoveDiacritics(word);
+                            break;
                         case 2:     // CI AS
-                            return invertFlag ^ (cr.Character.ToUpperInvariant() == word.ToUpperInvariant());
+                            wordFilter = cr.Character.ToUpperInvariant() == word.ToUpperInvariant();
+                            break;
                         case 4:     // CS AS
-                            return invertFlag ^ (cr.Character == word);
+                            wordFilter = cr.Character == word;
+                            break;
                     }
+                }
 
                 // If searched string is U+ followed by 1 to 6 hex digits, search for Codepoint value
-                if (CodepointRegex.IsMatch(word))
+                else if (CodepointRegex.IsMatch(word))
                 {
                     int n = int.Parse(word.Substring(2), NumberStyles.HexNumber);
-                    return invertFlag ^ (cr.Codepoint == n);
+                    wordFilter = cr.Codepoint == n;
+                }
+
+                // If searched string starts with gc:, it's a category filter
+                else if (word.StartsWith("GC:", StringComparison.OrdinalIgnoreCase))
+                {
+                    wordFilter = cr.CategoryRecord.CategoriesList.Any(s => string.Compare(s, word.Substring(3), true) == 0);
                 }
 
                 // Otherwise search a part of Name
-                if (isRE || isWW)
+                else if (isRE || isWW)
                 {
                     try
                     {
                         if (isAS)
-                        {
-                            if (invertFlag ^ !Regex.IsMatch(cr.Name, word, isCS ? 0 : RegexOptions.IgnoreCase))
-                                return false;
-                        }
+                            wordFilter = Regex.IsMatch(cr.Name, word, isCS ? 0 : RegexOptions.IgnoreCase);
                         else
-                        {
-                            if (invertFlag ^ !Regex.IsMatch(RemoveDiacritics(cr.Name), word, isCS ? 0 : RegexOptions.IgnoreCase))
-                                return false;
-                        }
+                            wordFilter = Regex.IsMatch(RemoveDiacritics(cr.Name), word, isCS ? 0 : RegexOptions.IgnoreCase);
                     }
                     catch (Exception)
                     {
-                        return true;
+                        wordFilter = true;
                     }
                 }
                 else
                 {
                     if (isAS)
-                    {
-                        if (invertFlag ^ (cr.Name.IndexOf(word, isCS ? StringComparison.CurrentCulture : StringComparison.InvariantCultureIgnoreCase) < 0))
-                            return false;
-                    }
+                        wordFilter = cr.Name.IndexOf(word, isCS ? StringComparison.CurrentCulture : StringComparison.InvariantCultureIgnoreCase) >= 0;
                     else
-                    {
-                        if (invertFlag ^ RemoveDiacritics(cr.Name).IndexOf(word, isCS ? StringComparison.CurrentCulture : StringComparison.InvariantCultureIgnoreCase) < 0)
-                            return false;
-                    }
+                        wordFilter = RemoveDiacritics(cr.Name).IndexOf(word, isCS ? StringComparison.CurrentCulture : StringComparison.InvariantCultureIgnoreCase) >= 0;
                 }
-            }
+
+                if (!(wordFilter ^ invertFlag))
+                    return false;
+
+            } // Words loop
+
+
             return true;
         }
 

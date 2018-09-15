@@ -44,6 +44,25 @@ namespace UniData
 
         public string CodepointHexa => $"U+{Codepoint:X4}";
 
+        public string UTF16 => Codepoint <= 0xD7FF || (Codepoint >= 0xE000 && Codepoint <= 0xFFFF) ? Codepoint.ToString("X4") : (0xD800 + ((Codepoint - 0x10000) >> 10)).ToString("X4") + " " + (0xDC00 + (Codepoint & 0x3ff)).ToString("X4");
+
+        public string UTF8
+        {
+            get
+            {
+                if (Codepoint <= 0x7F)
+                    return $"{Codepoint:X2}";
+                else if (Codepoint <= 0x7FF)
+                    return $"{0xC0 + Codepoint / 0x40:X2} {0x80 + Codepoint % 0x40:X2}";
+                else if (Codepoint <= 0xFFFF)
+                    return $"{0xE0 + (Codepoint / 0x40) / 0x40:X2} {0x80 + (Codepoint / 0x40) % 0x40:X2} {0x80 + Codepoint % 0x40:X2}";
+                else if (Codepoint <= 0x1FFFFF)
+                    return $"{0xF0 + ((Codepoint / 0x40) / 0x40) / 0x40:X2} {0x80 + ((Codepoint / 0x40) / 0x40) % 0x40:X2} {0x80 + (Codepoint / 0x40) % 0x40:X2} {0x80 + Codepoint % 0x40:X2}";
+                return "?{cp}?";
+            }
+        }
+
+
 
         internal CharacterRecord(int Codepoint, string Name, string Category, bool IsPrintable)
         {
@@ -260,10 +279,11 @@ namespace UniData
                 }
 
 
-            // For development
             //InternalTests();
         }
 
+
+        // For development
         private static void InternalTests()
         {
             foreach (var cr in char_map.Values)
@@ -272,8 +292,9 @@ namespace UniData
                 Debug.Assert(BlockRecords.ContainsKey(cr.Block));
                 // Check that all characters are assigned to a valid category
                 Debug.Assert(CategoryRecords.ContainsKey(cr.Category));
-
             }
+
+            Debug.Assert(UnicodeData.CharacterLength("Aé♫𝄞🐗") == 5);
         }
 
 
@@ -307,9 +328,6 @@ namespace UniData
 
         public static bool IsValidCodepoint(int cp) => char_map.ContainsKey(cp);
 
-
-        // Test
-        //Debug.Assert(UnicodeData.CharacterLength("Aé♫𝄞🐗") == 5);
 
         // Returns number of Unicode characters in a (valid) UTF-16 encoded string
         public static int CharacterLength(string s)

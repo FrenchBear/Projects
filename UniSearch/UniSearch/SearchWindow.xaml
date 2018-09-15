@@ -128,13 +128,13 @@
                 </Border>
 
 
-                <TextBlock Grid.Row="0" Grid.Column="1" Text="Level 3  " FontWeight="SemiBold" />
-                <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding SelectedChar.BlockRecord.Level3Name}" />
-                <TextBlock Grid.Row="1" Grid.Column="1" Text="Level 2  " FontWeight="SemiBold" />
-                <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding SelectedChar.BlockRecord.Level2Name}" />
-                <TextBlock Grid.Row="2" Grid.Column="1" Text="Level 1  " FontWeight="SemiBold" />
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="UTF-8" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding SelectedChar.UTF8}" />
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="UTF-16" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding SelectedChar.UTF16}" />
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="Level 1" FontWeight="SemiBold" />
                 <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding SelectedChar.BlockRecord.Level1Name}" />
-                <TextBlock Grid.Row="3" Grid.Column="1" Text="Block " FontWeight="SemiBold" />
+                <TextBlock Grid.Row="3" Grid.Column="1" Text="Block" FontWeight="SemiBold" />
                 <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding SelectedChar.BlockRecord.BlockNameRange}" />
                 <TextBlock Grid.Row="4" Grid.Column="1" Text="Categories " FontWeight="SemiBold" />
                 <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding SelectedChar.CategoryRecord.Categories}" />
