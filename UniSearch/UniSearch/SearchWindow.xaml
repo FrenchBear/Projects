@@ -123,14 +123,14 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Border BorderThickness="2" BorderBrush="Black" Padding="6" Grid.RowSpan="5" VerticalAlignment="Top" Margin="0,3,12,0">
+                <Border Background="White" BorderThickness="2" BorderBrush="Black" Padding="6" Grid.RowSpan="5" VerticalAlignment="Top" Margin="0,3,12,0">
                     <Image Name="CharImage" Source="{Binding SelectedCharImage}" MinWidth="90" MaxWidth="160" Height="80" Stretch="Uniform" StretchDirection="DownOnly" >
-                        <Image.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Header="Copy image" Command="{Binding CopyImageCommand}" />
-                            </ContextMenu>
-                        </Image.ContextMenu>
                     </Image>
+                    <Border.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Copy image" Command="{Binding CopyImageCommand}" />
+                        </ContextMenu>
+                    </Border.ContextMenu>
                 </Border>
 
 
