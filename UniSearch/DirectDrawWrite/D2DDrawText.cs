@@ -71,9 +71,9 @@ namespace DirectDrawWrite
             {
                 result = wicBitmap.CopyPixels();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
             finally
             {

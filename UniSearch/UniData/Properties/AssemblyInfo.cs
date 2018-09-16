@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("UniData")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Static class providing characters and blocks information reading Unicode UCD files")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("UniData")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyCopyright("Copyright ©2018 Pierre Violent")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("206d70a7-b1bd-440f-8670-35719679b7b2")]
+[assembly: Guid("75696ce4-5fda-4018-9cab-ebb611018208")]
 
 // Version information for an assembly consists of the following four values:
 //

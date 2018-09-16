@@ -81,7 +81,7 @@ namespace UniSearchNS
             }
         }
 
-        public string Title => SelectedChar == null ? "Character Detail" : SelectedChar.CodepointHexa + " - Character Detail";
+        public string Title => SelectedChar == null ? "Character Detail" : SelectedChar.CodepointHex + " - Character Detail";
 
 
         public Object NormalizationNFDContent => NormalizationContent(NormalizationForm.FormD);

@@ -68,7 +68,7 @@
         <DataTemplate x:Key="CodepointCellTemplate">
             <TextBlock >
                 <Hyperlink Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.ShowDetailCommand}" CommandParameter="{Binding Codepoint}" >
-                    <TextBlock Text="{Binding CodepointHexa}" />
+                    <TextBlock Text="{Binding CodepointHex}" />
                 </Hyperlink>
             </TextBlock>
         </DataTemplate>

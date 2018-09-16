@@ -42,7 +42,7 @@
         </Border>
         <TextBlock Grid.Row="0" Grid.Column="1" Text="Character" FontWeight="Bold" />
         <TextBlock Grid.Row="1" Grid.Column="1" Text="  Codepoint  " FontWeight="SemiBold" />
-        <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding SelectedChar.CodepointHexa}" />
+        <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding SelectedChar.CodepointHex}" />
         <TextBlock Grid.Row="2" Grid.Column="1" Text="  Name  " FontWeight="SemiBold" />
         <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding SelectedChar.Name}" />
         <TextBlock Grid.Row="3" Grid.Column="1" Text="  Categories  " FontWeight="SemiBold" />

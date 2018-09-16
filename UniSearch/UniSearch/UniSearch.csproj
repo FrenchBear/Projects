@@ -50,7 +50,7 @@
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -106,6 +106,7 @@
     <Compile Include="CharDetailWindow.xaml.cs">
       <DependentUpon>CharDetailWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="PredicateBuilder.cs" />
     <Compile Include="RelayCommand.cs" />
@@ -151,12 +152,15 @@
       <Name>DirectDrawWrite</Name>
     </ProjectReference>
     <ProjectReference Include="..\UniData\UniData.csproj">
-      <Project>{99dedfc5-2dec-4b2d-a2f6-1b397abf6453}</Project>
+      <Project>{75696ce4-5fda-4018-9cab-ebb611018208}</Project>
       <Name>UniData</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Unicorn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="CustomDictionary.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

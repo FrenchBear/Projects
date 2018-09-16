@@ -286,7 +286,7 @@ namespace UniSearchNS
             Grid.SetColumn(t1, 0);
             g.Children.Add(t1);
 
-            Run r = new Run(cr.CodepointHexa);
+            Run r = new Run(cr.CodepointHex);
             Hyperlink h = new Hyperlink(r);
             h.Command = command;
             h.CommandParameter = cr.Codepoint;
@@ -432,11 +432,11 @@ namespace UniSearchNS
                         break;
 
                     case "1":
-                        sb.AppendLine(r.Character + "\t" + r.CodepointHexa + "\t" + r.Name);
+                        sb.AppendLine(r.Character + "\t" + r.CodepointHex + "\t" + r.Name);
                         break;
 
                     case "2":
-                        sb.AppendLine(r.Character + "\t" + r.CodepointHexa + "\t" + r.Name + "\t" + r.CategoryRecord.Categories + "\t" + r.Age + "\t" + r.BlockRecord.BlockNameAndRange + "\t" + r.UTF16 + "\t" + r.UTF8);
+                        sb.AppendLine(r.Character + "\t" + r.CodepointHex + "\t" + r.Name + "\t" + r.CategoryRecord.Categories + "\t" + r.Age + "\t" + r.BlockRecord.BlockNameAndRange + "\t" + r.UTF16 + "\t" + r.UTF8);
                         break;
                 }
             System.Windows.Clipboard.Clear();

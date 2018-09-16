@@ -30,18 +30,18 @@ namespace UniData
 
 
         // When True, Character method will return an hex codepoint representation instead of the actual string
-        public readonly bool IsPrintable;
+        public bool IsPrintable { get; private set; }
 
         // Convert to a C# string representation of the character, except for control characters
         // 'Safe version' of UnicodeData.CPtoString. U+FFFD is the official replacement character.
-        public string Character => UnicodeData.CPtoString(IsPrintable ? Codepoint : 0xFFFD);
+        public string Character => UnicodeData.CodepointToString(IsPrintable ? Codepoint : 0xFFFD);
 
 
         // Used by binding
         public BlockRecord BlockRecord => UnicodeData.BlockRecords[Block];
         public CategoryRecord CategoryRecord => UnicodeData.CategoryRecords[Category];
 
-        public string CodepointHexa => $"U+{Codepoint:X4}";
+        public string CodepointHex => $"U+{Codepoint:X4}";
 
 
         public string UTF16 => Codepoint <= 0xD7FF || (Codepoint >= 0xE000 && Codepoint <= 0xFFFF) ? Codepoint.ToString("X4") : (0xD800 + ((Codepoint - 0x10000) >> 10)).ToString("X4") + " " + (0xDC00 + (Codepoint & 0x3ff)).ToString("X4");
@@ -69,13 +69,13 @@ namespace UniData
         {
             if (!IsPrintable) return string.Empty;
 
-            string s = UnicodeData.CPtoString(Codepoint);
+            string s = UnicodeData.CodepointToString(Codepoint);
             string sn = s.Normalize(form);
             if (s == sn) return string.Empty;
             if (form == NormalizationForm.FormKD && sn == s.Normalize(NormalizationForm.FormD))
                 return "Same as NFD";
 
-            return sn.EnumCharacterRecords().Select(cr => cr.Str).Aggregate((prev, st) => prev + "\r\n" + st);
+            return sn.EnumCharacterRecords().Select(cr => cr.AsString).Aggregate((prev, st) => prev + "\r\n" + st);
         }
 
 
@@ -86,11 +86,11 @@ namespace UniData
         {
             if (!IsPrintable) return string.Empty;
 
-            string s = UnicodeData.CPtoString(Codepoint);
-            string sc = lower ? s.ToLower(CultureInfo.InvariantCulture) : s.ToUpper(CultureInfo.InvariantCulture);
+            string s = UnicodeData.CodepointToString(Codepoint);
+            string sc = lower ? s.ToLowerInvariant() : s.ToUpperInvariant();
             if (s == sc) return string.Empty;
 
-            return sc.EnumCharacterRecords().Select(cr => cr.Str).Aggregate((prev, st) => prev + "\r\n" + st);
+            return sc.EnumCharacterRecords().Select(cr => cr.AsString).Aggregate((prev, st) => prev + "\r\n" + st);
         }
 
 
@@ -103,9 +103,9 @@ namespace UniData
             this.IsPrintable = IsPrintable;
         }
 
-        public string Str => $"{Character}\t{CodepointHexa}\t{Name}";
+        public string AsString => $"{Character}\t{CodepointHex}\t{Name}";
 
-        public override string ToString() => $"CharacterRecord({Str})";
+        public override string ToString() => $"CharacterRecord({AsString})";
     }
 
 
@@ -143,12 +143,12 @@ namespace UniData
         public string Name { get; private set; }
         public string Include { get; private set; }
 
-        public List<string> CategoriesList { get; private set; }
+        public IList<string> CategoriesList { get; private set; }
 
         public string Categories => CategoriesList.Aggregate((prev, c) => prev + ", " + c);
 
 
-        public CategoryRecord(string code, string name, string include = "")
+        internal CategoryRecord(string code, string name, string include = "")
         {
             this.Code = code;
             this.Name = name;
@@ -251,15 +251,16 @@ namespace UniData
                 string char_category = fields[2];
                 if (char_name == "<control>")
                     char_name = "CONTROL-" + fields[10];
-                bool is_range = char_name.EndsWith(", First>", StringComparison.InvariantCultureIgnoreCase);
+                bool is_range = char_name.EndsWith(", First>", StringComparison.OrdinalIgnoreCase);
                 bool is_printable = !(codepoint < 32 || codepoint >= 0x7f && codepoint < 0xA0 || codepoint >= 0xD800 && codepoint <= 0xDFFF);
                 if (is_range)   // Add all characters within a specified range
                 {
                     char_name = char_name.Replace(", First>", String.Empty).Replace("<", string.Empty).ToUpperInvariant(); //remove range indicator from name
                     fields = unicodedata[++i].Split(';');
                     int end_char_code = int.Parse(fields[0], NumberStyles.HexNumber);
-                    if (!fields[1].EndsWith(", Last>", StringComparison.InvariantCultureIgnoreCase))
-                        throw new Exception("Expected end-of-range indicator.");
+                    if (!fields[1].EndsWith(", Last>", StringComparison.OrdinalIgnoreCase))
+                        Debugger.Break();
+                        //throw new Exception("Expected end-of-range indicator.");
                     for (int code = codepoint; code <= end_char_code; code++)
                         char_map.Add(code, new CharacterRecord(code, $"{char_name}-{code:X4}", char_category, is_printable));
                 }
@@ -331,15 +332,15 @@ namespace UniData
         }
 
 
-        public static int GetCPFromName(string name)
+        public static int GetCodepointFromName(string name)
         {
-            CharacterRecord cr = char_map.Values.FirstOrDefault(c => string.Compare(c.Name, name, true) == 0);
+            CharacterRecord cr = char_map.Values.FirstOrDefault(c => string.Compare(c.Name, name, StringComparison.OrdinalIgnoreCase) == 0);
             if (cr == null)
                 return -1;
             return cr.Codepoint;
         }
 
-        public static string CPtoString(int cp) => cp <= 0xD7FF || (cp >= 0xE000 && cp <= 0xFFFF) ? new string((char)cp, 1) : new string((char)(0xD800 + ((cp - 0x10000) >> 10)), 1) + new string((char)(0xDC00 + (cp & 0x3ff)), 1);
+        public static string CodepointToString(int cp) => cp <= 0xD7FF || (cp >= 0xE000 && cp <= 0xFFFF) ? new string((char)cp, 1) : new string((char)(0xD800 + ((cp - 0x10000) >> 10)), 1) + new string((char)(0xDC00 + (cp & 0x3ff)), 1);
 
 
         public static string GetName(int cp)
@@ -356,26 +357,26 @@ namespace UniData
             if (char_map.ContainsKey(cp))
                 return char_map[cp].Category;
             else
-                return "??";
+                return String.Empty;
         }
 
         public static bool IsValidCodepoint(int cp) => char_map.ContainsKey(cp);
 
 
         // Returns number of Unicode characters in a (valid) UTF-16 encoded string
-        public static int CharacterLength(string s)
+        public static int CharacterLength(string str)
         {
+            if (str == null) return 0;
             int l = 0;
             bool surrogate = false;
-            foreach (char c in s)
+            foreach (char c in str)
             {
                 if (surrogate)
                     surrogate = false;
                 else
                 {
                     l++;
-                    if ((int)c >= 0xD800 && (int)c <= 0xDBFF)
-                        surrogate = true;
+                    surrogate = ((int)c >= 0xD800 && (int)c <= 0xDBFF);
                 }
             }
             return l;
@@ -385,15 +386,15 @@ namespace UniData
 
     public static class ExtensionMethods
     {
-        public static IEnumerable<CharacterRecord> EnumCharacterRecords(this string s)
+        public static IEnumerable<CharacterRecord> EnumCharacterRecords(this string str)
         {
-            for (int i = 0; i < s.Length; i++)
+            for (int i = 0; i < str.Length; i++)
             {
-                int cp = (int)s[i];
+                int cp = (int)str[i];
                 if (cp >= 0xD800 && cp <= 0xDBFF)
                 {
                     i += 1;
-                    cp = 0x10000 + ((cp & 0x3ff) << 10) + ((int)s[i] & 0x3ff);
+                    cp = 0x10000 + ((cp & 0x3ff) << 10) + ((int)str[i] & 0x3ff);
                 }
                 var cr = UnicodeData.CharacterRecords[cp];
                 yield return cr;

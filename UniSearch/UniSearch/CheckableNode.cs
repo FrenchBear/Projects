@@ -36,7 +36,7 @@ namespace UniSearchNS
         }
 
 
-        public List<CheckableNode> Children { get; private set; }
+        public IList<CheckableNode> Children { get; private set; }
 
         public bool IsInitiallySelected { get; private set; }
 
@@ -120,7 +120,9 @@ namespace UniSearchNS
             _isChecked = value;
 
             if (updateChildren && _isChecked.HasValue)
-                Children.ForEach(c => c.SetIsChecked(_isChecked, true, false));
+                foreach (var c in Children)
+                    c.SetIsChecked(_isChecked, true, false);
+                //Children.ForEach(c => c.SetIsChecked(_isChecked, true, false));
 
             if (updateParent && _parent != null)
                 _parent.VerifyCheckState();
