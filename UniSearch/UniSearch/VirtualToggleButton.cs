@@ -22,7 +22,7 @@ namespace UniSearchNS.Controls
         /// </summary>
         public static bool? GetIsChecked(DependencyObject d)
         {
-            return (bool?)d.GetValue(IsCheckedProperty);
+            return (bool?)d?.GetValue(IsCheckedProperty);
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace UniSearchNS.Controls
         /// </summary>
         public static void SetIsChecked(DependencyObject d, bool? value)
         {
-            d.SetValue(IsCheckedProperty, value);
+            d?.SetValue(IsCheckedProperty, value);
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace UniSearchNS.Controls
         /// </summary>
         public static bool GetIsThreeState(DependencyObject d)
         {
-            return (bool)d.GetValue(IsThreeStateProperty);
+            return (bool)d?.GetValue(IsThreeStateProperty);
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace UniSearchNS.Controls
         /// </summary>
         public static void SetIsThreeState(DependencyObject d, bool value)
         {
-            d.SetValue(IsThreeStateProperty, value);
+            d?.SetValue(IsThreeStateProperty, value);
         }
 
 
@@ -101,7 +101,7 @@ namespace UniSearchNS.Controls
         /// </summary>
         public static bool GetIsVirtualToggleButton(DependencyObject d)
         {
-            return (bool)d.GetValue(IsVirtualToggleButtonProperty);
+            return (bool)d?.GetValue(IsVirtualToggleButtonProperty);
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace UniSearchNS.Controls
         /// </summary>
         public static void SetIsVirtualToggleButton(DependencyObject d, bool value)
         {
-            d.SetValue(IsVirtualToggleButtonProperty, value);
+            d?.SetValue(IsVirtualToggleButtonProperty, value);
         }
 
         /// <summary>
@@ -229,14 +229,10 @@ namespace UniSearchNS.Controls
 
         private static void RaiseEvent(DependencyObject target, RoutedEventArgs args)
         {
-            if (target is UIElement)
-            {
-                (target as UIElement).RaiseEvent(args);
-            }
-            else if (target is ContentElement)
-            {
-                (target as ContentElement).RaiseEvent(args);
-            }
+            if (target is UIElement e)
+                e.RaiseEvent(args);
+            else if (target is ContentElement c)
+                c.RaiseEvent(args);
         }
 
     }

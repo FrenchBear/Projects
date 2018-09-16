@@ -101,7 +101,7 @@ namespace UniSearchNS
 
             root.Initialize();
             root.IsChecked = true;
-            roots = root.Children;
+            Roots = root.Children;
 
             // Unselect some pretty useless blocks
             BlocksCheckableNodesDictionary[0x0000].IsChecked = false;       // ASCII Controls C0
@@ -132,7 +132,7 @@ namespace UniSearchNS
         // ==============================================================================================
         // Bindable properties
 
-        public List<CheckableNode> roots { get; set; }      // For TreeView binding
+        public IList<CheckableNode> Roots { get; set; }      // For TreeView binding
         public CharacterRecord[] CharactersRecordsList { get; set; }
 
 
@@ -146,7 +146,7 @@ namespace UniSearchNS
                 {
                     _CharNameFilter = value;
                     NotifyPropertyChanged(nameof(CharNameFilter));
-                    StartOrResetDispatcherTimer();
+                    StartOrResetCharFilterDispatcherTimer();
                 }
             }
         }
@@ -281,21 +281,21 @@ namespace UniSearchNS
             g.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(60) });
             g.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
 
-            var t1 = new TextBlock();
-            t1.Text = cr.Character;
+            var t1 = new TextBlock { Text = cr.Character };
             Grid.SetColumn(t1, 0);
             g.Children.Add(t1);
 
             Run r = new Run(cr.CodepointHex);
-            Hyperlink h = new Hyperlink(r);
-            h.Command = command;
-            h.CommandParameter = cr.Codepoint;
+            Hyperlink h = new Hyperlink(r)
+            {
+                Command = command,
+                CommandParameter = cr.Codepoint
+            };
             TextBlock t2 = new TextBlock(h);
             Grid.SetColumn(t2, 1);
             g.Children.Add(t2);
 
-            var t3 = new TextBlock();
-            t3.Text = cr.Name;
+            var t3 = new TextBlock { Text = cr.Name };
             Grid.SetColumn(t3, 2);
             g.Children.Add(t3);
 
@@ -312,7 +312,7 @@ namespace UniSearchNS
         internal void AfterCheckboxFlip()
         {
             RefreshSelBlocks();
-            StartOrResetDispatcherTimer();
+            StartOrResetCharFilterDispatcherTimer();
         }
 
         private void RefreshSelBlocks()
@@ -341,7 +341,7 @@ namespace UniSearchNS
         }
 
         // Temporarily public during transition to MVVM pattern
-        public void StartOrResetDispatcherTimer()
+        public void StartOrResetCharFilterDispatcherTimer()
         {
             if (dispatcherTimer == null)
             {
@@ -360,7 +360,7 @@ namespace UniSearchNS
             CollectionView view = CollectionViewSource.GetDefaultView(CharactersRecordsList) as CollectionView;
 
             // Block part of the filtering predicate
-            Predicate<object> bp = (object o) => BlocksCheckableNodesDictionary[((CharacterRecord)o).Block].IsChecked.Value;
+            bool bp(object o) => BlocksCheckableNodesDictionary[((CharacterRecord)o).Block].IsChecked.Value;
 
             // Character part of the filtering predicate
             if (string.IsNullOrEmpty(CharNameFilter))

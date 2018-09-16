@@ -14,7 +14,7 @@ namespace UniSearchNS
     /// <summary>
     /// Interaction logic for AboutWindow.xaml
     /// </summary>
-    public partial class AboutWindow : Window
+    internal partial class AboutWindow : Window
     {
         public AboutWindow()
         {
@@ -30,7 +30,10 @@ namespace UniSearchNS
             AssemblyDescription.Text = aDescAttr.Description;
             AssemblyVersion.Text = "Version " + sAssemblyVersion;
             AssemblyCopyright.Text = aCopyrightAttr.Copyright;
+
+            Loaded += (s, e) => { OKButton.Focus(); };
         }
+
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {

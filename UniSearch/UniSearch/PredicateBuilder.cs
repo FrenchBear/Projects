@@ -36,12 +36,12 @@ namespace UniSearchNS
                 try
                 {
                     // reTest is not used, it's there to raise an exception and skip words.Add(filter)
-                    // if filter is an invalid or incomplete Regex
+                    // if filter is an invalid or incomplete Regex, so we ignore it
                     Regex reTest = new Regex(filter);
                     words.Add(filter);
                 }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                catch (Exception)
+                catch (ArgumentException)
                 {
                 }
             }
@@ -273,7 +273,7 @@ namespace UniSearchNS
                 // If searched string starts with gc:, it's a category filter
                 else if (word.StartsWith("GC:", StringComparison.OrdinalIgnoreCase))
                 {
-                    wordFilter = cr.CategoryRecord.CategoriesList.Any(s => string.Compare(s, word.Substring(3), true) == 0);
+                    wordFilter = cr.CategoryRecord.CategoriesList.Any(s => string.Compare(s, word.Substring(3), StringComparison.OrdinalIgnoreCase) == 0);
                 }
 
                 // Age filter

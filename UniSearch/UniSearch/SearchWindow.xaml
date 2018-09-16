@@ -5,7 +5,7 @@
   xmlns:local="clr-namespace:UniSearchNS"
   xmlns:dw="clr-namespace:UniSearchNS.Controls"
   FontSize="13" FontFamily="Segoe UI"
-  Title="UnISearch - Unicode Character Search Tool"
+  Title="UnISearch – Unicode Character Search Tool"
   Width="800" Height="420" 
   WindowStartupLocation="CenterScreen" Icon="Unicorn.ico"  
   >
@@ -85,7 +85,7 @@
             <StackPanel DockPanel.Dock="Top">
                 <DockPanel Margin="0,0,0,6">
                     <Label DockPanel.Dock="Left" Content="Character _Name Filter " FontWeight="SemiBold" Target="{Binding ElementName=CharacterFilterTextBox}" />
-                    <TextBox Name="CharacterFilterTextBox" Text="{Binding CharNameFilter, UpdateSourceTrigger=PropertyChanged, Delay=200}" VerticalContentAlignment="Center" />
+                    <TextBox Name="CharacterFilterTextBox" Text="{Binding CharNameFilter, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" />
                 </DockPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
                     <Label Content="Copy " />
@@ -205,7 +205,7 @@
             </WrapPanel>
 
             <TreeView x:Name="tree" ItemContainerStyle="{StaticResource TreeViewItemStyle}" 
-                  ItemsSource="{Binding roots, Mode=OneTime}" 
+                  ItemsSource="{Binding Roots, Mode=OneTime}" 
                   ItemTemplate="{StaticResource CheckBoxItemTemplate}" />
         </DockPanel>
 
