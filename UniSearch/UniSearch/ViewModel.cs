@@ -56,7 +56,7 @@ namespace UniSearchNS
             CopyRecordsCommand = new RelayCommand<object>(CopyRecordsExecute, CanCopyRecords);
             CopyImageCommand = new RelayCommand<object>(CopyImageExecute, CanCopyRecords);
             ShowLevelCommand = new RelayCommand<object>(ShowLevelExecute);
-            FlipVisibleCommand = new RelayCommand<object>(FlipVisibleExecute);
+            FlipVisibleCommand = new RelayCommand<string>(FlipVisibleExecute);
             ShowDetailCommand = new RelayCommand<int>(ShowDetailExecute);
 
             // Get Unicode data
@@ -385,6 +385,7 @@ namespace UniSearchNS
             FilterBlock(root);
             RefreshFilBlocks();
 
+            /*
             Visibility FilterBlock(CheckableNode n)
             {
                 if (n.Level == 0)
@@ -404,6 +405,27 @@ namespace UniSearchNS
                     return v;
                 }
             }
+            */
+
+            bool FilterBlock(CheckableNode n)
+            {
+                if (n.Level == 0)
+                {
+                    bool v = f(n);
+                    n.NodeVisibility = v ? Visibility.Visible : Visibility.Collapsed;
+                    return v;
+                }
+                else
+                {
+                    bool exp = false;
+                    foreach (CheckableNode child in n.Children)
+                        exp|= FilterBlock(child);
+                    exp |= f(n);
+                    n.IsNodeExpanded = exp;
+                    return exp;
+                }
+            }
+
         }
 
 
@@ -468,10 +490,20 @@ namespace UniSearchNS
             ActionAllNodes(root, n => { n.IsNodeExpanded = (n.Level != level); });
         }
 
-        private void FlipVisibleExecute(object param)
+        private void FlipVisibleExecute(string sparam)
         {
-            bool isChecked = int.Parse(param as string) != 0;
-            ActionAllNodes(root, n => { if (n.Level == 0 && n.NodeVisibility == Visibility.Visible) n.IsChecked = isChecked; });
+            int.TryParse(sparam, out int param);
+            switch (param)
+            {
+                case 0:
+                case 1:
+                    ActionAllNodes(root, n => { if (n.Level == 0 && n.NodeVisibility == Visibility.Visible) n.IsChecked = param==0; });
+                    break;
+                case 2:
+                case 3:
+                    ActionAllNodes(root, n => { if (n.Level == 0) n.IsChecked = param == 2; });
+                    break;
+            }
         }
 
 
