@@ -61,19 +61,26 @@ namespace UniData
             }
         }
 
-        public string NFKDDetail
-        {
-            get
-            {
-                if (!IsPrintable) return "";
+        public string NormalizationNFD => GetNormalization(NormalizationForm.FormD);
+        public string NormalizationNFKD => GetNormalization(NormalizationForm.FormKD);
 
-                var sb = new StringBuilder();
-                foreach (CharacterRecord cr in UnicodeData.CPtoString(Codepoint).Normalize(NormalizationForm.FormKD).EnumCharacterRecords())
-                {
-                    sb.AppendLine(cr.ToString());
-                }
-                return sb.ToString();
+        private string GetNormalization(NormalizationForm form)
+        {
+            if (!IsPrintable) return "";
+
+            string s = UnicodeData.CPtoString(Codepoint);
+            string sn = s.Normalize(form);
+            if (s == sn) return "-";
+            if (form == NormalizationForm.FormKD && sn == s.Normalize(NormalizationForm.FormD))
+                return "Same as NFD";
+
+            var sb = new StringBuilder();
+            foreach (CharacterRecord cr in sn.EnumCharacterRecords())
+            {
+                if (sb.Length > 0) sb.AppendLine();
+                sb.Append($"U+{cr.Codepoint:X4}\t{cr.Name}");
             }
+            return sb.ToString();
         }
 
 
@@ -371,7 +378,7 @@ namespace UniData
             for (int i = 0; i < s.Length; i++)
             {
                 int cp = (int)s[i];
-                if (cp>=0xD800 && cp <= 0xDBFF)
+                if (cp >= 0xD800 && cp <= 0xDBFF)
                 {
                     i += 1;
                     cp = 0x10000 + ((cp & 0x3ff) << 10) + ((int)s[i] & 0x3ff);

@@ -3,10 +3,9 @@
 //
 // 2018-09-15   PV
 
-// ToDo: Esc to close this window, button copy details, more info on categories
-
 
 using System.Windows;
+using System.Windows.Input;
 
 namespace UniSearchNS
 {
@@ -21,6 +20,13 @@ namespace UniSearchNS
 
             // Use same DataContext than main window to keep things simple
             DataContext = vm;
+
+            // Esc closes the window
+            PreviewKeyDown += (s, e) =>
+            {
+                if (e.Key == Key.Escape)
+                    Close();
+            };
         }
     }
 }
