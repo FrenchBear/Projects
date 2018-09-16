@@ -43,6 +43,7 @@ namespace UniData
 
         public string CodepointHexa => $"U+{Codepoint:X4}";
 
+
         public string UTF16 => Codepoint <= 0xD7FF || (Codepoint >= 0xE000 && Codepoint <= 0xFFFF) ? Codepoint.ToString("X4") : (0xD800 + ((Codepoint - 0x10000) >> 10)).ToString("X4") + " " + (0xDC00 + (Codepoint & 0x3ff)).ToString("X4");
 
         public string UTF8
@@ -66,21 +67,30 @@ namespace UniData
 
         private string GetNormalization(NormalizationForm form)
         {
-            if (!IsPrintable) return "";
+            if (!IsPrintable) return string.Empty;
 
             string s = UnicodeData.CPtoString(Codepoint);
             string sn = s.Normalize(form);
-            if (s == sn) return "-";
+            if (s == sn) return string.Empty;
             if (form == NormalizationForm.FormKD && sn == s.Normalize(NormalizationForm.FormD))
                 return "Same as NFD";
 
-            var sb = new StringBuilder();
-            foreach (CharacterRecord cr in sn.EnumCharacterRecords())
-            {
-                if (sb.Length > 0) sb.AppendLine();
-                sb.Append($"U+{cr.Codepoint:X4}\t{cr.Name}");
-            }
-            return sb.ToString();
+            return sn.EnumCharacterRecords().Select(cr => cr.Str).Aggregate((prev, st) => prev + "\r\n" + st);
+        }
+
+
+        public string Lowercase => GetCase(true);
+        public string Uppercase => GetCase(false);
+
+        private string GetCase(bool lower)
+        {
+            if (!IsPrintable) return string.Empty;
+
+            string s = UnicodeData.CPtoString(Codepoint);
+            string sc = lower ? s.ToLower(CultureInfo.InvariantCulture) : s.ToUpper(CultureInfo.InvariantCulture);
+            if (s == sc) return string.Empty;
+
+            return sc.EnumCharacterRecords().Select(cr => cr.Str).Aggregate((prev, st) => prev + "\r\n" + st);
         }
 
 
@@ -93,7 +103,9 @@ namespace UniData
             this.IsPrintable = IsPrintable;
         }
 
-        public override string ToString() => $"CharacterRecord(CP=U+{Codepoint:X4}, Name={Name}, Category={Category}, IsPrintable={IsPrintable})";
+        public string Str => $"{Character}\t{CodepointHexa}\t{Name}";
+
+        public override string ToString() => $"CharacterRecord({Str})";
     }
 
 

@@ -16,10 +16,11 @@ using System.Windows.Input;
 using System.Linq;
 using System.Windows.Threading;
 using System.Windows;
-using System.Windows.Controls;
 using UniData;
 using System.Windows.Media.Imaging;
 using DirectDrawWrite;
+using System.Windows.Controls;
+using System.Windows.Documents;
 
 namespace UniSearchNS
 {
@@ -43,6 +44,7 @@ namespace UniSearchNS
         public ICommand CopyImageCommand { get; private set; }
         public ICommand ShowLevelCommand { get; private set; }
         public ICommand FlipVisibleCommand { get; private set; }
+        public ICommand ShowDetailCommand { get; private set; }
 
 
         // Constructor
@@ -55,7 +57,7 @@ namespace UniSearchNS
             CopyImageCommand = new RelayCommand<object>(CopyImageExecute, CanCopyRecords);
             ShowLevelCommand = new RelayCommand<object>(ShowLevelExecute);
             FlipVisibleCommand = new RelayCommand<object>(FlipVisibleExecute);
-
+            ShowDetailCommand = new RelayCommand<int>(ShowDetailExecute);
 
             // Get Unicode data
             CharactersRecordsList = UnicodeData.CharacterRecords.Values.OrderBy(cr => cr.Codepoint).ToArray();
@@ -107,7 +109,8 @@ namespace UniSearchNS
             BlocksCheckableNodesDictionary[0xE0100].IsChecked = false;      // Variation Selectors Supplement; Variation Selectors; Specials; Symbols and Punctuation
             BlocksCheckableNodesDictionary[0xF0000].IsChecked = false;      // Supplementary Private Use Area-A; ; Private Use; Symbols and Punctuation
             BlocksCheckableNodesDictionary[0x100000].IsChecked = false;     // Supplementary Private Use Area-B; ; Private Use; Symbols and Punctuation
-            ActionAllNodes(root, n => {
+            ActionAllNodes(root, n =>
+            {
                 if (n.Name == "East Asian Scripts") n.IsChecked = false;
                 if (n.Name.IndexOf("CJK", StringComparison.Ordinal) >= 0) n.IsChecked = false;
                 if (n.Name == "Specials") n.IsChecked = false;
@@ -126,7 +129,9 @@ namespace UniSearchNS
         }
 
 
+        // ==============================================================================================
         // Bindable properties
+
         public List<CheckableNode> roots { get; set; }      // For TreeView binding
         public CharacterRecord[] CharactersRecordsList { get; set; }
 
@@ -174,6 +179,7 @@ namespace UniSearchNS
                     _SelectedChar = value;
                     NotifyPropertyChanged(nameof(SelectedChar));
                     NotifyPropertyChanged(nameof(SelectedCharImage));
+                    NotifyPropertyChanged(nameof(StrContent));
                 }
             }
         }
@@ -257,8 +263,25 @@ namespace UniSearchNS
             }
         }
 
+        public object StrContent
+        {
+            get
+            {
+                if (SelectedChar == null) return null;
+
+                Run r = new Run(SelectedChar.CodepointHexa);
+                Hyperlink h = new Hyperlink(r);
+                h.Command = ShowDetailCommand;
+                h.CommandParameter = SelectedChar.Codepoint;
+                TextBlock t = new TextBlock(h);
+
+                return t;
+            }
+        }
 
 
+
+        // ==============================================================================================
         // Events processing
 
         // Called from Window
@@ -281,6 +304,7 @@ namespace UniSearchNS
 
 
 
+        // ==============================================================================================
         // Delay processing of TextChanged event 250ms using a DispatcherTimer
         DispatcherTimer dispatcherTimer;
 
@@ -361,6 +385,7 @@ namespace UniSearchNS
 
 
 
+        // ==============================================================================================
         // Commands
 
         private bool CanCopyRecords(object obj)
@@ -398,7 +423,7 @@ namespace UniSearchNS
 
         private void CopyImageExecute(object param)
         {
-            if (SelectedChar!=null)
+            if (SelectedChar != null)
             {
                 System.Windows.Clipboard.Clear();
                 System.Windows.Clipboard.SetImage(SelectedCharImage);
@@ -418,14 +443,19 @@ namespace UniSearchNS
         {
             int level = int.Parse(param as string);
             ActionAllNodes(root, n => { n.IsNodeExpanded = (n.Level != level); });
-            //tree.Focus();
         }
 
         private void FlipVisibleExecute(object param)
         {
             bool isChecked = int.Parse(param as string) != 0;
             ActionAllNodes(root, n => { if (n.Level == 0 && n.NodeVisibility == Visibility.Visible) n.IsChecked = isChecked; });
-            //tree.Focus();
         }
+
+
+        private void ShowDetailExecute(int codepoint)
+        {
+            CharDetailWindow.ShowDetail(codepoint);
+        }
+
     }
 }

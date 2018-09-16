@@ -82,8 +82,7 @@ namespace UniSearchNS
 
         private void CharListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            var cdw = new CharDetailWindow(vm);
-            cdw.ShowDialog();
+            if (vm.SelectedChar != null) CharDetailWindow.ShowDetail(vm.SelectedChar.Codepoint);
         }
     }
 }

@@ -7,10 +7,12 @@
         FontSize="13" FontFamily="Segoe UI"
         SizeToContent="WidthAndHeight" 
         mc:Ignorable="d"
-        Title="Character Detail" Height="350" Width="400">
+        Title="Character Detail" Height="450" Width="450">
 
     <Grid Margin="12,6,6,6">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -36,7 +38,7 @@
 
         <!--<TextBlock Grid.Row="0" Grid.Column="0" Grid.RowSpan="10" MinWidth="50" Text="{Binding SelectedChar.Character}" FontSize="96" />-->
         <Border BorderThickness="2" BorderBrush="Black" Padding="6" Grid.RowSpan="10" VerticalAlignment="Top" Margin="0,3,12,0">
-            <Image Name="CharImage" Source="{Binding SelectedCharImage}" Grid.Row="0" Grid.Column="0"  MinWidth="50" Stretch="None" />
+            <Image Name="CharImage" Source="{Binding SelectedCharImage}" Grid.Row="0" Grid.Column="0" MinHeight="80" MinWidth="90" MaxWidth="160" Stretch="Uniform" StretchDirection="DownOnly" />
         </Border>
         <TextBlock Grid.Row="0" Grid.Column="1" Text="Character" FontWeight="Bold" />
         <TextBlock Grid.Row="1" Grid.Column="1" Text="  Codepoint  " FontWeight="SemiBold" />
@@ -64,11 +66,15 @@
         <TextBlock Grid.Row="12" Grid.Column="1" Text="  UTF-16" FontWeight="SemiBold" />
         <TextBlock Grid.Row="12" Grid.Column="2" Text="{Binding SelectedChar.UTF16}" />
 
-        <TextBlock Grid.Row="13" Grid.Column="1" Text="Decomposition" FontWeight="Bold" Margin="0,12,0,0"/>
+        <TextBlock Grid.Row="13" Grid.Column="1" Text="Decomposition and Case" Grid.ColumnSpan="2" FontWeight="Bold" Margin="0,12,0,0"/>
         <TextBlock Grid.Row="14" Grid.Column="1" Text="  NFD" FontWeight="SemiBold" />
         <TextBlock Grid.Row="14" Grid.Column="2" Text="{Binding SelectedChar.NormalizationNFD}" />
         <TextBlock Grid.Row="15" Grid.Column="1" Text="  NFKD" FontWeight="SemiBold" />
         <TextBlock Grid.Row="15" Grid.Column="2" Text="{Binding SelectedChar.NormalizationNFKD}" />
+        <TextBlock Grid.Row="16" Grid.Column="1" Text="  Lowercase " FontWeight="SemiBold" />
+        <TextBlock Grid.Row="16" Grid.Column="2" Text="{Binding SelectedChar.Lowercase}" />
+        <TextBlock Grid.Row="17" Grid.Column="1" Text="  Uppercase " FontWeight="SemiBold" />
+        <TextBlock Grid.Row="17" Grid.Column="2" Text="{Binding SelectedChar.Uppercase}" />
     </Grid>
 
 </Window>

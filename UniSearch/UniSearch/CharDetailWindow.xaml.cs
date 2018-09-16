@@ -4,22 +4,24 @@
 // 2018-09-15   PV
 
 
+using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
+using UniData;
+using DirectDrawWrite;
+
 
 namespace UniSearchNS
 {
-    /// <summary>
-    /// Interaction logic for CharDetailWindow.xaml
-    /// </summary>
     public partial class CharDetailWindow : Window
     {
-        internal CharDetailWindow(ViewModel vm)
+        internal CharDetailWindow(int codepoint)
         {
             InitializeComponent();
 
-            // Use same DataContext than main window to keep things simple
-            DataContext = vm;
+            DataContext = new CharDetailViewModel { SelectedChar = UnicodeData.CharacterRecords[codepoint] };
 
             // Esc closes the window
             PreviewKeyDown += (s, e) =>
@@ -28,5 +30,40 @@ namespace UniSearchNS
                     Close();
             };
         }
+
+        public static void ShowDetail(int codepoint)
+        {
+            var w = new CharDetailWindow(codepoint);
+            w.ShowDialog();
+        }
+    }
+
+    internal class CharDetailViewModel : INotifyPropertyChanged
+    {
+        // INotifyPropertyChanged interface
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void NotifyPropertyChanged(string propertyName)
+          => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+
+        public CharacterRecord SelectedChar { get; set; }
+
+        public BitmapSource SelectedCharImage
+        {
+            get
+            {
+                if (SelectedChar == null)
+                    return null;
+                else
+                {
+                    string s = SelectedChar.Character;
+                    if (s.StartsWith("U+", StringComparison.Ordinal))
+                        s = "U+ " + s.Substring(2);
+                    return D2DDrawText.GetBitmapSource(s);
+                }
+            }
+        }
+
     }
 }
