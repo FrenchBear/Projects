@@ -61,6 +61,21 @@ namespace UniData
             }
         }
 
+        public string NFKDDetail
+        {
+            get
+            {
+                if (!IsPrintable) return "";
+
+                var sb = new StringBuilder();
+                foreach (CharacterRecord cr in UnicodeData.CPtoString(Codepoint).Normalize(NormalizationForm.FormKD).EnumCharacterRecords())
+                {
+                    sb.AppendLine(cr.ToString());
+                }
+                return sb.ToString();
+            }
+        }
+
 
 
         internal CharacterRecord(int Codepoint, string Name, string Category, bool IsPrintable)
@@ -345,6 +360,26 @@ namespace UniData
                 }
             }
             return l;
+        }
+    }
+
+
+    public static class ExtensionMethods
+    {
+        public static IEnumerable<CharacterRecord> EnumCharacterRecords(this string s)
+        {
+            for (int i = 0; i < s.Length; i++)
+            {
+                int cp = (int)s[i];
+                if (cp>=0xD800 && cp <= 0xDBFF)
+                {
+                    i += 1;
+                    cp = 0x10000 + ((cp & 0x3ff) << 10) + ((int)s[i] & 0x3ff);
+                }
+                var cr = UnicodeData.CharacterRecords[cp];
+                yield return cr;
+
+            }
         }
     }
 }

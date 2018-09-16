@@ -3,6 +3,8 @@
 //
 // 2018-09-15   PV
 
+// ToDo: Esc to close this window, button copy details, more info on categories
+
 
 using System.Windows;
 
