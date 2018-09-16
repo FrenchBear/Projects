@@ -79,10 +79,5 @@ namespace UniSearchNS
         {
             vm.AfterCheckboxFlip();
         }
-
-        private void CharListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            if (vm.SelectedChar != null) CharDetailWindow.ShowDetail(vm.SelectedChar.Codepoint);
-        }
     }
 }

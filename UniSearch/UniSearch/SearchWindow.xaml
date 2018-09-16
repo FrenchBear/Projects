@@ -157,15 +157,9 @@
 
             <ListView Name="CharListView" Grid.Row="3" Grid.Column="1" Foreground="Black" 
                       SelectedItem="{Binding SelectedChar}" ItemsSource="{Binding CharactersRecordsList}" >
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListViewItem}">
-                        <EventSetter Event="MouseDoubleClick" Handler="CharListView_MouseDoubleClick" />
-                    </Style>
-                </ListView.ItemContainerStyle>
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="Character" CellTemplate="{StaticResource CharacterCellTemplate}"/>
-                        <!--<GridViewColumn Header="Codepoint   " DisplayMemberBinding="{Binding CodepointHexa}" />-->
                         <GridViewColumn Header="Codepoint   " CellTemplate="{StaticResource CodepointCellTemplate}" />
                         <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" />
                     </GridView>

@@ -263,20 +263,43 @@ namespace UniSearchNS
             }
         }
 
-        public object StrContent
+        public UIElement StrContent
         {
             get
             {
                 if (SelectedChar == null) return null;
-
-                Run r = new Run(SelectedChar.CodepointHexa);
-                Hyperlink h = new Hyperlink(r);
-                h.Command = ShowDetailCommand;
-                h.CommandParameter = SelectedChar.Codepoint;
-                TextBlock t = new TextBlock(h);
-
-                return t;
+                return GetStrContent(SelectedChar.Codepoint, ShowDetailCommand);
             }
+        }
+
+        public static UIElement GetStrContent(int codepoint, ICommand command)
+        {
+            var cr = UnicodeData.CharacterRecords[codepoint];
+
+            Grid g = new Grid();
+            g.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(40) });
+            g.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(60) });
+            g.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
+
+            var t1 = new TextBlock();
+            t1.Text = cr.Character;
+            Grid.SetColumn(t1, 0);
+            g.Children.Add(t1);
+
+            Run r = new Run(cr.CodepointHexa);
+            Hyperlink h = new Hyperlink(r);
+            h.Command = command;
+            h.CommandParameter = cr.Codepoint;
+            TextBlock t2 = new TextBlock(h);
+            Grid.SetColumn(t2, 1);
+            g.Children.Add(t2);
+
+            var t3 = new TextBlock();
+            t3.Text = cr.Name;
+            Grid.SetColumn(t3, 2);
+            g.Children.Add(t3);
+
+            return g;
         }
 
 

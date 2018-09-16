@@ -30,11 +30,11 @@ namespace UniData
 
 
         // When True, Character method will return an hex codepoint representation instead of the actual string
-        private readonly bool IsPrintable;
+        public readonly bool IsPrintable;
 
         // Convert to a C# string representation of the character, except for control characters
-        // 'Safe version' of UnicodeData.CPtoString
-        public string Character => IsPrintable ? UnicodeData.CPtoString(Codepoint) : CodepointHexa;
+        // 'Safe version' of UnicodeData.CPtoString. U+FFFD is the official replacement character.
+        public string Character => UnicodeData.CPtoString(IsPrintable ? Codepoint : 0xFFFD);
 
 
         // Used by binding
@@ -236,7 +236,7 @@ namespace UniData
                 cat_map.Add(cat.Code, cat);
             }
             // Second pass, fill AllCategories
-            foreach (CategoryRecord cr in cat_map.Values)
+            foreach (CategoryRecord cr in cat_map.Values.Where(c => c.Include.Length>0))
                 foreach (string other in cr.Include.Split('|'))
                     cat_map[other].CategoriesList.Add(cr.Code);
 

@@ -7,7 +7,7 @@
         FontSize="13" FontFamily="Segoe UI"
         SizeToContent="WidthAndHeight" 
         mc:Ignorable="d"
-        Title="Character Detail" Height="450" Width="450">
+        Title="{Binding Title}" Height="450" Width="450">
 
     <Grid Margin="12,6,6,6">
         <Grid.RowDefinitions>
@@ -68,13 +68,13 @@
 
         <TextBlock Grid.Row="13" Grid.Column="1" Text="Decomposition and Case" Grid.ColumnSpan="2" FontWeight="Bold" Margin="0,12,0,0"/>
         <TextBlock Grid.Row="14" Grid.Column="1" Text="  NFD" FontWeight="SemiBold" />
-        <TextBlock Grid.Row="14" Grid.Column="2" Text="{Binding SelectedChar.NormalizationNFD}" />
+        <ContentPresenter Grid.Row="14" Grid.Column="2" Content="{Binding NormalizationNFDContent}" />
         <TextBlock Grid.Row="15" Grid.Column="1" Text="  NFKD" FontWeight="SemiBold" />
-        <TextBlock Grid.Row="15" Grid.Column="2" Text="{Binding SelectedChar.NormalizationNFKD}" />
+        <ContentPresenter Grid.Row="15" Grid.Column="2" Content="{Binding NormalizationNFKDContent}" />
         <TextBlock Grid.Row="16" Grid.Column="1" Text="  Lowercase " FontWeight="SemiBold" />
-        <TextBlock Grid.Row="16" Grid.Column="2" Text="{Binding SelectedChar.Lowercase}" />
+        <ContentPresenter Grid.Row="16" Grid.Column="2" Content="{Binding LowercaseContent}" />
         <TextBlock Grid.Row="17" Grid.Column="1" Text="  Uppercase " FontWeight="SemiBold" />
-        <TextBlock Grid.Row="17" Grid.Column="2" Text="{Binding SelectedChar.Uppercase}" />
+        <ContentPresenter Grid.Row="17" Grid.Column="2" Content="{Binding UppercaseContent}" />
     </Grid>
 
 </Window>
