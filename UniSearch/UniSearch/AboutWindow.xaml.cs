@@ -14,7 +14,7 @@ namespace UniSearchNS
     /// <summary>
     /// Interaction logic for AboutWindow.xaml
     /// </summary>
-    internal partial class AboutWindow : Window
+    internal sealed partial class AboutWindow : Window
     {
         public AboutWindow()
         {

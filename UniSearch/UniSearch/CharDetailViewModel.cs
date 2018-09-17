@@ -9,7 +9,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using UniData;
+using UniDataNS;
 using DirectDrawWrite;
 using System.Text;
 using System.Windows.Controls;

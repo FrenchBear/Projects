@@ -14,7 +14,7 @@ using static UniSearchNS.NativeMethods;
 
 namespace UniSearchNS
 {
-    public partial class SearchWindow : Window
+    internal sealed partial class SearchWindow : Window
     {
         ViewModel vm;
 

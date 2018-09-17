@@ -16,7 +16,7 @@ using System.Windows.Input;
 using System.Linq;
 using System.Windows.Threading;
 using System.Windows;
-using UniData;
+using UniDataNS;
 using System.Windows.Media.Imaging;
 using DirectDrawWrite;
 using System.Windows.Controls;
@@ -60,8 +60,8 @@ namespace UniSearchNS
             ShowDetailCommand = new RelayCommand<int>(ShowDetailExecute);
 
             // Get Unicode data
-            CharactersRecordsList = UnicodeData.CharacterRecords.Values.OrderBy(cr => cr.Codepoint).ToArray();
-            ReadOnlyDictionary<int, BlockRecord>.ValueCollection BlockRecordsList = UnicodeData.BlockRecords.Values;
+            CharactersRecordsList = UniData.CharacterRecords.Values.OrderBy(cr => cr.Codepoint).ToArray();
+            ReadOnlyDictionary<int, BlockRecord>.ValueCollection BlockRecordsList = UniData.BlockRecords.Values;
 
 
             // root is *not* added to the TreeView on purpose
@@ -200,7 +200,7 @@ namespace UniSearchNS
             }
         }
 
-        public int NumChars => UnicodeData.CharacterRecords.Count;
+        public int NumChars => UniData.CharacterRecords.Count;
 
         public int NumBlocks => BlocksCheckableNodesDictionary.Count;
 
@@ -274,7 +274,7 @@ namespace UniSearchNS
 
         public static UIElement GetStrContent(int codepoint, ICommand command)
         {
-            var cr = UnicodeData.CharacterRecords[codepoint];
+            var cr = UniData.CharacterRecords[codepoint];
 
             Grid g = new Grid();
             g.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(40) });

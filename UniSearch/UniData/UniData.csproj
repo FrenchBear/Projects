@@ -7,7 +7,7 @@
     <ProjectGuid>{75696CE4-5FDA-4018-9CAB-EBB611018208}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UniData</RootNamespace>
+    <RootNamespace>UniDataNS</RootNamespace>
     <AssemblyName>UniData</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -63,15 +63,9 @@
     <Compile Include="UniData.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="UCD\DerivedAge.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="UCD\MetaBlocks.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="UCD\UnicodeData.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <EmbeddedResource Include="UCD\DerivedAge.txt" />
+    <EmbeddedResource Include="UCD\MetaBlocks.txt" />
+    <EmbeddedResource Include="UCD\UnicodeData.txt" />
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="CustomDictionary.xml" />

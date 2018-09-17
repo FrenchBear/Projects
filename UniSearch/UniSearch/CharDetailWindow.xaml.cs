@@ -6,17 +6,17 @@
 
 using System.Windows;
 using System.Windows.Input;
-using UniData;
+using UniDataNS;
 
 namespace UniSearchNS
 {
-    public partial class CharDetailWindow : Window
+    internal sealed partial class CharDetailWindow : Window
     {
         internal CharDetailWindow(int codepoint)
         {
             InitializeComponent();
 
-            DataContext = new CharDetailViewModel(UnicodeData.CharacterRecords[codepoint]);
+            DataContext = new CharDetailViewModel(UniData.CharacterRecords[codepoint]);
 
             // Esc closes the window
             PreviewKeyDown += (s, e) =>
