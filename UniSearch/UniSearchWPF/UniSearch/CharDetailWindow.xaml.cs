@@ -1,5 +1,5 @@
 ﻿// CharDetailWindow
-// Show more information on a character after a double-click on the list
+// Show more information on a character after a click on hyperlink
 //
 // 2018-09-15   PV
 
