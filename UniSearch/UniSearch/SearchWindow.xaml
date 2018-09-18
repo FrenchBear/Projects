@@ -52,7 +52,7 @@
             <StackPanel Orientation="Horizontal">
                 <!-- These elements are bound to a CheckableNode object. -->
                 <CheckBox Focusable="False" IsChecked="{Binding IsChecked}" VerticalAlignment="Center" 
-                          Checked="CheckBox_Flip" Unchecked="CheckBox_Flip"  />
+                          Click="CheckBox_Flip" />
                 <ContentPresenter  Content="{Binding Name}" Margin="3,0" />
             </StackPanel>
         </HierarchicalDataTemplate>

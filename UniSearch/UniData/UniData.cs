@@ -265,13 +265,14 @@ namespace UniDataNS
                         if (!fields[1].EndsWith(", Last>", StringComparison.OrdinalIgnoreCase))
                             Debugger.Break();
                         // Skip planes 15 and 16 private use
-                        if (codepoint != 0xF0000 && codepoint != 0x100000)
+                        if (codepoint != 0xF0000 && codepoint != 0x100000 && codepoint < 0x20000)
                             for (int code = codepoint; code <= end_char_code; code++)
                                 char_map.Add(code, new CharacterRecord(code, $"{char_name}-{code:X4}", char_category, is_printable));
                     }
                     else
                     {
-                        char_map.Add(codepoint, new CharacterRecord(codepoint, char_name, char_category, is_printable));
+                        if (codepoint < 0x20000)
+                            char_map.Add(codepoint, new CharacterRecord(codepoint, char_name, char_category, is_printable));
                     }
                 }
 
@@ -308,14 +309,18 @@ namespace UniDataNS
                     int codepoint = int.Parse(p < 0 ? fields[0] : fields[0].Substring(0, p), NumberStyles.HexNumber);
                     string age = fields[1].Trim();
                     if (p < 0)
-                        char_map[codepoint].Age = age;
+                    {
+                        if (char_map.ContainsKey(codepoint))
+                            char_map[codepoint].Age = age;
+                    }
                     else
                     {
                         int end_char_code = int.Parse(fields[0].Substring(p + 2), NumberStyles.HexNumber);
                         // Skip planes 15 and 16 private use
                         if (codepoint != 0xF0000 && codepoint != 0x100000)
                             for (int code = codepoint; code <= end_char_code; code++)
-                                char_map[code].Age = age;
+                                if (char_map.ContainsKey(code))
+                                    char_map[code].Age = age;
                     }
                 }
 
