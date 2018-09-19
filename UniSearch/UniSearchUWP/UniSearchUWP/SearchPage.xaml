@@ -3,21 +3,63 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:UniSearchUWP"
-    xmlns:dw="clr-namespace:UniSearchUWP.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=local:ViewModel}"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    d:DesignWidth="1000" d:DesignHeight="350" 
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" FontFamily="Segoe UI" >
 
     <Page.Resources>
         <Style x:Key="Label" TargetType="TextBlock">
-            <Setter Property="Margin" Value="0,4,12,0" />
+            <Setter Property="Margin" Value="0,5,12,0" />
+        </Style>
+
+        <!-- Default tooltip template has a MaxWidth of 320 and it can't be changed, so this is a version with MaxWidth=2000 -->
+        <!-- https://stackoverflow.com/questions/42254473/uwp-change-tooltip-height-width -->
+        <Style x:Key="LargeTooltipStyle" TargetType="ToolTip">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToolTip">
+                        <ContentPresenter
+                                     x:Name="LayoutRoot"
+                                     MaxWidth="2000"
+                                     Padding="{TemplateBinding Padding}"
+                                     Background="{TemplateBinding Background}"
+                                     BorderBrush="{TemplateBinding BorderBrush}"
+                                     BorderThickness="{TemplateBinding BorderThickness}"
+                                     Content="{TemplateBinding Content}"
+                                     ContentTemplate="{TemplateBinding ContentTemplate}"
+                                     ContentTransitions="{TemplateBinding ContentTransitions}"
+                                     TextWrapping="Wrap">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="OpenStates">
+                                    <VisualState x:Name="Closed">
+                                        <Storyboard>
+                                            <FadeOutThemeAnimation TargetName="LayoutRoot" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Opened">
+                                        <Storyboard>
+                                            <FadeInThemeAnimation TargetName="LayoutRoot" />
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                        </ContentPresenter>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
     </Page.Resources>
 
-    
+
     <Grid Margin="6">
+        <Grid.KeyboardAccelerators>
+            <KeyboardAccelerator Modifiers="Control" Key="L"  Invoked="KeyboardAccelerator_CopyRecordsInvoked" />
+        </Grid.KeyboardAccelerators>
+        
+        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
@@ -42,14 +84,40 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Style="{StaticResource Label}" Grid.Column="0" Text="Character Name Filter" FontWeight="SemiBold"  />
-                    <TextBox Grid.Column="1" Name="CharacterFilterTextBox" AccessKey="N" 
-                             Text="{Binding CharNameFilter, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" VerticalContentAlignment="Center" />
+                    <TextBlock Style="{StaticResource Label}" Grid.Column="0" Text="Character" FontWeight="SemiBold"  />
+                    <AutoSuggestBox Grid.Column="1" Name="CharacterFilterTextBox" QueryIcon="Filter" PlaceholderText="Name filter"
+                                    AccessKey="N" AccessKeyInvoked="SetFocus"
+                                    Text="{Binding CharNameFilter, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" >
+                        <ToolTipService.ToolTip>
+                            <ToolTip Style="{StaticResource LargeTooltipStyle}" >
+                                <TextBlock>
+                                Enter a list of words to filter character names (case insensitive, accent insenstitive).
+                                <LineBreak/>
+                                A single-letter word filters on character itself, not on name.
+                                <LineBreak/>
+                                Use w: to search for full words, w:cat does not match multipli<Bold>cat</Bold>ion
+                                <LineBreak/>
+                                use U+ prefix to search for a specific hex code, such as U+CAFE
+                                <LineBreak/>
+                                Use b: to filter on block name
+                                <LineBreak/>
+                                Use a: to filter on character age.  Also support comparison operators such as a:&lt;=10
+                                </TextBlock>
+                            </ToolTip>
+                        </ToolTipService.ToolTip>
+                    </AutoSuggestBox>
                 </Grid>
 
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
                     <TextBlock Style="{StaticResource Label}" Text="Copy " />
-                    <Button Content="Chars" AccessKey="C" Margin="0,0,6,0"  Command="{Binding CopyRecordsCommand}" CommandParameter="0"/>
+                    <Button Content="Chars" AccessKey="C" Margin="0,0,6,0"  Command="{Binding CopyRecordsCommand}" CommandParameter="0" HorizontalAlignment="Left" VerticalAlignment="Top" >
+                        <Button.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control" Key="C" />
+                        </Button.KeyboardAccelerators>
+                        <ToolTipService.ToolTip>
+                            <ToolTip>Ctrl+C</ToolTip>
+                        </ToolTipService.ToolTip>
+                    </Button>
                     <Button Content="Lines" AccessKey="L" Margin="0,0,6,0"  Command="{Binding CopyRecordsCommand}" CommandParameter="1"/>
                     <Button Content="Details" AccessKey="D" Margin="0,0,18,0" Command="{Binding CopyRecordsCommand}" CommandParameter="2"/>
                     <Button Content="About" AccessKey="I" Margin="0,0,6,0" Command="{Binding CopyImageCommand}" />
@@ -58,7 +126,9 @@
 
             <!-- List of filtered characters -->
             <ListView  Name="CharListView" x:FieldModifier="internal" Grid.Row="1" SelectedItem="{Binding SelectedChar, Mode=TwoWay}" ItemsSource="{Binding CharactersRecordsFilteredList}"
-                       SelectionMode="Extended" SelectionChanged="CharListView_SelectionChanged">
+                       Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
+                       SelectionMode="Extended" SelectionChanged="CharListView_SelectionChanged" >
+                <!--ZBackground="#202020"-->
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="Height" Value="20" />
@@ -113,7 +183,7 @@
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="80" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
@@ -157,7 +227,7 @@
             <controls:GridSplitter.Element>
                 <Grid>
                     <TextBlock HorizontalAlignment="Center" IsHitTestVisible="False" VerticalAlignment="Center"  
-                               Text="&#xE784;" Foreground="Gray" FontFamily="Segoe MDL2 Assets">
+                               Text="&#xE784;" Foreground="Gray">
                     </TextBlock>
                 </Grid>
             </controls:GridSplitter.Element>
@@ -179,8 +249,10 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Style="{StaticResource Label}" Grid.Column="0" Text="Block Name Filter" FontWeight="SemiBold" />
-                    <TextBox Grid.Column="1" Name="BlockFilterTextBox" AccessKey="B" Text="{Binding BlockNameFilter, UpdateSourceTrigger=PropertyChanged}"  VerticalContentAlignment="Center" />
+                    <TextBlock Style="{StaticResource Label}" Grid.Column="0" Text="Block" FontWeight="SemiBold" />
+                    <AutoSuggestBox Grid.Column="1" Name="BlockFilterTextBox" QueryIcon="Filter" PlaceholderText="Name filter"
+                                    AccessKey="B" AccessKeyInvoked="SetFocus"
+                                    Text="{Binding BlockNameFilter, UpdateSourceTrigger=PropertyChanged}" />
                 </Grid>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
                     <TextBlock Style="{StaticResource Label}" Text="View" />
@@ -195,7 +267,7 @@
                 </StackPanel>
             </StackPanel>
 
-            <ListView Grid.Row="1" ItemsSource="{Binding NodesList}" >
+            <ListView Grid.Row="1" ItemsSource="{Binding NodesList}"  Background="{ThemeResource SystemControlBackgroundBaseLowBrush}" >
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="Height" Value="24" />

@@ -70,6 +70,10 @@
         </DataTemplate>
     </Window.Resources>
 
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding CopyRecordsCommand}" CommandParameter="0" Key="C" Modifiers="Ctrl" />
+    </Window.InputBindings>
+
     <Grid >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
