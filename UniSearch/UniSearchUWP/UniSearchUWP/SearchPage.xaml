@@ -58,8 +58,8 @@
         <Grid.KeyboardAccelerators>
             <KeyboardAccelerator Modifiers="Control" Key="L"  Invoked="KeyboardAccelerator_CopyRecordsInvoked" />
         </Grid.KeyboardAccelerators>
-        
-        
+
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
@@ -120,12 +120,30 @@
                     </Button>
                     <Button Content="Lines" AccessKey="L" Margin="0,0,6,0"  Command="{Binding CopyRecordsCommand}" CommandParameter="1"/>
                     <Button Content="Details" AccessKey="D" Margin="0,0,18,0" Command="{Binding CopyRecordsCommand}" CommandParameter="2"/>
-                    <Button Content="About" AccessKey="I" Margin="0,0,6,0" Command="{Binding CopyImageCommand}" />
+                    <Button Content="About" AccessKey="I" Margin="0,0,18,0" Command="{Binding CopyImageCommand}" />
+                    <Button Content="L/G" Click="ListGrid_Click" />
                 </StackPanel>
             </StackPanel>
 
+            <GridView Name="CharGridView" Grid.Row="1" SelectedItem="{Binding SelectedChar, Mode=TwoWay}" ItemsSource="{Binding CharactersRecordsFilteredList}"
+                       Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
+                       SelectionMode="Extended" SelectionChanged="CharListView_SelectionChanged">
+                <GridView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="3,3,0,0"
+                        MinWidth="72" MaxWidth="72" Height="72">
+                            <TextBlock Name="CharImage" Text="{Binding Character}"  
+                               FontSize="48" HorizontalAlignment="Center" VerticalAlignment="Top" >
+                            </TextBlock>
+                        </Border>
+                    </DataTemplate>
+
+                </GridView.ItemTemplate>
+            </GridView>
+
             <!-- List of filtered characters -->
             <ListView  Name="CharListView" x:FieldModifier="internal" Grid.Row="1" SelectedItem="{Binding SelectedChar, Mode=TwoWay}" ItemsSource="{Binding CharactersRecordsFilteredList}"
+                       Visibility="Collapsed"
                        Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
                        SelectionMode="Extended" SelectionChanged="CharListView_SelectionChanged" >
                 <!--ZBackground="#202020"-->

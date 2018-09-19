@@ -54,5 +54,19 @@ namespace UniSearchUWP
             if (vm.CopyRecordsCommand.CanExecute("1"))
                 vm.CopyRecordsCommand.Execute("1");
         }
+
+        private void ListGrid_Click(object sender, RoutedEventArgs e)
+        {
+            if (CharListView.Visibility == Visibility.Collapsed)
+            {
+                CharGridView.Visibility = Visibility.Collapsed;
+                CharListView.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                CharListView.Visibility = Visibility.Collapsed;
+                CharGridView.Visibility = Visibility.Visible;
+            }
+        }
     }
 }
