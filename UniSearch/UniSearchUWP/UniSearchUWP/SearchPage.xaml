@@ -100,6 +100,8 @@
                                 <LineBreak/>
                                 Use b: to filter on block name
                                 <LineBreak/>
+                                Use s: to filter on subheader name
+                                <LineBreak/>
                                 Use a: to filter on character age.  Also support comparison operators such as a:&lt;=10
                                 </TextBlock>
                             </ToolTip>
@@ -159,7 +161,7 @@
                     <GroupStyle>
                         <GroupStyle.HeaderTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Key.BlockNameAndRange}"/>
+                                <TextBlock Text="{Binding Key}"/>
                             </DataTemplate>
                         </GroupStyle.HeaderTemplate>
                     </GroupStyle>
@@ -247,8 +249,8 @@
                 <ContentPresenter Grid.Row="2" Grid.Column="2" Content="{Binding StrContent}" />
                 <TextBlock Grid.Row="3" Grid.Column="1" Text="Block" FontWeight="SemiBold" />
                 <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding SelectedChar.BlockRecord.BlockNameAndRange}" />
-                <TextBlock Grid.Row="4" Grid.Column="1" Text="Categories " FontWeight="SemiBold" />
-                <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding SelectedChar.CategoryRecord.Categories}" />
+                <TextBlock Grid.Row="4" Grid.Column="1" Text="Subheader " FontWeight="SemiBold" />
+                <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding SelectedChar.Subheader}" />
             </Grid>
 
 
@@ -271,7 +273,7 @@
             <controls:GridSplitter.Element>
                 <Grid>
                     <TextBlock HorizontalAlignment="Center" IsHitTestVisible="False" VerticalAlignment="Center"  
-                               Text="&#xE784;" Foreground="Gray">
+                               Text="&#xE784;" FontFamily="Segoe MDL2 Assets" Foreground="Gray">
                     </TextBlock>
                 </Grid>
             </controls:GridSplitter.Element>

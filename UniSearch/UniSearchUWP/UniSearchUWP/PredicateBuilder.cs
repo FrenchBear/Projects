@@ -1,9 +1,10 @@
 ﻿// FilterPredicateBuilder
 // Helper class to build a specific Predicate<object> to filter a List depending on a list of searched words and search options
 //
-// 2016-12-13   PV  v2.1 Full rewrite in a separate, clean class
-// 2017-01-01   PV  v2.5.1 Exclusion of search words starting with -; move filter parsing from VM to here
-// 2018-09-08   PV  Adaptation to UniSearch with dedicated predicates for CharacterRecord and BlockRecord
+// 2016-12-13   PV      v2.1 Full rewrite in a separate, clean class
+// 2017-01-01   PV      v2.5.1 Exclusion of search words starting with -; move filter parsing from VM to here
+// 2018-09-08   PV      Adaptation to UniSearch with dedicated predicates for CharacterRecord and BlockRecord
+// 2018-09-20   PV      Filter on Subheader using s:
 
 using System;
 using System.Collections.Generic;
@@ -306,6 +307,13 @@ namespace UniSearchUWP
                 {
                     word = word.Substring(word.IndexOf(':') + 1);
                     wordFilter = cr.BlockRecord.BlockName.IndexOf(word, 0, StringComparison.OrdinalIgnoreCase) >= 0;
+                }
+
+                // Block filter
+                else if (word.StartsWith("Sub:", StringComparison.OrdinalIgnoreCase) || word.StartsWith("S:", StringComparison.OrdinalIgnoreCase))
+                {
+                    word = word.Substring(word.IndexOf(':') + 1);
+                    wordFilter = cr.Subheader.IndexOf(word, 0, StringComparison.OrdinalIgnoreCase) >= 0;
                 }
 
                 // Otherwise search a part of Name

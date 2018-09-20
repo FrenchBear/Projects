@@ -354,11 +354,26 @@ namespace UniSearchUWP
                 CharactersRecordsFilteredList.Add(c);
 
             // Build the grouped version
-            var g = CharactersRecordsFilteredList.GroupBy(cr => cr.BlockRecord).OrderBy(k => k.Key.Begin);
+            var g = CharactersRecordsFilteredList.GroupBy(cr => new GroupKey { Block = cr.Block, Subheader = cr.Subheader }, new GroupKeyComparer()).OrderBy(grp => grp.Key.Block);
             window.GroupedCharsSource.Source = g;
 
             // Refresh filtered count
             NotifyPropertyChanged(nameof(FilChars));
+        }
+
+        struct GroupKey
+        {
+            public int Block { get; set; }
+            public string Subheader { get; set; }
+            public override string ToString() => UniData.BlockRecords[Block].BlockName + ": " + Subheader;
+        }
+
+
+        class GroupKeyComparer : IEqualityComparer<GroupKey>
+        {
+            public bool Equals(GroupKey x, GroupKey y) => x.Block == y.Block && x.Subheader == y.Subheader;
+
+            public int GetHashCode(GroupKey obj) => obj.Block.GetHashCode() ^ obj.Subheader.GetHashCode();
         }
 
 

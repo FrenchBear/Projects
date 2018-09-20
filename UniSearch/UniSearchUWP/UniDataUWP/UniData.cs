@@ -1,9 +1,10 @@
 ﻿// UniData
 // Static class providing characters and blocks information reading Unicode UCD files
-// Aé♫山𝄞🐗
+// Aé♫山??
 //
 // 2018-09-11   PV
 // 2018-09-17   PV      1.1 Store UCD Data in embedded streams; Skip characters from planes 15 and 16
+// 2018-09-20   PV      1.2 Read NamesList.txt
 //
 // ToDo: Manage script PropertyValueAliases.txt and Scripts.txt
 // ToDo: Add more tests
@@ -17,7 +18,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-
+using System.Text.RegularExpressions;
 
 namespace UniDataNS
 {
@@ -30,6 +31,7 @@ namespace UniDataNS
         public string Category { get; private set; }
         public string Age { get; internal set; }
         public int Block { get; internal set; } = -1;       // -1 for tests, to make sure at the end all supported chars have a block
+        public string Subheader { get; internal set; }
 
 
         // When True, Character method will return an hex codepoint representation instead of the actual string
@@ -292,6 +294,40 @@ namespace UniDataNS
                     }
                 }
 
+            // Read NamesList
+            string subheader = "";
+            Regex CodepointRegex = new Regex(@"^[0-9A-F]{4,6}\t");
+            using (var sr = new StreamReader(GetResourceStream("NamesList.txt")))
+                while (!sr.EndOfStream)
+                {
+                    string line = sr.ReadLine();
+                    if (line.StartsWith(";", StringComparison.Ordinal))
+                    { // Comment, nothing to do 
+                    }
+                    else if (line.StartsWith("@@@+", StringComparison.Ordinal)) { }
+                    else if (line.StartsWith("@@@~", StringComparison.Ordinal)) { }
+                    else if (line.StartsWith("@@@", StringComparison.Ordinal)) { }
+                    else if (line.StartsWith("@@+", StringComparison.Ordinal)) { }
+                    else if (line.StartsWith("@@", StringComparison.Ordinal)) { }
+                    else if (line.StartsWith("@+", StringComparison.Ordinal)) { }
+                    else if (line.StartsWith("@~", StringComparison.Ordinal)) { }
+                    else if (line.StartsWith("@", StringComparison.Ordinal))
+                    {
+                        subheader = line.Substring(3);
+                    }
+                    else if (line.StartsWith("\t", StringComparison.Ordinal))
+                    {
+                    }
+                    else
+                    {
+                        Match ma = CodepointRegex.Match(line);
+                        if (!ma.Success) Debugger.Break();
+
+                        int cp = int.Parse(line.Substring(0, ma.Length - 1), NumberStyles.HexNumber);
+                        if (char_map.ContainsKey(cp))
+                            char_map[cp].Subheader = subheader;
+                    }
+                }
 
             // Validate data
             //InternalTests();
@@ -308,7 +344,7 @@ namespace UniDataNS
                 Debug.Assert(CategoryRecords.ContainsKey(cr.Category));
             }
 
-            Debug.Assert(UnicodeLength("Aé♫𝄞🐗") == 5);
+            Debug.Assert(UnicodeLength("Aé♫??") == 5);
         }
 
 
@@ -368,5 +404,4 @@ namespace UniDataNS
             }
         }
     }
-
 }

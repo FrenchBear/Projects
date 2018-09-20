@@ -168,8 +168,8 @@
                 <ContentPresenter Grid.Row="2" Grid.Column="2" Content="{Binding StrContent}" />
                 <TextBlock Grid.Row="3" Grid.Column="1" Text="Block" FontWeight="SemiBold" />
                 <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding SelectedChar.BlockRecord.BlockNameAndRange}" />
-                <TextBlock Grid.Row="4" Grid.Column="1" Text="Categories " FontWeight="SemiBold" />
-                <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding SelectedChar.CategoryRecord.Categories}" />
+                <TextBlock Grid.Row="4" Grid.Column="1" Text="Subheader " FontWeight="SemiBold" />
+                <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding SelectedChar.Subheader}" />
             </Grid>
 
 

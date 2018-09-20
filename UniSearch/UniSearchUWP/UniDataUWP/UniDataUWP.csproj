@@ -123,6 +123,9 @@
     <EmbeddedResource Include="UCD\MetaBlocks.txt" />
     <EmbeddedResource Include="UCD\UnicodeData.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UCD\NamesList.txt" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
