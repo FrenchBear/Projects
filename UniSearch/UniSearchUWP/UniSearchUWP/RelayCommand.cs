@@ -1,5 +1,7 @@
-﻿// UnISearch RelayCommand for MVVM CommandBinding
+﻿// Usual RelayCommand for MVVM CommandBinding
+//
 // 2016-09-26   PV
+// 2018-09-15   PV      Adaptation for UWP
 
 using System;
 using System.Windows.Input;
@@ -40,14 +42,12 @@ namespace UniSearchUWP
         /// <param name="canExecute">The execution status logic.</param>
         public RelayCommand(Action<T> execute, Predicate<T> canExecute)
         {
-            if (execute == null)
-                throw new ArgumentNullException(nameof(execute));
-            _execute = execute;
+            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             _canExecute = canExecute;
         }
 
         /// <summary>
-        /// Determines whether this <see cref="RelayCommand"/> can execute in its current state.
+        /// Determines whether this <see cref="RelayCommand{T}"/> can execute in its current state.
         /// </summary>
         /// <param name="parameter">
         /// Data used by the command. If the command does not require data to be passed, this object can be set to null.
@@ -55,11 +55,11 @@ namespace UniSearchUWP
         /// <returns>true if this command can be executed; otherwise, false.</returns>
         public bool CanExecute(object parameter)
         {
-            return _canExecute == null ? true : _canExecute((T)parameter);
+            return _canExecute == null || _canExecute((T)parameter);
         }
 
         /// <summary>
-        /// Executes the <see cref="RelayCommand"/> on the current command target.
+        /// Executes the <see cref="RelayCommand{T}"/> on the current command target.
         /// </summary>
         /// <param name="parameter">
         /// Data used by the command. If the command does not require data to be passed, this object can be set to null.
@@ -78,69 +78,5 @@ namespace UniSearchUWP
         {
             CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
-    }
-
-
-
-    internal class ZZRelayCommand<T> : ICommand
-    {
-        private readonly Predicate<T> canExecute;
-        private readonly Action<T> execute;
-
-        public ZZRelayCommand(Action<T> execute, Predicate<T> canExecute)
-        {
-            this.canExecute = canExecute;
-            this.execute = execute;
-        }
-
-        // canExecute is optional, and by default is assumed returning true (directly in CanExecute)
-        public ZZRelayCommand(Action<T> execute)
-            : this(execute, null)
-        { }
-
-        /* From ICommand */
-
-        public bool CanExecute(object parameter)
-        {
-            return canExecute?.Invoke((T)parameter) ?? true;
-        }
-
-        /* From ICommand */
-
-        public void Execute(object parameter)
-        {
-            execute?.Invoke((T)parameter);
-        }
-
-
-
-        public event EventHandler CanExecuteChanged;
-
-        public void RaiseCanExecuteChanged()
-        {
-            if (CanExecuteChanged != null)
-                CanExecuteChanged(this, EventArgs.Empty);
-        }
-
-        // The 'black magic' part: according to help, CommandManager.RequerySuggested Event occurs when the
-        // CommandManager """detects conditions that might change the ability of a command to execute"""...
-        // Ok, it works, but exactly how does this detection works is still a mystery to me...
-        //
-        // Added info from CommandManager.InvalidateRequerySuggested Method:
-        // The CommandManager only pays attention to certain conditions in determining when the command target has changed,
-        // such as change in keyboard focus. In situations where the CommandManager does not sufficiently determine a change
-        // in conditions that cause a command to not be able to execute, InvalidateRequerySuggested can be called to force
-        // the CommandManager to raise the RequerySuggested event.
-
-        /* From ICommand */
-
-        // $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-        //public event EventHandler CanExecuteChanged
-        //{
-        //    //add { CommandManager.RequerySuggested += value; }
-        //    //remove { CommandManager.RequerySuggested -= value; }
-        //    add { }
-        //    remove { }
-        //}
     }
 }

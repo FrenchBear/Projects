@@ -91,6 +91,9 @@ namespace UniDataNS
         public string Level2Name { get; private set; }
         public string Level3Name { get; private set; }
 
+        // Sorting order matching hierarchy
+        public int Rank { get; internal set; }
+
         public string BlockNameAndRange => $"{BlockName} {Begin:X4}..{End:X4}";
 
 
@@ -164,6 +167,30 @@ namespace UniDataNS
                     BlockRecord br = new BlockRecord(begin, end, fields[1], fields[2], fields[3], fields[4]);
                     block_map.Add(begin, br);
                 }
+
+            // Compute rank using an integer of format 33221100 where 33 is index of L3 block, 22 index of L2 block in L3...
+            int rank3 = 0;
+            foreach (var l3 in block_map.Values.GroupBy(b => b.Level3Name).OrderBy(g => g.Key))
+            {
+                int rank2 = 0;
+                foreach (var l2 in l3.GroupBy(b => b.Level2Name))
+                {
+                    int rank1 = 0;
+                    foreach (var l1 in l2.GroupBy(b => b.Level1Name))
+                    {
+                        int rank0 = 0;
+                        foreach (var l0 in l1)
+                        {
+                            l0.Rank=rank0+100*(rank1+100*(rank2+100*rank3));
+                            rank0++;
+                        }
+                        rank1++;
+                    }
+                    rank2++;
+                }
+                rank3++;
+            }
+
 
             // Initialize Categories
             foreach (var cat in new CategoryRecord[] {

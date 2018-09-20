@@ -39,9 +39,10 @@
         </Grid>
 
 
-        <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="0,0,26,26">
+        <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="0,0,20,20">
             <Grid  >
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -85,22 +86,24 @@
                 <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding SelectedChar.BlockRecord.Level1Name}" />
                 <TextBlock Grid.Row="9" Grid.Column="0" Text="  Block" FontWeight="SemiBold" />
                 <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding SelectedChar.BlockRecord.BlockNameAndRange}" />
+                <TextBlock Grid.Row="10" Grid.Column="0" Text="  Subheader" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="10" Grid.Column="1" Text="{Binding SelectedChar.Subheader}" />
 
-                <TextBlock Grid.Row="10" Grid.Column="0" Text="Encoding" FontWeight="Bold" Margin="0,12,0,0"/>
-                <TextBlock Grid.Row="11" Grid.Column="0" Text="  UTF-8" FontWeight="SemiBold" />
-                <TextBlock Grid.Row="11" Grid.Column="1" Text="{Binding SelectedChar.UTF8}" />
-                <TextBlock Grid.Row="12" Grid.Column="0" Text="  UTF-16" FontWeight="SemiBold" />
-                <TextBlock Grid.Row="12" Grid.Column="1" Text="{Binding SelectedChar.UTF16}" />
+                <TextBlock Grid.Row="11" Grid.Column="0" Text="Encoding" FontWeight="Bold" Margin="0,12,0,0"/>
+                <TextBlock Grid.Row="12" Grid.Column="0" Text="  UTF-8" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="12" Grid.Column="1" Text="{Binding SelectedChar.UTF8}" />
+                <TextBlock Grid.Row="13" Grid.Column="0" Text="  UTF-16" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="13" Grid.Column="1" Text="{Binding SelectedChar.UTF16}" />
 
-                <TextBlock Grid.Row="13" Grid.Column="0" Text="Decomposition and Case" Grid.ColumnSpan="2" FontWeight="Bold" Margin="0,12,0,0"/>
-                <TextBlock Grid.Row="14" Grid.Column="0" Text="  NFD" FontWeight="SemiBold" />
-                <ContentPresenter Grid.Row="14" Grid.Column="1" Content="{Binding NormalizationNFDContent}" />
-                <TextBlock Grid.Row="15" Grid.Column="0" Text="  NFKD" FontWeight="SemiBold" />
-                <ContentPresenter Grid.Row="15" Grid.Column="1" Content="{Binding NormalizationNFKDContent}" />
-                <TextBlock Grid.Row="16" Grid.Column="0" Text="  Lowercase" FontWeight="SemiBold" />
-                <ContentPresenter Grid.Row="16" Grid.Column="1" Content="{Binding LowercaseContent}" />
-                <TextBlock Grid.Row="17" Grid.Column="0" Text="  Uppercase" FontWeight="SemiBold" />
-                <ContentPresenter Grid.Row="17" Grid.Column="1" Content="{Binding UppercaseContent}" />
+                <TextBlock Grid.Row="14" Grid.Column="0" Text="Decomposition and Case" Grid.ColumnSpan="2" FontWeight="Bold" Margin="0,12,0,0"/>
+                <TextBlock Grid.Row="15" Grid.Column="0" Text="  NFD" FontWeight="SemiBold" />
+                <ContentPresenter Grid.Row="15" Grid.Column="1" Content="{Binding NormalizationNFDContent}" />
+                <TextBlock Grid.Row="16" Grid.Column="0" Text="  NFKD" FontWeight="SemiBold" />
+                <ContentPresenter Grid.Row="16" Grid.Column="1" Content="{Binding NormalizationNFKDContent}" />
+                <TextBlock Grid.Row="17" Grid.Column="0" Text="  Lowercase" FontWeight="SemiBold" />
+                <ContentPresenter Grid.Row="17" Grid.Column="1" Content="{Binding LowercaseContent}" />
+                <TextBlock Grid.Row="18" Grid.Column="0" Text="  Uppercase" FontWeight="SemiBold" />
+                <ContentPresenter Grid.Row="18" Grid.Column="1" Content="{Binding UppercaseContent}" />
             </Grid>
         </ScrollViewer>
 

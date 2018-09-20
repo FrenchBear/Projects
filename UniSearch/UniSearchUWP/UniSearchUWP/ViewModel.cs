@@ -349,17 +349,27 @@ namespace UniSearchUWP
             else
                 p2 = p1;
 
+            var SavedSelectedChar = SelectedChar;
+
             CharactersRecordsFilteredList.Clear();
             foreach (CharacterRecord c in CharactersRecordsList.Where(cr => p2(cr)))
                 CharactersRecordsFilteredList.Add(c);
 
             // Build the grouped version
-            var g = CharactersRecordsFilteredList.GroupBy(cr => new GroupKey { Block = cr.Block, Subheader = cr.Subheader }, new GroupKeyComparer()).OrderBy(grp => grp.Key.Block);
+            var g = CharactersRecordsFilteredList.GroupBy(cr => new GroupKey { Block = cr.Block, Subheader = cr.Subheader }, new GroupKeyComparer()).OrderBy(grp => UniData.BlockRecords[grp.Key.Block].Rank);
             window.GroupedCharsSource.Source = g;
+
+            // Restore selected char if it's still part of filtered list
+            if (SavedSelectedChar!=null && CharactersRecordsFilteredList.Contains(SavedSelectedChar))
+            {
+                SelectedChar = SavedSelectedChar;
+                window.CharCurrentView.ScrollIntoView(SelectedChar);
+            }
 
             // Refresh filtered count
             NotifyPropertyChanged(nameof(FilChars));
         }
+
 
         struct GroupKey
         {
@@ -369,11 +379,11 @@ namespace UniSearchUWP
         }
 
 
-        class GroupKeyComparer : IEqualityComparer<GroupKey>
+        private class GroupKeyComparer : IEqualityComparer<GroupKey>
         {
             public bool Equals(GroupKey x, GroupKey y) => x.Block == y.Block && x.Subheader == y.Subheader;
 
-            public int GetHashCode(GroupKey obj) => obj.Block.GetHashCode() ^ obj.Subheader.GetHashCode();
+            public int GetHashCode(GroupKey obj) => obj.GetHashCode();  // obj.Block.GetHashCode() ^ obj.Subheader.GetHashCode();
         }
 
 

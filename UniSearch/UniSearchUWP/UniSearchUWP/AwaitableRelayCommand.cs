@@ -1,11 +1,12 @@
-﻿// http://jake.ginnivan.net/awaitable-RelayCommand/
+﻿// Usual RelayCommand for MVVM CommandBinding, awaitable version
+// http://jake.ginnivan.net/awaitable-RelayCommand/
+//
+// 2016-09-15   PV
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+
 
 namespace UniSearchUWP
 {
@@ -26,7 +27,6 @@ namespace UniSearchUWP
     }
     
 
-
     // http://jake.ginnivan.net/awaitable-delegatecommand/
     public interface IAsyncCommand : IAsyncCommand<object>
     {
@@ -39,14 +39,14 @@ namespace UniSearchUWP
         ICommand Command { get; }
     }
 
-    public class AwaitableDelegateCommand : AwaitableRelayCommand<object>, IAsyncCommand
+    public class AwaitableRelayCommand : AwaitableRelayCommand<object>, IAsyncCommand
     {
-        public AwaitableDelegateCommand(Func<Task> executeMethod)
+        public AwaitableRelayCommand(Func<Task> executeMethod)
             : base(o => executeMethod())
         {
         }
 
-        public AwaitableDelegateCommand(Func<Task> executeMethod, Func<bool> canExecuteMethod)
+        public AwaitableRelayCommand(Func<Task> executeMethod, Func<bool> canExecuteMethod)
             : base(o => executeMethod(), o => canExecuteMethod())
         {
         }
@@ -88,18 +88,8 @@ namespace UniSearchUWP
 
         public bool CanExecute(object parameter)
         {
-            //ToDo: Rewrite to avoid exception with T=int and parameter=null
+            // PV: Replace null by default(T), otherwise we've problems with RelayCommand<int> when CanExecute is not specified
             return !_isExecuting && _underlyingCommand.CanExecute(parameter==null ? default(T) : (T)parameter);
-            /*
-            try
-            {
-                return !_isExecuting && _underlyingCommand.CanExecute((T)parameter);
-            }
-            catch (Exception)
-            {
-                return !_isExecuting;
-            }
-            */
         }
 
         public event EventHandler CanExecuteChanged
@@ -109,8 +99,11 @@ namespace UniSearchUWP
         }
 
 
+
         // Should return a Task, but ICommand interface expects void for Execute
+#pragma warning disable RECS0165 // Asynchronous methods should return a Task instead of void
         public async void Execute(object parameter)
+#pragma warning restore RECS0165 // Asynchronous methods should return a Task instead of void
         {
             await ExecuteAsync((T)parameter);
         }
