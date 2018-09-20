@@ -2,7 +2,7 @@
 // Show more information on a character after a click on hyperlink
 //
 // In UWP version, can't show more than one ContentDialog on screen: drill-down explore
-// is handlled by recycling current window and implement a back mechanism
+// is handled by recycling current window and implement a back mechanism
 //
 // 2018-09-18   PV
 

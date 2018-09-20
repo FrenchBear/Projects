@@ -1,7 +1,7 @@
 ﻿// CharDetailViewModel
 // Support for CharDetailDialog binding
 //
-// In UWP version, selected character can change during drill down, so INotifyPropertyChanged is implemnted.
+// In UWP version, selected character can change during drill down, so INotifyPropertyChanged is implemented.
 //
 // 2018-09-18   PV
 

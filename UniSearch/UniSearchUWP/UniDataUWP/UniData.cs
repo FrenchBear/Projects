@@ -23,7 +23,7 @@ using System.Text.RegularExpressions;
 namespace UniDataNS
 {
 
-    // Represents an Unicode codepoint and various associated informaton
+    // Represents an Unicode codepoint and various associated information
     public class CharacterRecord
     {
         public int Codepoint { get; private set; }
