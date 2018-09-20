@@ -353,6 +353,10 @@ namespace UniSearchUWP
             foreach (CharacterRecord c in CharactersRecordsList.Where(cr => p2(cr)))
                 CharactersRecordsFilteredList.Add(c);
 
+            // Build the grouped version
+            var g = CharactersRecordsFilteredList.GroupBy(cr => cr.BlockRecord).OrderBy(k => k.Key.Begin);
+            window.GroupedCharsSource.Source = g;
+
             // Refresh filtered count
             NotifyPropertyChanged(nameof(FilChars));
         }

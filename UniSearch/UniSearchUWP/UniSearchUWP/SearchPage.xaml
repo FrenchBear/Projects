@@ -10,7 +10,10 @@
     d:DesignWidth="1000" d:DesignHeight="350" 
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" FontFamily="Segoe UI" >
 
+
     <Page.Resources>
+        <CollectionViewSource x:Name="GroupedCharsSource" x:FieldModifier="internal" IsSourceGrouped="true"/>
+
         <Style x:Key="Label" TargetType="TextBlock">
             <Setter Property="Margin" Value="0,5,12,0" />
         </Style>
@@ -137,9 +140,10 @@
 
 
             <GridView Name="CharGridView" x:FieldModifier="internal" Grid.Row="1" SelectedItem="{Binding SelectedChar, Mode=TwoWay}" 
-                      ItemsSource="{Binding CharactersRecordsFilteredList}"
+                      ItemsSource="{Binding Source={StaticResource GroupedCharsSource}}"
                       Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
                       SelectionMode="Extended" SelectionChanged="CharListView_SelectionChanged">
+                <!--ItemsSource="{Binding CharactersRecordsFilteredList}"-->
                 <GridView.ItemTemplate>
                     <DataTemplate>
                         <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="3,3,0,0"
@@ -151,6 +155,15 @@
                     </DataTemplate>
                 </GridView.ItemTemplate>
 
+                <GridView.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Key.BlockNameAndRange}"/>
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </GridView.GroupStyle>
             </GridView>
 
             <!-- List of filtered characters -->

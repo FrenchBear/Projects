@@ -65,38 +65,6 @@ namespace UniDataNS
             }
         }
 
-        //public string NormalizationNFD => GetNormalization(NormalizationForm.FormD);
-        //public string NormalizationNFKD => GetNormalization(NormalizationForm.FormKD);
-
-        //private string GetNormalization(NormalizationForm form)
-        //{
-        //    if (!IsPrintable) return string.Empty;
-
-        //    string s = UniData.CodepointToString(Codepoint);
-        //    string sn = s.Normalize(form);
-        //    if (s == sn) return string.Empty;
-        //    if (form == NormalizationForm.FormKD && sn == s.Normalize(NormalizationForm.FormD))
-        //        return "Same as NFD";
-
-        //    return sn.EnumCharacterRecords().Select(cr => cr.AsString).Aggregate((prev, st) => prev + "\r\n" + st);
-        //}
-
-
-        //public string Lowercase => GetCase(true);
-        //public string Uppercase => GetCase(false);
-
-        //private string GetCase(bool lower)
-        //{
-        //    if (!IsPrintable) return string.Empty;
-
-        //    string s = UniData.CodepointToString(Codepoint);
-        //    string sc = lower ? s.ToLowerInvariant() : s.ToUpperInvariant();
-        //    if (s == sc) return string.Empty;
-
-        //    return sc.EnumCharacterRecords().Select(cr => cr.AsString).Aggregate((prev, st) => prev + "\r\n" + st);
-        //}
-
-
 
         internal CharacterRecord(int Codepoint, string Name, string Category, bool IsPrintable)
         {
