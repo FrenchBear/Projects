@@ -419,7 +419,7 @@ namespace UniSearchNS
                 {
                     bool exp = false;
                     foreach (CheckableNode child in n.Children)
-                        exp|= FilterBlock(child);
+                        exp |= FilterBlock(child);
                     exp |= f(n);
                     n.IsNodeExpanded = exp;
                     return exp;
@@ -505,7 +505,7 @@ namespace UniSearchNS
             {
                 case 0:
                 case 1:
-                    ActionAllNodes(root, n => { if (n.Level == 0 && n.NodeVisibility == Visibility.Visible) n.IsChecked = param==0; });
+                    ActionAllNodes(root, n => { if (n.Level == 0 && n.NodeVisibility == Visibility.Visible) n.IsChecked = param == 0; });
                     break;
                 case 2:
                 case 3:

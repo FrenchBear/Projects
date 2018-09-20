@@ -470,7 +470,7 @@ namespace UniSearchUWP
             string s = aTitleAttr.Title + " version " + sAssemblyVersion + "\r\n" + aDescAttr.Description + "\r\n\n" + aProductAttr.Product + "\r\n" + aCopyrightAttr.Copyright;
 
             var dialog = new MessageDialog(s, "About " + aTitleAttr.Title);
-            await dialog.ShowAsync();
+            await dialog.ShowAsync();   
         }
 
         // From Hyperlink

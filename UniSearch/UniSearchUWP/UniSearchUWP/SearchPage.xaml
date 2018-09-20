@@ -306,8 +306,8 @@
                     <Button Command="{Binding ShowLevelCommand}" CommandParameter="2" Content="L2" AccessKey="2" Margin="0,0,6,0" />
                     <Button Command="{Binding ShowLevelCommand}" CommandParameter="1" Content="L1" AccessKey="1" Margin="0,0,6,0" />
                     <Button Command="{Binding ShowLevelCommand}" CommandParameter="0" Content="Block" AccessKey="K" Margin="0,0,12,0" />
-                    <Button Command="{Binding FlipVisibleCommand}" CommandParameter="1" Content="Check visible" AccessKey="V" Margin="0,0,6,0" />
-                    <Button Command="{Binding FlipVisibleCommand}" CommandParameter="0" Content="Uncheck visible" AccessKey="U" Margin="0,0,6,0" />
+                    <Button Command="{Binding FlipVisibleCommand}" CommandParameter="0" Content="Check visible" AccessKey="V" Margin="0,0,6,0" />
+                    <Button Command="{Binding FlipVisibleCommand}" CommandParameter="1" Content="Uncheck visible" AccessKey="U" Margin="0,0,6,0" />
                     <Button Command="{Binding FlipVisibleCommand}" CommandParameter="2" Content="Check all" AccessKey="A" Margin="0,0,6,0" />
                     <Button Command="{Binding FlipVisibleCommand}" CommandParameter="3" Content="Uncheck all" AccessKey="H" Margin="0,0,6,0" />
                 </StackPanel>
