@@ -490,6 +490,14 @@ namespace UniSearchNS
             ActionAllNodes(root, n => { n.IsNodeExpanded = (n.Level != level); });
         }
 
+
+        /*
+        <Button Command="{Binding FlipVisibleCommand}" CommandParameter="0" Content=" Check _visible " Margin="0,0,6,0" />
+        <Button Command="{Binding FlipVisibleCommand}" CommandParameter="1" Content=" _Uncheck visible " Margin="0,0,6,0" />
+        <Button Command="{Binding FlipVisibleCommand}" CommandParameter="2" Content=" Check _all " Margin="0,0,6,0" />
+        <Button Command="{Binding FlipVisibleCommand}" CommandParameter="3" Content=" Unchec_k all " Margin="0,0,6,0" />
+
+        */
         private void FlipVisibleExecute(string sparam)
         {
             int.TryParse(sparam, out int param);

@@ -3,7 +3,6 @@
 //
 // In UWP version, can't show more than one ContentDialog on screen: drill-down explore
 // is handlled by recycling current window and implement a back mechanism
-// ToDo: Use commanding for back to enable/disable the button, or do it manually
 //
 // 2018-09-18   PV
 
@@ -26,7 +25,7 @@ namespace UniSearchUWP
         {
             InitializeComponent();
 
-            ViewModel = new CharDetailViewModel(UniData.CharacterRecords[codepoint]);
+            ViewModel = new CharDetailViewModel(this, UniData.CharacterRecords[codepoint]);
             DataContext = ViewModel;
 
             // Esc closes the window automatically, nothing to do

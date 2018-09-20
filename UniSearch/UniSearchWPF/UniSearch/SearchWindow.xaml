@@ -227,8 +227,8 @@
                     <Button Command="{Binding ShowLevelCommand}" CommandParameter="2" Content=" L_2 " Margin="0,0,6,0" />
                     <Button Command="{Binding ShowLevelCommand}" CommandParameter="1" Content=" L_1 " Margin="0,0,6,0" />
                     <Button Command="{Binding ShowLevelCommand}" CommandParameter="0" Content=" Bloc_k " Margin="0,0,12,0" />
-                    <Button Command="{Binding FlipVisibleCommand}" CommandParameter="1" Content=" Check _visible " Margin="0,0,6,0" />
-                    <Button Command="{Binding FlipVisibleCommand}" CommandParameter="0" Content=" _Uncheck visible " Margin="0,0,6,0" />
+                    <Button Command="{Binding FlipVisibleCommand}" CommandParameter="0" Content=" Check _visible " Margin="0,0,6,0" />
+                    <Button Command="{Binding FlipVisibleCommand}" CommandParameter="1" Content=" _Uncheck visible " Margin="0,0,6,0" />
                     <Button Command="{Binding FlipVisibleCommand}" CommandParameter="2" Content=" Check _all " Margin="0,0,6,0" />
                     <Button Command="{Binding FlipVisibleCommand}" CommandParameter="3" Content=" Unchec_k all " Margin="0,0,6,0" />
                 </StackPanel>

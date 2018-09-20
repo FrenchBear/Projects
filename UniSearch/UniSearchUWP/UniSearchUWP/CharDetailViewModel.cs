@@ -23,6 +23,7 @@ namespace UniSearchUWP
     {
         // Private variables
         private readonly Stack<int> History = new Stack<int>();
+        private readonly CharDetailDialog window;
 
 
         // INotifyPropertyChanged interface
@@ -31,13 +32,15 @@ namespace UniSearchUWP
         private void NotifyPropertyChanged(string propertyName)
           => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
+
         // Commands public interface
         public ICommand ShowDetailCommand { get; private set; }
 
 
         // Constructor
-        public CharDetailViewModel(CharacterRecord cr)
+        public CharDetailViewModel(CharDetailDialog window, CharacterRecord cr)
         {
+            this.window = window;
             SelectedChar = cr;
             ShowDetailCommand = new RelayCommand<int>(ShowDetailExecute);
         }
@@ -116,7 +119,7 @@ namespace UniSearchUWP
 
         internal void Back()
         {
-            if (History.Count == 0) return;
+            window.BackButton.IsEnabled = History.Count != 1;
             NavigateToCodepoint(History.Pop(), false);
         }
 
@@ -125,7 +128,10 @@ namespace UniSearchUWP
         private void NavigateToCodepoint(int codepoint, bool trackHistory)
         {
             if (trackHistory)
+            {
                 History.Push(SelectedChar.Codepoint);
+                window.BackButton.IsEnabled = true;
+            }
 
             SelectedChar = UniData.CharacterRecords[codepoint];
         }

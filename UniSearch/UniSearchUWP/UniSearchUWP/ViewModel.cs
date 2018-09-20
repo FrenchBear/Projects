@@ -25,6 +25,7 @@ using Windows.ApplicationModel.DataTransfer;
 using System.Reflection;
 using Windows.UI.Popups;
 
+
 namespace UniSearchUWP
 {
     internal class ViewModel : INotifyPropertyChanged
@@ -44,7 +45,7 @@ namespace UniSearchUWP
 
         // Commands public interface
         public ICommand CopyRecordsCommand { get; private set; }
-        public ICommand CopyImageCommand { get; private set; }
+        public ICommand AboutCommand { get; private set; }
         public ICommand ShowLevelCommand { get; private set; }
         public ICommand FlipVisibleCommand { get; private set; }
         public ICommand ShowDetailCommand { get; private set; }
@@ -57,7 +58,7 @@ namespace UniSearchUWP
 
             // Binding commands with behavior
             CopyRecordsCommand = new RelayCommand<object>(CopyRecordsExecute, CanCopyRecords);
-            CopyImageCommand = new AwaitableRelayCommand<object>(CopyImageExecute);  //, CanCopyRecords);
+            AboutCommand = new AwaitableRelayCommand<object>(AboutExecute);
             ShowLevelCommand = new RelayCommand<object>(ShowLevelExecute);
             FlipVisibleCommand = new RelayCommand<string>(FlipVisibleExecute);
             ShowDetailCommand = new AwaitableRelayCommand<int>(ShowDetailExecute);
@@ -143,6 +144,7 @@ namespace UniSearchUWP
         public IList<CheckableNode> Roots { get; set; }      // For TreeView binding
         public CharacterRecord[] CharactersRecordsList { get; set; }
         public ObservableCollection<CharacterRecord> CharactersRecordsFilteredList { get; set; } = new ObservableCollection<CharacterRecord>();
+
         public List<CheckableNode> NodesList { get; set; }
 
         public BlockRecord[] BlocksRecordsList { get; set; }
@@ -203,25 +205,10 @@ namespace UniSearchUWP
         public int NumBlocks => BlocksCheckableNodesDictionary.Count;
 
 
-        public int SelChars => window.CharListView.SelectedItems.Count;
+        public int SelChars => window.CharCurrentView.SelectedItems.Count;
 
 
         public int FilChars => CharactersRecordsFilteredList.Count;
-        /*
-        private int _FilChars;
-        public int FilChars
-        {
-            get { return _FilChars; }
-            set
-            {
-                if (_FilChars != value)
-                {
-                    _FilChars = value;
-                    NotifyPropertyChanged(nameof(FilChars));
-                }
-            }
-        }
-        */
 
 
         private int _SelBlocks;
@@ -368,8 +355,6 @@ namespace UniSearchUWP
 
             // Refresh filtered count
             NotifyPropertyChanged(nameof(FilChars));
-
-            Debug.WriteLine($"FilterCharList: {CharactersRecordsFilteredList.Count}/{CharactersRecordsList.Length}");
         }
 
 
@@ -381,28 +366,6 @@ namespace UniSearchUWP
 
             FilterBlock(root);
             RefreshFilBlocks();
-
-            /*
-            Visibility FilterBlock(CheckableNode n)
-            {
-                if (n.Level == 0)
-                {
-                    n.NodeVisibility = f(n) ? Visibility.Visible : Visibility.Collapsed;
-                    return n.NodeVisibility;
-                }
-                else
-                {
-                    Visibility v = Visibility.Collapsed;
-                    foreach (CheckableNode child in n.Children)
-                        if (FilterBlock(child) == Visibility.Visible)
-                            v = Visibility.Visible;
-                    // Also filter on group name
-                    if (f(n)) v = Visibility.Visible;
-                    n.NodeVisibility = v;
-                    return v;
-                }
-            }
-            */
 
             bool FilterBlock(CheckableNode n)
             {
@@ -422,7 +385,6 @@ namespace UniSearchUWP
                     return exp;
                 }
             }
-
         }
 
 
@@ -430,14 +392,11 @@ namespace UniSearchUWP
         // ==============================================================================================
         // Commands
 
-        private bool CanCopyRecords(object obj)
-        {
-            return SelectedChar != null;
-        }
+        private bool CanCopyRecords(object obj) => SelectedChar != null;
 
         private void CopyRecordsExecute(object param)
         {
-            var selectedCharRecords = window.CharListView.SelectedItems.Cast<CharacterRecord>();
+            var selectedCharRecords = window.CharCurrentView.SelectedItems.Cast<CharacterRecord>();
 
             var sb = new StringBuilder();
             foreach (CharacterRecord r in selectedCharRecords.OrderBy(cr => cr.Codepoint))
@@ -469,8 +428,8 @@ namespace UniSearchUWP
         }
 
 
-        // From button: no parameter
-        private async Task CopyImageExecute(object param)
+        // Show app information
+        private async Task AboutExecute(object param)
         {
             Assembly myAssembly = System.Reflection.Assembly.GetExecutingAssembly();
             AssemblyTitleAttribute aTitleAttr = (AssemblyTitleAttribute)Attribute.GetCustomAttribute(myAssembly, typeof(AssemblyTitleAttribute));
@@ -485,7 +444,7 @@ namespace UniSearchUWP
             await dialog.ShowAsync();
         }
 
-        // From Hyperlick
+        // From Hyperlink
         private async Task ShowDetailExecute(int codepoint)
         {
             await CharDetailDialog.ShowDetail(codepoint);

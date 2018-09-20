@@ -55,10 +55,6 @@
 
 
     <Grid Margin="6">
-        <Grid.KeyboardAccelerators>
-            <KeyboardAccelerator Modifiers="Control" Key="L"  Invoked="KeyboardAccelerator_CopyRecordsInvoked" />
-        </Grid.KeyboardAccelerators>
-
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -115,34 +111,51 @@
                             <KeyboardAccelerator Modifiers="Control" Key="C" />
                         </Button.KeyboardAccelerators>
                         <ToolTipService.ToolTip>
-                            <ToolTip>Ctrl+C</ToolTip>
+                            <ToolTip>Copy selected chars (Ctrl+C)</ToolTip>
                         </ToolTipService.ToolTip>
                     </Button>
-                    <Button Content="Lines" AccessKey="L" Margin="0,0,6,0"  Command="{Binding CopyRecordsCommand}" CommandParameter="1"/>
+                    <Button Content="Lines" AccessKey="L" Margin="0,0,6,0"  Command="{Binding CopyRecordsCommand}" CommandParameter="1">
+                        <Button.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control" Key="L" />
+                        </Button.KeyboardAccelerators>
+                        <ToolTipService.ToolTip>
+                            <ToolTip>Copy Character, Codepoint and Name of selected chars (Ctrl+L)</ToolTip>
+                        </ToolTipService.ToolTip>
+                    </Button>
                     <Button Content="Details" AccessKey="D" Margin="0,0,18,0" Command="{Binding CopyRecordsCommand}" CommandParameter="2"/>
-                    <Button Content="About" AccessKey="I" Margin="0,0,18,0" Command="{Binding CopyImageCommand}" />
-                    <Button Content="L/G" Click="ListGrid_Click" />
+                    <Button Content="𝄙 ⭤  𝄝" FontSize="19" Padding="4,0" AccessKey="G" Margin="0,0,18,0" Click="ListGrid_Click" VerticalAlignment="Stretch">
+                        <Button.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control" Key="G" />
+                        </Button.KeyboardAccelerators>
+                        <ToolTipService.ToolTip>
+                            <ToolTip>Toggle betweel Grid and List view (Ctrl+G)</ToolTip>
+                        </ToolTipService.ToolTip>
+                    </Button>
+                    <Button Content="About" Margin="0,0,18,0" Command="{Binding AboutCommand}" />
                 </StackPanel>
             </StackPanel>
 
-            <GridView Name="CharGridView" Grid.Row="1" SelectedItem="{Binding SelectedChar, Mode=TwoWay}" ItemsSource="{Binding CharactersRecordsFilteredList}"
-                       Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
-                       SelectionMode="Extended" SelectionChanged="CharListView_SelectionChanged">
+
+            <GridView Name="CharGridView" x:FieldModifier="internal" Grid.Row="1" SelectedItem="{Binding SelectedChar, Mode=TwoWay}" 
+                      ItemsSource="{Binding CharactersRecordsFilteredList}"
+                      Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
+                      SelectionMode="Extended" SelectionChanged="CharListView_SelectionChanged">
                 <GridView.ItemTemplate>
                     <DataTemplate>
                         <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="3,3,0,0"
-                        MinWidth="72" MaxWidth="72" Height="72">
+                        MinWidth="72" MaxWidth="72" Height="72" DoubleTapped="GridViewCell_DoubleTap" >
                             <TextBlock Name="CharImage" Text="{Binding Character}"  
                                FontSize="48" HorizontalAlignment="Center" VerticalAlignment="Top" >
                             </TextBlock>
                         </Border>
                     </DataTemplate>
-
                 </GridView.ItemTemplate>
+
             </GridView>
 
             <!-- List of filtered characters -->
-            <ListView  Name="CharListView" x:FieldModifier="internal" Grid.Row="1" SelectedItem="{Binding SelectedChar, Mode=TwoWay}" ItemsSource="{Binding CharactersRecordsFilteredList}"
+            <ListView  Name="CharListView" x:FieldModifier="internal" Grid.Row="1" 
+                       SelectedItem="{Binding SelectedChar, Mode=TwoWay}" ItemsSource="{Binding CharactersRecordsFilteredList}"
                        Visibility="Collapsed"
                        Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
                        SelectionMode="Extended" SelectionChanged="CharListView_SelectionChanged" >
@@ -161,7 +174,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="50"/>
                                 <ColumnDefinition Width="80"/>
-                                <ColumnDefinition Width="250"/>
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" Text="Char" />
                             <TextBlock Grid.Column="1" Text="Codepoint" />
@@ -176,7 +189,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="50"/>
                                 <ColumnDefinition Width="80"/>
-                                <ColumnDefinition Width="250"/>
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" Text="{Binding Character}" />
                             <HyperlinkButton Grid.Column="1" Content="{Binding CodepointHex}" 

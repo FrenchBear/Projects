@@ -46,27 +46,29 @@ namespace UniSearchUWP
                 c.Focus(FocusState.Keyboard);
         }
 
-        // Very, very stupid: can't find how to bind command to keyboard accelerator at page level in UWP.
-        // Can create bindings on top level control such as Page main grid... but can only lauch an event, not a command!!!
-        // So this event actually launches a command...
-        private void KeyboardAccelerator_CopyRecordsInvoked(Windows.UI.Xaml.Input.KeyboardAccelerator sender, Windows.UI.Xaml.Input.KeyboardAcceleratorInvokedEventArgs args)
-        {
-            if (vm.CopyRecordsCommand.CanExecute("1"))
-                vm.CopyRecordsCommand.Execute("1");
-        }
+        public bool IsGridViewVisible => CharGridView.Visibility == Visibility.Visible;
+
+        public ListViewBase CharCurrentView => IsGridViewVisible ? (ListViewBase)CharGridView : (ListViewBase)CharListView;
 
         private void ListGrid_Click(object sender, RoutedEventArgs e)
         {
-            if (CharListView.Visibility == Visibility.Collapsed)
+            if (IsGridViewVisible)
             {
                 CharGridView.Visibility = Visibility.Collapsed;
                 CharListView.Visibility = Visibility.Visible;
+                CharListView.ScrollIntoView(vm.SelectedChar);
             }
             else
             {
                 CharListView.Visibility = Visibility.Collapsed;
                 CharGridView.Visibility = Visibility.Visible;
+                CharGridView.ScrollIntoView(vm.SelectedChar);
             }
+        }
+
+        private async void GridViewCell_DoubleTap(object sender, Windows.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
+        {
+            await CharDetailDialog.ShowDetail(vm.SelectedChar.Codepoint);
         }
     }
 }
