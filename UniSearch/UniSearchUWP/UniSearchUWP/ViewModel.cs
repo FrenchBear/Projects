@@ -361,13 +361,26 @@ namespace UniSearchUWP
                 CharactersRecordsFilteredList.Add(c);
 
             // Build the grouped version
-            var g = CharactersRecordsFilteredList.GroupBy(cr => new GroupKey { Block = cr.Block, Subheader = cr.Subheader }, new GroupKeyComparer()).OrderBy(grp => UniData.BlockRecords[grp.Key.Block].Rank);
-            _CharactersRecordsCVS.Source = g;
+            var groups = CharactersRecordsFilteredList.GroupBy(cr => new BSHGroupKey(cr.Block, cr.Subheader), new GroupKeyComparer()).OrderBy(grp => UniData.BlockRecords[grp.Key.Block].Rank).ToList();
+            int lb = 0;
+            foreach (var group in groups)
+            {
+                BSHGroupKey k = group.Key;
+                if (k.Block != lb)
+                {
+                    k.NewBlock = true;
+                    lb = k.Block;
+                }
+            }
+            var g0 = groups.FirstOrDefault();
+            if (g0 != null) g0.Key.NewBlock = false;
+
+            _CharactersRecordsCVS.Source = groups;
             _CharactersRecordsCVS.IsSourceGrouped = true;
             NotifyPropertyChanged(nameof(CharactersRecordsCVS));
 
             // Restore selected char if it's still part of filtered list
-            if (SavedSelectedChar!=null && CharactersRecordsFilteredList.Contains(SavedSelectedChar))
+            if (SavedSelectedChar != null && CharactersRecordsFilteredList.Contains(SavedSelectedChar))
             {
                 SelectedChar = SavedSelectedChar;
                 window.CharCurrentView.ScrollIntoView(SelectedChar);
@@ -377,20 +390,29 @@ namespace UniSearchUWP
             NotifyPropertyChanged(nameof(FilChars));
         }
 
-
-        struct GroupKey
+        // Block and subheader group
+        class BSHGroupKey
         {
             public int Block { get; set; }
             public string Subheader { get; set; }
-            public override string ToString() => UniData.BlockRecords[Block].BlockName + ": " + Subheader;
+            public bool NewBlock { get; set; }
+
+            internal BSHGroupKey(int block, string subheader)
+            {
+                Block = block;
+                Subheader = subheader;
+            }
+
+            public override string ToString() => (NewBlock ? "\r\n" : "") + UniData.BlockRecords[Block].BlockName + ": " + Subheader;
+
         }
 
 
-        private class GroupKeyComparer : IEqualityComparer<GroupKey>
+        private class GroupKeyComparer : IEqualityComparer<BSHGroupKey>
         {
-            public bool Equals(GroupKey x, GroupKey y) => x.Block == y.Block && x.Subheader == y.Subheader;
+            public bool Equals(BSHGroupKey x, BSHGroupKey y) => x.Block == y.Block && x.Subheader == y.Subheader;
 
-            public int GetHashCode(GroupKey obj) => obj.GetHashCode();  // obj.Block.GetHashCode() ^ obj.Subheader.GetHashCode();
+            public int GetHashCode(BSHGroupKey obj) => obj.Block.GetHashCode() ^ obj.Subheader.GetHashCode();
         }
 
 
@@ -447,7 +469,9 @@ namespace UniSearchUWP
                         break;
 
                     case "2":
-                        sb.AppendLine(r.Character + "\t" + r.CodepointHex + "\t" + r.Name + "\t" + r.CategoryRecord.Categories + "\t" + r.Age + "\t" + r.BlockRecord.BlockNameAndRange + "\t" + r.UTF16 + "\t" + r.UTF8);
+                        sb.AppendLine(r.Character + "\t" + r.CodepointHex + "\t" + r.Name + "\t" +
+                            r.CategoryRecord.Categories + "\t" + r.Age + "\t" + r.BlockRecord.BlockNameAndRange + "\t" +
+                            r.Subheader + "\t" + r.UTF16 + "\t" + r.UTF8);
                         break;
                 }
 
@@ -477,7 +501,7 @@ namespace UniSearchUWP
             string s = aTitleAttr.Title + " version " + sAssemblyVersion + "\r\n" + aDescAttr.Description + "\r\n\n" + aProductAttr.Product + "\r\n" + aCopyrightAttr.Copyright;
 
             var dialog = new MessageDialog(s, "About " + aTitleAttr.Title);
-            await dialog.ShowAsync();   
+            await dialog.ShowAsync();
         }
 
         // From Hyperlink
