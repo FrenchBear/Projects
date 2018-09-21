@@ -12,8 +12,6 @@
 
 
     <Page.Resources>
-        <CollectionViewSource x:Name="GroupedCharsSource" x:FieldModifier="internal" IsSourceGrouped="true"/>
-
         <Style x:Key="Label" TargetType="TextBlock">
             <Setter Property="Margin" Value="0,5,12,0" />
         </Style>
@@ -140,12 +138,56 @@
                 </StackPanel>
             </StackPanel>
 
+            <SemanticZoom Grid.Row="1"  Grid.Column="1">
+                <SemanticZoom.ZoomedInView>
+                    <GridView Name="CharGridView" x:FieldModifier="internal" SelectedItem="{Binding SelectedChar, Mode=TwoWay}" 
+                      ItemsSource="{Binding CharactersRecordsCVS.View}"
+                      Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
+                      SelectionMode="Extended" SelectionChanged="CharListView_SelectionChanged">
 
+                        <GridView.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="3,3,0,0"
+                        MinWidth="72" MaxWidth="72" Height="72" DoubleTapped="GridViewCell_DoubleTap" >
+                                    <TextBlock Name="CharImage" Text="{Binding Character}"  
+                               FontSize="48" HorizontalAlignment="Center" VerticalAlignment="Top" >
+                                    </TextBlock>
+                                </Border>
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+
+                        <GridView.GroupStyle>
+                            <GroupStyle>
+                                <GroupStyle.HeaderTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Key}"/>
+                                    </DataTemplate>
+                                </GroupStyle.HeaderTemplate>
+                            </GroupStyle>
+                        </GridView.GroupStyle>
+                    </GridView>
+                </SemanticZoom.ZoomedInView>
+
+                <SemanticZoom.ZoomedOutView>
+                    <ListView ItemsSource="{Binding CharactersRecordsCVS.View.CollectionGroups}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Group.Key}" />
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </SemanticZoom.ZoomedOutView>
+            </SemanticZoom>
+
+
+            <!--
             <GridView Name="CharGridView" x:FieldModifier="internal" Grid.Row="1" SelectedItem="{Binding SelectedChar, Mode=TwoWay}" 
                       ItemsSource="{Binding Source={StaticResource GroupedCharsSource}}"
                       Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
                       SelectionMode="Extended" SelectionChanged="CharListView_SelectionChanged">
-                <!--ItemsSource="{Binding CharactersRecordsFilteredList}"-->
+                -->
+            <!--ItemsSource="{Binding CharactersRecordsFilteredList}"-->
+            <!--
                 <GridView.ItemTemplate>
                     <DataTemplate>
                         <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="3,3,0,0"
@@ -167,6 +209,7 @@
                     </GroupStyle>
                 </GridView.GroupStyle>
             </GridView>
+            -->
 
             <!-- List of filtered characters -->
             <ListView  Name="CharListView" x:FieldModifier="internal" Grid.Row="1" 

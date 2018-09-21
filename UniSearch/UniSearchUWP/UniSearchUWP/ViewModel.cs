@@ -145,6 +145,11 @@ namespace UniSearchUWP
         public CharacterRecord[] CharactersRecordsList { get; set; }
         public ObservableCollection<CharacterRecord> CharactersRecordsFilteredList { get; set; } = new ObservableCollection<CharacterRecord>();
 
+
+        private CollectionViewSource _CharactersRecordsCVS = new CollectionViewSource();
+        public CollectionViewSource CharactersRecordsCVS => _CharactersRecordsCVS;
+
+
         public List<CheckableNode> NodesList { get; set; }
 
         public BlockRecord[] BlocksRecordsList { get; set; }
@@ -357,7 +362,9 @@ namespace UniSearchUWP
 
             // Build the grouped version
             var g = CharactersRecordsFilteredList.GroupBy(cr => new GroupKey { Block = cr.Block, Subheader = cr.Subheader }, new GroupKeyComparer()).OrderBy(grp => UniData.BlockRecords[grp.Key.Block].Rank);
-            window.GroupedCharsSource.Source = g;
+            _CharactersRecordsCVS.Source = g;
+            _CharactersRecordsCVS.IsSourceGrouped = true;
+            NotifyPropertyChanged(nameof(CharactersRecordsCVS));
 
             // Restore selected char if it's still part of filtered list
             if (SavedSelectedChar!=null && CharactersRecordsFilteredList.Contains(SavedSelectedChar))
