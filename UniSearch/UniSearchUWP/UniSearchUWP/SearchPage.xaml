@@ -146,6 +146,7 @@
 
                 <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="12,0,12,6">
                     <Button Content="Select all" AccessKey="A" Click="SelectAllButton_Click" Margin="0,0,6,0"/>
+                    <!-- UnselectAll disabled until we can target Windows 10 1809 -->
                     <Button Content="Unselect all" AccessKey="U" Click="UnselectAllButton_Click" Margin="0,0,12,0" IsEnabled="False"/>
 
                     <Button Command="{Binding ShowLevelCommand}" CommandParameter="3" Content="L3" AccessKey="3" Margin="0,0,6,0" />

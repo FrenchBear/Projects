@@ -79,30 +79,32 @@ namespace UniSearchUWPNS
         private void BlocksTreeView_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Debug.WriteLine("BlocksTreeView_Tapped");
-            vm.FilterBlockTree();
+            vm.FilterBlockTree(true);
         }
         private void BlocksTreeView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
             Debug.WriteLine("BlocksTreeView_DoubleTapped");
-            vm.FilterBlockTree();
+            vm.FilterBlockTree(true);
         }
 
         private void BlocksTreeView_KeyUp(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == Windows.System.VirtualKey.Space)
-                vm.FilterBlockTree();
+                vm.FilterBlockTree(true);
         }
 
 
         private void SelectAllButton_Click(object sender, RoutedEventArgs e)
         {
             BlocksTreeView.SelectAll();
-            vm.FilterBlockTree();
+            vm.FilterBlockTree(true);
         }
 
         private void UnselectAllButton_Click(object sender, RoutedEventArgs e)
         {
             // Not working for now
+            BlocksTreeView.SelectedNodes.Clear();
+            vm.FilterBlockTree(true);
         }
     }
 }
