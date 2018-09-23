@@ -26,14 +26,14 @@ using System.Reflection;
 using Windows.UI.Popups;
 using RelayCommandNS;
 
-namespace UniSearchUWP
+namespace UniSearchUWPNS
 {
     internal class ViewModel : INotifyPropertyChanged
     {
         // Private variables
-        private readonly SearchPage window;       // Access to main window
-        private Dictionary<int, CheckableNode> BlocksCheckableNodesDictionary;
-        private readonly CheckableNode BlocksRoot;        // TreeView root
+        private readonly SearchPage page;                               // Access to main window
+        private readonly BlockNode BlocksRoot;                          // TreeView root
+        private HashSet<BlockRecord> SelectedBlocksSet = new HashSet<BlockRecord>();    // Set of selected blocks in TreeView
 
 
         // INotifyPropertyChanged interface
@@ -47,78 +47,79 @@ namespace UniSearchUWP
         public ICommand CopyRecordsCommand { get; private set; }
         public ICommand AboutCommand { get; private set; }
         public ICommand ShowLevelCommand { get; private set; }
-        public ICommand FlipVisibleCommand { get; private set; }
         public ICommand ShowDetailCommand { get; private set; }
+        public ICommand ShowBlocksCommand { get; private set; }
 
 
         // Constructor
-        public ViewModel(SearchPage w)
+        public ViewModel(SearchPage p)
         {
-            window = w;
+            page = p;
 
             // Binding commands with behavior
             CopyRecordsCommand = new RelayCommand<object>(CopyRecordsExecute, CanCopyRecords);
             AboutCommand = new AwaitableRelayCommand<object>(AboutExecute);
             ShowLevelCommand = new RelayCommand<object>(ShowLevelExecute);
-            FlipVisibleCommand = new RelayCommand<string>(FlipVisibleExecute);
             ShowDetailCommand = new AwaitableRelayCommand<int>(ShowDetailExecute);
+            ShowBlocksCommand = new RelayCommand<object>(ShowBlocksExecute);
 
             // Get Unicode data
             CharactersRecordsList = UniData.CharacterRecords.Values.OrderBy(cr => cr.Codepoint).ToArray();
             BlocksRecordsList = UniData.BlockRecords.Values.OrderBy(br => br.Begin).ToArray();
 
             // root is *not* added to the TreeView on purpose
-            BlocksRoot = new CheckableNode("root", 4);
-            // Dictionary of CheckableNodes indexed by Begin block value
-            BlocksCheckableNodesDictionary = new Dictionary<int, CheckableNode>();
+            BlocksRoot = new BlockNode("root", 4);
+            // Dictionary of BlockNodes indexed by Begin block value, to help uncheck some blocks at the end
+            var BlocksBlockNodesDictionary = new Dictionary<int, BlockNode>();
 
-            NodesList = new List<CheckableNode>();
+            NodesList = new List<BlockNode>();
 
             foreach (var l3 in BlocksRecordsList.GroupBy(b => b.Level3Name).OrderBy(g => g.Key))
             {
-                var r3 = new CheckableNode(l3.Key, 3);
+                var r3 = new BlockNode(l3.Key, 3);
                 BlocksRoot.Children.Add(r3);
                 NodesList.Add(r3);
                 foreach (var l2 in l3.GroupBy(b => b.Level2Name))
                 {
-                    var r2 = new CheckableNode(l2.Key, 2);
+                    var r2 = new BlockNode(l2.Key, 2);
                     r3.Children.Add(r2);
                     NodesList.Add(r2);
                     foreach (var l1 in l2.GroupBy(b => b.Level1Name))
                     {
                         // Special case, l1 can be empty
-                        CheckableNode r1;
+                        BlockNode r1;
                         if (l1.Key.Length > 0)
                         {
-                            r1 = new CheckableNode(l1.Key, 1);
+                            r1 = new BlockNode(l1.Key, 1);
                             r2.Children.Add(r1);
                             NodesList.Add(r1);
                         }
                         else
                             r1 = r2;
                         // Blocks
-                        foreach (var l0 in l1)
+                        foreach (var b in l1)
                         {
-                            var blockCheckableNode = new CheckableNode(l0.BlockName, 0);
-                            r1.Children.Add(blockCheckableNode);
-                            BlocksCheckableNodesDictionary.Add(l0.Begin, blockCheckableNode);
-                            NodesList.Add(blockCheckableNode);
+                            var blockBlockNode = new BlockNode(b.BlockName, 0, b);
+                            r1.Children.Add(blockBlockNode);
+                            BlocksBlockNodesDictionary.Add(b.Begin, blockBlockNode);
+                            NodesList.Add(blockBlockNode);
 
                         }
                     }
                 }
             }
 
-            BlocksRoot.Initialize();
-            BlocksRoot.IsChecked = true;
-            Roots = BlocksRoot.Children;
+            // Current version of TreeView does not support binding
+            foreach (var item in BlocksRoot.Children)
+                page.BlocksTreeView.RootNodes.Add(item);
 
+            /*
             // Unselect some pretty useless blocks
-            BlocksCheckableNodesDictionary[0x0000].IsChecked = false;       // ASCII Controls C0
-            BlocksCheckableNodesDictionary[0x0080].IsChecked = false;       // ASCII Controls C1
-            BlocksCheckableNodesDictionary[0xE0100].IsChecked = false;      // Variation Selectors Supplement; Variation Selectors; Specials; Symbols and Punctuation
-            BlocksCheckableNodesDictionary[0xF0000].IsChecked = false;      // Supplementary Private Use Area-A; ; Private Use; Symbols and Punctuation
-            BlocksCheckableNodesDictionary[0x100000].IsChecked = false;     // Supplementary Private Use Area-B; ; Private Use; Symbols and Punctuation
+            BlocksBlockNodesDictionary[0x0000].IsChecked = false;       // ASCII Controls C0
+            BlocksBlockNodesDictionary[0x0080].IsChecked = false;       // ASCII Controls C1
+            BlocksBlockNodesDictionary[0xE0100].IsChecked = false;      // Variation Selectors Supplement; Variation Selectors; Specials; Symbols and Punctuation
+            BlocksBlockNodesDictionary[0xF0000].IsChecked = false;      // Supplementary Private Use Area-A; ; Private Use; Symbols and Punctuation
+            BlocksBlockNodesDictionary[0x100000].IsChecked = false;     // Supplementary Private Use Area-B; ; Private Use; Symbols and Punctuation
             ActionAllNodes(BlocksRoot, n =>
             {
                 if (n.Name == "East Asian Scripts") n.IsChecked = false;
@@ -127,21 +128,23 @@ namespace UniSearchUWP
             });
 
 
-            BlocksCheckableNodesDictionary[0xD800].IsChecked = false;       //  High Surrogates; ; Surrogates; Symbols and Punctuation
-            BlocksCheckableNodesDictionary[0xDB80].IsChecked = false;       //  High Private Use Surrogates; ; Surrogates; Symbols and Punctuation
-            BlocksCheckableNodesDictionary[0xDC00].IsChecked = false;       //  Low Surrogates; ; Surrogates; Symbols and Punctuation
-            BlocksCheckableNodesDictionary[0xE000].IsChecked = false;       //  Private Use Area; ; Private Use; Symbols and Punctuation
+            BlocksBlockNodesDictionary[0xD800].IsChecked = false;       //  High Surrogates; ; Surrogates; Symbols and Punctuation
+            BlocksBlockNodesDictionary[0xDB80].IsChecked = false;       //  High Private Use Surrogates; ; Surrogates; Symbols and Punctuation
+            BlocksBlockNodesDictionary[0xDC00].IsChecked = false;       //  Low Surrogates; ; Surrogates; Symbols and Punctuation
+            BlocksBlockNodesDictionary[0xE000].IsChecked = false;       //  Private Use Area; ; Private Use; Symbols and Punctuation
+            */
 
             // To compute bound values based on initial blocks filteringFilterCharList();
-            RefreshSelBlocks();
-            RefreshFilBlocks();
-            FilterCharList();
+
+            //p.BlocksTreeView.SelectAll();
+            //FilterBlockTree();
         }
+
 
         // ==============================================================================================
         // Bindable properties
 
-        public IList<CheckableNode> Roots { get; set; }      // For TreeView binding
+        //public IEnumerable<BlockNode> Roots { get; set; }      // For TreeView binding
         public CharacterRecord[] CharactersRecordsList { get; set; }
         public ObservableCollection<CharacterRecord> CharactersRecordsFilteredList { get; set; } = new ObservableCollection<CharacterRecord>();
 
@@ -150,7 +153,7 @@ namespace UniSearchUWP
         public CollectionViewSource CharactersRecordsCVS => _CharactersRecordsCVS;
 
 
-        public List<CheckableNode> NodesList { get; set; }
+        public List<BlockNode> NodesList { get; set; }
 
         public BlockRecord[] BlocksRecordsList { get; set; }
 
@@ -180,7 +183,7 @@ namespace UniSearchUWP
                 {
                     _BlockNameFilter = value;
                     NotifyPropertyChanged(nameof(BlockNameFilter));
-                    FilterBlockList();
+                    FilterBlockTree();
                 }
             }
         }
@@ -199,50 +202,22 @@ namespace UniSearchUWP
                     NotifyPropertyChanged(nameof(SelectedChar));
                     NotifyPropertyChanged(nameof(StrContent));
                     CopyRecordsCommand.RaiseCanExecuteChanged();
-
-
                 }
             }
         }
 
         public int NumChars => UniData.CharacterRecords.Count;
 
-        public int NumBlocks => BlocksCheckableNodesDictionary.Count;
+        public int NumBlocks => UniData.BlockRecords.Count;
 
 
-        public int SelChars => window.CharCurrentView.SelectedItems.Count;
+        public int SelChars => page.CharCurrentView.SelectedItems.Count;
 
 
         public int FilChars => CharactersRecordsFilteredList.Count;
 
 
-        private int _SelBlocks;
-        public int SelBlocks
-        {
-            get { return _SelBlocks; }
-            set
-            {
-                if (_SelBlocks != value)
-                {
-                    _SelBlocks = value;
-                    NotifyPropertyChanged(nameof(SelBlocks));
-                }
-            }
-        }
-
-        private int _FilBlocks;
-        public int FilBlocks
-        {
-            get { return _FilBlocks; }
-            set
-            {
-                if (_FilBlocks != value)
-                {
-                    _FilBlocks = value;
-                    NotifyPropertyChanged(nameof(FilBlocks));
-                }
-            }
-        }
+        public int FilBlocks => SelectedBlocksSet.Count;
 
         public UIElement StrContent
         {
@@ -253,6 +228,9 @@ namespace UniSearchUWP
             }
         }
 
+
+        // Returns a grid containing char information (character itself, codepoint, name) and an hyperlink on
+        // CodePoint that executes Command
         public static UIElement GetStrContent(int codepoint, ICommand command)
         {
             var cr = UniData.CharacterRecords[codepoint];
@@ -292,21 +270,7 @@ namespace UniSearchUWP
 
         // Called from Window
         // ToDo: FInd a way to call VM directly
-        internal void AfterCheckboxFlip()
-        {
-            RefreshSelBlocks();
-            StartOrResetCharFilterDispatcherTimer();
-        }
 
-        private void RefreshSelBlocks()
-        {
-            SelBlocks = BlocksCheckableNodesDictionary.Values.Count(cn => cn.IsChecked != null && cn.IsChecked.Value && cn.Level == 0);
-        }
-
-        private void RefreshFilBlocks()
-        {
-            FilBlocks = BlocksCheckableNodesDictionary.Values.Count(cn => cn.NodeVisibility == Visibility.Visible);
-        }
 
 
 
@@ -341,7 +305,7 @@ namespace UniSearchUWP
         private void FilterCharList()
         {
             // Block part of the filtering predicate
-            bool p1(CharacterRecord cr) => BlocksCheckableNodesDictionary[cr.Block].IsChecked != null && BlocksCheckableNodesDictionary[cr.Block].IsChecked.Value;
+            bool p1(CharacterRecord cr) => SelectedBlocksSet.Contains(cr.BlockRecord);
             Predicate<CharacterRecord> p2;
 
             // Character part of the filtering predicate
@@ -361,15 +325,15 @@ namespace UniSearchUWP
                 CharactersRecordsFilteredList.Add(c);
 
             // Build the grouped version
-            var groups = CharactersRecordsFilteredList.GroupBy(cr => new BSHGroupKey(cr.Block, cr.Subheader), new GroupKeyComparer()).OrderBy(grp => UniData.BlockRecords[grp.Key.Block].Rank).ToList();
-            int lb = 0;
+            var groups = CharactersRecordsFilteredList.GroupBy(cr => new BSHGroupKey(cr.BlockBegin, cr.Subheader), new GroupKeyComparer()).OrderBy(grp => UniData.BlockRecords[grp.Key.BlockBegin].Rank).ToList();
+            int lastbb = 0;
             foreach (var group in groups)
             {
                 BSHGroupKey k = group.Key;
-                if (k.Block != lb)
+                if (k.BlockBegin != lastbb)
                 {
                     k.NewBlock = true;
-                    lb = k.Block;
+                    lastbb = k.BlockBegin;
                 }
             }
             var g0 = groups.FirstOrDefault();
@@ -383,7 +347,7 @@ namespace UniSearchUWP
             if (SavedSelectedChar != null && CharactersRecordsFilteredList.Contains(SavedSelectedChar))
             {
                 SelectedChar = SavedSelectedChar;
-                window.CharCurrentView.ScrollIntoView(SelectedChar);
+                page.CharCurrentView.ScrollIntoView(SelectedChar);
             }
 
             // Refresh filtered count
@@ -393,52 +357,74 @@ namespace UniSearchUWP
         // Block and subheader group
         class BSHGroupKey
         {
-            public int Block { get; set; }
+            public int BlockBegin { get; set; }
             public string Subheader { get; set; }
             public bool NewBlock { get; set; }
 
-            internal BSHGroupKey(int block, string subheader)
+            internal BSHGroupKey(int blockBegin, string subheader)
             {
-                Block = block;
+                BlockBegin = blockBegin;
                 Subheader = subheader;
             }
 
-            public override string ToString() => (NewBlock ? "\r\n" : "") + UniData.BlockRecords[Block].BlockName + ": " + Subheader;
+            public override string ToString() => (NewBlock ? "\r\n" : "") + UniData.BlockRecords[BlockBegin].BlockName + ": " + Subheader;
 
         }
 
 
         private class GroupKeyComparer : IEqualityComparer<BSHGroupKey>
         {
-            public bool Equals(BSHGroupKey x, BSHGroupKey y) => x.Block == y.Block && x.Subheader == y.Subheader;
+            public bool Equals(BSHGroupKey x, BSHGroupKey y) => x.BlockBegin == y.BlockBegin && x.Subheader == y.Subheader;
 
-            public int GetHashCode(BSHGroupKey obj) => obj.Block.GetHashCode() ^ obj.Subheader.GetHashCode();
+            public int GetHashCode(BSHGroupKey obj)
+            {
+                if (obj.Subheader == null)
+                    return obj.BlockBegin.GetHashCode();
+                else
+                    return obj.BlockBegin.GetHashCode() ^ obj.Subheader.GetHashCode();
+            }
         }
 
 
-        private void FilterBlockList()
+        // After a change in Blocks selection, rebuilds SelectedBlocksSet and calls FilterCharList()
+        internal void FilterBlockTree()
         {
-            string s = BlockNameFilter;
-            var p = new PredicateBuilder(s, false, false, false, false);
-            Predicate<object> f = p.GetCheckableNodeFilter;
-
             FilterBlock(BlocksRoot);
-            RefreshFilBlocks();
 
-            bool FilterBlock(CheckableNode n)
+            var newSelectedBlocksSet = new HashSet<BlockRecord>();
+            foreach (var item in page.BlocksTreeView.SelectedNodes)
+            {
+                var b = (item as BlockNode).Block;
+                if (b != null)
+                    newSelectedBlocksSet.Add((item as BlockNode).Block);
+            }
+
+            if (newSelectedBlocksSet.SetEquals(SelectedBlocksSet))
+            {
+                Debug.WriteLine("FilterBlockTree: No change in SelectedBlocks");
+                return;
+            }
+
+            SelectedBlocksSet = newSelectedBlocksSet;
+            Debug.WriteLine($"Filtered blocks: {SelectedBlocksSet.Count}");
+            NotifyPropertyChanged(nameof(FilBlocks));
+
+            //FilterCharList();
+            StartOrResetCharFilterDispatcherTimer();
+
+            // Filtering Predicate
+            bool fp(BlockNode bn) => String.IsNullOrEmpty(BlockNameFilter) || bn.Name.IndexOf(BlockNameFilter, 0, StringComparison.InvariantCultureIgnoreCase) >= 0;
+
+            bool FilterBlock(BlockNode n)
             {
                 if (n.Level == 0)
-                {
-                    bool v = f(n);
-                    n.NodeVisibility = v ? Visibility.Visible : Visibility.Collapsed;
-                    return v;
-                }
+                    return fp(n);
                 else
                 {
                     bool exp = false;
-                    foreach (CheckableNode child in n.Children)
+                    foreach (BlockNode child in n.Children)
                         exp |= FilterBlock(child);
-                    exp |= f(n);
+                    exp |= fp(n);
                     n.IsExpanded = exp;
                     return exp;
                 }
@@ -454,7 +440,7 @@ namespace UniSearchUWP
 
         private void CopyRecordsExecute(object param)
         {
-            var selectedCharRecords = window.CharCurrentView.SelectedItems.Cast<CharacterRecord>();
+            var selectedCharRecords = page.CharCurrentView.SelectedItems.Cast<CharacterRecord>();
 
             var sb = new StringBuilder();
             foreach (CharacterRecord r in selectedCharRecords.OrderBy(cr => cr.Codepoint))
@@ -512,10 +498,10 @@ namespace UniSearchUWP
 
 
         // Helper performing a given action on a node and all its decendants
-        void ActionAllNodes(CheckableNode n, Action<CheckableNode> a)
+        void ActionAllNodes(BlockNode n, Action<BlockNode> a)
         {
             a(n);
-            foreach (CheckableNode child in n.Children)
+            foreach (BlockNode child in n.Children)
                 ActionAllNodes(child, a);
         }
 
@@ -525,22 +511,12 @@ namespace UniSearchUWP
             ActionAllNodes(BlocksRoot, n => { n.IsExpanded = (n.Level != level); });
         }
 
-        private void FlipVisibleExecute(string sparam)
+
+        // Show blocks tree
+        private void ShowBlocksExecute(object param)
         {
-            int.TryParse(sparam, out int param);
-            switch (param)
-            {
-                case 0:
-                case 1:
-                    ActionAllNodes(BlocksRoot, n => { if (n.Level == 0 && n.NodeVisibility == Visibility.Visible) n.IsChecked = param == 0; });
-                    break;
-                case 2:
-                case 3:
-                    ActionAllNodes(BlocksRoot, n => { if (n.Level == 0) n.IsChecked = param == 2; });
-                    break;
-            }
+            page.MainSplitView.IsPaneOpen = !page.MainSplitView.IsPaneOpen;
         }
-
-
     }
+
 }

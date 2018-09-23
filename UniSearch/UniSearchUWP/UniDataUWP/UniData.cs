@@ -30,7 +30,7 @@ namespace UniDataNS
         public string Name { get; private set; }
         public string Category { get; private set; }
         public string Age { get; internal set; }
-        public int Block { get; internal set; } = -1;       // -1 for tests, to make sure at the end all supported chars have a block
+        public int BlockBegin { get; internal set; } = -1;       // -1 for tests, to make sure at the end all supported chars have a block
         public string Subheader { get; internal set; }
 
 
@@ -43,7 +43,7 @@ namespace UniDataNS
 
 
         // Used by binding
-        public BlockRecord BlockRecord => UniData.BlockRecords[Block];
+        public BlockRecord BlockRecord => UniData.BlockRecords[BlockBegin];
         public CategoryRecord CategoryRecord => UniData.CategoryRecords[Category];
 
         public string CodepointHex => $"U+{Codepoint:X4}";
@@ -290,7 +290,7 @@ namespace UniDataNS
             foreach (var br in block_map.Values)
                 for (int ch = br.Begin; ch <= br.End; ch++)
                     if (char_map.ContainsKey(ch))
-                        char_map[ch].Block = br.Begin;
+                        char_map[ch].BlockBegin = br.Begin;
 
             // Read age
             using (var sr = new StreamReader(GetResourceStream("DerivedAge.txt")))
@@ -365,7 +365,7 @@ namespace UniDataNS
             foreach (var cr in char_map.Values)
             {
                 // Check that all characters are assigned to a valid block
-                Debug.Assert(BlockRecords.ContainsKey(cr.Block));
+                Debug.Assert(BlockRecords.ContainsKey(cr.BlockBegin));
                 // Check that all characters are assigned to a valid category
                 Debug.Assert(CategoryRecords.ContainsKey(cr.Category));
             }

@@ -18,7 +18,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 
-namespace UniSearchUWP
+namespace UniSearchUWPNS
 {
     internal class CharDetailViewModel : INotifyPropertyChanged
     {

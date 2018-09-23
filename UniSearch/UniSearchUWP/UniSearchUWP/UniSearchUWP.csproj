@@ -7,7 +7,7 @@
     <ProjectGuid>{1A607EBA-1578-4722-B572-F475CECE714D}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UniSearchUWP</RootNamespace>
+    <RootNamespace>UniSearchUWPNS</RootNamespace>
     <AssemblyName>UniSearchUWP</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
@@ -97,11 +97,11 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="AwaitableRelayCommand.cs" />
+    <Compile Include="BlockNode.cs" />
     <Compile Include="CharDetailDialog.xaml.cs">
       <DependentUpon>CharDetailDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="CharDetailViewModel.cs" />
-    <Compile Include="CheckableNode.cs" />
     <Compile Include="PredicateBuilder.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="SearchPage.xaml.cs">

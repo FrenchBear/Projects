@@ -15,7 +15,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using UniDataNS;
 
-namespace UniSearchUWP
+namespace UniSearchUWPNS
 {
     class PredicateBuilder
     {
@@ -154,9 +154,9 @@ namespace UniSearchUWP
             return sb.ToString().Normalize(NormalizationForm.FormC);
         }
 
-        public bool GetCheckableNodeFilter(object searched)
+        public bool GetBlockNodeFilter(object searched)
         {
-            CheckableNode cn = searched as CheckableNode;
+            BlockNode cn = searched as BlockNode;
 
             foreach (string aWord in words)
             {
