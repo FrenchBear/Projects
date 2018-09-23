@@ -197,7 +197,7 @@
                             <ToolTipService.ToolTip>
                                 <ToolTip Style="{StaticResource LargeTooltipStyle}" >
                                     <TextBlock>
-                                Enter a list of words to filter character names (case insensitive, accent insenstitive).
+                                Enter a list of words to filter character names (case insensitive, accent insensitive).
                                 <LineBreak/>
                                 A single-letter word filters on character itself, not on name.
                                 <LineBreak/>
@@ -240,11 +240,11 @@
                                 <KeyboardAccelerator Modifiers="Control" Key="G" />
                             </Button.KeyboardAccelerators>
                             <ToolTipService.ToolTip>
-                                <ToolTip>Toggle betweel Grid and List view (Ctrl+G)</ToolTip>
+                                <ToolTip>Toggle between Grid and List view (Ctrl+G)</ToolTip>
                             </ToolTipService.ToolTip>
                         </Button>
                         <Button Content="About" Margin="0,0,18,0" Command="{Binding AboutCommand}" />
-                        <ToggleButton Name="TogglePaneButton" IsChecked="True" Content="Blocks Filters" AccessKey="F" Margin="0,0,18,0" Command="{Binding ShowBlocksCommand}"/>
+                        <ToggleButton Name="TogglePaneButton" IsChecked="True" Content="Block Filter" AccessKey="F" Margin="0,0,18,0" />
 
                     </StackPanel>
                 </StackPanel>

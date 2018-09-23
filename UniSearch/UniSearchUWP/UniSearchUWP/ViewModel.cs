@@ -48,7 +48,6 @@ namespace UniSearchUWPNS
         public ICommand AboutCommand { get; private set; }
         public ICommand ShowLevelCommand { get; private set; }
         public ICommand ShowDetailCommand { get; private set; }
-        public ICommand ShowBlocksCommand { get; private set; }
 
 
         // Constructor
@@ -61,8 +60,7 @@ namespace UniSearchUWPNS
             AboutCommand = new AwaitableRelayCommand<object>(AboutExecute);
             ShowLevelCommand = new RelayCommand<object>(ShowLevelExecute);
             ShowDetailCommand = new AwaitableRelayCommand<int>(ShowDetailExecute);
-            ShowBlocksCommand = new RelayCommand<object>(ShowBlocksExecute);
-
+            
             // Get Unicode data
             CharactersRecordsList = UniData.CharacterRecords.Values.OrderBy(cr => cr.Codepoint).ToArray();
             BlocksRecordsList = UniData.BlockRecords.Values.OrderBy(br => br.Begin).ToArray();
@@ -399,7 +397,7 @@ namespace UniSearchUWPNS
                     newSelectedBlocksSet.Add((item as BlockNode).Block);
             }
 
-            // Optimization: Don't filter changs if blocks selection hasn not changed and filtering
+            // Optimization: Don't filter chars if blocks selection has not changed and filtering
             // has only expanded/closed nodes in TreeeView
             if (newSelectedBlocksSet.SetEquals(SelectedBlocksSet))
             {
@@ -503,7 +501,7 @@ namespace UniSearchUWPNS
         }
 
 
-        // Helper performing a given action on a node and all its decendants
+        // Helper performing a given action on a node and all its descendants
         void ActionAllNodes(BlockNode n, Action<BlockNode> a)
         {
             a(n);
@@ -518,11 +516,6 @@ namespace UniSearchUWPNS
         }
 
 
-        // Show blocks tree
-        private void ShowBlocksExecute(object param)
-        {
-            page.MainSplitView.IsPaneOpen = !page.MainSplitView.IsPaneOpen;
-        }
     }
 
 }
