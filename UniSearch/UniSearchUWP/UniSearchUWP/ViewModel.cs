@@ -24,7 +24,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using System.Reflection;
 using Windows.UI.Popups;
-
+using RelayCommandNS;
 
 namespace UniSearchUWP
 {
@@ -33,7 +33,7 @@ namespace UniSearchUWP
         // Private variables
         private readonly SearchPage window;       // Access to main window
         private Dictionary<int, CheckableNode> BlocksCheckableNodesDictionary;
-        private readonly CheckableNode root;        // TreeView root
+        private readonly CheckableNode BlocksRoot;        // TreeView root
 
 
         // INotifyPropertyChanged interface
@@ -68,7 +68,7 @@ namespace UniSearchUWP
             BlocksRecordsList = UniData.BlockRecords.Values.OrderBy(br => br.Begin).ToArray();
 
             // root is *not* added to the TreeView on purpose
-            root = new CheckableNode("root", 4);
+            BlocksRoot = new CheckableNode("root", 4);
             // Dictionary of CheckableNodes indexed by Begin block value
             BlocksCheckableNodesDictionary = new Dictionary<int, CheckableNode>();
 
@@ -77,7 +77,7 @@ namespace UniSearchUWP
             foreach (var l3 in BlocksRecordsList.GroupBy(b => b.Level3Name).OrderBy(g => g.Key))
             {
                 var r3 = new CheckableNode(l3.Key, 3);
-                root.Children.Add(r3);
+                BlocksRoot.Children.Add(r3);
                 NodesList.Add(r3);
                 foreach (var l2 in l3.GroupBy(b => b.Level2Name))
                 {
@@ -109,9 +109,9 @@ namespace UniSearchUWP
                 }
             }
 
-            root.Initialize();
-            root.IsChecked = true;
-            Roots = root.Children;
+            BlocksRoot.Initialize();
+            BlocksRoot.IsChecked = true;
+            Roots = BlocksRoot.Children;
 
             // Unselect some pretty useless blocks
             BlocksCheckableNodesDictionary[0x0000].IsChecked = false;       // ASCII Controls C0
@@ -119,7 +119,7 @@ namespace UniSearchUWP
             BlocksCheckableNodesDictionary[0xE0100].IsChecked = false;      // Variation Selectors Supplement; Variation Selectors; Specials; Symbols and Punctuation
             BlocksCheckableNodesDictionary[0xF0000].IsChecked = false;      // Supplementary Private Use Area-A; ; Private Use; Symbols and Punctuation
             BlocksCheckableNodesDictionary[0x100000].IsChecked = false;     // Supplementary Private Use Area-B; ; Private Use; Symbols and Punctuation
-            ActionAllNodes(root, n =>
+            ActionAllNodes(BlocksRoot, n =>
             {
                 if (n.Name == "East Asian Scripts") n.IsChecked = false;
                 if (n.Name.IndexOf("CJK", StringComparison.Ordinal) >= 0) n.IsChecked = false;
@@ -422,7 +422,7 @@ namespace UniSearchUWP
             var p = new PredicateBuilder(s, false, false, false, false);
             Predicate<object> f = p.GetCheckableNodeFilter;
 
-            FilterBlock(root);
+            FilterBlock(BlocksRoot);
             RefreshFilBlocks();
 
             bool FilterBlock(CheckableNode n)
@@ -439,7 +439,7 @@ namespace UniSearchUWP
                     foreach (CheckableNode child in n.Children)
                         exp |= FilterBlock(child);
                     exp |= f(n);
-                    n.IsNodeExpanded = exp;
+                    n.IsExpanded = exp;
                     return exp;
                 }
             }
@@ -511,7 +511,7 @@ namespace UniSearchUWP
         }
 
 
-
+        // Helper performing a given action on a node and all its decendants
         void ActionAllNodes(CheckableNode n, Action<CheckableNode> a)
         {
             a(n);
@@ -522,7 +522,7 @@ namespace UniSearchUWP
         private void ShowLevelExecute(object param)
         {
             int level = int.Parse(param as string);
-            ActionAllNodes(root, n => { n.IsNodeExpanded = (n.Level != level); });
+            ActionAllNodes(BlocksRoot, n => { n.IsExpanded = (n.Level != level); });
         }
 
         private void FlipVisibleExecute(string sparam)
@@ -532,11 +532,11 @@ namespace UniSearchUWP
             {
                 case 0:
                 case 1:
-                    ActionAllNodes(root, n => { if (n.Level == 0 && n.NodeVisibility == Visibility.Visible) n.IsChecked = param == 0; });
+                    ActionAllNodes(BlocksRoot, n => { if (n.Level == 0 && n.NodeVisibility == Visibility.Visible) n.IsChecked = param == 0; });
                     break;
                 case 2:
                 case 3:
-                    ActionAllNodes(root, n => { if (n.Level == 0) n.IsChecked = param == 2; });
+                    ActionAllNodes(BlocksRoot, n => { if (n.Level == 0) n.IsChecked = param == 2; });
                     break;
             }
         }

@@ -144,11 +144,10 @@ namespace UniDataNS
         private static readonly Dictionary<int, BlockRecord> block_map = new Dictionary<int, BlockRecord>();
 
 
+        // Public read only dictionaries to access Unicode data
         public static ReadOnlyDictionary<int, CharacterRecord> CharacterRecords => new ReadOnlyDictionary<int, CharacterRecord>(char_map);
-
-        public static ReadOnlyDictionary<int, BlockRecord> BlockRecords => new ReadOnlyDictionary<int, BlockRecord>(block_map);
-
         public static ReadOnlyDictionary<string, CategoryRecord> CategoryRecords => new ReadOnlyDictionary<string, CategoryRecord>(cat_map);
+        public static ReadOnlyDictionary<int, BlockRecord> BlockRecords => new ReadOnlyDictionary<int, BlockRecord>(block_map);
 
 
         // Static constructor

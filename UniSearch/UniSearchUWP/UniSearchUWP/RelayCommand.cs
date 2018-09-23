@@ -6,8 +6,27 @@
 using System;
 using System.Windows.Input;
 
-namespace UniSearchUWP
+
+namespace RelayCommandNS
 {
+    // https://gist.github.com/JakeGinnivan/5166866
+    public interface IRaiseCanExecuteChanged
+    {
+        void RaiseCanExecuteChanged();
+    }
+
+    // And an extension method to make it easy to raise changed events
+    public static class CommandExtensions
+    {
+        public static void RaiseCanExecuteChanged(this ICommand command)
+        {
+            if (command is IRaiseCanExecuteChanged canExecuteChanged)
+                canExecuteChanged.RaiseCanExecuteChanged();
+        }
+    }
+
+
+
 
     /// <summary>
     /// A command whose sole purpose is to relay its functionality 

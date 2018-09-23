@@ -73,7 +73,7 @@ namespace UniSearchUWP
 
 
         private bool _IsNodeExpanded = true;
-        public bool IsNodeExpanded
+        public bool IsExpanded
         {
             get { return _IsNodeExpanded; }
             set
@@ -81,7 +81,7 @@ namespace UniSearchUWP
                 if (_IsNodeExpanded != value)
                 {
                     _IsNodeExpanded = value;
-                    NotifyPropertyChanged(nameof(IsNodeExpanded));
+                    NotifyPropertyChanged(nameof(IsExpanded));
                 }
             }
         }
