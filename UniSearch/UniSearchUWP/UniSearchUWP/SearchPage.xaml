@@ -353,7 +353,7 @@
                     <TextBlock Style="{StaticResource Label}" Grid.Column="0" Text="Block" FontWeight="SemiBold" />
                     <AutoSuggestBox Grid.Column="1" Name="BlockFilterTextBox" QueryIcon="Filter" PlaceholderText="Name filter"
                                     AccessKey="B" AccessKeyInvoked="SetFocus"
-                                    Text="{Binding BlockNameFilter, UpdateSourceTrigger=PropertyChanged}" />
+                                    Text="{Binding BlockNameFilter, UpdateSourceTrigger=PropertyChanged}, Mode=TwoWay" />
                 </Grid>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
                     <TextBlock Style="{StaticResource Label}" Text="View" />

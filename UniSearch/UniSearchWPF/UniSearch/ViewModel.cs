@@ -421,7 +421,7 @@ namespace UniSearchNS
                     foreach (CheckableNode child in n.Children)
                         exp |= FilterBlock(child);
                     exp |= f(n);
-                    n.IsNodeExpanded = exp;
+                    n.IsExpanded = exp;
                     return exp;
                 }
             }
@@ -487,7 +487,7 @@ namespace UniSearchNS
         private void ShowLevelExecute(object param)
         {
             int level = int.Parse(param as string);
-            ActionAllNodes(root, n => { n.IsNodeExpanded = (n.Level != level); });
+            ActionAllNodes(root, n => { n.IsExpanded = (n.Level != level); });
         }
 
 

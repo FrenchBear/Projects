@@ -1,4 +1,10 @@
-﻿using System.Collections.Generic;
+﻿// CheckableNode.cs
+// Implementation of a visual class to be used as node in a TreeView
+// Original code from internet, forgot to record source address, but since I've found many copies...
+// 2018-09-23   PV
+
+
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 
@@ -69,16 +75,16 @@ namespace UniSearchNS
             }
         }
 
-        private bool _IsNodeExpanded = true;
-        public bool IsNodeExpanded
+        private bool _IsExpanded = true;
+        public bool IsExpanded
         {
-            get { return _IsNodeExpanded; }
+            get { return _IsExpanded; }
             set
             {
-                if (_IsNodeExpanded != value)
+                if (_IsExpanded != value)
                 {
-                    _IsNodeExpanded = value;
-                    NotifyPropertyChanged(nameof(IsNodeExpanded));
+                    _IsExpanded = value;
+                    NotifyPropertyChanged(nameof(IsExpanded));
                 }
             }
         }
