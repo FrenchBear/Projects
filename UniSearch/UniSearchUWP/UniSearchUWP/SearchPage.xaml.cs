@@ -32,7 +32,7 @@ namespace UniSearchUWPNS
             Loaded += (s, e) =>
             {
                 BlocksTreeView.SelectAll();
-                vm.FilterBlockTree();
+                vm.FilterBlockTree(true);
             };
         }
 

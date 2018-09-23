@@ -387,7 +387,7 @@ namespace UniSearchUWPNS
 
 
         // After a change in Blocks selection, rebuilds SelectedBlocksSet and calls FilterCharList()
-        internal void FilterBlockTree()
+        internal void FilterBlockTree(bool immediateCharFilter = false)
         {
             FilterBlock(BlocksRoot);
 
@@ -399,6 +399,8 @@ namespace UniSearchUWPNS
                     newSelectedBlocksSet.Add((item as BlockNode).Block);
             }
 
+            // Optimization: Don't filter changs if blocks selection hasn not changed and filtering
+            // has only expanded/closed nodes in TreeeView
             if (newSelectedBlocksSet.SetEquals(SelectedBlocksSet))
             {
                 Debug.WriteLine("FilterBlockTree: No change in SelectedBlocks");
@@ -409,8 +411,12 @@ namespace UniSearchUWPNS
             Debug.WriteLine($"Filtered blocks: {SelectedBlocksSet.Count}");
             NotifyPropertyChanged(nameof(FilBlocks));
 
-            //FilterCharList();
-            StartOrResetCharFilterDispatcherTimer();
+            if (immediateCharFilter)
+                FilterCharList();
+            else
+                StartOrResetCharFilterDispatcherTimer();
+
+
 
             // Filtering Predicate
             bool fp(BlockNode bn) => String.IsNullOrEmpty(BlockNameFilter) || bn.Name.IndexOf(BlockNameFilter, 0, StringComparison.InvariantCultureIgnoreCase) >= 0;
