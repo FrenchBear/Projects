@@ -97,11 +97,13 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="AwaitableRelayCommand.cs" />
+    <Compile Include="BlockGroupItemTemplateSelector.cs" />
     <Compile Include="BlockNode.cs" />
     <Compile Include="CharDetailDialog.xaml.cs">
       <DependentUpon>CharDetailDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="CharDetailViewModel.cs" />
+    <Compile Include="NullableBooleanToBooleanConverter.cs" />
     <Compile Include="PredicateBuilder.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="SearchPage.xaml.cs">
@@ -182,9 +184,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.1.7</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
-      <Version>4.0.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,31 @@
+﻿// UniSearchUWP
+// Unicode Character Search Tool, UWP version
+// Dynamically select DataTemplate for TreeView item
+//
+// 2018-09-18   PV
+
+
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+
+
+namespace UniSearchUWPNS
+{
+    public class BlockGroupItemTemplateSelector : DataTemplateSelector
+    {
+        public DataTemplate BlockTemplate { get; set; } 
+        public DataTemplate GroupL1Template { get; set; }
+        public DataTemplate GroupTemplate { get; set; }
+
+        // Used by binding
+        protected override DataTemplate SelectTemplateCore(object item)
+        {
+            var blockItem = (BlockNode)item;
+            if (blockItem.Level == 0) return BlockTemplate;
+            if (blockItem.Level == 1) return GroupL1Template;
+            return GroupTemplate;
+        }
+    }
+
+
+}
