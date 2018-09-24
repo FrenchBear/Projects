@@ -43,7 +43,7 @@ namespace UniDataNS
 
 
         // Used by binding
-        public BlockRecord BlockRecord => UniData.BlockRecords[BlockBegin];
+        public BlockRecord Block => UniData.BlockRecords[BlockBegin];
         public CategoryRecord CategoryRecord => UniData.CategoryRecords[Category];
 
         public string CodepointHex => $"U+{Codepoint:X4}";
@@ -327,9 +327,7 @@ namespace UniDataNS
                 while (!sr.EndOfStream)
                 {
                     string line = sr.ReadLine();
-                    if (line.StartsWith(";", StringComparison.Ordinal))
-                    { // Comment, nothing to do 
-                    }
+                    if (line.StartsWith(";", StringComparison.Ordinal)) { }
                     else if (line.StartsWith("@@@+", StringComparison.Ordinal)) { }
                     else if (line.StartsWith("@@@~", StringComparison.Ordinal)) { }
                     else if (line.StartsWith("@@@", StringComparison.Ordinal)) { }
@@ -341,14 +339,11 @@ namespace UniDataNS
                     {
                         subheader = line.Substring(3);
                     }
-                    else if (line.StartsWith("\t", StringComparison.Ordinal))
-                    {
-                    }
+                    else if (line.StartsWith("\t", StringComparison.Ordinal)) { }
                     else
                     {
                         Match ma = CodepointRegex.Match(line);
                         if (!ma.Success) Debugger.Break();
-
                         int cp = int.Parse(line.Substring(0, ma.Length - 1), NumberStyles.HexNumber);
                         if (char_map.ContainsKey(cp))
                             char_map[cp].Subheader = subheader;
@@ -356,7 +351,7 @@ namespace UniDataNS
                 }
 
             // Validate data
-            //InternalTests();
+            InternalTests();
         }
 
         // For development

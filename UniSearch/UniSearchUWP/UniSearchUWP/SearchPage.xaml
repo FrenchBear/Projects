@@ -121,8 +121,8 @@
 
 
     <SplitView Name="MainSplitView" x:FieldModifier="internal"
-                IsPaneOpen="{x:Bind TogglePaneButton.IsChecked, Mode=TwoWay, Converter={StaticResource nullableBooleanToBooleanConverter}}"
-                DisplayMode="Inline" PanePlacement="Right" OpenPaneLength="400">
+               IsPaneOpen="{x:Bind TogglePaneButton.IsChecked, Mode=TwoWay, Converter={StaticResource nullableBooleanToBooleanConverter}, FallbackValue=True}"
+               DisplayMode="Inline" PanePlacement="Right" OpenPaneLength="400">
 
         <SplitView.Pane>
             <Grid>
@@ -140,8 +140,8 @@
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" Text="Block" FontWeight="SemiBold" Margin="0,4,12,0" />
                     <AutoSuggestBox Name="BlockFilterTextBox" Grid.Column="1" QueryIcon="Filter" PlaceholderText="Name filter" 
-                                        AccessKey="B" AccessKeyInvoked="SetFocus"
-                                        Text="{Binding BlockNameFilter, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                                    AccessKey="B" AccessKeyInvoked="SetFocus"
+                                    Text="{Binding BlockNameFilter, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                 </Grid>
 
                 <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="12,0,12,6">
@@ -156,7 +156,8 @@
                 </StackPanel>
 
                 <TreeView Grid.Row="2" Name="BlocksTreeView" x:FieldModifier="internal" SelectionMode="Multiple"  Margin="12,0,12,12"
-                              Tapped="BlocksTreeView_Tapped" DoubleTapped="BlocksTreeView_DoubleTapped" KeyUp="BlocksTreeView_KeyUp" />
+                          ItemInvoked="BlocksTreeView_ItemInvoked" KeyUp="BlocksTreeView_KeyUp" 
+                          Tapped="BlocksTreeView_Tapped" DoubleTapped="BlocksTreeView_DoubleTapped" />
             </Grid>
         </SplitView.Pane>
 
@@ -365,7 +366,7 @@
                     <TextBlock Grid.Row="2" Grid.Column="1" Text="Character" FontWeight="SemiBold" />
                     <ContentPresenter Grid.Row="2" Grid.Column="2" Content="{Binding StrContent}" />
                     <TextBlock Grid.Row="3" Grid.Column="1" Text="Block" FontWeight="SemiBold" />
-                    <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding SelectedChar.BlockRecord.BlockNameAndRange}" />
+                    <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding SelectedChar.Block.BlockNameAndRange}" />
                     <TextBlock Grid.Row="4" Grid.Column="1" Text="Subheader " FontWeight="SemiBold" />
                     <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding SelectedChar.Subheader}" />
                 </Grid>
@@ -380,7 +381,7 @@
                     <TextBlock Text="{Binding SelChars}" Margin="18,0,0,0" />
                     <TextBlock Text="  selected      |" />
 
-                    <TextBlock Text="{Binding NumBlocks}" Margin="40,0,0,0"/>
+                    <TextBlock Text="{Binding NumBlocks}" Margin="28,0,0,0"/>
                     <TextBlock Text=" blocks  " />
                     <TextBlock Text="{Binding FilBlocks}" Margin="18,0,0,0" />
                     <TextBlock Text="  filtered  " />

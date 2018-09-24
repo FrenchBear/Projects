@@ -8,17 +8,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows.Input;
 using System.Linq;
-using System.Windows;
 using UniDataNS;
-using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Data;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
@@ -60,7 +55,7 @@ namespace UniSearchUWPNS
             AboutCommand = new AwaitableRelayCommand<object>(AboutExecute);
             ShowLevelCommand = new RelayCommand<object>(ShowLevelExecute);
             ShowDetailCommand = new AwaitableRelayCommand<int>(ShowDetailExecute);
-            
+
             // Get Unicode data
             CharactersRecordsList = UniData.CharacterRecords.Values.OrderBy(cr => cr.Codepoint).ToArray();
             BlocksRecordsList = UniData.BlockRecords.Values.OrderBy(br => br.Begin).ToArray();
@@ -101,7 +96,6 @@ namespace UniSearchUWPNS
                             r1.Children.Add(blockBlockNode);
                             BlocksBlockNodesDictionary.Add(b.Begin, blockBlockNode);
                             NodesList.Add(blockBlockNode);
-
                         }
                     }
                 }
@@ -110,6 +104,8 @@ namespace UniSearchUWPNS
             // Current version of TreeView does not support binding
             foreach (var item in BlocksRoot.Children)
                 page.BlocksTreeView.RootNodes.Add(item);
+
+            // ToDo: Do it once Windows 10 oct 2018 is available.  Build 1803 does not let change selection by program.
 
             /*
             // Unselect some pretty useless blocks
@@ -131,11 +127,6 @@ namespace UniSearchUWPNS
             BlocksBlockNodesDictionary[0xDC00].IsChecked = false;       //  Low Surrogates; ; Surrogates; Symbols and Punctuation
             BlocksBlockNodesDictionary[0xE000].IsChecked = false;       //  Private Use Area; ; Private Use; Symbols and Punctuation
             */
-
-            // To compute bound values based on initial blocks filteringFilterCharList();
-
-            //p.BlocksTreeView.SelectAll();
-            //FilterBlockTree();
         }
 
 
@@ -181,7 +172,7 @@ namespace UniSearchUWPNS
                 {
                     _BlockNameFilter = value;
                     NotifyPropertyChanged(nameof(BlockNameFilter));
-                    FilterBlockTree();
+                    ApplyBlockNameFilter();
                 }
             }
         }
@@ -303,7 +294,7 @@ namespace UniSearchUWPNS
         private void FilterCharList()
         {
             // Block part of the filtering predicate
-            bool p1(CharacterRecord cr) => SelectedBlocksSet.Contains(cr.BlockRecord);
+            bool p1(CharacterRecord cr) => SelectedBlocksSet.Contains(cr.Block);
             Predicate<CharacterRecord> p2;
 
             // Character part of the filtering predicate
@@ -353,7 +344,7 @@ namespace UniSearchUWPNS
         }
 
         // Block and subheader group
-        class BSHGroupKey
+        private class BSHGroupKey
         {
             public int BlockBegin { get; set; }
             public string Subheader { get; set; }
@@ -365,8 +356,7 @@ namespace UniSearchUWPNS
                 Subheader = subheader;
             }
 
-            public override string ToString() => (NewBlock ? "\r\n" : "") + UniData.BlockRecords[BlockBegin].BlockName + ": " + Subheader;
-
+            public override string ToString() => (NewBlock ? "\r\n" : "") + UniData.BlockRecords[BlockBegin].BlockName + (string.IsNullOrEmpty(Subheader) ? "" : ": " + Subheader);
         }
 
 
@@ -384,37 +374,10 @@ namespace UniSearchUWPNS
         }
 
 
-        // After a change in Blocks selection, rebuilds SelectedBlocksSet and calls FilterCharList()
-        internal void FilterBlockTree(bool immediateCharFilter = false)
+        // When BlockNameFilter has changed, collapse/expand the nodes
+        internal void ApplyBlockNameFilter()
         {
             FilterBlock(BlocksRoot);
-
-            var newSelectedBlocksSet = new HashSet<BlockRecord>();
-            foreach (var item in page.BlocksTreeView.SelectedNodes)
-            {
-                var b = (item as BlockNode).Block;
-                if (b != null)
-                    newSelectedBlocksSet.Add((item as BlockNode).Block);
-            }
-
-            // Optimization: Don't filter chars if blocks selection has not changed and filtering
-            // has only expanded/closed nodes in TreeeView
-            if (newSelectedBlocksSet.SetEquals(SelectedBlocksSet))
-            {
-                Debug.WriteLine("FilterBlockTree: No change in SelectedBlocks");
-                return;
-            }
-
-            SelectedBlocksSet = newSelectedBlocksSet;
-            Debug.WriteLine($"Filtered blocks: {SelectedBlocksSet.Count}");
-            NotifyPropertyChanged(nameof(FilBlocks));
-
-            if (immediateCharFilter)
-                FilterCharList();
-            else
-                StartOrResetCharFilterDispatcherTimer();
-
-
 
             // Filtering Predicate
             bool fp(BlockNode bn) => String.IsNullOrEmpty(BlockNameFilter) || bn.Name.IndexOf(BlockNameFilter, 0, StringComparison.InvariantCultureIgnoreCase) >= 0;
@@ -433,6 +396,36 @@ namespace UniSearchUWPNS
                     return exp;
                 }
             }
+        }
+
+        // After a change in Blocks selection, rebuilds SelectedBlocksSet and calls FilterCharList()
+        internal void RefreshSelectedBlocks(bool immediateCharFilter = false)
+        {
+
+            var newSelectedBlocksSet = new HashSet<BlockRecord>();
+            foreach (var item in page.BlocksTreeView.SelectedNodes)
+            {
+                var b = (item as BlockNode).Block;
+                if (b != null)
+                    newSelectedBlocksSet.Add((item as BlockNode).Block);
+            }
+
+            // Optimization: Don't filter chars if blocks selection has not changed and filtering
+            // has only expanded/closed nodes in TreeeView
+            if (newSelectedBlocksSet.SetEquals(SelectedBlocksSet))
+            {
+                //Debug.WriteLine("FilterBlockTree: No change in SelectedBlocks");
+                return;
+            }
+
+            SelectedBlocksSet = newSelectedBlocksSet;
+            //Debug.WriteLine($"Filtered blocks: {SelectedBlocksSet.Count}");
+            NotifyPropertyChanged(nameof(FilBlocks));
+
+            if (immediateCharFilter)
+                FilterCharList();
+            else
+                StartOrResetCharFilterDispatcherTimer();
         }
 
 
@@ -460,7 +453,7 @@ namespace UniSearchUWPNS
 
                     case "2":
                         sb.AppendLine(r.Character + "\t" + r.CodepointHex + "\t" + r.Name + "\t" +
-                            r.CategoryRecord.Categories + "\t" + r.Age + "\t" + r.BlockRecord.BlockNameAndRange + "\t" +
+                            r.CategoryRecord.Categories + "\t" + r.Age + "\t" + r.Block.BlockNameAndRange + "\t" +
                             r.Subheader + "\t" + r.UTF16 + "\t" + r.UTF8);
                         break;
                 }

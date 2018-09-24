@@ -306,7 +306,7 @@ namespace UniSearchUWPNS
                 else if (word.StartsWith("Block:", StringComparison.OrdinalIgnoreCase) || word.StartsWith("B:", StringComparison.OrdinalIgnoreCase))
                 {
                     word = word.Substring(word.IndexOf(':') + 1);
-                    wordFilter = cr.BlockRecord.BlockName.IndexOf(word, 0, StringComparison.OrdinalIgnoreCase) >= 0;
+                    wordFilter = cr.Block.BlockName.IndexOf(word, 0, StringComparison.OrdinalIgnoreCase) >= 0;
                 }
 
                 // Block filter
