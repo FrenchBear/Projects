@@ -3,23 +3,23 @@
 //
 // 2018-12-09   PV
 
+using RelayCommandNS;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Text;
-using System.Windows.Input;
 using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using UniDataNS;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
-using System.Threading.Tasks;
-using Windows.ApplicationModel.DataTransfer;
-using System.Reflection;
-using Windows.UI.Popups;
-using RelayCommandNS;
 
 namespace UniSearchUWPNS
 {
@@ -30,20 +30,18 @@ namespace UniSearchUWPNS
         private readonly BlockNode BlocksRoot;                          // TreeView root
         private HashSet<BlockRecord> SelectedBlocksSet = new HashSet<BlockRecord>();    // Set of selected blocks in TreeView
 
-
         // INotifyPropertyChanged interface
         public event PropertyChangedEventHandler PropertyChanged;
 
         internal void NotifyPropertyChanged(string propertyName)
           => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-
         // Commands public interface
         public ICommand CopyRecordsCommand { get; private set; }
+
         public ICommand AboutCommand { get; private set; }
         public ICommand ShowLevelCommand { get; private set; }
         public ICommand ShowDetailCommand { get; private set; }
-
 
         // Constructor
         public ViewModel(SearchPage p)
@@ -121,7 +119,6 @@ namespace UniSearchUWPNS
                 if (n.Name == "Specials") n.IsChecked = false;
             });
 
-
             BlocksBlockNodesDictionary[0xD800].IsChecked = false;       //  High Surrogates; ; Surrogates; Symbols and Punctuation
             BlocksBlockNodesDictionary[0xDB80].IsChecked = false;       //  High Private Use Surrogates; ; Surrogates; Symbols and Punctuation
             BlocksBlockNodesDictionary[0xDC00].IsChecked = false;       //  Low Surrogates; ; Surrogates; Symbols and Punctuation
@@ -129,25 +126,24 @@ namespace UniSearchUWPNS
             */
         }
 
-
         // ==============================================================================================
         // Bindable properties
 
-        //public IEnumerable<BlockNode> Roots { get; set; }      // For TreeView binding
+        // ToDo: Property needed?
         public CharacterRecord[] CharactersRecordsList { get; set; }
-        public ObservableCollection<CharacterRecord> CharactersRecordsFilteredList { get; set; } = new ObservableCollection<CharacterRecord>();
 
+        // Source of CharListView and used to build the grouped version
+        public ObservableCollection<CharacterRecord> CharactersRecordsFilteredList { get; set; } = new ObservableCollection<CharacterRecord>();
 
         private CollectionViewSource _CharactersRecordsCVS = new CollectionViewSource();
         public CollectionViewSource CharactersRecordsCVS => _CharactersRecordsCVS;
-
 
         public List<BlockNode> NodesList { get; set; }
 
         public BlockRecord[] BlocksRecordsList { get; set; }
 
-
         private string _CharNameFilter;
+
         public string CharNameFilter
         {
             get { return _CharNameFilter; }
@@ -163,6 +159,7 @@ namespace UniSearchUWPNS
         }
 
         private string _BlockNameFilter;
+
         public string BlockNameFilter
         {
             get { return _BlockNameFilter; }
@@ -177,9 +174,8 @@ namespace UniSearchUWPNS
             }
         }
 
-
-
         private CharacterRecord _SelectedChar;
+
         public CharacterRecord SelectedChar
         {
             get { return _SelectedChar; }
@@ -199,12 +195,9 @@ namespace UniSearchUWPNS
 
         public int NumBlocks => UniData.BlockRecords.Count;
 
-
         public int SelChars => page.CharCurrentView.SelectedItems.Count;
 
-
         public int FilChars => CharactersRecordsFilteredList.Count;
-
 
         public int FilBlocks => SelectedBlocksSet.Count;
 
@@ -216,7 +209,6 @@ namespace UniSearchUWPNS
                 return GetStrContent(SelectedChar.Codepoint, ShowDetailCommand);
             }
         }
-
 
         // Returns a grid containing char information (character itself, codepoint, name) and an hyperlink on
         // CodePoint that executes Command
@@ -252,26 +244,20 @@ namespace UniSearchUWPNS
             return g;
         }
 
-
-
-        // ==============================================================================================
-        // Events processing
-
-        // Called from Window
-        // ToDo: FInd a way to call VM directly
-
-
-
-
         // ==============================================================================================
         // Delay processing of TextChanged event 250ms using a DispatcherTimer
-        DispatcherTimer dispatcherTimer;
+
+        private DispatcherTimer dispatcherTimer;
+        private readonly object dispatcherTimerLock = new object();
 
         private void DispatcherTimer_Tick(object sender, object e)
         {
-            dispatcherTimer.Stop();
-            dispatcherTimer.Tick -= DispatcherTimer_Tick;
-            dispatcherTimer = null;
+            lock (dispatcherTimerLock)
+            {
+                dispatcherTimer.Stop();
+                dispatcherTimer.Tick -= DispatcherTimer_Tick;
+                dispatcherTimer = null;
+            }
 
             FilterCharList();
         }
@@ -279,20 +265,32 @@ namespace UniSearchUWPNS
         // Temporarily public during transition to MVVM pattern
         public void StartOrResetCharFilterDispatcherTimer()
         {
-            if (dispatcherTimer == null)
+            lock (dispatcherTimerLock)
             {
-                dispatcherTimer = new DispatcherTimer();
-                dispatcherTimer.Tick += DispatcherTimer_Tick;
-                dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 250);
-            }
-            else
-                dispatcherTimer.Stop();
+                if (dispatcherTimer == null)
+                {
+                    dispatcherTimer = new DispatcherTimer();
+                    dispatcherTimer.Tick += DispatcherTimer_Tick;
+                    dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 250);
+                }
+                else
+                    dispatcherTimer.Stop();
 
-            dispatcherTimer.Start();
+                dispatcherTimer.Start();
+            }
         }
 
-        private void FilterCharList()
+        internal void FilterCharList()
         {
+            // Just in case there is a direct call while a timer is pending
+            lock (dispatcherTimerLock)
+                if (dispatcherTimer != null)
+                {
+                    dispatcherTimer.Stop();
+                    dispatcherTimer.Tick -= DispatcherTimer_Tick;
+                    dispatcherTimer = null;
+                }
+
             // Block part of the filtering predicate
             bool p1(CharacterRecord cr) => SelectedBlocksSet.Contains(cr.Block);
             Predicate<CharacterRecord> p2;
@@ -309,9 +307,11 @@ namespace UniSearchUWPNS
 
             var SavedSelectedChar = SelectedChar;
 
-            CharactersRecordsFilteredList.Clear();
-            foreach (CharacterRecord c in CharactersRecordsList.Where(cr => p2(cr)))
-                CharactersRecordsFilteredList.Add(c);
+            //CharactersRecordsFilteredList.Clear();
+            //foreach (CharacterRecord c in CharactersRecordsList.Where(cr => p2(cr)))
+            //    CharactersRecordsFilteredList.Add(c);
+
+            CharactersRecordsFilteredList = new ObservableCollection<CharacterRecord>(CharactersRecordsList.Where(cr => p2(cr)));
 
             // Build the grouped version
             var groups = CharactersRecordsFilteredList.GroupBy(cr => new BSHGroupKey(cr.BlockBegin, cr.Subheader), new GroupKeyComparer()).OrderBy(grp => UniData.BlockRecords[grp.Key.BlockBegin].Rank).ToList();
@@ -330,7 +330,7 @@ namespace UniSearchUWPNS
 
             _CharactersRecordsCVS.Source = groups;
             _CharactersRecordsCVS.IsSourceGrouped = true;
-            NotifyPropertyChanged(nameof(CharactersRecordsCVS));
+            //NotifyPropertyChanged(nameof(CharactersRecordsCVS));
 
             // Restore selected char if it's still part of filtered list
             if (SavedSelectedChar != null && CharactersRecordsFilteredList.Contains(SavedSelectedChar))
@@ -359,7 +359,6 @@ namespace UniSearchUWPNS
             public override string ToString() => (NewBlock ? "\r\n" : "") + UniData.BlockRecords[BlockBegin].BlockName + (string.IsNullOrEmpty(Subheader) ? "" : ": " + Subheader);
         }
 
-
         private class GroupKeyComparer : IEqualityComparer<BSHGroupKey>
         {
             public bool Equals(BSHGroupKey x, BSHGroupKey y) => x.BlockBegin == y.BlockBegin && x.Subheader == y.Subheader;
@@ -369,10 +368,9 @@ namespace UniSearchUWPNS
                 if (obj.Subheader == null)
                     return obj.BlockBegin.GetHashCode();
                 else
-                    return obj.BlockBegin.GetHashCode() ^ obj.Subheader.GetHashCode();
+                    return obj.BlockBegin.GetHashCode() ^ obj.Subheader.GetHashCode(StringComparison.Ordinal);
             }
         }
-
 
         // When BlockNameFilter has changed, collapse/expand the nodes
         internal void ApplyBlockNameFilter()
@@ -401,7 +399,6 @@ namespace UniSearchUWPNS
         // After a change in Blocks selection, rebuilds SelectedBlocksSet and calls FilterCharList()
         internal void RefreshSelectedBlocks(bool immediateCharFilter = false)
         {
-
             var newSelectedBlocksSet = new HashSet<BlockRecord>();
             foreach (var item in page.BlocksTreeView.SelectedNodes)
             {
@@ -427,8 +424,6 @@ namespace UniSearchUWPNS
             else
                 StartOrResetCharFilterDispatcherTimer();
         }
-
-
 
         // ==============================================================================================
         // Commands
@@ -470,7 +465,6 @@ namespace UniSearchUWPNS
             }
         }
 
-
         // Show app information
         private async Task AboutExecute(object param)
         {
@@ -493,9 +487,8 @@ namespace UniSearchUWPNS
             await CharDetailDialog.ShowDetail(codepoint);
         }
 
-
         // Helper performing a given action on a node and all its descendants
-        void ActionAllNodes(BlockNode n, Action<BlockNode> a)
+        private void ActionAllNodes(BlockNode n, Action<BlockNode> a)
         {
             a(n);
             foreach (BlockNode child in n.Children)
@@ -507,8 +500,5 @@ namespace UniSearchUWPNS
             int level = int.Parse(param as string);
             ActionAllNodes(BlocksRoot, n => { n.IsExpanded = (n.Level != level); });
         }
-
-
     }
-
 }

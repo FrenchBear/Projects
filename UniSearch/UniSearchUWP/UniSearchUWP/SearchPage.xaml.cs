@@ -7,6 +7,7 @@
 
 using System.Diagnostics;
 using UniDataNS;
+using Windows.ApplicationModel.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -33,7 +34,17 @@ namespace UniSearchUWPNS
                 BlocksTreeView.SelectAll();
                 vm.RefreshSelectedBlocks(true);
                 CharacterFilterTextBox.Focus(FocusState.Programmatic);
+
+                // For performance tests
+                //CharacterFilterTextBox.Text = "cat";
+                //vm.FilterCharList();
             };
+
+            // For performance profiling
+            //GotFocus += (s, e) =>
+            //{
+            //    CoreApplication.Exit();
+            //};
         }
 
         private void CharListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -133,7 +144,6 @@ namespace UniSearchUWPNS
             BlocksTreeView.SelectedNodes.Clear();
             vm.RefreshSelectedBlocks(true);
         }
-
     }
 }
 

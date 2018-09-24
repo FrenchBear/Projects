@@ -41,7 +41,6 @@ namespace UniSearchUWPNS
         private void MyBackButton_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.Back();
-
         }
 
         private void MyCloseButton_Click(object sender, RoutedEventArgs e)

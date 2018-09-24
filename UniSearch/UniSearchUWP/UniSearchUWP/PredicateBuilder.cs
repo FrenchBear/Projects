@@ -309,11 +309,12 @@ namespace UniSearchUWPNS
                     wordFilter = cr.Block.BlockName.IndexOf(word, 0, StringComparison.OrdinalIgnoreCase) >= 0;
                 }
 
-                // Block filter
+                // Subheader filter
                 else if (word.StartsWith("Sub:", StringComparison.OrdinalIgnoreCase) || word.StartsWith("S:", StringComparison.OrdinalIgnoreCase))
                 {
                     word = word.Substring(word.IndexOf(':') + 1);
-                    wordFilter = cr.Subheader.IndexOf(word, 0, StringComparison.OrdinalIgnoreCase) >= 0;
+                    if (word.Length > 0)
+                        wordFilter = cr.Subheader != null && cr.Subheader.IndexOf(word, 0, StringComparison.OrdinalIgnoreCase) >= 0;
                 }
 
                 // Otherwise search a part of Name

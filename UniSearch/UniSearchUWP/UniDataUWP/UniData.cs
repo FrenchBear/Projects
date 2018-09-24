@@ -145,9 +145,9 @@ namespace UniDataNS
 
 
         // Public read only dictionaries to access Unicode data
-        public static ReadOnlyDictionary<int, CharacterRecord> CharacterRecords => new ReadOnlyDictionary<int, CharacterRecord>(char_map);
-        public static ReadOnlyDictionary<string, CategoryRecord> CategoryRecords => new ReadOnlyDictionary<string, CategoryRecord>(cat_map);
-        public static ReadOnlyDictionary<int, BlockRecord> BlockRecords => new ReadOnlyDictionary<int, BlockRecord>(block_map);
+        public static ReadOnlyDictionary<int, CharacterRecord> CharacterRecords { get; } = new ReadOnlyDictionary<int, CharacterRecord>(char_map);
+        public static ReadOnlyDictionary<string, CategoryRecord> CategoryRecords { get; } = new ReadOnlyDictionary<string, CategoryRecord>(cat_map);
+        public static ReadOnlyDictionary<int, BlockRecord> BlockRecords { get; } = new ReadOnlyDictionary<int, BlockRecord>(block_map);
 
 
         // Static constructor
@@ -180,7 +180,7 @@ namespace UniDataNS
                         int rank0 = 0;
                         foreach (var l0 in l1)
                         {
-                            l0.Rank=rank0+100*(rank1+100*(rank2+100*rank3));
+                            l0.Rank = rank0 + 100 * (rank1 + 100 * (rank2 + 100 * rank3));
                             rank0++;
                         }
                         rank1++;
@@ -322,16 +322,17 @@ namespace UniDataNS
 
             // Read NamesList
             string subheader = "";
-            Regex CodepointRegex = new Regex(@"^[0-9A-F]{4,6}\t");
+            // Optimizations: Do not use Regex, looks costly to performance profiler
+            //Regex CodepointRegex = new Regex(@"^[0-9A-F]{4,6}\t");
             using (var sr = new StreamReader(GetResourceStream("NamesList.txt")))
                 while (!sr.EndOfStream)
                 {
                     string line = sr.ReadLine();
                     if (line.StartsWith(";", StringComparison.Ordinal)) { }
-                    else if (line.StartsWith("@@@+", StringComparison.Ordinal)) { }
-                    else if (line.StartsWith("@@@~", StringComparison.Ordinal)) { }
-                    else if (line.StartsWith("@@@", StringComparison.Ordinal)) { }
-                    else if (line.StartsWith("@@+", StringComparison.Ordinal)) { }
+                    //else if (line.StartsWith("@@@+", StringComparison.Ordinal)) { }
+                    //else if (line.StartsWith("@@@~", StringComparison.Ordinal)) { }
+                    //else if (line.StartsWith("@@@", StringComparison.Ordinal)) { }
+                    //else if (line.StartsWith("@@+", StringComparison.Ordinal)) { }
                     else if (line.StartsWith("@@", StringComparison.Ordinal)) { }
                     else if (line.StartsWith("@+", StringComparison.Ordinal)) { }
                     else if (line.StartsWith("@~", StringComparison.Ordinal)) { }
@@ -342,30 +343,32 @@ namespace UniDataNS
                     else if (line.StartsWith("\t", StringComparison.Ordinal)) { }
                     else
                     {
-                        Match ma = CodepointRegex.Match(line);
-                        if (!ma.Success) Debugger.Break();
-                        int cp = int.Parse(line.Substring(0, ma.Length - 1), NumberStyles.HexNumber);
-                        if (char_map.ContainsKey(cp))
-                            char_map[cp].Subheader = subheader;
+                        int cp16 = 0;
+                        for (int p = 0; ; p++)
+                        {
+                            char c = line[p];
+
+                            if (c >= '0' && c <= '9')
+                                cp16 = 16 * cp16 + ((int)(c)) - 48;
+                            else if (c >= 'A' && c <= 'F')
+                                cp16 = 16 * cp16 + ((int)(c)) - 65 + 10;
+                            else
+                            {
+                                if (c != '\t') Debugger.Break();
+                                break;
+                            }
+                        }
+
+                        //Match ma = CodepointRegex.Match(line);
+                        //if (!ma.Success) Debugger.Break();
+                        //int cp = int.Parse(line.Substring(0, ma.Length - 1), NumberStyles.HexNumber);
+
+                        //if (cp != cp10) Debugger.Break();
+
+                        if (char_map.ContainsKey(cp16))
+                            char_map[cp16].Subheader = subheader;
                     }
                 }
-
-            // Validate data
-            InternalTests();
-        }
-
-        // For development
-        private static void InternalTests()
-        {
-            foreach (var cr in char_map.Values)
-            {
-                // Check that all characters are assigned to a valid block
-                Debug.Assert(BlockRecords.ContainsKey(cr.BlockBegin));
-                // Check that all characters are assigned to a valid category
-                Debug.Assert(CategoryRecords.ContainsKey(cr.Category));
-            }
-
-            Debug.Assert(UnicodeLength("Aé♫??") == 5);
         }
 
 

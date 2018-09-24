@@ -1,13 +1,14 @@
-﻿<Page Name="thisPage"
-    x:Class="UniSearchUWPNS.SearchPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:UniSearchUWPNS"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=local:ViewModel}"
-    d:DesignWidth="1000" d:DesignHeight="350" 
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" FontFamily="Segoe UI" >
+﻿<Page Name="MainPage"
+      x:Class="UniSearchUWPNS.SearchPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:UniSearchUWPNS"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=local:ViewModel}"
+      d:DesignWidth="1000" d:DesignHeight="350" 
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" 
+      FontFamily="Segoe UI" >
 
 
     <Page.Resources>
@@ -326,7 +327,7 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0" Text="{Binding Character}" />
                                 <HyperlinkButton Grid.Column="1" Content="{Binding CodepointHex}" 
-                                Command="{Binding ElementName=thisPage, Path=DataContext.ShowDetailCommand}"
+                                Command="{Binding ElementName=MainPage, Path=DataContext.ShowDetailCommand}"
                                 CommandParameter="{Binding Codepoint}"
                                 Padding="0" />
                                 <TextBlock Grid.Column="2" Text="{Binding Name}" Margin="0" />

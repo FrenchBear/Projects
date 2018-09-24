@@ -17,8 +17,8 @@ namespace RelayCommandNS
 
     public interface IAsyncCommand<in T> : IRaiseCanExecuteChanged
     {
-        Task ExecuteAsync(T obj);
-        bool CanExecute(object obj);
+        Task ExecuteAsync(T param);
+        bool CanExecute(object param);
         ICommand Command { get; }
     }
 

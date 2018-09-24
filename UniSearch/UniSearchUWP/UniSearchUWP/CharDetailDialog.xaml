@@ -5,16 +5,10 @@
     xmlns:local="using:UniSearchUWPNS"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Title="{Binding Title}"
-    >
-    <!--PrimaryButtonText="Back"
-    SecondaryButtonText="Close"
-    PrimaryButtonClick="BackButton_Click"
-    SecondaryButtonClick="CloseButton_Click">-->
-
+    mc:Ignorable="d"  d:DataContext="{d:DesignInstance Type=local:CharDetailViewModel}"
+    Title="{Binding Title}">
+    
     <Grid>
-
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
