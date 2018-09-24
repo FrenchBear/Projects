@@ -191,9 +191,9 @@ namespace UniSearchUWPNS
             }
         }
 
-        public int NumChars => UniData.CharacterRecords.Count;
+        public static int NumChars => UniData.CharacterRecords.Count;
 
-        public int NumBlocks => UniData.BlockRecords.Count;
+        public static int NumBlocks => UniData.BlockRecords.Count;
 
         public int SelChars => page.CharCurrentView.SelectedItems.Count;
 
