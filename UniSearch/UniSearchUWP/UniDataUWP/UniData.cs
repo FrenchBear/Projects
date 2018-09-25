@@ -5,9 +5,6 @@
 // 2018-09-11   PV
 // 2018-09-17   PV      1.1 Store UCD Data in embedded streams; Skip characters from planes 15 and 16
 // 2018-09-20   PV      1.2 Read NamesList.txt
-//
-// ToDo: Manage script PropertyValueAliases.txt and Scripts.txt
-// ToDo: Add more tests
 
 
 using System;
@@ -18,12 +15,13 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
+
 
 namespace UniDataNS
 {
-
-    // Represents an Unicode codepoint and various associated information
+    /// <summary>
+    /// Represents an Unicode codepoint and various associated information 
+    /// </summary>
     public class CharacterRecord
     {
         public int Codepoint { get; private set; }
@@ -82,6 +80,9 @@ namespace UniDataNS
     }
 
 
+    /// <summary>
+    /// Represent an Unicode block (range of codepoints) and its hierarchical classification
+    /// </summary>
     public class BlockRecord
     {
         public int Begin { get; private set; }
@@ -107,12 +108,14 @@ namespace UniDataNS
             this.Level3Name = Level3Name;
         }
 
-        public override string ToString()
-        {
-            return $"BlockRecord(Range={Begin:X4}..{End:X4}, Block={BlockName}, L1={Level1Name}, L2={Level2Name}, L3={Level3Name})";
-        }
+        public override string ToString() =>
+            $"BlockRecord(Range={Begin:X4}..{End:X4}, Block={BlockName}, L1={Level1Name}, L2={Level2Name}, L3={Level3Name})";
     }
 
+
+    /// <summary>
+    /// Represents Unicode general category of characters
+    /// </summary>
     public class CategoryRecord
     {
         public string Code { get; private set; }
@@ -136,6 +139,9 @@ namespace UniDataNS
     }
 
 
+    /// <summary>
+    /// Static class exposing Unicode data dictionaries
+    /// </summary>
     public static class UniData
     {
         // Real internal dictionaries used to store Unicode data
@@ -150,7 +156,7 @@ namespace UniDataNS
         public static ReadOnlyDictionary<int, BlockRecord> BlockRecords { get; } = new ReadOnlyDictionary<int, BlockRecord>(block_map);
 
 
-        // Static constructor
+        // Static constructor, loads data from resources
         static UniData()
         {
             // Read blocks
@@ -252,7 +258,12 @@ namespace UniDataNS
                     if (char_name == "<control>")
                         char_name = "CONTROL-" + fields[10];
                     bool is_range = char_name.EndsWith(", First>", StringComparison.OrdinalIgnoreCase);
-                    bool is_printable = !(codepoint < 32 || codepoint >= 0x7f && codepoint < 0xA0 || codepoint >= 0xD800 && codepoint <= 0xDFFF);
+                    bool is_printable = !(codepoint < 32                                // Control characters 0-31
+                                        || codepoint >= 0x7f && codepoint < 0xA0        // Control characters 127-160
+                                        || codepoint >= 0xD800 && codepoint <= 0xDFFF   // Surrogates
+                                        || codepoint == 0x2028                          // U+2028  LINE SEPARATOR
+                                        || codepoint == 0x2029                          // U+2029  PARAGRAPH SEPARATOR
+                                        );
                     if (is_range)   // Add all characters within a specified range
                     {
                         char_name = char_name.Replace(", First>", String.Empty).Replace("<", string.Empty).ToUpperInvariant(); //remove range indicator from name
@@ -362,7 +373,6 @@ namespace UniDataNS
                         //Match ma = CodepointRegex.Match(line);
                         //if (!ma.Success) Debugger.Break();
                         //int cp = int.Parse(line.Substring(0, ma.Length - 1), NumberStyles.HexNumber);
-
                         //if (cp != cp10) Debugger.Break();
 
                         if (char_map.ContainsKey(cp16))
@@ -424,7 +434,6 @@ namespace UniDataNS
                 }
                 var cr = UniData.CharacterRecords[cp];
                 yield return cr;
-
             }
         }
     }
