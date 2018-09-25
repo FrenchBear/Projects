@@ -453,8 +453,14 @@ namespace UniSearchUWPNS
                         break;
                 }
 
+            ClipboardSetText(sb.ToString());
+        }
+
+        // Convenient helper
+        internal static void ClipboardSetText(string s)
+        {
             var dataPackage = new DataPackage();
-            dataPackage.SetText(sb.ToString());
+            dataPackage.SetText(s);
             try
             {
                 Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(dataPackage);
@@ -463,6 +469,7 @@ namespace UniSearchUWPNS
             {
                 Debug.WriteLine("Error copying text into clipboard: " + ex.Message);
             }
+
         }
 
         // Show app information

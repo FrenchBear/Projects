@@ -34,7 +34,7 @@ public class UniDataUnitTests
     public void TestEnumCharacterRecords()
     {
         string s = "Aé♫山𝄞🐗";
-        var l = UniDataNS.ExtensionMethods.EnumCharacterRecords(s).ToList();
+        var l = s.EnumCharacterRecords().ToList();
         Assert.AreEqual(l[0], UniData.CharacterRecords[0x41]);
         Assert.AreEqual(l[1], UniData.CharacterRecords[0xE9]);
         Assert.AreEqual(l[2], UniData.CharacterRecords[0x266B]);

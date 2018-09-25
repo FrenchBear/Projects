@@ -19,6 +19,7 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <Border Background="Black" BorderThickness="2" BorderBrush="White" Margin="0,3,12,0" VerticalAlignment="Top"
@@ -28,8 +29,9 @@
                 </TextBlock>
             </Border>
 
-            <Button Name="BackButton" x:FieldModifier="internal" IsEnabled="False" Grid.Row="1" Content="Back" HorizontalAlignment="Stretch" Click="MyBackButton_Click" Margin="0,0,12,0" />
-            <Button Grid.Row="2" Content="Close" HorizontalAlignment="Stretch" Click="MyCloseButton_Click" Margin="0,12,12,0" />
+            <Button Name="CopyButton" Grid.Row="1" Content="Copy" HorizontalAlignment="Stretch" Click="CopyButton_Click" Margin="0,12,12,0" />
+            <Button Name="BackButton" x:FieldModifier="internal" IsEnabled="False" Grid.Row="2" Content="Back" HorizontalAlignment="Stretch" Click="BackButton_Click" Margin="0,12,12,0" />
+            <Button Name="CloseButton" Grid.Row="3" Content="Close" HorizontalAlignment="Stretch" Click="CloseButton_Click" Margin="0,12,12,0" />
         </Grid>
 
 

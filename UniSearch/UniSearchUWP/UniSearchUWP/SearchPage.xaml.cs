@@ -85,6 +85,16 @@ namespace UniSearchUWPNS
             await CharDetailDialog.ShowDetail(vm.SelectedChar.Codepoint);
         }
 
+        private async void GridViewCell_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Space || e.Key == Windows.System.VirtualKey.Enter)
+            {
+                e.Handled = true;
+                await CharDetailDialog.ShowDetail(vm.SelectedChar.Codepoint);
+            }
+        }
+
+
 
         // Simulate "SelectionChanged" missing event with mouse and key events
         // But this is unreliable, doubletap event gets fired before SelectedNodes has been refreshed...
@@ -144,6 +154,7 @@ namespace UniSearchUWPNS
             BlocksTreeView.SelectedNodes.Clear();
             vm.RefreshSelectedBlocks(true);
         }
+
     }
 }
 

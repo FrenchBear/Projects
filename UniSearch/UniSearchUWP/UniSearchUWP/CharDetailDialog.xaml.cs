@@ -2,7 +2,7 @@
 // Show more information on a character after a click on hyperlink
 //
 // In UWP version, can't show more than one ContentDialog on screen: drill-down explore
-// is handled by recycling current window and implement a back mechanism
+// is handled by recycling current window and implement a back navigation mechanism
 //
 // 2018-09-18   PV
 
@@ -28,6 +28,12 @@ namespace UniSearchUWPNS
             ViewModel = new CharDetailViewModel(this, UniData.CharacterRecords[codepoint]);
             DataContext = ViewModel;
 
+            Loaded += (s, e) =>
+            {
+                DefaultButton = ContentDialogButton.None;
+                CloseButton.Focus(FocusState.Programmatic);
+            };
+
             // Esc closes the window automatically, nothing to do
         }
 
@@ -38,14 +44,21 @@ namespace UniSearchUWPNS
             await w.ShowAsync();
         }
 
-        private void MyBackButton_Click(object sender, RoutedEventArgs e)
+        private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.Back();
         }
 
-        private void MyCloseButton_Click(object sender, RoutedEventArgs e)
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             this.Hide();
+        }
+
+        private void CopyButton_Click(object sender, RoutedEventArgs e)
+        {
+            CharacterRecord cr = ViewModel.SelectedChar;
+            string s = $"Character\t{cr.Character}\r\nCodepoint\t{cr.CodepointHex}\r\nName\t{cr.Name}\r\nCategories\t{cr.CategoryRecord.Categories}\r\nAge\t{cr.Age}\r\nBlock\t{cr.Block.BlockNameAndRange}\r\nSubheader\t{cr.Subheader}\r\nUTF-16\t{cr.UTF16}\r\nUTF-8\t{cr.UTF8}\r\n";
+            UniSearchUWPNS.ViewModel.ClipboardSetText(s);
         }
     }
 }

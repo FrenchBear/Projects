@@ -18,7 +18,12 @@
                     Text="{Binding Content}" 
                     HorizontalAlignment="Left" 
                     VerticalAlignment="Center"
-                    Style="{ThemeResource BodyTextBlockStyle}"/>
+                    Style="{ThemeResource BodyTextBlockStyle}">
+                            <ToolTipService.ToolTip>
+                                <ToolTip Content="{Binding Block.BlockNameAndRange}" />
+                            </ToolTipService.ToolTip>
+
+                </TextBlock>
             </Grid>
         </DataTemplate>
 
@@ -122,7 +127,7 @@
 
 
     <SplitView Name="MainSplitView" x:FieldModifier="internal"
-               IsPaneOpen="{x:Bind TogglePaneButton.IsChecked, Mode=TwoWay, Converter={StaticResource nullableBooleanToBooleanConverter}, FallbackValue=True}"
+               IsPaneOpen="{x:Bind TogglePaneButton.IsChecked, Mode=TwoWay, Converter={StaticResource nullableBooleanToBooleanConverter}}"
                DisplayMode="Inline" PanePlacement="Right" OpenPaneLength="400">
 
         <SplitView.Pane>
@@ -134,18 +139,18 @@
                 </Grid.RowDefinitions>
 
 
-                <Grid Margin="12,12,12,6">
+                <Grid Margin="12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="Block" FontWeight="SemiBold" Margin="0,4,12,0" />
+                    <TextBlock Grid.Column="0" Text="Block" FontWeight="SemiBold" Margin="0,5,12,0" />
                     <AutoSuggestBox Name="BlockFilterTextBox" Grid.Column="1" QueryIcon="Filter" PlaceholderText="Name filter" 
                                     AccessKey="B" AccessKeyInvoked="SetFocus"
                                     Text="{Binding BlockNameFilter, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                 </Grid>
 
-                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="12,0,12,6">
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="12,0,12,12">
                     <Button Content="Select all" AccessKey="A" Click="SelectAllButton_Click" Margin="0,0,6,0"/>
                     <!-- UnselectAll disabled until we can target Windows 10 1809 -->
                     <Button Content="Unselect all" AccessKey="U" Click="UnselectAllButton_Click" Margin="0,0,12,0" IsEnabled="False"/>
@@ -164,7 +169,7 @@
 
 
 
-        <Grid Margin="6">
+        <Grid Margin="12">
             <Grid.Resources>
                 <ResourceDictionary>
                     <ResourceDictionary.ThemeDictionaries>
@@ -177,7 +182,7 @@
                 </ResourceDictionary>
             </Grid.Resources>
 
-            <Grid Margin="6,6,0,6" Grid.Column="0">
+            <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
@@ -188,12 +193,12 @@
 
                 <!-- Input and control for characters -->
                 <StackPanel Grid.Row="0">
-                    <Grid Margin="0,0,0,6">
+                    <Grid Margin="0,0,0,12">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="Character" FontWeight="SemiBold" Margin="0,4,12,0" />
+                        <TextBlock Grid.Column="0" Text="Character" FontWeight="SemiBold" Margin="0,5,12,0" />
                         <AutoSuggestBox Grid.Column="1" Name="CharacterFilterTextBox" QueryIcon="Filter" PlaceholderText="Name filter"
                                     AccessKey="N" AccessKeyInvoked="SetFocus"
                                     Text="{Binding CharNameFilter, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" >
@@ -213,13 +218,15 @@
                                 Use s: to filter on subheader name
                                 <LineBreak/>
                                 Use a: to filter on character age.  Also support comparison operators such as a:&lt;=10
+                                <LineBreak/>
+                                Use l: to filter on letters of a word
                                     </TextBlock>
                                 </ToolTip>
                             </ToolTipService.ToolTip>
                         </AutoSuggestBox>
                     </Grid>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                         <TextBlock Text="Copy " Margin="0,4,12,0" />
                         <Button Content="Chars" AccessKey="C" Margin="0,0,6,0"  Command="{Binding CopyRecordsCommand}" CommandParameter="0" HorizontalAlignment="Left" VerticalAlignment="Top" >
                             <Button.KeyboardAccelerators>
@@ -257,6 +264,7 @@
                         <GridView Name="CharGridView" x:FieldModifier="internal" SelectedItem="{Binding SelectedChar, Mode=TwoWay}" 
                               ItemsSource="{Binding CharactersRecordsCVS.View}"
                               Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
+                              PreviewKeyDown="GridViewCell_PreviewKeyDown"
                               SelectionMode="Extended" SelectionChanged="CharListView_SelectionChanged">
 
                             <GridView.ItemTemplate>
@@ -274,7 +282,7 @@
                                 <GroupStyle>
                                     <GroupStyle.HeaderTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding Key}"/>
+                                            <TextBlock Text="{Binding Key}" />
                                         </DataTemplate>
                                     </GroupStyle.HeaderTemplate>
                                 </GroupStyle>
