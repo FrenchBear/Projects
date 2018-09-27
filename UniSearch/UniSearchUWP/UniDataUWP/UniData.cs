@@ -402,7 +402,7 @@ namespace UniDataNS
         // Returns number of Unicode characters in a (valid) UTF-16 encoded string
         public static int UnicodeLength(string str)
         {
-            if (str == null) return 0;
+            if (string.IsNullOrEmpty(str)) return 0;
             int l = 0;
             bool surrogate = false;
             foreach (char c in str)
