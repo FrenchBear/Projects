@@ -126,85 +126,162 @@
     </Page.Resources>
 
 
-    <SplitView Name="MainSplitView" x:FieldModifier="internal"
-               IsPaneOpen="{x:Bind TogglePaneButton.IsChecked, Mode=TwoWay, Converter={StaticResource nullableBooleanToBooleanConverter}}"
-               DisplayMode="Inline" PanePlacement="Right" OpenPaneLength="400">
 
-        <SplitView.Pane>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <CommandBar DefaultLabelPosition="Right" >
+            <AppBarToggleButton Name="SettingsButton" AccessKey="S" IsChecked="False" Icon="Setting" Label="Settings" />
+
+            <CommandBar.SecondaryCommands>
+                <AppBarButton Name="AboutButton" Label="About" Command="{Binding AboutCommand}" >
+                    <AppBarButton.Icon>
+                        <FontIcon FontFamily="Segoe UI Emoji" Glyph="🛈" FontSize="24" />
+                    </AppBarButton.Icon>
+                </AppBarButton>
+            </CommandBar.SecondaryCommands>
+
+            <CommandBar.Content>
+                <CommandBar DefaultLabelPosition="Right" OverflowButtonVisibility="Collapsed">
+                    <AppBarToggleButton Name="BlocksToggleButton" Icon="DockLeft" Label="Blocks" IsChecked="True" AccessKey="F" />
+                    <AppBarButton Name="CopyCharsButton" AccessKey="C" Icon="Copy" Label="Chars" Command="{Binding CopyRecordsCommand}" CommandParameter="0"  >
+                        <AppBarButton.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control" Key="C" />
+                        </AppBarButton.KeyboardAccelerators>
+                        <ToolTipService.ToolTip>
+                            <ToolTip>Copy selected chars (Ctrl+C)</ToolTip>
+                        </ToolTipService.ToolTip>
+                    </AppBarButton>
+                    <AppBarButton Name="CopyLinesButton" AccessKey="L" Icon="Copy" Label="Lines" Command="{Binding CopyRecordsCommand}" CommandParameter="1"  >
+                        <AppBarButton.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control" Key="L" />
+                        </AppBarButton.KeyboardAccelerators>
+                        <ToolTipService.ToolTip>
+                            <ToolTip>Copy Character, Codepoint and Name of selected chars (Ctrl+L)</ToolTip>
+                        </ToolTipService.ToolTip>
+                    </AppBarButton>
+                    <AppBarButton Name="CopyDetailsButton" AccessKey="D" Icon="Copy" Label="Details" Command="{Binding CopyRecordsCommand}" CommandParameter="2" >
+                        <AppBarButton.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control" Key="D" />
+                        </AppBarButton.KeyboardAccelerators>
+                        <ToolTipService.ToolTip>
+                            <ToolTip>Copy full detail of selected chars (Ctrl+D)</ToolTip>
+                        </ToolTipService.ToolTip>
+                    </AppBarButton>
+
+                    <AppBarButton Name="SwiychGridListButton" AccessKey="G" Label="List/Grid" Click="ListGrid_Click" HorizontalAlignment="Center" Margin="0,1,0,0" VerticalAlignment="Top" >
+                        <AppBarButton.Icon>
+                            <FontIcon FontFamily="Segoe UI Emoji" Glyph="𝄙 ⭤  𝄝" FontSize="24" />
+                        </AppBarButton.Icon>
+                        <AppBarButton.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control" Key="G" />
+                        </AppBarButton.KeyboardAccelerators>
+                        <ToolTipService.ToolTip>
+                            <ToolTip>Toggle between Grid and List view (Ctrl+G)</ToolTip>
+                        </ToolTipService.ToolTip>
+
+                    </AppBarButton>
+                </CommandBar>
+            </CommandBar.Content>
+        </CommandBar>
+
+
+        <SplitView Grid.Row="1" Name="MainSplitView" x:FieldModifier="internal" 
+                   IsPaneOpen="{x:Bind SettingsButton.IsChecked, Mode=TwoWay, Converter={StaticResource nullableBooleanToBooleanConverter}}"
+                   DisplayMode="Overlay" PanePlacement="Right" OpenPaneLength="230">
+
+            <SplitView.Pane>
+                <StackPanel Name="OptionsPanel" Margin="12" >
+                    <TextBlock Text="Settings" Margin="0,0,0,12" FontWeight="SemiBold" FontSize="20" />
+                    <TextBlock Text="Not defined yet" />
+                </StackPanel>
+            </SplitView.Pane>
+
+
+
+            <SplitView Name="BlocksSplitView" x:FieldModifier="internal"
+                       IsPaneOpen="{x:Bind BlocksToggleButton.IsChecked, Mode=TwoWay, Converter={StaticResource nullableBooleanToBooleanConverter}}"
+                       DisplayMode="Inline" PanePlacement="Left" OpenPaneLength="400">
+
+                <SplitView.Pane>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+
+                        <Grid Margin="12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Block" FontWeight="SemiBold" Margin="0,5,12,0" />
+                            <AutoSuggestBox Name="BlockFilterTextBox" Grid.Column="1" QueryIcon="Filter" PlaceholderText="Name filter" 
+                                    AccessKey="B" AccessKeyInvoked="SetFocus"
+                                    Text="{Binding BlockNameFilter, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                        </Grid>
+
+                        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="12,0,12,12">
+                            <Button Content="Select all" AccessKey="A" Click="SelectAllButton_Click" Margin="0,0,6,0"/>
+                            <!-- UnselectAll disabled until we can target Windows 10 1809 -->
+                            <Button Content="Unselect all" AccessKey="U" Click="UnselectAllButton_Click" Margin="0,0,12,0" IsEnabled="False"/>
+
+                            <Button Command="{Binding ShowLevelCommand}" CommandParameter="3" Content="L3" AccessKey="3" Margin="0,0,6,0" />
+                            <Button Command="{Binding ShowLevelCommand}" CommandParameter="2" Content="L2" AccessKey="2" Margin="0,0,6,0" />
+                            <Button Command="{Binding ShowLevelCommand}" CommandParameter="1" Content="L1" AccessKey="1" Margin="0,0,6,0" />
+                            <Button Command="{Binding ShowLevelCommand}" CommandParameter="0" Content="Block" AccessKey="K" Margin="0,0,12,0" />
+                        </StackPanel>
+
+                        <TreeView Grid.Row="2" Name="BlocksTreeView" x:FieldModifier="internal" SelectionMode="Multiple"  Margin="12,0,12,12"
+                          ItemInvoked="BlocksTreeView_ItemInvoked" KeyUp="BlocksTreeView_KeyUp" 
+                          Tapped="BlocksTreeView_Tapped" DoubleTapped="BlocksTreeView_DoubleTapped" />
+                    </Grid>
+                </SplitView.Pane>
+
 
 
                 <Grid Margin="12">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="Block" FontWeight="SemiBold" Margin="0,5,12,0" />
-                    <AutoSuggestBox Name="BlockFilterTextBox" Grid.Column="1" QueryIcon="Filter" PlaceholderText="Name filter" 
-                                    AccessKey="B" AccessKeyInvoked="SetFocus"
-                                    Text="{Binding BlockNameFilter, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                </Grid>
-
-                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="12,0,12,12">
-                    <Button Content="Select all" AccessKey="A" Click="SelectAllButton_Click" Margin="0,0,6,0"/>
-                    <!-- UnselectAll disabled until we can target Windows 10 1809 -->
-                    <Button Content="Unselect all" AccessKey="U" Click="UnselectAllButton_Click" Margin="0,0,12,0" IsEnabled="False"/>
-
-                    <Button Command="{Binding ShowLevelCommand}" CommandParameter="3" Content="L3" AccessKey="3" Margin="0,0,6,0" />
-                    <Button Command="{Binding ShowLevelCommand}" CommandParameter="2" Content="L2" AccessKey="2" Margin="0,0,6,0" />
-                    <Button Command="{Binding ShowLevelCommand}" CommandParameter="1" Content="L1" AccessKey="1" Margin="0,0,6,0" />
-                    <Button Command="{Binding ShowLevelCommand}" CommandParameter="0" Content="Block" AccessKey="K" Margin="0,0,12,0" />
-                </StackPanel>
-
-                <TreeView Grid.Row="2" Name="BlocksTreeView" x:FieldModifier="internal" SelectionMode="Multiple"  Margin="12,0,12,12"
-                          ItemInvoked="BlocksTreeView_ItemInvoked" KeyUp="BlocksTreeView_KeyUp" 
-                          Tapped="BlocksTreeView_Tapped" DoubleTapped="BlocksTreeView_DoubleTapped" />
-            </Grid>
-        </SplitView.Pane>
-
-
-
-        <Grid Margin="12">
-            <Grid.Resources>
-                <ResourceDictionary>
-                    <ResourceDictionary.ThemeDictionaries>
-                        <ResourceDictionary x:Key="Default">
-                            <x:Double x:Key="ListViewItemMinHeight">20</x:Double>
+                    <Grid.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.ThemeDictionaries>
+                                <ResourceDictionary x:Key="Default">
+                                    <x:Double x:Key="ListViewItemMinHeight">20</x:Double>
+                                </ResourceDictionary>
+                                <ResourceDictionary x:Key="HighContrast">
+                                </ResourceDictionary>
+                            </ResourceDictionary.ThemeDictionaries>
                         </ResourceDictionary>
-                        <ResourceDictionary x:Key="HighContrast">
-                        </ResourceDictionary>
-                    </ResourceDictionary.ThemeDictionaries>
-                </ResourceDictionary>
-            </Grid.Resources>
+                    </Grid.Resources>
 
-            <Grid Grid.Column="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
+                    <Grid Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
 
 
-                <!-- Input and control for characters -->
-                <StackPanel Grid.Row="0">
-                    <Grid Margin="0,0,0,12">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="Character" FontWeight="SemiBold" Margin="0,5,12,0" />
-                        <AutoSuggestBox Grid.Column="1" Name="CharacterFilterTextBox" QueryIcon="Filter" PlaceholderText="Name filter"
+                        <!-- Input and control for characters -->
+                        <StackPanel Grid.Row="0">
+                            <Grid Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Character" FontWeight="SemiBold" Margin="0,5,12,0" />
+                                <AutoSuggestBox Grid.Column="1" Name="CharacterFilterTextBox" QueryIcon="Filter" PlaceholderText="Name filter"
                                     AccessKey="N" AccessKeyInvoked="SetFocus"
                                     Text="{Binding CharNameFilter, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" >
-                            <ToolTipService.ToolTip>
-                                <ToolTip Style="{StaticResource LargeTooltipStyle}" >
-                                    <TextBlock>
+                                    <ToolTipService.ToolTip>
+                                        <ToolTip Style="{StaticResource LargeTooltipStyle}" >
+                                            <TextBlock>
                                 Enter a list of words to filter character names (case insensitive, accent insensitive).
                                 <LineBreak/>
                                 A single-letter word filters on character itself, not on name.
@@ -220,183 +297,153 @@
                                 Use a: to filter on character age.  Also support comparison operators such as a:&lt;=10
                                 <LineBreak/>
                                 Use l: to filter on letters of a word
-                                    </TextBlock>
-                                </ToolTip>
-                            </ToolTipService.ToolTip>
-                        </AutoSuggestBox>
-                    </Grid>
-
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                        <TextBlock Text="Copy " Margin="0,4,12,0" />
-                        <Button Content="Chars" AccessKey="C" Margin="0,0,6,0"  Command="{Binding CopyRecordsCommand}" CommandParameter="0" HorizontalAlignment="Left" VerticalAlignment="Top" >
-                            <Button.KeyboardAccelerators>
-                                <KeyboardAccelerator Modifiers="Control" Key="C" />
-                            </Button.KeyboardAccelerators>
-                            <ToolTipService.ToolTip>
-                                <ToolTip>Copy selected chars (Ctrl+C)</ToolTip>
-                            </ToolTipService.ToolTip>
-                        </Button>
-                        <Button Content="Lines" AccessKey="L" Margin="0,0,6,0"  Command="{Binding CopyRecordsCommand}" CommandParameter="1">
-                            <Button.KeyboardAccelerators>
-                                <KeyboardAccelerator Modifiers="Control" Key="L" />
-                            </Button.KeyboardAccelerators>
-                            <ToolTipService.ToolTip>
-                                <ToolTip>Copy Character, Codepoint and Name of selected chars (Ctrl+L)</ToolTip>
-                            </ToolTipService.ToolTip>
-                        </Button>
-                        <Button Content="Details" AccessKey="D" Margin="0,0,18,0" Command="{Binding CopyRecordsCommand}" CommandParameter="2"/>
-                        <Button Content="𝄙 ⭤  𝄝" FontSize="19" Padding="4,0" AccessKey="G" Margin="0,0,18,0" Click="ListGrid_Click" VerticalAlignment="Stretch">
-                            <Button.KeyboardAccelerators>
-                                <KeyboardAccelerator Modifiers="Control" Key="G" />
-                            </Button.KeyboardAccelerators>
-                            <ToolTipService.ToolTip>
-                                <ToolTip>Toggle between Grid and List view (Ctrl+G)</ToolTip>
-                            </ToolTipService.ToolTip>
-                        </Button>
-                        <Button Content="About" Margin="0,0,18,0" Command="{Binding AboutCommand}" />
-                        <ToggleButton Name="TogglePaneButton" IsChecked="True" Content="Block Filter" AccessKey="F" Margin="0,0,18,0" />
-
-                    </StackPanel>
-                </StackPanel>
-
-                <SemanticZoom Grid.Row="1"  Grid.Column="1">
-                    <SemanticZoom.ZoomedInView>
-                        <GridView Name="CharGridView" x:FieldModifier="internal" SelectedItem="{Binding SelectedChar, Mode=TwoWay}" 
-                              ItemsSource="{Binding CharactersRecordsCVS.View}"
-                              Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
-                              PreviewKeyDown="GridViewCell_PreviewKeyDown"
-                              SelectionMode="Extended" SelectionChanged="CharListView_SelectionChanged">
-
-                            <GridView.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="3,3,0,0"
-                                            MinWidth="72" MaxWidth="72" Height="72" DoubleTapped="GridViewCell_DoubleTap" >
-                                        <TextBlock Name="CharImage" Text="{Binding Character}"  
-                                                   FontSize="48" HorizontalAlignment="Center" VerticalAlignment="Top" >
-                                        </TextBlock>
-                                    </Border>
-                                </DataTemplate>
-                            </GridView.ItemTemplate>
-
-                            <GridView.GroupStyle>
-                                <GroupStyle>
-                                    <GroupStyle.HeaderTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Key}" />
-                                        </DataTemplate>
-                                    </GroupStyle.HeaderTemplate>
-                                </GroupStyle>
-                            </GridView.GroupStyle>
-                        </GridView>
-                    </SemanticZoom.ZoomedInView>
-
-                    <SemanticZoom.ZoomedOutView>
-                        <ListView ItemsSource="{Binding CharactersRecordsCVS.View.CollectionGroups}">
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Group.Key}" />
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </SemanticZoom.ZoomedOutView>
-                </SemanticZoom>
-
-
-
-                <!-- List of filtered characters -->
-                <ListView  Name="CharListView" x:FieldModifier="internal" Grid.Row="1" 
-                       SelectedItem="{Binding SelectedChar, Mode=TwoWay}" ItemsSource="{Binding CharactersRecordsFilteredList}"
-                       Visibility="Collapsed"
-                       Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
-                       SelectionMode="Extended" SelectionChanged="CharListView_SelectionChanged" >
-
-                    <ListView.HeaderTemplate>
-                        <DataTemplate>
-                            <Grid Background="{ThemeResource SystemControlBackgroundBaseLowBrush}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="50"/>
-                                    <ColumnDefinition Width="80"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="Char" />
-                                <TextBlock Grid.Column="1" Text="Codepoint" />
-                                <TextBlock Grid.Column="2" Text="Name"/>
+                                            </TextBlock>
+                                        </ToolTip>
+                                    </ToolTipService.ToolTip>
+                                </AutoSuggestBox>
                             </Grid>
-                        </DataTemplate>
-                    </ListView.HeaderTemplate>
+                        </StackPanel>
 
-                    <ListView.ItemTemplate>
-                        <DataTemplate >
-                            <Grid Margin="-12,0,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="50"/>
-                                    <ColumnDefinition Width="80"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="{Binding Character}" />
-                                <HyperlinkButton Grid.Column="1" Content="{Binding CodepointHex}" 
+                        <SemanticZoom Name="CharSemanticView" Grid.Row="1"  Grid.Column="1">
+                            <SemanticZoom.ZoomedInView>
+                                <GridView Name="CharGridView" x:FieldModifier="internal" SelectedItem="{Binding SelectedChar, Mode=TwoWay}" 
+                                          ItemsSource="{Binding CharactersRecordsCVS.View}"
+                                          Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
+                                          PreviewKeyDown="GridViewCell_PreviewKeyDown"
+                                          SelectionMode="Extended" SelectionChanged="CharListView_SelectionChanged">
+
+                                    <GridView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="3,3,0,0"
+                                            MinWidth="72" MaxWidth="72" Height="72" DoubleTapped="GridViewCell_DoubleTap" >
+                                                <TextBlock Name="CharImage" Text="{Binding Character}"  
+                                                   FontSize="48" HorizontalAlignment="Center" VerticalAlignment="Top" >
+                                                </TextBlock>
+                                            </Border>
+                                        </DataTemplate>
+                                    </GridView.ItemTemplate>
+
+                                    <GridView.GroupStyle>
+                                        <GroupStyle>
+                                            <GroupStyle.HeaderTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Key}" />
+                                                </DataTemplate>
+                                            </GroupStyle.HeaderTemplate>
+                                        </GroupStyle>
+                                    </GridView.GroupStyle>
+                                </GridView>
+                            </SemanticZoom.ZoomedInView>
+
+                            <SemanticZoom.ZoomedOutView>
+                                <ListView ItemsSource="{Binding CharactersRecordsCVS.View.CollectionGroups}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Group.Key}" />
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </SemanticZoom.ZoomedOutView>
+                        </SemanticZoom>
+
+
+
+                        <!-- List of filtered characters -->
+                        <ListView  Name="CharListView" x:FieldModifier="internal" Grid.Row="1" 
+                                   SelectedItem="{Binding SelectedChar, Mode=TwoWay}" ItemsSource="{Binding CharactersRecordsFilteredList}"
+                                   Visibility="Collapsed"
+                                   Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
+                                   SelectionMode="Extended" SelectionChanged="CharListView_SelectionChanged" >
+
+                            <ListView.HeaderTemplate>
+                                <DataTemplate>
+                                    <Grid Background="{ThemeResource SystemControlBackgroundBaseLowBrush}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="50"/>
+                                            <ColumnDefinition Width="80"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="Char" />
+                                        <TextBlock Grid.Column="1" Text="Codepoint" />
+                                        <TextBlock Grid.Column="2" Text="Name"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.HeaderTemplate>
+
+                            <ListView.ItemTemplate>
+                                <DataTemplate >
+                                    <Grid Margin="-12,0,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="50"/>
+                                            <ColumnDefinition Width="80"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding Character}" />
+                                        <HyperlinkButton Grid.Column="1" Content="{Binding CodepointHex}" 
                                 Command="{Binding ElementName=MainPage, Path=DataContext.ShowDetailCommand}"
                                 CommandParameter="{Binding Codepoint}"
                                 Padding="0" />
-                                <TextBlock Grid.Column="2" Text="{Binding Name}" Margin="0" />
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+                                        <TextBlock Grid.Column="2" Text="{Binding Name}" Margin="0" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
 
 
-                <!-- Selected character detail on main window -->
-                <Grid Grid.Row="2" Margin="0,6,0,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="80" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
+                        <!-- Selected character detail on main window -->
+                        <Grid Grid.Row="2" Margin="0,6,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="80" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
 
-                    <Border Background="White" BorderThickness="2" BorderBrush="{ThemeResource SystemControlHighlightAltListAccentMediumBrush}" Grid.RowSpan="5" VerticalAlignment="Top" Margin="0,3,12,0"
+                            <Border Background="White" BorderThickness="2" BorderBrush="{ThemeResource SystemControlHighlightAltListAccentMediumBrush}" Grid.RowSpan="5" VerticalAlignment="Top" Margin="0,3,12,0"
                         MinWidth="90" MaxWidth="160" Height="90">
-                        <TextBlock Name="CharImage" Foreground="{ThemeResource SystemControlHighlightAltListAccentHighBrush}" Text="{Binding SelectedChar.Character}"  
+                                <TextBlock Name="CharImage" Foreground="{ThemeResource SystemControlHighlightAltListAccentHighBrush}" Text="{Binding SelectedChar.Character}"  
                                FontSize="72" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-10" >
-                        </TextBlock>
-                    </Border>
+                                </TextBlock>
+                            </Border>
 
 
-                    <TextBlock Grid.Row="0" Grid.Column="1" Text="UTF-8" FontWeight="SemiBold" />
-                    <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding SelectedChar.UTF8}" />
-                    <TextBlock Grid.Row="1" Grid.Column="1" Text="UTF-16" FontWeight="SemiBold" />
-                    <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding SelectedChar.UTF16}" />
-                    <TextBlock Grid.Row="2" Grid.Column="1" Text="Character" FontWeight="SemiBold" />
-                    <ContentPresenter Grid.Row="2" Grid.Column="2" Content="{Binding StrContent}" />
-                    <TextBlock Grid.Row="3" Grid.Column="1" Text="Block" FontWeight="SemiBold" />
-                    <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding SelectedChar.Block.BlockNameAndRange}" />
-                    <TextBlock Grid.Row="4" Grid.Column="1" Text="Subheader " FontWeight="SemiBold" />
-                    <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding SelectedChar.Subheader}" />
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="UTF-8" FontWeight="SemiBold" />
+                            <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding SelectedChar.UTF8}" />
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="UTF-16" FontWeight="SemiBold" />
+                            <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding SelectedChar.UTF16}" />
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="Character" FontWeight="SemiBold" />
+                            <ContentPresenter Grid.Row="2" Grid.Column="2" Content="{Binding StrContent}" />
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="Block" FontWeight="SemiBold" />
+                            <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding SelectedChar.Block.BlockNameAndRange}" />
+                            <TextBlock Grid.Row="4" Grid.Column="1" Text="Subheader " FontWeight="SemiBold" />
+                            <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding SelectedChar.Subheader}" />
+                        </Grid>
+
+
+                        <!-- Status bar character count/filtered/selected -->
+                        <StackPanel Grid.Row="3" Background="{ThemeResource SystemControlBackgroundBaseLowBrush}" Margin="0,6,0,0" Orientation="Horizontal">
+                            <TextBlock Text="{Binding NumChars}" />
+                            <TextBlock Text=" characters  " />
+                            <TextBlock Text="{Binding FilChars}" Margin="18,0,0,0" />
+                            <TextBlock Text="  filtered  " />
+                            <TextBlock Text="{Binding SelChars}" Margin="18,0,0,0" />
+                            <TextBlock Text="  selected      |" />
+
+                            <TextBlock Text="{Binding NumBlocks}" Margin="28,0,0,0"/>
+                            <TextBlock Text=" blocks  " />
+                            <TextBlock Text="{Binding FilBlocks}" Margin="18,0,0,0" />
+                            <TextBlock Text="  filtered  " />
+                        </StackPanel>
+                    </Grid>
                 </Grid>
+            </SplitView>
+        </SplitView>
+    </Grid>
 
-
-                <!-- Status bar character count/filtered/selected -->
-                <StackPanel Grid.Row="3" Background="{ThemeResource SystemControlBackgroundBaseLowBrush}" Margin="0,6,0,0" Orientation="Horizontal">
-                    <TextBlock Text="{Binding NumChars}" />
-                    <TextBlock Text=" characters  " />
-                    <TextBlock Text="{Binding FilChars}" Margin="18,0,0,0" />
-                    <TextBlock Text="  filtered  " />
-                    <TextBlock Text="{Binding SelChars}" Margin="18,0,0,0" />
-                    <TextBlock Text="  selected      |" />
-
-                    <TextBlock Text="{Binding NumBlocks}" Margin="28,0,0,0"/>
-                    <TextBlock Text=" blocks  " />
-                    <TextBlock Text="{Binding FilBlocks}" Margin="18,0,0,0" />
-                    <TextBlock Text="  filtered  " />
-                </StackPanel>
-            </Grid>
-        </Grid>
-    </SplitView>
-    
 </Page>

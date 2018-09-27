@@ -31,11 +31,13 @@ namespace UniSearchUWPNS
         private readonly BlockNode BlocksRoot;                          // TreeView root
         private HashSet<BlockRecord> SelectedBlocksSet = new HashSet<BlockRecord>();    // Set of selected blocks in TreeView
 
+
         // INotifyPropertyChanged interface
         public event PropertyChangedEventHandler PropertyChanged;
 
         internal void NotifyPropertyChanged(string propertyName)
           => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
 
         // Commands public interface
         public ICommand CopyRecordsCommand { get; private set; }
@@ -43,6 +45,7 @@ namespace UniSearchUWPNS
         public ICommand AboutCommand { get; private set; }
         public ICommand ShowLevelCommand { get; private set; }
         public ICommand ShowDetailCommand { get; private set; }
+
 
         // Constructor
         public ViewModel(SearchPage p)
@@ -308,11 +311,14 @@ namespace UniSearchUWPNS
 
             var SavedSelectedChar = SelectedChar;
 
-            //CharactersRecordsFilteredList.Clear();
-            //foreach (CharacterRecord c in CharactersRecordsList.Where(cr => p2(cr)))
-            //    CharactersRecordsFilteredList.Add(c);
 
-            CharactersRecordsFilteredList = new ObservableCollection<CharacterRecord>(CharactersRecordsList.Where(cr => p2(cr)));
+            // Build filtered list, used directly by ListView and to build grouped version for GridView
+            CharactersRecordsFilteredList.Clear();
+            foreach (CharacterRecord c in CharactersRecordsList.Where(cr => p2(cr)).OrderBy(cr => cr.Block.Rank))
+                CharactersRecordsFilteredList.Add(c);
+
+            // Not good, need a NotifyPropertyChanged to recreate a new ObservableCollection
+            //CharactersRecordsFilteredList = new ObservableCollection<CharacterRecord>(CharactersRecordsList.Where(cr => p2(cr)));
 
             // Build the grouped version
             var groups = CharactersRecordsFilteredList.GroupBy(cr => new BSHGroupKey(cr.BlockBegin, cr.Subheader), new GroupKeyComparer()).OrderBy(grp => UniData.BlockRecords[grp.Key.BlockBegin].Rank).ToList();

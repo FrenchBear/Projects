@@ -60,7 +60,7 @@ namespace UniSearchUWPNS
                 c.Focus(FocusState.Keyboard);
         }
 
-        public bool IsGridViewVisible => CharGridView.Visibility == Visibility.Visible;
+        public bool IsGridViewVisible => CharSemanticView.Visibility == Visibility.Visible;
 
         public ListViewBase CharCurrentView => IsGridViewVisible ? (ListViewBase)CharGridView : (ListViewBase)CharListView;
 
@@ -68,14 +68,14 @@ namespace UniSearchUWPNS
         {
             if (IsGridViewVisible)
             {
-                CharGridView.Visibility = Visibility.Collapsed;
+                CharSemanticView.Visibility = Visibility.Collapsed;
                 CharListView.Visibility = Visibility.Visible;
                 CharListView.ScrollIntoView(vm.SelectedChar);
             }
             else
             {
                 CharListView.Visibility = Visibility.Collapsed;
-                CharGridView.Visibility = Visibility.Visible;
+                CharSemanticView.Visibility = Visibility.Visible;
                 CharGridView.ScrollIntoView(vm.SelectedChar);
             }
         }
