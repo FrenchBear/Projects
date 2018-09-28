@@ -1,9 +1,13 @@
 ﻿// FilterPredicateBuilder
 // Helper class to build a specific Predicate<object> to filter a List depending on a list of searched words and search options
 //
-// 2016-12-13   PV  v2.1 Full rewrite in a separate, clean class
-// 2017-01-01   PV  v2.5.1 Exclusion of search words starting with -; move filter parsing from VM to here
-// 2018-09-08   PV  Adaptation to UniSearch with dedicated predicates for CharacterRecord and BlockRecord
+// 2016-12-13   PV      v2.1 Full rewrite in a separate, clean class
+// 2017-01-01   PV      v2.5.1 Exclusion of search words starting with -; move filter parsing from VM to here
+// 2018-09-08   PV      Adaptation to UniSearch with dedicated predicates for CharacterRecord and BlockRecord
+// 2018-09-20   PV      Filter on Subheader using s:
+// 2018-09-20   PV      Filter on letters using l:
+// 2018-09-26   PV      Use helper WordStartsWithPrefix for better code detecting special flags
+
 
 using System;
 using System.Collections.Generic;
@@ -13,6 +17,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using UniDataNS;
+
 
 namespace UniSearchNS
 {
@@ -53,7 +58,10 @@ namespace UniSearchNS
                 // words in regular expressions for whole word searches
                 foreach (string oneWord in wordsList)
                 {
-                    string word = isAS ? oneWord : RemoveDiacritics(oneWord);
+                    //string word = isAS ? oneWord : RemoveDiacritics(oneWord);
+                    // Because of l: prefix, can't remove diacritics in this app
+                    // But not really a problem since other searches use English wors without accents
+                    string word = oneWord;
 
                     // Special processing for WholeWords mode, transform each word in a Regex
                     if (isWW)
@@ -240,6 +248,19 @@ namespace UniSearchNS
                 }
 
 
+                // Checks if word starts with the first letters of prefix followed by :
+                // If there is a match, returns true and removes prefix from word
+                bool WordStartsWithPrefix(string prefix)
+                {
+                    int p = word.IndexOf(':');
+                    if (p <= 0 || p > prefix.Length) return false;      // p<=0 since starting with : is not a valid prefix
+                    bool match= string.Compare(word.Substring(0, p), prefix.Substring(0, p), StringComparison.InvariantCultureIgnoreCase) == 0;
+                    if (match)
+                        word = word.Substring(p + 1);
+                    return match;
+                }
+
+
                 bool wordFilter = true;
 
                 // If searched word is exactly 1 Unicode character, test directly character itself
@@ -264,23 +285,23 @@ namespace UniSearchNS
                 }
 
                 // If searched string is U+ followed by 1 to 6 hex digits, search for Codepoint value
-                else if (CodepointRegex.IsMatch(word))
+                // StartsWith U+ is for optimization, no need to start interpreting a regex for all chars
+                else if (word.StartsWith("U+", StringComparison.OrdinalIgnoreCase) && CodepointRegex.IsMatch(word))
                 {
                     int n = int.Parse(word.Substring(2), NumberStyles.HexNumber);
                     wordFilter = cr.Codepoint == n;
                 }
 
                 // If searched string starts with gc:, it's a category filter
-                else if (word.StartsWith("GC:", StringComparison.OrdinalIgnoreCase))
+                else if (WordStartsWithPrefix("GC"))
                 {
-                    wordFilter = cr.CategoryRecord.CategoriesList.Any(s => string.Compare(s, word.Substring(3), StringComparison.OrdinalIgnoreCase) == 0);
+                    wordFilter = cr.CategoryRecord.CategoriesList.Any(s => string.Compare(s, word, StringComparison.OrdinalIgnoreCase) == 0);
                 }
 
                 // Age filter
-                else if (word.StartsWith("Age:", StringComparison.OrdinalIgnoreCase) || word.StartsWith("A:", StringComparison.OrdinalIgnoreCase))
+                else if (WordStartsWithPrefix("Age"))
                 {
-                    double age = double.Parse(cr.Age, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture.NumberFormat);
-                    word = word.Substring(word.IndexOf(':')+1);
+                    double crAge = double.Parse(cr.Age, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture.NumberFormat);
                     string op = "";
                     foreach (string o in new string[] { ">=", ">", "<=", "<", "=" })
                         if (word.StartsWith(o, StringComparison.Ordinal))
@@ -293,19 +314,31 @@ namespace UniSearchNS
                     if (word.Length > 0 && double.TryParse(word, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture.NumberFormat, out double v))
                         switch (op)
                         {
-                            case ">": wordFilter = age > v; break;
-                            case ">=": wordFilter = age >= v; break;
-                            case "<": wordFilter = age < v; break;
-                            case "<=": wordFilter = age <= v; break;
-                            default: wordFilter = Math.Abs(age - v) < 0.001; break;
+                            case ">": wordFilter = crAge > v; break;
+                            case ">=": wordFilter = crAge >= v; break;
+                            case "<": wordFilter = crAge < v; break;
+                            case "<=": wordFilter = crAge <= v; break;
+                            default: wordFilter = Math.Abs(crAge - v) < 0.001; break;
                         }
                 }
 
                 // Block filter
-                else if (word.StartsWith("Block:", StringComparison.OrdinalIgnoreCase) || word.StartsWith("B:", StringComparison.OrdinalIgnoreCase))
+                else if (WordStartsWithPrefix("Block"))
                 {
-                    word = word.Substring(word.IndexOf(':') + 1);
-                    wordFilter = cr.BlockRecord.BlockName.IndexOf(word, 0, StringComparison.OrdinalIgnoreCase) >= 0;
+                    wordFilter = cr.Block.BlockName.IndexOf(word, 0, StringComparison.OrdinalIgnoreCase) >= 0;
+                }
+
+                // Subheader filter
+                else if (WordStartsWithPrefix("Subheader"))
+                {
+                    if (word.Length > 0)
+                        wordFilter = cr.Subheader != null && cr.Subheader.IndexOf(word, 0, StringComparison.OrdinalIgnoreCase) >= 0;
+                }
+
+                // Letters filter: matches all letters of word
+                else if (WordStartsWithPrefix("Letters"))
+                {
+                    wordFilter = word.EnumCharacterRecords().Any(r => r == cr);
                 }
 
                 // Otherwise search a part of Name

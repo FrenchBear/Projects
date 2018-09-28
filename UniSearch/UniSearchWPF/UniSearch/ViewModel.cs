@@ -1,7 +1,9 @@
 ﻿// UniSearch ViewModel
 // Interaction and commands support
 //
-// 2018-12-09   PV
+// 2018-09-12   PV
+// 2018-09-28   PV      New blocks filtering controling node expansion and not visibility
+
 
 using System;
 using System.Collections.Generic;
@@ -22,6 +24,7 @@ using DirectDrawWrite;
 using System.Windows.Controls;
 using System.Windows.Documents;
 
+
 namespace UniSearchNS
 {
     internal class ViewModel : INotifyPropertyChanged
@@ -29,7 +32,7 @@ namespace UniSearchNS
         // Private variables
         private readonly SearchWindow window;       // Access to main window
         private Dictionary<int, CheckableNode> BlocksCheckableNodesDictionary;
-        private readonly CheckableNode root;        // TreeView root
+        private readonly CheckableNode BlocksRoot;        // TreeView root
 
 
         // INotifyPropertyChanged interface
@@ -43,7 +46,7 @@ namespace UniSearchNS
         public ICommand CopyRecordsCommand { get; private set; }
         public ICommand CopyImageCommand { get; private set; }
         public ICommand ShowLevelCommand { get; private set; }
-        public ICommand FlipVisibleCommand { get; private set; }
+        public ICommand SelectAllCommand { get; private set; }
         public ICommand ShowDetailCommand { get; private set; }
 
 
@@ -56,7 +59,7 @@ namespace UniSearchNS
             CopyRecordsCommand = new RelayCommand<object>(CopyRecordsExecute, CanCopyRecords);
             CopyImageCommand = new RelayCommand<object>(CopyImageExecute, CanCopyRecords);
             ShowLevelCommand = new RelayCommand<object>(ShowLevelExecute);
-            FlipVisibleCommand = new RelayCommand<string>(FlipVisibleExecute);
+            SelectAllCommand = new RelayCommand<string>(SelectAllExecute);
             ShowDetailCommand = new RelayCommand<int>(ShowDetailExecute);
 
             // Get Unicode data
@@ -65,14 +68,14 @@ namespace UniSearchNS
 
 
             // root is *not* added to the TreeView on purpose
-            root = new CheckableNode("root", 4);
+            BlocksRoot = new CheckableNode("root", 4);
             // Dictionary of CheckableNodes indexed by Begin block value
             BlocksCheckableNodesDictionary = new Dictionary<int, CheckableNode>();
 
             foreach (var l3 in BlockRecordsList.GroupBy(b => b.Level3Name).OrderBy(g => g.Key))
             {
                 var r3 = new CheckableNode(l3.Key, 3);
-                root.Children.Add(r3);
+                BlocksRoot.Children.Add(r3);
                 foreach (var l2 in l3.GroupBy(b => b.Level2Name))
                 {
                     var r2 = new CheckableNode(l2.Key, 2);
@@ -99,9 +102,9 @@ namespace UniSearchNS
                 }
             }
 
-            root.Initialize();
-            root.IsChecked = true;
-            Roots = root.Children;
+            BlocksRoot.Initialize();
+            BlocksRoot.IsChecked = true;
+            Roots = BlocksRoot.Children;
 
             // Unselect some pretty useless blocks
             BlocksCheckableNodesDictionary[0x0000].IsChecked = false;       // ASCII Controls C0
@@ -109,7 +112,7 @@ namespace UniSearchNS
             BlocksCheckableNodesDictionary[0xE0100].IsChecked = false;      // Variation Selectors Supplement; Variation Selectors; Specials; Symbols and Punctuation
             BlocksCheckableNodesDictionary[0xF0000].IsChecked = false;      // Supplementary Private Use Area-A; ; Private Use; Symbols and Punctuation
             BlocksCheckableNodesDictionary[0x100000].IsChecked = false;     // Supplementary Private Use Area-B; ; Private Use; Symbols and Punctuation
-            ActionAllNodes(root, n =>
+            ActionAllNodes(BlocksRoot, n =>
             {
                 if (n.Name == "East Asian Scripts") n.IsChecked = false;
                 if (n.Name.IndexOf("CJK", StringComparison.Ordinal) >= 0) n.IsChecked = false;
@@ -125,7 +128,6 @@ namespace UniSearchNS
             // To compute bound values based on initial blocks filtering
             FilterCharList();
             RefreshSelBlocks();
-            RefreshFilBlocks();
         }
 
 
@@ -161,7 +163,7 @@ namespace UniSearchNS
                 {
                     _BlockNameFilter = value;
                     NotifyPropertyChanged(nameof(BlockNameFilter));
-                    FilterBlockList();
+                    ApplyBlockNameFilter();
                 }
             }
         }
@@ -320,12 +322,6 @@ namespace UniSearchNS
             SelBlocks = BlocksCheckableNodesDictionary.Values.Count(cn => cn.IsChecked.Value && cn.Level == 0);
         }
 
-        private void RefreshFilBlocks()
-        {
-            FilBlocks = BlocksCheckableNodesDictionary.Values.Count(cn => cn.NodeVisibility == Visibility.Visible);
-        }
-
-
 
         // ==============================================================================================
         // Delay processing of TextChanged event 250ms using a DispatcherTimer
@@ -360,7 +356,7 @@ namespace UniSearchNS
             CollectionView view = CollectionViewSource.GetDefaultView(CharactersRecordsList) as CollectionView;
 
             // Block part of the filtering predicate
-            bool bp(object o) => BlocksCheckableNodesDictionary[((CharacterRecord)o).Block].IsChecked.Value;
+            bool bp(object o) => BlocksCheckableNodesDictionary[((CharacterRecord)o).BlockBegin].IsChecked.Value;
 
             // Character part of the filtering predicate
             if (string.IsNullOrEmpty(CharNameFilter))
@@ -376,56 +372,34 @@ namespace UniSearchNS
         }
 
 
-        private void FilterBlockList()
+        private void ApplyBlockNameFilter()
         {
-            string s = BlockNameFilter;
-            var p = new PredicateBuilder(s, false, false, false, false);
-            Predicate<object> f = p.GetCheckableNodeFilter;
+            //string s = BlockNameFilter;
+            //var p = new PredicateBuilder(s, false, false, false, false);
+            //Predicate<object> f = p.GetCheckableNodeFilter;
 
-            FilterBlock(root);
-            RefreshFilBlocks();
+            FilterBlock(BlocksRoot);
+            //RefreshFilBlocks();
 
-            /*
-            Visibility FilterBlock(CheckableNode n)
-            {
-                if (n.Level == 0)
-                {
-                    n.NodeVisibility = f(n) ? Visibility.Visible : Visibility.Collapsed;
-                    return n.NodeVisibility;
-                }
-                else
-                {
-                    Visibility v = Visibility.Collapsed;
-                    foreach (CheckableNode child in n.Children)
-                        if (FilterBlock(child) == Visibility.Visible)
-                            v = Visibility.Visible;
-                    // Also filter on group name
-                    if (f(n)) v = Visibility.Visible;
-                    n.NodeVisibility = v;
-                    return v;
-                }
-            }
-            */
+
+            // Filtering Predicate
+            bool fp(CheckableNode bn) => String.IsNullOrEmpty(BlockNameFilter) || bn.Name.IndexOf(BlockNameFilter, 0, StringComparison.InvariantCultureIgnoreCase) >= 0;
+
 
             bool FilterBlock(CheckableNode n)
             {
                 if (n.Level == 0)
-                {
-                    bool v = f(n);
-                    n.NodeVisibility = v ? Visibility.Visible : Visibility.Collapsed;
-                    return v;
-                }
+                    return fp(n);
                 else
                 {
                     bool exp = false;
                     foreach (CheckableNode child in n.Children)
                         exp |= FilterBlock(child);
-                    exp |= f(n);
-                    n.IsExpanded = exp;
+                    exp |= fp(n);
+                    n.IsNodeExpanded = exp;
                     return exp;
                 }
             }
-
         }
 
 
@@ -458,7 +432,7 @@ namespace UniSearchNS
                         break;
 
                     case "2":
-                        sb.AppendLine(r.Character + "\t" + r.CodepointHex + "\t" + r.Name + "\t" + r.CategoryRecord.Categories + "\t" + r.Age + "\t" + r.BlockRecord.BlockNameAndRange + "\t" + r.UTF16 + "\t" + r.UTF8);
+                        sb.AppendLine(r.Character + "\t" + r.CodepointHex + "\t" + r.Name + "\t" + r.CategoryRecord.Categories + "\t" + r.Age + "\t" + r.Block.BlockNameAndRange + "\t" + r.UTF16 + "\t" + r.UTF8);
                         break;
                 }
             System.Windows.Clipboard.Clear();
@@ -476,7 +450,7 @@ namespace UniSearchNS
         }
 
 
-
+        // Helper, performs an action on a node and all its decendants
         void ActionAllNodes(CheckableNode n, Action<CheckableNode> a)
         {
             a(n);
@@ -487,38 +461,20 @@ namespace UniSearchNS
         private void ShowLevelExecute(object param)
         {
             int level = int.Parse(param as string);
-            ActionAllNodes(root, n => { n.IsExpanded = (n.Level != level); });
+            ActionAllNodes(BlocksRoot, n => { n.IsNodeExpanded = (n.Level != level); });
         }
 
 
-        /*
-        <Button Command="{Binding FlipVisibleCommand}" CommandParameter="0" Content=" Check _visible " Margin="0,0,6,0" />
-        <Button Command="{Binding FlipVisibleCommand}" CommandParameter="1" Content=" _Uncheck visible " Margin="0,0,6,0" />
-        <Button Command="{Binding FlipVisibleCommand}" CommandParameter="2" Content=" Check _all " Margin="0,0,6,0" />
-        <Button Command="{Binding FlipVisibleCommand}" CommandParameter="3" Content=" Unchec_k all " Margin="0,0,6,0" />
-
-        */
-        private void FlipVisibleExecute(string sparam)
+        private void SelectAllExecute(string sparam)
         {
             int.TryParse(sparam, out int param);
-            switch (param)
-            {
-                case 0:
-                case 1:
-                    ActionAllNodes(root, n => { if (n.Level == 0 && n.NodeVisibility == Visibility.Visible) n.IsChecked = param == 0; });
-                    break;
-                case 2:
-                case 3:
-                    ActionAllNodes(root, n => { if (n.Level == 0) n.IsChecked = param == 2; });
-                    break;
-            }
+            ActionAllNodes(BlocksRoot, n => { n.IsChecked = param == 1; });
+            RefreshSelBlocks();
         }
 
 
-        private void ShowDetailExecute(int codepoint)
-        {
+        private void ShowDetailExecute(int codepoint) =>
             CharDetailWindow.ShowDetail(codepoint);
-        }
 
     }
 }

@@ -5,9 +5,6 @@
 // 2018-09-11   PV
 // 2018-09-17   PV      1.1 Store UCD Data in embedded streams; Skip characters from planes 15 and 16
 // 2018-09-20   PV      1.2 Read NamesList.txt
-//
-// ToDo: Manage script PropertyValueAliases.txt and Scripts.txt
-// ToDo: Add more tests
 
 
 using System;
@@ -18,19 +15,20 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
+
 
 namespace UniDataNS
 {
-
-    // Represents an Unicode codepoint and various associated informaton
+    /// <summary>
+    /// Represents an Unicode codepoint and various associated information 
+    /// </summary>
     public class CharacterRecord
     {
         public int Codepoint { get; private set; }
         public string Name { get; private set; }
         public string Category { get; private set; }
         public string Age { get; internal set; }
-        public int Block { get; internal set; } = -1;       // -1 for tests, to make sure at the end all supported chars have a block
+        public int BlockBegin { get; internal set; } = -1;       // -1 for tests, to make sure at the end all supported chars have a block
         public string Subheader { get; internal set; }
 
 
@@ -43,7 +41,7 @@ namespace UniDataNS
 
 
         // Used by binding
-        public BlockRecord BlockRecord => UniData.BlockRecords[Block];
+        public BlockRecord Block => UniData.BlockRecords[BlockBegin];
         public CategoryRecord CategoryRecord => UniData.CategoryRecords[Category];
 
         public string CodepointHex => $"U+{Codepoint:X4}";
@@ -82,6 +80,9 @@ namespace UniDataNS
     }
 
 
+    /// <summary>
+    /// Represent an Unicode block (range of codepoints) and its hierarchical classification
+    /// </summary>
     public class BlockRecord
     {
         public int Begin { get; private set; }
@@ -90,6 +91,9 @@ namespace UniDataNS
         public string Level1Name { get; private set; }
         public string Level2Name { get; private set; }
         public string Level3Name { get; private set; }
+
+        // Sorting order matching hierarchy
+        public int Rank { get; internal set; }
 
         public string BlockNameAndRange => $"{BlockName} {Begin:X4}..{End:X4}";
 
@@ -104,12 +108,14 @@ namespace UniDataNS
             this.Level3Name = Level3Name;
         }
 
-        public override string ToString()
-        {
-            return $"BlockRecord(Range={Begin:X4}..{End:X4}, Block={BlockName}, L1={Level1Name}, L2={Level2Name}, L3={Level3Name})";
-        }
+        public override string ToString() =>
+            $"BlockRecord(Range={Begin:X4}..{End:X4}, Block={BlockName}, L1={Level1Name}, L2={Level2Name}, L3={Level3Name})";
     }
 
+
+    /// <summary>
+    /// Represents Unicode general category of characters
+    /// </summary>
     public class CategoryRecord
     {
         public string Code { get; private set; }
@@ -133,6 +139,9 @@ namespace UniDataNS
     }
 
 
+    /// <summary>
+    /// Static class exposing Unicode data dictionaries
+    /// </summary>
     public static class UniData
     {
         // Real internal dictionaries used to store Unicode data
@@ -141,14 +150,13 @@ namespace UniDataNS
         private static readonly Dictionary<int, BlockRecord> block_map = new Dictionary<int, BlockRecord>();
 
 
-        public static ReadOnlyDictionary<int, CharacterRecord> CharacterRecords => new ReadOnlyDictionary<int, CharacterRecord>(char_map);
+        // Public read only dictionaries to access Unicode data
+        public static ReadOnlyDictionary<int, CharacterRecord> CharacterRecords { get; } = new ReadOnlyDictionary<int, CharacterRecord>(char_map);
+        public static ReadOnlyDictionary<string, CategoryRecord> CategoryRecords { get; } = new ReadOnlyDictionary<string, CategoryRecord>(cat_map);
+        public static ReadOnlyDictionary<int, BlockRecord> BlockRecords { get; } = new ReadOnlyDictionary<int, BlockRecord>(block_map);
 
-        public static ReadOnlyDictionary<int, BlockRecord> BlockRecords => new ReadOnlyDictionary<int, BlockRecord>(block_map);
 
-        public static ReadOnlyDictionary<string, CategoryRecord> CategoryRecords => new ReadOnlyDictionary<string, CategoryRecord>(cat_map);
-
-
-        // Static constructor
+        // Static constructor, loads data from resources
         static UniData()
         {
             // Read blocks
@@ -164,6 +172,30 @@ namespace UniDataNS
                     BlockRecord br = new BlockRecord(begin, end, fields[1], fields[2], fields[3], fields[4]);
                     block_map.Add(begin, br);
                 }
+
+            // Compute rank using an integer of format 33221100 where 33 is index of L3 block, 22 index of L2 block in L3...
+            int rank3 = 0;
+            foreach (var l3 in block_map.Values.GroupBy(b => b.Level3Name).OrderBy(g => g.Key))
+            {
+                int rank2 = 0;
+                foreach (var l2 in l3.GroupBy(b => b.Level2Name))
+                {
+                    int rank1 = 0;
+                    foreach (var l1 in l2.GroupBy(b => b.Level1Name))
+                    {
+                        int rank0 = 0;
+                        foreach (var l0 in l1)
+                        {
+                            l0.Rank = rank0 + 100 * (rank1 + 100 * (rank2 + 100 * rank3));
+                            rank0++;
+                        }
+                        rank1++;
+                    }
+                    rank2++;
+                }
+                rank3++;
+            }
+
 
             // Initialize Categories
             foreach (var cat in new CategoryRecord[] {
@@ -226,7 +258,12 @@ namespace UniDataNS
                     if (char_name == "<control>")
                         char_name = "CONTROL-" + fields[10];
                     bool is_range = char_name.EndsWith(", First>", StringComparison.OrdinalIgnoreCase);
-                    bool is_printable = !(codepoint < 32 || codepoint >= 0x7f && codepoint < 0xA0 || codepoint >= 0xD800 && codepoint <= 0xDFFF);
+                    bool is_printable = !(codepoint < 32                                // Control characters 0-31
+                                        || codepoint >= 0x7f && codepoint < 0xA0        // Control characters 127-160
+                                        || codepoint >= 0xD800 && codepoint <= 0xDFFF   // Surrogates
+                                        || codepoint == 0x2028                          // U+2028  LINE SEPARATOR
+                                        || codepoint == 0x2029                          // U+2029  PARAGRAPH SEPARATOR
+                                        );
                     if (is_range)   // Add all characters within a specified range
                     {
                         char_name = char_name.Replace(", First>", String.Empty).Replace("<", string.Empty).ToUpperInvariant(); //remove range indicator from name
@@ -264,7 +301,7 @@ namespace UniDataNS
             foreach (var br in block_map.Values)
                 for (int ch = br.Begin; ch <= br.End; ch++)
                     if (char_map.ContainsKey(ch))
-                        char_map[ch].Block = br.Begin;
+                        char_map[ch].BlockBegin = br.Begin;
 
             // Read age
             using (var sr = new StreamReader(GetResourceStream("DerivedAge.txt")))
@@ -296,18 +333,17 @@ namespace UniDataNS
 
             // Read NamesList
             string subheader = "";
-            Regex CodepointRegex = new Regex(@"^[0-9A-F]{4,6}\t");
+            // Optimizations: Do not use Regex, looks costly to performance profiler
+            //Regex CodepointRegex = new Regex(@"^[0-9A-F]{4,6}\t");
             using (var sr = new StreamReader(GetResourceStream("NamesList.txt")))
                 while (!sr.EndOfStream)
                 {
                     string line = sr.ReadLine();
-                    if (line.StartsWith(";", StringComparison.Ordinal))
-                    { // Comment, nothing to do 
-                    }
-                    else if (line.StartsWith("@@@+", StringComparison.Ordinal)) { }
-                    else if (line.StartsWith("@@@~", StringComparison.Ordinal)) { }
-                    else if (line.StartsWith("@@@", StringComparison.Ordinal)) { }
-                    else if (line.StartsWith("@@+", StringComparison.Ordinal)) { }
+                    if (line.StartsWith(";", StringComparison.Ordinal)) { }
+                    //else if (line.StartsWith("@@@+", StringComparison.Ordinal)) { }
+                    //else if (line.StartsWith("@@@~", StringComparison.Ordinal)) { }
+                    //else if (line.StartsWith("@@@", StringComparison.Ordinal)) { }
+                    //else if (line.StartsWith("@@+", StringComparison.Ordinal)) { }
                     else if (line.StartsWith("@@", StringComparison.Ordinal)) { }
                     else if (line.StartsWith("@+", StringComparison.Ordinal)) { }
                     else if (line.StartsWith("@~", StringComparison.Ordinal)) { }
@@ -315,17 +351,32 @@ namespace UniDataNS
                     {
                         subheader = line.Substring(3);
                     }
-                    else if (line.StartsWith("\t", StringComparison.Ordinal))
-                    {
-                    }
+                    else if (line.StartsWith("\t", StringComparison.Ordinal)) { }
                     else
                     {
-                        Match ma = CodepointRegex.Match(line);
-                        if (!ma.Success) Debugger.Break();
+                        int cp16 = 0;
+                        for (int p = 0; ; p++)
+                        {
+                            char c = line[p];
 
-                        int cp = int.Parse(line.Substring(0, ma.Length - 1), NumberStyles.HexNumber);
-                        if (char_map.ContainsKey(cp))
-                            char_map[cp].Subheader = subheader;
+                            if (c >= '0' && c <= '9')
+                                cp16 = 16 * cp16 + ((int)(c)) - 48;
+                            else if (c >= 'A' && c <= 'F')
+                                cp16 = 16 * cp16 + ((int)(c)) - 65 + 10;
+                            else
+                            {
+                                if (c != '\t') Debugger.Break();
+                                break;
+                            }
+                        }
+
+                        //Match ma = CodepointRegex.Match(line);
+                        //if (!ma.Success) Debugger.Break();
+                        //int cp = int.Parse(line.Substring(0, ma.Length - 1), NumberStyles.HexNumber);
+                        //if (cp != cp10) Debugger.Break();
+
+                        if (char_map.ContainsKey(cp16))
+                            char_map[cp16].Subheader = subheader;
                     }
                 }
 
@@ -339,14 +390,13 @@ namespace UniDataNS
             foreach (var cr in char_map.Values)
             {
                 // Check that all characters are assigned to a valid block
-                Debug.Assert(BlockRecords.ContainsKey(cr.Block));
+                Debug.Assert(BlockRecords.ContainsKey(cr.BlockBegin));
                 // Check that all characters are assigned to a valid category
                 Debug.Assert(CategoryRecords.ContainsKey(cr.Category));
             }
 
             Debug.Assert(UnicodeLength("Aé♫??") == 5);
         }
-
 
         // Returns stream from embedded resource name
         private static Stream GetResourceStream(string name)
@@ -368,7 +418,7 @@ namespace UniDataNS
         // Returns number of Unicode characters in a (valid) UTF-16 encoded string
         public static int UnicodeLength(string str)
         {
-            if (str == null) return 0;
+            if (string.IsNullOrEmpty(str)) return 0;
             int l = 0;
             bool surrogate = false;
             foreach (char c in str)

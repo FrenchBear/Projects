@@ -16,7 +16,6 @@
             <Setter Property="dw:VirtualToggleButton.IsVirtualToggleButton" Value="True" />
             <Setter Property="dw:VirtualToggleButton.IsChecked" Value="{Binding IsChecked}" />
             <Setter Property="IsExpanded" Value="{Binding IsNodeExpanded}" />
-            <Setter Property="Visibility" Value="{Binding NodeVisibility}" />
 
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Level}" Value="3">
@@ -167,7 +166,7 @@
                 <TextBlock Grid.Row="2" Grid.Column="1" Text="Character" FontWeight="SemiBold" />
                 <ContentPresenter Grid.Row="2" Grid.Column="2" Content="{Binding StrContent}" />
                 <TextBlock Grid.Row="3" Grid.Column="1" Text="Block" FontWeight="SemiBold" />
-                <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding SelectedChar.BlockRecord.BlockNameAndRange}" />
+                <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding SelectedChar.Block.BlockNameAndRange}" />
                 <TextBlock Grid.Row="4" Grid.Column="1" Text="Subheader " FontWeight="SemiBold" />
                 <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding SelectedChar.Subheader}" />
             </Grid>
@@ -210,7 +209,6 @@
 
 
             <!-- Input and control for block -->
-
             <StackPanel Grid.Row="0">
                 <Grid Margin="0,0,0,6">
                     <Grid.ColumnDefinitions>
@@ -227,10 +225,8 @@
                     <Button Command="{Binding ShowLevelCommand}" CommandParameter="2" Content=" L_2 " Margin="0,0,6,0" />
                     <Button Command="{Binding ShowLevelCommand}" CommandParameter="1" Content=" L_1 " Margin="0,0,6,0" />
                     <Button Command="{Binding ShowLevelCommand}" CommandParameter="0" Content=" Bloc_k " Margin="0,0,12,0" />
-                    <Button Command="{Binding FlipVisibleCommand}" CommandParameter="0" Content=" Check _visible " Margin="0,0,6,0" />
-                    <Button Command="{Binding FlipVisibleCommand}" CommandParameter="1" Content=" _Uncheck visible " Margin="0,0,6,0" />
-                    <Button Command="{Binding FlipVisibleCommand}" CommandParameter="2" Content=" Check _all " Margin="0,0,6,0" />
-                    <Button Command="{Binding FlipVisibleCommand}" CommandParameter="3" Content=" Unchec_k all " Margin="0,0,6,0" />
+                    <Button Command="{Binding SelectAllCommand}" CommandParameter="1" Content=" Check _all " Margin="0,0,6,0" />
+                    <Button Command="{Binding SelectAllCommand}" CommandParameter="0" Content=" Unchec_k all " Margin="0,0,6,0" />
                 </StackPanel>
             </StackPanel>
 
@@ -241,8 +237,6 @@
             <WrapPanel Grid.Row="2" Background="LightGray" Margin="0,6,0,0">
                 <TextBlock Text="{Binding NumBlocks}" />
                 <TextBlock Text=" blocks  " />
-                <TextBlock Text="{Binding FilBlocks}" Margin="18,0,0,0" />
-                <TextBlock Text="  filtered  " />
                 <TextBlock Text="{Binding SelBlocks}" Margin="18,0,0,0" />
                 <TextBlock Text="  selected  " />
             </WrapPanel>

@@ -75,8 +75,10 @@ namespace UniSearchNS
             }
         }
 
+
+        // Do not rename this property IsExpanded, disrupts binding since IsExpanded already exists
         private bool _IsExpanded = true;
-        public bool IsExpanded
+        public bool IsNodeExpanded
         {
             get { return _IsExpanded; }
             set
@@ -84,21 +86,7 @@ namespace UniSearchNS
                 if (_IsExpanded != value)
                 {
                     _IsExpanded = value;
-                    NotifyPropertyChanged(nameof(IsExpanded));
-                }
-            }
-        }
-
-        private Visibility _NodeVisibility = Visibility.Visible;
-        public Visibility NodeVisibility
-        {
-            get { return _NodeVisibility; }
-            set
-            {
-                if (_NodeVisibility != value)
-                {
-                    _NodeVisibility = value;
-                    NotifyPropertyChanged(nameof(NodeVisibility));
+                    NotifyPropertyChanged(nameof(IsNodeExpanded));
                 }
             }
         }
