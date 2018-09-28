@@ -380,6 +380,36 @@ namespace UniDataNS
                     }
                 }
 
+            // Temp code, preparation of subheader grouping
+            foreach (var br in block_map.Values)
+            {
+                var subheadersCounter = new Dictionary<string, int>();
+                foreach (var cr in char_map.Values.Where(cr => cr.BlockBegin == br.Begin))
+                {
+                    if (cr.Subheader != null)
+                        if (subheadersCounter.ContainsKey(cr.Subheader))
+                            subheadersCounter[cr.Subheader] += 1;
+                        else
+                            subheadersCounter.Add(cr.Subheader, 1);
+                }
+
+                foreach (string sh in subheadersCounter.Keys)
+                {
+                    if (subheadersCounter.ContainsKey(sh+"s"))
+                    {
+                        Debug.WriteLine("\r\n" + br.BlockName);
+                        Debug.WriteLine($"  {sh,-40} {subheadersCounter[sh]}");
+                        Debug.WriteLine($"  {sh+"s",-40} {subheadersCounter[sh+"s"]}");
+                    }
+                }
+
+                //Debug.WriteLine("\r\n" + br.BlockName);
+                //foreach (var item in subheadersCounter)
+                //{
+                //    Debug.WriteLine($"  {item.Key,-40} {item.Value}");
+                //}
+            }
+
             // Validate data
             //InternalTests();
         }

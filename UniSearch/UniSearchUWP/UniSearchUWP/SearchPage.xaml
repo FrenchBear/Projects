@@ -169,7 +169,7 @@
                             <KeyboardAccelerator Modifiers="Control" Key="D" />
                         </AppBarButton.KeyboardAccelerators>
                         <ToolTipService.ToolTip>
-                            <ToolTip>Copy full detail of selected chars (Ctrl+D)</ToolTip>
+                            <ToolTip>Copy full details of selected chars (Ctrl+D)</ToolTip>
                         </ToolTipService.ToolTip>
                     </AppBarButton>
 
