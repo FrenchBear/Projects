@@ -40,6 +40,8 @@ namespace UniDataNS
         public string Character => UniData.CodepointToString(IsPrintable ? Codepoint : 0xFFFD);
 
 
+        public string GroupName => UniData.BlockRecords[BlockBegin].BlockName + (string.IsNullOrEmpty(Subheader) ? "" : ": " + Subheader);
+
         // Used by binding
         public BlockRecord Block => UniData.BlockRecords[BlockBegin];
         public CategoryRecord CategoryRecord => UniData.CategoryRecords[Category];
@@ -332,9 +334,33 @@ namespace UniDataNS
                 }
 
             // Read NamesList
-            string subheader = "";
+            string subheader = null;
             // Optimizations: Do not use Regex, looks costly to performance profiler
             //Regex CodepointRegex = new Regex(@"^[0-9A-F]{4,6}\t");
+
+            // Subheaders merging
+            HashSet<int> blockCodepoints = null;
+            HashSet<string> blockSubheaders = null;
+
+            void MergeSubheaders()
+            {
+                foreach (string sungularsh in blockSubheaders.Where(s => !s.EndsWith("s", StringComparison.Ordinal)))
+                {
+                    if (blockSubheaders.Contains(sungularsh+"s"))
+                    {
+                        foreach (int cp in blockCodepoints)
+                        {
+                            if (char_map[cp].Subheader == sungularsh)
+                                char_map[cp].Subheader += "s";
+                        }
+                    }
+                }
+
+                blockCodepoints = null;
+                blockSubheaders = null;
+            }
+
+
             using (var sr = new StreamReader(GetResourceStream("NamesList.txt")))
                 while (!sr.EndOfStream)
                 {
@@ -344,6 +370,15 @@ namespace UniDataNS
                     //else if (line.StartsWith("@@@~", StringComparison.Ordinal)) { }
                     //else if (line.StartsWith("@@@", StringComparison.Ordinal)) { }
                     //else if (line.StartsWith("@@+", StringComparison.Ordinal)) { }
+                    else if (line.StartsWith("@@\t", StringComparison.Ordinal))
+                    {
+                        // Block begin
+                        if (blockCodepoints != null)
+                            MergeSubheaders();
+                        blockCodepoints = new HashSet<int>();
+                        blockSubheaders = new HashSet<string>();
+                        subheader = null;
+                    }
                     else if (line.StartsWith("@@", StringComparison.Ordinal)) { }
                     else if (line.StartsWith("@+", StringComparison.Ordinal)) { }
                     else if (line.StartsWith("@~", StringComparison.Ordinal)) { }
@@ -373,12 +408,18 @@ namespace UniDataNS
                         //Match ma = CodepointRegex.Match(line);
                         //if (!ma.Success) Debugger.Break();
                         //int cp = int.Parse(line.Substring(0, ma.Length - 1), NumberStyles.HexNumber);
-                        //if (cp != cp10) Debugger.Break();
+                        //if (cp != cp16) Debugger.Break();
 
                         if (char_map.ContainsKey(cp16))
+                        {
+                            blockCodepoints.Add(cp16);
+                            blockSubheaders.Add(subheader);
                             char_map[cp16].Subheader = subheader;
+                        }
                     }
                 }
+            if (blockCodepoints != null)
+                MergeSubheaders();
 
             // Temp code, preparation of subheader grouping
             foreach (var br in block_map.Values)

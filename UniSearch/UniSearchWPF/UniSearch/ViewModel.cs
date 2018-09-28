@@ -66,6 +66,11 @@ namespace UniSearchNS
             CharactersRecordsList = UniData.CharacterRecords.Values.OrderBy(cr => cr.Codepoint).ToArray();
             ReadOnlyDictionary<int, BlockRecord>.ValueCollection BlockRecordsList = UniData.BlockRecords.Values;
 
+            // Add grouping
+            CollectionView view = CollectionViewSource.GetDefaultView(CharactersRecordsList) as CollectionView;
+            PropertyGroupDescription groupDescription = new PropertyGroupDescription("GroupName");
+            view.GroupDescriptions.Add(groupDescription);
+
 
             // root is *not* added to the TreeView on purpose
             BlocksRoot = new CheckableNode("root", 4);
@@ -354,6 +359,9 @@ namespace UniSearchNS
         private void FilterCharList()
         {
             CollectionView view = CollectionViewSource.GetDefaultView(CharactersRecordsList) as CollectionView;
+            //PropertyGroupDescription groupDescription = new PropertyGroupDescription("Subheader");
+            //view.GroupDescriptions.Add(groupDescription);
+
 
             // Block part of the filtering predicate
             bool bp(object o) => BlocksCheckableNodesDictionary[((CharacterRecord)o).BlockBegin].IsChecked.Value;

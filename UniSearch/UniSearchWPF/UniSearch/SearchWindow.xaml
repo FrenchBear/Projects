@@ -116,6 +116,7 @@
 
             <!-- List of filtered characters -->
             <ListView Name="CharListView" Grid.Row="1" Foreground="Black" 
+                      VirtualizingPanel.IsVirtualizingWhenGrouping="True"
                       SelectedItem="{Binding SelectedChar}" ItemsSource="{Binding CharactersRecordsList}" >
                 <ListView.View>
                     <GridView>
@@ -124,11 +125,32 @@
                         <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" />
                     </GridView>
                 </ListView.View>
+
+                <ListBox.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock FontWeight="Bold" FontSize="14" Text="{Binding Name}"/>
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </ListBox.GroupStyle>
+
+                <!--<ListView.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock FontWeight="Bold" FontSize="14" Text="{Binding}"/>
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </ListView.GroupStyle>-->
+
                 <ListView.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="_Copy chars" InputGestureText="Ctrl+C" Command="{Binding CopyRecordsCommand}" CommandParameter="0" />
-                        <MenuItem Header="Copy _lines" Command="{Binding CopyRecordsCommand}" CommandParameter="1" />
-                        <MenuItem Header="Copy _details" Command="{Binding CopyRecordsCommand}" CommandParameter="2" />
+                        <MenuItem Header="Copy _lines" InputGestureText="Ctrl+L" Command="{Binding CopyRecordsCommand}" CommandParameter="1" />
+                        <MenuItem Header="Copy _details" InputGestureText="Ctrl+D" Command="{Binding CopyRecordsCommand}" CommandParameter="2" />
                         <MenuItem Header="Copy _image" Command="{Binding CopyImageCommand}" />
                     </ContextMenu>
                 </ListView.ContextMenu>
