@@ -120,9 +120,9 @@
                       SelectedItem="{Binding SelectedChar}" ItemsSource="{Binding CharactersRecordsList}" >
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Character" CellTemplate="{StaticResource CharacterCellTemplate}"/>
-                        <GridViewColumn Header="Codepoint   " CellTemplate="{StaticResource CodepointCellTemplate}" />
-                        <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" />
+                        <GridViewColumn Width="60" Header="Character" CellTemplate="{StaticResource CharacterCellTemplate}"/>
+                        <GridViewColumn Width="80"  Header="Codepoint" CellTemplate="{StaticResource CodepointCellTemplate}" />
+                        <GridViewColumn Width="400" Header="Name" DisplayMemberBinding="{Binding Name}" />
                     </GridView>
                 </ListView.View>
 
@@ -130,21 +130,11 @@
                     <GroupStyle>
                         <GroupStyle.HeaderTemplate>
                             <DataTemplate>
-                                <TextBlock FontWeight="Bold" FontSize="14" Text="{Binding Name}"/>
+                                <TextBlock FontWeight="Bold" FontSize="14" Text="{Binding Name}" Margin="0,6,0,0" />
                             </DataTemplate>
                         </GroupStyle.HeaderTemplate>
                     </GroupStyle>
                 </ListBox.GroupStyle>
-
-                <!--<ListView.GroupStyle>
-                    <GroupStyle>
-                        <GroupStyle.HeaderTemplate>
-                            <DataTemplate>
-                                <TextBlock FontWeight="Bold" FontSize="14" Text="{Binding}"/>
-                            </DataTemplate>
-                        </GroupStyle.HeaderTemplate>
-                    </GroupStyle>
-                </ListView.GroupStyle>-->
 
                 <ListView.ContextMenu>
                     <ContextMenu>

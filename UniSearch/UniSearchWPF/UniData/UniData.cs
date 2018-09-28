@@ -5,7 +5,7 @@
 // 2018-09-11   PV
 // 2018-09-17   PV      1.1 Store UCD Data in embedded streams; Skip characters from planes 15 and 16
 // 2018-09-20   PV      1.2 Read NamesList.txt
-
+// 2018-09-28	PV		1.2.1 Subheaders merging
 
 using System;
 using System.Collections.Generic;
@@ -39,7 +39,7 @@ namespace UniDataNS
         // 'Safe version' of UnicodeData.CPtoString. U+FFFD is the official replacement character.
         public string Character => UniData.CodepointToString(IsPrintable ? Codepoint : 0xFFFD);
 
-
+        // For grouping
         public string GroupName => UniData.BlockRecords[BlockBegin].BlockName + (string.IsNullOrEmpty(Subheader) ? "" : ": " + Subheader);
 
         // Used by binding
@@ -345,17 +345,10 @@ namespace UniDataNS
             void MergeSubheaders()
             {
                 foreach (string sungularsh in blockSubheaders.Where(s => !s.EndsWith("s", StringComparison.Ordinal)))
-                {
                     if (blockSubheaders.Contains(sungularsh+"s"))
-                    {
                         foreach (int cp in blockCodepoints)
-                        {
                             if (char_map[cp].Subheader == sungularsh)
                                 char_map[cp].Subheader += "s";
-                        }
-                    }
-                }
-
                 blockCodepoints = null;
                 blockSubheaders = null;
             }
@@ -420,36 +413,6 @@ namespace UniDataNS
                 }
             if (blockCodepoints != null)
                 MergeSubheaders();
-
-            // Temp code, preparation of subheader grouping
-            foreach (var br in block_map.Values)
-            {
-                var subheadersCounter = new Dictionary<string, int>();
-                foreach (var cr in char_map.Values.Where(cr => cr.BlockBegin == br.Begin))
-                {
-                    if (cr.Subheader != null)
-                        if (subheadersCounter.ContainsKey(cr.Subheader))
-                            subheadersCounter[cr.Subheader] += 1;
-                        else
-                            subheadersCounter.Add(cr.Subheader, 1);
-                }
-
-                foreach (string sh in subheadersCounter.Keys)
-                {
-                    if (subheadersCounter.ContainsKey(sh+"s"))
-                    {
-                        Debug.WriteLine("\r\n" + br.BlockName);
-                        Debug.WriteLine($"  {sh,-40} {subheadersCounter[sh]}");
-                        Debug.WriteLine($"  {sh+"s",-40} {subheadersCounter[sh+"s"]}");
-                    }
-                }
-
-                //Debug.WriteLine("\r\n" + br.BlockName);
-                //foreach (var item in subheadersCounter)
-                //{
-                //    Debug.WriteLine($"  {item.Key,-40} {item.Value}");
-                //}
-            }
 
             // Validate data
             //InternalTests();
@@ -521,7 +484,6 @@ namespace UniDataNS
                 }
                 var cr = UniData.CharacterRecords[cp];
                 yield return cr;
-
             }
         }
     }

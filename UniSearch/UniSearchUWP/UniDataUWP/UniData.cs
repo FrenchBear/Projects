@@ -5,7 +5,7 @@
 // 2018-09-11   PV
 // 2018-09-17   PV      1.1 Store UCD Data in embedded streams; Skip characters from planes 15 and 16
 // 2018-09-20   PV      1.2 Read NamesList.txt
-
+// 2018-09-28	PV		1.2.1 Subheaders merging
 
 using System;
 using System.Collections.Generic;
@@ -39,6 +39,9 @@ namespace UniDataNS
         // 'Safe version' of UnicodeData.CPtoString. U+FFFD is the official replacement character.
         public string Character => UniData.CodepointToString(IsPrintable ? Codepoint : 0xFFFD);
 
+        // For grouping, but not used in UWP since grouping mechanism is different
+        // and use instead private chasses BSHGroupKey and GroupKeyComparer of ViewModel
+        //public string GroupName => UniData.BlockRecords[BlockBegin].BlockName + (string.IsNullOrEmpty(Subheader) ? "" : ": " + Subheader);
 
         // Used by binding
         public BlockRecord Block => UniData.BlockRecords[BlockBegin];
@@ -332,9 +335,26 @@ namespace UniDataNS
                 }
 
             // Read NamesList
-            string subheader = "";
+            string subheader = null;
             // Optimizations: Do not use Regex, looks costly to performance profiler
             //Regex CodepointRegex = new Regex(@"^[0-9A-F]{4,6}\t");
+
+            // Subheaders merging
+            HashSet<int> blockCodepoints = null;
+            HashSet<string> blockSubheaders = null;
+
+            void MergeSubheaders()
+            {
+                foreach (string sungularsh in blockSubheaders.Where(s => !s.EndsWith("s", StringComparison.Ordinal)))
+                    if (blockSubheaders.Contains(sungularsh+"s"))
+                        foreach (int cp in blockCodepoints)
+                            if (char_map[cp].Subheader == sungularsh)
+                                char_map[cp].Subheader += "s";
+                blockCodepoints = null;
+                blockSubheaders = null;
+            }
+
+
             using (var sr = new StreamReader(GetResourceStream("NamesList.txt")))
                 while (!sr.EndOfStream)
                 {
@@ -344,6 +364,15 @@ namespace UniDataNS
                     //else if (line.StartsWith("@@@~", StringComparison.Ordinal)) { }
                     //else if (line.StartsWith("@@@", StringComparison.Ordinal)) { }
                     //else if (line.StartsWith("@@+", StringComparison.Ordinal)) { }
+                    else if (line.StartsWith("@@\t", StringComparison.Ordinal))
+                    {
+                        // Block begin
+                        if (blockCodepoints != null)
+                            MergeSubheaders();
+                        blockCodepoints = new HashSet<int>();
+                        blockSubheaders = new HashSet<string>();
+                        subheader = null;
+                    }
                     else if (line.StartsWith("@@", StringComparison.Ordinal)) { }
                     else if (line.StartsWith("@+", StringComparison.Ordinal)) { }
                     else if (line.StartsWith("@~", StringComparison.Ordinal)) { }
@@ -373,14 +402,20 @@ namespace UniDataNS
                         //Match ma = CodepointRegex.Match(line);
                         //if (!ma.Success) Debugger.Break();
                         //int cp = int.Parse(line.Substring(0, ma.Length - 1), NumberStyles.HexNumber);
-                        //if (cp != cp10) Debugger.Break();
+                        //if (cp != cp16) Debugger.Break();
 
                         if (char_map.ContainsKey(cp16))
+                        {
+                            blockCodepoints.Add(cp16);
+                            blockSubheaders.Add(subheader);
                             char_map[cp16].Subheader = subheader;
+                        }
                     }
                 }
-        }
+            if (blockCodepoints != null)
+                MergeSubheaders();
 
+        }
 
         // Returns stream from embedded resource name
         private static Stream GetResourceStream(string name)
