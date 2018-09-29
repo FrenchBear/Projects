@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("UniDataUWP")]
-[assembly: AssemblyDescription("Static class providing characters and blocks information reading Unicode UCD files")]
+[assembly: AssemblyDescription("Unicode characters and blocks information (Unicode 11)")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("UniDataUWP")]

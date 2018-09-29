@@ -1,25 +1,35 @@
-﻿// Standard About Window for UniSearch
-// 2016-09-26   PV  First version
-// 2017-01-02   PV  En français
+﻿// AboutDialog
+// First attempt of an About window for an UWP app, even though it's not standard
+//
+// 2018-09-29   PV
+
 
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Windows;
-using System.Windows.Markup;
-using System.Windows.Media.Imaging;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using UniDataNS;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
 
-namespace UniSearchNS
+
+namespace UniSearchUWPNS
 {
-    /// <summary>
-    /// Interaction logic for AboutWindow.xaml
-    /// </summary>
-    internal sealed partial class AboutWindow : Window
+    public sealed partial class AboutDialog : ContentDialog
     {
-        public AboutWindow()
+        public AboutDialog()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             // Main app info
             (string Title, string Description, string Version, string Copyright) = GetAppVersion();
@@ -34,9 +44,8 @@ namespace UniSearchNS
             UniDataDescription.Text = DataDescription;
             UniDataVersion.Text = "Version " + DataVersion;
             UniDataCopyright.Text = DataCopyright;
-
-            Loaded += (s, e) => { OKButton.Focus(); };
         }
+
 
         public static (string Title, string Description, string Version, string Copyright) GetAppVersion(Assembly myAssembly = null)
         {
@@ -52,10 +61,10 @@ namespace UniSearchNS
         }
 
 
-        private void OKButton_Click(object sender, RoutedEventArgs e)
+        public async static Task ShowAbout()
         {
-            Close();
+            var w = new AboutDialog();
+            await w.ShowAsync();
         }
     }
-
 }
