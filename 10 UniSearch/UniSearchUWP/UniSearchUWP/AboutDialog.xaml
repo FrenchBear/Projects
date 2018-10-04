@@ -8,7 +8,7 @@
     mc:Ignorable="d"
     Title="About UniSearchUWP"
     PrimaryButtonText="OK" Height="350" Width="600"
-     Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"
+    Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"
     >
 
     <Grid Margin="0,12">

@@ -32,6 +32,7 @@ namespace UniSearchUWPNS
             Loaded += (s, e) =>
             {
                 BlocksTreeView.SelectAll();
+                vm.InitialBlocksUnselect();
                 vm.RefreshSelectedBlocks(true);
                 CharacterFilterTextBox.Focus(FocusState.Programmatic);
 
@@ -150,7 +151,6 @@ namespace UniSearchUWPNS
 
         private void UnselectAllButton_Click(object sender, RoutedEventArgs e)
         {
-            // Not working for now
             BlocksTreeView.SelectedNodes.Clear();
             vm.RefreshSelectedBlocks(true);
         }

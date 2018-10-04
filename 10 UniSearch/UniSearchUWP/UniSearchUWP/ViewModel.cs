@@ -28,6 +28,7 @@ namespace UniSearchUWPNS
     {
         // Private variables
         private readonly SearchPage page;                               // Access to main window
+
         private readonly BlockNode BlocksRoot;                          // TreeView root
         private HashSet<BlockRecord> SelectedBlocksSet = new HashSet<BlockRecord>();    // Set of selected blocks in TreeView
 
@@ -47,6 +48,10 @@ namespace UniSearchUWPNS
         public ICommand ShowDetailCommand { get; private set; }
 
 
+        // Dictionary of BlockNodes indexed by Begin block value, to help uncheck some blocks at the end
+        private Dictionary<int, BlockNode>  BlocksBlockNodesDictionary = new Dictionary<int, BlockNode>();
+
+
         // Constructor
         public ViewModel(SearchPage p)
         {
@@ -64,8 +69,6 @@ namespace UniSearchUWPNS
 
             // root is *not* added to the TreeView on purpose
             BlocksRoot = new BlockNode("root", 4);
-            // Dictionary of BlockNodes indexed by Begin block value, to help uncheck some blocks at the end
-            var BlocksBlockNodesDictionary = new Dictionary<int, BlockNode>();
 
             NodesList = new List<BlockNode>();
 
@@ -106,29 +109,58 @@ namespace UniSearchUWPNS
             // Current version of TreeView does not support binding
             foreach (var item in BlocksRoot.Children)
                 page.BlocksTreeView.RootNodes.Add(item);
+        }
 
+        internal void InitialBlocksUnselect()
+        {
             // ToDo: Do it once Windows 10 oct 2018 is available.  Build 1803 does not let change selection by program.
 
-            /*
             // Unselect some pretty useless blocks
-            BlocksBlockNodesDictionary[0x0000].IsChecked = false;       // ASCII Controls C0
-            BlocksBlockNodesDictionary[0x0080].IsChecked = false;       // ASCII Controls C1
-            BlocksBlockNodesDictionary[0xE0100].IsChecked = false;      // Variation Selectors Supplement; Variation Selectors; Specials; Symbols and Punctuation
-            BlocksBlockNodesDictionary[0xF0000].IsChecked = false;      // Supplementary Private Use Area-A; ; Private Use; Symbols and Punctuation
-            BlocksBlockNodesDictionary[0x100000].IsChecked = false;     // Supplementary Private Use Area-B; ; Private Use; Symbols and Punctuation
-            ActionAllNodes(BlocksRoot, n =>
-            {
-                if (n.Name == "East Asian Scripts") n.IsChecked = false;
-                if (n.Name.IndexOf("CJK", StringComparison.Ordinal) >= 0) n.IsChecked = false;
-                if (n.Name == "Specials") n.IsChecked = false;
-            });
+            UnselectBlock(0x0000);       // ASCII Controls C0
+            UnselectBlock(0x0080);       // ASCII Controls C1
+            UnselectBlock(0xE0100);      // Variation Selectors Supplement; Variation Selectors; Specials; Symbols and Punctuation
+            UnselectBlock(0xF0000);      // Supplementary Private Use Area-A; ; Private Use; Symbols and Punctuation
+            UnselectBlock(0x100000);     // Supplementary Private Use Area-B; ; Private Use; Symbols and Punctuation
+            UnselectBlock(0xD800);       //  High Surrogates; ; Surrogates; Symbols and Punctuation
+            UnselectBlock(0xDB80);       //  High Private Use Surrogates; ; Surrogates; Symbols and Punctuation
+            UnselectBlock(0xDC00);       //  Low Surrogates; ; Surrogates; Symbols and Punctuation
+            UnselectBlock(0xE000);       //  Private Use Area; ; Private Use; Symbols and Punctuation
 
-            BlocksBlockNodesDictionary[0xD800].IsChecked = false;       //  High Surrogates; ; Surrogates; Symbols and Punctuation
-            BlocksBlockNodesDictionary[0xDB80].IsChecked = false;       //  High Private Use Surrogates; ; Surrogates; Symbols and Punctuation
-            BlocksBlockNodesDictionary[0xDC00].IsChecked = false;       //  Low Surrogates; ; Surrogates; Symbols and Punctuation
-            BlocksBlockNodesDictionary[0xE000].IsChecked = false;       //  Private Use Area; ; Private Use; Symbols and Punctuation
-            */
+            //ActionAllNodes(BlocksRoot, n =>
+            //{
+            //    if (n.Name == ) n.IsChecked = false;
+            //    if (n.Name.IndexOf("CJK", StringComparison.Ordinal) >= 0) n.IsChecked = false;
+            //    if (n.Name == "Specials") n.IsChecked = false;
+            //});
+
+            UnselectName(BlocksRoot, "East Asian Scripts", false);
+            UnselectName(BlocksRoot, "CJK", false);
+            UnselectName(BlocksRoot, "Specials", false);
+
+            void UnselectName(BlockNode bn, string name, bool apply)
+            {
+                if (bn.Level == 0)
+                {
+                    if (apply && page.BlocksTreeView.SelectedNodes.Contains(bn as TreeViewNode))
+                        page.BlocksTreeView.SelectedNodes.Remove(bn as TreeViewNode);
+                }
+                else
+                {
+                    apply |=  bn.Name.IndexOf(name, StringComparison.Ordinal) >= 0;
+                    foreach (var child in bn.Children)
+                        UnselectName(child as BlockNode, name, apply);
+                }
+            }
+
+
+            void UnselectBlock(int blockBegin)
+            {
+                var tn = BlocksBlockNodesDictionary[blockBegin] as TreeViewNode;
+                if (page.BlocksTreeView.SelectedNodes.Contains(tn))
+                    page.BlocksTreeView.SelectedNodes.Remove(tn);
+            }
         }
+
 
         // ==============================================================================================
         // Bindable properties
