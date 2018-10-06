@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("UniSearchUWP")]
-[assembly: AssemblyDescription("Unicode Character Search Tool (UWP)")]
+[assembly: AssemblyDescription("Unicode Character Search Tool")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("UniSearchUWP")]

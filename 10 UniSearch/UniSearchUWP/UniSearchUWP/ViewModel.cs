@@ -3,6 +3,7 @@
 //
 // 2018-12-09   PV
 
+
 using RelayCommandNS;
 using System;
 using System.Collections.Generic;
@@ -10,17 +11,15 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using UniDataNS;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
-using System.Diagnostics.Contracts;
+
 
 namespace UniSearchUWPNS
 {
@@ -113,26 +112,18 @@ namespace UniSearchUWPNS
 
         internal void InitialBlocksUnselect()
         {
-            // ToDo: Do it once Windows 10 oct 2018 is available.  Build 1803 does not let change selection by program.
-
             // Unselect some pretty useless blocks
             UnselectBlock(0x0000);       // ASCII Controls C0
             UnselectBlock(0x0080);       // ASCII Controls C1
             UnselectBlock(0xE0100);      // Variation Selectors Supplement; Variation Selectors; Specials; Symbols and Punctuation
             UnselectBlock(0xF0000);      // Supplementary Private Use Area-A; ; Private Use; Symbols and Punctuation
             UnselectBlock(0x100000);     // Supplementary Private Use Area-B; ; Private Use; Symbols and Punctuation
-            UnselectBlock(0xD800);       //  High Surrogates; ; Surrogates; Symbols and Punctuation
-            UnselectBlock(0xDB80);       //  High Private Use Surrogates; ; Surrogates; Symbols and Punctuation
-            UnselectBlock(0xDC00);       //  Low Surrogates; ; Surrogates; Symbols and Punctuation
-            UnselectBlock(0xE000);       //  Private Use Area; ; Private Use; Symbols and Punctuation
+            UnselectBlock(0xD800);       // High Surrogates; ; Surrogates; Symbols and Punctuation
+            UnselectBlock(0xDB80);       // High Private Use Surrogates; ; Surrogates; Symbols and Punctuation
+            UnselectBlock(0xDC00);       // Low Surrogates; ; Surrogates; Symbols and Punctuation
+            UnselectBlock(0xE000);       // Private Use Area; ; Private Use; Symbols and Punctuation
 
-            //ActionAllNodes(BlocksRoot, n =>
-            //{
-            //    if (n.Name == ) n.IsChecked = false;
-            //    if (n.Name.IndexOf("CJK", StringComparison.Ordinal) >= 0) n.IsChecked = false;
-            //    if (n.Name == "Specials") n.IsChecked = false;
-            //});
-
+            // Unselect blocks using string match in hierarchy of greoups
             UnselectName(BlocksRoot, "East Asian Scripts", false);
             UnselectName(BlocksRoot, "CJK", false);
             UnselectName(BlocksRoot, "Specials", false);
@@ -165,8 +156,8 @@ namespace UniSearchUWPNS
         // ==============================================================================================
         // Bindable properties
 
-        // ToDo: Property needed?
-        public CharacterRecord[] CharactersRecordsList { get; set; }
+        // Permanent list of CharacterRecords returned by UniData
+        public CharacterRecord[] CharactersRecordsList;
 
         // Source of CharListView and used to build the grouped version
         public ObservableCollection<CharacterRecord> CharactersRecordsFilteredList { get; set; } = new ObservableCollection<CharacterRecord>();
@@ -280,6 +271,7 @@ namespace UniSearchUWPNS
             return g;
         }
 
+
         // ==============================================================================================
         // Delay processing of TextChanged event 250ms using a DispatcherTimer
 
@@ -348,9 +340,6 @@ namespace UniSearchUWPNS
             CharactersRecordsFilteredList.Clear();
             foreach (CharacterRecord c in CharactersRecordsList.Where(cr => p2(cr)).OrderBy(cr => cr.Block.Rank))
                 CharactersRecordsFilteredList.Add(c);
-
-            // Not good, need a NotifyPropertyChanged to recreate a new ObservableCollection
-            //CharactersRecordsFilteredList = new ObservableCollection<CharacterRecord>(CharactersRecordsList.Where(cr => p2(cr)));
 
             // Build the grouped version
             var groups = CharactersRecordsFilteredList.GroupBy(cr => new BSHGroupKey(cr.BlockBegin, cr.Subheader), new GroupKeyComparer()).OrderBy(grp => UniData.BlockRecords[grp.Key.BlockBegin].Rank).ToList();
@@ -463,6 +452,7 @@ namespace UniSearchUWPNS
             else
                 StartOrResetCharFilterDispatcherTimer();
         }
+
 
         // ==============================================================================================
         // Commands

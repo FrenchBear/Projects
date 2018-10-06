@@ -35,17 +35,7 @@ namespace UniSearchUWPNS
                 vm.InitialBlocksUnselect();
                 vm.RefreshSelectedBlocks(true);
                 CharacterFilterTextBox.Focus(FocusState.Programmatic);
-
-                // For performance tests
-                //CharacterFilterTextBox.Text = "cat";
-                //vm.FilterCharList();
             };
-
-            // For performance profiling
-            //GotFocus += (s, e) =>
-            //{
-            //    CoreApplication.Exit();
-            //};
         }
 
         private void CharListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
