@@ -6,6 +6,8 @@
 // 2018-09-17   PV      1.1 Store UCD Data in embedded streams; Skip characters from planes 15 and 16
 // 2018-09-20   PV      1.2 Read NamesList.txt
 // 2018-09-28	PV		1.2.1 Subheaders merging
+// 2018-10-08	PV		XML comments
+
 
 using System;
 using System.Collections.Generic;
@@ -24,19 +26,48 @@ namespace UniDataNS
     /// </summary>
     public class CharacterRecord
     {
+        /// <summary>
+        /// Unicode character codepoint, between 0 and 0x10FFFF (from UnicodeData.txt)
+        /// </summary>
         public int Codepoint { get; private set; }
+
+        /// <summary>
+        /// Unicode character name, uppercase string such as LATIN CAPITAL LETTER A (from UnicodeData.txt)
+        /// </summary>
         public string Name { get; private set; }
+
+        /// <summary>
+        /// Unicode general category, 2 characters such as Lu (from UnicodeData.txt)
+        /// </summary>
         public string Category { get; private set; }
+
+        /// <summary>
+        /// First version of Unicode standard the character appeared, such as 3.0 (from DerivedAge.txt)
+        /// </summary>
         public string Age { get; internal set; }
+
+        /// <summary>
+        /// First codepoint of the block assigned to the character, such as 0x100 (from MetaBlocks.txt)
+        /// </summary>
         public int BlockBegin { get; internal set; } = -1;       // -1 for tests, to make sure at the end all supported chars have a block
+
+        /// <summary>
+        /// Name of block subdivision the character belongs to, such as ASCII punctuation and symbols (from NamesList.txt, marker @)
+        /// If both singular and plural form exist for a subheader in a block (ex: "Additional letter" and "Additional letters"), only plural form is used
+        /// Because of name merging, sorting by subheader does not sort characters in codepoint order
+        /// </summary>
         public string Subheader { get; internal set; }
 
 
-        // When True, Character method will return an hex codepoint representation instead of the actual string
+        /// <summary>
+        /// When True, Character method will return an hex codepoint representation instead of the actual string.
+        /// </summary>
         public bool IsPrintable { get; private set; }
 
-        // Convert to a C# string representation of the character, except for control characters
-        // 'Safe version' of UnicodeData.CPtoString. U+FFFD is the official replacement character.
+        /// <summary>
+        /// Convert to a C# string representation of the character, except for control characters.
+        /// 'Safe version' of UnicodeData.CPtoString. U+FFFD is the official replacement character. 
+        /// </summary>
         public string Character => UniData.CodepointToString(IsPrintable ? Codepoint : 0xFFFD);
 
         // For grouping, but not used in UWP since grouping mechanism is different
@@ -47,11 +78,19 @@ namespace UniDataNS
         public BlockRecord Block => UniData.BlockRecords[BlockBegin];
         public CategoryRecord CategoryRecord => UniData.CategoryRecords[Category];
 
+        /// <summary>
+        /// Standard hexadecimal representation of codepoint such as U+0041 (4 to 6 uppercase hex digits)
+        /// </summary>
         public string CodepointHex => $"U+{Codepoint:X4}";
 
-
+        /// <summary>
+        /// string representation of UTF-16 encoding such as "D83D DC17" for U+1F417
+        /// </summary>
         public string UTF16 => Codepoint <= 0xD7FF || (Codepoint >= 0xE000 && Codepoint <= 0xFFFF) ? Codepoint.ToString("X4") : (0xD800 + ((Codepoint - 0x10000) >> 10)).ToString("X4") + " " + (0xDC00 + (Codepoint & 0x3ff)).ToString("X4");
 
+        /// <summary>
+        /// string representation of UTF-8 encoding such as "F0 9F 90 97" for U+1F417
+        /// </summary>
         public string UTF8
         {
             get
@@ -68,7 +107,7 @@ namespace UniDataNS
             }
         }
 
-
+        // internal constructor
         internal CharacterRecord(int Codepoint, string Name, string Category, bool IsPrintable)
         {
             this.Codepoint = Codepoint;
@@ -77,6 +116,9 @@ namespace UniDataNS
             this.IsPrintable = IsPrintable;
         }
 
+        /// <summary>
+        /// Text representation of the form "char(tab)codepoint(tab)name"
+        /// </summary>
         public string AsString => $"{Character}\t{CodepointHex}\t{Name}";
 
         public override string ToString() => $"CharacterRecord({AsString})";
@@ -88,19 +130,47 @@ namespace UniDataNS
     /// </summary>
     public class BlockRecord
     {
+        /// <summary>
+        /// First codepoint of the block
+        /// </summary>
         public int Begin { get; private set; }
+
+        /// <summary>
+        /// Last codepoint of the block (may or may not be an assigned codepoint)
+        /// </summary>
         public int End { get; private set; }
+
+        /// <summary>
+        /// Unicode block name such as "Basic Latin (ASCII)" (from MetaBlocks.txt)
+        /// </summary>
         public string BlockName { get; private set; }
+
+        /// <summary>
+        /// Name of first level of block hierarchy such as "Latin" (from MetaBlocks.txt)
+        /// </summary>
         public string Level1Name { get; private set; }
+
+        /// <summary>
+        /// Name of second level of block hierarchy such as "European Scripts" (from MetaBlocks.txt)
+        /// </summary>
         public string Level2Name { get; private set; }
+
+        /// <summary>
+        /// Name of third level of block hierarchy such as "Scripts" (from MetaBlocks.txt)
+        /// </summary>
         public string Level3Name { get; private set; }
 
-        // Sorting order matching hierarchy
+        /// <summary>
+        /// Sorting key matching hierarchy order
+        /// </summary>
         public int Rank { get; internal set; }
 
+        /// <summary>
+        /// Block name followed by range of codepoints such as "Basic Latin (ASCII) 0020..007F"
+        /// </summary>
         public string BlockNameAndRange => $"{BlockName} {Begin:X4}..{End:X4}";
 
-
+        // internal constructor
         internal BlockRecord(int Begin, int End, string BlockName, string Level1Name, string Level2Name, string Level3Name)
         {
             this.Begin = Begin;
@@ -121,15 +191,32 @@ namespace UniDataNS
     /// </summary>
     public class CategoryRecord
     {
+        /// <summary>
+        /// Unicode general category code, one or two letters such as Lu
+        /// </summary>
         public string Code { get; private set; }
+
+        /// <summary>
+        /// Unicode General Category name with spaces replaced by underscores such as Uppercase_Letter
+        /// </summary>
         public string Name { get; private set; }
+
+        /// <summary>
+        /// For metacategories, a pipe-separated string of included categories such as "Ll|Lm|Lo|Lt|Lu" for category L
+        /// </summary>
         public string Include { get; private set; }
 
+        /// <summary>
+        /// For metacategories, a list of strings of included categories such as ["Ll", "Lm", "Lo", "Lt", "Lu"] for category L
+        /// </summary>
         public IList<string> CategoriesList { get; private set; }
 
+        /// <summary>
+        /// For metacategories, a comma-separated string of included categories such as "Ll, Lm, Lo, Lt, Lu" for category L
+        /// </summary>
         public string Categories => CategoriesList.Aggregate((prev, c) => prev + ", " + c);
 
-
+        // internal constructor
         internal CategoryRecord(string code, string name, string include = "")
         {
             this.Code = code;
@@ -159,7 +246,7 @@ namespace UniDataNS
         public static ReadOnlyDictionary<int, BlockRecord> BlockRecords { get; } = new ReadOnlyDictionary<int, BlockRecord>(block_map);
 
 
-        // Static constructor, loads data from resources
+        // Static constructor, loads data from resources, executed when application starts
         static UniData()
         {
             // Read blocks
@@ -354,7 +441,6 @@ namespace UniDataNS
                 blockSubheaders = null;
             }
 
-
             using (var sr = new StreamReader(GetResourceStream("NamesList.txt")))
                 while (!sr.EndOfStream)
                 {
@@ -457,6 +543,12 @@ namespace UniDataNS
 
     public static class ExtensionMethods
     {
+        /// <summary>
+        /// Enumerates CharacterRecord from a C# string (UTF-16 encoded).
+        /// Couples of surrogates return a single CharacterRecord.
+        /// </summary>
+        /// <param name="str">String to decompose</param>
+        /// <returns>An enumeration of CharacterRecord from str</returns>
         public static IEnumerable<CharacterRecord> EnumCharacterRecords(this string str)
         {
             for (int i = 0; i < str.Length; i++)

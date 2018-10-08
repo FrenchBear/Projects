@@ -1,7 +1,8 @@
 ﻿// UniSearch ViewModel
 // Interaction and commands support
 //
-// 2018-12-09   PV
+// 2018-09-12   PV
+// 2018-10-08   PV      v1.2 CopyImage (finally!)
 
 
 using RelayCommandNS;
@@ -11,15 +12,18 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using UniDataNS;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Graphics.Imaging;
+using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
-
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace UniSearchUWPNS
 {
@@ -41,14 +45,14 @@ namespace UniSearchUWPNS
 
         // Commands public interface
         public ICommand CopyRecordsCommand { get; private set; }
-
+        public ICommand CopyImageCommand { get; private set; }
         public ICommand AboutCommand { get; private set; }
         public ICommand ShowLevelCommand { get; private set; }
         public ICommand ShowDetailCommand { get; private set; }
 
 
         // Dictionary of BlockNodes indexed by Begin block value, to help uncheck some blocks at the end
-        private Dictionary<int, BlockNode>  BlocksBlockNodesDictionary = new Dictionary<int, BlockNode>();
+        private Dictionary<int, BlockNode> BlocksBlockNodesDictionary = new Dictionary<int, BlockNode>();
 
 
         // Constructor
@@ -57,7 +61,8 @@ namespace UniSearchUWPNS
             page = p;
 
             // Binding commands with behavior
-            CopyRecordsCommand = new RelayCommand<object>(CopyRecordsExecute, CanCopyRecords);
+            CopyRecordsCommand = new RelayCommand<object>(CopyRecordsExecute, CanCopy);
+            CopyImageCommand = new AwaitableRelayCommand<object>(CopyImageExecute, CanCopy);
             AboutCommand = new AwaitableRelayCommand<object>(AboutExecute);
             ShowLevelCommand = new RelayCommand<object>(ShowLevelExecute);
             ShowDetailCommand = new AwaitableRelayCommand<int>(ShowDetailExecute);
@@ -110,6 +115,7 @@ namespace UniSearchUWPNS
                 page.BlocksTreeView.RootNodes.Add(item);
         }
 
+
         internal void InitialBlocksUnselect()
         {
             // Unselect some pretty useless blocks
@@ -137,7 +143,7 @@ namespace UniSearchUWPNS
                 }
                 else
                 {
-                    apply |=  bn.Name.IndexOf(name, StringComparison.Ordinal) >= 0;
+                    apply |= bn.Name.IndexOf(name, StringComparison.Ordinal) >= 0;
                     foreach (var child in bn.Children)
                         UnselectName(child as BlockNode, name, apply);
                 }
@@ -213,7 +219,9 @@ namespace UniSearchUWPNS
                     _SelectedChar = value;
                     NotifyPropertyChanged(nameof(SelectedChar));
                     NotifyPropertyChanged(nameof(StrContent));
+                    // In a UWP app, it's done manually...
                     CopyRecordsCommand.RaiseCanExecuteChanged();
+                    CopyImageCommand.RaiseCanExecuteChanged();
                 }
             }
         }
@@ -457,7 +465,7 @@ namespace UniSearchUWPNS
         // ==============================================================================================
         // Commands
 
-        private bool CanCopyRecords(object obj) => SelectedChar != null;
+        private bool CanCopy(object obj) => SelectedChar != null;
 
         private void CopyRecordsExecute(object param)
         {
@@ -482,24 +490,66 @@ namespace UniSearchUWPNS
                         break;
                 }
 
-            ClipboardSetText(sb.ToString());
+            ClipboardSetData(sb.ToString());
         }
 
+
+        private async Task CopyImageExecute(object obj)
+        {
+            string s = SelectedChar.Character;
+
+            // ToDo: Crop top 10 pixels, to compensate for margim="0,-10"
+
+            // Get RenderTargetBitmap of character image
+            var control = page.CharImageBorder;
+            RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap();
+            await renderTargetBitmap.RenderAsync(control); //, (int)control.Width, (int)control.Height);
+
+            // Get the pixels BGRA8-format.
+            // IBuffer represents a referenced array of bytes used by byte stream read and write interfaces.
+            IBuffer pixelBuffer = await renderTargetBitmap.GetPixelsAsync();
+            int width = renderTargetBitmap.PixelWidth;
+            int height = renderTargetBitmap.PixelHeight;
+
+            // Convert IBuffer in a RandomAccessStreamReference (not easy to find!!!)
+            var rasr = await CopyImageUsingMemoryStream(pixelBuffer, width, height);
+
+            ClipboardSetData(s, rasr);
+        }
+
+
+        private static InMemoryRandomAccessStream imas;
+
+        // Copy image using a stream provided by InMemoryRandomAccessStream
+        // Key point: declare ma at class level to prevent GC destruction
+        internal async static Task<RandomAccessStreamReference> CopyImageUsingMemoryStream(IBuffer pixelBuffer, int width, int height)
+        {
+            imas = new InMemoryRandomAccessStream();
+            BitmapEncoder be = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, imas);
+            be.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Straight, (uint)width, (uint)height, 96, 96, pixelBuffer.ToArray());
+            await be.FlushAsync();
+            return RandomAccessStreamReference.CreateFromStream(imas);
+        }
+
+
         // Convenient helper
-        internal static void ClipboardSetText(string s)
+        internal static void ClipboardSetData(string s, RandomAccessStreamReference bmp = null)
         {
             var dataPackage = new DataPackage();
             dataPackage.SetText(s);
+            if (bmp != null) dataPackage.SetBitmap(bmp);
             try
             {
-                Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(dataPackage);
+                Clipboard.SetContent(dataPackage);
             }
             catch (Exception ex)
             {
                 Debug.WriteLine("Error copying text into clipboard: " + ex.Message);
             }
-
         }
+
+
+
 
         // Show app information
         private async Task AboutExecute(object param)

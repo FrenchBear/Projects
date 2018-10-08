@@ -58,7 +58,7 @@ namespace UniSearchUWPNS
         {
             CharacterRecord cr = ViewModel.SelectedChar;
             string s = $"Character\t{cr.Character}\r\nCodepoint\t{cr.CodepointHex}\r\nName\t{cr.Name}\r\nCategories\t{cr.CategoryRecord.Categories}\r\nAge\t{cr.Age}\r\nBlock\t{cr.Block.BlockNameAndRange}\r\nSubheader\t{cr.Subheader}\r\nUTF-16\t{cr.UTF16}\r\nUTF-8\t{cr.UTF8}\r\n";
-            UniSearchUWPNS.ViewModel.ClipboardSetText(s);
+            UniSearchUWPNS.ViewModel.ClipboardSetData(s);
         }
     }
 }

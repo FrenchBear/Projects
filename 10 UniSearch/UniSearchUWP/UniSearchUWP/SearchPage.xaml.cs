@@ -6,6 +6,7 @@
 
 
 using System.Diagnostics;
+using System.Reflection;
 using UniDataNS;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Xaml;
@@ -35,6 +36,21 @@ namespace UniSearchUWPNS
                 vm.InitialBlocksUnselect();
                 vm.RefreshSelectedBlocks(true);
                 CharacterFilterTextBox.Focus(FocusState.Programmatic);
+
+                // Main app info
+                (string Title, string Description, string Version, string Copyright) = AboutDialog.GetAppVersion();
+                AssemblyTitle.Text = Title;
+                AssemblyDescription.Text = Description;
+                AssemblyVersion.Text = "Version " + Version;
+                AssemblyCopyright.Text = Copyright;
+
+                // UniData DLL info
+                (string DataTitle, string DataDescription, string DataVersion, string DataCopyright) = AboutDialog.GetAppVersion(typeof(UniData).GetTypeInfo().Assembly);
+                UniDataTitle.Text = DataTitle;
+                UniDataDescription.Text = DataDescription;
+                UniDataVersion.Text = "Version " + DataVersion;
+                UniDataCopyright.Text = DataCopyright;
+
             };
         }
 

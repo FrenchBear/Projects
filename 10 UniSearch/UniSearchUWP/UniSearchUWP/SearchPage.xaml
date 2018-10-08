@@ -173,7 +173,16 @@
                         </ToolTipService.ToolTip>
                     </AppBarButton>
 
-                    <AppBarButton Name="SwiychGridListButton" AccessKey="G" Label="List/Grid" Click="ListGrid_Click" HorizontalAlignment="Center" Margin="0,1,0,0" VerticalAlignment="Top" >
+                    <AppBarButton Name="CopyImageButton" AccessKey="I" Icon="Copy" Label="Image" Command="{Binding CopyImageCommand}" >
+                        <AppBarButton.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control" Key="I" />
+                        </AppBarButton.KeyboardAccelerators>
+                        <ToolTipService.ToolTip>
+                            <ToolTip>Copy image of selected char (Ctrl+I)</ToolTip>
+                        </ToolTipService.ToolTip>
+                    </AppBarButton>
+
+                    <AppBarButton Name="SwitchGridListButton" AccessKey="G" Label="List/Grid" Click="ListGrid_Click" HorizontalAlignment="Center" Margin="0,1,0,0" VerticalAlignment="Top" >
                         <AppBarButton.Icon>
                             <FontIcon FontFamily="Segoe UI Emoji" Glyph="𝄙 ⭤  𝄝" FontSize="24" />
                         </AppBarButton.Icon>
@@ -192,13 +201,32 @@
 
         <SplitView Grid.Row="1" Name="MainSplitView" x:FieldModifier="internal" 
                    IsPaneOpen="{x:Bind SettingsButton.IsChecked, Mode=TwoWay, Converter={StaticResource nullableBooleanToBooleanConverter}}"
-                   DisplayMode="Overlay" PanePlacement="Right" OpenPaneLength="230">
+                   DisplayMode="Overlay" PanePlacement="Right" OpenPaneLength="250">
 
             <SplitView.Pane>
-                <StackPanel Name="OptionsPanel" Margin="12" >
+                <!--<StackPanel Name="OptionsPanel" Margin="12" >
                     <TextBlock Text="Settings" Margin="0,0,0,12" FontWeight="SemiBold" FontSize="20" />
                     <TextBlock Text="Not defined yet" />
-                </StackPanel>
+                </StackPanel>-->
+                <Grid Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Vertical" Grid.Row="1" Margin="12">
+                        <TextBlock Name="AssemblyTitle" FontWeight="Bold" />
+                        <TextBlock Name="AssemblyDescription" Margin="0,3,0,0" TextWrapping="Wrap" />
+                        <TextBlock Name="AssemblyVersion" />
+                        <TextBlock Name="AssemblyCopyright" />
+
+                        <TextBlock Name="UniDataTitle" FontWeight="Bold" Margin="0,12,0,0" />
+                        <TextBlock Name="UniDataDescription" Margin="0,3,0,0" TextWrapping="Wrap" />
+                        <TextBlock Name="UniDataVersion" />
+                        <TextBlock Name="UniDataCopyright" />
+                    </StackPanel>
+
+                </Grid>
             </SplitView.Pane>
 
 
@@ -405,10 +433,20 @@
                             </Grid.ColumnDefinitions>
 
                             <Border Background="White" BorderThickness="2" BorderBrush="{ThemeResource SystemControlHighlightAltListAccentMediumBrush}" Grid.RowSpan="5" VerticalAlignment="Top" Margin="0,3,12,0"
-                        MinWidth="90" MaxWidth="160" Height="90">
-                                <TextBlock Name="CharImage" Foreground="{ThemeResource SystemControlHighlightAltListAccentHighBrush}" Text="{Binding SelectedChar.Character}"  
-                               FontSize="72" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-10" >
-                                </TextBlock>
+                                    MinWidth="90" MaxWidth="160" Height="90" >
+                                <Border Name="CharImageBorder" x:FieldModifier="internal" >
+                                    <TextBlock Name="CharImage" x:FieldModifier="internal" Foreground="{ThemeResource SystemControlHighlightAltListAccentHighBrush}" Text="{Binding SelectedChar.Character}"  
+                                           FontSize="72" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-10" />
+                                </Border>
+                                <Border.ContextFlyout>
+                                    <MenuFlyout>
+                                        <MenuFlyoutItem Text="Copy image" Command="{Binding CopyImageCommand}">
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="I" Modifiers="Control"/>
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+                                    </MenuFlyout>
+                                </Border.ContextFlyout>
                             </Border>
 
 
