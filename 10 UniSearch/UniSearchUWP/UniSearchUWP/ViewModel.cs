@@ -20,10 +20,13 @@ using UniDataNS;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media.Imaging;
+
 
 namespace UniSearchUWPNS
 {
@@ -307,7 +310,7 @@ namespace UniSearchUWPNS
                 {
                     dispatcherTimer = new DispatcherTimer();
                     dispatcherTimer.Tick += DispatcherTimer_Tick;
-                    dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 250);
+                    dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 350);
                 }
                 else
                     dispatcherTimer.Stop();
@@ -392,6 +395,25 @@ namespace UniSearchUWPNS
                 Subheader = subheader;
             }
 
+            // Used by ZoomIn semantic view
+            public UIElement Content
+            {
+                get
+                {
+                    var tb = new TextBlock();
+                    if (NewBlock) tb.Inlines.Add(new LineBreak());
+                    var br = new Run { Text = UniData.BlockRecords[BlockBegin].BlockName, FontWeight = FontWeights.SemiBold };
+                    tb.Inlines.Add(br);
+                    if (!string.IsNullOrEmpty(Subheader))
+                    {
+                        var sr = new Run { Text = ": " + Subheader };
+                        tb.Inlines.Add(sr);
+                    }
+                    return tb;
+                }
+            }
+
+            // Used by ZoomOut semantic view
             public override string ToString() => (NewBlock ? "\r\n" : "") + UniData.BlockRecords[BlockBegin].BlockName + (string.IsNullOrEmpty(Subheader) ? "" : ": " + Subheader);
         }
 
@@ -498,8 +520,6 @@ namespace UniSearchUWPNS
         {
             string s = SelectedChar.Character;
 
-            // ToDo: Crop top 10 pixels, to compensate for margim="0,-10"
-
             // Get RenderTargetBitmap of character image
             var control = page.CharImageBorder;
             RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap();
@@ -524,9 +544,19 @@ namespace UniSearchUWPNS
         // Key point: declare ma at class level to prevent GC destruction
         internal async static Task<RandomAccessStreamReference> CopyImageUsingMemoryStream(IBuffer pixelBuffer, int width, int height)
         {
+            // Crop top 10 lines into a2 array
+            //int dl = 10 * 4 * width;
+            //int fl = height * width * 4;
+            //byte[] a1 = pixelBuffer.ToArray();
+            //byte[] a2 = new byte[fl - dl];
+            //Array.Copy(a1, dl, a2, 0, fl - dl);
+            //height -= 10;
+
+            byte[] pixelArray = pixelBuffer.ToArray();
+
             imas = new InMemoryRandomAccessStream();
             BitmapEncoder be = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, imas);
-            be.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Straight, (uint)width, (uint)height, 96, 96, pixelBuffer.ToArray());
+            be.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Straight, (uint)width, (uint)height, 96, 96, pixelArray);
             await be.FlushAsync();
             return RandomAccessStreamReference.CreateFromStream(imas);
         }

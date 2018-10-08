@@ -19,10 +19,9 @@
                     HorizontalAlignment="Left" 
                     VerticalAlignment="Center"
                     Style="{ThemeResource BodyTextBlockStyle}">
-                            <ToolTipService.ToolTip>
-                                <ToolTip Content="{Binding Block.BlockNameAndRange}" />
-                            </ToolTipService.ToolTip>
-
+                    <ToolTipService.ToolTip>
+                        <ToolTip Content="{Binding Block.BlockNameAndRange}" />
+                    </ToolTipService.ToolTip>
                 </TextBlock>
             </Grid>
         </DataTemplate>
@@ -204,10 +203,7 @@
                    DisplayMode="Overlay" PanePlacement="Right" OpenPaneLength="250">
 
             <SplitView.Pane>
-                <!--<StackPanel Name="OptionsPanel" Margin="12" >
-                    <TextBlock Text="Settings" Margin="0,0,0,12" FontWeight="SemiBold" FontSize="20" />
-                    <TextBlock Text="Not defined yet" />
-                </StackPanel>-->
+                <!-- Options Panel -->
                 <Grid Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
@@ -230,7 +226,7 @@
             </SplitView.Pane>
 
 
-
+            <!-- Tree Panel and main section -->
             <SplitView Name="BlocksSplitView" x:FieldModifier="internal"
                        IsPaneOpen="{x:Bind BlocksToggleButton.IsChecked, Mode=TwoWay, Converter={StaticResource nullableBooleanToBooleanConverter}}"
                        DisplayMode="Inline" PanePlacement="Left" OpenPaneLength="400">
@@ -272,15 +268,13 @@
                 </SplitView.Pane>
 
 
-
+                <!-- Main section -->
                 <Grid Margin="12">
                     <Grid.Resources>
                         <ResourceDictionary>
                             <ResourceDictionary.ThemeDictionaries>
                                 <ResourceDictionary x:Key="Default">
                                     <x:Double x:Key="ListViewItemMinHeight">20</x:Double>
-                                </ResourceDictionary>
-                                <ResourceDictionary x:Key="HighContrast">
                                 </ResourceDictionary>
                             </ResourceDictionary.ThemeDictionaries>
                         </ResourceDictionary>
@@ -295,7 +289,7 @@
                         </Grid.RowDefinitions>
 
 
-                        <!-- Input and control for characters -->
+                        <!-- Character Name Filter -->
                         <StackPanel Grid.Row="0">
                             <Grid Margin="0,0,0,12">
                                 <Grid.ColumnDefinitions>
@@ -331,6 +325,7 @@
                             </Grid>
                         </StackPanel>
 
+                        <!-- Main display of characters, semantic zoom between grid/list and list of subheaders -->
                         <SemanticZoom Name="CharSemanticView" Grid.Row="1"  Grid.Column="1">
                             <SemanticZoom.ZoomedInView>
                                 <GridView Name="CharGridView" x:FieldModifier="internal" SelectedItem="{Binding SelectedChar, Mode=TwoWay}" 
@@ -342,10 +337,21 @@
                                     <GridView.ItemTemplate>
                                         <DataTemplate>
                                             <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="3,3,0,0"
-                                            MinWidth="72" MaxWidth="72" Height="72" DoubleTapped="GridViewCell_DoubleTap" >
-                                                <TextBlock Name="CharImage" Text="{Binding Character}"  
-                                                   FontSize="48" HorizontalAlignment="Center" VerticalAlignment="Top" >
-                                                </TextBlock>
+                                                    MinWidth="72" MaxWidth="72" Height="72" DoubleTapped="GridViewCell_DoubleTap" >
+                                                <Viewbox>
+                                                    <TextBlock Name="CharImage" Text="{Binding Character}"  
+                                                               FontSize="48" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-3,0,3" >
+                                                    </TextBlock>
+                                                </Viewbox>
+                                                <Border.ContextFlyout>
+                                                    <MenuFlyout>
+                                                        <MenuFlyoutItem Text="Copy image" Command="{Binding ElementName=MainPage, Path=DataContext.CopyImageCommand}" >
+                                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                                <KeyboardAccelerator Key="I" Modifiers="Control"/>
+                                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                                        </MenuFlyoutItem>
+                                                    </MenuFlyout>
+                                                </Border.ContextFlyout>
                                             </Border>
                                         </DataTemplate>
                                     </GridView.ItemTemplate>
@@ -354,7 +360,7 @@
                                         <GroupStyle>
                                             <GroupStyle.HeaderTemplate>
                                                 <DataTemplate>
-                                                    <TextBlock Text="{Binding Key}" />
+                                                    <ContentPresenter Content="{Binding Key.Content}" />
                                                 </DataTemplate>
                                             </GroupStyle.HeaderTemplate>
                                         </GroupStyle>
@@ -433,10 +439,12 @@
                             </Grid.ColumnDefinitions>
 
                             <Border Background="White" BorderThickness="2" BorderBrush="{ThemeResource SystemControlHighlightAltListAccentMediumBrush}" Grid.RowSpan="5" VerticalAlignment="Top" Margin="0,3,12,0"
-                                    MinWidth="90" MaxWidth="160" Height="90" >
+                                    Width="96" Height="96" >
                                 <Border Name="CharImageBorder" x:FieldModifier="internal" >
-                                    <TextBlock Name="CharImage" x:FieldModifier="internal" Foreground="{ThemeResource SystemControlHighlightAltListAccentHighBrush}" Text="{Binding SelectedChar.Character}"  
-                                           FontSize="72" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-10" />
+                                    <Viewbox>
+                                        <TextBlock Name="CharImage" x:FieldModifier="internal" Foreground="{ThemeResource SystemControlHighlightAltListAccentHighBrush}" Text="{Binding SelectedChar.Character}"  
+                                                   FontSize="64" HorizontalAlignment="Center" Margin="0,-4,0,4" />
+                                    </Viewbox>
                                 </Border>
                                 <Border.ContextFlyout>
                                     <MenuFlyout>
