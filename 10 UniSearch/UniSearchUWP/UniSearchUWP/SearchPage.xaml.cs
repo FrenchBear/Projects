@@ -6,6 +6,7 @@
 
 
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using UniDataNS;
 using Windows.ApplicationModel.Core;
@@ -54,7 +55,7 @@ namespace UniSearchUWPNS
             };
         }
 
-        private void CharListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void CharListOrGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             vm.NotifyPropertyChanged(nameof(vm.SelChars));
         }
@@ -92,12 +93,26 @@ namespace UniSearchUWPNS
             await CharDetailDialog.ShowDetail(vm.SelectedChar.Codepoint);
         }
 
+        // Show details when pressing Enter of Space
         private async void GridViewCell_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == Windows.System.VirtualKey.Space || e.Key == Windows.System.VirtualKey.Enter)
             {
                 e.Handled = true;
                 await CharDetailDialog.ShowDetail(vm.SelectedChar.Codepoint);
+            }
+        }
+
+
+        // Select character on right-click
+        private void CharGridView_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            var cr = ((FrameworkElement)e.OriginalSource).DataContext as CharacterRecord;
+            if (cr != null)
+            {
+                // Select char if it's not in current selection
+                if (!CharCurrentView.SelectedItems.Cast<CharacterRecord>().Contains(cr))
+                    vm.SelectedChar = cr;
             }
         }
 

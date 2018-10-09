@@ -331,8 +331,8 @@
                                 <GridView Name="CharGridView" x:FieldModifier="internal" SelectedItem="{Binding SelectedChar, Mode=TwoWay}" 
                                           ItemsSource="{Binding CharactersRecordsCVS.View}"
                                           Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
-                                          PreviewKeyDown="GridViewCell_PreviewKeyDown"
-                                          SelectionMode="Extended" SelectionChanged="CharListView_SelectionChanged">
+                                          PreviewKeyDown="GridViewCell_PreviewKeyDown" RightTapped="CharGridView_RightTapped"
+                                          SelectionMode="Extended" SelectionChanged="CharListOrGridView_SelectionChanged">
 
                                     <GridView.ItemTemplate>
                                         <DataTemplate>
@@ -345,7 +345,26 @@
                                                 </Viewbox>
                                                 <Border.ContextFlyout>
                                                     <MenuFlyout>
-                                                        <MenuFlyoutItem Text="Copy image" Command="{Binding ElementName=MainPage, Path=DataContext.CopyImageCommand}" >
+
+                                                        <MenuFlyoutItem Text="Copy Chars" Command="{Binding ElementName=MainPage, Path=DataContext.CopyRecordsCommand}" CommandParameter="0"  >
+                                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                                <KeyboardAccelerator Modifiers="Control" Key="C" />
+                                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                                        </MenuFlyoutItem>
+                                                        
+                                                        <MenuFlyoutItem Text="Copy Lines" Command="{Binding ElementName=MainPage, Path=DataContext.CopyRecordsCommand}" CommandParameter="1"  >
+                                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                                <KeyboardAccelerator Modifiers="Control" Key="L" />
+                                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                                        </MenuFlyoutItem>
+
+                                                        <MenuFlyoutItem Text="Copy Details" Command="{Binding ElementName=MainPage, Path=DataContext.CopyRecordsCommand}" CommandParameter="2" >
+                                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                                <KeyboardAccelerator Modifiers="Control" Key="D" />
+                                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                                        </MenuFlyoutItem>
+
+                                                        <MenuFlyoutItem Text="Copy Image" Command="{Binding ElementName=MainPage, Path=DataContext.CopyImageCommand}" >
                                                             <MenuFlyoutItem.KeyboardAccelerators>
                                                                 <KeyboardAccelerator Key="I" Modifiers="Control"/>
                                                             </MenuFlyoutItem.KeyboardAccelerators>
@@ -386,7 +405,7 @@
                                    SelectedItem="{Binding SelectedChar, Mode=TwoWay}" ItemsSource="{Binding CharactersRecordsFilteredList}"
                                    Visibility="Collapsed"
                                    Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
-                                   SelectionMode="Extended" SelectionChanged="CharListView_SelectionChanged" >
+                                   SelectionMode="Extended" SelectionChanged="CharListOrGridView_SelectionChanged" >
 
                             <ListView.HeaderTemplate>
                                 <DataTemplate>
@@ -448,7 +467,25 @@
                                 </Border>
                                 <Border.ContextFlyout>
                                     <MenuFlyout>
-                                        <MenuFlyoutItem Text="Copy image" Command="{Binding CopyImageCommand}">
+                                        <MenuFlyoutItem Text="Copy Chars" Command="{Binding CopyRecordsCommand}" CommandParameter="0"  >
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Modifiers="Control" Key="C" />
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+
+                                        <MenuFlyoutItem Text="Copy Lines" Command="{Binding CopyRecordsCommand}" CommandParameter="1"  >
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Modifiers="Control" Key="L" />
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+
+                                        <MenuFlyoutItem Text="Copy Details" Command="{Binding CopyRecordsCommand}" CommandParameter="2" >
+                                            <MenuFlyoutItem.KeyboardAccelerators>
+                                                <KeyboardAccelerator Modifiers="Control" Key="D" />
+                                            </MenuFlyoutItem.KeyboardAccelerators>
+                                        </MenuFlyoutItem>
+
+                                        <MenuFlyoutItem Text="Copy Image" Command="{Binding CopyImageCommand}">
                                             <MenuFlyoutItem.KeyboardAccelerators>
                                                 <KeyboardAccelerator Key="I" Modifiers="Control"/>
                                             </MenuFlyoutItem.KeyboardAccelerators>
