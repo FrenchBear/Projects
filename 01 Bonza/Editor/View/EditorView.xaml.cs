@@ -228,6 +228,11 @@ namespace Bonza.Editor.View
 
         internal void AutoPlace()
         {
+            if (m_Sel.WordAndCanvasList.Count!=1)
+            {
+                MessageBox.Show("Sorry, AutoPlace currently only works for a single word.", App.AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return;
+            }
             Debug.Assert(m_Sel.WordAndCanvasList != null && m_Sel.WordAndCanvasList.Count == 1);
 
             // ToDo: Nice compact code, but this doesn't work for Undo

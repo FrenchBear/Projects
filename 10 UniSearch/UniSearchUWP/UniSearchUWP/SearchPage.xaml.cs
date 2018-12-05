@@ -107,8 +107,7 @@ namespace UniSearchUWPNS
         // Select character on right-click
         private void CharGridView_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            var cr = ((FrameworkElement)e.OriginalSource).DataContext as CharacterRecord;
-            if (cr != null)
+            if (((FrameworkElement)e.OriginalSource).DataContext is CharacterRecord cr)
             {
                 // Select char if it's not in current selection
                 if (!CharCurrentView.SelectedItems.Cast<CharacterRecord>().Contains(cr))
