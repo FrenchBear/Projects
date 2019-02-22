@@ -17,7 +17,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using UniDataNS;
 
-
 namespace UniSearchUWPNS
 {
     class PredicateBuilder

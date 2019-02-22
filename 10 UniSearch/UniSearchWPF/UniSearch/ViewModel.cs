@@ -2,7 +2,7 @@
 // Interaction and commands support
 //
 // 2018-09-12   PV
-// 2018-09-28   PV      New blocks filtering controling node expansion and not visibility
+// 2018-09-28   PV      New blocks filtering controlling node expansion and not visibility
 
 
 using System;
