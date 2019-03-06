@@ -6,6 +6,7 @@
 // 2018-09-17   PV      1.1 Store UCD Data in embedded streams; Skip characters from planes 15 and 16
 // 2018-09-20   PV      1.2 Read NamesList.txt
 // 2018-09-28	PV		1.2.1 Subheaders merging
+// 2019-03-06	PV		1.3 Unicode 12 (no code change, only UCD data updated)
 
 using System;
 using System.Collections.Generic;
