@@ -7,7 +7,7 @@
 // 2018-09-20   PV      1.2 Read NamesList.txt
 // 2018-09-28	PV		1.2.1 Subheaders merging
 // 2018-10-08	PV		XML comments
-
+// 2019-03-06   PV      1.3 Unicode 12 UCD
 
 using System;
 using System.Collections.Generic;
