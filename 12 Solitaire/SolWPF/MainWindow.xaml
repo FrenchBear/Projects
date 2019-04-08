@@ -1,0 +1,33 @@
+﻿<Window x:Class="SolWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SolWPF"
+        mc:Ignorable="d"
+        Title="SolWPF" Height="450" Width="800"
+        Loaded="Window_Loaded"
+        >
+
+    <Grid Name="mainGrid" MouseMove="MainGrid_MouseMoveWhenUp" PreviewMouseDown="MainGrid_MouseDown" MouseUp="MainGrid_MouseUp" MouseWheel="MainGrid_MouseWheel" Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="9*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+
+        <Canvas Width="400" Height="220" Background="Beige" HorizontalAlignment="Left" VerticalAlignment="Top" >
+            <Canvas.RenderTransform>
+                <MatrixTransform x:Name="mainMatrixTransform"/>
+            </Canvas.RenderTransform>
+
+
+            <Rectangle Name="Rectangle1" StrokeThickness="3" Stroke="Blue" Canvas.Left="50" Canvas.Top="50" />
+            <Rectangle Name="Rectangle2" StrokeThickness="3" Stroke="Black" Canvas.Left="250" Canvas.Top="30" />
+
+            <local:PlayingCard x:Name="MyCard" Face="C3" Width="100" Height="140" Canvas.Left="50" Canvas.Top="50" IsHitTestVisible="True" />
+
+        </Canvas>
+
+        <Button Content="Exit" Grid.Row="1" FontSize="20" Click="ButtonExit_Click"/>
+    </Grid>
+</Window>
