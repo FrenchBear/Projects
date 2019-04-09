@@ -20,9 +20,10 @@
                 <MatrixTransform x:Name="mainMatrixTransform"/>
             </Canvas.RenderTransform>
 
-
-            <Rectangle Name="Rectangle1" StrokeThickness="3" Stroke="Blue" Canvas.Left="50" Canvas.Top="50" />
-            <Rectangle Name="Rectangle2" StrokeThickness="3" Stroke="Black" Canvas.Left="250" Canvas.Top="30" />
+            <Rectangle Name="Rectangle1" StrokeThickness="3" Stroke="Black" Canvas.Left="10" Canvas.Top="50" />
+            <Rectangle Name="Rectangle2" StrokeThickness="3" Stroke="Black" Canvas.Left="120" Canvas.Top="50" />
+            <Rectangle Name="Rectangle3" StrokeThickness="3" Stroke="Black" Canvas.Left="230" Canvas.Top="50" />
+            <Rectangle Name="Rectangle4" StrokeThickness="3" Stroke="Black" Canvas.Left="340" Canvas.Top="50" />
 
             <local:PlayingCard x:Name="MyCard" Face="C3" Width="100" Height="140" Canvas.Left="50" Canvas.Top="50" IsHitTestVisible="True" />
 
