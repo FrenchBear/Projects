@@ -47,8 +47,8 @@ namespace SolSolver
                     bool withKing = false;
                     for (int c = 0; c < 7; c++)
                     {
-                        if (d.ColumnTopCard(c).valeur == 1) withAce = true;
-                        if (d.ColumnTopCard(c).valeur == 13) withKing = true;
+                        if (d.ColumnTopCard(c).value == 1) withAce = true;
+                        if (d.ColumnTopCard(c).value == 13) withKing = true;
                     }
                     if (withAce && withKing) break;
                 }

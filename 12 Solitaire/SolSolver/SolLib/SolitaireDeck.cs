@@ -16,12 +16,12 @@ namespace SolLib
 {
     public class SolitaireDeck
     {
-        readonly int[] Bases;               // 0..3     Contains value of card on base, or 0 if empty.  Index=color
+        readonly List<Card>[] Bases;        // 0..3     Index 0 contains top card on base.  Index=color (bases are fixed in this version)
         readonly List<Card>[] Columns;      // 0..6
         readonly int[] Visible;             // 0..6
         readonly List<Card> Talon;
 
-        public bool isSolved => Bases.All(c => c == 13);    // True when all bases contain Kings
+        public bool isSolved => Bases.All(b => b.FirstOrDefault()!=null && b.FirstOrDefault().value == 13);    // True when all bases contain Kings
         public bool isSolvable              // True when all columns contain visible cards
         {
             get
@@ -37,7 +37,7 @@ namespace SolLib
         public SolitaireDeck(int seed)
         {
             Talon = Card.Set52().Shuffle(seed);
-            Bases = new int[4];     // Initialized at 0 = no card on base; 
+            Bases = (new List<Card>[4]).InitializeArray();
             Columns = (new List<Card>[7]).InitializeArray();
             Visible = new int[7];
             for (int c = 0; c < 7; c++)
@@ -59,10 +59,7 @@ namespace SolLib
             WriteLine("----------------------------------------------------------");
             WriteLine("Deck:");
             for (int b = 0; b < 4; b++)
-                if (Bases[b] == 0)
-                    WriteLine($"Base {b}: Empty");
-                else
-                    WriteLine($"Base {b}: {new Card(Bases[b], b).ToString()}");
+                PrintCards($"Base {b}  ", Bases[b]);
             for (int c = 0; c < 7; c++)
                 PrintCards($"Column {c}", Columns[c], Visible[c]);
             PrintCards("Talon       ", Talon);
@@ -78,8 +75,8 @@ namespace SolLib
                 Debug.Assert(Talon.Count > 0);
                 Card ca = Talon[0];
                 Talon.RemoveAt(0);
-                Debug.Assert((Bases[ca.couleur] == 0 && ca.valeur == 1) || Bases[ca.couleur] + 1 == ca.valeur);
-                Bases[ca.couleur] = ca.valeur;
+                Debug.Assert(Bases[ca.couleur].Count == 0 && ca.value == 1 || Bases[ca.couleur].Count > 0 && Bases[ca.couleur].First().value + 1 == ca.value);
+                Bases[ca.couleur].Insert(0, ca);
             }
             else
             {
@@ -87,8 +84,8 @@ namespace SolLib
                 Debug.Assert(Columns[c_from].Count > 0);
                 Card ca = Columns[c_from][0];
                 Columns[c_from].RemoveAt(0);
-                Debug.Assert((Bases[ca.couleur] == 0 && ca.valeur == 1) || Bases[ca.couleur] + 1 == ca.valeur);
-                Bases[ca.couleur] = ca.valeur;
+                Debug.Assert(Bases[ca.couleur].Count == 0 && ca.value == 1 || Bases[ca.couleur].Count > 0 && Bases[ca.couleur].First().value + 1 == ca.value);
+                Bases[ca.couleur].Insert(0, ca);
                 Visible[c_from]--;
                 if (Visible[c_from] == 0 && Columns[c_from].Count > 0)
                     Visible[c_from] = 1;
@@ -115,7 +112,7 @@ namespace SolLib
                 if (Columns[col].Count == 0) return false;
                 ca = Columns[col][0];
             }
-            return (Bases[ca.couleur] == 0 && ca.valeur == 1) || Bases[ca.couleur] + 1 == ca.valeur;
+            return Bases[ca.couleur].Count == 0 && ca.value == 1 || Bases[ca.couleur].Count>0 && Bases[ca.couleur].First().value + 1 == ca.value;
         }
 
         private void MoveColumnToColumn(int c_from, int c_to, int n)
@@ -136,8 +133,8 @@ namespace SolLib
                 else
                     ca = Columns[c_from][i];
 
-                Debug.Assert(Columns[c_to].Count > 0 || ca.valeur == 13);  // Can only move a King to an empty column
-                Debug.Assert(Columns[c_to].Count == 0 || ca.valeur == Columns[c_to][0].valeur - 1 && ca.couleur % 2 != Columns[c_to][0].couleur % 2);
+                Debug.Assert(Columns[c_to].Count > 0 || ca.value == 13);  // Can only move a King to an empty column
+                Debug.Assert(Columns[c_to].Count == 0 || ca.value == Columns[c_to][0].value - 1 && ca.couleur % 2 != Columns[c_to][0].couleur % 2);
                 Columns[c_to].Insert(0, ca);
             }
 
@@ -176,8 +173,8 @@ namespace SolLib
             else
                 ca = Columns[c_from][n - 1];
 
-            if (Columns[c_to].Count == 0 && ca.valeur == 13) return true;  // Can move a King to an empty column
-            if (Columns[c_to].Count > 0 && ca.valeur == Columns[c_to][0].valeur - 1 && ca.couleur % 2 != Columns[c_to][0].couleur % 2) return true; // Can move if value-1 and alternating colors 
+            if (Columns[c_to].Count == 0 && ca.value == 13) return true;  // Can move a King to an empty column
+            if (Columns[c_to].Count > 0 && ca.value == Columns[c_to][0].value - 1 && ca.couleur % 2 != Columns[c_to][0].couleur % 2) return true; // Can move if value-1 and alternating colors 
 
             return false;
         }
@@ -285,11 +282,19 @@ namespace SolLib
             return isSolvable;
         }
 
+        // A unique representation of current game configuration
         private string Signature(int c_from = -1, int c_to = -1, int n = 1)
         {
             var sb = new StringBuilder();
+
+            // Only include top base card in signature
             for (int b = 0; b < 4; b++)
-                sb.Append((char)(64 + Bases[b]));
+                if (Bases[b].Count == 0)
+                    sb.Append("@@");
+                else
+                    sb.Append(Bases[b].First().Signature());
+
+            // Then add columns signature.  Note than all cards of a column are included, not only the visible ones (not sure it's useful)
             for (int c = 0; c < 7; c++)
             {
                 sb.Append('|');
