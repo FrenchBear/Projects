@@ -256,7 +256,7 @@ namespace UniDataNS
                     string line = sr.ReadLine();
                     if (line.Length == 0 || line[0] == '#') continue;
                     string[] fields = line.Split(';');
-                    string[] field0 = fields[0].Replace("..", ";").Split(';');
+                    string[] field0 = fields[0].Replace("..", ";", StringComparison.InvariantCulture).Split(';');
                     int begin = int.Parse(field0[0], NumberStyles.HexNumber);
                     int end = int.Parse(field0[1], NumberStyles.HexNumber);
                     BlockRecord br = new BlockRecord(begin, end, fields[1], fields[2], fields[3], fields[4]);
@@ -356,7 +356,7 @@ namespace UniDataNS
                                         );
                     if (is_range)   // Add all characters within a specified range
                     {
-                        char_name = char_name.Replace(", First>", String.Empty).Replace("<", string.Empty).ToUpperInvariant(); //remove range indicator from name
+                        char_name = char_name.Replace(", First>", String.Empty, StringComparison.InvariantCulture).Replace("<", string.Empty, StringComparison.InvariantCulture).ToUpperInvariant(); //remove range indicator from name
                         fields = sr.ReadLine().Split(';');
                         int end_char_code = int.Parse(fields[0], NumberStyles.HexNumber);
                         if (!fields[1].EndsWith(", Last>", StringComparison.OrdinalIgnoreCase))
