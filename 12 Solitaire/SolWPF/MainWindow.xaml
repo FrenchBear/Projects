@@ -20,12 +20,20 @@
                 <MatrixTransform x:Name="mainMatrixTransform"/>
             </Canvas.RenderTransform>
 
-            <Rectangle Name="Rectangle1" StrokeThickness="3" Stroke="Black" Canvas.Left="10" Canvas.Top="50" />
-            <Rectangle Name="Rectangle2" StrokeThickness="3" Stroke="Black" Canvas.Left="120" Canvas.Top="50" />
-            <Rectangle Name="Rectangle3" StrokeThickness="3" Stroke="Black" Canvas.Left="230" Canvas.Top="50" />
-            <Rectangle Name="Rectangle4" StrokeThickness="3" Stroke="Black" Canvas.Left="340" Canvas.Top="50" />
+            <Rectangle Name="Base0" StrokeThickness="3" Stroke="Black" Canvas.Left="210" Canvas.Top="10" RadiusX="12" RadiusY="12" />
+            <Rectangle Name="Base1" StrokeThickness="3" Stroke="Black" Canvas.Left="320" Canvas.Top="10" RadiusX="12" RadiusY="12" />
+            <Rectangle Name="Base2" StrokeThickness="3" Stroke="Black" Canvas.Left="430" Canvas.Top="10" RadiusX="12" RadiusY="12" />
+            <Rectangle Name="Base3" StrokeThickness="3" Stroke="Black" Canvas.Left="540" Canvas.Top="10" RadiusX="12" RadiusY="12" />
 
-            <!--<local:PlayingCard x:Name="MyCard" Face="C3" Width="100" Height="140" Canvas.Left="50" Canvas.Top="50" IsHitTestVisible="True" />-->
+            <Rectangle Name="Talon" StrokeThickness="3" Stroke="Black" Canvas.Left="670" Canvas.Top="10" RadiusX="12" RadiusY="12" />
+
+            <Rectangle Name="Column0" StrokeThickness="3" Stroke="Black" Canvas.Left="10" Canvas.Top="200" RadiusX="12" RadiusY="12" />
+            <Rectangle Name="Column1" StrokeThickness="3" Stroke="Black" Canvas.Left="120" Canvas.Top="200" RadiusX="12" RadiusY="12" />
+            <Rectangle Name="Column2" StrokeThickness="3" Stroke="Black" Canvas.Left="230" Canvas.Top="200" RadiusX="12" RadiusY="12" />
+            <Rectangle Name="Column3" StrokeThickness="3" Stroke="Black" Canvas.Left="340" Canvas.Top="200" RadiusX="12" RadiusY="12" />
+            <Rectangle Name="Column4" StrokeThickness="3" Stroke="Black" Canvas.Left="450" Canvas.Top="200" RadiusX="12" RadiusY="12" />
+            <Rectangle Name="Column5" StrokeThickness="3" Stroke="Black" Canvas.Left="560" Canvas.Top="200" RadiusX="12" RadiusY="12" />
+            <Rectangle Name="Column6" StrokeThickness="3" Stroke="Black" Canvas.Left="670" Canvas.Top="200" RadiusX="12" RadiusY="12" />
 
         </Canvas>
 

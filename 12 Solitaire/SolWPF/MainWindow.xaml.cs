@@ -19,6 +19,7 @@ namespace SolWPF
     {
         private double cardWidth = 100, cardHeight = 140;
         private Rectangle[] BasesRect;
+        private Rectangle[] ColumnsRect;
         private List<string>[] BasesCards;
         private Dictionary<string, PlayingCard> Cards;
 
@@ -32,12 +33,23 @@ namespace SolWPF
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            BasesRect = new Rectangle[] { Rectangle1, Rectangle2, Rectangle3, Rectangle4 };
+            BasesRect = new Rectangle[] { Base0, Base1, Base2, Base3};
             foreach (var br in BasesRect)
             {
                 br.Width = cardWidth;
                 br.Height = cardHeight;
             }
+
+            ColumnsRect = new Rectangle[] { Column0, Column1, Column2, Column3, Column4, Column5, Column6 };
+            foreach (var cr in ColumnsRect)
+            {
+                cr.Width = cardWidth;
+                cr.Height = cardHeight;
+            }
+
+            Talon.Width = cardWidth;
+            Talon.Height = cardHeight;
+
 
             BasesCards = new List<string>[4];
             for (int i = 0; i < BasesCards.Length; i++)
@@ -88,6 +100,9 @@ namespace SolWPF
             Matrix m = mainMatrixTransform.Matrix;
 
             pmm = null;
+
+            // Should look for cards to move from this list
+            var vv = PlayingCanvas.Children.OfType<PlayingCard>().Reverse();
 
             for (var i = 0; i < 4; i++)
                 if (BasesCards[i].Count > 0)
