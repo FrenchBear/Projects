@@ -3,11 +3,14 @@
 // 2019-04-09   PV
 
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Linq;
+
 
 namespace SolWPF
 {
@@ -16,6 +19,11 @@ namespace SolWPF
     {
         private double cardWidth = 100, cardHeight = 140;
         private Rectangle[] BasesRect;
+        private List<string>[] BasesCards;
+        private Dictionary<string, PlayingCard> Cards;
+
+        PlayingCard MyCard;     // Card being moved
+        int CardSource;
 
         public MainWindow()
         {
@@ -24,17 +32,39 @@ namespace SolWPF
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            MyCard.Width = cardWidth;
-            MyCard.Height = cardHeight;
-            MyCard.SetValue(Canvas.LeftProperty, (double)Rectangle1.GetValue(Canvas.LeftProperty));
-            MyCard.SetValue(Canvas.TopProperty, (double)Rectangle1.GetValue(Canvas.TopProperty));
-
             BasesRect = new Rectangle[] { Rectangle1, Rectangle2, Rectangle3, Rectangle4 };
             foreach (var br in BasesRect)
             {
                 br.Width = cardWidth;
                 br.Height = cardHeight;
             }
+
+            BasesCards = new List<string>[4];
+            for (int i = 0; i < BasesCards.Length; i++)
+                BasesCards[i] = new List<string>();
+
+            BasesCards[0].Add("HK");        // King of Hearts on top
+            BasesCards[0].Add("DQ");
+            BasesCards[0].Add("C3");
+            BasesCards[3].Add("@@");
+
+            Cards = new Dictionary<string, PlayingCard>();
+            for (int i = 0; i < BasesCards.Length; i++)
+                for (int j = BasesCards[i].Count-1; j >= 0; j--)
+                {
+                    var face = BasesCards[i][j];
+
+                    var MyCard = new PlayingCard { Face = face };
+                    MyCard.Width = cardWidth;
+                    MyCard.Height = cardHeight;
+                    MyCard.SetValue(Canvas.LeftProperty, (double)BasesRect[i].GetValue(Canvas.LeftProperty));
+                    MyCard.SetValue(Canvas.TopProperty, (double)BasesRect[i].GetValue(Canvas.TopProperty));
+
+                    PlayingCanvas.Children.Add(MyCard);
+                    Cards.Add(face, MyCard);
+                }
+
+
         }
 
 
@@ -59,52 +89,61 @@ namespace SolWPF
 
             pmm = null;
 
-            foreach (var br in BasesRect)
-            {
-                Point P1 = new Point((double)br.GetValue(Canvas.LeftProperty), (double)br.GetValue(Canvas.TopProperty));
-                Point P2 = new Point((double)br.GetValue(Canvas.LeftProperty) + cardWidth, (double)br.GetValue(Canvas.TopProperty) + cardHeight);
-                Point P1T = m.Transform(P1);
-                Point P2T = m.Transform(P2);
-
-                if (previousMousePosition.X >= P1T.X && previousMousePosition.X <= P2T.X && previousMousePosition.Y >= P1T.Y && previousMousePosition.Y <= P2T.Y)
+            for (var i = 0; i < 4; i++)
+                if (BasesCards[i].Count > 0)
                 {
-                    startingLeft = P1.X;
-                    startingTop = P1.Y;
-                    startingRect = br;
+                    var br = BasesRect[i];
+                    Point P1 = new Point((double)br.GetValue(Canvas.LeftProperty), (double)br.GetValue(Canvas.TopProperty));
+                    Point P2 = new Point((double)br.GetValue(Canvas.LeftProperty) + cardWidth, (double)br.GetValue(Canvas.TopProperty) + cardHeight);
+                    Point P1T = m.Transform(P1);
+                    Point P2T = m.Transform(P2);
 
-                    // Move card
-                    m.Invert();
-                    Vector v = P1 - m.Transform(previousMousePosition);
-                    pmm = P =>
+                    if (previousMousePosition.X >= P1T.X && previousMousePosition.X <= P2T.X && previousMousePosition.Y >= P1T.Y && previousMousePosition.Y <= P2T.Y)
                     {
-                        MyCard.SetValue(Canvas.LeftProperty, P.X + v.X);
-                        MyCard.SetValue(Canvas.TopProperty, P.Y + v.Y);
+                        startingLeft = P1.X;
+                        startingTop = P1.Y;
+                        startingRect = br;
 
-                        foreach (var br in BasesRect)
-                            if (br != startingRect)
-                            {
-                                Point Q = new Point((double)br.GetValue(Canvas.LeftProperty), (double)br.GetValue(Canvas.TopProperty));
+                        // Move card
+                        m.Invert();
+                        Vector v = P1 - m.Transform(previousMousePosition);
+                        MyCard = Cards[BasesCards[i][0]];                   // Get card on the top
+                        CardSource = i;
 
-                                if (P.X >= Q.X && P.X <= Q.X + cardWidth && P.Y >= Q.Y && P.Y <= Q.Y + cardHeight)
+                        // Move card on top of children display list order
+                        PlayingCanvas.Children.Remove(MyCard);
+                        PlayingCanvas.Children.Add(MyCard);
+
+                        pmm = P =>
+                        {
+                            MyCard.SetValue(Canvas.LeftProperty, P.X + v.X);
+                            MyCard.SetValue(Canvas.TopProperty, P.Y + v.Y);
+
+                            foreach (var br in BasesRect)
+                                if (br != startingRect)
                                 {
-                                    br.Stroke = Brushes.Red;
-                                    br.StrokeThickness = 5.0;
+                                    Point Q = new Point((double)br.GetValue(Canvas.LeftProperty), (double)br.GetValue(Canvas.TopProperty));
+
+                                    if (P.X >= Q.X && P.X <= Q.X + cardWidth && P.Y >= Q.Y && P.Y <= Q.Y + cardHeight)
+                                    {
+                                        br.Stroke = Brushes.Red;
+                                        br.StrokeThickness = 5.0;
+                                    }
+                                    else
+                                    {
+                                        br.Stroke = Brushes.Black;
+                                        br.StrokeThickness = 3.0;
+                                    }
                                 }
-                                else
-                                {
-                                    br.Stroke = Brushes.Black;
-                                    br.StrokeThickness = 3.0;
-                                }
-                            }
-                    };
-                    // Be sure to call GetPosition before Capture, otherwise GetPosition returns 0 after Capture
-                    // Capture to get MouseUp event raised by grid
-                    Mouse.Capture(mainGrid);
-                    mainGrid.MouseMove -= new MouseEventHandler(MainGrid_MouseMoveWhenUp);
-                    mainGrid.MouseMove += new MouseEventHandler(MainGrid_MouseMoveWhenDown);
-                    return;
+                        };
+                        // Be sure to call GetPosition before Capture, otherwise GetPosition returns 0 after Capture
+                        // Capture to get MouseUp event raised by grid
+                        Mouse.Capture(mainGrid);
+                        mainGrid.MouseMove -= new MouseEventHandler(MainGrid_MouseMoveWhenUp);
+                        mainGrid.MouseMove += new MouseEventHandler(MainGrid_MouseMoveWhenDown);
+                        return;
+                    }
                 }
-            }
         }
 
         void MainGrid_MouseMoveWhenUp(object sender, MouseEventArgs e)
@@ -137,16 +176,23 @@ namespace SolWPF
             mainGrid.MouseMove += new MouseEventHandler(MainGrid_MouseMoveWhenUp);
 
             bool found = false;
-            foreach (var br in BasesRect)
+
+            for (var i = 0; i < 4; i++)
+            {
+                var br = BasesRect[i];
                 if (br.Stroke == Brushes.Red)
                 {
                     MyCard.SetValue(Canvas.LeftProperty, br.GetValue(Canvas.LeftProperty));
                     MyCard.SetValue(Canvas.TopProperty, br.GetValue(Canvas.TopProperty));
                     br.Stroke = Brushes.Black;
                     br.StrokeThickness = 3.0;
+
+                    BasesCards[i].Insert(0, BasesCards[CardSource][0]);
+                    BasesCards[CardSource].RemoveAt(0);
                     found = true;
                     break;
                 }
+            }
 
             if (!found)
             {

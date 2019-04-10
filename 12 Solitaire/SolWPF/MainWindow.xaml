@@ -15,7 +15,7 @@
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
 
-        <Canvas Width="400" Height="220" Background="Beige" HorizontalAlignment="Left" VerticalAlignment="Top" >
+        <Canvas Name="PlayingCanvas" Width="400" Height="220" Background="Beige" HorizontalAlignment="Left" VerticalAlignment="Top" >
             <Canvas.RenderTransform>
                 <MatrixTransform x:Name="mainMatrixTransform"/>
             </Canvas.RenderTransform>
@@ -25,7 +25,7 @@
             <Rectangle Name="Rectangle3" StrokeThickness="3" Stroke="Black" Canvas.Left="230" Canvas.Top="50" />
             <Rectangle Name="Rectangle4" StrokeThickness="3" Stroke="Black" Canvas.Left="340" Canvas.Top="50" />
 
-            <local:PlayingCard x:Name="MyCard" Face="C3" Width="100" Height="140" Canvas.Left="50" Canvas.Top="50" IsHitTestVisible="True" />
+            <!--<local:PlayingCard x:Name="MyCard" Face="C3" Width="100" Height="140" Canvas.Left="50" Canvas.Top="50" IsHitTestVisible="True" />-->
 
         </Canvas>
 
