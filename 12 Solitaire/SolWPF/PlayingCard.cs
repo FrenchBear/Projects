@@ -20,6 +20,11 @@ namespace SolWPF
                 typeof(string), typeof(PlayingCard));
         }
 
+        public PlayingCard(string face)
+        {
+            Face = face;
+        }
+
         public string Face
         {
             get { return (string)GetValue(FaceProperty); }

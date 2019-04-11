@@ -20,10 +20,10 @@
                 <MatrixTransform x:Name="mainMatrixTransform"/>
             </Canvas.RenderTransform>
 
-            <Rectangle Name="Base0" StrokeThickness="3" Stroke="Black" Canvas.Left="210" Canvas.Top="10" RadiusX="12" RadiusY="12" />
-            <Rectangle Name="Base1" StrokeThickness="3" Stroke="Black" Canvas.Left="320" Canvas.Top="10" RadiusX="12" RadiusY="12" />
-            <Rectangle Name="Base2" StrokeThickness="3" Stroke="Black" Canvas.Left="430" Canvas.Top="10" RadiusX="12" RadiusY="12" />
-            <Rectangle Name="Base3" StrokeThickness="3" Stroke="Black" Canvas.Left="540" Canvas.Top="10" RadiusX="12" RadiusY="12" />
+            <Rectangle Name="Base0" StrokeThickness="1" Stroke="Black" Canvas.Left="210" Canvas.Top="10" RadiusX="12" RadiusY="12" />
+            <Rectangle Name="Base1" StrokeThickness="1" Stroke="Black" Canvas.Left="320" Canvas.Top="10" RadiusX="12" RadiusY="12" />
+            <Rectangle Name="Base2" StrokeThickness="1" Stroke="Black" Canvas.Left="430" Canvas.Top="10" RadiusX="12" RadiusY="12" />
+            <Rectangle Name="Base3" StrokeThickness="1" Stroke="Black" Canvas.Left="540" Canvas.Top="10" RadiusX="12" RadiusY="12" />
 
             <Rectangle Name="Talon" StrokeThickness="3" Stroke="Black" Canvas.Left="670" Canvas.Top="10" RadiusX="12" RadiusY="12" />
 

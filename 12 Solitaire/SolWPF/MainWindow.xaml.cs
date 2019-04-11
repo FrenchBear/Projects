@@ -17,7 +17,7 @@ namespace SolWPF
 
     public partial class MainWindow : Window
     {
-        private double cardWidth = 100, cardHeight = 140;
+        public static double cardWidth = 100, cardHeight = 140;
         private Rectangle[] BasesRect;
         private Rectangle[] ColumnsRect;
         private List<string>[] BasesCards;
@@ -66,7 +66,7 @@ namespace SolWPF
                 {
                     var face = BasesCards[i][j];
 
-                    var MyCard = new PlayingCard { Face = face };
+                    var MyCard = new PlayingCard(face);
                     MyCard.Width = cardWidth;
                     MyCard.Height = cardHeight;
                     MyCard.SetValue(Canvas.LeftProperty, (double)BasesRect[i].GetValue(Canvas.LeftProperty));
@@ -75,8 +75,6 @@ namespace SolWPF
                     PlayingCanvas.Children.Add(MyCard);
                     Cards.Add(face, MyCard);
                 }
-
-
         }
 
 
@@ -92,6 +90,7 @@ namespace SolWPF
         double startingLeft, startingTop;
         Rectangle startingRect;
 
+
         private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {
             previousMousePosition = e.GetPosition(mainGrid);
@@ -100,9 +99,6 @@ namespace SolWPF
             Matrix m = mainMatrixTransform.Matrix;
 
             pmm = null;
-
-            // Should look for cards to move from this list
-            var vv = PlayingCanvas.Children.OfType<PlayingCard>().Reverse();
 
             for (var i = 0; i < 4; i++)
                 if (BasesCards[i].Count > 0)
@@ -175,7 +171,7 @@ namespace SolWPF
             if (pmm == null)
             {
                 // nop
-                // shouldn't consider this case here
+                // shouldn't consider this case for solitaire (don't translate background)
             }
             else
             {
