@@ -1919,6 +1919,11 @@
                         <Trigger Property="Face" Value="CK">
                             <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource CK}"/>
                         </Trigger>
+
+                        <Trigger Property="IsFaceUp" Value="False">
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource @@}"/>
+                        </Trigger>
+                        
                         <EventTrigger RoutedEvent="ToggleButton.Checked">
                             <BeginStoryboard>
                                 <Storyboard>

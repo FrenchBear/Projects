@@ -49,20 +49,39 @@ namespace SolWPF
             Bases[3] = new GameStack(PlayingCanvas, Base3);
 
             Columns = new GameStack[7];
-            Columns[0] = new GameStack(PlayingCanvas, Column0);
-            Columns[1] = new GameStack(PlayingCanvas, Column1);
-            Columns[2] = new GameStack(PlayingCanvas, Column2);
-            Columns[3] = new GameStack(PlayingCanvas, Column3);
-            Columns[4] = new GameStack(PlayingCanvas, Column4);
-            Columns[5] = new GameStack(PlayingCanvas, Column5);
-            Columns[6] = new GameStack(PlayingCanvas, Column6);
+            Columns[0] = new ColumnStack(PlayingCanvas, Column0);
+            Columns[1] = new ColumnStack(PlayingCanvas, Column1);
+            Columns[2] = new ColumnStack(PlayingCanvas, Column2);
+            Columns[3] = new ColumnStack(PlayingCanvas, Column3);
+            Columns[4] = new ColumnStack(PlayingCanvas, Column4);
+            Columns[5] = new ColumnStack(PlayingCanvas, Column5);
+            Columns[6] = new ColumnStack(PlayingCanvas, Column6);
 
             Talon = new TalonStack(PlayingCanvas, Talon0);
 
-            Bases[0].AddCard("HK");
-            Bases[0].AddCard("DQ");
-            Bases[0].AddCard("C3");
-            Bases[3].AddCard("@@");
+            var lc = new List<string>();
+            foreach (char c in "HDSC")
+                foreach (char v in "A23456789XJQK")
+                    lc.Add($"{c}{v}");
+            var rnd = new Random();
+            for (int i = 0; i < lc.Count; i++)
+            {
+                var i1 = rnd.Next(lc.Count);
+                var i2 = rnd.Next(lc.Count);
+                var t = lc[i1];
+                lc[i1] = lc[i2];
+                lc[i2] = t;
+            }
+
+            for (int c = 0; c < 7; c++)
+                for (int i = 0; i <= c; i++)
+                {
+                    string s = lc[0];
+                    lc.RemoveAt(0);
+                    Columns[c].AddCard(s, i == c);
+                }
+            foreach (string s in lc)
+                Talon.AddCard(s, false);
         }
 
 
@@ -97,15 +116,9 @@ namespace SolWPF
                 {
                     movingGroup.FromStack = gsSource;
                     Point P1 = movingGroup.GetTopLeft();
-
-                    //Point P1 = new Point((double)br.GetValue(Canvas.LeftProperty), (double)br.GetValue(Canvas.TopProperty));
-                    //Point P2 = new Point((double)br.GetValue(Canvas.LeftProperty) + cardWidth, (double)br.GetValue(Canvas.TopProperty) + cardHeight);
-
                     StartingPoint = P1;
-
-                    // Move card
                     Vector v = P1 - mouseT;
-
+                    // A closure to be executed my MouseMoveWhenDown with mouse coordinates (in game space) as parameter P
                     pmm = P =>
                     {
                         movingGroup.SetTopLeft(P + v);
@@ -115,27 +128,6 @@ namespace SolWPF
                             {
                                 if (gsTarget.isTargetHit(P))
                                     movingGroup.ToStack = gsTarget;
-                                /*
-                                MyCard.SetValue(Canvas.LeftProperty, P.X + v.X);
-                                MyCard.SetValue(Canvas.TopProperty, P.Y + v.Y);
-
-                                foreach (var br in BasesRect)
-                                    if (br != startingRect)
-                                    {
-                                        Point Q = new Point((double)br.GetValue(Canvas.LeftProperty), (double)br.GetValue(Canvas.TopProperty));
-
-                                        if (P.X >= Q.X && P.X <= Q.X + cardWidth && P.Y >= Q.Y && P.Y <= Q.Y + cardHeight)
-                                        {
-                                            br.Stroke = Brushes.Red;
-                                            br.StrokeThickness = 5.0;
-                                        }
-                                        else
-                                        {
-                                            br.Stroke = Brushes.Black;
-                                            br.StrokeThickness = 3.0;
-                                        }
-                                    }
-                                    */
                             }
                     };
                     // Be sure to call GetPosition before Capture, otherwise GetPosition returns 0 after Capture
@@ -160,17 +152,8 @@ namespace SolWPF
         {
             var newPosition = e.GetPosition(mainGrid);
             Matrix m = mainMatrixTransform.Matrix;
-
-            if (pmm == null)
-            {
-                // nop
-                // shouldn't consider this case for solitaire (don't translate background)
-            }
-            else
-            {
-                m.Invert();     // By construction, all applied transformations are reversible, so m is invertible
-                pmm(m.Transform(newPosition));
-            }
+            m.Invert();     // By construction, all applied transformations are reversible, so m is invertible
+            pmm(m.Transform(newPosition));
         }
 
         private void MainGrid_MouseUp(object sender, MouseButtonEventArgs e)

@@ -1,4 +1,8 @@
-﻿using System;
+﻿// GameStack class
+// A base class to represent a location and a collection of PlayingCards
+// 2019-04-11   PV
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -13,9 +17,9 @@ namespace SolWPF
     {
         private Canvas PlayingCanvas;
         private Rectangle BaseRect;
-        private List<PlayingCard> PlayingCards;
+        protected List<PlayingCard> PlayingCards;
 
-        public GameStack(Canvas c,Rectangle r)
+        public GameStack(Canvas c, Rectangle r)
         {
             PlayingCanvas = c;
             BaseRect = r;
@@ -24,14 +28,22 @@ namespace SolWPF
             PlayingCards = new List<PlayingCard>();
         }
 
-        public void AddCard(string face)
+
+        // Must be called BEFORE adding the card to PlayingCards list
+        protected virtual Point getNewCardPosition()
         {
-            var MyCard = new PlayingCard(face);
+            var P = new Point((double)BaseRect.GetValue(Canvas.LeftProperty), (double)BaseRect.GetValue(Canvas.TopProperty));
+            return P;
+        }
+
+        public void AddCard(string face, bool isFaceUp)
+        {
+            var MyCard = new PlayingCard(face, isFaceUp);
             MyCard.Width = MainWindow.cardWidth;
             MyCard.Height = MainWindow.cardHeight;
-            MyCard.SetValue(Canvas.LeftProperty, (double)BaseRect.GetValue(Canvas.LeftProperty));
-            MyCard.SetValue(Canvas.TopProperty, (double)BaseRect.GetValue(Canvas.TopProperty));
-
+            Point P = getNewCardPosition();
+            MyCard.SetValue(Canvas.LeftProperty, P.X);
+            MyCard.SetValue(Canvas.TopProperty, P.Y );
             PlayingCanvas.Children.Add(MyCard);
             PlayingCards.Insert(0, MyCard);
         }
@@ -48,31 +60,24 @@ namespace SolWPF
         {
             // For now, only move 1 card
             Debug.Assert(cards.Count == 1);
+            Point P = getNewCardPosition();
+            cards[0].SetValue(Canvas.LeftProperty, P.X);
+            cards[0].SetValue(Canvas.TopProperty, P.Y);
             PlayingCards.Insert(0, cards[0]);
-            cards[0].SetValue(Canvas.LeftProperty, (double)BaseRect.GetValue(Canvas.LeftProperty));
-            cards[0].SetValue(Canvas.TopProperty, (double)BaseRect.GetValue(Canvas.TopProperty));
         }
 
 
+        // Internal hit test
+        // Base version should only check rectangle, derived classes are responsible to implement
+        // specialized versions with possible offsets
         private bool isStackHit(Point P)
         {
-            Point Q = new Point((double)BaseRect.GetValue(Canvas.LeftProperty), (double)BaseRect.GetValue(Canvas.TopProperty));
-            Debug.WriteLine($"isStactHit mouse=({P.X}; {P.Y})  Q=({Q.X}; {Q.Y})");
-
-            return (P.X >= Q.X && P.X <= Q.X + MainWindow.cardWidth && P.Y >= Q.Y && P.Y <= Q.Y + MainWindow.cardHeight);
-            /*
-            {
-                BaseRect.Stroke = Brushes.Red;
-                BaseRect.StrokeThickness = 5.0;
-                return true;
-            }
+            Point Q;
+            if (PlayingCards.Count == 0)
+                Q = new Point((double)BaseRect.GetValue(Canvas.LeftProperty), (double)BaseRect.GetValue(Canvas.TopProperty));
             else
-            {
-                BaseRect.Stroke = Brushes.Black;
-                BaseRect.StrokeThickness = 3.0;
-                return false;
-            }
-            */
+                Q = new Point((double)PlayingCards[0].GetValue(Canvas.LeftProperty), (double)PlayingCards[0].GetValue(Canvas.TopProperty));
+            return (P.X >= Q.X && P.X <= Q.X + MainWindow.cardWidth && P.Y >= Q.Y && P.Y <= Q.Y + MainWindow.cardHeight);
         }
 
         public MovingGroup startingHit(Point P)
@@ -81,18 +86,15 @@ namespace SolWPF
             if (!isStackHit(P)) return null;
 
             var mg = new MovingGroup(PlayingCards[0]);
-            PlayingCanvas.Children.Remove(PlayingCards[0]);
-            PlayingCanvas.Children.Add(PlayingCards[0]);
-
+            foreach (PlayingCard pc in mg.Cards)
+                PlayingCanvas.Children.Remove(pc);
+            foreach (PlayingCard pc in mg.Cards)
+                PlayingCanvas.Children.Add(pc);
             return mg;
         }
 
         public virtual bool isTargetHit(Point P)
         {
-            //Point Q = new Point((double)BaseRect.GetValue(Canvas.LeftProperty), (double)BaseRect.GetValue(Canvas.TopProperty));
-            //Debug.WriteLine($"isTargetHit mouse=({P.X}; {P.Y})  Q=({Q.X}; {Q.Y})");
-
-            //if (P.X >= Q.X && P.X <= Q.X + MainWindow.cardWidth && P.Y >= Q.Y && P.Y <= Q.Y + MainWindow.cardHeight)
             if (isStackHit(P))
             {
                 BaseRect.Stroke = Brushes.Red;
@@ -104,7 +106,6 @@ namespace SolWPF
                 ClearTargetHighlight();
                 return false;
             }
-
         }
 
         internal void ClearTargetHighlight()
@@ -114,9 +115,9 @@ namespace SolWPF
         }
     }
 
-    class TalonStack: GameStack
+    class TalonStack : GameStack
     {
-        public TalonStack(Canvas c, Rectangle r): base(c, r)
+        public TalonStack(Canvas c, Rectangle r) : base(c, r)
         {
         }
 
@@ -125,6 +126,29 @@ namespace SolWPF
         {
             return false;
         }
+    }
+
+    // New cards are shown in a visible stack
+    class ColumnStack: GameStack
+    {
+        const double visibleYOffset = 45.0;
+        const double notVvisibleYOffset = 10.0;
+
+        public ColumnStack(Canvas c, Rectangle r) : base(c, r)
+        {
+        }
+
+        protected override Point getNewCardPosition()
+        {
+            Point P = base.getNewCardPosition();
+            if (PlayingCards.Count == 0) return P;
+            double off = 0;
+            for (int i = PlayingCards.Count - 1; i >= 0; i--)
+                off += PlayingCards[i].IsFaceUp ? visibleYOffset : notVvisibleYOffset;
+
+            return new Point(P.X, P.Y + off);
+        }
+
     }
 
 }

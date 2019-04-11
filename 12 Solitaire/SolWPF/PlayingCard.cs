@@ -9,20 +9,23 @@ namespace SolWPF
 {
     public class PlayingCard : ToggleButton
     {
+        public static DependencyProperty FaceProperty;
+        public static DependencyProperty IsFaceUpProperty;
+
         static PlayingCard()
         {
             // Override style
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(PlayingCard),
-                new FrameworkPropertyMetadata(typeof(PlayingCard)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(PlayingCard), new FrameworkPropertyMetadata(typeof(PlayingCard)));
 
-            // Register Face dependency property
-            FaceProperty = DependencyProperty.Register("Face",
-                typeof(string), typeof(PlayingCard));
+            // Register dependency properties
+            FaceProperty = DependencyProperty.Register("Face", typeof(string), typeof(PlayingCard));
+            IsFaceUpProperty = DependencyProperty.Register("IsFaceUp", typeof(bool), typeof(PlayingCard));
         }
 
-        public PlayingCard(string face)
+        public PlayingCard(string face, bool isFaceUp)
         {
             Face = face;
+            IsFaceUp = isFaceUp;
         }
 
         public string Face
@@ -31,7 +34,12 @@ namespace SolWPF
             set { SetValue(FaceProperty, value); }
         }
 
-        public static DependencyProperty FaceProperty;
+        public bool IsFaceUp
+        {
+            get { return (bool)GetValue(IsFaceUpProperty); }
+            set { SetValue(IsFaceUpProperty, value); }
+        }
+
     }
 
 }

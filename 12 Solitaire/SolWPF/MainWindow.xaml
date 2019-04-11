@@ -5,16 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SolWPF"
         mc:Ignorable="d"
-        Title="SolWPF" Height="450" Width="800"
+        Title="SolWPF" Height="800" Width="800"
         Loaded="Window_Loaded"
         >
 
     <Grid Name="mainGrid" MouseMove="MainGrid_MouseMoveWhenUp" PreviewMouseDown="MainGrid_MouseDown" MouseUp="MainGrid_MouseUp" MouseWheel="MainGrid_MouseWheel" Background="Transparent">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="9*"/>
-            <RowDefinition Height="1*"/>
-        </Grid.RowDefinitions>
-
         <Canvas Name="PlayingCanvas" Width="400" Height="220" Background="Beige" HorizontalAlignment="Left" VerticalAlignment="Top" >
             <Canvas.RenderTransform>
                 <MatrixTransform x:Name="mainMatrixTransform"/>
@@ -27,16 +22,13 @@
 
             <Rectangle Name="Talon0" StrokeThickness="3" Stroke="Black" Canvas.Left="670" Canvas.Top="10" RadiusX="12" RadiusY="12" />
 
-            <Rectangle Name="Column0" StrokeThickness="3" Stroke="Black" Canvas.Left="10" Canvas.Top="200" RadiusX="12" RadiusY="12" />
-            <Rectangle Name="Column1" StrokeThickness="3" Stroke="Black" Canvas.Left="120" Canvas.Top="200" RadiusX="12" RadiusY="12" />
-            <Rectangle Name="Column2" StrokeThickness="3" Stroke="Black" Canvas.Left="230" Canvas.Top="200" RadiusX="12" RadiusY="12" />
-            <Rectangle Name="Column3" StrokeThickness="3" Stroke="Black" Canvas.Left="340" Canvas.Top="200" RadiusX="12" RadiusY="12" />
-            <Rectangle Name="Column4" StrokeThickness="3" Stroke="Black" Canvas.Left="450" Canvas.Top="200" RadiusX="12" RadiusY="12" />
-            <Rectangle Name="Column5" StrokeThickness="3" Stroke="Black" Canvas.Left="560" Canvas.Top="200" RadiusX="12" RadiusY="12" />
-            <Rectangle Name="Column6" StrokeThickness="3" Stroke="Black" Canvas.Left="670" Canvas.Top="200" RadiusX="12" RadiusY="12" />
-
+            <Rectangle Name="Column0" StrokeThickness="3" Stroke="Black" Canvas.Left="10"  Canvas.Top="170" RadiusX="12" RadiusY="12" />
+            <Rectangle Name="Column1" StrokeThickness="3" Stroke="Black" Canvas.Left="120" Canvas.Top="170" RadiusX="12" RadiusY="12" />
+            <Rectangle Name="Column2" StrokeThickness="3" Stroke="Black" Canvas.Left="230" Canvas.Top="170" RadiusX="12" RadiusY="12" />
+            <Rectangle Name="Column3" StrokeThickness="3" Stroke="Black" Canvas.Left="340" Canvas.Top="170" RadiusX="12" RadiusY="12" />
+            <Rectangle Name="Column4" StrokeThickness="3" Stroke="Black" Canvas.Left="450" Canvas.Top="170" RadiusX="12" RadiusY="12" />
+            <Rectangle Name="Column5" StrokeThickness="3" Stroke="Black" Canvas.Left="560" Canvas.Top="170" RadiusX="12" RadiusY="12" />
+            <Rectangle Name="Column6" StrokeThickness="3" Stroke="Black" Canvas.Left="670" Canvas.Top="170" RadiusX="12" RadiusY="12" />
         </Canvas>
-
-        <Button Content="Exit" Grid.Row="1" FontSize="20" Click="ButtonExit_Click"/>
     </Grid>
 </Window>
