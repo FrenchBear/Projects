@@ -57,7 +57,7 @@ namespace SolWPF
             Columns[5] = new GameStack(PlayingCanvas, Column5);
             Columns[6] = new GameStack(PlayingCanvas, Column6);
 
-            Talon = new GameStack(PlayingCanvas, Talon0);
+            Talon = new TalonStack(PlayingCanvas, Talon0);
 
             Bases[0].AddCard("HK");
             Bases[0].AddCard("DQ");
@@ -90,57 +90,53 @@ namespace SolWPF
             pmm = null;
             //movingGroup= null;
 
-            foreach (var gs in AllStacks())
+            foreach (var gsSource in AllStacks())
             {
-                movingGroup = gs.startingHit(mouseT);
+                movingGroup = gsSource.startingHit(mouseT);
                 if (movingGroup != null)
                 {
+                    movingGroup.FromStack = gsSource;
                     Point P1 = movingGroup.GetTopLeft();
 
                     //Point P1 = new Point((double)br.GetValue(Canvas.LeftProperty), (double)br.GetValue(Canvas.TopProperty));
                     //Point P2 = new Point((double)br.GetValue(Canvas.LeftProperty) + cardWidth, (double)br.GetValue(Canvas.TopProperty) + cardHeight);
 
-                    //if (mouseT.X >= P1.X && mouseT.X <= P2.X && mouseT.Y >= P1.Y && mouseT.Y <= P2.Y)
-                    //{
-                    //startingLeft = P1.X;
-                    //startingTop = P1.Y;
-                    //startingRect = br;
                     StartingPoint = P1;
 
                     // Move card
                     Vector v = P1 - mouseT;
-                    //MyCard = Cards[BasesCards[i][0]];                   // Get card on the top
-                    //CardSource = i;
-
-                    // Move card on top of children display list order
-                    // $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ToDo, but probably in gs.startingHit
-                    //PlayingCanvas.Children.Remove(MyCard);
-                    //PlayingCanvas.Children.Add(MyCard);
 
                     pmm = P =>
                     {
                         movingGroup.SetTopLeft(P + v);
-                            /*
-                            MyCard.SetValue(Canvas.LeftProperty, P.X + v.X);
-                            MyCard.SetValue(Canvas.TopProperty, P.Y + v.Y);
+                        movingGroup.ToStack = null;
+                        foreach (var gsTarget in AllStacks())
+                            if (gsTarget != movingGroup.FromStack)
+                            {
+                                if (gsTarget.isTargetHit(P))
+                                    movingGroup.ToStack = gsTarget;
+                                /*
+                                MyCard.SetValue(Canvas.LeftProperty, P.X + v.X);
+                                MyCard.SetValue(Canvas.TopProperty, P.Y + v.Y);
 
-                            foreach (var br in BasesRect)
-                                if (br != startingRect)
-                                {
-                                    Point Q = new Point((double)br.GetValue(Canvas.LeftProperty), (double)br.GetValue(Canvas.TopProperty));
+                                foreach (var br in BasesRect)
+                                    if (br != startingRect)
+                                    {
+                                        Point Q = new Point((double)br.GetValue(Canvas.LeftProperty), (double)br.GetValue(Canvas.TopProperty));
 
-                                    if (P.X >= Q.X && P.X <= Q.X + cardWidth && P.Y >= Q.Y && P.Y <= Q.Y + cardHeight)
-                                    {
-                                        br.Stroke = Brushes.Red;
-                                        br.StrokeThickness = 5.0;
+                                        if (P.X >= Q.X && P.X <= Q.X + cardWidth && P.Y >= Q.Y && P.Y <= Q.Y + cardHeight)
+                                        {
+                                            br.Stroke = Brushes.Red;
+                                            br.StrokeThickness = 5.0;
+                                        }
+                                        else
+                                        {
+                                            br.Stroke = Brushes.Black;
+                                            br.StrokeThickness = 3.0;
+                                        }
                                     }
-                                    else
-                                    {
-                                        br.Stroke = Brushes.Black;
-                                        br.StrokeThickness = 3.0;
-                                    }
-                                }
-                                */
+                                    */
+                            }
                     };
                     // Be sure to call GetPosition before Capture, otherwise GetPosition returns 0 after Capture
                     // Capture to get MouseUp event raised by grid
@@ -183,35 +179,19 @@ namespace SolWPF
             mainGrid.MouseMove -= new MouseEventHandler(MainGrid_MouseMoveWhenDown);
             mainGrid.MouseMove += new MouseEventHandler(MainGrid_MouseMoveWhenUp);
 
-            bool found = false;
+            if (movingGroup == null)
+                return;
 
-            /*
-            for (var i = 0; i < 4; i++)
+            if (movingGroup.ToStack != null)
             {
-                var br = BasesRect[i];
-                if (br.Stroke == Brushes.Red)
-                {
-                    MyCard.SetValue(Canvas.LeftProperty, br.GetValue(Canvas.LeftProperty));
-                    MyCard.SetValue(Canvas.TopProperty, br.GetValue(Canvas.TopProperty));
-                    br.Stroke = Brushes.Black;
-                    br.StrokeThickness = 3.0;
-
-                    BasesCards[i].Insert(0, BasesCards[CardSource][0]);
-                    BasesCards[CardSource].RemoveAt(0);
-                    found = true;
-                    break;
-                }
+                movingGroup.ToStack.ClearTargetHighlight();
+                movingGroup.DoMove();
             }
-            */
-
-            if (!found)
-            {
+            else
                 movingGroup.SetTopLeft(StartingPoint);
-                //MyCard.SetValue(Canvas.LeftProperty, startingLeft);
-                //MyCard.SetValue(Canvas.TopProperty, startingTop);
-            }
-            
         }
+
+
 
         private void MainGrid_MouseWheel(object sender, MouseWheelEventArgs e)
         {

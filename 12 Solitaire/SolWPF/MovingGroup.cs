@@ -9,6 +9,7 @@ namespace SolWPF
     class MovingGroup
     {
         public GameStack FromStack;
+        public GameStack ToStack;
         public List<PlayingCard> Cards;
 
         public MovingGroup(PlayingCard pc)
@@ -27,6 +28,12 @@ namespace SolWPF
         {
             Cards[0].SetValue(Canvas.LeftProperty, P.X);
             Cards[0].SetValue(Canvas.TopProperty, P.Y);
+        }
+
+        internal void DoMove()
+        {
+            FromStack.MoveOutCards(Cards);
+            ToStack.MoveInCards(Cards);
         }
     }
 }

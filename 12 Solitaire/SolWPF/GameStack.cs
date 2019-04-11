@@ -36,9 +36,28 @@ namespace SolWPF
             PlayingCards.Insert(0, MyCard);
         }
 
+        internal void MoveOutCards(List<PlayingCard> cards)
+        {
+            // For now, only move 1 card
+            Debug.Assert(cards.Count == 1);
+            Debug.Assert(PlayingCards[0] == cards[0]);
+            PlayingCards.RemoveAt(0);
+        }
+
+        internal void MoveInCards(List<PlayingCard> cards)
+        {
+            // For now, only move 1 card
+            Debug.Assert(cards.Count == 1);
+            PlayingCards.Insert(0, cards[0]);
+            cards[0].SetValue(Canvas.LeftProperty, (double)BaseRect.GetValue(Canvas.LeftProperty));
+            cards[0].SetValue(Canvas.TopProperty, (double)BaseRect.GetValue(Canvas.TopProperty));
+        }
+
+
         private bool isStackHit(Point P)
         {
             Point Q = new Point((double)BaseRect.GetValue(Canvas.LeftProperty), (double)BaseRect.GetValue(Canvas.TopProperty));
+            Debug.WriteLine($"isStactHit mouse=({P.X}; {P.Y})  Q=({Q.X}; {Q.Y})");
 
             return (P.X >= Q.X && P.X <= Q.X + MainWindow.cardWidth && P.Y >= Q.Y && P.Y <= Q.Y + MainWindow.cardHeight);
             /*
@@ -67,5 +86,45 @@ namespace SolWPF
 
             return mg;
         }
+
+        public virtual bool isTargetHit(Point P)
+        {
+            //Point Q = new Point((double)BaseRect.GetValue(Canvas.LeftProperty), (double)BaseRect.GetValue(Canvas.TopProperty));
+            //Debug.WriteLine($"isTargetHit mouse=({P.X}; {P.Y})  Q=({Q.X}; {Q.Y})");
+
+            //if (P.X >= Q.X && P.X <= Q.X + MainWindow.cardWidth && P.Y >= Q.Y && P.Y <= Q.Y + MainWindow.cardHeight)
+            if (isStackHit(P))
+            {
+                BaseRect.Stroke = Brushes.Red;
+                BaseRect.StrokeThickness = 5.0;
+                return true;
+            }
+            else
+            {
+                ClearTargetHighlight();
+                return false;
+            }
+
+        }
+
+        internal void ClearTargetHighlight()
+        {
+            BaseRect.Stroke = Brushes.Black;
+            BaseRect.StrokeThickness = 3.0;
+        }
     }
+
+    class TalonStack: GameStack
+    {
+        public TalonStack(Canvas c, Rectangle r): base(c, r)
+        {
+        }
+
+        // Talon is never a target
+        public override bool isTargetHit(Point P)
+        {
+            return false;
+        }
+    }
+
 }
