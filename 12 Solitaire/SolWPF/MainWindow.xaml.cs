@@ -18,13 +18,22 @@ namespace SolWPF
     public partial class MainWindow : Window
     {
         public static double cardWidth = 100, cardHeight = 140;
-        private Rectangle[] BasesRect;
-        private Rectangle[] ColumnsRect;
-        private List<string>[] BasesCards;
-        private Dictionary<string, PlayingCard> Cards;
+        private GameStack[] Bases;
+        private GameStack[] Columns;
+        private GameStack Talon;
 
-        PlayingCard MyCard;     // Card being moved
-        int CardSource;
+        private IEnumerable<GameStack> AllStacks()
+        {
+            foreach (var gs in Bases)
+                yield return gs;
+            foreach (var gs in Columns)
+                yield return gs;
+            yield return Talon;
+        }
+
+        MovingGroup movingGroup;    // Origin of card moved
+        //PlayingCard MyCard;     // Card being moved
+        //int CardSource;
 
         public MainWindow()
         {
@@ -33,48 +42,27 @@ namespace SolWPF
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            BasesRect = new Rectangle[] { Base0, Base1, Base2, Base3};
-            foreach (var br in BasesRect)
-            {
-                br.Width = cardWidth;
-                br.Height = cardHeight;
-            }
+            Bases = new GameStack[4];
+            Bases[0] = new GameStack(PlayingCanvas, Base0);
+            Bases[1] = new GameStack(PlayingCanvas, Base1);
+            Bases[2] = new GameStack(PlayingCanvas, Base2);
+            Bases[3] = new GameStack(PlayingCanvas, Base3);
 
-            ColumnsRect = new Rectangle[] { Column0, Column1, Column2, Column3, Column4, Column5, Column6 };
-            foreach (var cr in ColumnsRect)
-            {
-                cr.Width = cardWidth;
-                cr.Height = cardHeight;
-            }
+            Columns = new GameStack[7];
+            Columns[0] = new GameStack(PlayingCanvas, Column0);
+            Columns[1] = new GameStack(PlayingCanvas, Column1);
+            Columns[2] = new GameStack(PlayingCanvas, Column2);
+            Columns[3] = new GameStack(PlayingCanvas, Column3);
+            Columns[4] = new GameStack(PlayingCanvas, Column4);
+            Columns[5] = new GameStack(PlayingCanvas, Column5);
+            Columns[6] = new GameStack(PlayingCanvas, Column6);
 
-            Talon.Width = cardWidth;
-            Talon.Height = cardHeight;
+            Talon = new GameStack(PlayingCanvas, Talon0);
 
-
-            BasesCards = new List<string>[4];
-            for (int i = 0; i < BasesCards.Length; i++)
-                BasesCards[i] = new List<string>();
-
-            BasesCards[0].Add("HK");        // King of Hearts on top
-            BasesCards[0].Add("DQ");
-            BasesCards[0].Add("C3");
-            BasesCards[3].Add("@@");
-
-            Cards = new Dictionary<string, PlayingCard>();
-            for (int i = 0; i < BasesCards.Length; i++)
-                for (int j = BasesCards[i].Count-1; j >= 0; j--)
-                {
-                    var face = BasesCards[i][j];
-
-                    var MyCard = new PlayingCard(face);
-                    MyCard.Width = cardWidth;
-                    MyCard.Height = cardHeight;
-                    MyCard.SetValue(Canvas.LeftProperty, (double)BasesRect[i].GetValue(Canvas.LeftProperty));
-                    MyCard.SetValue(Canvas.TopProperty, (double)BasesRect[i].GetValue(Canvas.TopProperty));
-
-                    PlayingCanvas.Children.Add(MyCard);
-                    Cards.Add(face, MyCard);
-                }
+            Bases[0].AddCard("HK");
+            Bases[0].AddCard("DQ");
+            Bases[0].AddCard("C3");
+            Bases[3].AddCard("@@");
         }
 
 
@@ -87,46 +75,52 @@ namespace SolWPF
         Point previousMousePosition;
         delegate void ProcessMouseMove(Point p);
         ProcessMouseMove pmm;       // null indicates canvas move
-        double startingLeft, startingTop;
         Rectangle startingRect;
-
+        Point StartingPoint;
 
         private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {
             previousMousePosition = e.GetPosition(mainGrid);
 
-            // Reverse-transform mouse Grid coordinates into Canvas coordinates
+            // Reverse-transform mouse grid coordinates (screen) into Canvas coordinates
             Matrix m = mainMatrixTransform.Matrix;
+            m.Invert();
+            var mouseT = m.Transform(previousMousePosition);
 
             pmm = null;
+            //movingGroup= null;
 
-            for (var i = 0; i < 4; i++)
-                if (BasesCards[i].Count > 0)
+            foreach (var gs in AllStacks())
+            {
+                movingGroup = gs.startingHit(mouseT);
+                if (movingGroup != null)
                 {
-                    var br = BasesRect[i];
-                    Point P1 = new Point((double)br.GetValue(Canvas.LeftProperty), (double)br.GetValue(Canvas.TopProperty));
-                    Point P2 = new Point((double)br.GetValue(Canvas.LeftProperty) + cardWidth, (double)br.GetValue(Canvas.TopProperty) + cardHeight);
-                    Point P1T = m.Transform(P1);
-                    Point P2T = m.Transform(P2);
+                    Point P1 = movingGroup.GetTopLeft();
 
-                    if (previousMousePosition.X >= P1T.X && previousMousePosition.X <= P2T.X && previousMousePosition.Y >= P1T.Y && previousMousePosition.Y <= P2T.Y)
+                    //Point P1 = new Point((double)br.GetValue(Canvas.LeftProperty), (double)br.GetValue(Canvas.TopProperty));
+                    //Point P2 = new Point((double)br.GetValue(Canvas.LeftProperty) + cardWidth, (double)br.GetValue(Canvas.TopProperty) + cardHeight);
+
+                    //if (mouseT.X >= P1.X && mouseT.X <= P2.X && mouseT.Y >= P1.Y && mouseT.Y <= P2.Y)
+                    //{
+                    //startingLeft = P1.X;
+                    //startingTop = P1.Y;
+                    //startingRect = br;
+                    StartingPoint = P1;
+
+                    // Move card
+                    Vector v = P1 - mouseT;
+                    //MyCard = Cards[BasesCards[i][0]];                   // Get card on the top
+                    //CardSource = i;
+
+                    // Move card on top of children display list order
+                    // $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ToDo, but probably in gs.startingHit
+                    //PlayingCanvas.Children.Remove(MyCard);
+                    //PlayingCanvas.Children.Add(MyCard);
+
+                    pmm = P =>
                     {
-                        startingLeft = P1.X;
-                        startingTop = P1.Y;
-                        startingRect = br;
-
-                        // Move card
-                        m.Invert();
-                        Vector v = P1 - m.Transform(previousMousePosition);
-                        MyCard = Cards[BasesCards[i][0]];                   // Get card on the top
-                        CardSource = i;
-
-                        // Move card on top of children display list order
-                        PlayingCanvas.Children.Remove(MyCard);
-                        PlayingCanvas.Children.Add(MyCard);
-
-                        pmm = P =>
-                        {
+                        movingGroup.SetTopLeft(P + v);
+                            /*
                             MyCard.SetValue(Canvas.LeftProperty, P.X + v.X);
                             MyCard.SetValue(Canvas.TopProperty, P.Y + v.Y);
 
@@ -146,16 +140,19 @@ namespace SolWPF
                                         br.StrokeThickness = 3.0;
                                     }
                                 }
-                        };
-                        // Be sure to call GetPosition before Capture, otherwise GetPosition returns 0 after Capture
-                        // Capture to get MouseUp event raised by grid
-                        Mouse.Capture(mainGrid);
-                        mainGrid.MouseMove -= new MouseEventHandler(MainGrid_MouseMoveWhenUp);
-                        mainGrid.MouseMove += new MouseEventHandler(MainGrid_MouseMoveWhenDown);
-                        return;
-                    }
+                                */
+                    };
+                    // Be sure to call GetPosition before Capture, otherwise GetPosition returns 0 after Capture
+                    // Capture to get MouseUp event raised by grid
+                    Mouse.Capture(mainGrid);
+                    mainGrid.MouseMove -= new MouseEventHandler(MainGrid_MouseMoveWhenUp);
+                    mainGrid.MouseMove += new MouseEventHandler(MainGrid_MouseMoveWhenDown);
+                    return;
                 }
+
+            }
         }
+
 
         void MainGrid_MouseMoveWhenUp(object sender, MouseEventArgs e)
         {
@@ -188,6 +185,7 @@ namespace SolWPF
 
             bool found = false;
 
+            /*
             for (var i = 0; i < 4; i++)
             {
                 var br = BasesRect[i];
@@ -204,12 +202,15 @@ namespace SolWPF
                     break;
                 }
             }
+            */
 
             if (!found)
             {
-                MyCard.SetValue(Canvas.LeftProperty, startingLeft);
-                MyCard.SetValue(Canvas.TopProperty, startingTop);
+                movingGroup.SetTopLeft(StartingPoint);
+                //MyCard.SetValue(Canvas.LeftProperty, startingLeft);
+                //MyCard.SetValue(Canvas.TopProperty, startingTop);
             }
+            
         }
 
         private void MainGrid_MouseWheel(object sender, MouseWheelEventArgs e)

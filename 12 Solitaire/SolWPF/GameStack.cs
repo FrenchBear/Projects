@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Shapes;
 
 namespace SolWPF
@@ -17,6 +19,8 @@ namespace SolWPF
         {
             PlayingCanvas = c;
             BaseRect = r;
+            r.Width = MainWindow.cardWidth;
+            r.Height = MainWindow.cardHeight;
             PlayingCards = new List<PlayingCard>();
         }
 
@@ -32,9 +36,36 @@ namespace SolWPF
             PlayingCards.Insert(0, MyCard);
         }
 
-        public bool isMouseHit(double x, double y)
+        private bool isStackHit(Point P)
         {
-            return false;
+            Point Q = new Point((double)BaseRect.GetValue(Canvas.LeftProperty), (double)BaseRect.GetValue(Canvas.TopProperty));
+
+            return (P.X >= Q.X && P.X <= Q.X + MainWindow.cardWidth && P.Y >= Q.Y && P.Y <= Q.Y + MainWindow.cardHeight);
+            /*
+            {
+                BaseRect.Stroke = Brushes.Red;
+                BaseRect.StrokeThickness = 5.0;
+                return true;
+            }
+            else
+            {
+                BaseRect.Stroke = Brushes.Black;
+                BaseRect.StrokeThickness = 3.0;
+                return false;
+            }
+            */
+        }
+
+        public MovingGroup startingHit(Point P)
+        {
+            if (PlayingCards.Count == 0) return null;
+            if (!isStackHit(P)) return null;
+
+            var mg = new MovingGroup(PlayingCards[0]);
+            PlayingCanvas.Children.Remove(PlayingCards[0]);
+            PlayingCanvas.Children.Add(PlayingCards[0]);
+
+            return mg;
         }
     }
 }
