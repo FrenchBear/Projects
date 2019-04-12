@@ -94,7 +94,6 @@ namespace SolWPF
         Point previousMousePosition;
         delegate void ProcessMouseMove(Point p);
         ProcessMouseMove pmm;       // null indicates canvas move
-        Rectangle startingRect;
         Point StartingPoint;
 
         private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)

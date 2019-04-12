@@ -40,6 +40,11 @@ namespace SolWPF
             set { SetValue(IsFaceUpProperty, value); }
         }
 
+        public override string ToString()
+        {
+            return $"PlayingCard {Face}, IsFaceUp={IsFaceUp}";
+        }
+
     }
 
 }
