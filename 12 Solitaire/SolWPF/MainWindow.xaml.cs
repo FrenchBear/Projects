@@ -111,7 +111,7 @@ namespace SolWPF
 
             foreach (var gsSource in AllStacks())
             {
-                movingGroup = gsSource.startingHit(mouseT);
+                movingGroup = gsSource.FromHitTest(mouseT);
                 if (movingGroup != null)
                 {
                     movingGroup.FromStack = gsSource;
@@ -126,7 +126,7 @@ namespace SolWPF
                         foreach (var gsTarget in AllStacks())
                             if (gsTarget != movingGroup.FromStack)
                             {
-                                if (gsTarget.isTargetHit(P))
+                                if (gsTarget.ToHitTest(P))
                                     movingGroup.ToStack = gsTarget;
                             }
                     };

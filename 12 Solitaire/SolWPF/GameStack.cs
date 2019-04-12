@@ -54,6 +54,8 @@ namespace SolWPF
             Debug.Assert(cards.Count == 1);
             Debug.Assert(PlayingCards[0] == cards[0]);
             PlayingCards.RemoveAt(0);
+            if (PlayingCards.Count > 0 && !PlayingCards[0].IsFaceUp)
+                PlayingCards[0].IsFaceUp = true;
         }
 
         internal void MoveInCards(List<PlayingCard> cards)
@@ -70,22 +72,34 @@ namespace SolWPF
         // Internal hit test
         // Base version should only check rectangle, derived classes are responsible to implement
         // specialized versions with possible offsets
-        private bool isStackHit(Point P)
+        private bool isStackTopHit(Point P, out List<PlayingCard> hitList)
         {
             Point Q;
+            hitList = null;
             if (PlayingCards.Count == 0)
+            {
                 Q = new Point((double)BaseRect.GetValue(Canvas.LeftProperty), (double)BaseRect.GetValue(Canvas.TopProperty));
-            else
-                Q = new Point((double)PlayingCards[0].GetValue(Canvas.LeftProperty), (double)PlayingCards[0].GetValue(Canvas.TopProperty));
-            return (P.X >= Q.X && P.X <= Q.X + MainWindow.cardWidth && P.Y >= Q.Y && P.Y <= Q.Y + MainWindow.cardHeight);
+                return (P.X >= Q.X && P.X <= Q.X + MainWindow.cardWidth && P.Y >= Q.Y && P.Y <= Q.Y + MainWindow.cardHeight);
+            }
+
+
+            Q = new Point((double)PlayingCards[0].GetValue(Canvas.LeftProperty), (double)PlayingCards[0].GetValue(Canvas.TopProperty));
+            if (P.X >= Q.X && P.X <= Q.X + MainWindow.cardWidth && P.Y >= Q.Y && P.Y <= Q.Y + MainWindow.cardHeight)
+            {
+                hitList = new List<PlayingCard>();
+                hitList.Add(PlayingCards[0]);
+                return true;
+            }
+            return false;
         }
 
-        public MovingGroup startingHit(Point P)
+        public MovingGroup FromHitTest(Point P)
         {
             if (PlayingCards.Count == 0) return null;
-            if (!isStackHit(P)) return null;
+            if (!isStackTopHit(P, out List<PlayingCard> hitList)) return null;
+            Debug.Assert(hitList != null && hitList.Count > 0);
 
-            var mg = new MovingGroup(PlayingCards[0]);
+            var mg = new MovingGroup(hitList);
             foreach (PlayingCard pc in mg.Cards)
                 PlayingCanvas.Children.Remove(pc);
             foreach (PlayingCard pc in mg.Cards)
@@ -93,9 +107,9 @@ namespace SolWPF
             return mg;
         }
 
-        public virtual bool isTargetHit(Point P)
+        public virtual bool ToHitTest(Point P)
         {
-            if (isStackHit(P))
+            if (isStackTopHit(P, out _))
             {
                 BaseRect.Stroke = Brushes.Red;
                 BaseRect.StrokeThickness = 5.0;
@@ -122,7 +136,7 @@ namespace SolWPF
         }
 
         // Talon is never a target
-        public override bool isTargetHit(Point P)
+        public override bool ToHitTest(Point P)
         {
             return false;
         }

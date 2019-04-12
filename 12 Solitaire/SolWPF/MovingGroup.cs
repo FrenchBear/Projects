@@ -1,4 +1,8 @@
-﻿using System;
+﻿// MovingGroup
+// A group of cards moving together
+// 2019-04-12   PV
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -12,10 +16,10 @@ namespace SolWPF
         public GameStack ToStack;
         public List<PlayingCard> Cards;
 
-        public MovingGroup(PlayingCard pc)
+        public MovingGroup(List<PlayingCard> hitList)
         {
             Cards = new List<PlayingCard>();
-            Cards.Add(pc);
+            Cards.AddRange(hitList);
         }
 
         internal Point GetTopLeft()
