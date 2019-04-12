@@ -17,7 +17,7 @@ namespace SolWPF
     class GameStack
     {
         private Canvas PlayingCanvas;
-        private Rectangle BaseRect;
+        protected Rectangle BaseRect;
         protected List<PlayingCard> PlayingCards;
 
         public GameStack(Canvas c, Rectangle r)
@@ -63,7 +63,7 @@ namespace SolWPF
 
         internal void MoveInCards(List<PlayingCard> movedCards)
         {
-            for (int i = movedCards.Count-1; i >=0 ; i--)
+            for (int i = movedCards.Count - 1; i >= 0; i--)
             {
                 Point P = getNewCardPosition();
                 movedCards[i].SetValue(Canvas.LeftProperty, P.X);
@@ -76,7 +76,7 @@ namespace SolWPF
         // Internal hit test
         // Base version should only check rectangle, derived classes are responsible to implement
         // specialized versions with possible offsets
-        protected bool isStackHit(Point P, bool onlyTopCard, bool includeEmptyStack, out List<PlayingCard> hitList)
+        protected virtual bool isStackHit(Point P, bool onlyTopCard, bool includeEmptyStack, out List<PlayingCard> hitList)
         {
             Point Q;
             hitList = null;
@@ -131,9 +131,15 @@ namespace SolWPF
             return mg;
         }
 
-        public virtual bool ToHitTest(Point P)
+
+        protected virtual bool RulesAllowMoveInCards(MovingGroup mg)
         {
-            if (isStackToHit(P))
+            return true;
+        }
+
+        public virtual bool ToHitTest(Point P, MovingGroup mg)
+        {
+            if (isStackToHit(P) && RulesAllowMoveInCards(mg))
             {
                 BaseRect.Stroke = Brushes.Red;
                 BaseRect.StrokeThickness = 5.0;
@@ -153,6 +159,9 @@ namespace SolWPF
         }
     }
 
+
+
+
     class TalonStack : GameStack
     {
         public TalonStack(Canvas c, Rectangle r) : base(c, r)
@@ -160,10 +169,34 @@ namespace SolWPF
         }
 
         // Talon is never a target
-        public override bool ToHitTest(Point P)
+        public override bool ToHitTest(Point P, MovingGroup mg)
         {
             return false;
         }
+
+        protected override bool isStackHit(Point P, bool onlyTopCard, bool includeEmptyStack, out List<PlayingCard> hitList)
+        {
+            hitList = null;
+            if (PlayingCards.Count == 0)
+                return false;
+
+            Point Q;
+            Q = new Point((double)BaseRect.GetValue(Canvas.LeftProperty), (double)BaseRect.GetValue(Canvas.TopProperty));
+            if (P.X >= Q.X && P.X <= Q.X + MainWindow.cardWidth && P.Y >= Q.Y && P.Y <= Q.Y + MainWindow.cardHeight)
+            {
+                if (!PlayingCards[0].IsFaceUp)
+                {
+                    PlayingCards[0].IsFaceUp = true;
+                    return false;
+                }
+            }
+
+            hitList = new List<PlayingCard>();
+            hitList.Add(PlayingCards[0]);
+            return true;
+        }
+
+
     }
 
     // New cards are shown in a visible stack
@@ -190,6 +223,28 @@ namespace SolWPF
         protected override bool isStackFromHit(Point P, out List<PlayingCard> hitList)
         {
             return isStackHit(P, false, false, out hitList);
+        }
+    }
+
+
+    class BaseStack : GameStack
+    {
+        public BaseStack(Canvas c, Rectangle r) : base(c, r)
+        {
+        }
+
+        protected override bool RulesAllowMoveInCards(MovingGroup mg)
+        {
+            // Can only add 1 card to a base
+            if (mg.MovingCards.Count != 1)
+                return false;
+
+            // Need to access other bases
+            // Simplified model for now
+            if (PlayingCards.Count == 0)
+                return mg.MovingCards[0].Value == 1;
+
+            return PlayingCards[0].Color == mg.MovingCards[0].Color && PlayingCards[0].Value + 1 == mg.MovingCards[0].Value;
         }
 
     }

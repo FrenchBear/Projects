@@ -1,4 +1,10 @@
-﻿using System;
+﻿// Playing card
+// A simple class to visually represent a card
+// 2019-04-12   PV
+//
+// Note: Base class should be a simple button
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Media;
@@ -45,6 +51,8 @@ namespace SolWPF
             return $"PlayingCard {Face}, IsFaceUp={IsFaceUp}";
         }
 
+        public int Color => "HDSC".IndexOf(Face[0]);                // 0..3
+        public int Value => "A23456789XJQK".IndexOf(Face[1]) + 1;   // 1..13
     }
 
 }

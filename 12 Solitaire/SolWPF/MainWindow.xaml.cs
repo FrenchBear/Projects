@@ -43,10 +43,10 @@ namespace SolWPF
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             Bases = new GameStack[4];
-            Bases[0] = new GameStack(PlayingCanvas, Base0);
-            Bases[1] = new GameStack(PlayingCanvas, Base1);
-            Bases[2] = new GameStack(PlayingCanvas, Base2);
-            Bases[3] = new GameStack(PlayingCanvas, Base3);
+            Bases[0] = new BaseStack(PlayingCanvas, Base0);
+            Bases[1] = new BaseStack(PlayingCanvas, Base1);
+            Bases[2] = new BaseStack(PlayingCanvas, Base2);
+            Bases[3] = new BaseStack(PlayingCanvas, Base3);
 
             Columns = new GameStack[7];
             Columns[0] = new ColumnStack(PlayingCanvas, Column0);
@@ -125,7 +125,7 @@ namespace SolWPF
                         foreach (var gsTarget in AllStacks())
                             if (gsTarget != movingGroup.FromStack)
                             {
-                                if (gsTarget.ToHitTest(P))
+                                if (gsTarget.ToHitTest(P, movingGroup))
                                     movingGroup.ToStack = gsTarget;
                             }
                     };
@@ -136,7 +136,6 @@ namespace SolWPF
                     mainGrid.MouseMove += new MouseEventHandler(MainGrid_MouseMoveWhenDown);
                     return;
                 }
-
             }
         }
 
