@@ -1719,6 +1719,14 @@
                             <RectangleGeometry Rect="0,0,100,150" RadiusX="10" RadiusY="10" />
                         </GeometryDrawing.Geometry>
                     </GeometryDrawing>
+                    <GeometryDrawing>
+                        <GeometryDrawing.Pen>
+                            <Pen Brush="DarkBlue" Thickness="2" />
+                        </GeometryDrawing.Pen>
+                        <GeometryDrawing.Geometry>
+                            <RectangleGeometry Rect="0,0,100,150" RadiusX="10" RadiusY="10" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
                 </DrawingGroup.Children>
             </DrawingGroup>
         </DrawingBrush.Drawing>
