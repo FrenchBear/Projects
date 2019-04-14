@@ -13,7 +13,7 @@ using System.Windows;
 
 namespace SolWPF
 {
-    public class PlayingCard : ToggleButton
+    public class PlayingCard : ButtonBase
     {
         public static DependencyProperty FaceProperty;
         public static DependencyProperty IsFaceUpProperty;

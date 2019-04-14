@@ -10,7 +10,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Linq;
-
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace SolWPF
 {
@@ -95,6 +96,9 @@ namespace SolWPF
         delegate void ProcessMouseMove(Point p);
         ProcessMouseMove pmm;       // null indicates canvas move
         Point StartingPoint;
+        bool isMovingMode;
+        DateTime lastClickDateTime = DateTime.MinValue;
+
 
         private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -106,7 +110,7 @@ namespace SolWPF
             var mouseT = m.Transform(previousMousePosition);
 
             pmm = null;
-            //movingGroup= null;
+            isMovingMode = false;
 
             foreach (var gsSource in AllStacks())
             {
@@ -146,13 +150,24 @@ namespace SolWPF
             // Cards will react to hovering themselves
         }
 
+        // Do not really start moving unless the move has moved 5 pixels in any direction, makes detection of clicks easier
         void MainGrid_MouseMoveWhenDown(object sender, MouseEventArgs e)
         {
-            var newPosition = e.GetPosition(mainGrid);
-            Matrix m = mainMatrixTransform.Matrix;
-            m.Invert();     // By construction, all applied transformations are reversible, so m is invertible
-            pmm(m.Transform(newPosition));
+            var newMousePosition = e.GetPosition(mainGrid);
+            // We only onsider a real move beyond a system-defined threshold, configured at 4 pixels (both X and Y) on my machine
+            if (!isMovingMode && Math.Abs(newMousePosition.X - previousMousePosition.X) >= SystemParameters.MinimumHorizontalDragDistance ||
+Math.Abs(newMousePosition.Y - previousMousePosition.Y) >= SystemParameters.MinimumVerticalDragDistance)
+                isMovingMode = true;
+
+            if (isMovingMode)
+            {
+                Matrix m = mainMatrixTransform.Matrix;
+                m.Invert();     // By construction, all applied transformations are reversible, so m is invertible
+                pmm(m.Transform(newMousePosition));
+            }
         }
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)] public static extern int GetDoubleClickTime();
 
         private void MainGrid_MouseUp(object sender, MouseButtonEventArgs e)
         {
@@ -162,6 +177,21 @@ namespace SolWPF
 
             if (movingGroup == null)
                 return;
+            if (!isMovingMode)
+            {
+                // ToDo: Detect double-click
+                // SystemInformation.DoubleClickTime in ms
+                var clickDateTime = System.DateTime.Now;
+                if ((clickDateTime - lastClickDateTime).TotalMilliseconds <= GetDoubleClickTime())
+                {
+                    Debug.WriteLine("Double-Click detected on MovingGroup");
+                    lastClickDateTime = DateTime.MinValue;  // Don't need a triple-click or multiple double-cliks!
+                    return;
+                }
+                Debug.WriteLine("Click detected on MovingGroup");
+                lastClickDateTime = clickDateTime;
+                return;
+            }
 
             if (movingGroup.ToStack != null)
             {

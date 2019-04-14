@@ -1765,7 +1765,7 @@
                                     <TranslateTransform X="0" Y="0"/>
                                 </Grid.RenderTransform>
                             </Grid>
-                            <Grid Name="TheBorder" Cursor="Hand" Opacity="0.1">
+                            <Grid Name="TheBorder" Cursor="Hand" Opacity="0.25">
                                 <Rectangle Stroke="DarkBlue" StrokeThickness="2" Width="100" Height="140" RadiusX="10" RadiusY="10" />
                             </Grid>
                         </Grid>
@@ -1935,88 +1935,32 @@
                             <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource @@}"/>
                         </Trigger>
                         
-                        <EventTrigger RoutedEvent="ToggleButton.Checked">
+                        <!--<EventTrigger RoutedEvent="ButtonBase.Checked">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <!--<DoubleAnimation
-                    Storyboard.TargetName="TheGrid" 
-                    Storyboard.TargetProperty="(Button.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.Y)"
-                    To="-6" DecelerationRatio="1" Duration="0:0:0.25" AutoReverse="false" />-->
-                                    <!--<DoubleAnimation
-                    Storyboard.TargetName="TheBorder" 
-                    Storyboard.TargetProperty="(Rectangle.Opacity)"
-                    To="1" DecelerationRatio="1" Duration="0:0:0.25" AutoReverse="false" />-->
+
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
-                        
-                        
-                        <EventTrigger RoutedEvent="ToggleButton.Unchecked">
+
+
+                        <EventTrigger RoutedEvent="ButtonBase.Unchecked">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <!--<DoubleAnimation
-                    Storyboard.TargetName="TheGrid" 
-                    Storyboard.TargetProperty="(Button.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.Y)"
-                    To="0" DecelerationRatio="1" Duration="0:0:0.25" AutoReverse="false" />-->
-                                    <!--<DoubleAnimation
-                    Storyboard.TargetName="TheBorder" 
-                    Storyboard.TargetProperty="(Rectangle.Opacity)"
-                    To="0.1" DecelerationRatio="1" Duration="0:0:0.25" AutoReverse="false" />-->
+
                                 </Storyboard>
                             </BeginStoryboard>
-                        </EventTrigger>
+                        </EventTrigger>-->
                         
                         
                         <EventTrigger SourceName="TheCard" RoutedEvent="Mouse.MouseEnter">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <!-- Rotate -->
-                                    <!--<DoubleAnimation
-                    Storyboard.TargetName="TheGrid" 
-                    Storyboard.TargetProperty="(Grid.RenderTransform).(TransformGroup.Children)[0].(RotateTransform.Angle)"
-                    To="-10" Duration="0:0:0.25" AutoReverse="false" />-->
-
                                     <!-- Border visibility -->
                                     <DoubleAnimation
                     Storyboard.TargetName="TheBorder" 
                     Storyboard.TargetProperty="(Rectangle.Opacity)"
                     To="1" DecelerationRatio="1" Duration="0:0:0.25" AutoReverse="false" />
-
-                                    <!-- Move up and right-->
-                                    <!--<DoubleAnimation
-                    Storyboard.TargetName="TheCard" 
-                    Storyboard.TargetProperty="(Grid.RenderTransform).(TranslateTransform.X)"
-                    To="3" DecelerationRatio="1" Duration="0:0:0.25" AutoReverse="false" />
-                                    <DoubleAnimation
-                    Storyboard.TargetName="TheCard" 
-                    Storyboard.TargetProperty="(Grid.RenderTransform).(TranslateTransform.Y)"
-                    To="-3" DecelerationRatio="1" Duration="0:0:0.25" AutoReverse="false" />-->
-                                    
-                                    
-                                    <!-- Scale -->
-                                    <!--<DoubleAnimation
-                    Storyboard.TargetName="TheGrid" 
-                    Storyboard.TargetProperty="(Grid.RenderTransform).(TransformGroup.Children)[2].(ScaleTransform.ScaleX)"
-                    To="1.25" Duration="0:0:0.25" AutoReverse="false" />
-                  <DoubleAnimation
-                    Storyboard.TargetName="TheGrid" 
-                    Storyboard.TargetProperty="(Grid.RenderTransform).(TransformGroup.Children)[2].(ScaleTransform.ScaleY)"
-                    To="1.25" Duration="0:0:0.25" AutoReverse="false" />-->
-                                    
-                                    <!-- Change shadow opacity -->
-                                    <!--<DoubleAnimation
-                    Storyboard.TargetName="TheShadow" 
-                    Storyboard.TargetProperty="(Rectangle.Opacity)"
-                    To="0.4" DecelerationRatio="1" Duration="0:0:0.25" AutoReverse="false" />-->
-                                    <!-- Move shadow -->
-                                    <!--<DoubleAnimation
-                    Storyboard.TargetName="TheShadow" 
-                    Storyboard.TargetProperty="(Rectangle.RenderTransform).(TranslateTransform.X)"
-                    To="-1" DecelerationRatio="1" Duration="0:0:0.25" AutoReverse="false" />
-                                    <DoubleAnimation
-                    Storyboard.TargetName="TheShadow" 
-                    Storyboard.TargetProperty="(Rectangle.RenderTransform).(TranslateTransform.Y)"
-                    To="1" DecelerationRatio="1" Duration="0:0:0.25" AutoReverse="false" />-->
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
@@ -2025,52 +1969,11 @@
                         <EventTrigger SourceName="TheCard" RoutedEvent="Mouse.MouseLeave">
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <!-- "Un-Rotate" -->
-                                    <!--<DoubleAnimation
-                    Storyboard.TargetName="TheGrid" 
-                    Storyboard.TargetProperty="(Grid.RenderTransform).(TransformGroup.Children)[0].(RotateTransform.Angle)"
-                    To="0" Duration="0:0:0.25" AutoReverse="false" />-->
-                                    
-                                    <!-- Move back down -->
-                                    <!--<DoubleAnimation
-                    Storyboard.TargetName="TheCard" 
-                    Storyboard.TargetProperty="(Grid.RenderTransform).(TranslateTransform.Y)"
-                    To="0" DecelerationRatio="1" Duration="0:0:0.25" AutoReverse="false" />-->
-                                    <!-- Move back left -->
-                                    <!--<DoubleAnimation
-                    Storyboard.TargetName="TheCard" 
-                    Storyboard.TargetProperty="(Grid.RenderTransform).(TranslateTransform.X)"
-                    To="0" DecelerationRatio="1" Duration="0:0:0.25" AutoReverse="false" />-->
-
+                                    <!-- Border visibility -->
                                     <DoubleAnimation
                     Storyboard.TargetName="TheBorder" 
                     Storyboard.TargetProperty="(Rectangle.Opacity)"
-                    To="0.1" DecelerationRatio="1" Duration="0:0:0.25" AutoReverse="false" />
-
-                                    
-                                    <!-- Scale -->
-                                    <!--<DoubleAnimation
-                    Storyboard.TargetName="TheGrid" 
-                    Storyboard.TargetProperty="(Grid.RenderTransform).(TransformGroup.Children)[2].(ScaleTransform.ScaleX)"
-                    To="1" Duration="0:0:0.25" AutoReverse="false" />
-                  <DoubleAnimation
-                    Storyboard.TargetName="TheGrid" 
-                    Storyboard.TargetProperty="(Grid.RenderTransform).(TransformGroup.Children)[2].(ScaleTransform.ScaleY)"
-                    To="1" Duration="0:0:0.25" AutoReverse="false" />-->
-                                    <!-- Change shadow opacity -->
-                                    <!--<DoubleAnimation
-                    Storyboard.TargetName="TheShadow" 
-                    Storyboard.TargetProperty="(Rectangle.Opacity)"
-                    To="0.1" DecelerationRatio="1" Duration="0:0:0.25" AutoReverse="false" />-->
-                                    <!-- Move shadow -->
-                                    <!--<DoubleAnimation
-                    Storyboard.TargetName="TheShadow" 
-                    Storyboard.TargetProperty="(Rectangle.RenderTransform).(TranslateTransform.X)"
-                    To="-2" DecelerationRatio="1" Duration="0:0:0.25" AutoReverse="false" />-->
-                                    <!--<DoubleAnimation
-                    Storyboard.TargetName="TheShadow" 
-                    Storyboard.TargetProperty="(Rectangle.RenderTransform).(TranslateTransform.Y)"
-                    To="2" DecelerationRatio="1" Duration="0:0:0.25" AutoReverse="false" />-->
+                    To="0.25" DecelerationRatio="1" Duration="0:0:0.25" AutoReverse="false" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
