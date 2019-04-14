@@ -141,6 +141,9 @@ namespace SolWPF
                     return;
                 }
             }
+
+            // Clicked outside active and valid area
+            movingGroup = null;
         }
 
 
@@ -155,8 +158,7 @@ namespace SolWPF
         {
             var newMousePosition = e.GetPosition(mainGrid);
             // We only onsider a real move beyond a system-defined threshold, configured at 4 pixels (both X and Y) on my machine
-            if (!isMovingMode && Math.Abs(newMousePosition.X - previousMousePosition.X) >= SystemParameters.MinimumHorizontalDragDistance ||
-Math.Abs(newMousePosition.Y - previousMousePosition.Y) >= SystemParameters.MinimumVerticalDragDistance)
+            if (!isMovingMode && Math.Abs(newMousePosition.X - previousMousePosition.X) >= SystemParameters.MinimumHorizontalDragDistance || Math.Abs(newMousePosition.Y - previousMousePosition.Y) >= SystemParameters.MinimumVerticalDragDistance)
                 isMovingMode = true;
 
             if (isMovingMode)
@@ -167,6 +169,7 @@ Math.Abs(newMousePosition.Y - previousMousePosition.Y) >= SystemParameters.Minim
             }
         }
 
+        // Just to avoid a reference to Windows.Forms...
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)] public static extern int GetDoubleClickTime();
 
         private void MainGrid_MouseUp(object sender, MouseButtonEventArgs e)
@@ -175,8 +178,10 @@ Math.Abs(newMousePosition.Y - previousMousePosition.Y) >= SystemParameters.Minim
             mainGrid.MouseMove -= new MouseEventHandler(MainGrid_MouseMoveWhenDown);
             mainGrid.MouseMove += new MouseEventHandler(MainGrid_MouseMoveWhenUp);
 
+            // Clicked outside any active area
             if (movingGroup == null)
                 return;
+
             if (!isMovingMode)
             {
                 // ToDo: Detect double-click

@@ -177,23 +177,30 @@ namespace SolWPF
         protected override bool isStackHit(Point P, bool onlyTopCard, bool includeEmptyStack, out List<PlayingCard> hitList)
         {
             hitList = null;
+
+            // For talon, when it's empty, it can't be hit
             if (PlayingCards.Count == 0)
                 return false;
 
+            // For now, just check base rect
+            // May evolve and be sophisticated if Talon shows last three cards
             Point Q;
             Q = new Point((double)BaseRect.GetValue(Canvas.LeftProperty), (double)BaseRect.GetValue(Canvas.TopProperty));
             if (P.X >= Q.X && P.X <= Q.X + MainWindow.cardWidth && P.Y >= Q.Y && P.Y <= Q.Y + MainWindow.cardHeight)
             {
                 if (!PlayingCards[0].IsFaceUp)
                 {
+                    // ToDo: DO this after detecting a click especially if we show multiple cards at once
+                    // Moreover, we must do talon rotation which is not done here...
                     PlayingCards[0].IsFaceUp = true;
                     return false;
                 }
-            }
 
-            hitList = new List<PlayingCard>();
-            hitList.Add(PlayingCards[0]);
-            return true;
+                hitList = new List<PlayingCard>();
+                hitList.Add(PlayingCards[0]);
+                return true;
+            }
+            return false;
         }
 
 
