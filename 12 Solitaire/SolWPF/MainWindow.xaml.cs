@@ -19,9 +19,9 @@ namespace SolWPF
     public partial class MainWindow : Window
     {
         public static double cardWidth = 100, cardHeight = 140;
-        private GameStack[] Bases;
-        private GameStack[] Columns;
-        private GameStack Talon;
+        private BaseStack[] Bases;
+        private ColumnStack[] Columns;
+        private TalonStack Talon;
 
         private IEnumerable<GameStack> AllStacks()
         {
@@ -43,13 +43,13 @@ namespace SolWPF
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Bases = new GameStack[4];
+            Bases = new BaseStack[4];
             Bases[0] = new BaseStack(PlayingCanvas, Base0);
             Bases[1] = new BaseStack(PlayingCanvas, Base1);
             Bases[2] = new BaseStack(PlayingCanvas, Base2);
             Bases[3] = new BaseStack(PlayingCanvas, Base3);
 
-            Columns = new GameStack[7];
+            Columns = new ColumnStack[7];
             Columns[0] = new ColumnStack(PlayingCanvas, Column0);
             Columns[1] = new ColumnStack(PlayingCanvas, Column1);
             Columns[2] = new ColumnStack(PlayingCanvas, Column2);
@@ -81,8 +81,11 @@ namespace SolWPF
                     lc.RemoveAt(0);
                     Columns[c].AddCard(s, i == c);
                 }
-            foreach (string s in lc)
-                Talon.AddCard(s, false);
+            for (int mt = 0; mt < 3 /*lc.Count*/; mt++)     // 3 = Temp for testing talon rotation with a 3-card talon
+            {
+                Talon.AddCard(lc[mt], mt != 2);
+                Debug.WriteLine($"Talon Add {lc[mt]}");
+            }
         }
 
 
@@ -97,7 +100,7 @@ namespace SolWPF
         ProcessMouseMove pmm;       // null indicates canvas move
         Point StartingPoint;
         bool isMovingMode;
-        DateTime lastClickDateTime = DateTime.MinValue;
+        DateTime lastMouseUpDateTime = DateTime.MinValue;
 
 
         private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
@@ -158,7 +161,7 @@ namespace SolWPF
         {
             var newMousePosition = e.GetPosition(mainGrid);
             // We only onsider a real move beyond a system-defined threshold, configured at 4 pixels (both X and Y) on my machine
-            if (!isMovingMode && Math.Abs(newMousePosition.X - previousMousePosition.X) >= SystemParameters.MinimumHorizontalDragDistance || Math.Abs(newMousePosition.Y - previousMousePosition.Y) >= SystemParameters.MinimumVerticalDragDistance)
+            if (!isMovingMode && movingGroup.IsMouvable && (Math.Abs(newMousePosition.X - previousMousePosition.X) >= SystemParameters.MinimumHorizontalDragDistance || Math.Abs(newMousePosition.Y - previousMousePosition.Y) >= SystemParameters.MinimumVerticalDragDistance))
                 isMovingMode = true;
 
             if (isMovingMode)
@@ -184,17 +187,17 @@ namespace SolWPF
 
             if (!isMovingMode)
             {
-                // ToDo: Detect double-click
-                // SystemInformation.DoubleClickTime in ms
-                var clickDateTime = System.DateTime.Now;
-                if ((clickDateTime - lastClickDateTime).TotalMilliseconds <= GetDoubleClickTime())
-                {
-                    Debug.WriteLine("Double-Click detected on MovingGroup");
-                    lastClickDateTime = DateTime.MinValue;  // Don't need a triple-click or multiple double-cliks!
-                    return;
-                }
-                Debug.WriteLine("Click detected on MovingGroup");
-                lastClickDateTime = clickDateTime;
+                var mouseUpDateTime = System.DateTime.Now;
+                //if ((clickDateTime - lastClickDateTime).TotalMilliseconds <= 100 /* GetDoubleClickTime()*/ )
+                //{
+                //    //Debug.WriteLine("Double-Click detected on MovingGroup");
+                //    DoubleClickOnGroup(movingGroup);
+                //    lastClickDateTime = DateTime.MinValue;  // Don't need a triple-click or multiple double-cliks!
+                //    return;
+                //}
+
+                ClickOnGroup(movingGroup);
+                lastMouseUpDateTime = mouseUpDateTime;
                 return;
             }
 
@@ -207,6 +210,24 @@ namespace SolWPF
                 movingGroup.SetTopLeft(StartingPoint);
         }
 
+
+        private void ClickOnGroup(MovingGroup movingGroup)
+        {
+            Debug.WriteLine("ClickOnGroup");
+            if (movingGroup.FromStack is TalonStack)
+            {
+                // Talon rotation
+                Talon.RotateOne();
+                return;
+            }
+        }
+
+
+        private void DoubleClickOnGroup(MovingGroup movingGroup)
+        {
+            Debug.WriteLine("DoubleClickOnGroup");
+            // ToDo: Automatic move mechanisms
+        }
 
 
         private void MainGrid_MouseWheel(object sender, MouseWheelEventArgs e)

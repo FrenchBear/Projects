@@ -16,7 +16,7 @@ namespace SolWPF
 {
     class GameStack
     {
-        private Canvas PlayingCanvas;
+        protected Canvas PlayingCanvas;
         protected Rectangle BaseRect;
         protected List<PlayingCard> PlayingCards;
 
@@ -29,6 +29,7 @@ namespace SolWPF
             PlayingCards = new List<PlayingCard>();
         }
 
+        //public IReadOnlyList<PlayingCard> Cards => PlayingCards.AsReadOnly();
 
         // Must be called BEFORE adding the card to PlayingCards list
         protected virtual Point getNewCardPosition()
@@ -49,7 +50,7 @@ namespace SolWPF
             PlayingCards.Insert(0, MyCard);
         }
 
-        internal void MoveOutCards(List<PlayingCard> movedCards)
+        public virtual void MoveOutCards(List<PlayingCard> movedCards)
         {
             Debug.Assert(PlayingCards.Count >= movedCards.Count);
             for (int i = 0; i < movedCards.Count; i++)
@@ -76,10 +77,11 @@ namespace SolWPF
         // Internal hit test
         // Base version should only check rectangle, derived classes are responsible to implement
         // specialized versions with possible offsets
-        protected virtual bool isStackHit(Point P, bool onlyTopCard, bool includeEmptyStack, out List<PlayingCard> hitList)
+        protected virtual bool isStackHit(Point P, bool onlyTopCard, bool includeEmptyStack, out List<PlayingCard> hitList, out bool isMovable)
         {
             Point Q;
             hitList = null;
+            isMovable = true;
             if (PlayingCards.Count == 0)
             {
                 if (!includeEmptyStack)
@@ -107,22 +109,23 @@ namespace SolWPF
             return false;
         }
 
-        protected virtual bool isStackFromHit(Point P, out List<PlayingCard> hitList)
+        protected virtual bool isStackFromHit(Point P, out List<PlayingCard> hitList, out bool isMovable)
         {
-            return isStackHit(P, true, false, out hitList);
+            return isStackHit(P, true, false, out hitList, out isMovable);
         }
 
         protected virtual bool isStackToHit(Point P)
         {
-            return isStackHit(P, true, true, out _);
+            return isStackHit(P, true, true, out _, out _);
         }
 
         public MovingGroup FromHitTest(Point P)
         {
-            if (!isStackFromHit(P, out List<PlayingCard> hitList)) return null;
+            if (!isStackFromHit(P, out List<PlayingCard> hitList, out bool isMovable)) return null;
             Debug.Assert(hitList != null && hitList.Count > 0);
 
-            var mg = new MovingGroup(hitList);
+            var mg = new MovingGroup(hitList, isMovable);
+            if (isMovable)
             for (int i = hitList.Count - 1; i >= 0; i--)
             {
                 PlayingCanvas.Children.Remove(hitList[i]);
@@ -164,6 +167,8 @@ namespace SolWPF
 
     class TalonStack : GameStack
     {
+        private int lastTalonCardIndex;
+
         public TalonStack(Canvas c, Rectangle r) : base(c, r)
         {
         }
@@ -174,9 +179,10 @@ namespace SolWPF
             return false;
         }
 
-        protected override bool isStackHit(Point P, bool onlyTopCard, bool includeEmptyStack, out List<PlayingCard> hitList)
+        protected override bool isStackHit(Point P, bool onlyTopCard, bool includeEmptyStack, out List<PlayingCard> hitList, out bool isMovable)
         {
             hitList = null;
+            isMovable = true;
 
             // For talon, when it's empty, it can't be hit
             if (PlayingCards.Count == 0)
@@ -188,21 +194,78 @@ namespace SolWPF
             Q = new Point((double)BaseRect.GetValue(Canvas.LeftProperty), (double)BaseRect.GetValue(Canvas.TopProperty));
             if (P.X >= Q.X && P.X <= Q.X + MainWindow.cardWidth && P.Y >= Q.Y && P.Y <= Q.Y + MainWindow.cardHeight)
             {
+                // Special case when we click on Talon with turned down card on top
+                // To work with CLick event, we build a fake movingGroup with isMovable set to false
                 if (!PlayingCards[0].IsFaceUp)
-                {
-                    // ToDo: DO this after detecting a click especially if we show multiple cards at once
-                    // Moreover, we must do talon rotation which is not done here...
-                    PlayingCards[0].IsFaceUp = true;
-                    return false;
-                }
+                    isMovable = false;
 
                 hitList = new List<PlayingCard>();
                 hitList.Add(PlayingCards[0]);
+
+                if (PlayingCards.Count>1)
+                {
+                    PlayingCanvas.Children.Remove(PlayingCards[1]);
+                    PlayingCanvas.Children.Remove(PlayingCards[0]);
+                    PlayingCanvas.Children.Add(PlayingCards[1]);
+                    PlayingCanvas.Children.Add(PlayingCards[0]);
+                    if (lastTalonCardIndex == 1)
+                        PlayingCards[1].IsFaceUp = false;
+                }
+
+
                 return true;
             }
             return false;
         }
 
+        public void RotateOne()
+        {
+            if (PlayingCards.Count == 0)
+                return;
+
+            if (!PlayingCards[0].IsFaceUp)
+            {
+                PlayingCards[0].IsFaceUp = true;
+                lastTalonCardIndex = PlayingCards.Count;
+                Debug.WriteLine($"Rotate: Set lastTalonCardIndex to {lastTalonCardIndex}");
+                return;
+            }
+            else
+            {
+                var t = PlayingCards[0];
+                PlayingCards.RemoveAt(0);
+                PlayingCards.Add(t);
+                PlayingCanvas.Children.Remove(PlayingCards[0]);
+                PlayingCanvas.Children.Add(PlayingCards[0]);
+                lastTalonCardIndex--;
+                Debug.WriteLine($"Rotate: Decrement lastTalonCardIndex to {lastTalonCardIndex}");
+                if (lastTalonCardIndex==0)
+                    PlayingCards[0].IsFaceUp = false;
+            }
+
+        }
+
+        public override void MoveOutCards(List<PlayingCard> movedCards)
+        {
+            Debug.Assert(movedCards.Count == 1);
+            Debug.Assert(PlayingCards.Count >= movedCards.Count);
+            Debug.Assert(PlayingCards[0].IsFaceUp);
+            PlayingCards.RemoveAt(0);
+
+            if (PlayingCards.Count > 0)
+            {
+                var t = PlayingCards[0];
+                PlayingCards.RemoveAt(0);
+                PlayingCards.Add(t);
+                PlayingCanvas.Children.Remove(PlayingCards[0]);
+                PlayingCanvas.Children.Add(PlayingCards[0]);
+
+                lastTalonCardIndex--;
+                Debug.WriteLine($"Rotate: Decrement lastTalonCardIndex to {lastTalonCardIndex}");
+                if (lastTalonCardIndex == 0)
+                    PlayingCards[0].IsFaceUp = false;
+            }
+        }
 
     }
 
@@ -227,9 +290,9 @@ namespace SolWPF
             return new Point(P.X, P.Y + off);
         }
 
-        protected override bool isStackFromHit(Point P, out List<PlayingCard> hitList)
+        protected override bool isStackFromHit(Point P, out List<PlayingCard> hitList, out bool isMovable)
         {
-            return isStackHit(P, false, false, out hitList);
+            return isStackHit(P, false, false, out hitList, out isMovable);
         }
     }
 

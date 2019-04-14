@@ -14,10 +14,11 @@ namespace SolWPF
     {
         public GameStack FromStack;
         public GameStack ToStack;
-        public List<PlayingCard> MovingCards;
-        private List<Vector> offVec;
+        public readonly List<PlayingCard> MovingCards;
+        public readonly bool IsMouvable;
+        private readonly List<Vector> offVec;
 
-        public MovingGroup(List<PlayingCard> hitList)
+        public MovingGroup(List<PlayingCard> hitList, bool isMouvable)
         {
             MovingCards = new List<PlayingCard>();
             offVec = new List<Vector>();
@@ -28,7 +29,7 @@ namespace SolWPF
                 Point P = new Point((double)pc.GetValue(Canvas.LeftProperty), (double)pc.GetValue(Canvas.TopProperty));
                 offVec.Add(P - P0);
             }
-
+            IsMouvable = isMouvable;
         }
 
         internal Point GetTopLeft()
@@ -41,7 +42,7 @@ namespace SolWPF
         {
             for (int i = 0; i < MovingCards.Count; i++)
             {
-                MovingCards[i].SetValue(Canvas.LeftProperty, P.X+offVec[i].X);
+                MovingCards[i].SetValue(Canvas.LeftProperty, P.X + offVec[i].X);
                 MovingCards[i].SetValue(Canvas.TopProperty, P.Y + offVec[i].Y);
             }
         }
