@@ -83,9 +83,11 @@ namespace SolWPF
                 }
             for (int mt = 0; mt < 3 /*lc.Count*/; mt++)     // 3 = Temp for testing talon rotation with a 3-card talon
             {
-                Talon.AddCard(lc[mt], mt != 2);
+                Talon.AddCard(lc[mt], true);
                 Debug.WriteLine($"Talon Add {lc[mt]}");
             }
+            Talon.AddCard("@@", false);
+            Talon.PrintTalon("Initial           ");
         }
 
 

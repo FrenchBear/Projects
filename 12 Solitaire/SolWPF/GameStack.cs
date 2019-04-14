@@ -126,11 +126,11 @@ namespace SolWPF
 
             var mg = new MovingGroup(hitList, isMovable);
             if (isMovable)
-            for (int i = hitList.Count - 1; i >= 0; i--)
-            {
-                PlayingCanvas.Children.Remove(hitList[i]);
-                PlayingCanvas.Children.Add(hitList[i]);
-            }
+                for (int i = hitList.Count - 1; i >= 0; i--)
+                {
+                    PlayingCanvas.Children.Remove(hitList[i]);
+                    PlayingCanvas.Children.Add(hitList[i]);
+                }
             return mg;
         }
 
@@ -167,8 +167,6 @@ namespace SolWPF
 
     class TalonStack : GameStack
     {
-        private int lastTalonCardIndex;
-
         public TalonStack(Canvas c, Rectangle r) : base(c, r)
         {
         }
@@ -177,6 +175,14 @@ namespace SolWPF
         public override bool ToHitTest(Point P, MovingGroup mg)
         {
             return false;
+        }
+
+        public void PrintTalon(string msg)
+        {
+            Debug.Write("Talon {msg}  ");
+            for (int i = 0; i < PlayingCards.Count; i++)
+                Debug.Write($"{PlayingCards[i].Face} ");
+            Debug.WriteLine("");
         }
 
         protected override bool isStackHit(Point P, bool onlyTopCard, bool includeEmptyStack, out List<PlayingCard> hitList, out bool isMovable)
@@ -201,18 +207,8 @@ namespace SolWPF
 
                 hitList = new List<PlayingCard>();
                 hitList.Add(PlayingCards[0]);
-
-                if (PlayingCards.Count>1)
-                {
-                    PlayingCanvas.Children.Remove(PlayingCards[1]);
-                    PlayingCanvas.Children.Remove(PlayingCards[0]);
-                    PlayingCanvas.Children.Add(PlayingCards[1]);
-                    PlayingCanvas.Children.Add(PlayingCards[0]);
-                    if (lastTalonCardIndex == 1)
-                        PlayingCards[1].IsFaceUp = false;
-                }
-
-
+                PlayingCanvas.Children.Remove(PlayingCards[0]);
+                PlayingCanvas.Children.Add(PlayingCards[0]);
                 return true;
             }
             return false;
@@ -223,26 +219,15 @@ namespace SolWPF
             if (PlayingCards.Count == 0)
                 return;
 
-            if (!PlayingCards[0].IsFaceUp)
-            {
-                PlayingCards[0].IsFaceUp = true;
-                lastTalonCardIndex = PlayingCards.Count;
-                Debug.WriteLine($"Rotate: Set lastTalonCardIndex to {lastTalonCardIndex}");
-                return;
-            }
-            else
-            {
-                var t = PlayingCards[0];
-                PlayingCards.RemoveAt(0);
-                PlayingCards.Add(t);
-                PlayingCanvas.Children.Remove(PlayingCards[0]);
-                PlayingCanvas.Children.Add(PlayingCards[0]);
-                lastTalonCardIndex--;
-                Debug.WriteLine($"Rotate: Decrement lastTalonCardIndex to {lastTalonCardIndex}");
-                if (lastTalonCardIndex==0)
-                    PlayingCards[0].IsFaceUp = false;
-            }
+            var t = PlayingCards[0];
+            PlayingCards.RemoveAt(0);
+            PlayingCards.Add(t);
+            PlayingCanvas.Children.Remove(PlayingCards[1]);
+            PlayingCanvas.Children.Remove(PlayingCards[0]);
+            PlayingCanvas.Children.Add(PlayingCards[1]);
+            PlayingCanvas.Children.Add(PlayingCards[0]);
 
+            PrintTalon("After RotateOne   ");
         }
 
         public override void MoveOutCards(List<PlayingCard> movedCards)
@@ -252,19 +237,18 @@ namespace SolWPF
             Debug.Assert(PlayingCards[0].IsFaceUp);
             PlayingCards.RemoveAt(0);
 
-            if (PlayingCards.Count > 0)
+            // Refresh visual order in Talon
+            for (int i = PlayingCards.Count-1; i >=0; i--)
             {
-                var t = PlayingCards[0];
-                PlayingCards.RemoveAt(0);
-                PlayingCards.Add(t);
-                PlayingCanvas.Children.Remove(PlayingCards[0]);
-                PlayingCanvas.Children.Add(PlayingCards[0]);
-
-                lastTalonCardIndex--;
-                Debug.WriteLine($"Rotate: Decrement lastTalonCardIndex to {lastTalonCardIndex}");
-                if (lastTalonCardIndex == 0)
-                    PlayingCards[0].IsFaceUp = false;
+                PlayingCanvas.Children.Remove(PlayingCards[i]);
+                PlayingCanvas.Children.Add(PlayingCards[i]);
             }
+
+            // When Talon contains just @@ marker, it's done
+            if (PlayingCards.Count==1)
+                PlayingCanvas.Children.Remove(PlayingCards[0]);
+
+            PrintTalon("After MoveOutCards");
         }
 
     }
