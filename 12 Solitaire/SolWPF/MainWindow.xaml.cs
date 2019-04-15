@@ -21,7 +21,8 @@ namespace SolWPF
         public static double cardWidth = 100, cardHeight = 140;
         private BaseStack[] Bases;
         private ColumnStack[] Columns;
-        private TalonStack Talon;
+        private TalonFaceDownStack TalonFD;
+        private TalonFaceUpStack TalonFU;
 
         private IEnumerable<GameStack> AllStacks()
         {
@@ -29,12 +30,11 @@ namespace SolWPF
                 yield return gs;
             foreach (var gs in Columns)
                 yield return gs;
-            yield return Talon;
+            yield return TalonFU;
+            yield return TalonFD;
         }
 
         MovingGroup movingGroup;    // Origin of card moved
-        //PlayingCard MyCard;     // Card being moved
-        //int CardSource;
 
         public MainWindow()
         {
@@ -58,7 +58,8 @@ namespace SolWPF
             Columns[5] = new ColumnStack(PlayingCanvas, Column5);
             Columns[6] = new ColumnStack(PlayingCanvas, Column6);
 
-            Talon = new TalonStack(PlayingCanvas, Talon0);
+            TalonFD = new TalonFaceDownStack(PlayingCanvas, Talon0);
+            TalonFU = new TalonFaceUpStack(PlayingCanvas, Talon1);
 
             var lc = new List<string>();
             foreach (char c in "HDSC")
@@ -83,11 +84,9 @@ namespace SolWPF
                 }
             for (int mt = 0; mt < 3 /*lc.Count*/; mt++)     // 3 = Temp for testing talon rotation with a 3-card talon
             {
-                Talon.AddCard(lc[mt], true);
-                Debug.WriteLine($"Talon Add {lc[mt]}");
+                TalonFD.AddCard(lc[mt], false);
+                Debug.WriteLine($"TalonFD Add {lc[mt]}");
             }
-            Talon.AddCard("@@", false);
-            Talon.PrintTalon("Initial           ");
         }
 
 
@@ -190,13 +189,13 @@ namespace SolWPF
             if (!isMovingMode)
             {
                 var mouseUpDateTime = System.DateTime.Now;
-                //if ((clickDateTime - lastClickDateTime).TotalMilliseconds <= 100 /* GetDoubleClickTime()*/ )
-                //{
-                //    //Debug.WriteLine("Double-Click detected on MovingGroup");
-                //    DoubleClickOnGroup(movingGroup);
-                //    lastClickDateTime = DateTime.MinValue;  // Don't need a triple-click or multiple double-cliks!
-                //    return;
-                //}
+                if ((mouseUpDateTime - lastMouseUpDateTime).TotalMilliseconds <= 200 /* GetDoubleClickTime()*/ )
+                {
+                    Debug.WriteLine("Double-Click detected on MovingGroup");
+                    DoubleClickOnGroup(movingGroup);
+                    lastMouseUpDateTime = DateTime.MinValue;  // Don't need a triple-click or multiple double-cliks!
+                    return;
+                }
 
                 ClickOnGroup(movingGroup);
                 lastMouseUpDateTime = mouseUpDateTime;
@@ -209,17 +208,21 @@ namespace SolWPF
                 movingGroup.DoMove();
             }
             else
+            {
                 movingGroup.SetTopLeft(StartingPoint);
+            }
         }
 
 
         private void ClickOnGroup(MovingGroup movingGroup)
         {
             Debug.WriteLine("ClickOnGroup");
-            if (movingGroup.FromStack is TalonStack)
+            if (movingGroup.FromStack is TalonFaceDownStack)
             {
                 // Talon rotation
-                Talon.RotateOne();
+                //TalonFD.RotateOne();
+                movingGroup.ToStack = TalonFU;
+                movingGroup.DoMove();
                 return;
             }
         }

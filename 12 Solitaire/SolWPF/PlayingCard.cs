@@ -1,8 +1,6 @@
 ﻿// Playing card
 // A simple class to visually represent a card
 // 2019-04-12   PV
-//
-// Note: Base class should be a simple button
 
 using System;
 using System.Collections.Generic;
@@ -10,6 +8,7 @@ using System.Text;
 using System.Windows.Media;
 using System.Windows.Controls.Primitives;
 using System.Windows;
+
 
 namespace SolWPF
 {

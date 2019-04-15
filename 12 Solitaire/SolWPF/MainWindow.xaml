@@ -21,6 +21,7 @@
             <Rectangle Name="Base3" StrokeThickness="3" Stroke="Black" Canvas.Left="340" Canvas.Top="10" RadiusX="12" RadiusY="12" />
 
             <Rectangle Name="Talon0" StrokeThickness="3" Stroke="Black" Canvas.Left="670" Canvas.Top="10" RadiusX="12" RadiusY="12" />
+            <Rectangle Name="Talon1" StrokeThickness="3" Stroke="Black" Canvas.Left="560" Canvas.Top="10" RadiusX="12" RadiusY="12" />
 
             <Rectangle Name="Column0" StrokeThickness="3" Stroke="Black" Canvas.Left="10"  Canvas.Top="170" RadiusX="12" RadiusY="12" />
             <Rectangle Name="Column1" StrokeThickness="3" Stroke="Black" Canvas.Left="120" Canvas.Top="170" RadiusX="12" RadiusY="12" />
