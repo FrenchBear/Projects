@@ -216,7 +216,7 @@ namespace SolWPF
 
         public void RotateOne()
         {
-            if (PlayingCards.Count == 0)
+            if (PlayingCards.Count <= 1)
                 return;
 
             var t = PlayingCards[0];
