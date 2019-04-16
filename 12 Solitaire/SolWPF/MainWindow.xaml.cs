@@ -44,22 +44,22 @@ namespace SolWPF
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             Bases = new BaseStack[4];
-            Bases[0] = new BaseStack(PlayingCanvas, Base0);
-            Bases[1] = new BaseStack(PlayingCanvas, Base1);
-            Bases[2] = new BaseStack(PlayingCanvas, Base2);
-            Bases[3] = new BaseStack(PlayingCanvas, Base3);
+            Bases[0] = new BaseStack("Base0", PlayingCanvas, Base0);
+            Bases[1] = new BaseStack("Base1", PlayingCanvas, Base1);
+            Bases[2] = new BaseStack("Base2", PlayingCanvas, Base2);
+            Bases[3] = new BaseStack("Base3", PlayingCanvas, Base3);
 
             Columns = new ColumnStack[7];
-            Columns[0] = new ColumnStack(PlayingCanvas, Column0);
-            Columns[1] = new ColumnStack(PlayingCanvas, Column1);
-            Columns[2] = new ColumnStack(PlayingCanvas, Column2);
-            Columns[3] = new ColumnStack(PlayingCanvas, Column3);
-            Columns[4] = new ColumnStack(PlayingCanvas, Column4);
-            Columns[5] = new ColumnStack(PlayingCanvas, Column5);
-            Columns[6] = new ColumnStack(PlayingCanvas, Column6);
+            Columns[0] = new ColumnStack("Column0", PlayingCanvas, Column0);
+            Columns[1] = new ColumnStack("Column1", PlayingCanvas, Column1);
+            Columns[2] = new ColumnStack("Column2", PlayingCanvas, Column2);
+            Columns[3] = new ColumnStack("Column3", PlayingCanvas, Column3);
+            Columns[4] = new ColumnStack("Column4", PlayingCanvas, Column4);
+            Columns[5] = new ColumnStack("Column5", PlayingCanvas, Column5);
+            Columns[6] = new ColumnStack("Column6", PlayingCanvas, Column6);
 
-            TalonFD = new TalonFaceDownStack(PlayingCanvas, Talon0);
-            TalonFU = new TalonFaceUpStack(PlayingCanvas, Talon1);
+            TalonFD = new TalonFaceDownStack("TalonFD", PlayingCanvas, Talon0);
+            TalonFU = new TalonFaceUpStack("TalonFU", PlayingCanvas, Talon1);
 
             var lc = new List<string>();
             foreach (char c in "HDSC")
@@ -121,7 +121,6 @@ namespace SolWPF
                 movingGroup = gsSource.FromHitTest(mouseT);
                 if (movingGroup != null)
                 {
-                    movingGroup.FromStack = gsSource;
                     Point P1 = movingGroup.GetTopLeft();
                     StartingPoint = P1;
                     Vector v = P1 - mouseT;
@@ -129,7 +128,7 @@ namespace SolWPF
                     pmm = P =>
                     {
                         movingGroup.SetTopLeft(P + v);
-                        movingGroup.ToStack = null;
+                        movingGroup.ToStack = null;                     // Reset in case mouse is moving away from a potential drop target
                         foreach (var gsTarget in AllStacks())
                             if (gsTarget != movingGroup.FromStack)
                             {
@@ -157,12 +156,13 @@ namespace SolWPF
             // Cards will react to hovering themselves
         }
 
-        // Do not really start moving unless the move has moved 5 pixels in any direction, makes detection of clicks easier
+
+        // Do not really start moving unless the group is movable the mouse has moved 4 pixels in any direction, makes detection of clicks easier
         void MainGrid_MouseMoveWhenDown(object sender, MouseEventArgs e)
         {
             var newMousePosition = e.GetPosition(mainGrid);
             // We only onsider a real move beyond a system-defined threshold, configured at 4 pixels (both X and Y) on my machine
-            if (!isMovingMode && movingGroup.IsMouvable && (Math.Abs(newMousePosition.X - previousMousePosition.X) >= SystemParameters.MinimumHorizontalDragDistance || Math.Abs(newMousePosition.Y - previousMousePosition.Y) >= SystemParameters.MinimumVerticalDragDistance))
+            if (!isMovingMode && movingGroup.IsMovable && (Math.Abs(newMousePosition.X - previousMousePosition.X) >= SystemParameters.MinimumHorizontalDragDistance || Math.Abs(newMousePosition.Y - previousMousePosition.Y) >= SystemParameters.MinimumVerticalDragDistance))
                 isMovingMode = true;
 
             if (isMovingMode)
@@ -174,6 +174,7 @@ namespace SolWPF
         }
 
         // Just to avoid a reference to Windows.Forms...
+        // Anyway, its current valus in 500ms which is waaaaaaaaay too long for me
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)] public static extern int GetDoubleClickTime();
 
         private void MainGrid_MouseUp(object sender, MouseButtonEventArgs e)
@@ -186,7 +187,9 @@ namespace SolWPF
             if (movingGroup == null)
                 return;
 
-            if (!isMovingMode)
+            // If move did not start (goup not movable or mouse didn't mouve enough), it's a click or a double click
+            // Note that movingGroup.ToStack is null in this case
+            if (!isMovingMode)      
             {
                 var mouseUpDateTime = System.DateTime.Now;
                 if ((mouseUpDateTime - lastMouseUpDateTime).TotalMilliseconds <= 200 /* GetDoubleClickTime()*/ )
@@ -197,18 +200,23 @@ namespace SolWPF
                     return;
                 }
 
+                Debug.WriteLine("Click detected on MovingGroup");
                 ClickOnGroup(movingGroup);
                 lastMouseUpDateTime = mouseUpDateTime;
                 return;
             }
 
+            // Move started
             if (movingGroup.ToStack != null)
             {
+                // Valid target selected, Ok to move (without visual animation, or maybe from trop point to target point??)
                 movingGroup.ToStack.ClearTargetHighlight();
                 movingGroup.DoMove();
             }
             else
             {
+                // We cancel the move
+                // Here we could have a visual animation if drop point is far enough from starting point to make clear that the move was rejected
                 movingGroup.SetTopLeft(StartingPoint);
             }
         }
@@ -219,10 +227,18 @@ namespace SolWPF
             Debug.WriteLine("ClickOnGroup");
             if (movingGroup.FromStack is TalonFaceDownStack)
             {
-                // Talon rotation
-                //TalonFD.RotateOne();
-                movingGroup.ToStack = TalonFU;
-                movingGroup.DoMove();
+                if (movingGroup.MovingCards is null)
+                {
+                    // It's a talon reset
+                    TalonFD.ResetTalon(TalonFU);
+                }
+                else
+                {
+                    // We move a single card from TalonFD to TalonFU
+                    // Note: the card in movingGroup.MovingCards has already be turned face up and put on top of visual stack
+                    movingGroup.ToStack = TalonFU;
+                    movingGroup.DoMove();
+                }
                 return;
             }
         }
@@ -232,9 +248,12 @@ namespace SolWPF
         {
             Debug.WriteLine("DoubleClickOnGroup");
             // ToDo: Automatic move mechanisms
+            // But I'm thinking it could be better on single click?  To test and decide.
         }
 
 
+
+        // Just to test if mouse coordinates transformations are correct
         private void MainGrid_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             var newPosition = e.GetPosition(mainGrid);

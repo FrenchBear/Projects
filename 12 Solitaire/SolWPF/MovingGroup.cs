@@ -12,29 +12,52 @@ namespace SolWPF
 {
     class MovingGroup
     {
-        public GameStack FromStack;
+        public readonly GameStack FromStack;
         public GameStack ToStack;
         public readonly List<PlayingCard> MovingCards;
-        public readonly bool IsMouvable;
+        public readonly bool IsMovable;
         private readonly List<Vector> offVec;
 
-        public MovingGroup(List<PlayingCard> hitList, bool isMouvable)
+        public MovingGroup(GameStack from, List<PlayingCard> hitList, bool isMovable)
         {
-            MovingCards = new List<PlayingCard>();
-            offVec = new List<Vector>();
-            MovingCards.AddRange(hitList);
-            Point P0 = new Point((double)MovingCards[0].GetValue(Canvas.LeftProperty), (double)MovingCards[0].GetValue(Canvas.TopProperty));
-            foreach (PlayingCard pc in hitList)
+            FromStack = from;
+            if (hitList != null)
             {
-                Point P = new Point((double)pc.GetValue(Canvas.LeftProperty), (double)pc.GetValue(Canvas.TopProperty));
-                offVec.Add(P - P0);
+                MovingCards = new List<PlayingCard>();
+                MovingCards.AddRange(hitList);
+                offVec = new List<Vector>();
+                Point P0 = new Point((double)MovingCards[0].GetValue(Canvas.LeftProperty), (double)MovingCards[0].GetValue(Canvas.TopProperty));
+                foreach (PlayingCard pc in hitList)
+                {
+                    Point P = new Point((double)pc.GetValue(Canvas.LeftProperty), (double)pc.GetValue(Canvas.TopProperty));
+                    offVec.Add(P - P0);
+                }
             }
-            IsMouvable = isMouvable;
+            IsMovable = isMovable;
+        }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            sb.Append($"MovingGroup FromStack={FromStack.Name}, ToStack={ToStack?.Name}, IsMovable={IsMovable}, MovingCards=");
+            if (MovingCards == null)
+                sb.Append("∅");
+            else
+                foreach (var c in MovingCards)
+                {
+                    sb.Append(c.Face);
+                    sb.Append(' ');
+                }
+            return sb.ToString();
         }
 
         internal Point GetTopLeft()
         {
-            Point P = new Point((double)MovingCards[0].GetValue(Canvas.LeftProperty), (double)MovingCards[0].GetValue(Canvas.TopProperty));
+            Point P;
+            if (MovingCards != null)
+                P = new Point((double)MovingCards[0].GetValue(Canvas.LeftProperty), (double)MovingCards[0].GetValue(Canvas.TopProperty));
+            else
+                P = new Point(0, 0);
             return P;
         }
 
