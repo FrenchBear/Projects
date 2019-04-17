@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
+
 namespace SolWPF
 {
     class MovingGroup
@@ -19,6 +20,8 @@ namespace SolWPF
 
         private readonly List<Vector> offVec;
         private readonly bool reverseCardsDuringMove;
+        private PlayingCard cardMadeVisibleDuringMove;
+
 
         public MovingGroup(GameStack from, List<PlayingCard> hitList, bool isMovable, bool reverseCardsDuringMove=false)
         {
@@ -77,7 +80,7 @@ namespace SolWPF
         internal void DoMove()
         {
             if (reverseCardsDuringMove) MovingCards.Reverse();
-            FromStack.MoveOutCards(MovingCards);
+            cardMadeVisibleDuringMove= FromStack.MoveOutCards(MovingCards);
             ToStack.MoveInCards(MovingCards);
             ToStack.ClearTargetHighlight();
         }

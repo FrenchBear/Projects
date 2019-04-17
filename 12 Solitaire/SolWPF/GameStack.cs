@@ -51,7 +51,8 @@ namespace SolWPF
         }
 
         // MouveOut is reponsible for putting moved cards on top of display stack
-        internal protected virtual void MoveOutCards(List<PlayingCard> movedCards)
+        // Returns a PlayingCard if it's been made visible in the process, null otherwise
+        internal protected virtual PlayingCard MoveOutCards(List<PlayingCard> movedCards)
         {
             Debug.Assert(PlayingCards.Count >= movedCards.Count);
             for (int i = 0; i < movedCards.Count; i++)
@@ -59,6 +60,7 @@ namespace SolWPF
                 Debug.Assert(PlayingCards[0].IsFaceUp);
                 PlayingCards.RemoveAt(0);
             }
+            return null;
         }
 
         internal protected virtual void MoveInCards(List<PlayingCard> movedCards)
@@ -221,7 +223,7 @@ namespace SolWPF
                 c.IsFaceUp = false;
         }
 
-        internal protected override void MoveOutCards(List<PlayingCard> movedCards)
+        internal protected override PlayingCard MoveOutCards(List<PlayingCard> movedCards)
         {
             Debug.Assert(PlayingCards.Count >= 1);
             var c = PlayingCards[0];
@@ -229,6 +231,7 @@ namespace SolWPF
 
             PlayingCanvas.Children.Remove(c);
             PlayingCanvas.Children.Add(c);
+            return null;
         }
     }   // class TalonFaceDownStack
 
@@ -276,13 +279,17 @@ namespace SolWPF
             return isStackHit(P, false, false, false, out hitList, out isMovable);
         }
 
-        internal protected override void MoveOutCards(List<PlayingCard> movedCards)
+        internal protected override PlayingCard MoveOutCards(List<PlayingCard> movedCards)
         {
             base.MoveOutCards(movedCards);
-            
+
             // For columns, Make card just below the moved group face up if needed
             if (PlayingCards.Count > 0 && !PlayingCards[0].IsFaceUp)
+            {
                 PlayingCards[0].IsFaceUp = true;
+                return PlayingCards[0];
+            }
+            return null;
         }
 
     }   // class ColumnStack
