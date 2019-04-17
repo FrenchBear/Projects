@@ -16,11 +16,16 @@ namespace SolWPF
         public GameStack ToStack;
         public readonly List<PlayingCard> MovingCards;
         public readonly bool IsMovable;
-        private readonly List<Vector> offVec;
 
-        public MovingGroup(GameStack from, List<PlayingCard> hitList, bool isMovable)
+        private readonly List<Vector> offVec;
+        private readonly bool reverseCardsDuringMove;
+
+        public MovingGroup(GameStack from, List<PlayingCard> hitList, bool isMovable, bool reverseCardsDuringMove=false)
         {
             FromStack = from;
+            this.reverseCardsDuringMove = reverseCardsDuringMove;
+            IsMovable = isMovable;
+
             if (hitList != null)
             {
                 MovingCards = new List<PlayingCard>();
@@ -33,7 +38,6 @@ namespace SolWPF
                     offVec.Add(P - P0);
                 }
             }
-            IsMovable = isMovable;
         }
 
         public override string ToString()
@@ -72,6 +76,7 @@ namespace SolWPF
 
         internal void DoMove()
         {
+            if (reverseCardsDuringMove) MovingCards.Reverse();
             FromStack.MoveOutCards(MovingCards);
             ToStack.MoveInCards(MovingCards);
             ToStack.ClearTargetHighlight();

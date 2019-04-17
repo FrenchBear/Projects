@@ -50,7 +50,7 @@ namespace SolWPF
             return $"PlayingCard {Face}, IsFaceUp={IsFaceUp}";
         }
 
-        public int Color => "HDSC".IndexOf(Face[0]);                // 0..3
+        public int Color => "HSDC".IndexOf(Face[0]);                // 0..3; %2==0 => Red, %2==1 => Black
         public int Value => "A23456789XJQK".IndexOf(Face[1]) + 1;   // 1..13
     }
 

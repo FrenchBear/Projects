@@ -207,9 +207,8 @@ namespace SolWPF
             if (TalonFU.PlayingCards.Count == 0)
                 return;
 
-            var mg = new MovingGroup(TalonFU, TalonFU.PlayingCards, true);
+            var mg = new MovingGroup(TalonFU, TalonFU.PlayingCards, true, reverseCardsDuringMove: true);
             mg.ToStack = this;
-            mg.MovingCards.Reverse();
             mg.DoMove();
         }
 
@@ -279,6 +278,8 @@ namespace SolWPF
 
         internal protected override void MoveOutCards(List<PlayingCard> movedCards)
         {
+            base.MoveOutCards(movedCards);
+            
             // For columns, Make card just below the moved group face up if needed
             if (PlayingCards.Count > 0 && !PlayingCards[0].IsFaceUp)
                 PlayingCards[0].IsFaceUp = true;

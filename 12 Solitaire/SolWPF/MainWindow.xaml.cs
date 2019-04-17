@@ -65,7 +65,7 @@ namespace SolWPF
             foreach (char c in "HDSC")
                 foreach (char v in "A23456789XJQK")
                     lc.Add($"{c}{v}");
-            var rnd = new Random(8);
+            var rnd = new Random(22);
             for (int i = 0; i < lc.Count; i++)
             {
                 var i1 = rnd.Next(lc.Count);
@@ -82,10 +82,10 @@ namespace SolWPF
                     lc.RemoveAt(0);
                     Columns[c].AddCard(s, i == c);
                 }
-            for (int mt = 0; mt < 3 /*lc.Count*/; mt++)     // 3 = Temp for testing talon rotation with a 3-card talon
+            for (int mt = 0; mt < lc.Count; mt++)     // 3 = Temp for testing talon rotation with a 3-card talon
             {
                 TalonFD.AddCard(lc[mt], false);
-                Debug.WriteLine($"TalonFD Add {lc[mt]}");
+                //Debug.WriteLine($"TalonFD Add {lc[mt]}");
             }
         }
 
@@ -189,7 +189,7 @@ namespace SolWPF
 
             // If move did not start (goup not movable or mouse didn't mouve enough), it's a click or a double click
             // Note that movingGroup.ToStack is null in this case
-            if (!isMovingMode)      
+            if (!isMovingMode)
             {
                 var mouseUpDateTime = System.DateTime.Now;
                 if ((mouseUpDateTime - lastMouseUpDateTime).TotalMilliseconds <= 200 /* GetDoubleClickTime()*/ )
@@ -223,7 +223,7 @@ namespace SolWPF
 
         private void ClickOnGroup(MovingGroup movingGroup)
         {
-            Debug.WriteLine("ClickOnGroup");
+            //Debug.WriteLine("ClickOnGroup");
             if (movingGroup.FromStack is TalonFaceDownStack)
             {
                 if (movingGroup.MovingCards is null)
@@ -245,9 +245,67 @@ namespace SolWPF
 
         private void DoubleClickOnGroup(MovingGroup movingGroup)
         {
-            Debug.WriteLine("DoubleClickOnGroup");
+            //Debug.WriteLine("DoubleClickOnGroup");
             // ToDo: Automatic move mechanisms
             // But I'm thinking it could be better on single click?  To test and decide.
+
+            // First check if we can move to a base
+            if (movingGroup.MovingCards.Count == 1)
+            {
+                var baseStack = GetCompatibleBaseStack(movingGroup.MovingCards[0]);
+                if (baseStack != null)
+                {
+                    movingGroup.ToStack = baseStack;
+                    movingGroup.DoMove();
+                    return;
+                }
+            }
+
+            // If we try to move more than 1 card, check that they go in deceasing value order and alternate color
+            for (int i = 1; i < movingGroup.MovingCards.Count; i++)
+                if (movingGroup.MovingCards[i].Value != 1 + movingGroup.MovingCards[i - 1].Value
+                    || movingGroup.MovingCards[i].Value % 2 == movingGroup.MovingCards[i - 1].Value % 2)
+                    return;
+
+            // Look if we have another column that can accept it
+            for (int i = 0; i < 7; i++)
+            {
+                if (movingGroup.MovingCards[movingGroup.MovingCards.Count - 1].Value == 13 && Columns[i].PlayingCards.Count == 0)
+                {
+                    movingGroup.ToStack = Columns[i];
+                    movingGroup.DoMove();
+                    return;
+                }
+
+                if (Columns[i].PlayingCards.Count > 0
+                    && Columns[i].PlayingCards[0].Value == movingGroup.MovingCards[movingGroup.MovingCards.Count - 1].Value + 1
+                    && Columns[i].PlayingCards[0].Color % 2 != movingGroup.MovingCards[movingGroup.MovingCards.Count - 1].Color % 2)
+                {
+                    movingGroup.ToStack = Columns[i];
+                    movingGroup.DoMove();
+                    return;
+                }
+            }
+
+        }
+
+        private BaseStack GetCompatibleBaseStack(PlayingCard playingCard)
+        {
+            if (playingCard.Value == 1)
+            {
+                for (int i = 0; i < 4; i++)
+                    if (Bases[i].PlayingCards.Count == 0)
+                        return Bases[i];
+            }
+            else
+            {
+                for (int i = 0; i < 4; i++)
+                    if (Bases[i].PlayingCards.Count > 0)
+                        if (Bases[i].PlayingCards[0].Color == playingCard.Color && Bases[i].PlayingCards[0].Value + 1 == playingCard.Value)
+                            return Bases[i];
+
+            }
+            return null;
         }
 
 
