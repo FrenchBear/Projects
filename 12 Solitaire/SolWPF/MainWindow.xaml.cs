@@ -65,7 +65,7 @@ namespace SolWPF
             foreach (char c in "HDSC")
                 foreach (char v in "A23456789XJQK")
                     lc.Add($"{c}{v}");
-            var rnd = new Random();
+            var rnd = new Random(8);
             for (int i = 0; i < lc.Count; i++)
             {
                 var i1 = rnd.Next(lc.Count);
@@ -210,7 +210,6 @@ namespace SolWPF
             if (movingGroup.ToStack != null)
             {
                 // Valid target selected, Ok to move (without visual animation, or maybe from trop point to target point??)
-                movingGroup.ToStack.ClearTargetHighlight();
                 movingGroup.DoMove();
             }
             else

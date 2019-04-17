@@ -74,6 +74,7 @@ namespace SolWPF
         {
             FromStack.MoveOutCards(MovingCards);
             ToStack.MoveInCards(MovingCards);
+            ToStack.ClearTargetHighlight();
         }
     }
 }
