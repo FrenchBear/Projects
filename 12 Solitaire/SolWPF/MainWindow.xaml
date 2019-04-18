@@ -9,6 +9,18 @@
         Loaded="Window_Loaded"
         >
 
+    <Window.InputBindings>
+        <!-- <KeyBinding Key="N" Modifiers="Control" Command="{Binding NewGameCommand}" /> -->
+        <KeyBinding Key="Z" Modifiers="Ctrl"  Command="ApplicationCommands.Undo" />
+    </Window.InputBindings>
+
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.Undo"
+                        CanExecute="UndoCommand_CanExecute"
+                        Executed="UndoCommand_Executed" />
+    </Window.CommandBindings>
+
+
     <Grid Name="mainGrid" MouseMove="MainGrid_MouseMoveWhenUp" PreviewMouseDown="MainGrid_MouseDown" MouseUp="MainGrid_MouseUp" MouseWheel="MainGrid_MouseWheel" Background="Transparent">
         <Canvas Name="PlayingCanvas" Width="400" Height="220" Background="Beige" HorizontalAlignment="Left" VerticalAlignment="Top" >
             <Canvas.RenderTransform>

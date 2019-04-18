@@ -16,13 +16,15 @@ namespace SolWPF
 {
     class GameStack
     {
+        public readonly GameDataBag b;
         public readonly string Name;
         protected readonly Canvas PlayingCanvas;
         protected readonly Rectangle BaseRect;
         public readonly List<PlayingCard> PlayingCards;
 
-        public GameStack(String n, Canvas c, Rectangle r)
+        public GameStack(GameDataBag b, String n, Canvas c, Rectangle r)
         {
+            this.b = b;
             Name = n;
             PlayingCanvas = c;
             BaseRect = r;
@@ -179,7 +181,7 @@ namespace SolWPF
 
     abstract class TalonBaseStack : GameStack
     {
-        public TalonBaseStack(String n, Canvas c, Rectangle r) : base(n, c, r) { }
+        public TalonBaseStack(GameDataBag b, String n, Canvas c, Rectangle r) : base(b, n, c, r) { }
 
         // Talon is never a target
         public override bool ToHitTest(Point P, MovingGroup mg)
@@ -192,7 +194,7 @@ namespace SolWPF
 
     class TalonFaceDownStack : TalonBaseStack
     {
-        public TalonFaceDownStack(String n, Canvas c, Rectangle r) : base(n, c, r) { }
+        public TalonFaceDownStack(GameDataBag b, String n, Canvas c, Rectangle r) : base(b, n, c, r) { }
 
         // For Talon face down, empty stack is valid to generate a Click to reset the talon
         protected override bool isStackFromHit(Point P, out List<PlayingCard> hitList, out bool isMovable)
@@ -238,7 +240,7 @@ namespace SolWPF
 
     class TalonFaceUpStack : TalonBaseStack
     {
-        public TalonFaceUpStack(String n, Canvas c, Rectangle r) : base(n, c, r) { }
+        public TalonFaceUpStack(GameDataBag b, String n, Canvas c, Rectangle r) : base(b, n, c, r) { }
 
         protected override bool isStackFromHit(Point P, out List<PlayingCard> hitList, out bool isMovable)
         {
@@ -261,7 +263,7 @@ namespace SolWPF
         const double visibleYOffset = 45.0;
         const double notVvisibleYOffset = 10.0;
 
-        public ColumnStack(String n, Canvas c, Rectangle r) : base(n, c, r) { }
+        public ColumnStack(GameDataBag b, String n, Canvas c, Rectangle r) : base(b, n, c, r) { }
 
         protected override Point getNewCardPosition()
         {
@@ -297,7 +299,7 @@ namespace SolWPF
 
     class BaseStack : GameStack
     {
-        public BaseStack(String n, Canvas c, Rectangle r) : base(n, c, r) { }
+        public BaseStack(GameDataBag b, String n, Canvas c, Rectangle r) : base(b, n, c, r) { }
 
         protected override bool RulesAllowMoveInCards(MovingGroup mg)
         {

@@ -23,7 +23,7 @@ namespace SolWPF
         private PlayingCard cardMadeVisibleDuringMove;
 
 
-        public MovingGroup(GameStack from, List<PlayingCard> hitList, bool isMovable, bool reverseCardsDuringMove=false)
+        public MovingGroup(GameStack from, List<PlayingCard> hitList, bool isMovable, bool reverseCardsDuringMove = false)
         {
             FromStack = from;
             this.reverseCardsDuringMove = reverseCardsDuringMove;
@@ -80,9 +80,17 @@ namespace SolWPF
         internal void DoMove()
         {
             if (reverseCardsDuringMove) MovingCards.Reverse();
-            cardMadeVisibleDuringMove= FromStack.MoveOutCards(MovingCards);
+            cardMadeVisibleDuringMove = FromStack.MoveOutCards(MovingCards);
             ToStack.MoveInCards(MovingCards);
             ToStack.ClearTargetHighlight();
+
+            if (FromStack.b.IsGameFinished())
+                MessageBox.Show("Game finished!");
+            else if (FromStack.b.IsGameSolvable())
+                MessageBox.Show("Game solvable!");
+
+            // Keep this move for undo
+            FromStack.b.UndoStack.Push(this);
         }
     }
 }

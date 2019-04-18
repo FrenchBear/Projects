@@ -19,47 +19,44 @@ namespace SolWPF
     public partial class MainWindow : Window
     {
         public static double cardWidth = 100, cardHeight = 140;
-        private BaseStack[] Bases;
-        private ColumnStack[] Columns;
-        private TalonFaceDownStack TalonFD;
-        private TalonFaceUpStack TalonFU;
+        private GameDataBag b;
 
         private IEnumerable<GameStack> AllStacks()
         {
-            foreach (var gs in Bases)
+            foreach (var gs in b.Bases)
                 yield return gs;
-            foreach (var gs in Columns)
+            foreach (var gs in b.Columns)
                 yield return gs;
-            yield return TalonFU;
-            yield return TalonFD;
+            yield return b.TalonFU;
+            yield return b.TalonFD;
         }
 
-        MovingGroup movingGroup;    // Origin of card moved
 
         public MainWindow()
         {
             InitializeComponent();
+            b = new GameDataBag();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Bases = new BaseStack[4];
-            Bases[0] = new BaseStack("Base0", PlayingCanvas, Base0);
-            Bases[1] = new BaseStack("Base1", PlayingCanvas, Base1);
-            Bases[2] = new BaseStack("Base2", PlayingCanvas, Base2);
-            Bases[3] = new BaseStack("Base3", PlayingCanvas, Base3);
+            b.Bases = new BaseStack[4];
+            b.Bases[0] = new BaseStack(b, "Base0", PlayingCanvas, Base0);
+            b.Bases[1] = new BaseStack(b, "Base1", PlayingCanvas, Base1);
+            b.Bases[2] = new BaseStack(b, "Base2", PlayingCanvas, Base2);
+            b.Bases[3] = new BaseStack(b, "Base3", PlayingCanvas, Base3);
 
-            Columns = new ColumnStack[7];
-            Columns[0] = new ColumnStack("Column0", PlayingCanvas, Column0);
-            Columns[1] = new ColumnStack("Column1", PlayingCanvas, Column1);
-            Columns[2] = new ColumnStack("Column2", PlayingCanvas, Column2);
-            Columns[3] = new ColumnStack("Column3", PlayingCanvas, Column3);
-            Columns[4] = new ColumnStack("Column4", PlayingCanvas, Column4);
-            Columns[5] = new ColumnStack("Column5", PlayingCanvas, Column5);
-            Columns[6] = new ColumnStack("Column6", PlayingCanvas, Column6);
+            b.Columns = new ColumnStack[7];
+            b.Columns[0] = new ColumnStack(b, "Column0", PlayingCanvas, Column0);
+            b.Columns[1] = new ColumnStack(b, "Column1", PlayingCanvas, Column1);
+            b.Columns[2] = new ColumnStack(b, "Column2", PlayingCanvas, Column2);
+            b.Columns[3] = new ColumnStack(b, "Column3", PlayingCanvas, Column3);
+            b.Columns[4] = new ColumnStack(b, "Column4", PlayingCanvas, Column4);
+            b.Columns[5] = new ColumnStack(b, "Column5", PlayingCanvas, Column5);
+            b.Columns[6] = new ColumnStack(b, "Column6", PlayingCanvas, Column6);
 
-            TalonFD = new TalonFaceDownStack("TalonFD", PlayingCanvas, Talon0);
-            TalonFU = new TalonFaceUpStack("TalonFU", PlayingCanvas, Talon1);
+            b.TalonFD = new TalonFaceDownStack(b, "TalonFD", PlayingCanvas, Talon0);
+            b.TalonFU = new TalonFaceUpStack(b, "TalonFU", PlayingCanvas, Talon1);
 
             var lc = new List<string>();
             foreach (char c in "HDSC")
@@ -80,11 +77,11 @@ namespace SolWPF
                 {
                     string s = lc[0];
                     lc.RemoveAt(0);
-                    Columns[c].AddCard(s, i == c);
+                    b.Columns[c].AddCard(s, i == c);
                 }
             for (int mt = 0; mt < lc.Count; mt++)     // 3 = Temp for testing talon rotation with a 3-card talon
             {
-                TalonFD.AddCard(lc[mt], false);
+                b.TalonFD.AddCard(lc[mt], false);
                 //Debug.WriteLine($"TalonFD Add {lc[mt]}");
             }
         }
@@ -95,6 +92,7 @@ namespace SolWPF
             Application.Current.Shutdown();
         }
 
+
         // Mouse click and drag management
         Point previousMousePosition;
         delegate void ProcessMouseMove(Point p);
@@ -102,6 +100,7 @@ namespace SolWPF
         Point StartingPoint;
         bool isMovingMode;
         DateTime lastMouseUpDateTime = DateTime.MinValue;
+        private MovingGroup movingGroup;    // Current interactive moving group of cards
 
 
         private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
@@ -229,13 +228,13 @@ namespace SolWPF
                 if (movingGroup.MovingCards is null)
                 {
                     // It's a talon reset
-                    TalonFD.ResetTalon(TalonFU);
+                    b.TalonFD.ResetTalon(b.TalonFU);
                 }
                 else
                 {
                     // We move a single card from TalonFD to TalonFU
                     // Note: the card in movingGroup.MovingCards has already be turned face up and put on top of visual stack
-                    movingGroup.ToStack = TalonFU;
+                    movingGroup.ToStack = b.TalonFU;
                     movingGroup.DoMove();
                 }
                 return;
@@ -270,18 +269,18 @@ namespace SolWPF
             // Look if we have another column that can accept it
             for (int i = 0; i < 7; i++)
             {
-                if (movingGroup.MovingCards[movingGroup.MovingCards.Count - 1].Value == 13 && Columns[i].PlayingCards.Count == 0)
+                if (movingGroup.MovingCards[movingGroup.MovingCards.Count - 1].Value == 13 && b.Columns[i].PlayingCards.Count == 0)
                 {
-                    movingGroup.ToStack = Columns[i];
+                    movingGroup.ToStack = b.Columns[i];
                     movingGroup.DoMove();
                     return;
                 }
 
-                if (Columns[i].PlayingCards.Count > 0
-                    && Columns[i].PlayingCards[0].Value == movingGroup.MovingCards[movingGroup.MovingCards.Count - 1].Value + 1
-                    && Columns[i].PlayingCards[0].Color % 2 != movingGroup.MovingCards[movingGroup.MovingCards.Count - 1].Color % 2)
+                if (b.Columns[i].PlayingCards.Count > 0
+                    && b.Columns[i].PlayingCards[0].Value == movingGroup.MovingCards[movingGroup.MovingCards.Count - 1].Value + 1
+                    && b.Columns[i].PlayingCards[0].Color % 2 != movingGroup.MovingCards[movingGroup.MovingCards.Count - 1].Color % 2)
                 {
-                    movingGroup.ToStack = Columns[i];
+                    movingGroup.ToStack = b.Columns[i];
                     movingGroup.DoMove();
                     return;
                 }
@@ -294,18 +293,28 @@ namespace SolWPF
             if (playingCard.Value == 1)
             {
                 for (int i = 0; i < 4; i++)
-                    if (Bases[i].PlayingCards.Count == 0)
-                        return Bases[i];
+                    if (b.Bases[i].PlayingCards.Count == 0)
+                        return b.Bases[i];
             }
             else
             {
                 for (int i = 0; i < 4; i++)
-                    if (Bases[i].PlayingCards.Count > 0)
-                        if (Bases[i].PlayingCards[0].Color == playingCard.Color && Bases[i].PlayingCards[0].Value + 1 == playingCard.Value)
-                            return Bases[i];
+                    if (b.Bases[i].PlayingCards.Count > 0)
+                        if (b.Bases[i].PlayingCards[0].Color == playingCard.Color && b.Bases[i].PlayingCards[0].Value + 1 == playingCard.Value)
+                            return b.Bases[i];
 
             }
             return null;
+        }
+
+        private void UndoCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = b.UndoStack.Count > 0;
+        }
+
+        private void UndoCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            MessageBox.Show("Undo!");
         }
 
 
