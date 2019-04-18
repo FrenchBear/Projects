@@ -1,5 +1,5 @@
 ﻿// class GameDataBag
-// Data set of a game session
+// Data set of a game session = View Model
 // 2019-04-18   PV
 
 
@@ -18,10 +18,24 @@ namespace SolWPF
         public TalonFaceUpStack TalonFU;
         private Stack<MovingGroup> UndoStack;
 
+
+        // Helper
+        public IEnumerable<GameStack> AllStacks()
+        {
+            foreach (var gs in Bases)
+                yield return gs;
+            foreach (var gs in Columns)
+                yield return gs;
+            yield return TalonFU;
+            yield return TalonFD;
+        }
+
+
+
         public GameDataBag()
         {
             UndoStack = new Stack<MovingGroup>();
-            GameStatus = "In progress";
+            GameStatus = "Not started";
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -52,6 +66,18 @@ namespace SolWPF
         {
             UndoStack.Push(mg);
             MoveCount = UndoStack.Count;
+            UpdateStatus();
+        }
+
+        private void UpdateStatus()
+        {
+            if (IsGameFinished())
+                GameStatus = "Game finished!";
+            else if (IsGameSolvable())
+                GameStatus = "Game solvable!";
+            else
+                GameStatus = "In progress";
+
         }
 
         internal MovingGroup PopUndo()

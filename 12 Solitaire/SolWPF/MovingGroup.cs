@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -79,15 +80,19 @@ namespace SolWPF
 
         internal void DoMove()
         {
+            var sb=new StringBuilder($"DoMove r={reverseCardsDuringMove} From=({FromStack}) To=({ToStack}) MovingCards=");
+            foreach (var c in MovingCards)
+            {
+                sb.Append(c.Face);
+                sb.Append(c.IsFaceUp ? "^ " : "v ");
+            }
+
             if (reverseCardsDuringMove) MovingCards.Reverse();
             cardMadeVisibleDuringMove = FromStack.MoveOutCards(MovingCards);
             ToStack.MoveInCards(MovingCards);
             ToStack.ClearTargetHighlight();
 
-            if (FromStack.b.IsGameFinished())
-                MessageBox.Show("Game finished!");
-            else if (FromStack.b.IsGameSolvable())
-                MessageBox.Show("Game solvable!");
+            Debug.WriteLine($"{sb} Cmv={cardMadeVisibleDuringMove?.Face}");
 
             // Keep this move for undo
             FromStack.b.PushUndo(this);
@@ -95,6 +100,15 @@ namespace SolWPF
 
         internal void UndoMove()
         {
+            var sb = new StringBuilder($"UndoMove r={reverseCardsDuringMove} From=({FromStack}) To=({ToStack}) MovingCards=");
+            foreach (var c in MovingCards)
+            {
+                sb.Append(c.Face);
+                sb.Append(c.IsFaceUp ? "^ " : "v ");
+            }
+            sb.Append($" Cmv={cardMadeVisibleDuringMove?.Face}");
+            Debug.WriteLine(sb.ToString());
+
             if (reverseCardsDuringMove) MovingCards.Reverse();
             if (cardMadeVisibleDuringMove != null) cardMadeVisibleDuringMove.IsFaceUp = false;
             ToStack.MoveOutCards(MovingCards);

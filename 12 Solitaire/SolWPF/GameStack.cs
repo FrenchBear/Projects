@@ -33,6 +33,17 @@ namespace SolWPF
             PlayingCards = new List<PlayingCard>();
         }
 
+        public override string ToString()
+        {
+            var sb = new StringBuilder( $"{Name} Cards=");
+            foreach (var c in PlayingCards)
+            {
+                sb.Append(c.Face);
+                sb.Append(c.IsFaceUp ? "^ " : "v "); 
+            }
+            return sb.ToString();
+        }
+
         // Must be called BEFORE adding the card to PlayingCards list
         protected virtual Point getNewCardPosition()
         {
@@ -67,6 +78,35 @@ namespace SolWPF
 
         internal protected virtual void MoveInCards(List<PlayingCard> movedCards)
         {
+            /*
+            if (withAnimation)
+            {
+                for (int i = movedCards.Count - 1; i >= 0; i--)
+                {
+                    int j = i;
+                    Point from = new Point((double)movedCards[i].GetValue(Canvas.LeftProperty), (double)movedCards[i].GetValue(Canvas.TopProperty));
+                    Point to = getNewCardPosition();
+                    var ax = new DoubleAnimation(from.X, to.X, new Duration(new TimeSpan(0, 0, 0, 0,200)), FillBehavior.HoldEnd);
+                    ax.Completed += delegate
+                    {
+                        movedCards[j].SetValue(Canvas.LeftProperty, to.X);
+                        //movedCards[j].SetValue(Canvas.TopProperty, to.Y);
+                    };
+                    var ay = new DoubleAnimation(from.Y, to.Y, new Duration(new TimeSpan(0, 0, 0, 0, 500)), FillBehavior.HoldEnd);
+                    ay.Completed += delegate
+                    {
+                        //movedCards[j].SetValue(Canvas.LeftProperty, to.X);
+                        movedCards[j].SetValue(Canvas.TopProperty, to.Y);
+                    };
+
+                    movedCards[j].BeginAnimation(Canvas.LeftProperty, ax);
+                    movedCards[j].BeginAnimation(Canvas.TopProperty, ay);
+
+                    PlayingCards.Insert(0, movedCards[i]);
+                }
+            }
+			
+            */
             for (int i = movedCards.Count - 1; i >= 0; i--)
             {
                 Point P = getNewCardPosition();
@@ -139,7 +179,6 @@ namespace SolWPF
             if (!isStackFromHit(P, out List<PlayingCard> hitList, out bool isMovable)) return null;
 
             var mg = new MovingGroup(this, hitList, isMovable);
-            Debug.Write($"FromHitTest {Name}: {mg.ToString()}");
             if (isMovable)
                 for (int i = hitList.Count - 1; i >= 0; i--)
                 {
@@ -186,7 +225,6 @@ namespace SolWPF
         // Talon is never a target
         public override bool ToHitTest(Point P, MovingGroup mg)
         {
-            Debug.WriteLine($"TalonBaseStack.ToHitTest  Name={Name}");
             return false;
         }
     }   // class TalonBaseStack

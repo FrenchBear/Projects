@@ -27,7 +27,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         
-        <Canvas Name="PlayingCanvas" Width="1" Height="1" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top" >
+        <Canvas Name="PlayingCanvas" Width="1000" Height="1000" Background="SeaGreen" HorizontalAlignment="Left" VerticalAlignment="Top" >
             <Canvas.RenderTransform>
                 <MatrixTransform x:Name="mainMatrixTransform"/>
             </Canvas.RenderTransform>
@@ -54,6 +54,7 @@
             <TextBlock Text="{Binding MoveCount}"/>
             <TextBlock>Status:</TextBlock>
             <TextBlock Text="{Binding GameStatus}"/>
+            <Button Content="Generate Deck" Click="GenerateDeck_Click" />
         </StatusBar>
 
     </Grid>
