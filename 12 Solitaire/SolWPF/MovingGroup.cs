@@ -90,7 +90,15 @@ namespace SolWPF
                 MessageBox.Show("Game solvable!");
 
             // Keep this move for undo
-            FromStack.b.UndoStack.Push(this);
+            FromStack.b.PushUndo(this);
+        }
+
+        internal void UndoMove()
+        {
+            if (reverseCardsDuringMove) MovingCards.Reverse();
+            if (cardMadeVisibleDuringMove != null) cardMadeVisibleDuringMove.IsFaceUp = false;
+            ToStack.MoveOutCards(MovingCards);
+            FromStack.MoveInCards(MovingCards);
         }
     }
 }

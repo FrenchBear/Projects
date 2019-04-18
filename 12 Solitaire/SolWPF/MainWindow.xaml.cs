@@ -19,7 +19,7 @@ namespace SolWPF
     public partial class MainWindow : Window
     {
         public static double cardWidth = 100, cardHeight = 140;
-        private GameDataBag b;
+        private readonly GameDataBag b;
 
         private IEnumerable<GameStack> AllStacks()
         {
@@ -36,6 +36,7 @@ namespace SolWPF
         {
             InitializeComponent();
             b = new GameDataBag();
+            DataContext = b;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -309,12 +310,13 @@ namespace SolWPF
 
         private void UndoCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = b.UndoStack.Count > 0;
+            e.CanExecute = b.CanUndo();
         }
 
         private void UndoCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            MessageBox.Show("Undo!");
+            var mg = b.PopUndo();
+            mg?.UndoMove();
         }
 
 

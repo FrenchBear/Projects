@@ -22,7 +22,12 @@
 
 
     <Grid Name="mainGrid" MouseMove="MainGrid_MouseMoveWhenUp" PreviewMouseDown="MainGrid_MouseDown" MouseUp="MainGrid_MouseUp" MouseWheel="MainGrid_MouseWheel" Background="Transparent">
-        <Canvas Name="PlayingCanvas" Width="400" Height="220" Background="Beige" HorizontalAlignment="Left" VerticalAlignment="Top" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        
+        <Canvas Name="PlayingCanvas" Width="1" Height="1" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top" >
             <Canvas.RenderTransform>
                 <MatrixTransform x:Name="mainMatrixTransform"/>
             </Canvas.RenderTransform>
@@ -43,5 +48,13 @@
             <Rectangle Name="Column5" StrokeThickness="3" Stroke="Black" Canvas.Left="560" Canvas.Top="170" RadiusX="12" RadiusY="12" />
             <Rectangle Name="Column6" StrokeThickness="3" Stroke="Black" Canvas.Left="670" Canvas.Top="170" RadiusX="12" RadiusY="12" />
         </Canvas>
+
+        <StatusBar Grid.Row="1">
+            <TextBlock>Moves:</TextBlock>
+            <TextBlock Text="{Binding MoveCount}"/>
+            <TextBlock>Status:</TextBlock>
+            <TextBlock Text="{Binding GameStatus}"/>
+        </StatusBar>
+
     </Grid>
 </Window>
