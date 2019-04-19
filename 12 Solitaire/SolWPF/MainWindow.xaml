@@ -26,8 +26,9 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        
-        <Canvas Name="PlayingCanvas" Width="1000" Height="1000" Background="SeaGreen" HorizontalAlignment="Left" VerticalAlignment="Top" >
+
+        <Grid Background="SeaGreen">
+        <Canvas Name="PlayingCanvas" HorizontalAlignment="Left" VerticalAlignment="Top" >
             <Canvas.RenderTransform>
                 <MatrixTransform x:Name="mainMatrixTransform"/>
             </Canvas.RenderTransform>
@@ -48,7 +49,8 @@
             <Rectangle Name="Column5" StrokeThickness="3" Stroke="Black" Canvas.Left="560" Canvas.Top="170" RadiusX="12" RadiusY="12" />
             <Rectangle Name="Column6" StrokeThickness="3" Stroke="Black" Canvas.Left="670" Canvas.Top="170" RadiusX="12" RadiusY="12" />
         </Canvas>
-
+        </Grid>
+        
         <StatusBar Grid.Row="1">
             <TextBlock>Moves:</TextBlock>
             <TextBlock Text="{Binding MoveCount}"/>

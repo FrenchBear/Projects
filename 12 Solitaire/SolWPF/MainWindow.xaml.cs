@@ -25,6 +25,7 @@ namespace SolWPF
         public MainWindow()
         {
             InitializeComponent();
+            SetInterfaceScale(2);
             b = new GameDataBag();
             DataContext = b;
         }
@@ -467,6 +468,15 @@ namespace SolWPF
                 var scale = 1 - sign / 10.0;
                 m.ScaleAt(scale, scale, newPosition.X, newPosition.Y);
             }
+            mainMatrixTransform.Matrix = m;
+        }
+
+        private void SetInterfaceScale(double scale)
+        {
+            var P = new Point(0, 0);
+            var m = mainMatrixTransform.Matrix;
+            m.ScaleAt(scale, scale, P.X, P.Y);
+            mainMatrixTransform.Matrix = m;
             mainMatrixTransform.Matrix = m;
         }
     }

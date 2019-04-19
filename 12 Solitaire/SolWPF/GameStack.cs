@@ -81,7 +81,7 @@ namespace SolWPF
 
         internal protected virtual void MoveInCards(List<PlayingCard> movedCards, bool withAnimation = false)
         {
-            if (false && withAnimation)
+            if (withAnimation)
             {
                 var sb = new Storyboard();
                 var duration = new Duration(TimeSpan.FromSeconds(0.2));
@@ -334,10 +334,12 @@ namespace SolWPF
 
             // If column is empty, can only add a group starting with a King
             if (PlayingCards.Count == 0)
-                return mg.MovingCards[0].Value == 13;
+                return mg.MovingCards[mg.MovingCards.Count - 1].Value == 13;
+
+            Debug.WriteLine($"ST.C={PlayingCards[0].Color % 2}  MG.C={mg.MovingCards[mg.MovingCards.Count - 1].Color % 2}  ST.V={PlayingCards[0].Value}  MG.V={mg.MovingCards[mg.MovingCards.Count - 1].Value}");
 
             // Otherwise alternate color, decreasing value
-            return PlayingCards[0].Color%2 != mg.MovingCards[0].Color%2 && PlayingCards[0].Value - 1 == mg.MovingCards[0].Value;
+            return PlayingCards[0].Color % 2 != mg.MovingCards[mg.MovingCards.Count-1].Color % 2 && PlayingCards[0].Value - 1 == mg.MovingCards[mg.MovingCards.Count - 1].Value;
         }
 
         internal protected override PlayingCard MoveOutCards(List<PlayingCard> movedCards)
