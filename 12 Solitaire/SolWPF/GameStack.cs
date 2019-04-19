@@ -81,35 +81,41 @@ namespace SolWPF
 
         internal protected virtual void MoveInCards(List<PlayingCard> movedCards, bool withAnimation = false)
         {
-            /*
-            if (withAnimation)
+            if (false && withAnimation)
             {
+                var sb = new Storyboard();
+                var duration = new Duration(TimeSpan.FromSeconds(0.2));
+                Point[] to = new Point[movedCards.Count];
                 for (int i = movedCards.Count - 1; i >= 0; i--)
                 {
                     int j = i;
-                    Point from = new Point((double)movedCards[i].GetValue(Canvas.LeftProperty), (double)movedCards[i].GetValue(Canvas.TopProperty));
-                    Point to = getNewCardPosition();
-                    var ax = new DoubleAnimation(from.X, to.X, new Duration(new TimeSpan(0, 0, 0, 0, 200)), FillBehavior.HoldEnd);
-                    ax.Completed += delegate
-                    {
-                        movedCards[j].SetValue(Canvas.LeftProperty, to.X);
-                        //movedCards[j].SetValue(Canvas.TopProperty, to.Y);
-                    };
-                    var ay = new DoubleAnimation(from.Y, to.Y, new Duration(new TimeSpan(0, 0, 0, 0, 500)), FillBehavior.HoldEnd);
-                    ay.Completed += delegate
-                    {
-                        //movedCards[j].SetValue(Canvas.LeftProperty, to.X);
-                        movedCards[j].SetValue(Canvas.TopProperty, to.Y);
-                    };
+                    Point from = new Point((double)movedCards[j].GetValue(Canvas.LeftProperty), (double)movedCards[j].GetValue(Canvas.TopProperty));
+                    to[j] = getNewCardPosition();
 
-                    movedCards[j].BeginAnimation(Canvas.LeftProperty, ax);
-                    movedCards[j].BeginAnimation(Canvas.TopProperty, ay);
+                    var ax = new DoubleAnimation(from.X, to[j].X, duration, FillBehavior.HoldEnd);
+                    Storyboard.SetTarget(ax, movedCards[j]);
+                    Storyboard.SetTargetProperty(ax, new PropertyPath(Canvas.LeftProperty));
+                    sb.Children.Add(ax);
+                    var ay = new DoubleAnimation(from.Y, to[i].Y, duration, FillBehavior.HoldEnd);
+                    Storyboard.SetTarget(ay, movedCards[j]);
+                    Storyboard.SetTargetProperty(ay, new PropertyPath(Canvas.TopProperty));
+                    sb.Children.Add(ay);
 
-                    PlayingCards.Insert(0, movedCards[i]);
+                    PlayingCards.Insert(0, movedCards[j]);
                 }
+                sb.Completed += (object sender, EventArgs e) =>
+                {
+                    for (int i = movedCards.Count - 1; i >= 0; i--)
+                    {
+                        movedCards[i].BeginAnimation(Canvas.LeftProperty, null);
+                        movedCards[i].BeginAnimation(Canvas.TopProperty, null);
+                        movedCards[i].SetValue(Canvas.LeftProperty, to[i].X);
+                        movedCards[i].SetValue(Canvas.TopProperty, to[i].Y);
+                    };
+                };
+                sb.Begin();
             }
             else
-            */
                 for (int i = movedCards.Count - 1; i >= 0; i--)
                 {
                     Point P = getNewCardPosition();
@@ -193,11 +199,6 @@ namespace SolWPF
         }
 
 
-        protected virtual bool RulesAllowMoveInCards(MovingGroup mg)
-        {
-            return true;
-        }
-
         public virtual bool ToHitTest(Point P, MovingGroup mg)
         {
             if (isStackToHit(P) && RulesAllowMoveInCards(mg))
@@ -211,6 +212,11 @@ namespace SolWPF
                 ClearTargetHighlight();
                 return false;
             }
+        }
+
+        protected virtual bool RulesAllowMoveInCards(MovingGroup mg)
+        {
+            return true;
         }
 
         internal void ClearTargetHighlight()
@@ -322,6 +328,18 @@ namespace SolWPF
             return isStackHit(P, false, false, false, out hitList, out isMovable);
         }
 
+        protected override bool RulesAllowMoveInCards(MovingGroup mg)
+        {
+            Debug.Assert(mg.MovingCards.Count > 0);
+
+            // If column is empty, can only add a group starting with a King
+            if (PlayingCards.Count == 0)
+                return mg.MovingCards[0].Value == 13;
+
+            // Otherwise alternate color, decreasing value
+            return PlayingCards[0].Color%2 != mg.MovingCards[0].Color%2 && PlayingCards[0].Value - 1 == mg.MovingCards[0].Value;
+        }
+
         internal protected override PlayingCard MoveOutCards(List<PlayingCard> movedCards)
         {
             base.MoveOutCards(movedCards);
@@ -348,11 +366,11 @@ namespace SolWPF
             if (mg.MovingCards.Count != 1)
                 return false;
 
-            // Need to access other bases
-            // Simplified model for now
+            // Can only drop an Ace on an empty base
             if (PlayingCards.Count == 0)
                 return mg.MovingCards[0].Value == 1;
 
+            // Otherwise same color, increasing values
             return PlayingCards[0].Color == mg.MovingCards[0].Color && PlayingCards[0].Value + 1 == mg.MovingCards[0].Value;
         }
 
