@@ -16,12 +16,12 @@ namespace SolLib
 {
     public class SolitaireDeck
     {
-        readonly List<Card>[] Bases;        // 0..3     Index 0 contains top card on base.  Index=color (bases are fixed in this version)
-        readonly List<Card>[] Columns;      // 0..6
+        readonly List<PlayingCard>[] Bases;        // 0..3     Index 0 contains top card on base.  Index=color (bases are fixed in this version)
+        readonly List<PlayingCard>[] Columns;      // 0..6
         readonly int[] Visible;             // 0..6
-        readonly List<Card> Talon;
+        readonly List<PlayingCard> Talon;
 
-        public bool isSolved => Bases.All(b => b.FirstOrDefault()!=null && b.FirstOrDefault().value == 13);    // True when all bases contain Kings
+        public bool isSolved => Bases.All(b => b.FirstOrDefault()!=null && b.FirstOrDefault().Value == 13);    // True when all bases contain Kings
         public bool isSolvable              // True when all columns contain visible cards
         {
             get
@@ -36,9 +36,9 @@ namespace SolLib
 
         public SolitaireDeck(int seed)
         {
-            Talon = Card.Set52().Shuffle(seed);
-            Bases = (new List<Card>[4]).InitializeArray();
-            Columns = (new List<Card>[7]).InitializeArray();
+            Talon = PlayingCard.Set52().Shuffle(seed);
+            Bases = (new List<PlayingCard>[4]).InitializeArray();
+            Columns = (new List<PlayingCard>[7]).InitializeArray();
             Visible = new int[7];
             for (int c = 0; c < 7; c++)
             {
@@ -52,7 +52,7 @@ namespace SolLib
         }
 
         // ToDo: Validate args; do not crash if column is empty
-        public Card ColumnTopCard(int col) => Columns[col][0];
+        public PlayingCard ColumnTopCard(int col) => Columns[col][0];
 
         public void Print()
         {
@@ -73,19 +73,19 @@ namespace SolLib
             {
                 // Move from talon
                 Debug.Assert(Talon.Count > 0);
-                Card ca = Talon[0];
+                PlayingCard ca = Talon[0];
                 Talon.RemoveAt(0);
-                Debug.Assert(Bases[ca.couleur].Count == 0 && ca.value == 1 || Bases[ca.couleur].Count > 0 && Bases[ca.couleur].First().value + 1 == ca.value);
-                Bases[ca.couleur].Insert(0, ca);
+                Debug.Assert(Bases[ca.Color].Count == 0 && ca.Value == 1 || Bases[ca.Color].Count > 0 && Bases[ca.Color].First().Value + 1 == ca.Value);
+                Bases[ca.Color].Insert(0, ca);
             }
             else
             {
                 // Move from column col
                 Debug.Assert(Columns[c_from].Count > 0);
-                Card ca = Columns[c_from][0];
+                PlayingCard ca = Columns[c_from][0];
                 Columns[c_from].RemoveAt(0);
-                Debug.Assert(Bases[ca.couleur].Count == 0 && ca.value == 1 || Bases[ca.couleur].Count > 0 && Bases[ca.couleur].First().value + 1 == ca.value);
-                Bases[ca.couleur].Insert(0, ca);
+                Debug.Assert(Bases[ca.Color].Count == 0 && ca.Value == 1 || Bases[ca.Color].Count > 0 && Bases[ca.Color].First().Value + 1 == ca.Value);
+                Bases[ca.Color].Insert(0, ca);
                 Visible[c_from]--;
                 if (Visible[c_from] == 0 && Columns[c_from].Count > 0)
                     Visible[c_from] = 1;
@@ -99,7 +99,7 @@ namespace SolLib
         private bool CanMoveToBase(int col)
         {
             Debug.Assert(col >= 0 && col <= 7);
-            Card ca;
+            PlayingCard ca;
             if (col == 7)
             {
                 // Can move from talon?
@@ -112,7 +112,7 @@ namespace SolLib
                 if (Columns[col].Count == 0) return false;
                 ca = Columns[col][0];
             }
-            return Bases[ca.couleur].Count == 0 && ca.value == 1 || Bases[ca.couleur].Count>0 && Bases[ca.couleur].First().value + 1 == ca.value;
+            return Bases[ca.Color].Count == 0 && ca.Value == 1 || Bases[ca.Color].Count>0 && Bases[ca.Color].First().Value + 1 == ca.Value;
         }
 
         private void MoveColumnToColumn(int c_from, int c_to, int n)
@@ -127,14 +127,14 @@ namespace SolLib
 
             for (int i = n - 1; i >= 0; i--)
             {
-                Card ca;
+                PlayingCard ca;
                 if (c_from == 7)
                     ca = Talon[0];
                 else
                     ca = Columns[c_from][i];
 
-                Debug.Assert(Columns[c_to].Count > 0 || ca.value == 13);  // Can only move a King to an empty column
-                Debug.Assert(Columns[c_to].Count == 0 || ca.value == Columns[c_to][0].value - 1 && ca.couleur % 2 != Columns[c_to][0].couleur % 2);
+                Debug.Assert(Columns[c_to].Count > 0 || ca.Value == 13);  // Can only move a King to an empty column
+                Debug.Assert(Columns[c_to].Count == 0 || ca.Value == Columns[c_to][0].Value - 1 && ca.Color % 2 != Columns[c_to][0].Color % 2);
                 Columns[c_to].Insert(0, ca);
             }
 
@@ -167,23 +167,23 @@ namespace SolLib
             Debug.Assert(c_from == 7 || Columns[c_from].Count >= n);
             Debug.Assert(c_from == 7 || Visible[c_from] >= n);
 
-            Card ca;
+            PlayingCard ca;
             if (c_from == 7)
                 ca = Talon[0];
             else
                 ca = Columns[c_from][n - 1];
 
-            if (Columns[c_to].Count == 0 && ca.value == 13) return true;  // Can move a King to an empty column
-            if (Columns[c_to].Count > 0 && ca.value == Columns[c_to][0].value - 1 && ca.couleur % 2 != Columns[c_to][0].couleur % 2) return true; // Can move if value-1 and alternating colors 
+            if (Columns[c_to].Count == 0 && ca.Value == 13) return true;  // Can move a King to an empty column
+            if (Columns[c_to].Count > 0 && ca.Value == Columns[c_to][0].Value - 1 && ca.Color % 2 != Columns[c_to][0].Color % 2) return true; // Can move if value-1 and alternating colors 
 
             return false;
         }
 
-        private void PrintCards(string header, IEnumerable<Card> e, int visible = -1)
+        private void PrintCards(string header, IEnumerable<PlayingCard> e, int visible = -1)
         {
             Write(header + " ");
             if (visible >= 0) Write($"V={visible} ");
-            foreach (Card c in e)
+            foreach (PlayingCard c in e)
                 Write(c.ToString() + " ");
             WriteLine();
         }

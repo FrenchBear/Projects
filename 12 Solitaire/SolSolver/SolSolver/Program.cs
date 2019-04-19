@@ -41,16 +41,18 @@ namespace SolSolver
                     d = new SolitaireDeck(s++);
                     break;
 
+                    /*
                     // Check whether an Ace and a King visible at the beginning we're better chances to solve
                     // With this, we shift from ~30% to 37%...
                     bool withAce = false;
                     bool withKing = false;
                     for (int c = 0; c < 7; c++)
                     {
-                        if (d.ColumnTopCard(c).value == 1) withAce = true;
-                        if (d.ColumnTopCard(c).value == 13) withKing = true;
+                        if (d.ColumnTopCard(c).Value == 1) withAce = true;
+                        if (d.ColumnTopCard(c).Value == 13) withKing = true;
                     }
                     if (withAce && withKing) break;
+                    */
                 }
                 if (d.Solve())
                     solved++;
