@@ -78,7 +78,7 @@ namespace SolWPF
             }
         }
 
-        internal void DoMove()
+        internal void DoMove(bool withAnimation = false)
         {
             var sb=new StringBuilder($"DoMove r={reverseCardsDuringMove} From=({FromStack}) To=({ToStack}) MovingCards=");
             foreach (var c in MovingCards)
@@ -89,7 +89,7 @@ namespace SolWPF
 
             if (reverseCardsDuringMove) MovingCards.Reverse();
             cardMadeVisibleDuringMove = FromStack.MoveOutCards(MovingCards);
-            ToStack.MoveInCards(MovingCards);
+            ToStack.MoveInCards(MovingCards, withAnimation);
             ToStack.ClearTargetHighlight();
 
             Debug.WriteLine($"{sb} Cmv={cardMadeVisibleDuringMove?.Face}");

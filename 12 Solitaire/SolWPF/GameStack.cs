@@ -9,6 +9,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 
 
@@ -35,11 +36,11 @@ namespace SolWPF
 
         public override string ToString()
         {
-            var sb = new StringBuilder( $"{Name} Cards=");
+            var sb = new StringBuilder($"{Name} Cards=");
             foreach (var c in PlayingCards)
             {
                 sb.Append(c.Face);
-                sb.Append(c.IsFaceUp ? "^ " : "v "); 
+                sb.Append(c.IsFaceUp ? "^ " : "v ");
             }
             return sb.ToString();
         }
@@ -68,15 +69,17 @@ namespace SolWPF
         internal protected virtual PlayingCard MoveOutCards(List<PlayingCard> movedCards)
         {
             Debug.Assert(PlayingCards.Count >= movedCards.Count);
-            for (int i = 0; i < movedCards.Count; i++)
+            for (int i = movedCards.Count - 1; i >= 0; i--)
             {
-                Debug.Assert(PlayingCards[0].IsFaceUp);
-                PlayingCards.RemoveAt(0);
+                Debug.Assert(PlayingCards[i].IsFaceUp);
+                PlayingCanvas.Children.Remove(PlayingCards[i]);
+                PlayingCanvas.Children.Add(PlayingCards[i]);
+                PlayingCards.RemoveAt(i);
             }
             return null;
         }
 
-        internal protected virtual void MoveInCards(List<PlayingCard> movedCards)
+        internal protected virtual void MoveInCards(List<PlayingCard> movedCards, bool withAnimation = false)
         {
             /*
             if (withAnimation)
@@ -86,7 +89,7 @@ namespace SolWPF
                     int j = i;
                     Point from = new Point((double)movedCards[i].GetValue(Canvas.LeftProperty), (double)movedCards[i].GetValue(Canvas.TopProperty));
                     Point to = getNewCardPosition();
-                    var ax = new DoubleAnimation(from.X, to.X, new Duration(new TimeSpan(0, 0, 0, 0,200)), FillBehavior.HoldEnd);
+                    var ax = new DoubleAnimation(from.X, to.X, new Duration(new TimeSpan(0, 0, 0, 0, 200)), FillBehavior.HoldEnd);
                     ax.Completed += delegate
                     {
                         movedCards[j].SetValue(Canvas.LeftProperty, to.X);
@@ -105,15 +108,15 @@ namespace SolWPF
                     PlayingCards.Insert(0, movedCards[i]);
                 }
             }
-			
+            else
             */
-            for (int i = movedCards.Count - 1; i >= 0; i--)
-            {
-                Point P = getNewCardPosition();
-                movedCards[i].SetValue(Canvas.LeftProperty, P.X);
-                movedCards[i].SetValue(Canvas.TopProperty, P.Y);
-                PlayingCards.Insert(0, movedCards[i]);
-            }
+                for (int i = movedCards.Count - 1; i >= 0; i--)
+                {
+                    Point P = getNewCardPosition();
+                    movedCards[i].SetValue(Canvas.LeftProperty, P.X);
+                    movedCards[i].SetValue(Canvas.TopProperty, P.Y);
+                    PlayingCards.Insert(0, movedCards[i]);
+                }
         }
 
 
@@ -255,10 +258,10 @@ namespace SolWPF
         }
 
 
-        internal protected override void MoveInCards(List<PlayingCard> movedCards)
+        internal protected override void MoveInCards(List<PlayingCard> movedCards, bool withAnimation = false)
         {
-            base.MoveInCards(movedCards);
-            // In TalonFD, in cards are always face down (only called during a ResetTalon
+            base.MoveInCards(movedCards, false);        // No standard animation for now
+            // In TalonFD, in cards are always face down (only called during a ResetTalon)
             foreach (var c in movedCards)
                 c.IsFaceUp = false;
         }
@@ -285,9 +288,9 @@ namespace SolWPF
             return isStackHit(P, true, false, false, out hitList, out isMovable);
         }
 
-        internal protected override void MoveInCards(List<PlayingCard> movedCards)
+        internal protected override void MoveInCards(List<PlayingCard> movedCards, bool withAnimation = false)
         {
-            base.MoveInCards(movedCards);
+            base.MoveInCards(movedCards, withAnimation);
             // In TalonFU, in cards are always face up (card moved from TalonFD)
             foreach (var c in movedCards)
                 c.IsFaceUp = true;

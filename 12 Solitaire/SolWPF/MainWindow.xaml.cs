@@ -371,6 +371,7 @@ namespace SolWPF
         {
         }
 
+        // Shortcuts (automatic moves) to be executed either from a click or a double click
         private void AutoActionOnGroup(MovingGroup movingGroup)
         {
             // First check if we can move to a base
@@ -380,7 +381,7 @@ namespace SolWPF
                 if (baseStack != null)
                 {
                     movingGroup.ToStack = baseStack;
-                    movingGroup.DoMove();
+                    movingGroup.DoMove(true);
                     return;
                 }
             }
@@ -394,19 +395,21 @@ namespace SolWPF
             // Look if we have another column that can accept it
             for (int i = 0; i < 7; i++)
             {
+                // If moved group starts with a King, only an empty column can accept it
                 if (movingGroup.MovingCards[movingGroup.MovingCards.Count - 1].Value == 13 && b.Columns[i].PlayingCards.Count == 0)
                 {
                     movingGroup.ToStack = b.Columns[i];
-                    movingGroup.DoMove();
+                    movingGroup.DoMove(true);
                     return;
                 }
 
+                // Otherwise we need a matching column (decreasing order/alternating colors)
                 if (b.Columns[i].PlayingCards.Count > 0
                     && b.Columns[i].PlayingCards[0].Value == movingGroup.MovingCards[movingGroup.MovingCards.Count - 1].Value + 1
                     && b.Columns[i].PlayingCards[0].Color % 2 != movingGroup.MovingCards[movingGroup.MovingCards.Count - 1].Color % 2)
                 {
                     movingGroup.ToStack = b.Columns[i];
-                    movingGroup.DoMove();
+                    movingGroup.DoMove(true);
                     return;
                 }
             }
