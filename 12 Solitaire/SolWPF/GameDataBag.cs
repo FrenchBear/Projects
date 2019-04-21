@@ -65,12 +65,12 @@ namespace SolWPF
         internal void PushUndo(MovingGroup mg)
         {
             UndoStack.Push(mg);
-            MoveCount = UndoStack.Count;
-            UpdateStatus();
+            UpdateGameStatus();
         }
 
-        private void UpdateStatus()
+        internal void UpdateGameStatus()
         {
+            MoveCount = UndoStack.Count;
             if (IsGameFinished())
                 GameStatus = "Game finished!";
             else if (IsGameSolvable())
@@ -84,8 +84,9 @@ namespace SolWPF
         {
             if (UndoStack.Count == 0)
                 return null;
-            MoveCount = UndoStack.Count-1;
             return UndoStack.Pop();
+            // Cannot update game status here, before executing the undo, contrary to
+            // PushUndo, called after the move has been performed
         }
 
 

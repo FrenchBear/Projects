@@ -21,8 +21,8 @@ namespace SolLib
         readonly int[] Visible;             // 0..6
         readonly List<PlayingCard> Talon;
 
-        public bool isSolved => Bases.All(b => b.FirstOrDefault()!=null && b.FirstOrDefault().Value == 13);    // True when all bases contain Kings
-        public bool isSolvable              // True when all columns contain visible cards
+        public bool IsSolved => Bases.All(b => b.FirstOrDefault()!=null && b.FirstOrDefault().Value == 13);    // True when all bases contain Kings
+        public bool IsSolvable              // True when all columns contain visible cards
         {
             get
             {
@@ -272,14 +272,14 @@ namespace SolLib
             {
                 if (printSteps)
                     Print();
-                if (isSolvable) break;
+                if (IsSolvable) break;
             }
 
             if (printSteps)
                 Print();
 
             // Solved if all bases contain a King
-            return isSolvable;
+            return IsSolvable;
         }
 
         // A unique representation of current game configuration

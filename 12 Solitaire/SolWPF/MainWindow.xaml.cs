@@ -25,7 +25,6 @@ namespace SolWPF
         public MainWindow()
         {
             InitializeComponent();
-            SetInterfaceScale(2);
             b = new GameDataBag();
             DataContext = b;
         }
@@ -358,7 +357,7 @@ namespace SolWPF
                     // We move a single card from TalonFD to TalonFU
                     // Note: the card in movingGroup.MovingCards has already be turned face up and put on top of visual stack
                     movingGroup.ToStack = b.TalonFU;
-                    movingGroup.DoMove();
+                    movingGroup.DoMove(true);
                 }
                 return;
             }
@@ -445,8 +444,8 @@ namespace SolWPF
         {
             var mg = b.PopUndo();
             mg?.UndoMove();
+            b.UpdateGameStatus();
         }
-
 
 
 
@@ -468,15 +467,6 @@ namespace SolWPF
                 var scale = 1 - sign / 10.0;
                 m.ScaleAt(scale, scale, newPosition.X, newPosition.Y);
             }
-            mainMatrixTransform.Matrix = m;
-        }
-
-        private void SetInterfaceScale(double scale)
-        {
-            var P = new Point(0, 0);
-            var m = mainMatrixTransform.Matrix;
-            m.ScaleAt(scale, scale, P.X, P.Y);
-            mainMatrixTransform.Matrix = m;
             mainMatrixTransform.Matrix = m;
         }
     }
