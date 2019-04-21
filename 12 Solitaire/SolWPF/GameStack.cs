@@ -64,6 +64,14 @@ namespace SolWPF
             PlayingCards.Insert(0, MyCard);
         }
 
+        internal void Clear()
+        {
+            foreach (var c in PlayingCards)
+                PlayingCanvas.Children.Remove(c);
+            PlayingCards.Clear();
+        }
+
+
         // MouveOut is reponsible for putting moved cards on top of display stack
         // Returns a PlayingCard if it's been made visible in the process, null otherwise
         internal protected virtual PlayingCard MoveOutCards(List<PlayingCard> movedCards)
@@ -339,7 +347,7 @@ namespace SolWPF
             Debug.WriteLine($"ST.C={PlayingCards[0].Color % 2}  MG.C={mg.MovingCards[mg.MovingCards.Count - 1].Color % 2}  ST.V={PlayingCards[0].Value}  MG.V={mg.MovingCards[mg.MovingCards.Count - 1].Value}");
 
             // Otherwise alternate color, decreasing value
-            return PlayingCards[0].Color % 2 != mg.MovingCards[mg.MovingCards.Count-1].Color % 2 && PlayingCards[0].Value - 1 == mg.MovingCards[mg.MovingCards.Count - 1].Value;
+            return PlayingCards[0].Color % 2 != mg.MovingCards[mg.MovingCards.Count - 1].Color % 2 && PlayingCards[0].Value - 1 == mg.MovingCards[mg.MovingCards.Count - 1].Value;
         }
 
         internal protected override PlayingCard MoveOutCards(List<PlayingCard> movedCards)

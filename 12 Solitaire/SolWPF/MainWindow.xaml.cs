@@ -31,6 +31,7 @@ namespace SolWPF
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            // Create data structures
             b.Bases = new BaseStack[4];
             b.Bases[0] = new BaseStack(b, "Base0", PlayingCanvas, Base0);
             b.Bases[1] = new BaseStack(b, "Base1", PlayingCanvas, Base1);
@@ -49,151 +50,11 @@ namespace SolWPF
             b.TalonFD = new TalonFaceDownStack(b, "TalonFD", PlayingCanvas, Talon0);
             b.TalonFU = new TalonFaceUpStack(b, "TalonFU", PlayingCanvas, Talon1);
 
-            InitRandomDeck(22);
-            //InitTestDeck1();
-            //InitTestDeck2();
+            b.InitRandomDeck(22);
+            //b.InitTestDeck1();
+            //b.InitTestDeck2();
         }
 
-        private void InitRandomDeck(int seed)
-        {
-            var rnd = new Random(22);
-            var lc = new List<string>();
-            foreach (char c in "HDSC")
-                foreach (char v in "A23456789XJQK")
-                    lc.Add($"{c}{v}");
-            for (int i = 0; i < lc.Count; i++)
-            {
-                var i1 = rnd.Next(lc.Count);
-                var i2 = rnd.Next(lc.Count);
-                var t = lc[i1];
-                lc[i1] = lc[i2];
-                lc[i2] = t;
-            }
-
-            // Distribute cards to columns
-            for (int c = 0; c < 7; c++)
-                for (int i = 0; i <= c; i++)
-                {
-                    string s = lc[0];
-                    lc.RemoveAt(0);
-                    b.Columns[c].AddCard(s, i == c);    // Only top one is face up
-                }
-            // The rest goes to the TalonFaceDown
-            for (int mt = 0; mt < lc.Count; mt++)
-                b.TalonFD.AddCard(lc[mt], false);
-        }
-
-        private void InitTestDeck1()
-        {
-            b.Columns[0].AddCard("HA", true);
-            b.Columns[1].AddCard("D2", false);
-            b.Columns[1].AddCard("C8", true);
-            b.Columns[2].AddCard("H4", false);
-            b.Columns[2].AddCard("DA", false);
-            b.Columns[2].AddCard("DJ", true);
-            b.Columns[3].AddCard("D3", false);
-            b.Columns[3].AddCard("S3", false);
-            b.Columns[3].AddCard("S2", false);
-            b.Columns[3].AddCard("H6", true);
-            b.Columns[4].AddCard("CQ", false);
-            b.Columns[4].AddCard("C6", false);
-            b.Columns[4].AddCard("SX", false);
-            b.Columns[4].AddCard("SJ", false);
-            b.Columns[4].AddCard("C5", true);
-            b.Columns[5].AddCard("H7", false);
-            b.Columns[5].AddCard("D8", false);
-            b.Columns[5].AddCard("D5", false);
-            b.Columns[5].AddCard("DK", false);
-            b.Columns[5].AddCard("H8", false);
-            b.Columns[5].AddCard("CA", true);
-            b.Columns[6].AddCard("D9", false);
-            b.Columns[6].AddCard("DQ", false);
-            b.Columns[6].AddCard("CX", false);
-            b.Columns[6].AddCard("HQ", false);
-            b.Columns[6].AddCard("H2", false);
-            b.Columns[6].AddCard("C2", false);
-            b.Columns[6].AddCard("S7", true);
-            b.TalonFD.AddCard("CJ", false);
-            b.TalonFD.AddCard("DX", false);
-            b.TalonFD.AddCard("S9", false);
-            b.TalonFD.AddCard("S5", false);
-            b.TalonFD.AddCard("HJ", false);
-            b.TalonFD.AddCard("C3", false);
-            b.TalonFD.AddCard("S6", false);
-            b.TalonFD.AddCard("H5", false);
-            b.TalonFD.AddCard("C9", false);
-            b.TalonFD.AddCard("SK", false);
-            b.TalonFD.AddCard("H9", false);
-            b.TalonFD.AddCard("SQ", false);
-            b.TalonFD.AddCard("D7", false);
-            b.TalonFD.AddCard("HX", false);
-            b.TalonFD.AddCard("SA", false);
-            b.TalonFD.AddCard("S8", false);
-            b.TalonFD.AddCard("H3", false);
-            b.TalonFD.AddCard("C7", false);
-            b.TalonFD.AddCard("D4", false);
-            b.TalonFD.AddCard("S4", false);
-            b.TalonFD.AddCard("D6", false);
-            b.TalonFD.AddCard("HK", false);
-            b.TalonFD.AddCard("C4", false);
-            b.TalonFD.AddCard("CK", false);
-        }
-
-        private void InitTestDeck2()
-        {
-            b.Bases[0].AddCard("HA", true);
-            b.Bases[0].AddCard("H2", true);
-            b.Bases[1].AddCard("CA", true);
-            b.Bases[1].AddCard("C2", true);
-            b.Columns[0].AddCard("CK", true);
-            b.Columns[0].AddCard("HQ", true);
-            b.Columns[0].AddCard("SJ", true);
-            b.Columns[1].AddCard("D2", false);
-            b.Columns[1].AddCard("C8", true);
-            b.Columns[2].AddCard("H4", false);
-            b.Columns[2].AddCard("DA", false);
-            b.Columns[2].AddCard("DJ", true);
-            b.Columns[2].AddCard("SX", true);
-            b.Columns[3].AddCard("D3", false);
-            b.Columns[3].AddCard("S3", false);
-            b.Columns[3].AddCard("S2", true);
-            b.Columns[4].AddCard("CQ", false);
-            b.Columns[4].AddCard("C6", true);
-            b.Columns[5].AddCard("H7", false);
-            b.Columns[5].AddCard("D8", false);
-            b.Columns[5].AddCard("D5", false);
-            b.Columns[5].AddCard("DK", false);
-            b.Columns[5].AddCard("H8", true);
-            b.Columns[5].AddCard("S7", true);
-            b.Columns[5].AddCard("H6", true);
-            b.Columns[5].AddCard("C5", true);
-            b.Columns[6].AddCard("D9", false);
-            b.Columns[6].AddCard("DQ", false);
-            b.Columns[6].AddCard("CX", true);
-            b.TalonFU.AddCard("C4", true);
-            b.TalonFU.AddCard("HK", true);
-            b.TalonFD.AddCard("CJ", false);
-            b.TalonFD.AddCard("DX", false);
-            b.TalonFD.AddCard("S9", false);
-            b.TalonFD.AddCard("S5", false);
-            b.TalonFD.AddCard("HJ", false);
-            b.TalonFD.AddCard("C3", false);
-            b.TalonFD.AddCard("S6", false);
-            b.TalonFD.AddCard("H5", false);
-            b.TalonFD.AddCard("C9", false);
-            b.TalonFD.AddCard("SK", false);
-            b.TalonFD.AddCard("H9", false);
-            b.TalonFD.AddCard("SQ", false);
-            b.TalonFD.AddCard("D7", false);
-            b.TalonFD.AddCard("HX", false);
-            b.TalonFD.AddCard("SA", false);
-            b.TalonFD.AddCard("S8", false);
-            b.TalonFD.AddCard("H3", false);
-            b.TalonFD.AddCard("C7", false);
-            b.TalonFD.AddCard("D4", false);
-            b.TalonFD.AddCard("S4", false);
-            b.TalonFD.AddCard("D6", false);
-        }
 
         private void GenerateDeck_Click(object sender, RoutedEventArgs e)
         {
@@ -437,7 +298,7 @@ namespace SolWPF
 
         private void UndoCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = b.CanUndo();
+            e.CanExecute = b?.CanUndo() ?? false;
         }
 
         private void UndoCommand_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -445,6 +306,25 @@ namespace SolWPF
             var mg = b.PopUndo();
             mg?.UndoMove();
             b.UpdateGameStatus();
+        }
+
+        private void NewCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            int seed = 0;
+            if (IsShiftPressed())
+            {
+                var vm = new GameSerialViewModel();
+                var dlg = new GameSerialWindow(vm);
+                if (dlg.ShowDialog()==true)
+                    seed = vm.GameSerial;
+            }
+            b.InitRandomDeck(seed);
+        }
+
+        internal static bool IsShiftPressed()
+        {
+            return System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftShift) ||
+                   System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightShift);
         }
 
 

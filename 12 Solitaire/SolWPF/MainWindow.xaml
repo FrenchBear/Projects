@@ -11,13 +11,16 @@
 
     <Window.InputBindings>
         <!-- <KeyBinding Key="N" Modifiers="Control" Command="{Binding NewGameCommand}" /> -->
-        <KeyBinding Key="Z" Modifiers="Ctrl"  Command="ApplicationCommands.Undo" />
+        <!--<KeyBinding Key="Z" Modifiers="Ctrl"  Command="ApplicationCommands.Undo" />-->
+        <!--  In fact, Ctrl+N or Ctrl+Z are default keybindings -->
     </Window.InputBindings>
 
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.Undo"
                         CanExecute="UndoCommand_CanExecute"
                         Executed="UndoCommand_Executed" />
+        <CommandBinding Command="ApplicationCommands.New"
+                        Executed="NewCommand_Executed" />
     </Window.CommandBindings>
 
 
@@ -56,6 +59,10 @@
             <TextBlock Text="{Binding MoveCount}"/>
             <TextBlock>Status:</TextBlock>
             <TextBlock Text="{Binding GameStatus}"/>
+            <TextBlock>Game #:</TextBlock>
+            <TextBlock Text="{Binding GameSerial}"/>
+            <Button Content="New Game" Command="ApplicationCommands.New" />
+            <Button Content="Undo" Command="ApplicationCommands.Undo" />
             <Button Content="Generate Deck" Click="GenerateDeck_Click" />
         </StatusBar>
 
