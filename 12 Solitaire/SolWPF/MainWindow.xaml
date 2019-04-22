@@ -5,12 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SolWPF"
         mc:Ignorable="d"
-        Title="SolWPF" Height="800" Width="800"
+        Title="Solitaire WPF" Height="800" Width="800"
         Loaded="Window_Loaded"
+        Icon="SolWPF.ico"
         >
 
     <Window.InputBindings>
-        <!-- <KeyBinding Key="N" Modifiers="Control" Command="{Binding NewGameCommand}" /> -->
+        <!--<KeyBinding Key="N" Modifiers="Shift+Ctrl" Command="{Binding ApplicationsCommands.New}" />-->
         <!--<KeyBinding Key="Z" Modifiers="Ctrl"  Command="ApplicationCommands.Undo" />-->
         <!--  In fact, Ctrl+N or Ctrl+Z are default keybindings -->
     </Window.InputBindings>

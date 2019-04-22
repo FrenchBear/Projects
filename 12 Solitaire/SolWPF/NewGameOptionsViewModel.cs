@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SolWPF
 {
-    public class GameSerialViewModel: INotifyPropertyChanged
+    public class NewGameOptionsViewModel: INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -23,6 +23,20 @@ namespace SolWPF
                 {
                     _GameSerial = value;
                     NotifyPropertyChanged(nameof(GameSerial));
+                }
+            }
+        }
+
+        private bool? _IsWithAAndK;
+        public bool? IsWithAAndK
+        {
+            get { return _IsWithAAndK; }
+            set
+            {
+                if (_IsWithAAndK != value)
+                {
+                    _IsWithAAndK = value;
+                    NotifyPropertyChanged(nameof(IsWithAAndK));
                 }
             }
         }

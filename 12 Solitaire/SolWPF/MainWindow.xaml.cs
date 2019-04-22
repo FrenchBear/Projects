@@ -27,6 +27,14 @@ namespace SolWPF
             InitializeComponent();
             b = new GameDataBag();
             DataContext = b;
+
+            // Add Shift+Crl+N for New with New Game Options dialog (can't find how to use SHift+Ctrl in Xaml)
+            KeyBinding OpenCmdKeyBinding = new KeyBinding(
+                ApplicationCommands.New,
+                Key.N,
+                ModifierKeys.Control | ModifierKeys.Shift);
+
+            this.InputBindings.Add(OpenCmdKeyBinding);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -313,10 +321,12 @@ namespace SolWPF
             int seed = 0;
             if (IsShiftPressed())
             {
-                var vm = new GameSerialViewModel();
-                var dlg = new GameSerialWindow(vm);
-                if (dlg.ShowDialog()==true)
+                var vm = new NewGameOptionsViewModel();
+                var dlg = new NewGameOptionsWindow(vm);
+                if (dlg.ShowDialog() == true)
                     seed = vm.GameSerial;
+                else
+                    return;
             }
             b.InitRandomDeck(seed);
         }

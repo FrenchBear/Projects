@@ -1,5 +1,5 @@
-﻿// GameSerialWindow
-// A quick-and-dirty WPF window to enter game number
+﻿// NewGameOotionsWindow
+// A quick-and-dirty WPF window to enter options for a new game
 //
 // 2019-04-21   PV
 //
@@ -10,9 +10,9 @@ using System.Windows;
 
 namespace SolWPF
 {
-    public partial class GameSerialWindow : Window
+    public partial class NewGameOptionsWindow : Window
     {
-        public GameSerialWindow(GameSerialViewModel vm)
+        public NewGameOptionsWindow(NewGameOptionsViewModel vm)
         {
             InitializeComponent();
             DataContext = vm;

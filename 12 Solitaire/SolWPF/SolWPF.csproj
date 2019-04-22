@@ -5,7 +5,19 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-	<ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ApplicationIcon>SolWPF.ico</ApplicationIcon>
+    <Authors>Pierre Violent</Authors>
+    <Copyright>©Pierre Violent 2019</Copyright>
+    <Description>A simple WPF version of Solitaire classic card game with a solver</Description>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="NewGameOptionsWindow.xaml" />
+    <None Remove="SolWPF.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="SolWPF.ico" />
+  </ItemGroup>
 
 </Project>
