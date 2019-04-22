@@ -80,7 +80,7 @@ namespace SolWPF
 
         internal void DoMove(bool withAnimation = false)
         {
-            var sb=new StringBuilder($"DoMove r={reverseCardsDuringMove} From=({FromStack}) To=({ToStack}) MovingCards=");
+            var sb = new StringBuilder($"DoMove r={reverseCardsDuringMove} From=({FromStack}) To=({ToStack}) MovingCards=");
             foreach (var c in MovingCards)
             {
                 sb.Append(c.Face);
@@ -96,6 +96,9 @@ namespace SolWPF
 
             // Keep this move for undo
             FromStack.b.PushUndo(this);
+
+            // Finally refresh status bar
+            FromStack.b.UpdateGameStatus();
         }
 
         internal void UndoMove()

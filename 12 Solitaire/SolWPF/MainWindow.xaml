@@ -22,6 +22,8 @@
                         Executed="UndoCommand_Executed" />
         <CommandBinding Command="ApplicationCommands.New"
                         Executed="NewCommand_Executed" />
+        <CommandBinding Command="ApplicationCommands.Print"
+                        Executed="PlayCommand_Executed" />
     </Window.CommandBindings>
 
 
@@ -64,6 +66,7 @@
             <TextBlock Text="{Binding GameSerial}"/>
             <Button Content="New Game" Command="ApplicationCommands.New" />
             <Button Content="Undo" Command="ApplicationCommands.Undo" />
+            <Button Content="Play" Command="ApplicationCommands.Print" />
             <Button Content="Generate Deck" Click="GenerateDeck_Click" />
         </StatusBar>
 

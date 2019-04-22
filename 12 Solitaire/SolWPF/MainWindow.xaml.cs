@@ -337,12 +337,19 @@ namespace SolWPF
                    System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightShift);
         }
 
+        private void PlayCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            var mg = b.GetNextMove();
+            mg?.DoMove(true);
+        }
+
 
 
         // Just to test if mouse coordinates transformations are correct
         private void MainGrid_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            var newPosition = e.GetPosition(mainGrid);
+            //var newPosition = e.GetPosition(mainGrid);
+            var newPosition = new Point(0, 0);
             var m = mainMatrixTransform.Matrix;
 
             // Ctrl+MouseWheel for rotation
