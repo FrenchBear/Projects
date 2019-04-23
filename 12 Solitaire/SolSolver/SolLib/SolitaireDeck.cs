@@ -16,43 +16,57 @@ namespace SolLib
 {
     public class SolitaireDeck
     {
-        readonly List<PlayingCard>[] Bases;        // 0..3     Index 0 contains top card on base.  Index=color (bases are fixed in this version)
-        readonly List<PlayingCard>[] Columns;      // 0..6
+        readonly GameStack[] Bases;        // 0..3     Index 0 contains top card on base.  Index=color (bases are fixed in this version)
+        readonly GameStack[] Columns;      // 0..6
         readonly int[] Visible;             // 0..6
-        readonly List<PlayingCard> Talon;
+        readonly GameStack Talon;
 
-        public bool IsSolved => Bases.All(b => b.FirstOrDefault()!=null && b.FirstOrDefault().Value == 13);    // True when all bases contain Kings
-        public bool IsSolvable              // True when all columns contain visible cards
+        internal bool IsSolved()          // IsGameFinished
         {
-            get
-            {
-                for (int c = 0; c < 7; c++)
-                    if (Visible[c] < Columns[c].Count)
-                        return false;
-                return true;
-            }
+            foreach (var b in Bases)
+                if (b.PlayingCards.Count != 13)
+                    return false;
+            return true;
         }
-        
+
+        internal bool IsSolvable()      // IsGameSolvable
+        {
+            foreach (var c in Columns)
+                if (c.PlayingCards.Count > 0 && !c.PlayingCards[c.PlayingCards.Count - 1].IsFaceUp)
+                    return false;
+            return true;
+        }
+
+
 
         public SolitaireDeck(int seed)
         {
-            Talon = PlayingCard.Set52().Shuffle(seed);
-            Bases = (new List<PlayingCard>[4]).InitializeArray();
-            Columns = (new List<PlayingCard>[7]).InitializeArray();
+            Talon = new GameStack();
+            Bases = (new GameStack[4]).InitializeArray();
+            Columns = (new GameStack[7]).InitializeArray();
             Visible = new int[7];
+
+            foreach (var c in PlayingCard.Set52().Shuffle(seed))
+            {
+                c.IsFaceUp = false;
+                Talon.PlayingCards.Add(c);
+            }
+
             for (int c = 0; c < 7; c++)
             {
                 Visible[c] = 1;
                 for (int i = 0; i <= c; i++)
                 {
-                    Columns[c].Add(Talon[0]);
-                    Talon.RemoveAt(0);
+                    var card = Talon.PlayingCards[0];
+                    Talon.PlayingCards.RemoveAt(0);
+                    card.IsFaceUp = i == 0;
+                    Columns[c].PlayingCards.Add(card);
                 }
             }
         }
 
         // ToDo: Validate args; do not crash if column is empty
-        public PlayingCard ColumnTopCard(int col) => Columns[col][0];
+        public PlayingCard ColumnTopCard(int col) => Columns[col].PlayingCards[0];
 
         public void Print()
         {
@@ -65,6 +79,17 @@ namespace SolLib
             PrintCards("Talon       ", Talon);
         }
 
+        private void PrintCards(string header, GameStack st, int visible = -1)
+        {
+            Write(header + " ");
+            if (visible >= 0) Write($"V={visible} ");
+            foreach (PlayingCard c in st.PlayingCards)
+                Write(c.Signature() + " ");
+            WriteLine();
+        }
+
+
+
         // col==7 is Talon, otherwise col in [0..6]
         private void MoveToBase(int c_from)
         {
@@ -72,24 +97,24 @@ namespace SolLib
             if (c_from == 7)
             {
                 // Move from talon
-                Debug.Assert(Talon.Count > 0);
-                PlayingCard ca = Talon[0];
-                Talon.RemoveAt(0);
-                Debug.Assert(Bases[ca.Color].Count == 0 && ca.Value == 1 || Bases[ca.Color].Count > 0 && Bases[ca.Color].First().Value + 1 == ca.Value);
-                Bases[ca.Color].Insert(0, ca);
+                Debug.Assert(Talon.PlayingCards.Count > 0);
+                PlayingCard ca = Talon.PlayingCards[0];
+                Talon.PlayingCards.RemoveAt(0);
+                Debug.Assert(Bases[ca.Color].PlayingCards.Count == 0 && ca.Value == 1 || Bases[ca.Color].PlayingCards.Count > 0 && Bases[ca.Color].PlayingCards.First().Value + 1 == ca.Value);
+                Bases[ca.Color].PlayingCards.Insert(0, ca);
             }
             else
             {
                 // Move from column col
-                Debug.Assert(Columns[c_from].Count > 0);
-                PlayingCard ca = Columns[c_from][0];
-                Columns[c_from].RemoveAt(0);
-                Debug.Assert(Bases[ca.Color].Count == 0 && ca.Value == 1 || Bases[ca.Color].Count > 0 && Bases[ca.Color].First().Value + 1 == ca.Value);
-                Bases[ca.Color].Insert(0, ca);
+                Debug.Assert(Columns[c_from].PlayingCards.Count > 0);
+                PlayingCard ca = Columns[c_from].PlayingCards[0];
+                Columns[c_from].PlayingCards.RemoveAt(0);
+                Debug.Assert(Bases[ca.Color].PlayingCards.Count == 0 && ca.Value == 1 || Bases[ca.Color].PlayingCards.Count > 0 && Bases[ca.Color].PlayingCards.First().Value + 1 == ca.Value);
+                Bases[ca.Color].PlayingCards.Insert(0, ca);
                 Visible[c_from]--;
-                if (Visible[c_from] == 0 && Columns[c_from].Count > 0)
+                if (Visible[c_from] == 0 && Columns[c_from].PlayingCards.Count > 0)
                     Visible[c_from] = 1;
-                Debug.Assert((Columns[c_from].Count == 0 && Visible[c_from] == 0) || (Columns[c_from].Count > 0 && Visible[c_from] >= 1 && Visible[c_from] <= Columns[c_from].Count));
+                Debug.Assert((Columns[c_from].PlayingCards.Count == 0 && Visible[c_from] == 0) || (Columns[c_from].PlayingCards.Count > 0 && Visible[c_from] >= 1 && Visible[c_from] <= Columns[c_from].PlayingCards.Count));
             }
         }
 
@@ -103,16 +128,16 @@ namespace SolLib
             if (col == 7)
             {
                 // Can move from talon?
-                if (Talon.Count == 0) return false;
-                ca = Talon[0];
+                if (Talon.PlayingCards.Count == 0) return false;
+                ca = Talon.PlayingCards[0];
             }
             else
             {
                 // Can move from column col?
-                if (Columns[col].Count == 0) return false;
-                ca = Columns[col][0];
+                if (Columns[col].PlayingCards.Count == 0) return false;
+                ca = Columns[col].PlayingCards[0];
             }
-            return Bases[ca.Color].Count == 0 && ca.Value == 1 || Bases[ca.Color].Count>0 && Bases[ca.Color].First().Value + 1 == ca.Value;
+            return Bases[ca.Color].PlayingCards.Count == 0 && ca.Value == 1 || Bases[ca.Color].PlayingCards.Count > 0 && Bases[ca.Color].PlayingCards.First().Value + 1 == ca.Value;
         }
 
         private void MoveColumnToColumn(int c_from, int c_to, int n)
@@ -122,38 +147,38 @@ namespace SolLib
             Debug.Assert(c_from != c_to);
             Debug.Assert(c_from == 7 || n >= 1);
             Debug.Assert(c_from < 7 || n == 1);
-            Debug.Assert(c_from == 7 || Columns[c_from].Count >= n);
+            Debug.Assert(c_from == 7 || Columns[c_from].PlayingCards.Count >= n);
             Debug.Assert(c_from == 7 || Visible[c_from] >= n);
 
             for (int i = n - 1; i >= 0; i--)
             {
                 PlayingCard ca;
                 if (c_from == 7)
-                    ca = Talon[0];
+                    ca = Talon.PlayingCards[0];
                 else
-                    ca = Columns[c_from][i];
+                    ca = Columns[c_from].PlayingCards[i];
 
-                Debug.Assert(Columns[c_to].Count > 0 || ca.Value == 13);  // Can only move a King to an empty column
-                Debug.Assert(Columns[c_to].Count == 0 || ca.Value == Columns[c_to][0].Value - 1 && ca.Color % 2 != Columns[c_to][0].Color % 2);
-                Columns[c_to].Insert(0, ca);
+                Debug.Assert(Columns[c_to].PlayingCards.Count > 0 || ca.Value == 13);  // Can only move a King to an empty column
+                Debug.Assert(Columns[c_to].PlayingCards.Count == 0 || ca.Value == Columns[c_to].PlayingCards[0].Value - 1 && ca.Color % 2 != Columns[c_to].PlayingCards[0].Color % 2);
+                Columns[c_to].PlayingCards.Insert(0, ca);
             }
 
             if (c_from == 7)
             {
-                Talon.RemoveAt(0);
+                Talon.PlayingCards.RemoveAt(0);
                 Visible[c_to]++;
             }
             else
             {
                 for (int i = 0; i < n; i++)
-                    Columns[c_from].RemoveAt(0);
+                    Columns[c_from].PlayingCards.RemoveAt(0);
                 Visible[c_from] -= n;
-                if (Visible[c_from] == 0 && Columns[c_from].Count > 0)
+                if (Visible[c_from] == 0 && Columns[c_from].PlayingCards.Count > 0)
                 {
                     Visible[c_from] = 1;
                 }
                 Visible[c_to] += n;
-                Debug.Assert((Columns[c_from].Count == 0 && Visible[c_from] == 0) || (Columns[c_from].Count > 0 && Visible[c_from] >= 1 && Visible[c_from] <= Columns[c_from].Count));
+                Debug.Assert((Columns[c_from].PlayingCards.Count == 0 && Visible[c_from] == 0) || (Columns[c_from].PlayingCards.Count > 0 && Visible[c_from] >= 1 && Visible[c_from] <= Columns[c_from].PlayingCards.Count));
             }
         }
 
@@ -164,28 +189,19 @@ namespace SolLib
             Debug.Assert(c_from != c_to);
             Debug.Assert(c_from == 7 || n >= 1);
             Debug.Assert(c_from < 7 || n == 1);
-            Debug.Assert(c_from == 7 || Columns[c_from].Count >= n);
+            Debug.Assert(c_from == 7 || Columns[c_from].PlayingCards.Count >= n);
             Debug.Assert(c_from == 7 || Visible[c_from] >= n);
 
             PlayingCard ca;
             if (c_from == 7)
-                ca = Talon[0];
+                ca = Talon.PlayingCards[0];
             else
-                ca = Columns[c_from][n - 1];
+                ca = Columns[c_from].PlayingCards[n - 1];
 
-            if (Columns[c_to].Count == 0 && ca.Value == 13) return true;  // Can move a King to an empty column
-            if (Columns[c_to].Count > 0 && ca.Value == Columns[c_to][0].Value - 1 && ca.Color % 2 != Columns[c_to][0].Color % 2) return true; // Can move if value-1 and alternating colors 
+            if (Columns[c_to].PlayingCards.Count == 0 && ca.Value == 13) return true;  // Can move a King to an empty column
+            if (Columns[c_to].PlayingCards.Count > 0 && ca.Value == Columns[c_to].PlayingCards[0].Value - 1 && ca.Color % 2 != Columns[c_to].PlayingCards[0].Color % 2) return true; // Can move if value-1 and alternating colors 
 
             return false;
-        }
-
-        private void PrintCards(string header, IEnumerable<PlayingCard> e, int visible = -1)
-        {
-            Write(header + " ");
-            if (visible >= 0) Write($"V={visible} ");
-            foreach (PlayingCard c in e)
-                Write(c.ToString() + " ");
-            WriteLine();
         }
 
         public bool OneMovementToBase(bool showTraces = false)
@@ -194,7 +210,7 @@ namespace SolLib
             Signatures = new HashSet<string>();
 
         restart_reset_talon:
-            int talonRotateCount = Talon.Count;
+            int talonRotateCount = Talon.PlayingCards.Count;
 
             // Move one card from columns to Base?
             for (int c = 0; c < 7; c++)
@@ -220,7 +236,7 @@ namespace SolLib
 
             // Move from Column to Column, max cards possible
             for (int c_from = 0; c_from < 7; c_from++)
-                if (Columns[c_from].Count > 0)
+                if (Columns[c_from].PlayingCards.Count > 0)
                     for (int c_to = 0; c_to < 7; c_to++)
                         if (c_to != c_from)
                             for (int n = Visible[c_from]; n >= 1; n--)
@@ -240,7 +256,7 @@ namespace SolLib
                                 }
 
             // Move from Talon to Columns
-            if (Talon.Count > 0)
+            if (Talon.PlayingCards.Count > 0)
                 for (int c_to = 0; c_to < 7; c_to++)
                     if (CanMoveColumnToColumn(7, c_to, 1))
                     {
@@ -255,11 +271,11 @@ namespace SolLib
                     }
 
             // Rotate talon and restart
-            if (Talon.Count == 0 || talonRotateCount == 0)
+            if (Talon.PlayingCards.Count == 0 || talonRotateCount == 0)
                 return false;
             talonRotateCount--;
-            Talon.Add(Talon[0]);
-            Talon.RemoveAt(0);
+            Talon.PlayingCards.Add(Talon.PlayingCards[0]);
+            Talon.PlayingCards.RemoveAt(0);
             goto restart;
         }
 
@@ -272,14 +288,14 @@ namespace SolLib
             {
                 if (printSteps)
                     Print();
-                if (IsSolvable) break;
+                if (IsSolvable()) break;
             }
 
             if (printSteps)
                 Print();
 
             // Solved if all bases contain a King
-            return IsSolvable;
+            return IsSolvable();
         }
 
         // A unique representation of current game configuration
@@ -289,10 +305,10 @@ namespace SolLib
 
             // Only include top base card in signature
             for (int b = 0; b < 4; b++)
-                if (Bases[b].Count == 0)
+                if (Bases[b].PlayingCards.Count == 0)
                     sb.Append("@@");
                 else
-                    sb.Append(Bases[b].First().Signature());
+                    sb.Append(Bases[b].PlayingCards.First().Signature());
 
             // Then add columns signature.  Note than all cards of a column are included, not only the visible ones (not sure it's useful)
             for (int c = 0; c < 7; c++)
@@ -303,17 +319,17 @@ namespace SolLib
                     if (c_from == 7)
                     {
                         Debug.Assert(n == 1);
-                        sb.Append(Talon[0].Signature());
+                        sb.Append(Talon.PlayingCards[0].Signature());
                     }
                     else
                     {
                         // Add n cards from c_from
                         for (int i = 0; i < n; i++)
-                            sb.Append(Columns[c_from][i].Signature());
+                            sb.Append(Columns[c_from].PlayingCards[i].Signature());
                     }
 
-                for (int i = (c == c_from) ? n : 0; i < Columns[c].Count; i++)
-                    sb.Append(Columns[c][i].Signature());
+                for (int i = (c == c_from) ? n : 0; i < Columns[c].PlayingCards.Count; i++)
+                    sb.Append(Columns[c].PlayingCards[i].Signature());
             }
             return sb.ToString();
         }

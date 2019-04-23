@@ -65,10 +65,11 @@ namespace SolSolver
         {
             var d = new SolitaireDeck(4);
             d.Print();
-            if (d.Solve())
+            if (d.Solve(true))
                 WriteLine("Solved");
             else
                 WriteLine("Stuck");
+            d.Print();
         }
     }
 
