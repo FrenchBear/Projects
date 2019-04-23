@@ -1,8 +1,8 @@
 ﻿// Solitaire Library 
 // Quick and dirty simple Solitaire Solver
-// 2019-04-07   PV
 //
-// ToDo: When all cards are visible, game is solved
+// 2019-04-07   PV
+// 2019-04-23   PV      Refactoring remplacing Visible[] by PlayingCard.IsFaceUp
 
 using System;
 using System.Collections.Generic;
@@ -18,7 +18,6 @@ namespace SolLib
     {
         readonly GameStack[] Bases;        // 0..3     Index 0 contains top card on base.  Index=color (bases are fixed in this version)
         readonly GameStack[] Columns;      // 0..6
-        readonly int[] Visible;             // 0..6
         readonly GameStack Talon;
 
         internal bool IsSolved()          // IsGameFinished
@@ -44,7 +43,6 @@ namespace SolLib
             Talon = new GameStack();
             Bases = (new GameStack[4]).InitializeArray();
             Columns = (new GameStack[7]).InitializeArray();
-            Visible = new int[7];
 
             foreach (var c in PlayingCard.Set52().Shuffle(seed))
             {
@@ -54,7 +52,6 @@ namespace SolLib
 
             for (int c = 0; c < 7; c++)
             {
-                Visible[c] = 1;
                 for (int i = 0; i <= c; i++)
                 {
                     var card = Talon.PlayingCards[0];
@@ -75,22 +72,19 @@ namespace SolLib
             for (int b = 0; b < 4; b++)
                 PrintCards($"Base {b}  ", Bases[b]);
             for (int c = 0; c < 7; c++)
-                PrintCards($"Column {c}", Columns[c], Visible[c]);
+                PrintCards($"Column {c}", Columns[c]);
             PrintCards("Talon       ", Talon);
         }
 
-        private void PrintCards(string header, GameStack st, int visible = -1)
+        private void PrintCards(string header, GameStack st)
         {
             Write(header + " ");
-            if (visible >= 0) Write($"V={visible} ");
             foreach (PlayingCard c in st.PlayingCards)
                 Write(c.Signature() + " ");
             for (int i = 0; i < st.PlayingCards.Count; i++)
             {
                 var ca = st.PlayingCards[i];
                 Write(ca.Signature() + " ");
-                if (visible >= 0)
-                    Debug.Assert((i < visible && ca.IsFaceUp) || (i >= visible && !ca.IsFaceUp));
             }
             WriteLine();
         }
@@ -119,13 +113,9 @@ namespace SolLib
                 Columns[c_from].PlayingCards.RemoveAt(0);
                 Debug.Assert(Bases[ca.Color].PlayingCards.Count == 0 && ca.Value == 1 || Bases[ca.Color].PlayingCards.Count > 0 && Bases[ca.Color].PlayingCards.First().Value + 1 == ca.Value);
                 Bases[ca.Color].PlayingCards.Insert(0, ca);
-                ca.IsFaceUp = true;
-                Visible[c_from]--;
-                if (Visible[c_from] == 0 && Columns[c_from].PlayingCards.Count > 0)
-                    Visible[c_from] = 1;
+                Debug.Assert(ca.IsFaceUp);
                 // Turn top of From column face up
                 if (Columns[c_from].PlayingCards.Count > 0) Columns[c_from].PlayingCards[0].IsFaceUp = true;
-                Debug.Assert((Columns[c_from].PlayingCards.Count == 0 && Visible[c_from] == 0) || (Columns[c_from].PlayingCards.Count > 0 && Visible[c_from] >= 1 && Visible[c_from] <= Columns[c_from].PlayingCards.Count));
             }
         }
 
@@ -159,7 +149,7 @@ namespace SolLib
             Debug.Assert(c_from == 7 || n >= 1);
             Debug.Assert(c_from < 7 || n == 1);
             Debug.Assert(c_from == 7 || Columns[c_from].PlayingCards.Count >= n);
-            Debug.Assert(c_from == 7 || Visible[c_from] >= n);
+            Debug.Assert(c_from == 7 || Columns[c_from].PlayingCards[n-1].IsFaceUp);
 
             for (int i = n - 1; i >= 0; i--)
             {
@@ -183,23 +173,13 @@ namespace SolLib
             if (c_from == 7)
             {
                 Talon.PlayingCards.RemoveAt(0);
-                Visible[c_to]++;
             }
             else
             {
                 for (int i = 0; i < n; i++)
                     Columns[c_from].PlayingCards.RemoveAt(0);
-                Visible[c_from] -= n;
                 // Turn top of From column face up
                 if (Columns[c_from].PlayingCards.Count > 0) Columns[c_from].PlayingCards[0].IsFaceUp = true;
-
-                if (Visible[c_from] == 0 && Columns[c_from].PlayingCards.Count > 0)
-                {
-                    Visible[c_from] = 1;
-                }
-                Visible[c_to] += n;
-
-                Debug.Assert((Columns[c_from].PlayingCards.Count == 0 && Visible[c_from] == 0) || (Columns[c_from].PlayingCards.Count > 0 && Visible[c_from] >= 1 && Visible[c_from] <= Columns[c_from].PlayingCards.Count));
             }
         }
 
@@ -211,7 +191,7 @@ namespace SolLib
             Debug.Assert(c_from == 7 || n >= 1);
             Debug.Assert(c_from < 7 || n == 1);
             Debug.Assert(c_from == 7 || Columns[c_from].PlayingCards.Count >= n);
-            Debug.Assert(c_from == 7 || Visible[c_from] >= n);
+            Debug.Assert(c_from == 7 || Columns[c_from].PlayingCards[n - 1].IsFaceUp);
 
             PlayingCard ca;
             if (c_from == 7)
@@ -255,28 +235,6 @@ namespace SolLib
                 return true;
             }
 
-            // Move from Column to Column, max cards possible
-            /*
-            for (int c_from = 0; c_from < 7; c_from++)
-                if (Columns[c_from].PlayingCards.Count > 0)
-                    for (int c_to = 0; c_to < 7; c_to++)
-                        if (c_to != c_from)
-                            for (int n = Visible[c_from]; n >= 1; n--)
-                                if (CanMoveColumnToColumn(c_from, c_to, n))
-                                {
-                                    var s = Signature(c_from, c_to, n);
-                                    if (!Signatures.Contains(s))
-                                    {
-                                        MoveColumnToColumn(c_from, c_to, n);
-                                        if (showTraces)
-                                            WriteLine($"Move {n} card(s) from Column {c_from} to Column {c_to}: " + Signature());
-                                        var s2 = Signature();
-                                        Debug.Assert(s == s2);
-                                        Signatures.Add(s);
-                                        goto restart_reset_talon;
-                                    }
-                                }
-            */
             for (int c_from = 0; c_from < 7; c_from++)
                 if (Columns[c_from].PlayingCards.Count > 0)
                     for (int c_to = 0; c_to < 7; c_to++)

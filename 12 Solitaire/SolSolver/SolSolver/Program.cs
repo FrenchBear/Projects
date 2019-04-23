@@ -17,7 +17,7 @@ namespace SolSolver
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             Console.OutputEncoding = new UTF8Encoding();
             //TestSolver();
