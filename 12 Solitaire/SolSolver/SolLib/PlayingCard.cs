@@ -23,21 +23,15 @@ namespace SolLib
             IsFaceUp = isFaceUp;
         }
 
-        public override string ToString()
-        {
-            // "♠♣♥♦".Substring(couleur, 1)
-            //return "HDSC".Substring(Color, 1) + ("A23456789XJQK".Substring(Value - 1, 1));
-            return Face + (IsFaceUp ? "^" : "v");
-        }
+        public override string ToString() => $"PlayingCard {Face}, IsFaceUp={IsFaceUp}";
+
+        internal string Signature() => Face + (IsFaceUp ? "^" : "v");
+
 
         public static bool operator ==(PlayingCard a, PlayingCard b) => a.Face == b.Face;
         public static bool operator !=(PlayingCard a, PlayingCard b) => a.Face != b.Face;
 
-        internal string Signature() //=> (char)(32 + 16 * couleur + valeur);
-        {
-            return ToString();
-        }
-
+        
         public override bool Equals(object obj)
         {
             return obj is PlayingCard card && Equals(card);
