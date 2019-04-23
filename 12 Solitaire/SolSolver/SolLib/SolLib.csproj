@@ -4,4 +4,10 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="SolitaireDeck.badcs" />
+    <None Remove="SolitaireDeck.cs.bak" />
+    <None Remove="SolitaireDeck.goodcs" />
+  </ItemGroup>
+
 </Project>

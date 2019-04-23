@@ -38,6 +38,7 @@ namespace SolLib
         }
 
 
+
         public SolitaireDeck(int seed)
         {
             TalonFD = new GameStack("TalonFD");
@@ -380,9 +381,6 @@ namespace SolLib
                     Print();
                 if (IsGameSolvable()) break;
             }
-
-            if (printSteps)
-                Print();
 
             // Solved if all bases contain a King
             return IsGameSolvable();

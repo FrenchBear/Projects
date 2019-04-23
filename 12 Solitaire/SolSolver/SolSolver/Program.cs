@@ -69,7 +69,7 @@ namespace SolSolver
             else
             {
                 WriteLine("Stuck");
-                d.Print();
+                //d.Print();
             }
         }
     }
