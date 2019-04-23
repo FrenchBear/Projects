@@ -17,7 +17,7 @@ namespace SolLib
 
         public PlayingCard(int v, int c, bool isFaceUp)
         {
-            char vc = "A23456789XJQK"[v-1];
+            char vc = "A23456789XJQK"[v - 1];
             char cc = "HSDC"[c];
             Face = $"{cc}{vc}";
             IsFaceUp = isFaceUp;
@@ -25,13 +25,13 @@ namespace SolLib
 
         public override string ToString() => $"PlayingCard {Face}, IsFaceUp={IsFaceUp}";
 
-        internal string Signature() => Face; // + (IsFaceUp ? "^" : "v");
+        internal string Signature(bool isFaceUpForced = false) => Face + ((IsFaceUp || isFaceUpForced) ? "^" : "v");
 
 
         public static bool operator ==(PlayingCard a, PlayingCard b) => a.Face == b.Face;
         public static bool operator !=(PlayingCard a, PlayingCard b) => a.Face != b.Face;
 
-        
+
         public override bool Equals(object obj)
         {
             return obj is PlayingCard card && Equals(card);

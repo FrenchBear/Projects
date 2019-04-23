@@ -256,6 +256,7 @@ namespace SolLib
             }
 
             // Move from Column to Column, max cards possible
+            /*
             for (int c_from = 0; c_from < 7; c_from++)
                 if (Columns[c_from].PlayingCards.Count > 0)
                     for (int c_to = 0; c_to < 7; c_to++)
@@ -275,6 +276,28 @@ namespace SolLib
                                         goto restart_reset_talon;
                                     }
                                 }
+            */
+            for (int c_from = 0; c_from < 7; c_from++)
+                if (Columns[c_from].PlayingCards.Count > 0)
+                    for (int c_to = 0; c_to < 7; c_to++)
+                        if (c_to != c_from)
+                            for (int n = Columns[c_from].PlayingCards.Count - 1; n >= 0; n--)
+                                if (Columns[c_from].PlayingCards[n].IsFaceUp)
+                                    if (CanMoveColumnToColumn(c_from, c_to, n + 1))
+                                    {
+                                        var s = Signature(c_from, c_to, n + 1);
+                                        if (!Signatures.Contains(s))
+                                        {
+                                            MoveColumnToColumn(c_from, c_to, n + 1);
+                                            if (showTraces)
+                                                WriteLine($"Move {n + 1} card(s) from Column {c_from} to Column {c_to}: " + Signature());
+                                            var s2 = Signature();
+                                            Debug.Assert(s == s2);
+                                            Signatures.Add(s);
+                                            goto restart_reset_talon;
+                                        }
+                                    }
+
 
             // Move from Talon to Columns
             if (Talon.PlayingCards.Count > 0)
@@ -349,8 +372,12 @@ namespace SolLib
                             sb.Append(Columns[c_from].PlayingCards[i].Signature());
                     }
 
+                bool firstCard = true;
                 for (int i = (c == c_from) ? n : 0; i < Columns[c].PlayingCards.Count; i++)
-                    sb.Append(Columns[c].PlayingCards[i].Signature());
+                {
+                    sb.Append(Columns[c].PlayingCards[i].Signature(firstCard));
+                    firstCard = false;
+                }
             }
             return sb.ToString();
         }
