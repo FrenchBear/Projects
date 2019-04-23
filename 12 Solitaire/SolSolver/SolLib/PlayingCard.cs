@@ -25,7 +25,7 @@ namespace SolLib
 
         public override string ToString() => $"PlayingCard {Face}, IsFaceUp={IsFaceUp}";
 
-        internal string Signature() => Face + (IsFaceUp ? "^" : "v");
+        internal string Signature() => Face; // + (IsFaceUp ? "^" : "v");
 
 
         public static bool operator ==(PlayingCard a, PlayingCard b) => a.Face == b.Face;

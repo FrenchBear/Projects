@@ -85,6 +85,13 @@ namespace SolLib
             if (visible >= 0) Write($"V={visible} ");
             foreach (PlayingCard c in st.PlayingCards)
                 Write(c.Signature() + " ");
+            for (int i = 0; i < st.PlayingCards.Count; i++)
+            {
+                var ca = st.PlayingCards[i];
+                Write(ca.Signature() + " ");
+                if (visible >= 0)
+                    Debug.Assert((i < visible && ca.IsFaceUp) || (i >= visible && !ca.IsFaceUp));
+            }
             WriteLine();
         }
 
@@ -102,6 +109,7 @@ namespace SolLib
                 Talon.PlayingCards.RemoveAt(0);
                 Debug.Assert(Bases[ca.Color].PlayingCards.Count == 0 && ca.Value == 1 || Bases[ca.Color].PlayingCards.Count > 0 && Bases[ca.Color].PlayingCards.First().Value + 1 == ca.Value);
                 Bases[ca.Color].PlayingCards.Insert(0, ca);
+                ca.IsFaceUp = true;
             }
             else
             {
@@ -111,9 +119,12 @@ namespace SolLib
                 Columns[c_from].PlayingCards.RemoveAt(0);
                 Debug.Assert(Bases[ca.Color].PlayingCards.Count == 0 && ca.Value == 1 || Bases[ca.Color].PlayingCards.Count > 0 && Bases[ca.Color].PlayingCards.First().Value + 1 == ca.Value);
                 Bases[ca.Color].PlayingCards.Insert(0, ca);
+                ca.IsFaceUp = true;
                 Visible[c_from]--;
                 if (Visible[c_from] == 0 && Columns[c_from].PlayingCards.Count > 0)
                     Visible[c_from] = 1;
+                // Turn top of From column face up
+                if (Columns[c_from].PlayingCards.Count > 0) Columns[c_from].PlayingCards[0].IsFaceUp = true;
                 Debug.Assert((Columns[c_from].PlayingCards.Count == 0 && Visible[c_from] == 0) || (Columns[c_from].PlayingCards.Count > 0 && Visible[c_from] >= 1 && Visible[c_from] <= Columns[c_from].PlayingCards.Count));
             }
         }
@@ -154,9 +165,15 @@ namespace SolLib
             {
                 PlayingCard ca;
                 if (c_from == 7)
+                {
                     ca = Talon.PlayingCards[0];
+                    ca.IsFaceUp = true;
+                }
                 else
+                {
                     ca = Columns[c_from].PlayingCards[i];
+                    Debug.Assert(ca.IsFaceUp);
+                }
 
                 Debug.Assert(Columns[c_to].PlayingCards.Count > 0 || ca.Value == 13);  // Can only move a King to an empty column
                 Debug.Assert(Columns[c_to].PlayingCards.Count == 0 || ca.Value == Columns[c_to].PlayingCards[0].Value - 1 && ca.Color % 2 != Columns[c_to].PlayingCards[0].Color % 2);
@@ -173,11 +190,15 @@ namespace SolLib
                 for (int i = 0; i < n; i++)
                     Columns[c_from].PlayingCards.RemoveAt(0);
                 Visible[c_from] -= n;
+                // Turn top of From column face up
+                if (Columns[c_from].PlayingCards.Count > 0) Columns[c_from].PlayingCards[0].IsFaceUp = true;
+
                 if (Visible[c_from] == 0 && Columns[c_from].PlayingCards.Count > 0)
                 {
                     Visible[c_from] = 1;
                 }
                 Visible[c_to] += n;
+
                 Debug.Assert((Columns[c_from].PlayingCards.Count == 0 && Visible[c_from] == 0) || (Columns[c_from].PlayingCards.Count > 0 && Visible[c_from] >= 1 && Visible[c_from] <= Columns[c_from].PlayingCards.Count));
             }
         }
