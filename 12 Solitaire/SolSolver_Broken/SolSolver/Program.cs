@@ -64,8 +64,9 @@ namespace SolSolver
         private static void TestSolver()
         {
             var d = new SolitaireDeck(4);
+            //d.Print();
             if (d.Solve(true))
-                WriteLine("Solvable/Solved");
+                WriteLine("Solved");
             else
             {
                 WriteLine("Stuck");
