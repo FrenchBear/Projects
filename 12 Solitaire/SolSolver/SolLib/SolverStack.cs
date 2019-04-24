@@ -2,18 +2,18 @@
 
 namespace SolLib
 {
-    public class GameStack
+    internal class SolverStack
     {
         public string Name;
-        public List<PlayingCard> PlayingCards;
+        public List<SolverCard> PlayingCards;
 
-        public GameStack(string name)
+        public SolverStack(string name)
         {
             Name = name;
-            PlayingCards = new List<PlayingCard>();
+            PlayingCards = new List<SolverCard>();
         }
 
-        internal void AddCard(PlayingCard c, bool isFaceUp)
+        internal void AddCard(SolverCard c, bool isFaceUp)
         {
             c.IsFaceUp = isFaceUp;
             PlayingCards.Add(c);

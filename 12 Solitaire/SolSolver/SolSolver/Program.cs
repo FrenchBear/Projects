@@ -12,7 +12,7 @@ using System.Text;
 using static System.Console;
 
 using SolLib;
-
+using System.Collections.Generic;
 
 namespace SolSolver
 {
@@ -36,10 +36,10 @@ namespace SolSolver
             Stopwatch sw = Stopwatch.StartNew();
             for (int i = 0; i < n; i++)
             {
-                SolitaireDeck d;
+                SolverDeck d;
                 for (; ; )
                 {
-                    d = new SolitaireDeck(s++);
+                    d = CreateNewRandomSolverDeck(s++);
                     break;
 
                     /*
@@ -64,7 +64,7 @@ namespace SolSolver
 
         private static void TestSolver()
         {
-            var d = new SolitaireDeck(4);
+            var d = CreateNewRandomSolverDeck(4);
             if (d.Solve(true))
                 WriteLine("Solvable/Solved");
             else
@@ -73,5 +73,35 @@ namespace SolSolver
                 //d.Print();
             }
         }
+
+        private static SolverDeck CreateNewRandomSolverDeck(int seed)
+        {
+            var s = SolverCard.Set52().Shuffle(seed);
+
+            List<(SolverCard,bool)>[] Bases = new List<(SolverCard,bool)>[4];
+            for (int b = 0; b < 4; b++)
+                Bases[b] = new List<(SolverCard, bool)>();
+            List<(SolverCard, bool)>[] Columns = new List<(SolverCard, bool)>[7];
+            for (int c = 0; c < 7; c++)
+            {
+                Columns[c] = new List<(SolverCard, bool)>();
+                for (int i = 0; i <= c; i++)
+                {
+                    var card = s[0];
+                    s.RemoveAt(0);
+                    Columns[c].Add((card, i == 0));
+                }
+            }
+            List<(SolverCard, bool)> TalonFU = new List<(SolverCard, bool)>();
+            List<(SolverCard, bool)> TalonFD = new List<(SolverCard, bool)>();
+
+            foreach (var c in s)
+                TalonFD.Add((c, false));
+
+            return new SolverDeck(Bases, Columns, TalonFU, TalonFD);
+
+        }
+
+
     }
 }

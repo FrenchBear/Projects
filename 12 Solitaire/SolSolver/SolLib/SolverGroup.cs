@@ -3,11 +3,11 @@ using System.Text;
 
 namespace SolLib
 {
-    public class MovingGroup
+    internal class SolverGroup
     {
-        public GameStack FromStack;
-        public GameStack ToStack;
-        public List<PlayingCard> MovingCards;
+        public SolverStack FromStack;
+        public SolverStack ToStack;
+        public List<SolverCard> MovingCards;
 
         public override string ToString()
         {

@@ -14,12 +14,12 @@ using static System.Console;
 
 namespace SolLib
 {
-    public class SolitaireDeck
+    public class SolverDeck
     {
-        readonly GameStack[] Bases;         // 0..3     Index 0 contains top card on base.  Index=color (bases are fixed in this version)
-        readonly GameStack[] Columns;       // 0..6
-        readonly GameStack TalonFD;         // Talon Face Down
-        readonly GameStack TalonFU;         // Talon Face Up
+        readonly SolverStack[] Bases;         // 0..3     Index 0 contains top card on base.  Index=color (bases are fixed in this version)
+        readonly SolverStack[] Columns;       // 0..6
+        readonly SolverStack TalonFD;         // Talon Face Down
+        readonly SolverStack TalonFU;         // Talon Face Up
 
         internal bool IsGameFinished()
         {
@@ -38,28 +38,30 @@ namespace SolLib
         }
 
 
-
-        public SolitaireDeck(int seed)
+        private SolverDeck()
         {
-            TalonFD = new GameStack("TalonFD");
-            TalonFU = new GameStack("TalonFU");
-            Bases = new GameStack[4];
+            TalonFD = new SolverStack("TalonFD");
+            TalonFU = new SolverStack("TalonFU");
+            Bases = new SolverStack[4];
             for (int b = 0; b < 4; b++)
-                Bases[b] = new GameStack($"Base[{b}]");
-            Columns = new GameStack[7];
+                Bases[b] = new SolverStack($"Base[{b}]");
+            Columns = new SolverStack[7];
             for (int c = 0; c < 7; c++)
-                Columns[c] = new GameStack($"Column[{c}]");
+                Columns[c] = new SolverStack($"Column[{c}]");
+        }
 
-            foreach (var c in PlayingCard.Set52().Shuffle(seed))
-                TalonFD.AddCard(c, false);
-
+        public SolverDeck(List<(SolverCard, bool)>[] bases, List<(SolverCard, bool)>[] columns, List<(SolverCard, bool)> talonFU, List<(SolverCard, bool)> talonFD):this()
+        {
+            for (int b = 0; b < 4; b++)
+                foreach ((SolverCard card, bool isFaceUp) in bases[b])
+                    Bases[b].AddCard(card, isFaceUp);
             for (int c = 0; c < 7; c++)
-                for (int i = 0; i <= c; i++)
-                {
-                    var card = TalonFD.PlayingCards[0];
-                    TalonFD.PlayingCards.RemoveAt(0);
-                    Columns[c].AddCard(card, i == 0);
-                }
+                foreach ((SolverCard card, bool isFaceUp) in columns[c])
+                    Columns[c].AddCard(card, isFaceUp);
+            foreach ((SolverCard card, bool isFaceUp) in talonFU)
+                TalonFU.AddCard(card, isFaceUp);
+            foreach ((SolverCard card, bool isFaceUp) in talonFD)
+                TalonFD.AddCard(card, isFaceUp);
         }
 
         //public PlayingCard ColumnTopCard(int col) => Columns[col].PlayingCards[0];
@@ -76,10 +78,10 @@ namespace SolLib
             PrintCards("Talon FD    ", TalonFD);
         }
 
-        private void PrintCards(string header, GameStack st)
+        private void PrintCards(string header, SolverStack st)
         {
             Write(header + " ");
-            foreach (PlayingCard c in st.PlayingCards)
+            foreach (SolverCard c in st.PlayingCards)
                 Write(c.Signature() + " ");
             WriteLine();
         }
@@ -103,7 +105,7 @@ namespace SolLib
             Debug.Assert(TalonFD.PlayingCards.All(c => !c.IsFaceUp));
         }
 
-        private void CheckStack(GameStack st)
+        private void CheckStack(SolverStack st)
         {
             // As a safety, check that Bases and Columns are valid
             if (st.Name.StartsWith("Base"))
@@ -142,28 +144,28 @@ namespace SolLib
 
 
         // col==7 is TalonFU, otherwise col in [0..6]
-        private MovingGroup MoveToBase(int c_from)
+        private SolverGroup MoveToBase(int c_from)
         {
-            var mg = new MovingGroup();
+            var mg = new SolverGroup();
             Debug.Assert(c_from >= 0 && c_from <= 7);
             if (c_from == 7)
             {
                 // Move from talon
                 Debug.Assert(TalonFU.PlayingCards.Count > 0);
-                PlayingCard ca = TalonFU.PlayingCards[0];
+                SolverCard ca = TalonFU.PlayingCards[0];
                 TalonFU.PlayingCards.RemoveAt(0);
                 Debug.Assert(Bases[ca.Color].PlayingCards.Count == 0 && ca.Value == 1 || Bases[ca.Color].PlayingCards.Count > 0 && Bases[ca.Color].PlayingCards.First().Value + 1 == ca.Value);
                 Bases[ca.Color].PlayingCards.Insert(0, ca);
                 ca.IsFaceUp = true;
                 mg.FromStack = TalonFU;
                 mg.ToStack = Bases[ca.Color];
-                mg.MovingCards = new List<PlayingCard> { ca };
+                mg.MovingCards = new List<SolverCard> { ca };
             }
             else
             {
                 // Move from column col
                 Debug.Assert(Columns[c_from].PlayingCards.Count > 0);
-                PlayingCard ca = Columns[c_from].PlayingCards[0];
+                SolverCard ca = Columns[c_from].PlayingCards[0];
                 Columns[c_from].PlayingCards.RemoveAt(0);
                 Debug.Assert(Bases[ca.Color].PlayingCards.Count == 0 && ca.Value == 1 || Bases[ca.Color].PlayingCards.Count > 0 && Bases[ca.Color].PlayingCards.First().Value + 1 == ca.Value);
                 Bases[ca.Color].PlayingCards.Insert(0, ca);
@@ -172,7 +174,7 @@ namespace SolLib
                 if (Columns[c_from].PlayingCards.Count > 0) Columns[c_from].PlayingCards[0].IsFaceUp = true;
                 mg.FromStack = Columns[c_from];
                 mg.ToStack = Bases[ca.Color];
-                mg.MovingCards = new List<PlayingCard> { ca };
+                mg.MovingCards = new List<SolverCard> { ca };
             }
             return mg;
         }
@@ -183,7 +185,7 @@ namespace SolLib
         private bool CanMoveToBase(int col)
         {
             Debug.Assert(col >= 0 && col <= 7);
-            PlayingCard ca;
+            SolverCard ca;
             if (col == 7)
             {
                 // Can move from talon?
@@ -199,7 +201,7 @@ namespace SolLib
             return Bases[ca.Color].PlayingCards.Count == 0 && ca.Value == 1 || Bases[ca.Color].PlayingCards.Count > 0 && Bases[ca.Color].PlayingCards.First().Value + 1 == ca.Value;
         }
 
-        private MovingGroup MoveColumnToColumn(int c_from, int c_to, int n)
+        private SolverGroup MoveColumnToColumn(int c_from, int c_to, int n)
         {
             Debug.Assert(c_from >= 0 && c_from <= 7);
             Debug.Assert(c_to >= 0 && c_to < 7);
@@ -209,16 +211,16 @@ namespace SolLib
             Debug.Assert(c_from == 7 || Columns[c_from].PlayingCards.Count >= n);
             Debug.Assert(c_from == 7 || Columns[c_from].PlayingCards[n - 1].IsFaceUp);
 
-            var mg = new MovingGroup
+            var mg = new SolverGroup
             {
                 FromStack = c_from == 7 ? TalonFU : Columns[c_from],
                 ToStack = Columns[c_to],
-                MovingCards = new List<PlayingCard>()
+                MovingCards = new List<SolverCard>()
             };
 
             for (int i = n - 1; i >= 0; i--)
             {
-                PlayingCard ca;
+                SolverCard ca;
                 if (c_from == 7)
                 {
                     ca = TalonFU.PlayingCards[0];
@@ -261,7 +263,7 @@ namespace SolLib
             Debug.Assert(c_from == 7 || Columns[c_from].PlayingCards.Count >= n);
             Debug.Assert(c_from == 7 || Columns[c_from].PlayingCards[n - 1].IsFaceUp);
 
-            PlayingCard ca;
+            SolverCard ca;
             if (c_from == 7)
                 ca = TalonFU.PlayingCards[0];
             else
@@ -277,7 +279,7 @@ namespace SolLib
         public bool OneMovementToBase(bool showTraces = false)
         {
             var Signatures = new HashSet<string>();
-            var Movments = new List<MovingGroup>();
+            var Movments = new List<SolverGroup>();
 
         restart_reset_talon:
             int talonRotateCount = TalonFU.PlayingCards.Count + TalonFD.PlayingCards.Count;
