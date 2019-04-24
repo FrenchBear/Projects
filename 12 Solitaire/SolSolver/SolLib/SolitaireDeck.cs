@@ -51,21 +51,20 @@ namespace SolLib
                 Columns[c] = new GameStack($"Column[{c}]");
 
             foreach (var c in PlayingCard.Set52().Shuffle(seed))
-                TalonFU.AddCard(c, false);
+                TalonFD.AddCard(c, false);
 
             for (int c = 0; c < 7; c++)
                 for (int i = 0; i <= c; i++)
                 {
-                    var card = TalonFU.PlayingCards[0];
-                    TalonFU.PlayingCards.RemoveAt(0);
+                    var card = TalonFD.PlayingCards[0];
+                    TalonFD.PlayingCards.RemoveAt(0);
                     Columns[c].AddCard(card, i == 0);
                 }
         }
 
-        // ToDo: Validate args; do not crash if column is empty
-        public PlayingCard ColumnTopCard(int col) => Columns[col].PlayingCards[0];
+        //public PlayingCard ColumnTopCard(int col) => Columns[col].PlayingCards[0];
 
-        public void Print()
+        public void PrintDeck()
         {
             WriteLine("----------------------------------------------------------");
             WriteLine("Deck:");
@@ -83,9 +82,31 @@ namespace SolLib
             foreach (PlayingCard c in st.PlayingCards)
                 Write(c.Signature() + " ");
             WriteLine();
+        }
 
+        public void CheckDeck()
+        {
+            int nc = 0;
+            foreach (var b in Bases)
+            {
+                CheckStack(b);
+                nc += b.PlayingCards.Count();
+            }
+            foreach (var c in Columns)
+            { 
+                CheckStack(c);
+                nc += c.PlayingCards.Count();
+            }
+            nc += TalonFU.PlayingCards.Count + TalonFD.PlayingCards.Count;
+            Debug.Assert(nc == 52);
+            Debug.Assert(TalonFU.PlayingCards.All(c => c.IsFaceUp));
+            Debug.Assert(TalonFD.PlayingCards.All(c => !c.IsFaceUp));
+        }
+
+        private void CheckStack(GameStack st)
+        {
             // As a safety, check that Bases and Columns are valid
-            if (header.StartsWith("Base"))
+            if (st.Name.StartsWith("Base"))
             {
                 if (st.PlayingCards.Count > 0)
                 {
@@ -97,7 +118,7 @@ namespace SolLib
                     }
                 }
             }
-            else if (header.StartsWith("Column"))
+            else if (st.Name.StartsWith("Column"))
             {
                 bool visiblePart = true;
                 for (int i = 0; i < st.PlayingCards.Count; i++)
@@ -188,10 +209,12 @@ namespace SolLib
             Debug.Assert(c_from == 7 || Columns[c_from].PlayingCards.Count >= n);
             Debug.Assert(c_from == 7 || Columns[c_from].PlayingCards[n - 1].IsFaceUp);
 
-            var mg = new MovingGroup();
-            mg.FromStack = c_from == 7 ? TalonFU : Columns[c_from];
-            mg.ToStack = Columns[c_to];
-            mg.MovingCards = new List<PlayingCard>();
+            var mg = new MovingGroup
+            {
+                FromStack = c_from == 7 ? TalonFU : Columns[c_from],
+                ToStack = Columns[c_to],
+                MovingCards = new List<PlayingCard>()
+            };
 
             for (int i = n - 1; i >= 0; i--)
             {
@@ -326,27 +349,63 @@ namespace SolLib
                     }
 
             // Rotate talon and restart
-            if (TalonFU.PlayingCards.Count == 0 || talonRotateCount == 0)
+            if (TalonFU.PlayingCards.Count + TalonFD.PlayingCards.Count == 0 || talonRotateCount == 0)
                 return false;
 
             talonRotateCount--;
             if (showTraces)
                 WriteLine($"talonRotateCount = {talonRotateCount}");
 
-            TalonFU.PlayingCards.Add(TalonFU.PlayingCards[0]);
-            TalonFU.PlayingCards.RemoveAt(0);
+            if (TalonFD.PlayingCards.Count == 0)
+            {
+                if (showTraces)
+                {
+                    WriteLine("Before All TalonFU -> TalonFD");
+                    PrintCards("Talon FU    ", TalonFU);
+                    PrintCards("Talon FD    ", TalonFD);
+                }
+                // Move all TalonFU --> TalonFD
+                foreach (var c in TalonFU.PlayingCards)
+                {
+                    c.IsFaceUp = false;
+                    TalonFD.PlayingCards.Insert(0, c);
+                }
+                TalonFU.PlayingCards.Clear();
+                if (showTraces)
+                {
+                    WriteLine("After All TalonFU -> TalonFD");
+                    PrintCards("Talon FU    ", TalonFU);
+                    PrintCards("Talon FD    ", TalonFD);
+                }
+            }
+
+            // Move 1 Talon FD to Talon FU
+            TalonFU.PlayingCards.Insert(0, TalonFD.PlayingCards[0]);
+            TalonFU.PlayingCards[0].IsFaceUp = true;
+            TalonFD.PlayingCards.RemoveAt(0);
+
+            if (showTraces)
+            {
+                WriteLine("Move 1 TalonFD -> TalonFU");
+                PrintCards("Talon FU    ", TalonFU);
+                PrintCards("Talon FD    ", TalonFD);
+            }
+
+
             goto restart;
         }
 
         public bool Solve(bool printSteps = false)
         {
             if (printSteps)
-                Print();
+                PrintDeck();
+            CheckDeck();
 
-            while (OneMovementToBase(true))
+            while (OneMovementToBase(showTraces: printSteps))
             {
                 if (printSteps)
-                    Print();
+                    PrintDeck();
+                CheckDeck();
                 if (IsGameSolvable()) break;
             }
 

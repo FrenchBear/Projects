@@ -1,4 +1,4 @@
-﻿// Solitaire Library 
+﻿// Solitaire Library
 // Card class
 // 2019-04-07   PV
 
@@ -27,10 +27,9 @@ namespace SolLib
 
         internal string Signature(bool isFaceUpForced = false) => Face + ((IsFaceUp || isFaceUpForced) ? "^" : "v");
 
-
         public static bool operator ==(PlayingCard a, PlayingCard b) => a.Face == b.Face;
-        public static bool operator !=(PlayingCard a, PlayingCard b) => a.Face != b.Face;
 
+        public static bool operator !=(PlayingCard a, PlayingCard b) => a.Face != b.Face;
 
         public override bool Equals(object obj)
         {
@@ -39,13 +38,10 @@ namespace SolLib
 
         public bool Equals(PlayingCard other) => Value == other.Value && Color == other.Color;
 
-
         public override int GetHashCode()
         {
             return HashCode.Combine(Face);
         }
-
-
 
         public static List<PlayingCard> Set52()
         {
@@ -55,6 +51,5 @@ namespace SolLib
                     Cards.Add(new PlayingCard(v, c, true));
             return Cards;
         }
-
     }   // Struct Card
 }

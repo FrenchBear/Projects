@@ -7,21 +7,22 @@
 // When all cards are visible, game is solved
 
 using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using static System.Console;
+
 using SolLib;
-using System.Diagnostics;
+
 
 namespace SolSolver
 {
-    class Program
+    internal class Program
     {
-        static void Main()
+        private static void Main()
         {
             Console.OutputEncoding = new UTF8Encoding();
-            TestSolver();
-            //SolverStats(100);
+            //TestSolver();
+            SolverStats(100);
 
             //Console.WriteLine();
             //Console.Write("(Pause)");
@@ -58,7 +59,7 @@ namespace SolSolver
                     solved++;
             }
             sw.Stop();
-            WriteLine($"{n} decks analyzed in {sw.ElapsedMilliseconds/1000.0:F03}s, {solved} solvable = {(double)solved / n:P2}");
+            WriteLine($"{n} decks analyzed in {sw.ElapsedMilliseconds / 1000.0:F03}s, {solved} solvable = {(double)solved / n:P2}");
         }
 
         private static void TestSolver()
@@ -73,5 +74,4 @@ namespace SolSolver
             }
         }
     }
-
 }

@@ -2,6 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
+    <Authors>Pierre Violent</Authors>
+    <Copyright>(c) Pierre Violent 2019</Copyright>
+    <Description>A simplified (no backtracking) Solitaire solver</Description>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,10 +1,9 @@
-﻿// Solitaire Library 
+﻿// Solitaire Library
 // Extension Methods
 // 2019-04-07   PV
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace SolLib
 {
@@ -40,4 +39,3 @@ namespace SolLib
         }
     }
 }
-

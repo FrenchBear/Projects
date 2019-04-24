@@ -3,6 +3,9 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
+    <Copyright>(c) Pierre Violent 2019</Copyright>
+    <Description>A minimal test program for Solitaire solver in SolLib dll</Description>
+    <Authors>Pierre Violent</Authors>
   </PropertyGroup>
 
   <ItemGroup>
