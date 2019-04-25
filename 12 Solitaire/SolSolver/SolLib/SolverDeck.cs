@@ -50,7 +50,7 @@ namespace SolLib
                 Columns[c] = new SolverStack($"Column[{c}]");
         }
 
-        public SolverDeck(List<(SolverCard, bool)>[] bases, List<(SolverCard, bool)>[] columns, List<(SolverCard, bool)> talonFU, List<(SolverCard, bool)> talonFD):this()
+        public SolverDeck(List<(SolverCard, bool)>[] bases, List<(SolverCard, bool)>[] columns, List<(SolverCard, bool)> talonFU, List<(SolverCard, bool)> talonFD) : this()
         {
             for (int b = 0; b < 4; b++)
                 foreach ((SolverCard card, bool isFaceUp) in bases[b])
@@ -66,37 +66,44 @@ namespace SolLib
 
         //public PlayingCard ColumnTopCard(int col) => Columns[col].PlayingCards[0];
 
-        public void PrintDeck()
+        public void PrintSolverDeck()
         {
-            WriteLine("----------------------------------------------------------");
-            WriteLine("Deck:");
+            Debug.WriteLine("----------------------------------------------------------");
+            Debug.WriteLine("Deck:");
             for (int b = 0; b < 4; b++)
-                PrintCards($"Base {b}  ", Bases[b]);
+                PrintSolverStack($"Base {b}  ", Bases[b]);
             for (int c = 0; c < 7; c++)
-                PrintCards($"Column {c}", Columns[c]);
-            PrintCards("Talon FU    ", TalonFU);
-            PrintCards("Talon FD    ", TalonFD);
+                PrintSolverStack($"Column {c}", Columns[c]);
+            PrintSolverStack("Talon FU    ", TalonFU);
+            PrintSolverStack("Talon FD    ", TalonFD);
         }
 
-        private void PrintCards(string header, SolverStack st)
+        private void PrintSolverStack(string header, SolverStack st)
         {
-            Write(header + " ");
+            Debug.Write(header + " ");
             foreach (SolverCard c in st.PlayingCards)
-                Write(c.Signature() + " ");
-            WriteLine();
+                Debug.Write(c.Signature() + " ");
+            Debug.WriteLine("");
         }
 
-        public void CheckDeck()
+        public void CheckSolverDeck()
         {
             int nc = 0;
-            foreach (var b in Bases)
+            for (int i = 0; i < 4; i++)
             {
-                CheckStack(b);
+                var b = Bases[i];
+                CheckSolverStack(b);
                 nc += b.PlayingCards.Count();
+                if (b.PlayingCards.Count>0)
+                {
+                    for (int j = 0; j < 4; j++)
+                        if (j != i && Bases[j].PlayingCards.Count > 0)
+                            Debug.Assert(b.PlayingCards[0].Color != Bases[j].PlayingCards[0].Color);
+                }
             }
             foreach (var c in Columns)
-            { 
-                CheckStack(c);
+            {
+                CheckSolverStack(c);
                 nc += c.PlayingCards.Count();
             }
             nc += TalonFU.PlayingCards.Count + TalonFD.PlayingCards.Count;
@@ -105,7 +112,7 @@ namespace SolLib
             Debug.Assert(TalonFD.PlayingCards.All(c => !c.IsFaceUp));
         }
 
-        private void CheckStack(SolverStack st)
+        private void CheckSolverStack(SolverStack st)
         {
             // As a safety, check that Bases and Columns are valid
             if (st.Name.StartsWith("Base"))
@@ -154,11 +161,12 @@ namespace SolLib
                 Debug.Assert(TalonFU.PlayingCards.Count > 0);
                 SolverCard ca = TalonFU.PlayingCards[0];
                 TalonFU.PlayingCards.RemoveAt(0);
-                Debug.Assert(Bases[ca.Color].PlayingCards.Count == 0 && ca.Value == 1 || Bases[ca.Color].PlayingCards.Count > 0 && Bases[ca.Color].PlayingCards.First().Value + 1 == ca.Value);
-                Bases[ca.Color].PlayingCards.Insert(0, ca);
+                int targetBase = GetMatchingBase(ca);
+                Debug.Assert(Bases[targetBase].PlayingCards.Count == 0 && ca.Value == 1 || Bases[targetBase].PlayingCards.Count > 0 && Bases[targetBase].PlayingCards.First().Value + 1 == ca.Value);
+                Bases[targetBase].PlayingCards.Insert(0, ca);
                 ca.IsFaceUp = true;
                 mg.FromStack = TalonFU;
-                mg.ToStack = Bases[ca.Color];
+                mg.ToStack = Bases[targetBase];
                 mg.MovingCards = new List<SolverCard> { ca };
             }
             else
@@ -167,16 +175,45 @@ namespace SolLib
                 Debug.Assert(Columns[c_from].PlayingCards.Count > 0);
                 SolverCard ca = Columns[c_from].PlayingCards[0];
                 Columns[c_from].PlayingCards.RemoveAt(0);
-                Debug.Assert(Bases[ca.Color].PlayingCards.Count == 0 && ca.Value == 1 || Bases[ca.Color].PlayingCards.Count > 0 && Bases[ca.Color].PlayingCards.First().Value + 1 == ca.Value);
-                Bases[ca.Color].PlayingCards.Insert(0, ca);
+                int targetBase = GetMatchingBase(ca);
+                Debug.Assert(Bases[targetBase].PlayingCards.Count == 0 && ca.Value == 1 || Bases[targetBase].PlayingCards.Count > 0 && Bases[targetBase].PlayingCards.First().Value + 1 == ca.Value);
+                Bases[targetBase].PlayingCards.Insert(0, ca);
                 Debug.Assert(ca.IsFaceUp);
                 // Turn top of From column face up
                 if (Columns[c_from].PlayingCards.Count > 0) Columns[c_from].PlayingCards[0].IsFaceUp = true;
                 mg.FromStack = Columns[c_from];
-                mg.ToStack = Bases[ca.Color];
+                mg.ToStack = Bases[targetBase];
                 mg.MovingCards = new List<SolverCard> { ca };
             }
             return mg;
+        }
+
+        private int GetMatchingBase(SolverCard ca)
+        {
+            int emptyBase = -1;
+            int targetBase = -1;
+            for (int b = 0; b < 4; b++)
+            {
+                if (Bases[b].PlayingCards.Count == 0)
+                {
+                    if (emptyBase < 0) emptyBase = b;
+                }
+                else
+                {
+                    if (Bases[b].PlayingCards[0].Color == ca.Color)
+                    {
+                        Debug.Assert(targetBase < 0);
+                        targetBase = b;
+                        break;
+                    }
+                }
+            }
+            if (targetBase == -1)
+            {
+                targetBase = emptyBase;
+                Debug.Assert(targetBase >= 0);
+            }
+            return targetBase;
         }
 
 
@@ -198,7 +235,9 @@ namespace SolLib
                 if (Columns[col].PlayingCards.Count == 0) return false;
                 ca = Columns[col].PlayingCards[0];
             }
-            return Bases[ca.Color].PlayingCards.Count == 0 && ca.Value == 1 || Bases[ca.Color].PlayingCards.Count > 0 && Bases[ca.Color].PlayingCards.First().Value + 1 == ca.Value;
+
+            int targetBase = GetMatchingBase(ca);
+            return Bases[targetBase].PlayingCards.Count == 0 && ca.Value == 1 || Bases[targetBase].PlayingCards.Count > 0 && Bases[targetBase].PlayingCards.First().Value + 1 == ca.Value;
         }
 
         private SolverGroup MoveColumnToColumn(int c_from, int c_to, int n)
@@ -363,8 +402,8 @@ namespace SolLib
                 if (showTraces)
                 {
                     WriteLine("Before All TalonFU -> TalonFD");
-                    PrintCards("Talon FU    ", TalonFU);
-                    PrintCards("Talon FD    ", TalonFD);
+                    PrintSolverStack("Talon FU    ", TalonFU);
+                    PrintSolverStack("Talon FD    ", TalonFD);
                 }
                 // Move all TalonFU --> TalonFD
                 foreach (var c in TalonFU.PlayingCards)
@@ -376,8 +415,8 @@ namespace SolLib
                 if (showTraces)
                 {
                     WriteLine("After All TalonFU -> TalonFD");
-                    PrintCards("Talon FU    ", TalonFU);
-                    PrintCards("Talon FD    ", TalonFD);
+                    PrintSolverStack("Talon FU    ", TalonFU);
+                    PrintSolverStack("Talon FD    ", TalonFD);
                 }
             }
 
@@ -389,8 +428,8 @@ namespace SolLib
             if (showTraces)
             {
                 WriteLine("Move 1 TalonFD -> TalonFU");
-                PrintCards("Talon FU    ", TalonFU);
-                PrintCards("Talon FD    ", TalonFD);
+                PrintSolverStack("Talon FU    ", TalonFU);
+                PrintSolverStack("Talon FD    ", TalonFD);
             }
 
 
@@ -400,14 +439,14 @@ namespace SolLib
         public bool Solve(bool printSteps = false)
         {
             if (printSteps)
-                PrintDeck();
-            CheckDeck();
+                PrintSolverDeck();
+            CheckSolverDeck();
 
             while (OneMovementToBase(showTraces: printSteps))
             {
                 if (printSteps)
-                    PrintDeck();
-                CheckDeck();
+                    PrintSolverDeck();
+                CheckSolverDeck();
                 if (IsGameSolvable()) break;
             }
 

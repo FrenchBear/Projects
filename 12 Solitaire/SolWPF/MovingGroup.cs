@@ -92,7 +92,7 @@ namespace SolWPF
             ToStack.MoveInCards(MovingCards, withAnimation);
             ToStack.ClearTargetHighlight();
 
-            Debug.WriteLine($"{sb} Cmv={cardMadeVisibleDuringMove?.Face}");
+            //Debug.WriteLine($"{sb} Cmv={cardMadeVisibleDuringMove?.Face}");
 
             // Keep this move for undo
             FromStack.b.PushUndo(this);
@@ -110,7 +110,7 @@ namespace SolWPF
                 sb.Append(c.IsFaceUp ? "^ " : "v ");
             }
             sb.Append($" Cmv={cardMadeVisibleDuringMove?.Face}");
-            Debug.WriteLine(sb.ToString());
+            //Debug.WriteLine(sb.ToString());
 
             if (reverseCardsDuringMove) MovingCards.Reverse();
             if (cardMadeVisibleDuringMove != null) cardMadeVisibleDuringMove.IsFaceUp = false;

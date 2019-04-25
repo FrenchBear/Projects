@@ -75,6 +75,7 @@ namespace SolWPF
             for (int mt = 0; mt < lc.Count; mt++)
                 TalonFD.AddCard(lc[mt], false);
 
+            // Initial status
             UpdateGameStatus();
         }
 
@@ -231,6 +232,7 @@ namespace SolWPF
             List<(SolverCard, bool)> SolverTalonFD;
             CopyStack(TalonFD, out SolverTalonFD);
 
+            // ToDo: If too long, do it in a separate thread
             var sd = new SolverDeck(SolverBases, SolverColumns, SolverTalonFU, SolverTalonFD);
             return sd.Solve();
         }

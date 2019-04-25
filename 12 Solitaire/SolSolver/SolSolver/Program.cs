@@ -68,10 +68,7 @@ namespace SolSolver
             if (d.Solve(true))
                 WriteLine("Solvable/Solved");
             else
-            {
                 WriteLine("Stuck");
-                //d.Print();
-            }
         }
 
         private static SolverDeck CreateNewRandomSolverDeck(int seed)

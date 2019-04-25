@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SolSolver\SolSolver\SolSolver.csproj" />
+    <ProjectReference Include="..\SolSolver\SolLib\SolLib.csproj" />
   </ItemGroup>
 
   <ItemGroup>
