@@ -3,6 +3,7 @@
 // 2019-04-18   PV
 
 
+using SolLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -217,6 +218,30 @@ namespace SolWPF
             return true;
         }
 
+        internal bool IsSolverSolvable()
+        {
+            List<(SolverCard, bool)>[] SolverBases = new List<(SolverCard, bool)>[4];
+            for (int b = 0; b < 4; b++)
+                CopyStack(Bases[b], out SolverBases[b]);
+            List<(SolverCard, bool)>[] SolverColumns = new List<(SolverCard, bool)>[7];
+            for (int c = 0; c < 7; c++)
+                CopyStack(Columns[c], out SolverColumns[c]);
+            List<(SolverCard, bool)> SolverTalonFU;
+            CopyStack(TalonFU, out SolverTalonFU);
+            List<(SolverCard, bool)> SolverTalonFD;
+            CopyStack(TalonFD, out SolverTalonFD);
+
+            var sd = new SolverDeck(SolverBases, SolverColumns, SolverTalonFU, SolverTalonFD);
+            return sd.Solve();
+        }
+
+        private void CopyStack(GameStack st, out List<(SolverCard, bool)> solverSt)
+        {
+            solverSt = new List<(SolverCard, bool)>();
+            foreach (var c in st.PlayingCards)
+                solverSt.Add((new SolverCard(c.Value, c.Color, c.IsFaceUp), c.IsFaceUp));
+        }
+
         internal bool CanUndo() => UndoStack.Count > 0;
 
         internal void PushUndo(MovingGroup mg)
@@ -227,6 +252,7 @@ namespace SolWPF
         internal void UpdateGameStatus()
         {
             MoveCount = UndoStack.Count;
+            SolverStatus = IsSolverSolvable() ? "Solvable" : "No solution";
             if (MoveCount == 0)
                 GameStatus = "Not started";
             else if (IsGameFinished())
@@ -235,7 +261,6 @@ namespace SolWPF
                 GameStatus = "Game solvable!";
             else
                 GameStatus = "In progress";
-
         }
 
         internal MovingGroup PopUndo()
@@ -272,6 +297,20 @@ namespace SolWPF
                 {
                     _GameStatus = value;
                     NotifyPropertyChanged(nameof(GameStatus));
+                }
+            }
+        }
+
+        private string _SolverStatus;
+        public string SolverStatus
+        {
+            get { return _SolverStatus; }
+            set
+            {
+                if (_SolverStatus != value)
+                {
+                    _SolverStatus = value;
+                    NotifyPropertyChanged(nameof(SolverStatus));
                 }
             }
         }

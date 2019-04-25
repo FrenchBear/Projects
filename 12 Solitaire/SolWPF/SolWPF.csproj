@@ -17,6 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SolSolver\SolSolver\SolSolver.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="SolWPF.ico" />
   </ItemGroup>
 

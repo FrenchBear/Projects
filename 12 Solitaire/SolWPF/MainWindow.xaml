@@ -62,6 +62,8 @@
             <TextBlock Text="{Binding MoveCount}"/>
             <TextBlock>Status:</TextBlock>
             <TextBlock Text="{Binding GameStatus}"/>
+            <TextBlock>Solver:</TextBlock>
+            <TextBlock Text="{Binding SolverStatus}"/>
             <TextBlock>Game #:</TextBlock>
             <TextBlock Text="{Binding GameSerial}"/>
             <Button Content="New Game" Command="ApplicationCommands.New" />
