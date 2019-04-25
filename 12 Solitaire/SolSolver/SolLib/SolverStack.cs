@@ -2,7 +2,7 @@
 
 namespace SolLib
 {
-    internal class SolverStack
+    public class SolverStack
     {
         public string Name;
         public List<SolverCard> PlayingCards;

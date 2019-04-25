@@ -34,42 +34,61 @@
         </Grid.RowDefinitions>
 
         <Grid Background="SeaGreen">
-        <Canvas Name="PlayingCanvas" HorizontalAlignment="Left" VerticalAlignment="Top" >
-            <Canvas.RenderTransform>
-                <MatrixTransform x:Name="mainMatrixTransform"/>
-            </Canvas.RenderTransform>
+            <Canvas Name="PlayingCanvas" HorizontalAlignment="Left" VerticalAlignment="Top" >
+                <Canvas.RenderTransform>
+                    <MatrixTransform x:Name="mainMatrixTransform"/>
+                </Canvas.RenderTransform>
 
-            <Rectangle Name="Base0" StrokeThickness="3" Stroke="Black" Canvas.Left="10" Canvas.Top="10" RadiusX="12" RadiusY="12" />
-            <Rectangle Name="Base1" StrokeThickness="3" Stroke="Black" Canvas.Left="120" Canvas.Top="10" RadiusX="12" RadiusY="12" />
-            <Rectangle Name="Base2" StrokeThickness="3" Stroke="Black" Canvas.Left="230" Canvas.Top="10" RadiusX="12" RadiusY="12" />
-            <Rectangle Name="Base3" StrokeThickness="3" Stroke="Black" Canvas.Left="340" Canvas.Top="10" RadiusX="12" RadiusY="12" />
+                <Rectangle Name="Base0" StrokeThickness="3" Stroke="Black" Canvas.Left="10" Canvas.Top="10" RadiusX="12" RadiusY="12" />
+                <Rectangle Name="Base1" StrokeThickness="3" Stroke="Black" Canvas.Left="120" Canvas.Top="10" RadiusX="12" RadiusY="12" />
+                <Rectangle Name="Base2" StrokeThickness="3" Stroke="Black" Canvas.Left="230" Canvas.Top="10" RadiusX="12" RadiusY="12" />
+                <Rectangle Name="Base3" StrokeThickness="3" Stroke="Black" Canvas.Left="340" Canvas.Top="10" RadiusX="12" RadiusY="12" />
 
-            <Rectangle Name="Talon0" StrokeThickness="3" Stroke="Black" Canvas.Left="670" Canvas.Top="10" RadiusX="12" RadiusY="12" />
-            <Rectangle Name="Talon1" StrokeThickness="3" Stroke="Black" Canvas.Left="560" Canvas.Top="10" RadiusX="12" RadiusY="12" />
+                <Rectangle Name="Talon0" StrokeThickness="3" Stroke="Black" Canvas.Left="670" Canvas.Top="10" RadiusX="12" RadiusY="12" />
+                <Rectangle Name="Talon1" StrokeThickness="3" Stroke="Black" Canvas.Left="560" Canvas.Top="10" RadiusX="12" RadiusY="12" />
 
-            <Rectangle Name="Column0" StrokeThickness="3" Stroke="Black" Canvas.Left="10"  Canvas.Top="170" RadiusX="12" RadiusY="12" />
-            <Rectangle Name="Column1" StrokeThickness="3" Stroke="Black" Canvas.Left="120" Canvas.Top="170" RadiusX="12" RadiusY="12" />
-            <Rectangle Name="Column2" StrokeThickness="3" Stroke="Black" Canvas.Left="230" Canvas.Top="170" RadiusX="12" RadiusY="12" />
-            <Rectangle Name="Column3" StrokeThickness="3" Stroke="Black" Canvas.Left="340" Canvas.Top="170" RadiusX="12" RadiusY="12" />
-            <Rectangle Name="Column4" StrokeThickness="3" Stroke="Black" Canvas.Left="450" Canvas.Top="170" RadiusX="12" RadiusY="12" />
-            <Rectangle Name="Column5" StrokeThickness="3" Stroke="Black" Canvas.Left="560" Canvas.Top="170" RadiusX="12" RadiusY="12" />
-            <Rectangle Name="Column6" StrokeThickness="3" Stroke="Black" Canvas.Left="670" Canvas.Top="170" RadiusX="12" RadiusY="12" />
-        </Canvas>
+                <Rectangle Name="Column0" StrokeThickness="3" Stroke="Black" Canvas.Left="10"  Canvas.Top="170" RadiusX="12" RadiusY="12" />
+                <Rectangle Name="Column1" StrokeThickness="3" Stroke="Black" Canvas.Left="120" Canvas.Top="170" RadiusX="12" RadiusY="12" />
+                <Rectangle Name="Column2" StrokeThickness="3" Stroke="Black" Canvas.Left="230" Canvas.Top="170" RadiusX="12" RadiusY="12" />
+                <Rectangle Name="Column3" StrokeThickness="3" Stroke="Black" Canvas.Left="340" Canvas.Top="170" RadiusX="12" RadiusY="12" />
+                <Rectangle Name="Column4" StrokeThickness="3" Stroke="Black" Canvas.Left="450" Canvas.Top="170" RadiusX="12" RadiusY="12" />
+                <Rectangle Name="Column5" StrokeThickness="3" Stroke="Black" Canvas.Left="560" Canvas.Top="170" RadiusX="12" RadiusY="12" />
+                <Rectangle Name="Column6" StrokeThickness="3" Stroke="Black" Canvas.Left="670" Canvas.Top="170" RadiusX="12" RadiusY="12" />
+            </Canvas>
         </Grid>
-        
-        <StatusBar Grid.Row="1">
-            <TextBlock>Moves:</TextBlock>
-            <TextBlock Text="{Binding MoveCount}"/>
-            <TextBlock>Status:</TextBlock>
-            <TextBlock Text="{Binding GameStatus}"/>
-            <TextBlock>Solver:</TextBlock>
-            <TextBlock Text="{Binding SolverStatus}"/>
-            <TextBlock>Game #:</TextBlock>
-            <TextBlock Text="{Binding GameSerial}"/>
-            <Button Content="New Game" Command="ApplicationCommands.New" />
-            <Button Content="Undo" Command="ApplicationCommands.Undo" />
-            <Button Content="Play" Command="ApplicationCommands.Print" />
-            <Button Content="Generate Deck" Click="GenerateDeck_Click" />
+
+        <StatusBar Grid.Row="1" FontSize="16" HorizontalContentAlignment="Left">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="90" />
+                    <ColumnDefinition Width="170" />
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" Grid.Column="0" Margin="0,0,12,0">
+                    <TextBlock Margin="0,0,6,0">Moves:</TextBlock>
+                    <TextBlock Text="{Binding MoveCount}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="1" Margin="0,0,12,0">
+                    <TextBlock Margin="0,0,6,0">Status:</TextBlock>
+                    <TextBlock Text="{Binding GameStatus}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="2" Margin="0,0,12,0">
+                    <TextBlock Margin="0,0,6,0">Solver:</TextBlock>
+                    <TextBlock Text="{Binding SolverStatus}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="3" Margin="0,0,12,0">
+                    <TextBlock Margin="0,0,6,0">Game #:</TextBlock>
+                    <TextBlock Text="{Binding GameSerial}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="4">
+                    <Button Content="New Game" Command="ApplicationCommands.New" Padding="3,0" Margin="0,0,6,0"/>
+                    <Button Content="Undo" Command="ApplicationCommands.Undo" Padding="3,0" Margin="0,0,6,0"/>
+                    <Button Content="Play" Command="ApplicationCommands.Print" Padding="3,0"/>
+                    <!--<Button Content="Generate Deck" Click="GenerateDeck_Click" />-->
+                </StackPanel>
+            </Grid>
         </StatusBar>
 
     </Grid>

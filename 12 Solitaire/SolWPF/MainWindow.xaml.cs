@@ -58,6 +58,8 @@ namespace SolWPF
             b.TalonFD = new TalonFaceDownStack(b, "TalonFD", PlayingCanvas, Talon0);
             b.TalonFU = new TalonFaceUpStack(b, "TalonFU", PlayingCanvas, Talon1);
 
+            b.InitializeStacksDictionary();
+
             b.InitRandomDeck(22);
             //b.InitTestDeck1();
             //b.InitTestDeck2();
@@ -339,8 +341,15 @@ namespace SolWPF
 
         private void PlayCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            var mg = b.GetNextMove();
-            mg?.DoMove(true);
+            var lmg = b.GetNextMoves();
+            if (lmg == null)
+            {
+                MessageBox.Show("Sorry, no suggested play...");
+                return;
+            }
+
+            foreach (var mg in lmg)
+                mg.DoMove(true);
         }
 
 

@@ -43,21 +43,21 @@ namespace SolLib
             TalonFD = new SolverStack("TalonFD");
             TalonFU = new SolverStack("TalonFU");
             Bases = new SolverStack[4];
-            for (int b = 0; b < 4; b++)
-                Bases[b] = new SolverStack($"Base[{b}]");
+            for (int bi = 0; bi < 4; bi++)
+                Bases[bi] = new SolverStack($"Base{bi}");
             Columns = new SolverStack[7];
-            for (int c = 0; c < 7; c++)
-                Columns[c] = new SolverStack($"Column[{c}]");
+            for (int ci = 0; ci < 7; ci++)
+                Columns[ci] = new SolverStack($"Column{ci}");
         }
 
         public SolverDeck(List<(SolverCard, bool)>[] bases, List<(SolverCard, bool)>[] columns, List<(SolverCard, bool)> talonFU, List<(SolverCard, bool)> talonFD) : this()
         {
-            for (int b = 0; b < 4; b++)
-                foreach ((SolverCard card, bool isFaceUp) in bases[b])
-                    Bases[b].AddCard(card, isFaceUp);
-            for (int c = 0; c < 7; c++)
-                foreach ((SolverCard card, bool isFaceUp) in columns[c])
-                    Columns[c].AddCard(card, isFaceUp);
+            for (int bi = 0; bi < 4; bi++)
+                foreach ((SolverCard card, bool isFaceUp) in bases[bi])
+                    Bases[bi].AddCard(card, isFaceUp);
+            for (int ci = 0; ci < 7; ci++)
+                foreach ((SolverCard card, bool isFaceUp) in columns[ci])
+                    Columns[ci].AddCard(card, isFaceUp);
             foreach ((SolverCard card, bool isFaceUp) in talonFU)
                 TalonFU.AddCard(card, isFaceUp);
             foreach ((SolverCard card, bool isFaceUp) in talonFD)
@@ -70,10 +70,10 @@ namespace SolLib
         {
             Debug.WriteLine("----------------------------------------------------------");
             Debug.WriteLine("Deck:");
-            for (int b = 0; b < 4; b++)
-                PrintSolverStack($"Base {b}  ", Bases[b]);
-            for (int c = 0; c < 7; c++)
-                PrintSolverStack($"Column {c}", Columns[c]);
+            for (int bi = 0; bi < 4; bi++)
+                PrintSolverStack($"Base {bi}  ", Bases[bi]);
+            for (int ci = 0; ci < 7; ci++)
+                PrintSolverStack($"Column {ci}", Columns[ci]);
             PrintSolverStack("Talon FU    ", TalonFU);
             PrintSolverStack("Talon FD    ", TalonFD);
         }
@@ -192,18 +192,18 @@ namespace SolLib
         {
             int emptyBase = -1;
             int targetBase = -1;
-            for (int b = 0; b < 4; b++)
+            for (int bi = 0; bi < 4; bi++)
             {
-                if (Bases[b].PlayingCards.Count == 0)
+                if (Bases[bi].PlayingCards.Count == 0)
                 {
-                    if (emptyBase < 0) emptyBase = b;
+                    if (emptyBase < 0) emptyBase = bi;
                 }
                 else
                 {
-                    if (Bases[b].PlayingCards[0].Color == ca.Color)
+                    if (Bases[bi].PlayingCards[0].Color == ca.Color)
                     {
                         Debug.Assert(targetBase < 0);
-                        targetBase = b;
+                        targetBase = bi;
                         break;
                     }
                 }
@@ -314,8 +314,13 @@ namespace SolLib
             return false;
         }
 
+        public List<SolverGroup> GetMovingGroupsForOneMovmentToBase()
+        {
+            return OneMovementToBase(false);
+        }
 
-        public bool OneMovementToBase(bool showTraces = false)
+
+        internal List<SolverGroup> OneMovementToBase(bool showTraces = false)
         {
             var Signatures = new HashSet<string>();
             var Movments = new List<SolverGroup>();
@@ -326,15 +331,15 @@ namespace SolLib
                 WriteLine($"Set talonRotateCount = {talonRotateCount}");
 
             // Move one card from columns to Base?
-            for (int c = 0; c < 7; c++)
+            for (int ci = 0; ci < 7; ci++)
             {
-                if (CanMoveToBase(c))
+                if (CanMoveToBase(ci))
                 {
-                    var mg = MoveToBase(c);
+                    var mg = MoveToBase(ci);
                     Movments.Add(mg);
                     if (showTraces)
                         WriteLine(mg.ToString());
-                    return true;
+                    return Movments;
                 }
             }
 
@@ -346,7 +351,7 @@ namespace SolLib
                 Movments.Add(mg);
                 if (showTraces)
                     WriteLine(mg.ToString());
-                return true;
+                return Movments;
             }
 
             // Move from column to column?
@@ -391,7 +396,7 @@ namespace SolLib
 
             // Rotate talon and restart
             if (TalonFU.PlayingCards.Count + TalonFD.PlayingCards.Count == 0 || talonRotateCount == 0)
-                return false;
+                return null;
 
             talonRotateCount--;
             if (showTraces)
@@ -432,7 +437,6 @@ namespace SolLib
                 PrintSolverStack("Talon FD    ", TalonFD);
             }
 
-
             goto restart;
         }
 
@@ -442,7 +446,7 @@ namespace SolLib
                 PrintSolverDeck();
             CheckSolverDeck();
 
-            while (OneMovementToBase(showTraces: printSteps))
+            while (OneMovementToBase(showTraces: printSteps)!=null)
             {
                 if (printSteps)
                     PrintSolverDeck();
@@ -462,18 +466,18 @@ namespace SolLib
             var sb = new StringBuilder();
 
             // Only include top base card in signature
-            for (int b = 0; b < 4; b++)
-                if (Bases[b].PlayingCards.Count == 0)
+            for (int bi = 0; bi < 4; bi++)
+                if (Bases[bi].PlayingCards.Count == 0)
                     sb.Append("@@");
                 else
-                    sb.Append(Bases[b].PlayingCards.First().Signature());
+                    sb.Append(Bases[bi].PlayingCards.First().Signature());
 
             // Then add columns signature.  Note than all cards of a column are included, not only the visible ones (not sure it's useful)
-            for (int c = 0; c < 7; c++)
+            for (int ci = 0; ci < 7; ci++)
             {
                 sb.Append('|');
 
-                if (c == c_to)
+                if (ci == c_to)
                     if (c_from == 7)
                     {
                         Debug.Assert(n == 1);
@@ -487,9 +491,9 @@ namespace SolLib
                     }
 
                 bool firstCard = true;
-                for (int i = (c == c_from) ? n : 0; i < Columns[c].PlayingCards.Count; i++)
+                for (int i = (ci == c_from) ? n : 0; i < Columns[ci].PlayingCards.Count; i++)
                 {
-                    sb.Append(Columns[c].PlayingCards[i].Signature(firstCard));
+                    sb.Append(Columns[ci].PlayingCards[i].Signature(firstCard));
                     firstCard = false;
                 }
             }

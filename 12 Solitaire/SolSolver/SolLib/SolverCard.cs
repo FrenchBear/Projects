@@ -47,8 +47,8 @@ namespace SolLib
         {
             var Cards = new List<SolverCard>();
             for (int v = 1; v <= 13; v++)
-                for (int c = 0; c <= 3; c++)
-                    Cards.Add(new SolverCard(v, c, true));
+                for (int ci = 0; ci <= 3; ci++)
+                    Cards.Add(new SolverCard(v, ci, true));
             return Cards;
         }
     }   // Struct Card

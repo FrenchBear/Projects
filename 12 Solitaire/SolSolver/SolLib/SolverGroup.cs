@@ -3,7 +3,7 @@ using System.Text;
 
 namespace SolLib
 {
-    internal class SolverGroup
+    public class SolverGroup
     {
         public SolverStack FromStack;
         public SolverStack ToStack;
