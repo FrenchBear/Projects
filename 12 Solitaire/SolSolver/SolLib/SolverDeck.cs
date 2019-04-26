@@ -403,33 +403,27 @@ namespace SolLib
             if (showTraces)
                 WriteLine($"talonRotateCount = {talonRotateCount}");
 
+            // Need to reset TalonFD ?
             if (TalonFD.PlayingCards.Count == 0)
             {
-                if (showTraces)
-                {
-                    WriteLine("Before All TalonFU -> TalonFD");
-                    PrintSolverStack("Talon FU    ", TalonFU);
-                    PrintSolverStack("Talon FD    ", TalonFD);
-                }
-                // Move all TalonFU --> TalonFD
-                foreach (var c in TalonFU.PlayingCards)
-                {
-                    c.IsFaceUp = false;
-                    TalonFD.PlayingCards.Insert(0, c);
-                }
-                TalonFU.PlayingCards.Clear();
-                if (showTraces)
-                {
-                    WriteLine("After All TalonFU -> TalonFD");
-                    PrintSolverStack("Talon FU    ", TalonFU);
-                    PrintSolverStack("Talon FD    ", TalonFD);
-                }
+                var mg = MoveAllTalonFUToTalonFD(showTraces);
+                Movments.Add(mg);
             }
+
 
             // Move 1 Talon FD to Talon FU
             TalonFU.PlayingCards.Insert(0, TalonFD.PlayingCards[0]);
             TalonFU.PlayingCards[0].IsFaceUp = true;
             TalonFD.PlayingCards.RemoveAt(0);
+
+            var mgt1 = new SolverGroup
+            {
+                FromStack = TalonFD,
+                ToStack = TalonFU,
+                MovingCards = new List<SolverCard>()
+            };
+            mgt1.MovingCards.Add(TalonFU.PlayingCards[0]);
+            Movments.Add(mgt1);
 
             if (showTraces)
             {
@@ -439,6 +433,38 @@ namespace SolLib
             }
 
             goto restart;
+        }
+
+        private SolverGroup MoveAllTalonFUToTalonFD(bool showTraces)
+        {
+            var mg = new SolverGroup
+            {
+                FromStack = TalonFU,
+                ToStack = TalonFD,
+                MovingCards = new List<SolverCard>()
+            };
+
+            if (showTraces)
+            {
+                WriteLine("Before All TalonFU -> TalonFD");
+                PrintSolverStack("Talon FU    ", TalonFU);
+                PrintSolverStack("Talon FD    ", TalonFD);
+            }
+            // Move all TalonFU --> TalonFD
+            foreach (var c in TalonFU.PlayingCards)
+            {
+                c.IsFaceUp = false;
+                TalonFD.PlayingCards.Insert(0, c);
+                mg.MovingCards.Add(c);
+            }
+            TalonFU.PlayingCards.Clear();
+            if (showTraces)
+            {
+                WriteLine("After All TalonFU -> TalonFD");
+                PrintSolverStack("Talon FU    ", TalonFU);
+                PrintSolverStack("Talon FD    ", TalonFD);
+            }
+            return mg;
         }
 
         public bool? Solve(bool printSteps = false, CancellationToken? cancellationToken = null)
