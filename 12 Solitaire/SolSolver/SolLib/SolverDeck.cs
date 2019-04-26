@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using static System.Console;
 
 
@@ -93,8 +94,8 @@ namespace SolLib
             {
                 var b = Bases[i];
                 CheckSolverStack(b);
-                nc += b.PlayingCards.Count();
-                if (b.PlayingCards.Count>0)
+                nc += b.PlayingCards.Count;
+                if (b.PlayingCards.Count > 0)
                 {
                     for (int j = 0; j < 4; j++)
                         if (j != i && Bases[j].PlayingCards.Count > 0)
@@ -104,7 +105,7 @@ namespace SolLib
             foreach (var c in Columns)
             {
                 CheckSolverStack(c);
-                nc += c.PlayingCards.Count();
+                nc += c.PlayingCards.Count;
             }
             nc += TalonFU.PlayingCards.Count + TalonFD.PlayingCards.Count;
             Debug.Assert(nc == 52);
@@ -440,14 +441,16 @@ namespace SolLib
             goto restart;
         }
 
-        public bool Solve(bool printSteps = false)
+        public bool? Solve(bool printSteps = false, CancellationToken? cancellationToken = null)
         {
             if (printSteps)
                 PrintSolverDeck();
             CheckSolverDeck();
 
-            while (OneMovementToBase(showTraces: printSteps)!=null)
+            while (OneMovementToBase(showTraces: printSteps) != null)
             {
+                if (cancellationToken.HasValue && cancellationToken.Value.IsCancellationRequested) return null;
+
                 if (printSteps)
                     PrintSolverDeck();
                 CheckSolverDeck();

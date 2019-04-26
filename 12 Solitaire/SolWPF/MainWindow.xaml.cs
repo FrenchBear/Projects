@@ -349,7 +349,10 @@ namespace SolWPF
             }
 
             foreach (var mg in lmg)
+            {
                 mg.DoMove(true);
+                break;
+            }
         }
 
 

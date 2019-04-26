@@ -7,7 +7,10 @@ using SolLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace SolWPF
@@ -117,12 +120,6 @@ namespace SolWPF
             return true;
         }
 
-        internal bool IsSolverSolvable()
-        {
-            SolverDeck sd = GetSolverDeck();
-            return sd.Solve();
-        }
-
         private SolverDeck GetSolverDeck()
         {
             List<(SolverCard, bool)>[] SolverBases = new List<(SolverCard, bool)>[4];
@@ -131,10 +128,8 @@ namespace SolWPF
             List<(SolverCard, bool)>[] SolverColumns = new List<(SolverCard, bool)>[7];
             for (int c = 0; c < 7; c++)
                 CopyStack(Columns[c], out SolverColumns[c]);
-            List<(SolverCard, bool)> SolverTalonFU;
-            CopyStack(TalonFU, out SolverTalonFU);
-            List<(SolverCard, bool)> SolverTalonFD;
-            CopyStack(TalonFD, out SolverTalonFD);
+            CopyStack(TalonFU, out List<(SolverCard, bool)> SolverTalonFU);
+            CopyStack(TalonFD, out List<(SolverCard, bool)> SolverTalonFD);
 
             // ToDo: If too long, do it in a separate thread
             var sd = new SolverDeck(SolverBases, SolverColumns, SolverTalonFU, SolverTalonFD);
@@ -161,7 +156,7 @@ namespace SolWPF
                 var from = StacksDictionary[sg.FromStack.Name];
                 var to = StacksDictionary[sg.ToStack.Name];
                 var hitList = new List<PlayingCard>();
-                for (int i=0; i< sg.MovingCards.Count;i++)
+                for (int i = 0; i < sg.MovingCards.Count; i++)
                     hitList.Add(from.PlayingCards[i]);
                 var mg = new MovingGroup(from, hitList, true, false);
                 mg.ToStack = to;
@@ -170,16 +165,47 @@ namespace SolWPF
             return lmg;
         }
 
+        private void CheckDeck()
+        {
+            int nc = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                var b = Bases[i];
+                b.CheckStack();
+                nc += b.PlayingCards.Count;
+                if (b.PlayingCards.Count > 0)
+                {
+                    for (int j = 0; j < 4; j++)
+                        if (j != i && Bases[j].PlayingCards.Count > 0)
+                            Debug.Assert(b.PlayingCards[0].Color != Bases[j].PlayingCards[0].Color);
+                }
+            }
+            foreach (var c in Columns)
+            {
+                c.CheckStack();
+                nc += c.PlayingCards.Count;
+            }
+
+            TalonFU.CheckStack();
+            TalonFD.CheckStack();
+
+            nc += TalonFU.PlayingCards.Count + TalonFD.PlayingCards.Count;
+            Debug.Assert(nc == 52);
+        }
+
 
         internal bool CanUndo() => UndoStack.Count > 0;
 
         internal void PushUndo(MovingGroup mg)
         {
             UndoStack.Push(mg);
+            CheckDeck();
         }
 
         internal void UpdateGameStatus()
         {
+            CheckDeck();        // To be safe in debug mode
+
             MoveCount = UndoStack.Count;
 
             if (MoveCount == 0)
@@ -194,10 +220,36 @@ namespace SolWPF
             ComputeAndUpdateGameSolvability();
         }
 
+        CancellationTokenSource cts;
+
+        // Do the job in a background worker, that can be interrupted if needed
         private void ComputeAndUpdateGameSolvability()
         {
-            // Do the job in a background worker, that can be interrupted if needed
-            //SolverStatus = IsSolverSolvable() ? "Solvable" : "No solution";
+            // If a previous evaluation is still in progress, cancel it
+            cts?.Cancel();
+
+            cts = new CancellationTokenSource();
+            // We need to use a Progress<T> to update interface from a different thread
+            IProgress<string> progress = new Progress<string>(UpdateHashProgress);
+            // GetSolverDeck access WPF objects, so it must run in UI thread
+            SolverDeck sd = GetSolverDeck();
+            Task t = new Task(() =>
+            {
+                if (cts.Token.IsCancellationRequested) goto EndTask;
+                bool? res = sd.Solve(cancellationToken: cts.Token);
+                if (res.HasValue)
+                    progress.Report(res.Value ? "Solvable" : "No solution");
+                EndTask:
+                ;
+                //cts = null;
+            });
+            t.Start();
+        }
+
+
+        private void UpdateHashProgress(string s)
+        {
+            SolverStatus = s;
         }
 
         internal MovingGroup PopUndo()
