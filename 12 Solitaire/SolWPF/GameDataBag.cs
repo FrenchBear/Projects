@@ -181,7 +181,7 @@ namespace SolWPF
         internal void UpdateGameStatus()
         {
             MoveCount = UndoStack.Count;
-            SolverStatus = IsSolverSolvable() ? "Solvable" : "No solution";
+
             if (MoveCount == 0)
                 GameStatus = "Not started";
             else if (IsGameFinished())
@@ -190,6 +190,14 @@ namespace SolWPF
                 GameStatus = "Game solvable!";
             else
                 GameStatus = "In progress";
+
+            ComputeAndUpdateGameSolvability();
+        }
+
+        private void ComputeAndUpdateGameSolvability()
+        {
+            // Do the job in a background worker, that can be interrupted if needed
+            //SolverStatus = IsSolverSolvable() ? "Solvable" : "No solution";
         }
 
         internal MovingGroup PopUndo()

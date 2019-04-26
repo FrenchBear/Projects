@@ -87,13 +87,23 @@ namespace SolWPF
             return null;
         }
 
+        // Storiboard and animation is static, there's only one animation in progress for all stacks
+        private static Storyboard sb;
+        private static Action AnimationCompleted;
+
         internal protected virtual void MoveInCards(List<PlayingCard> movedCards, bool withAnimation = false)
         {
             if (withAnimation)
             {
-                var sb = new Storyboard();
+                // Terminate previous animation if needed
+                Debug.WriteLine("Before Invoke");
+                AnimationCompleted?.Invoke();
+                Debug.WriteLine("After Invoke");
+
+                sb = new Storyboard();
                 var duration = new Duration(TimeSpan.FromSeconds(0.2));
                 Point[] to = new Point[movedCards.Count];
+
                 for (int i = movedCards.Count - 1; i >= 0; i--)
                 {
                     int j = i;
@@ -111,16 +121,23 @@ namespace SolWPF
 
                     PlayingCards.Insert(0, movedCards[j]);
                 }
-                sb.Completed += (object sender, EventArgs e) =>
+
+                AnimationCompleted = () =>
                 {
+                    Debug.WriteLine($"AnimationCompleted Count={movedCards.Count}");
+
                     for (int i = movedCards.Count - 1; i >= 0; i--)
                     {
                         movedCards[i].BeginAnimation(Canvas.LeftProperty, null);
                         movedCards[i].BeginAnimation(Canvas.TopProperty, null);
                         movedCards[i].SetValue(Canvas.LeftProperty, to[i].X);
                         movedCards[i].SetValue(Canvas.TopProperty, to[i].Y);
+                        sb = null;
+                        AnimationCompleted = null;
                     };
                 };
+
+                sb.Completed += (object sender, EventArgs e) => AnimationCompleted?.Invoke();
                 sb.Begin();
             }
             else
