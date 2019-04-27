@@ -1,5 +1,6 @@
-﻿// class GameDataBag
-// Data set of a game session = View Model
+﻿// Solitaire WPF
+// class GameDeck
+// Data set of a solitaire session = View Model
 // 2019-04-18   PV
 
 
@@ -15,7 +16,7 @@ using System.Windows;
 
 namespace SolWPF
 {
-    internal class GameDataBag : INotifyPropertyChanged
+    internal class GameDeck : INotifyPropertyChanged
     {
         public BaseStack[] Bases;
         public ColumnStack[] Columns;
@@ -25,7 +26,7 @@ namespace SolWPF
         private readonly Random SeedRnd;
         private readonly Dictionary<string, GameStack> StacksDictionary;
 
-        public GameDataBag()
+        public GameDeck()
         {
             UndoStack = new Stack<MovingGroup>();
             StacksDictionary = new Dictionary<string, GameStack>();
@@ -67,9 +68,11 @@ namespace SolWPF
             GameSerial = seed;
             var rnd = new Random(seed);
             var lc = new List<string>();
-            foreach (char c in "HDSC")
-                foreach (char v in "A23456789XJQK")
+            // Build set
+            foreach (char c in PlayingCard.Colors)
+                foreach (char v in PlayingCard.Values)
                     lc.Add($"{c}{v}");
+            // shuffle it
             for (int i = 0; i < lc.Count; i++)
             {
                 var i1 = rnd.Next(lc.Count);
@@ -85,7 +88,7 @@ namespace SolWPF
                 {
                     string s = lc[0];
                     lc.RemoveAt(0);
-                    Columns[c].AddCard(s, i == c);    // Only top one is face up
+                    Columns[c].AddCard(s, i == c);    // Only top card is face up
                 }
             // The rest goes to the TalonFaceDown
             for (int mt = 0; mt < lc.Count; mt++)
@@ -93,6 +96,8 @@ namespace SolWPF
 
             // Initial status
             UpdateGameStatus();
+
+            PrintGame();
         }
 
 
@@ -122,6 +127,13 @@ namespace SolWPF
 
         private SolverDeck GetSolverDeck()
         {
+            void CopyStack(GameStack st, out List<(SolverCard, bool)> solverSt)
+            {
+                solverSt = new List<(SolverCard, bool)>();
+                foreach (var c in st.PlayingCards)
+                    solverSt.Add((new SolverCard(c.Value, c.Color, c.IsFaceUp), c.IsFaceUp));
+            }
+
             List<(SolverCard, bool)>[] SolverBases = new List<(SolverCard, bool)>[4];
             for (int b = 0; b < 4; b++)
                 CopyStack(Bases[b], out SolverBases[b]);
@@ -131,17 +143,9 @@ namespace SolWPF
             CopyStack(TalonFU, out List<(SolverCard, bool)> SolverTalonFU);
             CopyStack(TalonFD, out List<(SolverCard, bool)> SolverTalonFD);
 
-            // ToDo: If too long, do it in a separate thread
-            var sd = new SolverDeck(SolverBases, SolverColumns, SolverTalonFU, SolverTalonFD);
-            return sd;
+            return new SolverDeck(SolverBases, SolverColumns, SolverTalonFU, SolverTalonFD);
         }
 
-        private void CopyStack(GameStack st, out List<(SolverCard, bool)> solverSt)
-        {
-            solverSt = new List<(SolverCard, bool)>();
-            foreach (var c in st.PlayingCards)
-                solverSt.Add((new SolverCard(c.Value, c.Color, c.IsFaceUp), c.IsFaceUp));
-        }
 
         public List<MovingGroup> GetNextMoves()
         {
@@ -158,12 +162,13 @@ namespace SolWPF
                 var hitList = new List<PlayingCard>();
                 for (int i = 0; i < sg.MovingCards.Count; i++)
                     hitList.Add(from.PlayingCards[i]);
-                var mg = new MovingGroup(from, hitList, true, false);
+                var mg = new MovingGroup(from, hitList, true);
                 mg.ToStack = to;
                 lmg.Add(mg);
             }
             return lmg;
         }
+
 
         private void CheckDeck()
         {
@@ -199,12 +204,23 @@ namespace SolWPF
         internal void PushUndo(MovingGroup mg)
         {
             UndoStack.Push(mg);
-            CheckDeck();
+            CheckDeck();            // For debugging
+            PrintGame();            // For debugging
         }
+
+        internal MovingGroup PopUndo()
+        {
+            if (UndoStack.Count == 0)
+                return null;
+            return UndoStack.Pop();
+            // Cannot update game status here, before executing the undo, contrary to
+            // PushUndo, called after the move has been performed
+        }
+
 
         internal void UpdateGameStatus()
         {
-            CheckDeck();        // To be safe in debug mode
+            CheckDeck();            // To be safe in debug mode
 
             MoveCount = UndoStack.Count;
 
@@ -220,18 +236,20 @@ namespace SolWPF
             ComputeAndUpdateGameSolvability();
         }
 
+
+        // Used to abort a running previous computation if it's not finished
         CancellationTokenSource cts;
 
-        // Do the job in a background worker, that can be interrupted if needed
+        // Do the job in a background task, that can be interrupted if needed
         private void ComputeAndUpdateGameSolvability()
         {
             // If a previous evaluation is still in progress, cancel it
             cts?.Cancel();
 
             cts = new CancellationTokenSource();
-            // We need to use a Progress<T> to update interface from a different thread
-            IProgress<string> progress = new Progress<string>(UpdateHashProgress);
-            // GetSolverDeck access WPF objects, so it must run in UI thread
+            // Use a Progress<T>, simple mechanism to update interface from a different thread
+            IProgress<string> progress = new Progress<string>((s) => { SolverStatus = s; });
+            // GetSolverDeck access WPF objects (PlayingCard), so it must run in UI thread
             SolverDeck sd = GetSolverDeck();
             Task t = new Task(() =>
             {
@@ -241,24 +259,8 @@ namespace SolWPF
                     progress.Report(res.Value ? "Solvable" : "No solution");
                 EndTask:
                 ;
-                //cts = null;
             });
-            t.Start();
-        }
-
-
-        private void UpdateHashProgress(string s)
-        {
-            SolverStatus = s;
-        }
-
-        internal MovingGroup PopUndo()
-        {
-            if (UndoStack.Count == 0)
-                return null;
-            return UndoStack.Pop();
-            // Cannot update game status here, before executing the undo, contrary to
-            // PushUndo, called after the move has been performed
+            t.Start();      // Don't care about task ending
         }
 
 
@@ -318,5 +320,24 @@ namespace SolWPF
             }
         }
 
+        internal void PrintGame()
+        {
+            Debug.WriteLine("----------------------------------------------------------");
+            Debug.WriteLine("Deck:");
+            for (int bi = 0; bi < 4; bi++)
+                PrintStack($"Base {bi}  ", Bases[bi]);
+            for (int ci = 0; ci < 7; ci++)
+                PrintStack($"Column {ci}", Columns[ci]);
+            PrintStack("Talon FU    ", TalonFU);
+            PrintStack("Talon FD    ", TalonFD);
+        }
+
+        private void PrintStack(string header, GameStack st)
+        {
+            Debug.Write(header + " ");
+            foreach (PlayingCard c in st.PlayingCards)
+                Debug.Write(c.Signature() + " ");
+            Debug.WriteLine("");
+        }
     }
 }

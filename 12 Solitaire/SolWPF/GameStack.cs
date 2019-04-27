@@ -1,5 +1,6 @@
-﻿// GameStack class
-// A base class to represent a location and a collection of PlayingCards
+﻿// Solitaire WPF
+// GameStack class
+// A hierarchy of classes to represent a location and a collection of PlayingCards
 // 2019-04-11   PV
 
 using System;
@@ -18,13 +19,14 @@ namespace SolWPF
 {
     class GameStack
     {
-        public readonly GameDataBag b;
+        public readonly GameDeck b;
         public readonly string Name;
+        public readonly List<PlayingCard> PlayingCards;     // By convention, element [0] of this list will become element [0] of stack it will be moved to
+
         protected readonly Canvas PlayingCanvas;
         protected readonly Rectangle BaseRect;
-        public readonly List<PlayingCard> PlayingCards;
 
-        public GameStack(GameDataBag b, String n, Canvas c, Rectangle r)
+        public GameStack(GameDeck b, String n, Canvas c, Rectangle r)
         {
             this.b = b;
             Name = n;
@@ -39,10 +41,7 @@ namespace SolWPF
         {
             var sb = new StringBuilder($"{Name} Cards=");
             foreach (var c in PlayingCards)
-            {
-                sb.Append(c.Face);
-                sb.Append(c.IsFaceUp ? "^ " : "v ");
-            }
+                sb.Append(c.Signature()).Append(' ');
             return sb.ToString();
         }
 
@@ -75,7 +74,7 @@ namespace SolWPF
         }
 
 
-        // MouveOut is reponsible for putting moved cards on top of display stack
+        // MouveOut is responsible for putting moved cards on top of display stack
         // Returns a PlayingCard if it's been made visible in the process, null otherwise
         internal protected virtual PlayingCard MoveOutCards(List<PlayingCard> movedCards)
         {
@@ -90,7 +89,7 @@ namespace SolWPF
             return null;
         }
 
-        // Storiboard and animation is static, there's only one animation in progress for all stacks
+        // Storyboard and animation is static, there's only one animation in progress for all stacks
         private static Storyboard sb;
         private static Action AnimationCompleted;
 
@@ -203,10 +202,10 @@ namespace SolWPF
 
         // Main function to detect a valid click on a stack, that can either start a move or not.
         // Returns NULL if point P does not match any valid area of the stack or the stack is empty.
-        // Otherwise returns a MovingGroup containing a list of potentialy moved cards.
-        // IsMovable is True for group of cards that can move, in this case, the group of cards is already on top ov display stack.
+        // Otherwise returns a MovingGroup containing a list of potentially moved cards.
+        // IsMovable is True for group of cards that can move, in this case, the group of cards is already on top of display stack.
         // IsMovable is always False for TalonFaceDown, if there is at least one card in TalonFaceDown, then hitList contains this card, 
-        // otherise hitList is empty, indicating that TalonFaceDown must be reset
+        // otherwise hitList is empty, indicating that TalonFaceDown must be reset
         public virtual MovingGroup FromHitTest(Point P)
         {
             if (!IsStackFromHit(P, out List<PlayingCard> hitList, out bool isMovable)) return null;
@@ -258,7 +257,7 @@ namespace SolWPF
 
     abstract class TalonBaseStack : GameStack
     {
-        public TalonBaseStack(GameDataBag b, String n, Canvas c, Rectangle r) : base(b, n, c, r) { }
+        public TalonBaseStack(GameDeck b, String n, Canvas c, Rectangle r) : base(b, n, c, r) { }
 
         // Talon is never a target
         public override bool ToHitTest(Point P, MovingGroup mg)
@@ -270,7 +269,7 @@ namespace SolWPF
 
     class TalonFaceDownStack : TalonBaseStack
     {
-        public TalonFaceDownStack(GameDataBag b, String n, Canvas c, Rectangle r) : base(b, n, c, r) { }
+        public TalonFaceDownStack(GameDeck b, String n, Canvas c, Rectangle r) : base(b, n, c, r) { }
 
         // For Talon face down, empty stack is valid to generate a Click to reset the talon
         protected override bool IsStackFromHit(Point P, out List<PlayingCard> hitList, out bool isMovable)
@@ -287,15 +286,15 @@ namespace SolWPF
             if (TalonFU.PlayingCards.Count == 0)
                 return;
 
-            var mg = new MovingGroup(TalonFU, TalonFU.PlayingCards, true, reverseCardsDuringMove: true);
+            var mg = new MovingGroup(TalonFU, TalonFU.PlayingCards.Reverse<PlayingCard>().ToList(), true);
             mg.ToStack = this;
-            mg.DoMove();
+            mg.DoMove(true);        // Can do animation, since ResetTalon is not called during Undo
         }
 
 
         internal protected override void MoveInCards(List<PlayingCard> movedCards, bool withAnimation = false)
         {
-            base.MoveInCards(movedCards, false);        // No standard animation for now
+            base.MoveInCards(movedCards, withAnimation);        // No standard animation for now
             // In TalonFD, in cards are always face down (only called during a ResetTalon)
             foreach (var c in movedCards)
                 c.IsFaceUp = false;
@@ -303,12 +302,15 @@ namespace SolWPF
 
         internal protected override PlayingCard MoveOutCards(List<PlayingCard> movedCards)
         {
-            Debug.Assert(PlayingCards.Count >= 1);
-            var c = PlayingCards[0];
-            PlayingCards.RemoveAt(0);
+            Debug.Assert(PlayingCards.Count >= movedCards.Count);
+            for (int i = movedCards.Count - 1; i >= 0; i--)
+            {
+                var c = PlayingCards[0];
+                PlayingCards.RemoveAt(0);
 
-            PlayingCanvas.Children.Remove(c);
-            PlayingCanvas.Children.Add(c);
+                PlayingCanvas.Children.Remove(c);
+                PlayingCanvas.Children.Add(c);
+            }
             return null;
         }
         public override void CheckStack()
@@ -321,7 +323,7 @@ namespace SolWPF
 
     class TalonFaceUpStack : TalonBaseStack
     {
-        public TalonFaceUpStack(GameDataBag b, String n, Canvas c, Rectangle r) : base(b, n, c, r) { }
+        public TalonFaceUpStack(GameDeck b, string n, Canvas c, Rectangle r) : base(b, n, c, r) { }
 
         protected override bool IsStackFromHit(Point P, out List<PlayingCard> hitList, out bool isMovable)
         {
@@ -330,7 +332,9 @@ namespace SolWPF
 
         internal protected override void MoveInCards(List<PlayingCard> movedCards, bool withAnimation = false)
         {
-            base.MoveInCards(movedCards, withAnimation);
+            // TalonFU inverts cards to support Undo correctly
+            base.MoveInCards(movedCards.Reverse<PlayingCard>().ToList(), withAnimation);
+
             // In TalonFU, in cards are always face up (card moved from TalonFD)
             foreach (var c in movedCards)
                 c.IsFaceUp = true;
@@ -350,7 +354,7 @@ namespace SolWPF
         const double visibleYOffset = 45.0;
         const double notVvisibleYOffset = 10.0;
 
-        public ColumnStack(GameDataBag b, String n, Canvas c, Rectangle r) : base(b, n, c, r) { }
+        public ColumnStack(GameDeck b, string n, Canvas c, Rectangle r) : base(b, n, c, r) { }
 
         protected override Point GetNewCardPosition()
         {
@@ -419,7 +423,7 @@ namespace SolWPF
 
     class BaseStack : GameStack
     {
-        public BaseStack(GameDataBag b, String n, Canvas c, Rectangle r) : base(b, n, c, r) { }
+        public BaseStack(GameDeck b, String n, Canvas c, Rectangle r) : base(b, n, c, r) { }
 
         protected override bool RulesAllowMoveInCards(MovingGroup mg)
         {

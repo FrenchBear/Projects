@@ -1,18 +1,17 @@
-﻿// SolSolver
+﻿// Solitaire Solver Test Application
 // Quick and dirty simple Solitaire Solver
 // 2019-06-04 PV
 //
-// Base does't need to be a stack, a simple int is enough since base are assigned to a color
-// Signature history is reset each time a card is moved from column to base (in fact, only durint OneMovementToBase)
-// When all cards are visible, game is solved
+// Game Signature history is reset each time a card is moved from column to base (in fact, only during OneMovementToBase)
+// When all cards are visible, game is trivially solvable, no need to continue
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using static System.Console;
-
 using SolLib;
-using System.Collections.Generic;
+
 
 namespace SolSolver
 {
@@ -23,10 +22,6 @@ namespace SolSolver
             Console.OutputEncoding = new UTF8Encoding();
             //TestSolver();
             SolverStats(100);
-
-            //Console.WriteLine();
-            //Console.Write("(Pause)");
-            //Console.ReadLine();
         }
 
         private static void SolverStats(int n)
@@ -55,7 +50,8 @@ namespace SolSolver
                     if (withAce && withKing) break;
                     */
                 }
-                if (d.Solve())
+                var res = d.Solve();
+                if (res.HasValue && res.Value)
                     solved++;
             }
             sw.Stop();
@@ -65,7 +61,8 @@ namespace SolSolver
         private static void TestSolver()
         {
             var d = CreateNewRandomSolverDeck(4);
-            if (d.Solve(true))
+            var res = d.Solve(true);
+            if (res.HasValue && res.Value)
                 WriteLine("Solvable/Solved");
             else
                 WriteLine("Stuck");
@@ -75,18 +72,18 @@ namespace SolSolver
         {
             var s = SolverCard.Set52().Shuffle(seed);
 
-            List<(SolverCard,bool)>[] Bases = new List<(SolverCard,bool)>[4];
-            for (int b = 0; b < 4; b++)
-                Bases[b] = new List<(SolverCard, bool)>();
+            List<(SolverCard, bool)>[] Bases = new List<(SolverCard, bool)>[4];
+            for (int bi = 0; bi < 4; bi++)
+                Bases[bi] = new List<(SolverCard, bool)>();
             List<(SolverCard, bool)>[] Columns = new List<(SolverCard, bool)>[7];
-            for (int c = 0; c < 7; c++)
+            for (int ci = 0; ci < 7; ci++)
             {
-                Columns[c] = new List<(SolverCard, bool)>();
-                for (int i = 0; i <= c; i++)
+                Columns[ci] = new List<(SolverCard, bool)>();
+                for (int i = 0; i <= ci; i++)
                 {
                     var card = s[0];
                     s.RemoveAt(0);
-                    Columns[c].Add((card, i == 0));
+                    Columns[ci].Add((card, i == 0));
                 }
             }
             List<(SolverCard, bool)> TalonFU = new List<(SolverCard, bool)>();

@@ -1,4 +1,11 @@
-﻿using System.Collections.Generic;
+﻿// Solitaire Solver Library
+// class SolverStack
+// Implements a stack of cards, used by SolverDeck
+// Contrary to WPF equivalent class, it's minimalistic since it doesn't care about visual rendering of stack and movments
+// 2019-04-07   PV
+
+using System.Collections.Generic;
+
 
 namespace SolLib
 {

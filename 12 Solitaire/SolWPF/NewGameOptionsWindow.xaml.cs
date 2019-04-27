@@ -1,9 +1,10 @@
-﻿// NewGameOotionsWindow
+﻿// Solitaire WPF
+// NewGameOotionsWindow
 // A quick-and-dirty WPF window to enter options for a new game
 //
 // 2019-04-21   PV
 //
-// ToDo: Validate numeric input, input range, better visual
+// ToDo: Validate numeric input, input range, better visuals
 
 using System.Windows;
 

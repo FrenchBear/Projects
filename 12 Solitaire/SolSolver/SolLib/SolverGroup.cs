@@ -1,5 +1,11 @@
-﻿using System.Collections.Generic;
+﻿// Solitaire Solver Library
+// class SolverGroup
+// Implements a group of cards to be moved from FromStack to ToStack
+// 2019-04-07   PV
+
+using System.Collections.Generic;
 using System.Text;
+
 
 namespace SolLib
 {

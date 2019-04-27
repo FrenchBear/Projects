@@ -1,3 +1,6 @@
+<!-- From WPF Unleashed book, with simplifications and support for card background visual @@ -->
+<!-- 2019-04 PV -->
+    
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -1937,7 +1940,7 @@
                         <Trigger Property="IsFaceUp" Value="False">
                             <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource @@}"/>
                         </Trigger>
-                        
+
                         <!--<EventTrigger RoutedEvent="ButtonBase.Checked">
                             <BeginStoryboard>
                                 <Storyboard>
@@ -1954,8 +1957,8 @@
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>-->
-                        
-                        
+
+
                         <EventTrigger SourceName="TheCard" RoutedEvent="Mouse.MouseEnter">
                             <BeginStoryboard>
                                 <Storyboard>
@@ -1967,8 +1970,8 @@
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
-                        
-                        
+
+
                         <EventTrigger SourceName="TheCard" RoutedEvent="Mouse.MouseLeave">
                             <BeginStoryboard>
                                 <Storyboard>

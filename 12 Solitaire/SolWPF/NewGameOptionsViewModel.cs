@@ -1,4 +1,9 @@
-﻿using System;
+﻿// Solitaire WPF
+// class NewGameOptionsViewModel
+// Simple VM for NewGameOptionsWindow binding
+// 2019-04-18   PV
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;

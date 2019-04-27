@@ -1,5 +1,6 @@
-﻿// MovingGroup
-// A group of cards moving together
+﻿// Solitaire WPF
+// class MovingGroup
+// A group of cards moving together between two GameStacks
 // 2019-04-12   PV
 
 using System;
@@ -20,14 +21,12 @@ namespace SolWPF
         public readonly bool IsMovable;
 
         private readonly List<Vector> offVec;
-        private readonly bool reverseCardsDuringMove;
         private PlayingCard cardMadeVisibleDuringMove;
 
 
-        public MovingGroup(GameStack from, List<PlayingCard> hitList, bool isMovable, bool reverseCardsDuringMove = false)
+        public MovingGroup(GameStack from, List<PlayingCard> hitList, bool isMovable)
         {
             FromStack = from;
-            this.reverseCardsDuringMove = reverseCardsDuringMove;
             IsMovable = isMovable;
 
             if (hitList != null)
@@ -80,19 +79,16 @@ namespace SolWPF
 
         internal void DoMove(bool withAnimation = false)
         {
-            var sb = new StringBuilder($"DoMove r={reverseCardsDuringMove} From=({FromStack}) To=({ToStack}) MovingCards=");
+            var sb = new StringBuilder($"\nDoMove From=({FromStack}) To=({ToStack}) MovingCards=");
             foreach (var c in MovingCards)
-            {
-                sb.Append(c.Face);
-                sb.Append(c.IsFaceUp ? "^ " : "v ");
-            }
+                sb.Append(c.Signature()).Append(' ');
 
-            if (reverseCardsDuringMove) MovingCards.Reverse();
             cardMadeVisibleDuringMove = FromStack.MoveOutCards(MovingCards);
             ToStack.MoveInCards(MovingCards, withAnimation);
             ToStack.ClearTargetHighlight();
 
-            //Debug.WriteLine($"{sb} Cmv={cardMadeVisibleDuringMove?.Face}");
+            sb.Append($" CMV={cardMadeVisibleDuringMove?.Face}");
+            Debug.WriteLine(sb.ToString());
 
             // Keep this move for undo
             FromStack.b.PushUndo(this);
@@ -103,16 +99,15 @@ namespace SolWPF
 
         internal void UndoMove()
         {
-            var sb = new StringBuilder($"UndoMove r={reverseCardsDuringMove} From=({FromStack}) To=({ToStack}) MovingCards=");
+            var sb = new StringBuilder($"\nUndoMove From=({FromStack}) To=({ToStack}) MovingCards=");
             foreach (var c in MovingCards)
-            {
-                sb.Append(c.Face);
-                sb.Append(c.IsFaceUp ? "^ " : "v ");
-            }
-            sb.Append($" Cmv={cardMadeVisibleDuringMove?.Face}");
-            //Debug.WriteLine(sb.ToString());
+                sb.Append(c.Signature()).Append(' ');
+            sb.Append($" CMV={cardMadeVisibleDuringMove?.Face}");
+            Debug.WriteLine(sb.ToString());
 
-            if (reverseCardsDuringMove) MovingCards.Reverse();
+            if (sb.ToString().Contains("UndoMove From=(TalonFD Cards=) To=(TalonFU Cards=9♠˄ X♦˄ J♣˄ ) MovingCards=J♣˄  CMV="))
+                Debugger.Break();
+
             if (cardMadeVisibleDuringMove != null) cardMadeVisibleDuringMove.IsFaceUp = false;
             ToStack.MoveOutCards(MovingCards);
             FromStack.MoveInCards(MovingCards);

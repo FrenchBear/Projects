@@ -1,47 +1,40 @@
-﻿// Solitaire Library
-// Card class
+﻿// Solitaire Solver Library
+// class SolverCard
+// Implements a game card, Face combines Color and Value such as D3 for a Three of Diamonds, and a boolean indicating if face is up (visible)
 // 2019-04-07   PV
 
 using System;
 using System.Collections.Generic;
 
+
 namespace SolLib
 {
-    public class SolverCard //: IEquatable<PlayingCard>
+    public class SolverCard
     {
+        public const string Colors = "HSDC";
+        public const string Values = "A23456789XJQK";
+
+        private const string SignatureColors = "♥♠♦♣";
+        private const string SignatureValues = "A23456789XJQK";
+        private const string SignatureFaceUp = "˄";             // ˄↑↕↟↥↨↰↱⇅⇈⇑⇕⇞⇡⇧⇪⇫⇬⇭⇮⇯⇳⇵⌃⌤⍐➦➮➱⟰⟱⤉⤊⤒⤴⥉⥻⦨⦩⦬⦭⦽⬆⬍⬏⬑⭄⭅⭆⭡⭥⭫⭱⭻⮁⮃⮅⮉⮙⮝⮢⮣⮤⮥⮪⮫⮬⮭⮲⮳⮴⮵⮸⮹⯭𛲙🔃🔄🔝🠁🠅🠉🠑🠕🠙🠝🠡🠥🠩🠭🠱🠵🠹🠽🡁🡅🡑🡙🡡🡩🡱🡹🢁🢑🢕🢙
+        private const string SignatureFaceDown = "˅";           // ˅↓↕↡↧↨↯↲↳↴↵⇅⇊⇓⇕⇟⇣⇩⇳⇵⌄⍗⍼➥⟱⤈⤋⤓⤵⤶⤷⦪⦫⦮⦯⧪⧬⧭⬇⬍⬎⬐⭍⭞⭟⭣⭥⭭⭳⭽⮁⮃⮇⮋⮛⮟⮠⮡⮦⮧⮨⮩⮮⮯⮰⮱⮶⮷⯯📩🔃🔄🠃🠇🠋🠓🠗🠛🠟🠣🠧🠫🠯🠳🠷🠻🠿🡃🡇🡓🡙🡣🡫🡳🡻🢃🢓🢗🢛
+
+
         public string Face { get; set; }
         public bool IsFaceUp { get; set; }
 
-        public int Color => "HSDC".IndexOf(Face[0]);                // 0..3; %2==0 => Red, %2==1 => Black
-        public int Value => "A23456789XJQK".IndexOf(Face[1]) + 1;   // 1..13
+        public int Color => Colors.IndexOf(Face[0]);            // 0..3; %2==0 => Red, %2==1 => Black
+        public int Value => Values.IndexOf(Face[1]) + 1;        // 1..13
 
         public SolverCard(int v, int c, bool isFaceUp)
         {
-            char vc = "A23456789XJQK"[v - 1];
-            char cc = "HSDC"[c];
-            Face = $"{cc}{vc}";
+            Face = Colors.Substring(c, 1) + Values.Substring(v - 1, 1);
             IsFaceUp = isFaceUp;
         }
 
         public override string ToString() => $"PlayingCard {Face}, IsFaceUp={IsFaceUp}";
 
-        internal string Signature(bool isFaceUpForced = false) => Face + ((IsFaceUp || isFaceUpForced) ? "^" : "v");
-
-        public static bool operator ==(SolverCard a, SolverCard b) => a.Face == b.Face;
-
-        public static bool operator !=(SolverCard a, SolverCard b) => a.Face != b.Face;
-
-        public override bool Equals(object obj)
-        {
-            return obj is SolverCard card && Equals(card);
-        }
-
-        public bool Equals(SolverCard other) => Value == other.Value && Color == other.Color;
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Face);
-        }
+        internal string Signature(bool overrideFaceUp = false) => SignatureValues.Substring(Value - 1, 1) + SignatureColors.Substring(Color, 1) + ((IsFaceUp || overrideFaceUp) ? SignatureFaceUp : SignatureFaceDown);
 
         public static List<SolverCard> Set52()
         {

@@ -1,8 +1,9 @@
-﻿// Solitaire Library 
-// Quick and dirty simple Solitaire Solver
+﻿// Solitaire Solver Library 
+// class SolverDeck
+// Implements a solitaire game model with all the stacks
 //
 // 2019-04-07   PV
-// 2019-04-23   PV      Refactoring remplacing Visible[] by PlayingCard.IsFaceUp
+// 2019-04-23   PV      Refactoring replacing Visible[] by PlayingCard.IsFaceUp
 
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,7 @@ namespace SolLib
         readonly SolverStack[] Columns;       // 0..6
         readonly SolverStack TalonFD;         // Talon Face Down
         readonly SolverStack TalonFU;         // Talon Face Up
+
 
         internal bool IsGameFinished()
         {

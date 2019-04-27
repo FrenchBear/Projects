@@ -1,5 +1,7 @@
-﻿// Playing card
-// A simple class to visually represent a card
+﻿// Solitaire WPF
+// class PlayingCard
+// A visual class (inherits from ButtonBase) to represent a Solitaire card and its representation.
+// Use Face dependency property to select correct representation in PlayingCards.xaml when visually rendered.
 // 2019-04-12   PV
 
 using System;
@@ -16,6 +18,15 @@ namespace SolWPF
     {
         public static DependencyProperty FaceProperty;
         public static DependencyProperty IsFaceUpProperty;
+
+        public const string Colors = "HSDC";
+        public const string Values = "A23456789XJQK";
+
+        private const string SignatureColors = "♥♠♦♣";
+        private const string SignatureValues = "A23456789XJQK";
+        private const string SignatureFaceUp = "˄";                   // ˄↑↕↟↥↨↰↱⇅⇈⇑⇕⇞⇡⇧⇪⇫⇬⇭⇮⇯⇳⇵⌃⌤⍐➦➮➱⟰⟱⤉⤊⤒⤴⥉⥻⦨⦩⦬⦭⦽⬆⬍⬏⬑⭄⭅⭆⭡⭥⭫⭱⭻⮁⮃⮅⮉⮙⮝⮢⮣⮤⮥⮪⮫⮬⮭⮲⮳⮴⮵⮸⮹⯭𛲙🔃🔄🔝🠁🠅🠉🠑🠕🠙🠝🠡🠥🠩🠭🠱🠵🠹🠽🡁🡅🡑🡙🡡🡩🡱🡹🢁🢑🢕🢙
+        private const string SignatureFaceDown = "˅";                 // ˅↓↕↡↧↨↯↲↳↴↵⇅⇊⇓⇕⇟⇣⇩⇳⇵⌄⍗⍼➥⟱⤈⤋⤓⤵⤶⤷⦪⦫⦮⦯⧪⧬⧭⬇⬍⬎⬐⭍⭞⭟⭣⭥⭭⭳⭽⮁⮃⮇⮋⮛⮟⮠⮡⮦⮧⮨⮩⮮⮯⮰⮱⮶⮷⯯📩🔃🔄🠃🠇🠋🠓🠗🠛🠟🠣🠧🠫🠯🠳🠷🠻🠿🡃🡇🡓🡙🡣🡫🡳🡻🢃🢓🢗🢛
+
 
         static PlayingCard()
         {
@@ -45,13 +56,16 @@ namespace SolWPF
             set { SetValue(IsFaceUpProperty, value); }
         }
 
+        internal string Signature() => SignatureValues.Substring(Value - 1, 1) + SignatureColors.Substring(Color, 1) + (IsFaceUp ? SignatureFaceUp : SignatureFaceDown);
+
         public override string ToString()
         {
             return $"PlayingCard {Face}, IsFaceUp={IsFaceUp}";
         }
 
-        public int Color => "HSDC".IndexOf(Face[0]);                // 0..3; %2==0 => Red, %2==1 => Black
-        public int Value => "A23456789XJQK".IndexOf(Face[1]) + 1;   // 1..13
+        // 
+        public int Color => Colors.IndexOf(Face[0]);        // 0..3; %2==0 => Red, %2==1 => Black
+        public int Value => Values.IndexOf(Face[1]) + 1;    // 1..13
     }
 
 }

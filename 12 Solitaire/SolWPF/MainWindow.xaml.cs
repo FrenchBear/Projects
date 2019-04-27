@@ -1,5 +1,6 @@
-﻿// SolWPF
-// Early tests in WPF of Solitaire cards drag-n-drop
+﻿// Solitaire WPF
+// SolWPF
+// Main Window = Startup code + interface (drag and drop) interactions
 // 2019-04-09   PV
 
 using System;
@@ -19,16 +20,16 @@ namespace SolWPF
     public partial class MainWindow : Window
     {
         public static double cardWidth = 100, cardHeight = 140;
-        private readonly GameDataBag b;
+        private readonly GameDeck b;
 
 
         public MainWindow()
         {
             InitializeComponent();
-            b = new GameDataBag();
+            b = new GameDeck();
             DataContext = b;
 
-            // Add Shift+Crl+N for New with New Game Options dialog (can't find how to use SHift+Ctrl in Xaml)
+            // Add Shift+Ctrl+N for New with New Game Options dialog (can't find how to use SHift+Ctrl in Xaml)
             KeyBinding OpenCmdKeyBinding = new KeyBinding(
                 ApplicationCommands.New,
                 Key.N,
@@ -61,8 +62,6 @@ namespace SolWPF
             b.InitializeStacksDictionary();
 
             b.InitRandomDeck(22);
-            //b.InitTestDeck1();
-            //b.InitTestDeck2();
         }
 
 
@@ -92,7 +91,7 @@ namespace SolWPF
         // Mouse click and drag management
         Point previousMousePosition;
         delegate void ProcessMouseMove(Point p);
-        ProcessMouseMove pmm;       // null indicates canvas move
+        ProcessMouseMove pmm;               // Delegate to run when mouse is moved in a down state
         Point StartingPoint;
         bool isMovingMode;
         DateTime lastMouseUpDateTime = DateTime.MinValue;
@@ -156,7 +155,7 @@ namespace SolWPF
         void MainGrid_MouseMoveWhenDown(object sender, MouseEventArgs e)
         {
             var newMousePosition = e.GetPosition(mainGrid);
-            // We only onsider a real move beyond a system-defined threshold, configured at 4 pixels (both X and Y) on my machine
+            // We only consider a real move beyond a system-defined threshold, configured at 4 pixels (both X and Y) on my machine
             if (!isMovingMode && movingGroup.IsMovable && (Math.Abs(newMousePosition.X - previousMousePosition.X) >= SystemParameters.MinimumHorizontalDragDistance || Math.Abs(newMousePosition.Y - previousMousePosition.Y) >= SystemParameters.MinimumVerticalDragDistance))
                 isMovingMode = true;
 
@@ -169,7 +168,7 @@ namespace SolWPF
         }
 
         // Just to avoid a reference to Windows.Forms...
-        // Anyway, its current valus in 500ms which is waaaaaaaaay too long for me
+        // Anyway, its current values in 500ms which is way too long for me
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)] public static extern int GetDoubleClickTime();
 
         private void MainGrid_MouseUp(object sender, MouseButtonEventArgs e)
@@ -182,7 +181,7 @@ namespace SolWPF
             if (movingGroup == null)
                 return;
 
-            // If move did not start (goup not movable or mouse didn't mouve enough), it's a click or a double click
+            // If move did not start (group not movable or mouse didn't move enough), it's a click or a double click
             // Note that movingGroup.ToStack is null in this case
             if (!isMovingMode)
             {
@@ -190,7 +189,7 @@ namespace SolWPF
                 if ((mouseUpDateTime - lastMouseUpDateTime).TotalMilliseconds <= 300 /* GetDoubleClickTime()*/ )
                 {
                     DoubleClickOnGroup(movingGroup);
-                    lastMouseUpDateTime = DateTime.MinValue;  // Don't need a triple-click or multiple double-cliks!
+                    lastMouseUpDateTime = DateTime.MinValue;  // Don't need a triple-click or multiple double-clicks!
                     return;
                 }
 
@@ -202,13 +201,14 @@ namespace SolWPF
             // Move started
             if (movingGroup.ToStack != null)
             {
-                // Valid target selected, Ok to move (without visual animation, or maybe from trop point to target point??)
+                // Valid target selected, OK to move (without visual animation, or maybe from top point to target point??)
                 movingGroup.DoMove();
             }
             else
             {
                 // We cancel the move
-                // Here we could have a visual animation if drop point is far enough from starting point to make clear that the move was rejected
+                // Here we could have a visual animation if drop point is far enough from starting point to make clear that the move was rejected,
+                // or a left-right oscillation?
                 movingGroup.SetTopLeft(StartingPoint);
             }
         }
@@ -315,6 +315,7 @@ namespace SolWPF
         {
             var mg = b.PopUndo();
             mg?.UndoMove();
+            b.PrintGame();
             b.UpdateGameStatus();
         }
 
@@ -357,21 +358,22 @@ namespace SolWPF
 
 
 
+
         // Just to test if mouse coordinates transformations are correct
         private void MainGrid_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            //var newPosition = e.GetPosition(mainGrid);
-            var newPosition = new Point(0, 0);
             var m = mainMatrixTransform.Matrix;
 
             // Ctrl+MouseWheel for rotation
             if (System.Windows.Input.Keyboard.IsKeyDown(Key.LeftCtrl))
             {
-                //double angle = e.Delta / 16.0;
-                //m.RotateAt(angle, newPosition.X, newPosition.Y);
+                var newPosition = e.GetPosition(mainGrid);
+                double angle = e.Delta / 16.0;
+                m.RotateAt(angle, newPosition.X, newPosition.Y);
             }
             else
             {
+                var newPosition = new Point(0, 0);
                 var sign = Math.Sign(e.Delta);
                 var scale = 1 - sign / 10.0;
                 m.ScaleAt(scale, scale, newPosition.X, newPosition.Y);
