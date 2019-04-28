@@ -20,8 +20,8 @@ namespace SolSolver
         private static void Main()
         {
             Console.OutputEncoding = new UTF8Encoding();
-            //TestSolver();
-            SolverStats(100);
+            TestSolver();
+            //SolverStats(100);
         }
 
         private static void SolverStats(int n)

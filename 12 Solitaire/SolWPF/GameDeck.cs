@@ -103,10 +103,10 @@ namespace SolWPF
 
             // Initial status
             UpdateGameStatus();
-
+#if DEBUG
             PrintGame();
+#endif
         }
-
 
         private void ClearDeck()
         {
@@ -171,8 +171,10 @@ namespace SolWPF
                 var hitList = new List<PlayingCard>();
                 for (int i = 0; i < sg.MovingCards.Count; i++)
                     hitList.Add(CardsDictionary[sg.MovingCards[i].Face]);
-                var mg = new MovingGroup(from, hitList, true);
-                mg.ToStack = to;
+                var mg = new MovingGroup(from, hitList, true)
+                {
+                    ToStack = to
+                };
                 lmg.Add(mg);
             }
 
@@ -184,6 +186,7 @@ namespace SolWPF
         }
 
 
+#if DEBUG
         private void CheckDeck()
         {
             int nc = 0;
@@ -211,15 +214,18 @@ namespace SolWPF
             nc += TalonFU.PlayingCards.Count + TalonFD.PlayingCards.Count;
             Debug.Assert(nc == 52);
         }
-
+#endif
 
         internal bool CanUndo() => UndoStack.Count > 0;
 
         internal void PushUndo(MovingGroup mg)
         {
             UndoStack.Push(mg);
+#if DEBUG
+
             CheckDeck();            // For debugging
             PrintGame();            // For debugging
+#endif
         }
 
         internal MovingGroup PopUndo()
@@ -234,8 +240,9 @@ namespace SolWPF
 
         internal void UpdateGameStatus()
         {
+#if DEBUG
             CheckDeck();            // To be safe in debug mode
-
+#endif
             MoveCount = UndoStack.Count;
 
             if (MoveCount == 0)
@@ -334,6 +341,7 @@ namespace SolWPF
             }
         }
 
+#if DEBUG
         internal void PrintGame()
         {
             Debug.WriteLine("----------------------------------------------------------");
@@ -353,5 +361,6 @@ namespace SolWPF
                 Debug.Write(c.Signature() + " ");
             Debug.WriteLine("");
         }
+#endif
     }
 }

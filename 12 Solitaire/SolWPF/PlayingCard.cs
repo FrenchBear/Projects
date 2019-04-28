@@ -5,9 +5,6 @@
 // 2019-04-12   PV
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Media;
 using System.Windows.Controls.Primitives;
 using System.Windows;
 using System.Diagnostics;
@@ -15,29 +12,26 @@ using System.Diagnostics;
 namespace SolWPF
 {
 
-    [DebuggerDisplay("Card {Signature()}")]
+    [DebuggerDisplay("PlayingCard {Signature()}")]
     public class PlayingCard : ButtonBase
     {
-        public static DependencyProperty FaceProperty;
-        public static DependencyProperty IsFaceUpProperty;
+        // Declare and register dependency properties
+        public static DependencyProperty FaceProperty = DependencyProperty.Register("Face", typeof(string), typeof(PlayingCard));
+        public static DependencyProperty IsFaceUpProperty = DependencyProperty.Register("IsFaceUp", typeof(bool), typeof(PlayingCard));
 
         public const string Colors = "HSDC";
         public const string Values = "A23456789XJQK";
 
         private const string SignatureColors = "♥♠♦♣";
         private const string SignatureValues = "A23456789XJQK";
-        private const string SignatureFaceUp = "˄";                   // ˄↑↕↟↥↨↰↱⇅⇈⇑⇕⇞⇡⇧⇪⇫⇬⇭⇮⇯⇳⇵⌃⌤⍐➦➮➱⟰⟱⤉⤊⤒⤴⥉⥻⦨⦩⦬⦭⦽⬆⬍⬏⬑⭄⭅⭆⭡⭥⭫⭱⭻⮁⮃⮅⮉⮙⮝⮢⮣⮤⮥⮪⮫⮬⮭⮲⮳⮴⮵⮸⮹⯭𛲙🔃🔄🔝🠁🠅🠉🠑🠕🠙🠝🠡🠥🠩🠭🠱🠵🠹🠽🡁🡅🡑🡙🡡🡩🡱🡹🢁🢑🢕🢙
-        private const string SignatureFaceDown = "˅";                 // ˅↓↕↡↧↨↯↲↳↴↵⇅⇊⇓⇕⇟⇣⇩⇳⇵⌄⍗⍼➥⟱⤈⤋⤓⤵⤶⤷⦪⦫⦮⦯⧪⧬⧭⬇⬍⬎⬐⭍⭞⭟⭣⭥⭭⭳⭽⮁⮃⮇⮋⮛⮟⮠⮡⮦⮧⮨⮩⮮⮯⮰⮱⮶⮷⯯📩🔃🔄🠃🠇🠋🠓🠗🠛🠟🠣🠧🠫🠯🠳🠷🠻🠿🡃🡇🡓🡙🡣🡫🡳🡻🢃🢓🢗🢛
+        private const string SignatureFaceUp = "˄";
+        private const string SignatureFaceDown = "˅";
 
 
         static PlayingCard()
         {
             // Override style
             DefaultStyleKeyProperty.OverrideMetadata(typeof(PlayingCard), new FrameworkPropertyMetadata(typeof(PlayingCard)));
-
-            // Register dependency properties
-            FaceProperty = DependencyProperty.Register("Face", typeof(string), typeof(PlayingCard));
-            IsFaceUpProperty = DependencyProperty.Register("IsFaceUp", typeof(bool), typeof(PlayingCard));
         }
 
         public PlayingCard(string face, bool isFaceUp)
@@ -58,6 +52,7 @@ namespace SolWPF
             set { SetValue(IsFaceUpProperty, value); }
         }
 
+        // More user-friendly representation than ToString
         internal string Signature() => SignatureValues.Substring(Value - 1, 1) + SignatureColors.Substring(Color, 1) + (IsFaceUp ? SignatureFaceUp : SignatureFaceDown);
 
         public override string ToString()
@@ -66,8 +61,8 @@ namespace SolWPF
         }
 
         // 
-        public int Color => Colors.IndexOf(Face[0]);        // 0..3; %2==0 => Red, %2==1 => Black
-        public int Value => Values.IndexOf(Face[1]) + 1;    // 1..13
+        public int Color => Colors.IndexOf(Face[0], StringComparison.Ordinal);        // 0..3; %2==0 => Red, %2==1 => Black
+        public int Value => Values.IndexOf(Face[1], StringComparison.Ordinal) + 1;    // 1..13
     }
 
 }

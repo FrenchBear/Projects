@@ -248,10 +248,11 @@ namespace SolWPF
             BaseRect.StrokeThickness = 3.0;
         }
 
+#if DEBUG
         public virtual void CheckStack()
         {
         }
-
+#endif
     }
 
 
@@ -282,12 +283,15 @@ namespace SolWPF
         internal void ResetTalon(TalonFaceUpStack TalonFU)
         {
             Debug.Assert(PlayingCards.Count == 0);
+
             // Talon empty;
             if (TalonFU.PlayingCards.Count == 0)
                 return;
 
-            var mg = new MovingGroup(TalonFU, TalonFU.PlayingCards.Reverse<PlayingCard>().ToList(), true);
-            mg.ToStack = this;
+            var mg = new MovingGroup(TalonFU, TalonFU.PlayingCards.Reverse<PlayingCard>().ToList(), true)
+            {
+                ToStack = this
+            };
             mg.DoMove(true);        // Can do animation, since ResetTalon is not called during Undo
         }
 
@@ -313,11 +317,12 @@ namespace SolWPF
             }
             return null;
         }
+#if DEBUG
         public override void CheckStack()
         {
             Debug.Assert(PlayingCards.All(c => !c.IsFaceUp));
         }
-
+#endif
     }   // class TalonFaceDownStack
 
 
@@ -340,11 +345,12 @@ namespace SolWPF
                 c.IsFaceUp = true;
         }
 
+#if DEBUG
         public override void CheckStack()
         {
             Debug.Assert(PlayingCards.All(c => c.IsFaceUp));
         }
-
+#endif
     }   // class TalonFaceUpStack
 
 
@@ -399,6 +405,7 @@ namespace SolWPF
             return null;
         }
 
+#if DEBUG
         public override void CheckStack()
         {
             bool visiblePart = true;
@@ -418,6 +425,8 @@ namespace SolWPF
                     Debug.Assert(!PlayingCards[i].IsFaceUp);
             }
         }
+#endif
+
     }   // class ColumnStack
 
 
@@ -439,6 +448,7 @@ namespace SolWPF
             return PlayingCards[0].Color == mg.MovingCards[0].Color && PlayingCards[0].Value + 1 == mg.MovingCards[0].Value;
         }
 
+#if DEBUG
         public override void CheckStack()
         {
             if (PlayingCards.Count > 0)
@@ -451,7 +461,7 @@ namespace SolWPF
                 }
             }
         }
-
+#endif
 
     }   // class BaseStack
 

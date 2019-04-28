@@ -89,6 +89,7 @@ namespace SolLib
             Debug.WriteLine("");
         }
 
+#if DEBUG
         public void CheckSolverDeck()
         {
             int nc = 0;
@@ -118,7 +119,7 @@ namespace SolLib
         private void CheckSolverStack(SolverStack st)
         {
             // As a safety, check that Bases and Columns are valid
-            if (st.Name.StartsWith("Base"))
+            if (st.Name.StartsWith("Base", StringComparison.Ordinal))
             {
                 if (st.PlayingCards.Count > 0)
                 {
@@ -130,7 +131,7 @@ namespace SolLib
                     }
                 }
             }
-            else if (st.Name.StartsWith("Column"))
+            else if (st.Name.StartsWith("Column", StringComparison.Ordinal))
             {
                 bool visiblePart = true;
                 for (int i = 0; i < st.PlayingCards.Count; i++)
@@ -150,7 +151,7 @@ namespace SolLib
                 }
             }
         }
-
+#endif
 
 
         // col==7 is TalonFU, otherwise col in [0..6]
@@ -180,8 +181,8 @@ namespace SolLib
                 Columns[c_from].PlayingCards.RemoveAt(0);
                 int targetBase = GetMatchingBase(ca);
                 Debug.Assert(Bases[targetBase].PlayingCards.Count == 0 && ca.Value == 1 || Bases[targetBase].PlayingCards.Count > 0 && Bases[targetBase].PlayingCards.First().Value + 1 == ca.Value);
-                Bases[targetBase].PlayingCards.Insert(0, ca);
                 Debug.Assert(ca.IsFaceUp);
+                Bases[targetBase].PlayingCards.Insert(0, ca);
                 // Turn top of From column face up
                 if (Columns[c_from].PlayingCards.Count > 0) Columns[c_from].PlayingCards[0].IsFaceUp = true;
                 mg.FromStack = Columns[c_from];
@@ -311,7 +312,7 @@ namespace SolLib
             else
                 ca = Columns[c_from].PlayingCards[n - 1];
 
-            if (Columns[c_to].PlayingCards.Count == 0 && ca.Value == 13 && (c_from==7 || Columns[c_from].PlayingCards.Count!=n)) return true;  // Can move a King to an empty column, but only if it's not a whole column starting with a King (useless move)
+            if (Columns[c_to].PlayingCards.Count == 0 && ca.Value == 13 && (c_from == 7 || Columns[c_from].PlayingCards.Count != n)) return true;  // Can move a King to an empty column, but only if it's not a whole column starting with a King (useless move)
             if (Columns[c_to].PlayingCards.Count > 0 && ca.Value == Columns[c_to].PlayingCards[0].Value - 1 && ca.Color % 2 != Columns[c_to].PlayingCards[0].Color % 2) return true; // Can move if value-1 and alternating colors 
 
             return false;
@@ -373,8 +374,10 @@ namespace SolLib
                                             Movments.Add(mg);
                                             if (showTraces)
                                                 WriteLine(mg.ToString());
+#if DEBUG
                                             var s2 = Signature();
                                             Debug.Assert(s == s2);
+#endif
                                             Signatures.Add(s);
                                             goto restart_reset_talon;
                                         }
@@ -473,15 +476,18 @@ namespace SolLib
         {
             if (printSteps)
                 PrintSolverDeck();
+#if DEBUG
             CheckSolverDeck();
-
+#endif
             while (OneMovementToBase(showTraces: printSteps) != null)
             {
                 if (cancellationToken.HasValue && cancellationToken.Value.IsCancellationRequested) return null;
 
                 if (printSteps)
                     PrintSolverDeck();
+#if DEBUG
                 CheckSolverDeck();
+#endif
                 if (IsGameSolvable()) break;
             }
 

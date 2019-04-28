@@ -16,15 +16,15 @@ namespace SolLib
 
         private const string SignatureColors = "♥♠♦♣";
         private const string SignatureValues = "A23456789XJQK";
-        private const string SignatureFaceUp = "˄";             // ˄↑↕↟↥↨↰↱⇅⇈⇑⇕⇞⇡⇧⇪⇫⇬⇭⇮⇯⇳⇵⌃⌤⍐➦➮➱⟰⟱⤉⤊⤒⤴⥉⥻⦨⦩⦬⦭⦽⬆⬍⬏⬑⭄⭅⭆⭡⭥⭫⭱⭻⮁⮃⮅⮉⮙⮝⮢⮣⮤⮥⮪⮫⮬⮭⮲⮳⮴⮵⮸⮹⯭𛲙🔃🔄🔝🠁🠅🠉🠑🠕🠙🠝🠡🠥🠩🠭🠱🠵🠹🠽🡁🡅🡑🡙🡡🡩🡱🡹🢁🢑🢕🢙
-        private const string SignatureFaceDown = "˅";           // ˅↓↕↡↧↨↯↲↳↴↵⇅⇊⇓⇕⇟⇣⇩⇳⇵⌄⍗⍼➥⟱⤈⤋⤓⤵⤶⤷⦪⦫⦮⦯⧪⧬⧭⬇⬍⬎⬐⭍⭞⭟⭣⭥⭭⭳⭽⮁⮃⮇⮋⮛⮟⮠⮡⮦⮧⮨⮩⮮⮯⮰⮱⮶⮷⯯📩🔃🔄🠃🠇🠋🠓🠗🠛🠟🠣🠧🠫🠯🠳🠷🠻🠿🡃🡇🡓🡙🡣🡫🡳🡻🢃🢓🢗🢛
+        private const string SignatureFaceUp = "˄";
+        private const string SignatureFaceDown = "˅";
 
 
         public string Face { get; set; }
         public bool IsFaceUp { get; set; }
 
-        public int Color => Colors.IndexOf(Face[0]);            // 0..3; %2==0 => Red, %2==1 => Black
-        public int Value => Values.IndexOf(Face[1]) + 1;        // 1..13
+        public int Color => Colors.IndexOf(Face[0], StringComparison.Ordinal);            // 0..3; %2==0 => Red, %2==1 => Black
+        public int Value => Values.IndexOf(Face[1], StringComparison.Ordinal) + 1;        // 1..13
 
         public SolverCard(int v, int c, bool isFaceUp)
         {
@@ -44,5 +44,5 @@ namespace SolLib
                     Cards.Add(new SolverCard(v, ci, true));
             return Cards;
         }
-    }   // Struct Card
+    }   // class SolverCard
 }

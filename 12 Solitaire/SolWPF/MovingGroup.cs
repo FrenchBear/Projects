@@ -76,6 +76,7 @@ namespace SolWPF
 
         internal void DoMove(bool withAnimation = false)
         {
+#if DEBUG
             var sb = new StringBuilder($"\nDoMove From=({FromStack}) To=({ToStack}) MovingCards=");
             foreach (var c in MovingCards)
                 sb.Append(c.Signature()).Append(' ');
@@ -88,13 +89,15 @@ namespace SolWPF
             else
                 for (int i = 0; i < MovingCards.Count; i++)
                     Debug.Assert(FromStack.PlayingCards[i] == MovingCards[i]);
-
+#endif 
             cardMadeVisibleDuringMove = FromStack.MoveOutCards(MovingCards);
             ToStack.MoveInCards(MovingCards, withAnimation);
             ToStack.ClearTargetHighlight();
 
+#if DEBUG
             sb.Append($" CMV={cardMadeVisibleDuringMove?.Signature()}");
             Debug.WriteLine(sb.ToString());
+#endif
 
             // Keep this move for undo
             FromStack.b.PushUndo(this);
@@ -107,14 +110,14 @@ namespace SolWPF
 
         internal void UndoMove()
         {
+#if DEBUG
             var sb = new StringBuilder($"\nUndoMove From=({FromStack}) To=({ToStack}) MovingCards=");
             foreach (var c in MovingCards)
                 sb.Append(c.Signature()).Append(' ');
             sb.Append($" CMV={cardMadeVisibleDuringMove?.Signature()}");
             Debug.WriteLine(sb.ToString());
+#endif
 
-            if (sb.ToString().Contains("UndoMove From=(TalonFD Cards=) To=(TalonFU Cards=9♠˄ X♦˄ J♣˄ ) MovingCards=J♣˄  CMV="))
-                Debugger.Break();
 
             if (cardMadeVisibleDuringMove != null) cardMadeVisibleDuringMove.IsFaceUp = false;
             ToStack.MoveOutCards(MovingCards);

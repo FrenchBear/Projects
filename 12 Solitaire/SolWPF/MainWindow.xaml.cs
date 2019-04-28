@@ -35,7 +35,14 @@ namespace SolWPF
                 Key.N,
                 ModifierKeys.Control | ModifierKeys.Shift);
 
+            // Add Shift+Ctrl+P for Play with full solve
+            KeyBinding PlayCmdKeyBinding = new KeyBinding(
+                ApplicationCommands.Print,
+                Key.P,
+                ModifierKeys.Control | ModifierKeys.Shift);
+
             this.InputBindings.Add(OpenCmdKeyBinding);
+            this.InputBindings.Add(PlayCmdKeyBinding);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -62,6 +69,12 @@ namespace SolWPF
             b.InitializeStacksDictionary();
 
             b.InitRandomDeck(22);
+
+            // For performance testing
+            /*
+            FullSolve();
+            Close();
+            */
         }
 
 
@@ -168,9 +181,11 @@ namespace SolWPF
             }
         }
 
+        /*
         // Just to avoid a reference to Windows.Forms...
         // Anyway, its current values in 500ms which is way too long for me
-        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)] public static extern int GetDoubleClickTime();
+        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)] internal static extern int GetDoubleClickTime();
+        */
 
         private void MainGrid_MouseUp(object sender, MouseButtonEventArgs e)
         {
@@ -316,8 +331,10 @@ namespace SolWPF
         {
             var mg = b.PopUndo();
             mg?.UndoMove();
-            b.PrintGame();
             b.UpdateGameStatus();
+#if DEBUG
+            b.PrintGame();
+#endif
         }
 
         private void NewCommand_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -343,19 +360,31 @@ namespace SolWPF
 
         private void PlayCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            if (IsShiftPressed())
+                FullSolve();
+            else
+            if (!OneMetaStepSolve())
+                MessageBox.Show("Sorry, no suggested play...");
+        }
+
+        internal bool OneMetaStepSolve()
+        {
             var lmg = b.GetNextMoves();
             if (lmg == null)
-            {
-                MessageBox.Show("Sorry, no suggested play...");
-                return;
-            }
+                return false;
 
             foreach (var mg in lmg)
-            {
                 mg.DoMove(true);
-                //break;
-            }
+            return true;
         }
+
+        internal void FullSolve()
+        {
+            while (OneMetaStepSolve())
+                /* nop */
+                ;
+        }
+
 
 
 
