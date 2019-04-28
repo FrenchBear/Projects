@@ -420,6 +420,7 @@ namespace UniDataNS
         }
 
         // For development
+        /*
         private static void InternalTests()
         {
             foreach (var cr in char_map.Values)
@@ -432,6 +433,7 @@ namespace UniDataNS
 
             Debug.Assert(UnicodeLength("Aé♫??") == 5);
         }
+        */
 
         // Returns stream from embedded resource name
         private static Stream GetResourceStream(string name)

@@ -30,9 +30,9 @@ namespace UniSearchNS
     internal class ViewModel : INotifyPropertyChanged
     {
         // Private variables
-        private readonly SearchWindow window;       // Access to main window
-        private Dictionary<int, CheckableNode> BlocksCheckableNodesDictionary;
-        private readonly CheckableNode BlocksRoot;        // TreeView root
+        private readonly SearchWindow window;               // Access to main window
+        private readonly CheckableNode BlocksRoot;          // TreeView root
+        private readonly Dictionary<int, CheckableNode> BlocksCheckableNodesDictionary;
 
 
         // INotifyPropertyChanged interface

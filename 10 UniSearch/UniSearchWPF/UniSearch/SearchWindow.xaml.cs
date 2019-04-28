@@ -16,7 +16,7 @@ namespace UniSearchNS
 {
     internal sealed partial class SearchWindow : Window
     {
-        ViewModel vm;
+        readonly ViewModel vm;
 
 
         public SearchWindow()

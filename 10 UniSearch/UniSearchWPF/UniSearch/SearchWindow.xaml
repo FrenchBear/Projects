@@ -6,7 +6,7 @@
   xmlns:dw="clr-namespace:UniSearchNS.Controls"
   FontSize="13" FontFamily="Segoe UI"
   Title="UnISearch – Unicode Character Search Tool (WPF)"
-  Width="800" Height="420" 
+  Width="1000" Height="700" 
   WindowStartupLocation="CenterScreen" Icon="Unicorn.ico"  
   >
 
