@@ -24,12 +24,14 @@ namespace SolWPF
         public TalonFaceUpStack TalonFU;
         private readonly Stack<MovingGroup> UndoStack;
         private readonly Random SeedRnd;
-        private readonly Dictionary<string, GameStack> StacksDictionary;
+        private readonly Dictionary<string, GameStack> StacksDictionary;        // Map name -> Stack, name in [Base0..Base3, Column0..Column6, TalonFU, TalonFD]
+        private readonly Dictionary<string, PlayingCard> CardsDictionary;       // Map face -> PlayingCard, name in [Colors]×[Values] such as H4 or DQ for 4 of ♥ or Queen of ♦
 
         public GameDeck()
         {
             UndoStack = new Stack<MovingGroup>();
             StacksDictionary = new Dictionary<string, GameStack>();
+            CardsDictionary = new Dictionary<string, PlayingCard>();
             SeedRnd = new Random();
         }
 
@@ -62,7 +64,7 @@ namespace SolWPF
 
         internal void InitRandomDeck(int seed = 0)
         {
-            Clear();
+            ClearDeck();
             if (seed == 0)
                 seed = SeedRnd.Next(1, 1_000_000);
             GameSerial = seed;
@@ -94,6 +96,11 @@ namespace SolWPF
             for (int mt = 0; mt < lc.Count; mt++)
                 TalonFD.AddCard(lc[mt], false);
 
+            // Fill Cards Dictionary
+            foreach (GameStack st in AllStacks())
+                foreach (PlayingCard c in st.PlayingCards)
+                    CardsDictionary.Add(c.Face, c);
+
             // Initial status
             UpdateGameStatus();
 
@@ -101,7 +108,7 @@ namespace SolWPF
         }
 
 
-        private void Clear()
+        private void ClearDeck()
         {
             UndoStack.Clear();
             foreach (var b in AllStacks())
@@ -154,18 +161,25 @@ namespace SolWPF
             if (lsg == null)
                 return null;
 
+            Debug.WriteLine("");
             List<MovingGroup> lmg = new List<MovingGroup>();
             foreach (var sg in lsg)
             {
+                Debug.WriteLine(sg.ToString());
                 var from = StacksDictionary[sg.FromStack.Name];
                 var to = StacksDictionary[sg.ToStack.Name];
                 var hitList = new List<PlayingCard>();
                 for (int i = 0; i < sg.MovingCards.Count; i++)
-                    hitList.Add(from.PlayingCards[i]);
+                    hitList.Add(CardsDictionary[sg.MovingCards[i].Face]);
                 var mg = new MovingGroup(from, hitList, true);
                 mg.ToStack = to;
                 lmg.Add(mg);
             }
+
+            Debug.WriteLine("");
+            foreach (var mg in lmg)
+                Debug.WriteLine(mg.ToString());
+
             return lmg;
         }
 

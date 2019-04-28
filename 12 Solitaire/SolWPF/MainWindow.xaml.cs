@@ -65,6 +65,7 @@ namespace SolWPF
         }
 
 
+        /*
         private void GenerateDeck_Click(object sender, RoutedEventArgs e)
         {
             void PrintStack(GameStack gs, string name)
@@ -80,7 +81,7 @@ namespace SolWPF
             PrintStack(b.TalonFU, $"TalonFU");
             PrintStack(b.TalonFD, $"TalonFD");
         }
-
+        */
 
         private void ButtonExit_Click(object sender, RoutedEventArgs e)
         {
@@ -352,7 +353,7 @@ namespace SolWPF
             foreach (var mg in lmg)
             {
                 mg.DoMove(true);
-                break;
+                //break;
             }
         }
 

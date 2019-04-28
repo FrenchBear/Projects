@@ -277,7 +277,7 @@ namespace SolLib
                 Debug.Assert(Columns[c_to].PlayingCards.Count > 0 || ca.Value == 13);  // Can only move a King to an empty column
                 Debug.Assert(Columns[c_to].PlayingCards.Count == 0 || ca.Value == Columns[c_to].PlayingCards[0].Value - 1 && ca.Color % 2 != Columns[c_to].PlayingCards[0].Color % 2);
                 Columns[c_to].PlayingCards.Insert(0, ca);
-                mg.MovingCards.Add(ca);
+                mg.MovingCards.Insert(0, ca);
             }
 
             if (c_from == 7)
@@ -311,7 +311,7 @@ namespace SolLib
             else
                 ca = Columns[c_from].PlayingCards[n - 1];
 
-            if (Columns[c_to].PlayingCards.Count == 0 && ca.Value == 13) return true;  // Can move a King to an empty column
+            if (Columns[c_to].PlayingCards.Count == 0 && ca.Value == 13 && (c_from==7 || Columns[c_from].PlayingCards.Count!=n)) return true;  // Can move a King to an empty column, but only if it's not a whole column starting with a King (useless move)
             if (Columns[c_to].PlayingCards.Count > 0 && ca.Value == Columns[c_to].PlayingCards[0].Value - 1 && ca.Color % 2 != Columns[c_to].PlayingCards[0].Color % 2) return true; // Can move if value-1 and alternating colors 
 
             return false;
@@ -457,7 +457,7 @@ namespace SolLib
             {
                 c.IsFaceUp = false;
                 TalonFD.PlayingCards.Insert(0, c);
-                mg.MovingCards.Add(c);
+                mg.MovingCards.Insert(0, c);
             }
             TalonFU.PlayingCards.Clear();
             if (showTraces)

@@ -60,7 +60,7 @@
         <StatusBar Grid.Row="1" FontSize="16" HorizontalContentAlignment="Left">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="90" />
+                    <ColumnDefinition Width="100" />
                     <ColumnDefinition Width="170" />
                     <ColumnDefinition Width="150" />
                     <ColumnDefinition Width="150" />
@@ -86,7 +86,6 @@
                     <Button Content="New Game" Command="ApplicationCommands.New" Padding="3,0" Margin="0,0,6,0"/>
                     <Button Content="Undo" Command="ApplicationCommands.Undo" Padding="3,0" Margin="0,0,6,0"/>
                     <Button Content="Play" Command="ApplicationCommands.Print" Padding="3,0"/>
-                    <!--<Button Content="Generate Deck" Click="GenerateDeck_Click" />-->
                 </StackPanel>
             </Grid>
         </StatusBar>

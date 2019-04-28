@@ -10,10 +10,12 @@ using System.Text;
 using System.Windows.Media;
 using System.Windows.Controls.Primitives;
 using System.Windows;
-
+using System.Diagnostics;
 
 namespace SolWPF
 {
+
+    [DebuggerDisplay("Card {Signature()}")]
     public class PlayingCard : ButtonBase
     {
         public static DependencyProperty FaceProperty;

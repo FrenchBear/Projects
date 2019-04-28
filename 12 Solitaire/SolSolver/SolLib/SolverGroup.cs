@@ -18,7 +18,7 @@ namespace SolLib
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append($"{FromStack.Name,-9} => {ToStack.Name,-9} ");
+            sb.Append($"SolverGroup: {FromStack.Name,-9} => {ToStack.Name,-9} ");
             foreach (var ca in MovingCards)
                 sb.Append(ca.Signature() + " ");
             return sb.ToString();

@@ -51,10 +51,7 @@ namespace SolWPF
                 sb.Append("∅");
             else
                 foreach (var c in MovingCards)
-                {
-                    sb.Append(c.Face);
-                    sb.Append(' ');
-                }
+                    sb.Append(c.Signature()).Append(' ');
             return sb.ToString();
         }
 
@@ -83,17 +80,28 @@ namespace SolWPF
             foreach (var c in MovingCards)
                 sb.Append(c.Signature()).Append(' ');
 
+            // Check that the first cards of FromStack match MovingCards
+            // Since TalonFU reverses card order during a MoveIn, comparison is reversed
+            if (FromStack.Name == "TalonFU")
+                for (int i = 0; i < MovingCards.Count; i++)
+                    Debug.Assert(FromStack.PlayingCards[MovingCards.Count - 1 - i] == MovingCards[i]);
+            else
+                for (int i = 0; i < MovingCards.Count; i++)
+                    Debug.Assert(FromStack.PlayingCards[i] == MovingCards[i]);
+
             cardMadeVisibleDuringMove = FromStack.MoveOutCards(MovingCards);
             ToStack.MoveInCards(MovingCards, withAnimation);
             ToStack.ClearTargetHighlight();
 
-            sb.Append($" CMV={cardMadeVisibleDuringMove?.Face}");
+            sb.Append($" CMV={cardMadeVisibleDuringMove?.Signature()}");
             Debug.WriteLine(sb.ToString());
 
             // Keep this move for undo
             FromStack.b.PushUndo(this);
 
-            // Finally refresh status bar
+            // Finally refresh status bar.
+            // Not really a good idea to do this here, nor using the reference "FromStack.b", but since DoMove is called from
+            // various places (7 references), it's just convenient to do it here in a unique location.
             FromStack.b.UpdateGameStatus();
         }
 
@@ -102,7 +110,7 @@ namespace SolWPF
             var sb = new StringBuilder($"\nUndoMove From=({FromStack}) To=({ToStack}) MovingCards=");
             foreach (var c in MovingCards)
                 sb.Append(c.Signature()).Append(' ');
-            sb.Append($" CMV={cardMadeVisibleDuringMove?.Face}");
+            sb.Append($" CMV={cardMadeVisibleDuringMove?.Signature()}");
             Debug.WriteLine(sb.ToString());
 
             if (sb.ToString().Contains("UndoMove From=(TalonFD Cards=) To=(TalonFU Cards=9♠˄ X♦˄ J♣˄ ) MovingCards=J♣˄  CMV="))
