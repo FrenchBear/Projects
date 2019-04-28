@@ -7,15 +7,38 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace SolWPF
 {
-    public class NewGameOptionsViewModel: INotifyPropertyChanged
+    public class NewGameOptionsViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void NotifyPropertyChanged(string name) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+
+
+        public ICommand OKCommand { get; private set; }
+
+        private NewGameOptionsWindow dlg;
+
+
+
+        public NewGameOptionsViewModel()
+        {
+            OKCommand = new RelayCommand<object>(OKExecute, CanOK);
+            GameSerial = 0;
+            IsWithAAndK = false;
+        }
+
+        internal void SetWindow(NewGameOptionsWindow dlg)
+        {
+            this.dlg = dlg;
+        }
+
 
 
         private int _GameSerial;
@@ -45,5 +68,44 @@ namespace SolWPF
                 }
             }
         }
+
+
+        private bool CanOK(object obj)
+        {
+            return !Validation.GetHasError(dlg.GameSerialTextBox);
+        }
+
+        private void OKExecute(object obj)
+        {
+            dlg.DialogResult = true;
+        }
+
+
+
+        // =====================================================================================================
+        // IDataErrorInfo
+
+        public string Error
+        {
+            get { return null; }
+        }
+
+        public string this[string name]
+        {
+            get
+            {
+                string result = null;
+
+                if (name == "GameSerialTextBox")
+                {
+                    if (GameSerial < 0)
+                        result = "Minimum value is 0";
+                    else if (GameSerial > 999_999)
+                        result = "Maximum value is 999999";
+                }
+                return result;
+            }
+        }
+
     }
 }

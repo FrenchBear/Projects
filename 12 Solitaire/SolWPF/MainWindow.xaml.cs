@@ -204,7 +204,7 @@ namespace SolWPF
                 var mouseUpDateTime = System.DateTime.Now;
                 if ((mouseUpDateTime - lastMouseUpDateTime).TotalMilliseconds <= 300 /* GetDoubleClickTime()*/ )
                 {
-                    DoubleClickOnGroup(movingGroup);
+                    //DoubleClickOnGroup(movingGroup);      // For now, all is done using simple click
                     lastMouseUpDateTime = DateTime.MinValue;  // Don't need a triple-click or multiple double-clicks!
                     return;
                 }
@@ -254,9 +254,12 @@ namespace SolWPF
         }
 
 
+        /*
         private void DoubleClickOnGroup(MovingGroup movingGroup)
         {
         }
+        */
+
 
         // Shortcuts (automatic moves) to be executed either from a click or a double click
         private void AutoActionOnGroup(MovingGroup movingGroup)
@@ -344,6 +347,7 @@ namespace SolWPF
             {
                 var vm = new NewGameOptionsViewModel();
                 var dlg = new NewGameOptionsWindow(vm);
+                vm.SetWindow(dlg);
                 if (dlg.ShowDialog() == true)
                     seed = vm.GameSerial;
                 else
@@ -381,8 +385,10 @@ namespace SolWPF
         internal void FullSolve()
         {
             while (OneMetaStepSolve())
-                /* nop */
-                ;
+            {
+                mainGrid.Refresh();
+                System.Threading.Thread.Yield();
+            }
         }
 
 

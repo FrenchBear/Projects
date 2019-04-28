@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace SolWPF
 {
@@ -111,6 +112,7 @@ namespace SolWPF
         private void ClearDeck()
         {
             UndoStack.Clear();
+            CardsDictionary.Clear();
             foreach (var b in AllStacks())
                 b.Clear();
         }
@@ -362,5 +364,20 @@ namespace SolWPF
             Debug.WriteLine("");
         }
 #endif
+    }
+}
+
+
+public static class ExtensionMethods
+{
+    private static readonly Action EmptyDelegate = delegate () { };
+
+    // Extension method to force the refresh of a UIElement
+    public static void Refresh(this UIElement uiElement)
+    {
+        // By calling Dispatcher.Invoke, the code essentially asks the system to execute all operations that are Render or higher priority, 
+        // thus the control will then render itself (drawing the new content).  Afterwards, it will then execute the provided delegate,
+        // which is our empty method.
+        uiElement.Dispatcher.Invoke(DispatcherPriority.Render, EmptyDelegate);
     }
 }
