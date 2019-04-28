@@ -359,29 +359,31 @@ namespace SolLib
             }
 
             // Move from column to column?
-            for (int c_from = 0; c_from < 7; c_from++)
-                if (Columns[c_from].PlayingCards.Count > 0)
-                    for (int c_to = 0; c_to < 7; c_to++)
-                        if (c_to != c_from)
-                            for (int n = Columns[c_from].PlayingCards.Count - 1; n >= 0; n--)
-                                if (Columns[c_from].PlayingCards[n].IsFaceUp)
-                                    if (CanMoveColumnToColumn(c_from, c_to, n + 1))
-                                    {
-                                        var s = Signature(c_from, c_to, n + 1);
-                                        if (!Signatures.Contains(s))
+            // No need to go through it if game is solvable, only moves to base and from talon are enough
+            if (!IsGameSolvable())
+                for (int c_from = 0; c_from < 7; c_from++)
+                    if (Columns[c_from].PlayingCards.Count > 0)
+                        for (int c_to = 0; c_to < 7; c_to++)
+                            if (c_to != c_from)
+                                for (int n = Columns[c_from].PlayingCards.Count - 1; n >= 0; n--)
+                                    if (Columns[c_from].PlayingCards[n].IsFaceUp)
+                                        if (CanMoveColumnToColumn(c_from, c_to, n + 1))
                                         {
-                                            var mg = MoveColumnToColumn(c_from, c_to, n + 1);
-                                            Movments.Add(mg);
-                                            if (showTraces)
-                                                WriteLine(mg.ToString());
+                                            var s = Signature(c_from, c_to, n + 1);
+                                            if (!Signatures.Contains(s))
+                                            {
+                                                var mg = MoveColumnToColumn(c_from, c_to, n + 1);
+                                                Movments.Add(mg);
+                                                if (showTraces)
+                                                    WriteLine(mg.ToString());
 #if DEBUG
-                                            var s2 = Signature();
-                                            Debug.Assert(s == s2);
+                                                var s2 = Signature();
+                                                Debug.Assert(s == s2);
 #endif
-                                            Signatures.Add(s);
-                                            goto restart_reset_talon;
+                                                Signatures.Add(s);
+                                                goto restart_reset_talon;
+                                            }
                                         }
-                                    }
 
 
             // Move from TalonFU to Columns
