@@ -6,6 +6,8 @@
 // 2018-09-08   PV      Adaptation to UniSearch with dedicated predicates for CharacterRecord and BlockRecord
 // 2018-09-20   PV      Filter on Subheader using s:
 // 2018-09-20   PV      Filter on letters using l:
+// 2018-09-26   PV      Use helper WordStartsWithPrefix for better code detecting special flags
+// 2019-04-29   PV      ParseQuery accepts prefix:"words with spaces" since it's more natural than "prefix:words with spaces"
 
 
 using System;
@@ -89,7 +91,8 @@ namespace UniSearchUWPNS
         }
 
         // Helper that breaks white-separated words in a List<string>, but words "between quotes" are considered a single
-        // word even if they include spaces
+        // word even if they include spaces.
+        // Syntax prefix:"words with spaces" is also valid
         private static IEnumerable<string> ParseQuery(string s)
         {
             var wordsList = new List<string>();
@@ -122,7 +125,8 @@ namespace UniSearchUWPNS
                     if (c == '"')
                     {
                         inQuote = true;
-                        appendWordToList();
+                        // New rule: a " can be in the middle of a no-space sequence such as «b:"Playing Cards"»
+                        //appendWordToList();
                     }
                     else if (c == ' ')
                     {
@@ -196,10 +200,12 @@ namespace UniSearchUWPNS
                                 return false;
                         }
                     }
+#pragma warning disable CA1031 // Do not catch general exception types
                     catch (Exception)
                     {
                         return true;
                     }
+#pragma warning restore CA1031 // Do not catch general exception types
                 }
                 else
                 {
@@ -359,10 +365,12 @@ namespace UniSearchUWPNS
                             else
                                 wordFilter = Regex.IsMatch(RemoveDiacritics(cr.Name), word, isCS ? 0 : RegexOptions.IgnoreCase);
                         }
+#pragma warning disable CA1031 // Do not catch general exception types
                         catch (Exception)
                         {
                             wordFilter = true;
                         }
+#pragma warning restore CA1031 // Do not catch general exception types
                     }
                     else
                     {

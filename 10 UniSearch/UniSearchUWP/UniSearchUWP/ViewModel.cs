@@ -55,7 +55,7 @@ namespace UniSearchUWPNS
 
 
         // Dictionary of BlockNodes indexed by Begin block value, to help uncheck some blocks at the end
-        private Dictionary<int, BlockNode> BlocksBlockNodesDictionary = new Dictionary<int, BlockNode>();
+        private readonly Dictionary<int, BlockNode> BlocksBlockNodesDictionary = new Dictionary<int, BlockNode>();
 
 
         // Constructor
@@ -132,7 +132,7 @@ namespace UniSearchUWPNS
             UnselectBlock(0xDC00);       // Low Surrogates; ; Surrogates; Symbols and Punctuation
             UnselectBlock(0xE000);       // Private Use Area; ; Private Use; Symbols and Punctuation
 
-            // Unselect blocks using string match in hierarchy of greoups
+            // Unselect blocks using string match in hierarchy of groups
             UnselectName(BlocksRoot, "East Asian Scripts", false);
             UnselectName(BlocksRoot, "CJK", false);
             UnselectName(BlocksRoot, "Specials", false);
@@ -171,7 +171,7 @@ namespace UniSearchUWPNS
         // Source of CharListView and used to build the grouped version
         public ObservableCollection<CharacterRecord> CharactersRecordsFilteredList { get; set; } = new ObservableCollection<CharacterRecord>();
 
-        private CollectionViewSource _CharactersRecordsCVS = new CollectionViewSource();
+        private readonly CollectionViewSource _CharactersRecordsCVS = new CollectionViewSource();
         public CollectionViewSource CharactersRecordsCVS => _CharactersRecordsCVS;
 
         public List<BlockNode> NodesList { get; set; }
@@ -544,14 +544,6 @@ namespace UniSearchUWPNS
         // Key point: declare ma at class level to prevent GC destruction
         internal async static Task<RandomAccessStreamReference> CopyImageUsingMemoryStream(IBuffer pixelBuffer, int width, int height)
         {
-            // Crop top 10 lines into a2 array
-            //int dl = 10 * 4 * width;
-            //int fl = height * width * 4;
-            //byte[] a1 = pixelBuffer.ToArray();
-            //byte[] a2 = new byte[fl - dl];
-            //Array.Copy(a1, dl, a2, 0, fl - dl);
-            //height -= 10;
-
             byte[] pixelArray = pixelBuffer.ToArray();
 
             imas = new InMemoryRandomAccessStream();
@@ -572,10 +564,12 @@ namespace UniSearchUWPNS
             {
                 Clipboard.SetContent(dataPackage);
             }
+#pragma warning disable CA1031 // Do not catch general exception types
             catch (Exception ex)
             {
                 Debug.WriteLine("Error copying text into clipboard: " + ex.Message);
             }
+#pragma warning restore CA1031 // Do not catch general exception types
         }
 
 

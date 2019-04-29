@@ -200,11 +200,11 @@
 
         <SplitView Grid.Row="1" Name="MainSplitView" x:FieldModifier="internal" 
                    IsPaneOpen="{x:Bind SettingsButton.IsChecked, Mode=TwoWay, Converter={StaticResource nullableBooleanToBooleanConverter}}"
-                   DisplayMode="Overlay" PanePlacement="Right" OpenPaneLength="250">
+                   DisplayMode="Overlay" PanePlacement="Right" OpenPaneLength="280">
 
             <SplitView.Pane>
                 <!-- Options Panel -->
-                <Grid Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
+                <Grid Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}" >
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />

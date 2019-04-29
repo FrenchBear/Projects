@@ -22,7 +22,7 @@ namespace UniSearchUWPNS
     /// </summary>
     public sealed partial class SearchPage : Page
     {
-        ViewModel vm;
+        readonly ViewModel vm;
 
         public SearchPage()
         {
@@ -117,16 +117,15 @@ namespace UniSearchUWPNS
 
 
 
+#pragma warning disable IDE0060 // Remove unused parameter
         // Simulate "SelectionChanged" missing event with mouse and key events
         // But this is unreliable, doubletap event gets fired before SelectedNodes has been refreshed...
         private void BlocksTreeView_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            //Debug.WriteLine("BlocksTreeView_Tapped");
             vm.RefreshSelectedBlocks(true);
         }
         private void BlocksTreeView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            //Debug.WriteLine("BlocksTreeView_DoubleTapped");
             vm.RefreshSelectedBlocks(true);
         }
 
@@ -135,6 +134,19 @@ namespace UniSearchUWPNS
             if (e.Key == Windows.System.VirtualKey.Space)
                 vm.RefreshSelectedBlocks(true);
         }
+
+        private void SelectAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            BlocksTreeView.SelectAll();
+            vm.RefreshSelectedBlocks(true);
+        }
+
+        private void UnselectAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            BlocksTreeView.SelectedNodes.Clear();
+            vm.RefreshSelectedBlocks(true);
+        }
+#pragma warning restore IDE0060 // Remove unused parameter
 
 
         // On a click on a TreeViewItem text
@@ -149,7 +161,6 @@ namespace UniSearchUWPNS
                 {
                     if (cr.Block == n.Block)
                     {
-                        //Debug.WriteLine("Block invoke selected char " + cr);
                         if (IsGridViewVisible)
                             CharGridView.ScrollIntoView(cr);
                         else
@@ -157,22 +168,7 @@ namespace UniSearchUWPNS
                         return;
                     }
                 }
-                //Debug.WriteLine("Block invoke couldn't find a char to select");
             }
-        }
-
-
-
-        private void SelectAllButton_Click(object sender, RoutedEventArgs e)
-        {
-            BlocksTreeView.SelectAll();
-            vm.RefreshSelectedBlocks(true);
-        }
-
-        private void UnselectAllButton_Click(object sender, RoutedEventArgs e)
-        {
-            BlocksTreeView.SelectedNodes.Clear();
-            vm.RefreshSelectedBlocks(true);
         }
 
     }

@@ -4,9 +4,10 @@
 // 2016-12-13   PV      v2.1 Full rewrite in a separate, clean class
 // 2017-01-01   PV      v2.5.1 Exclusion of search words starting with -; move filter parsing from VM to here
 // 2018-09-08   PV      Adaptation to UniSearch with dedicated predicates for CharacterRecord and BlockRecord
-// 2018-09-20   PV      Filter on Subheader using s:
+// 2018-09-20   PV      Filter on subheader using s:
 // 2018-09-20   PV      Filter on letters using l:
 // 2018-09-26   PV      Use helper WordStartsWithPrefix for better code detecting special flags
+// 2019-04-29   PV      ParseQuery accepts prefix:"words with spaces" since it's more natural than "prefix:words with spaces"
 
 
 using System;
@@ -60,7 +61,7 @@ namespace UniSearchNS
                 {
                     //string word = isAS ? oneWord : RemoveDiacritics(oneWord);
                     // Because of l: prefix, can't remove diacritics in this app
-                    // But not really a problem since other searches use English wors without accents
+                    // But not really a problem since other searches use English words without accents
                     string word = oneWord;
 
                     // Special processing for WholeWords mode, transform each word in a Regex
@@ -91,7 +92,8 @@ namespace UniSearchNS
         }
 
         // Helper that breaks white-separated words in a List<string>, but words "between quotes" are considered a single
-        // word even if they include spaces
+        // word even if they include spaces.
+        // Syntax prefix:"words with spaces" is also valid
         private static IEnumerable<string> ParseQuery(string s)
         {
             var wordsList = new List<string>();
@@ -124,7 +126,8 @@ namespace UniSearchNS
                     if (c == '"')
                     {
                         inQuote = true;
-                        appendWordToList();
+                        // New rule: a " can be in the middle of a no-space sequence such as «b:"Playing Cards"»
+                        //appendWordToList();
                     }
                     else if (c == ' ')
                     {
@@ -292,7 +295,7 @@ namespace UniSearchNS
                     wordFilter = cr.Codepoint == n;
                 }
 
-                // If searched string starts with gc:, it's a category filter
+                // If searched string starts with GC:, it's a category filter
                 else if (WordStartsWithPrefix("GC"))
                 {
                     wordFilter = cr.CategoryRecord.CategoriesList.Any(s => string.Compare(s, word, StringComparison.OrdinalIgnoreCase) == 0);

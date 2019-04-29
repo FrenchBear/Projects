@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2026
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.202
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniSearchUWP", "UniSearchUWP\UniSearchUWP.csproj", "{1A607EBA-1578-4722-B572-F475CECE714D}"
 EndProject
@@ -22,6 +22,7 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{1A607EBA-1578-4722-B572-F475CECE714D}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{1A607EBA-1578-4722-B572-F475CECE714D}.Debug|Any CPU.Build.0 = Debug|x86
 		{1A607EBA-1578-4722-B572-F475CECE714D}.Debug|ARM.ActiveCfg = Debug|ARM
 		{1A607EBA-1578-4722-B572-F475CECE714D}.Debug|ARM.Build.0 = Debug|ARM
 		{1A607EBA-1578-4722-B572-F475CECE714D}.Debug|ARM.Deploy.0 = Debug|ARM

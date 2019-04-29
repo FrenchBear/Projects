@@ -72,7 +72,7 @@ namespace RelayCommandNS
         public bool CanExecute(object parameter)
         {
             // PV: Replace null by default(T), otherwise we've problems with RelayCommand<int> when CanExecute is not specified
-            return !_isExecuting && _underlyingCommand.CanExecute(parameter==null ? default(T) : (T)parameter);
+            return !_isExecuting && _underlyingCommand.CanExecute(parameter==null ? default : (T)parameter);
         }
 
         public event EventHandler CanExecuteChanged
