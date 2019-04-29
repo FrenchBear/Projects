@@ -60,7 +60,7 @@ namespace UniSearchUWPNS
                 {
                     //string word = isAS ? oneWord : RemoveDiacritics(oneWord);
                     // Because of l: prefix, can't remove diacritics in this app
-                    // But not really a problem since other searches use English wors without accents
+                    // But not really a problem since other searches use English words without accents
                     string word = oneWord;
 
                     // Special processing for WholeWords mode, transform each word in a Regex

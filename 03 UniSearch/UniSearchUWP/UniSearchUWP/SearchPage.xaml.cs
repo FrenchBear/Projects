@@ -14,6 +14,9 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
+#pragma warning disable IDE0060 // Remove unused parameter
+
+
 
 namespace UniSearchUWPNS
 {
