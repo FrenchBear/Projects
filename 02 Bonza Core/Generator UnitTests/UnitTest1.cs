@@ -97,7 +97,7 @@ namespace Bonza.Generator.UnitTests
         [TestMethod]
         public void TestCoverage()
         {
-            g.AddWordsFromFile(@"..\Lists\Prénoms.txt");
+            g.AddWordsFromFile(@"..\..\Lists\Prénoms.txt");
             WordPosition Pierre = g.Layout.WordPositionList.First(wp => string.Compare(wp.OriginalWord, "Pierre", StringComparison.OrdinalIgnoreCase) == 0);
             g.Layout.RemoveWordPosition(Pierre);
             g.Layout.AddWordPosition(Pierre);

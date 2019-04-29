@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>BonzaGenerator</PackageId>
+    <Authors>Pierre VIolent</Authors>
+    <Product>BonzaGenerator</Product>
+    <Copyright>Copyright ©2017-2019 Pierre Violent</Copyright>
+    <Description>Generation of Bonza puzzles: placing words, breaking in chunks</Description>
+    <AssemblyName>Bonza.Generator</AssemblyName>
+    <RootNamespace>Bonza.Generator</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>..\Output</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Immutable\Immutable.csproj" />
+  </ItemGroup>
+
+</Project>

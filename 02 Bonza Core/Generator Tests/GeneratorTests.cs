@@ -42,7 +42,7 @@ namespace Bonza.Generator.Tests
             int i;
             for (i = 0; i < 5; i++)
             {
-                if (g.AddWordsFromFile(@"..\Lists\" + file + ".txt")) break;
+                if (g.AddWordsFromFile(@"..\..\Lists\" + file + ".txt")) break;
             }
             Debug.Assert(i < 5);
             //}
@@ -56,7 +56,7 @@ namespace Bonza.Generator.Tests
         {
             Stopwatch sw = Stopwatch.StartNew();
             var g = new Bonza.Generator.Grille(123);
-            g.AddWordsFromFile(@"..\Lists\Countries.txt");
+            g.AddWordsFromFile(@"..\..\Lists\Countries.txt");
             sw.Stop();
             WriteLine("Time: " + sw.Elapsed);
             return sw.Elapsed;

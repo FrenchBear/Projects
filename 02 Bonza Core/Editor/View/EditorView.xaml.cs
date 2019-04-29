@@ -52,8 +52,8 @@ namespace Bonza.Editor.View
         public void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             // For development tests
-            viewModel.AddWordsFromFile(@"..\Lists\Fruits.txt");
-            // viewModel.LoadWordsList(@"..\Lists\Animals.txt");
+            viewModel.AddWordsFromFile(@"..\..\Lists\Fruits.txt");
+            // viewModel.LoadWordsList(@"..\..\Lists\Animals.txt");
             FinalRefreshAfterUpdate();
             RescaleAndCenter(false);
         }

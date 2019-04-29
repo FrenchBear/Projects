@@ -1,4 +1,4 @@
-﻿// ImmutabilityTests
+// ImmutabilityTests
 // Validation of types with custom attribute Immutable
 // From https://blogs.msdn.microsoft.com/kevinpilchbisson/2007/11/20/enforcing-immutability-in-code/
 // 2017-08-10   PV
@@ -54,7 +54,7 @@ public class Immutable_Tests
         if (!type.IsValueType) { return false; }
         if (type.IsEnum) { return false; }
         if (type.IsSpecialName) { return false; }
-        if (type.GetCustomAttribute(typeof(CompilerGeneratedAttribute))!=null) return false;      // PV: Can't actually control internally generated types
+        if (type.GetCustomAttribute(typeof(CompilerGeneratedAttribute)) != null) return false;      // PV: Can't actually control internally generated types
         if (type.Name.StartsWith("__", StringComparison.Ordinal)) { return false; }
         if (ReflectionHelper.TypeHasAttribute<ImmutableAttribute>(type)) { return false; }
         return true;

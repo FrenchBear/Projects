@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("BonzaGenerator")]
-[assembly: AssemblyCopyright("Copyright ©2017 Pierre Violent")]
+[assembly: AssemblyCopyright("Copyright ©2017-2019 Pierre Violent")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
