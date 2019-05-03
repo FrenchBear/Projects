@@ -63,7 +63,8 @@ namespace IntlNumbersWPF
 
         static string ChineseNumber(int n)
         {
-            Debug.Assert(n > 0 && n < 10000);
+            if (n <= 0) return "≤0";
+            if (n >= 10_000) return "≥10000";
 
             string digits = "0一二三四五六七八九";
             string ten = "十";
@@ -100,8 +101,8 @@ namespace IntlNumbersWPF
 
         static string RomanNumber(int n)
         {
-            if (n <= 0 || n >= 1_000_000)
-                return "---";
+            if (n <= 0) return "≤0";
+            if (n >= 1_000_000) return "≥1 000 000";
 
             // "IVXLCDMĪV̄X̄L̄C̄D̄M̄";
             StringBuilder sb = new StringBuilder();
