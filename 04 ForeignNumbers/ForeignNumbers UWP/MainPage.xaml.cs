@@ -65,7 +65,7 @@ namespace ForeignNumbersUWP
 
         static string ChineseNumber(int n)
         {
-            if (n <= 0 || n > 10_000)
+            if (n <= 0 || n >= 10_000)
                 return "---";
 
             string digits = "0一二三四五六七八九";
