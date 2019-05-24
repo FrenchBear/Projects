@@ -34,6 +34,7 @@
     <None Remove="Icons\swap.ico" />
     <None Remove="Icons\undo.ico" />
     <None Remove="Resources\Bonza.png" />
+    <None Remove="View\FindWordView.xaml" />
   </ItemGroup>
 
   <ItemGroup>

@@ -6,6 +6,7 @@
 
 using Bonza.Editor.Model;
 using Bonza.Editor.Support;
+using Bonza.Editor.View;
 using Bonza.Generator;
 using Microsoft.Win32;
 using System;
@@ -50,10 +51,11 @@ namespace Bonza.Editor.ViewModel
 
         // Edit
         public ICommand DeleteCommand { get; }
-
         public ICommand UndoCommand { get; }
         public ICommand SwapOrientationCommand { get; }
         public ICommand AutoPlaceCommand { get; }
+        public ICommand FindWordCommand { get; }
+
 
         // View
         public ICommand RecenterLayoutViewCommand { get; }
@@ -85,6 +87,7 @@ namespace Bonza.Editor.ViewModel
             UndoCommand = new RelayCommand<object>(UndoExecute, UndoCanExecute);
             SwapOrientationCommand = new RelayCommand<object>(SwapOrientationExecute, SwapOrientationCanExecute);
             AutoPlaceCommand = new RelayCommand<object>(AutoPlaceExecute, AutoPlaceCanExecute);
+            FindWordCommand = new RelayCommand<object>(FindWordExecute, FindWordCanExecute);
 
             // View
             RecenterLayoutViewCommand = new RelayCommand<object>(RecenterLayoutViewExecute);
@@ -92,7 +95,6 @@ namespace Bonza.Editor.ViewModel
             // Help
             AboutCommand = new RelayCommand<object>(AboutExecute);
         }
-
 
         // -------------------------------------------------
         // Simple relays to model
@@ -511,6 +513,23 @@ namespace Bonza.Editor.ViewModel
             view.EndAnimationsInProgress();
             // Delegate work to view since we have no access to Sel here
             view.AutoPlace();
+        }
+
+
+        private bool FindWordCanExecute(object obj)
+        {
+            return model.Layout != null;
+        }
+
+        private void FindWordExecute(object obj)
+        {
+            var vm = new FindWordViewModel();
+            var dlg = new FindWordView(vm);
+            vm.SetView(dlg);
+            if (dlg.ShowDialog() == true)
+                MessageBox.Show("Searching " + vm.SearchText);
+            else
+                return;
         }
 
 

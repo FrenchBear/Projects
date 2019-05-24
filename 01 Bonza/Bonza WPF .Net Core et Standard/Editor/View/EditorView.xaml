@@ -70,12 +70,13 @@
         <KeyBinding Key="N" Modifiers="Control" Command="{Binding NewLayoutCommand}" />
         <KeyBinding Key="O" Modifiers="Control" Command="{Binding LoadCommand}" />
         <KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveCommand}" />
-        <KeyBinding Key="OEMPlus" Modifiers="Shift" Command="{Binding AddWordsCommand}" />  <!-- French Keyboard, Shift is required!! -->
-        <KeyBinding Key="Add" Command="{Binding AddWordsCommand}" />     <!--  Numeric keyboard Plus -->
+        <KeyBinding Key="OEMPlus" Modifiers="Shift" Command="{Binding AddWordsCommand}" />        <!-- French Keyboard, Shift is required!! -->
+        <KeyBinding Key="Add" Command="{Binding AddWordsCommand}" />       <!--  Numeric keyboard Plus -->
         <KeyBinding Key="F5" Command="{Binding RegenerateLayoutCommand}" />
         <KeyBinding Key="Delete" Command="{Binding DeleteCommand}" />
         <KeyBinding Key="Z" Modifiers="Ctrl" Command="{Binding UndoCommand}" />
         <KeyBinding Key="B" Modifiers="Ctrl" Command="{Binding SwapOrientationCommand}" />
+        <KeyBinding Key="F" Modifiers="Ctrl" Command="{Binding FindWordCommand}" />
         <KeyBinding Key="R" Modifiers="Ctrl" Command="{Binding RecenterLayoutViewCommand}" />
     </Window.InputBindings>
 
@@ -94,7 +95,7 @@
                             <Image Source="/Icons/new.ico" Stretch="None" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Command="{Binding LoadCommand}" InputGestureText="Ctrl+O" Header="_Ouvrir une liste de mots et générer un nouveau layout...">
+                    <MenuItem Command="{Binding LoadCommand}" InputGestureText="Ctrl+O" Header="_Ouvrir une liste de mots...">
                         <MenuItem.Icon>
                             <Image Source="/Icons/open.ico" Stretch="None" />
                         </MenuItem.Icon>
@@ -142,6 +143,12 @@
                     <MenuItem Command="{Binding AutoPlaceCommand}" Header="_Place automatiquement le mot">
                         <MenuItem.Icon>
                             <Image Source="/Icons/autoplace.ico" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem Command="{Binding FindWordCommand}" Header="_Recherche un mot" InputGestureText="Ctrl+F">
+                        <MenuItem.Icon>
+                            <Image Source="/Icons/find.ico" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>

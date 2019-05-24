@@ -4,10 +4,12 @@
 // 2017-08-05   PV  First version
 
 
-using Bonza.Editor.Support;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Input;
+
+using Bonza.Editor.Support;
+
 
 namespace Bonza.Editor.ViewModel
 {
@@ -22,10 +24,8 @@ namespace Bonza.Editor.ViewModel
         // Implementation of INotifyPropertyChanged, standard since View is only linked through DataBinding
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void NotifyPropertyChanged(string name)
-        {
+        private void NotifyPropertyChanged(string name) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
 
 
         // Commands
