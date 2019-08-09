@@ -2,7 +2,7 @@
 // Unicode Character Search Tool
 //
 // 2018-09-10   PV
-
+// 2019-08-09   PV      1.1 .Net Core 3.0, C#8, Nullable
 
 using System;
 using System.Windows;

@@ -5,6 +5,12 @@
     <RootNamespace>UniDataNS</RootNamespace>
     <Platforms>x86;AnyCPU</Platforms>
     <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <Version>1.4.0</Version>
+    <Authors>Pierre Violent</Authors>
+    <Company>Pierre Violent</Company>
+    <Copyright>Copyright ©2018-2019 Pierre Violent</Copyright>
+    <Description>Unicode characters and blocks information (Unicode 12) [.Net Core 3 C#8 Nullable]</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">

@@ -8,7 +8,7 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("UniSearch")]
-[assembly: AssemblyDescription("Unicode Character Search Tool, WPF Version")]
+[assembly: AssemblyDescription("Unicode Character Search Tool [WPF, .Net Framework 4.8]")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("UniSearch")]

@@ -6,6 +6,10 @@
     <UseWPF>true</UseWPF>
     <Platforms>x86;AnyCPU</Platforms>
     <LangVersion>8.0</LangVersion>
+    <Authors>Pierre VIolent</Authors>
+    <Copyright>Copyright ©2018-2019 Pierre Violent</Copyright>
+    <Version>1.1.0</Version>
+    <Description>Unicode Character Search Tool [WPF .Net Core 3 C#8 Nullable]</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">

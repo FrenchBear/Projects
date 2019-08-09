@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("UniData")]
-[assembly: AssemblyDescription("Unicode characters and blocks information (Unicode 12)")]
+[assembly: AssemblyDescription("Unicode characters and blocks information (Unicode 12) [.Net Framework 4.8]")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("UniData")]
