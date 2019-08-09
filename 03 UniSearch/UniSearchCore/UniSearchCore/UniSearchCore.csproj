@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Platforms>x86;AnyCPU</Platforms>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Unicorn.ico" />
+    <None Remove="Unicorn.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DirectDrawWrite\DirectDrawWrite.csproj" />
+    <ProjectReference Include="..\UniDataCore\UniDataCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Unicorn.ico" />
+    <Resource Include="Unicorn.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="CharDetailWindow.xaml.cs">
+      <DependentUpon>CharDetailWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="SearchWindow.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>SearchWindow.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="AboutWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="CharDetailWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="SearchWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
+</Project>

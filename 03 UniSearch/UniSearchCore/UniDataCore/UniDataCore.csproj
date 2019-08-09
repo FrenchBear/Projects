@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <RootNamespace>UniDataNS</RootNamespace>
+    <Platforms>x86;AnyCPU</Platforms>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="UCD\DerivedAge.txt" />
+    <None Remove="UCD\MetaBlocks.txt" />
+    <None Remove="UCD\NamesList.txt" />
+    <None Remove="UCD\UnicodeData.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="UCD\DerivedAge.txt" />
+    <EmbeddedResource Include="UCD\MetaBlocks.txt" />
+    <EmbeddedResource Include="UCD\NamesList.txt" />
+    <EmbeddedResource Include="UCD\UnicodeData.txt" />
+  </ItemGroup>
+
+</Project>

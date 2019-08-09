@@ -1,0 +1,219 @@
+Latin Extended-B
+  Miscellaneous addition                   1
+  Miscellaneous additions                  29
+
+Greek and Coptic
+  Letter                                   1
+  Letters                                  68
+
+Greek and Coptic
+  Variant letterform                       1
+  Variant letterforms                      12
+
+Arabic
+  Quranic annotation sign                  1
+  Quranic annotation signs                 28
+
+Arabic
+  Extended Arabic letter                   1
+  Extended Arabic letters                  101
+
+Devanagari
+  Dependent vowel sign                     1
+  Dependent vowel signs                    19
+
+Bengali
+  Additional consonant                     1
+  Additional consonants                    3
+
+Bengali
+  Sign                                     2
+  Signs                                    3
+
+Gurmukhi
+  Sign                                     1
+  Signs                                    5
+
+Oriya
+  Additional consonant                     1
+  Additional consonants                    3
+
+Malayalam
+  Dependent vowel sign                     1
+  Dependent vowel signs                    10
+
+Sinhala
+  Dependent vowel sign                     1
+  Dependent vowel signs                    11
+
+Thai
+  Sign                                     1
+  Signs                                    6
+
+Thai
+  Vowel                                    1
+  Vowels                                   16
+
+Lao
+  Sign                                     1
+  Signs                                    4
+
+Myanmar
+  Consonant                                1
+  Consonants                               33
+
+Georgian
+  Additional letter                        1
+  Additional letters                       2
+
+Batak
+  Sign                                     1
+  Signs                                    2
+
+Phonetic Extensions
+  Latin letter                             1
+  Latin letters                            38
+
+Combining Diacritical Marks Supplement
+  Miscellaneous mark                       3
+  Miscellaneous marks                      2
+
+Latin Extended Additional
+  Medievalist addition                     1
+  Medievalist additions                    8
+
+General Punctuation
+  Space                                    1
+  Spaces                                   11
+
+General Punctuation
+  Format character                         1
+  Format characters                        17
+
+Number Forms
+  Fraction                                 1
+  Fractions                                16
+
+Mathematical Operators
+  Miscellaneous mathematical symbol        3
+  Miscellaneous mathematical symbols       14
+
+Mathematical Operators
+  Operator                                 3
+  Operators                                46
+
+Mathematical Operators
+  Relation                                 3
+  Relations                                151
+
+Miscellaneous Technical
+  Keyboard symbol                          1
+  Keyboard symbols                         5
+
+Miscellaneous Technical
+  Special character extension              1
+  Special character extensions             2
+
+Miscellaneous Symbols
+  Miscellaneous symbol                     4
+  Miscellaneous symbols                    14
+
+Miscellaneous Symbols
+  Gender symbol                            1
+  Gender symbols                           8
+
+Miscellaneous Symbols
+  Zodiacal symbol                          1
+  Zodiacal symbols                         12
+
+Dingbats
+  Dingbat arrow                            1
+  Dingbat arrows                           38
+
+Miscellaneous Mathematical Symbols-A
+  Miscellaneous symbol                     3
+  Miscellaneous symbols                    8
+
+Supplemental Arrows-B
+  Miscellaneous arrow                      1
+  Miscellaneous arrows                     35
+
+Supplemental Mathematical Operators
+  Miscellaneous mathematical operator      1
+  Miscellaneous mathematical operators     9
+
+Supplemental Punctuation
+  Palaeotype transliteration symbol        1
+  Palaeotype transliteration symbols       5
+
+CJK Symbols and Punctuation
+  CJK symbol                               1
+  CJK symbols                              2
+
+Enclosed CJK Letters and Months
+  Squared Latin abbreviation               1
+  Squared Latin abbreviations              4
+
+Enclosed CJK Letters and Months
+  Circled Hangul syllable                  1
+  Circled Hangul syllables                 14
+
+CJK Compatibility
+  Squared Latin abbreviation               1
+  Squared Latin abbreviations              102
+
+Latin Extended-D
+  Additional letter                        2
+  Additional letters                       8
+
+Phags-pa
+  Vowel                                    1
+  Vowels                                   4
+
+Phags-pa
+  Subjoined consonant                      1
+  Subjoined consonants                     2
+
+Chakma
+  Consonant                                1
+  Consonants                               32
+
+Grantha
+  Dependent vowel sign                     1
+  Dependent vowel signs                    11
+
+Musical Symbols
+  Rest                                     1
+  Rests                                    9
+
+Musical Symbols
+  Miscellaneous symbol                     1
+  Miscellaneous symbols                    5
+
+Musical Symbols
+  Accidental                               2
+  Accidentals                              10
+
+Musical Symbols
+  Clef                                     1
+  Clefs                                    11
+
+Miscellaneous Symbols and Pictographs
+  Miscellaneous symbol                     3
+  Miscellaneous symbols                    16
+
+Miscellaneous Symbols and Pictographs
+  Religious symbol                         1
+  Religious symbols                        15
+
+Miscellaneous Symbols and Pictographs
+  Game symbol                              1
+  Game symbols                             7
+
+Miscellaneous Symbols and Pictographs
+  Role symbol                              1
+  Role symbols                             3
+
+Miscellaneous Symbols and Pictographs
+  Heart symbol                             1
+  Heart symbols                            13
