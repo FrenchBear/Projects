@@ -3,7 +3,6 @@
 //
 // 2017-07-22   PV  First version
 
-
 using Bonza.Editor.ViewModel;
 using Bonza.Generator;
 using System.Collections.Generic;
@@ -65,7 +64,7 @@ namespace Bonza.Editor.Model
 
 
         // Check if a WordPosition can be placed at specific location in given layout
-        internal PlaceWordStatus CanPlaceWordAtPositionInLayout(WordPositionLayout layout, WordPosition wordPosition, PositionOrientation position)
+        internal static PlaceWordStatus CanPlaceWordAtPositionInLayout(WordPositionLayout layout, WordPosition wordPosition, PositionOrientation position)
         {
             WordPosition testWordPosition = new WordPosition(wordPosition.Word, wordPosition.OriginalWord, position);
             return layout.CanPlaceWord(testWordPosition, true);

@@ -9,6 +9,7 @@ using System.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
+#pragma warning disable IDE0060 // Remove unused parameter
 
 namespace ForeignNumbersUWP
 {

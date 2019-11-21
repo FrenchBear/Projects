@@ -207,7 +207,7 @@ namespace UniSearchNS
             }
         }
 
-        public int NumChars => UniData.CharacterRecords.Count;
+        public int GetNumChars() => UniData.CharacterRecords.Count;
 
         public int NumBlocks => BlocksCheckableNodesDictionary.Count;
 

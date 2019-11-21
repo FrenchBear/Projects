@@ -43,28 +43,28 @@ namespace LearningKeyboard
 
         private static string GetCharsFromKeys2AfterDiacritical(Keys dic, bool shiftDic, bool altGrDic, Keys vk, bool shift, bool altGr)
         {
-            GetCharsFromKeys(dic, shiftDic, altGrDic, out bool b0);
-            string s = GetCharsFromKeys(vk, shift, altGr, out bool b1);
-            GetCharsFromKeys(Keys.Space, false, false, out bool b2);
+            GetCharsFromKeys(dic, shiftDic, altGrDic, out bool _);
+            string s = GetCharsFromKeys(vk, shift, altGr, out bool _);
+            GetCharsFromKeys(Keys.Space, false, false, out bool _);
             return s;
         }
 
         private static string GetCharsFromKeys2Simplified(Keys vk, bool shift, bool altGr)
         {
-            string s = GetCharsFromKeys(vk, shift, altGr, out bool b1);
-            GetCharsFromKeys(Keys.Space, false, false, out bool b2);
+            string s = GetCharsFromKeys(vk, shift, altGr, out bool _);
+            GetCharsFromKeys(Keys.Space, false, false, out bool _);
             return s;
         }
 
-        // The apparently useless calls to GetCharsFromKeys
-        // clean internal buffer state, perturbed by previous diacritical
-        // characters such as ~ or ^
-        private static (string, bool) GetCharsFromKeys2(Keys vk, bool shift, bool altGr)
-        {
-            string s = GetCharsFromKeys(vk, shift, altGr, out bool b1);
-            GetCharsFromKeys(Keys.Space, false, false, out bool b2);
-            return (s, b1);
-        }
+        //// The apparently useless calls to GetCharsFromKeys
+        //// clean internal buffer state, perturbed by previous diacritical
+        //// characters such as ~ or ^
+        //private static (string, bool) GetCharsFromKeys2(Keys vk, bool shift, bool altGr)
+        //{
+        //    string s = GetCharsFromKeys(vk, shift, altGr, out bool b1);
+        //    GetCharsFromKeys(Keys.Space, false, false, out bool _);
+        //    return (s, b1);
+        //}
 
         private static string GetCharsFromKeys(Keys keys, bool shift, bool altGr, out bool isDeadKey)
         {

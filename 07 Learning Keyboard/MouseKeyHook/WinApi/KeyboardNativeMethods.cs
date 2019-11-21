@@ -154,8 +154,7 @@ namespace Gma.System.MouseKeyHook.WinApi
         private static IntPtr GetActiveKeyboard()
         {
             IntPtr hActiveWnd = ThreadNativeMethods.GetForegroundWindow(); //handle to focused window
-            int dwProcessId;
-            int hCurrentWnd = ThreadNativeMethods.GetWindowThreadProcessId(hActiveWnd, out dwProcessId);
+            int hCurrentWnd = ThreadNativeMethods.GetWindowThreadProcessId(hActiveWnd, out int _);
             //thread of focused window
             return GetKeyboardLayout(hCurrentWnd); //get the layout identifier for the thread whose window is focused
         }

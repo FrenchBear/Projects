@@ -4,7 +4,7 @@ namespace VirtualDesktopManager
 {
     internal static class Native
     {
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         internal static extern int SystemParametersInfo(
             uint uAction,
             uint uParam,

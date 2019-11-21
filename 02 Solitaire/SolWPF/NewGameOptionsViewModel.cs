@@ -82,10 +82,13 @@ namespace SolWPF
 
 
 
+
         // =====================================================================================================
         // IDataErrorInfo
 
+#pragma warning disable CA1822 // Mark members as static
         public string Error
+#pragma warning restore CA1822 // Mark members as static
         {
             get { return null; }
         }

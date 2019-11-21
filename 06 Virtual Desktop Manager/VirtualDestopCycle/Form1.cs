@@ -6,6 +6,8 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using WindowsDesktop;
 
+#pragma warning disable CA1031 // Do not catch general exception types
+
 namespace VirtualDesktopManager
 {
     public partial class Form1 : Form
@@ -111,7 +113,7 @@ namespace VirtualDesktopManager
         {
             labelStatus.Text = "";
 
-            var desktop = InitialDesktopState();
+            InitialDesktopState();
             ChangeTrayIcon();
 
             this.Visible = false;
@@ -235,9 +237,7 @@ namespace VirtualDesktopManager
                         "Item Select", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 }
             }
-#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
             catch (Exception)
-#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             {
             }
         }
@@ -269,9 +269,7 @@ namespace VirtualDesktopManager
                         "Item Select", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 }
             }
-#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
             catch (Exception)
-#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             {
             }
         }
@@ -327,9 +325,7 @@ namespace VirtualDesktopManager
                     listView1.Items.Remove(selected);
                 }
             }
-#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
             catch (Exception)
-#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             {
             }
         }

@@ -72,16 +72,16 @@ namespace LearningKeyboard
             NotificationIcon.Text = aTitleAttr.Title+" "+sAssemblyVersion;
         }
 
-        private static Stream GetInternalConfigFile(string fileName)
-        {
-            // Internal resource
-            Type type = typeof(KeyboardKey);      // Trick to get base namespace instead of hardcoding the string Eurofins.SharedComponents.RounLib
-            string streamName = type.FullName.Substring(0, type.FullName.LastIndexOf('.')) + ".Resources." + fileName;
-            Stream manifestStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(streamName);
-            if (manifestStream == null)
-                throw new ArgumentException("Invalid internal resource name " + fileName);
-            return manifestStream;
-        }
+        //private static Stream GetInternalConfigFile(string fileName)
+        //{
+        //    // Internal resource
+        //    Type type = typeof(KeyboardKey);      // Trick to get base namespace instead of hardcoding the string Eurofins.SharedComponents.RounLib
+        //    string streamName = type.FullName.Substring(0, type.FullName.LastIndexOf('.')) + ".Resources." + fileName;
+        //    Stream manifestStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(streamName);
+        //    if (manifestStream == null)
+        //        throw new ArgumentException("Invalid internal resource name " + fileName);
+        //    return manifestStream;
+        //}
 
         private void ApplyWPFTextOptions()
         {
@@ -99,7 +99,7 @@ namespace LearningKeyboard
             }
         }
 
-        private Dictionary<Tuple<Keys, bool, bool>, List<Tuple<string, string>>> dicCombi = new Dictionary<Tuple<Keys, bool, bool>, List<Tuple<string, string>>>();
+        private readonly Dictionary<Tuple<Keys, bool, bool>, List<Tuple<string, string>>> dicCombi = new Dictionary<Tuple<Keys, bool, bool>, List<Tuple<string, string>>>();
 
         private void PrepareDicraticalCombinations()
         {
@@ -124,11 +124,11 @@ namespace LearningKeyboard
         {
             m_GlobalHook = Hook.GlobalEvents();
 
-            m_GlobalHook.KeyDown += M_GlobalHook_KeyDown;
-            m_GlobalHook.KeyUp += M_GlobalHook_KeyUp;
+            m_GlobalHook.KeyDown += GlobalHook_KeyDown;
+            m_GlobalHook.KeyUp += GlobalHook_KeyUp;
         }
 
-        private void M_GlobalHook_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        private void GlobalHook_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             if (e is KeyEventArgsExt e2)
             {
@@ -176,7 +176,7 @@ namespace LearningKeyboard
             }
         }
 
-        private void M_GlobalHook_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
+        private void GlobalHook_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             if (e is KeyEventArgsExt e2)
             {
@@ -242,7 +242,7 @@ namespace LearningKeyboard
 
             int rm = bo + 15 * m + 14 * sp + ms;     // Right margin
 
-            int xc = 0, yc = 0;
+            int xc, yc;
             int nextX(int w) { int xs = xc; xc += w + sp; return xs; }
 
             xc = bo;
@@ -339,7 +339,7 @@ namespace LearningKeyboard
         }
 
 
-        private static Brush DarkerBrush = new SolidColorBrush(Color.FromArgb(64, 40, 40, 40));
+        private static readonly Brush DarkerBrush = new SolidColorBrush(Color.FromArgb(64, 40, 40, 40));
 
         private void ApplyColorScheme()
         {

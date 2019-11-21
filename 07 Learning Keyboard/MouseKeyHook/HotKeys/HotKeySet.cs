@@ -121,11 +121,7 @@ namespace Gma.System.MouseKeyHook.HotKeys
         ///     General invocation handler
         /// </summary>
         /// <param name="hotKeyDelegate"></param>
-        private void InvokeHotKeyHandler(HotKeyHandler hotKeyDelegate)
-        {
-            if (hotKeyDelegate != null)
-                hotKeyDelegate(this, new HotKeyArgs(DateTime.Now));
-        }
+        private void InvokeHotKeyHandler(HotKeyHandler hotKeyDelegate) => hotKeyDelegate?.Invoke(this, new HotKeyArgs(DateTime.Now));
 
         /// <summary>
         ///     Adds the keys into the dictionary tracking the keys and gets the real-time status of the Keys

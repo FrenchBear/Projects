@@ -1,8 +1,9 @@
 ﻿// Immutable.cs - Support of Immutable class attribute
 // From https://blogs.msdn.microsoft.com/kevinpilchbisson/2007/11/20/enforcing-immutability-in-code/
-
 // 2017-08-10   PV
 
+#pragma warning disable CA1032 // Implement standard exception constructors
+#pragma warning disable CA1034 // Nested types should not be visible
 
 using System;
 using System.Collections.Generic;
@@ -51,7 +52,7 @@ public sealed class ImmutableAttribute : Attribute
     }
 
     private class WritableFieldException : ImmutableFailureException
-    {
+   {
         protected WritableFieldException(SerializationInfo serializationInfo, StreamingContext streamingContext)
             : base(serializationInfo, streamingContext)
         {

@@ -136,7 +136,7 @@ namespace SolWPF
 
         private SolverDeck GetSolverDeck()
         {
-            void CopyStack(GameStack st, out List<(SolverCard, bool)> solverSt)
+            static void CopyStack(GameStack st, out List<(SolverCard, bool)> solverSt)
             {
                 solverSt = new List<(SolverCard, bool)>();
                 foreach (var c in st.PlayingCards)
@@ -356,7 +356,7 @@ namespace SolWPF
             PrintStack("Talon FD    ", TalonFD);
         }
 
-        private void PrintStack(string header, GameStack st)
+        private static void PrintStack(string header, GameStack st)
         {
             Debug.Write(header + " ");
             foreach (PlayingCard c in st.PlayingCards)

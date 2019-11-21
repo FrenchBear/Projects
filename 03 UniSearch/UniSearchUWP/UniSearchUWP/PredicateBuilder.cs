@@ -9,6 +9,7 @@
 // 2018-09-26   PV      Use helper WordStartsWithPrefix for better code detecting special flags
 // 2019-04-29   PV      ParseQuery accepts prefix:"words with spaces" since it's more natural than "prefix:words with spaces"
 
+#pragma warning disable CA1031 // Do not catch general exception types
 
 using System;
 using System.Collections.Generic;
@@ -45,7 +46,6 @@ namespace UniSearchUWPNS
                     Regex reTest = new Regex(filter);
                     words.Add(filter);
                 }
-#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                 catch (ArgumentException)
                 {
                 }
@@ -316,14 +316,14 @@ namespace UniSearchUWPNS
                         }
 
                     if (word.Length > 0 && double.TryParse(word, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture.NumberFormat, out double v))
-                        switch (op)
+                        wordFilter = op switch
                         {
-                            case ">": wordFilter = crAge > v; break;
-                            case ">=": wordFilter = crAge >= v; break;
-                            case "<": wordFilter = crAge < v; break;
-                            case "<=": wordFilter = crAge <= v; break;
-                            default: wordFilter = Math.Abs(crAge - v) < 0.001; break;
-                        }
+                            ">" => crAge > v,
+                            ">=" => crAge >= v,
+                            "<" => crAge < v,
+                            "<=" => crAge <= v,
+                            _ => Math.Abs(crAge - v) < 0.001,
+                        };
                 }
 
                 // Block filter

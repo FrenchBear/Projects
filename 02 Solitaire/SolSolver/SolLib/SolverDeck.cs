@@ -81,7 +81,7 @@ namespace SolLib
             PrintSolverStack("Talon FD    ", TalonFD);
         }
 
-        private void PrintSolverStack(string header, SolverStack st)
+        private static void PrintSolverStack(string header, SolverStack st)
         {
             Debug.Write(header + " ");
             foreach (SolverCard c in st.PlayingCards)
@@ -116,7 +116,7 @@ namespace SolLib
             Debug.Assert(TalonFD.PlayingCards.All(c => !c.IsFaceUp));
         }
 
-        private void CheckSolverStack(SolverStack st)
+        private static void CheckSolverStack(SolverStack st)
         {
             // As a safety, check that Bases and Columns are valid
             if (st.Name.StartsWith("Base", StringComparison.Ordinal))

@@ -3,6 +3,7 @@
 //
 // 2017-07-22   PV  First version
 
+#pragma warning disable CA1031 // Do not catch general exception types
 
 using Bonza.Editor.Model;
 using Bonza.Editor.Support;
@@ -111,9 +112,9 @@ namespace Bonza.Editor.ViewModel
             return model.GetLayoutExcludingWordPositionList(new List<WordPosition> { wordPosition });
         }
 
-        internal PlaceWordStatus CanPlaceWordAtPositionInLayout(WordPositionLayout layout, WordPosition wordPosition, PositionOrientation positionOrientation)
+        internal static PlaceWordStatus CanPlaceWordAtPositionInLayout(WordPositionLayout layout, WordPosition wordPosition, PositionOrientation positionOrientation)
         {
-            return model.CanPlaceWordAtPositionInLayout(layout, wordPosition, positionOrientation);
+            return EditorModel.CanPlaceWordAtPositionInLayout(layout, wordPosition, positionOrientation);
         }
 
         internal void RemoveWordPosition(WordPosition wordPosition)
@@ -131,7 +132,7 @@ namespace Bonza.Editor.ViewModel
             return Layout.CanPlaceWord(wac.WordPosition, withTooClose);
         }
 
-        internal PlaceWordStatus CanPlaceWordInLayout(WordPositionLayout layout, WordAndCanvas wac)
+        internal static PlaceWordStatus CanPlaceWordInLayout(WordPositionLayout layout, WordAndCanvas wac)
         {
             return layout.CanPlaceWord(wac.WordPosition, true);
         }

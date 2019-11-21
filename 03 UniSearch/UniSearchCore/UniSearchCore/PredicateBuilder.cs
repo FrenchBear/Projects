@@ -9,6 +9,7 @@
 // 2018-09-26   PV      Use helper WordStartsWithPrefix for better code detecting special flags
 // 2019-04-29   PV      ParseQuery accepts prefix:"words with spaces" since it's more natural than "prefix:words with spaces"
 
+#pragma warning disable CA1031 // Do not catch general exception types
 
 using System;
 using System.Collections.Generic;

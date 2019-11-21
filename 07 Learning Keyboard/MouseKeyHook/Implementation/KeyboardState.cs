@@ -93,7 +93,7 @@ namespace Gma.System.MouseKeyHook.Implementation
             int virtualKeyCode = (int) key;
             if (virtualKeyCode < 0 || virtualKeyCode > 255)
             {
-                throw new ArgumentOutOfRangeException("key", key, "The value must be between 0 and 255.");
+                throw new ArgumentOutOfRangeException(nameof(key), key, "The value must be between 0 and 255.");
             }
             return m_KeyboardStateNative[virtualKeyCode];
         }

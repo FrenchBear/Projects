@@ -16,8 +16,6 @@ using Windows.UI.Xaml.Input;
 
 #pragma warning disable IDE0060 // Remove unused parameter
 
-
-
 namespace UniSearchUWPNS
 {
     /// <summary>
@@ -149,7 +147,6 @@ namespace UniSearchUWPNS
             BlocksTreeView.SelectedNodes.Clear();
             vm.RefreshSelectedBlocks(true);
         }
-#pragma warning restore IDE0060 // Remove unused parameter
 
 
         // On a click on a TreeViewItem text

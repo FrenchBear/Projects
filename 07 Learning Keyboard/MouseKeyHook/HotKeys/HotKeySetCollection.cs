@@ -37,11 +37,7 @@ namespace Gma.System.MouseKeyHook.HotKeys
         ///     Uses a multi-case delegate to invoke individual HotKeySets if the Key is in use by any HotKeySets.
         /// </summary>
         /// <param name="e"></param>
-        internal void OnKey(KeyEventArgsExt e)
-        {
-            if (m_keyChain != null)
-                m_keyChain(e);
-        }
+        internal void OnKey(KeyEventArgsExt e) => m_keyChain?.Invoke(e);
 
         private delegate void KeyChainHandler(KeyEventArgsExt kex);
     }

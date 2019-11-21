@@ -15,7 +15,7 @@ using System.Runtime.CompilerServices;
 [TestClass]
 public class Immutable_Tests
 {
-    private IEnumerable<Assembly> AssembliesToTest
+    private static IEnumerable<Assembly> AssembliesToTest
     {
         get => new[] { typeof(Bonza.Generator.Position).Assembly };
     }

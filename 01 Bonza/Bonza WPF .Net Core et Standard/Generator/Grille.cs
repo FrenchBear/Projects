@@ -113,7 +113,7 @@ namespace Bonza.Generator
             if (words == null) throw new ArgumentNullException(nameof(words));
 
             // Plural case helper (French)
-            string S(int n) => n > 1 ? "s" : "";
+            static string S(int n) => n > 1 ? "s" : "";
 
             string result = string.Empty;
             string shortWords = words.Where(w => w.Length <= 2)
@@ -248,7 +248,7 @@ namespace Bonza.Generator
             foreach (WordPosition wordPosition in Layout.WordPositionList)
                 foreach (WordPosition placedWordPosition in TryPlace(canonizedWord, originalWord, wordPosition))
                 {
-                    BoundingRectangle newR = Layout.ExtendBounds(r, placedWordPosition);
+                    BoundingRectangle newR = WordPositionLayout.ExtendBounds(r, placedWordPosition);
                     if (newR.Equals(r))
                     {
                         if (optimization == PlaceWordOptimization.Aggressive)
@@ -325,7 +325,7 @@ namespace Bonza.Generator
             List<char> placedWordLetters = BreakLetters(placedWord.Word);
 
             // Internal helper function, returns a dictionary of (letter, count) for canonizedWord w
-            List<char> BreakLetters(string w)
+            static List<char> BreakLetters(string w)
             {
                 var set = new HashSet<char>();
                 foreach (char letter in w)
@@ -386,8 +386,8 @@ namespace Bonza.Generator
         /// <param name="fileName">Name of file to write.</param>
         public void Print(string fileName)
         {
-            using (TextWriter tw = new StreamWriter(fileName, false, Encoding.UTF8))
-                Print(tw);
+            using TextWriter tw = new StreamWriter(fileName, false, Encoding.UTF8);
+            Print(tw);
         }
 
         /// <summary>Internal low-level text output generation, writes a text representation of current layout.</summary>

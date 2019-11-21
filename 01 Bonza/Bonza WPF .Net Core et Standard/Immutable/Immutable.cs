@@ -3,6 +3,8 @@
 
 // 2017-08-10   PV
 
+#pragma warning disable CA1032 // Implement standard exception constructors
+#pragma warning disable CA1034 // Nested types should not be visible
 
 using System;
 using System.Collections.Generic;

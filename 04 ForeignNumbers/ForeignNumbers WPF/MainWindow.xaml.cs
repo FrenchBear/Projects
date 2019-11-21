@@ -3,6 +3,7 @@
 //
 // 2019-03-21   PV
 
+#pragma warning disable IDE0060 // Remove unused parameter
 
 using System;
 using System.Diagnostics;

@@ -12,18 +12,19 @@ using System.Runtime.InteropServices;
 using System.Text;
 using static System.Console;
 
+#pragma warning disable CA1031 // Do not catch general exception types
 
 namespace RunANSI
 {
-    public class Program
+    public static class Program
     {
         private static bool Verbose = false;
 
-        private const int STD_INPUT_HANDLE = -10;
+        //private const int STD_INPUT_HANDLE = -10;
         private const int STD_OUTPUT_HANDLE = -11;
         private const uint ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
-        private const uint DISABLE_NEWLINE_AUTO_RETURN = 0x0008;
-        private const uint ENABLE_VIRTUAL_TERMINAL_INPUT = 0x0200;
+        //private const uint DISABLE_NEWLINE_AUTO_RETURN = 0x0008;
+        //private const uint ENABLE_VIRTUAL_TERMINAL_INPUT = 0x0200;
 
         [DllImport("kernel32.dll")]
         private static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
@@ -35,7 +36,7 @@ namespace RunANSI
         private static extern IntPtr GetStdHandle(int nStdHandle);
 
         [DllImport("kernel32.dll")]
-        public static extern uint GetLastError();
+        private static extern uint GetLastError();
 
 
         private static void SetVTMode()

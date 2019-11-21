@@ -56,10 +56,12 @@ namespace Gma.System.MouseKeyHook.WinApi
         /// </remarks>
         public MouseStruct ToMouseStruct()
         {
-            MouseStruct tmp = new MouseStruct();
-            tmp.Point = Point;
-            tmp.MouseData = (IntPtr.Size == 4) ? MouseData_x86 : MouseData_x64;
-            tmp.Timestamp = Environment.TickCount;
+            MouseStruct tmp = new MouseStruct
+            {
+                Point = Point,
+                MouseData = (IntPtr.Size == 4) ? MouseData_x86 : MouseData_x64,
+                Timestamp = Environment.TickCount
+            };
             return tmp;
         }
     }

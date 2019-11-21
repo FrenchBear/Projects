@@ -116,36 +116,19 @@ namespace Bonza.Generator
         // Empirical function to stop accumulation of squares in a chuck around averageCount
         private bool OkAccumulation(int accumulatedCount, int averageCount)
         {
-            switch (accumulatedCount - averageCount)
+            return (accumulatedCount - averageCount) switch
             {
                 // ReSharper disable once PatternAlwaysMatches
-                case int x when x < -3:
-                    return true;
-
-                case -3:
-                    return rnd.NextDouble() < 0.95;
-
-                case -2:
-                    return rnd.NextDouble() < 0.9;
-
-                case -1:
-                    return rnd.NextDouble() < 0.8;
-
-                case 0:
-                    return rnd.NextDouble() < 0.5;
-
-                case 1:
-                    return rnd.NextDouble() < 0.2;
-
-                case 2:
-                    return rnd.NextDouble() < 0.9;
-
-                case 3:
-                    return rnd.NextDouble() < 0.05;
-
-                default:
-                    return false;
-            }
+                int x when x < -3 => true,
+                -3 => rnd.NextDouble() < 0.95,
+                -2 => rnd.NextDouble() < 0.9,
+                -1 => rnd.NextDouble() < 0.8,
+                0 => rnd.NextDouble() < 0.5,
+                1 => rnd.NextDouble() < 0.2,
+                2 => rnd.NextDouble() < 0.9,
+                3 => rnd.NextDouble() < 0.05,
+                _ => false,
+            };
         }
     }
 }

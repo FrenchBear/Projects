@@ -212,88 +212,32 @@ namespace Gma.System.MouseKeyHook.Implementation
         public event MouseEventHandler MouseDragFinished;
         public event EventHandler<MouseEventExtArgs> MouseDragFinishedExt;
 
-        protected virtual void OnMove(MouseEventArgs e)
-        {
-            var handler = MouseMove;
-            if (handler != null) handler(this, e);
-        }
+        protected virtual void OnMove(MouseEventArgs e) => MouseMove?.Invoke(this, e);
 
-        protected virtual void OnMoveExt(MouseEventExtArgs e)
-        {
-            var handler = MouseMoveExt;
-            if (handler != null) handler(this, e);
-        }
+        protected virtual void OnMoveExt(MouseEventExtArgs e) => MouseMoveExt?.Invoke(this, e);
 
-        protected virtual void OnClick(MouseEventArgs e)
-        {
-            var handler = MouseClick;
-            if (handler != null) handler(this, e);
-        }
+        protected virtual void OnClick(MouseEventArgs e) => MouseClick?.Invoke(this, e);
 
-        protected virtual void OnDown(MouseEventArgs e)
-        {
-            var handler = MouseDown;
-            if (handler != null) handler(this, e);
-        }
+        protected virtual void OnDown(MouseEventArgs e) => MouseDown?.Invoke(this, e);
 
-        protected virtual void OnDownExt(MouseEventExtArgs e)
-        {
-            var handler = MouseDownExt;
-            if (handler != null) handler(this, e);
-        }
+        protected virtual void OnDownExt(MouseEventExtArgs e) => MouseDownExt?.Invoke(this, e);
 
-        protected virtual void OnUp(MouseEventArgs e)
-        {
-            var handler = MouseUp;
-            if (handler != null) handler(this, e);
-        }
+        protected virtual void OnUp(MouseEventArgs e) => MouseUp?.Invoke(this, e);
 
-        protected virtual void OnUpExt(MouseEventExtArgs e)
-        {
-            var handler = MouseUpExt;
-            if (handler != null) handler(this, e);
-        }
+        protected virtual void OnUpExt(MouseEventExtArgs e) => MouseUpExt?.Invoke(this, e);
 
-        protected virtual void OnWheel(MouseEventArgs e)
-        {
-            var handler = MouseWheel;
-            if (handler != null) handler(this, e);
-        }
+        protected virtual void OnWheel(MouseEventArgs e) => MouseWheel?.Invoke(this, e);
 
-        protected virtual void OnWheelExt(MouseEventExtArgs e)
-        {
-            var handler = MouseWheelExt;
-            if (handler != null) handler(this, e);
-        }
+        protected virtual void OnWheelExt(MouseEventExtArgs e) => MouseWheelExt?.Invoke(this, e);
 
-        protected virtual void OnDoubleClick(MouseEventArgs e)
-        {
-            var handler = MouseDoubleClick;
-            if (handler != null) handler(this, e);
-        }
+        protected virtual void OnDoubleClick(MouseEventArgs e) => MouseDoubleClick?.Invoke(this, e);
 
-        protected virtual void OnDragStarted(MouseEventArgs e)
-        {
-            var handler = MouseDragStarted;
-            if (handler != null) handler(this, e);
-        }
+        protected virtual void OnDragStarted(MouseEventArgs e) => MouseDragStarted?.Invoke(this, e);
 
-        protected virtual void OnDragStartedExt(MouseEventExtArgs e)
-        {
-            var handler = MouseDragStartedExt;
-            if (handler != null) handler(this, e);
-        }
+        protected virtual void OnDragStartedExt(MouseEventExtArgs e) => MouseDragStartedExt?.Invoke(this, e);
 
-        protected virtual void OnDragFinished(MouseEventArgs e)
-        {
-            var handler = MouseDragFinished;
-            if (handler != null) handler(this, e);
-        }
+        protected virtual void OnDragFinished(MouseEventArgs e) => MouseDragFinished?.Invoke(this, e);
 
-        protected virtual void OnDragFinishedExt(MouseEventExtArgs e)
-        {
-            var handler = MouseDragFinishedExt;
-            if (handler != null) handler(this, e);
-        }
+        protected virtual void OnDragFinishedExt(MouseEventExtArgs e) => MouseDragFinishedExt?.Invoke(this, e);
     }
 }

@@ -460,7 +460,7 @@ namespace Bonza.Editor.View
                     int top = (int)Math.Floor(preciseTop / UnitSize + 0.5);
                     int left = (int)Math.Floor(preciseLeft / UnitSize + 0.5);
 
-                    PlaceWordStatus status = viewModel.CanPlaceWordAtPositionInLayout(m_FixedLayout, m_Sel.WordAndCanvasList[i].WordPosition, new PositionOrientation(top, left, m_Sel.WordAndCanvasList[i].WordPosition.IsVertical));
+                    PlaceWordStatus status = EditorViewModel.CanPlaceWordAtPositionInLayout(m_FixedLayout, m_Sel.WordAndCanvasList[i].WordPosition, new PositionOrientation(top, left, m_Sel.WordAndCanvasList[i].WordPosition.IsVertical));
                     RecolorizeWord(m_Sel.WordAndCanvasList[i], status);
                 }
             };
@@ -550,7 +550,7 @@ namespace Bonza.Editor.View
             foreach (WordAndCanvas wac in wordAndCanvasList)
             {
                 var layout = viewModel.GetLayoutExcludingWordPosition(wac.WordPosition);
-                PlaceWordStatus status = viewModel.CanPlaceWordInLayout(layout, wac);
+                PlaceWordStatus status = EditorViewModel.CanPlaceWordInLayout(layout, wac);
                 RecolorizeWord(wac, status);
                 if (status == PlaceWordStatus.TooClose && result == PlaceWordStatus.Valid)
                     result = PlaceWordStatus.TooClose;
@@ -601,7 +601,7 @@ namespace Bonza.Editor.View
             {
                 for (int il = 0; il < wordAndCanvasList.Count; il++)
                 {
-                    var placmentStatus = viewModel.CanPlaceWordAtPositionInLayout(layout, wordAndCanvasList[il].WordPosition, topLeftList[il]);
+                    var placmentStatus = EditorViewModel.CanPlaceWordAtPositionInLayout(layout, wordAndCanvasList[il].WordPosition, topLeftList[il]);
                     if (placmentStatus == PlaceWordStatus.Invalid || placmentStatus == PlaceWordStatus.TooClose && !isOnlyValidPlacement)
                         return false;
                 }

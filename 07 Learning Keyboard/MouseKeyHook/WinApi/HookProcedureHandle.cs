@@ -11,7 +11,9 @@ namespace Gma.System.MouseKeyHook.WinApi
     {
         private static bool _closing;
 
+#pragma warning disable CA1810 // Initialize reference type static fields inline
         static HookProcedureHandle()
+#pragma warning restore CA1810 // Initialize reference type static fields inline
         {
             Application.ApplicationExit += (sender, e) => { _closing = true; };
         }

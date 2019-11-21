@@ -14,7 +14,7 @@ using static System.Console;
 
 namespace Bonza.Generator.Tests
 {
-    public class GeneratorTestsApp
+    public static class GeneratorTestsApp
     {
         public static void Main()
         {

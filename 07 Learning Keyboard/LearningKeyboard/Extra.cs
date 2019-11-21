@@ -29,9 +29,9 @@ namespace LearningKeyboard
             m.CurrentInputLanguage = new System.Globalization.CultureInfo(hKL.ToInt32());
             //IntPtr i = LoadKeyboardLayout(hKL.ToString(), 1);
 
-            string InputLanguage = InputLanguageManager.Current.CurrentInputLanguage.ToString();
+            //string InputLanguage = InputLanguageManager.Current.CurrentInputLanguage.ToString();
 
-            InputManager im = System.Windows.Input.InputManager.Current;
+            //InputManager im = System.Windows.Input.InputManager.Current;
 
             //Debugger.Break();
 
@@ -40,7 +40,7 @@ namespace LearningKeyboard
         public static IntPtr GetActiveKeyboard()
         {
             IntPtr hActiveWnd = ThreadNativeMethods.GetForegroundWindow(); //handle to focused window
-            int hCurrentWnd = ThreadNativeMethods.GetWindowThreadProcessId(hActiveWnd, out int dwProcessId);
+            int hCurrentWnd = ThreadNativeMethods.GetWindowThreadProcessId(hActiveWnd, out int _);
             //thread of focused window
             return ThreadNativeMethods.GetKeyboardLayout(hCurrentWnd); //get the layout identifier for the thread whose window is focused
         }

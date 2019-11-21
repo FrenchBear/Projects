@@ -121,7 +121,7 @@ namespace UniSearchNS
             if (updateParent && _parent != null)
                 _parent.VerifyCheckState();
 
-            NotifyPropertyChanged("IsChecked");
+            NotifyPropertyChanged(nameof(IsChecked));
         }
 
         void VerifyCheckState()

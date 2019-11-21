@@ -53,9 +53,9 @@ namespace Bonza.Generator
         internal WordPositionLayout(WordPositionLayout copy)
         {
             m_WordPositionList.AddRange(copy.m_WordPositionList);
-            using (var e = copy.m_Squares.GetEnumerator())
-                while (e.MoveNext())
-                    m_Squares.Add(e.Current.Key, new Square(e.Current.Value));
+            using var e = copy.m_Squares.GetEnumerator();
+            while (e.MoveNext())
+                m_Squares.Add(e.Current.Key, new Square(e.Current.Value));
         }
 
 
@@ -168,7 +168,7 @@ namespace Bonza.Generator
 
         // Return layout bounds extended with a WordPosition added
         // Don't use Position version of BoundingRectangle constructor, too slow
-        internal BoundingRectangle ExtendBounds(BoundingRectangle r, WordPosition wordPosition)
+        internal static BoundingRectangle ExtendBounds(BoundingRectangle r, WordPosition wordPosition)
         {
             if (wordPosition.IsVertical)
                 return new BoundingRectangle(
@@ -437,9 +437,9 @@ namespace Bonza.Generator
 
         public void SaveLayoutAsCode(string outFile)
         {
-            using (StreamWriter sw = new StreamWriter(outFile, false, Encoding.UTF8))
-                foreach (WordPosition wordPosition in m_WordPositionList)
-                    sw.WriteLine($"g.Layout.AddWordPosition(new WordPosition(\"{wordPosition.Word}\", \"{wordPosition.OriginalWord}\", new PositionOrientation({wordPosition.StartRow}, {wordPosition.StartColumn}, {wordPosition.IsVertical.ToString().ToLower()})));");
+            using StreamWriter sw = new StreamWriter(outFile, false, Encoding.UTF8);
+            foreach (WordPosition wordPosition in m_WordPositionList)
+                sw.WriteLine($"g.Layout.AddWordPosition(new WordPosition(\"{wordPosition.Word}\", \"{wordPosition.OriginalWord}\", new PositionOrientation({wordPosition.StartRow}, {wordPosition.StartColumn}, {wordPosition.IsVertical.ToString().ToLower()})));");
         }
     }
 }

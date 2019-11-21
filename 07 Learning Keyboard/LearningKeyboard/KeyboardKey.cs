@@ -8,22 +8,22 @@ using System.Text;
 using System.Windows.Forms;
 using static LearningKeyboard.NativeMethods;
 
+#pragma warning disable IDE0060 // Remove unused parameter
 
 namespace LearningKeyboard
 {
     internal class KeyboardKey : NewKey
     {
-        private readonly string dispoNF;    // Key ref in NF-Z-71-300
-        private readonly int scanCode;
+        //private readonly string dispoNF;    // Key ref in NF-Z-71-300
+        //private readonly int scanCode;
         public readonly Keys vk;            // Windows Forms VK
         public readonly string digit;       // L5..L2 R2..R5
 
 
-
         public KeyboardKey(string dispoNF, int scanCode, string digit, NewKeyStyle style, string simpleTextOverride, int w, int h)
         {
-            this.dispoNF = dispoNF;
-            this.scanCode = scanCode;
+            //this.dispoNF = dispoNF;
+            //this.scanCode = scanCode;
             this.digit = digit;
 
             Width = w;
@@ -59,7 +59,7 @@ namespace LearningKeyboard
         private static (string, bool) GetCharsFromKeys2(Keys vk, bool shift, bool altGr)
         {
             string s = GetCharsFromKeys(vk, shift, altGr, out bool b1);
-            GetCharsFromKeys(Keys.Space, false, false, out bool b2);
+            GetCharsFromKeys(Keys.Space, false, false, out bool _);
             return (s, b1);
         }
 

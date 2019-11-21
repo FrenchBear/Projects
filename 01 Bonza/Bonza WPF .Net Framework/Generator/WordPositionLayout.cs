@@ -168,7 +168,7 @@ namespace Bonza.Generator
 
         // Return layout bounds extended with a WordPosition added
         // Don't use Position version of BoundingRectangle constructor, too slow
-        internal BoundingRectangle ExtendBounds(BoundingRectangle r, WordPosition wordPosition)
+        internal static BoundingRectangle ExtendBounds(BoundingRectangle r, WordPosition wordPosition)
         {
             if (wordPosition.IsVertical)
                 return new BoundingRectangle(

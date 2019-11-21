@@ -248,7 +248,7 @@ namespace Bonza.Generator
             foreach (WordPosition wordPosition in Layout.WordPositionList)
                 foreach (WordPosition placedWordPosition in TryPlace(canonizedWord, originalWord, wordPosition))
                 {
-                    BoundingRectangle newR = Layout.ExtendBounds(r, placedWordPosition);
+                    BoundingRectangle newR = WordPositionLayout.ExtendBounds(r, placedWordPosition);
                     if (newR.Equals(r))
                     {
                         if (optimization == PlaceWordOptimization.Aggressive)
