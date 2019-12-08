@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <Authors>Pierre Violent</Authors>
     <Copyright>(c) Pierre Violent 2019</Copyright>
     <Description>A simplified (no backtracking) Solitaire solver</Description>
@@ -11,11 +11,6 @@
     <None Remove="SolitaireDeck.badcs" />
     <None Remove="SolitaireDeck.cs.bak" />
     <None Remove="SolitaireDeck.goodcs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.0.0" />
-    <PackageReference Include="Microsoft.NetCore.Analyzers" Version="2.9.2" />
   </ItemGroup>
 
 </Project>

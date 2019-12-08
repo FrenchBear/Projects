@@ -351,8 +351,8 @@ namespace UniDataNS
             void MergeSubheaders()
             {
                 foreach (string sungularsh in blockSubheaders.Where(s => !s.EndsWith("s", StringComparison.Ordinal)))
-                    if (blockSubheaders.Contains(sungularsh + "s"))
-                        foreach (int cp in blockCodepoints)
+                    if (blockSubheaders!.Contains(sungularsh + "s"))
+                        foreach (int cp in blockCodepoints!)
                             if (char_map[cp].Subheader == sungularsh)
                                 char_map[cp].Subheader += "s";
                 blockCodepoints = null;

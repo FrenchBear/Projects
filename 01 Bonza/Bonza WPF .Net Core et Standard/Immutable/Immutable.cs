@@ -35,7 +35,6 @@ public sealed class ImmutableAttribute : Attribute
     /// [Immutable] follow the rules for immutability.
     /// </summary>
     /// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
     public static void VerifyTypesAreImmutable(IEnumerable<Assembly> assemblies, params Type[] whiteList)
     {
         var typesMarkedImmutable = from type in assemblies.GetTypes()
@@ -65,7 +64,6 @@ public sealed class ImmutableAttribute : Attribute
         {
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", MessageId = "System.String.Format(System.String,System.Object,System.Object)")]
         private static string FormatMessage(FieldInfo fieldInfo)
         {
             return string.Format("'{0}' is mutable because field '{1}' is not marked 'readonly'.", fieldInfo.DeclaringType, fieldInfo.Name);
@@ -84,7 +82,6 @@ public sealed class ImmutableAttribute : Attribute
         {
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", MessageId = "System.String.Format(System.String,System.Object,System.Object,System.Object)")]
         private static string FormatMessage(FieldInfo fieldInfo)
         {
             return string.Format("'{0}' is mutable because '{1}' of type '{2}' is mutable.", fieldInfo.DeclaringType, fieldInfo.Name, fieldInfo.FieldType);
@@ -103,15 +100,13 @@ public sealed class ImmutableAttribute : Attribute
         {
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", MessageId = "System.String.Format(System.String,System.Object,System.Object)")]
         private static string FormatMessage(Type type)
         {
             return string.Format("'{0}' is mutable because its base type ('[{1}]') is mutable.", type, type.BaseType);
         }
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2237:MarkISerializableTypesWithSerializable")]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors")]
+
     public class ImmutableFailureException : Exception
     {
         public readonly Type Type;
@@ -138,7 +133,6 @@ public sealed class ImmutableAttribute : Attribute
     /// Ensures that 'type' follows the rules for immutability
     /// </summary>
     /// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
     public static void VerifyTypeIsImmutable(Type type, IEnumerable<Type> whiteList)
     {
         if (whiteList.Contains(type))

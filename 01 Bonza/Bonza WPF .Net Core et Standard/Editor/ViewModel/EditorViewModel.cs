@@ -3,8 +3,6 @@
 //
 // 2017-07-22   PV  First version
 
-#pragma warning disable CA1031 // Do not catch general exception types
-
 using Bonza.Editor.Model;
 using Bonza.Editor.Support;
 using Bonza.Editor.View;

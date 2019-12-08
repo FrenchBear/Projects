@@ -2,3 +2,6 @@
 
 # IDE0022: Use expression body for methods
 csharp_style_expression_bodied_methods = true:none
+
+# CA1031: Do not catch general exception types
+dotnet_diagnostic.CA1031.severity = none
