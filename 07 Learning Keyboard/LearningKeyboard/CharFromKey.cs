@@ -66,7 +66,7 @@ namespace LearningKeyboard
         //    return (s, b1);
         //}
 
-        private static string GetCharsFromKeys(Keys keys, bool shift, bool altGr, out bool isDeadKey)
+        internal static string GetCharsFromKeys(Keys keys, bool shift, bool altGr, out bool isDeadKey)
         {
             var buf = new StringBuilder(256);
             var keyboardState = new byte[256];
@@ -86,6 +86,7 @@ namespace LearningKeyboard
             }
             else
                 isDeadKey = false;
+            if (n > buf.Length) n = buf.Length;
             return buf.ToString().Substring(0, n);
         }
     }

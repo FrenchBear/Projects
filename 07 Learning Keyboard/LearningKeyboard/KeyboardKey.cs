@@ -58,33 +58,33 @@ namespace LearningKeyboard
         // characters such as ~ or ^
         private static (string, bool) GetCharsFromKeys2(Keys vk, bool shift, bool altGr)
         {
-            string s = GetCharsFromKeys(vk, shift, altGr, out bool b1);
-            GetCharsFromKeys(Keys.Space, false, false, out bool _);
+            string s = CharFromKey.GetCharsFromKeys(vk, shift, altGr, out bool b1);
+            CharFromKey.GetCharsFromKeys(Keys.Space, false, false, out bool _);
             return (s, b1);
         }
 
 
-        private static string GetCharsFromKeys(Keys keys, bool shift, bool altGr, out bool isDeadKey)
-        {
-            var buf = new StringBuilder(256);
-            var keyboardState = new byte[256];
-            if (shift)
-                keyboardState[(int)Keys.ShiftKey] = 0xff;
-            if (altGr)
-            {
-                keyboardState[(int)Keys.ControlKey] = 0xff;
-                keyboardState[(int)Keys.Menu] = 0xff;
-            }
+    //    private static string GetCharsFromKeys(Keys keys, bool shift, bool altGr, out bool isDeadKey)
+    //    {
+    //        var buf = new StringBuilder(256);
+    //        var keyboardState = new byte[256];
+    //        if (shift)
+    //            keyboardState[(int)Keys.ShiftKey] = 0xff;
+    //        if (altGr)
+    //        {
+    //            keyboardState[(int)Keys.ControlKey] = 0xff;
+    //            keyboardState[(int)Keys.Menu] = 0xff;
+    //        }
 
-            int n = ToUnicode((uint)keys, 0, keyboardState, buf, 256, 0);
-            if (n < 0)
-            {
-                isDeadKey = true;
-                n = 1;
-            }
-            else
-                isDeadKey = false;
-            return buf.ToString().Substring(0, n);
-        }
+    //        int n = ToUnicode((uint)keys, 0, keyboardState, buf, 256, 0);
+    //        if (n < 0)
+    //        {
+    //            isDeadKey = true;
+    //            n = 1;
+    //        }
+    //        else
+    //            isDeadKey = false;
+    //        return buf.Length==0 ? "" : buf.ToString().Substring(0, n);
+    //    }
     }
 }
