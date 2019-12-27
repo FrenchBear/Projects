@@ -6,14 +6,14 @@
   IgnorableNamespaces="uap mp">
 
   <Identity Name="4a2a71f2-a458-419e-9422-bbe47bc4e634"
-            Publisher="CN=Pierre"
-            Version="1.0.0.0" />
+            Publisher="CN=Pierre Violent"
+            Version="1.0.1.0" />
 
   <mp:PhoneIdentity PhoneProductId="4a2a71f2-a458-419e-9422-bbe47bc4e634" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>UniDataTestProject</DisplayName>
-    <PublisherDisplayName>Pierre</PublisherDisplayName>
+    <PublisherDisplayName>Pierre Violent</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 

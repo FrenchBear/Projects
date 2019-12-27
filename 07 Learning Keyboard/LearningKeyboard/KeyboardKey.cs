@@ -14,16 +14,12 @@ namespace LearningKeyboard
 {
     internal class KeyboardKey : NewKey
     {
-        //private readonly string dispoNF;    // Key ref in NF-Z-71-300
-        //private readonly int scanCode;
         public readonly Keys vk;            // Windows Forms VK
         public readonly string digit;       // L5..L2 R2..R5
 
 
         public KeyboardKey(string dispoNF, int scanCode, string digit, NewKeyStyle style, string simpleTextOverride, int w, int h)
         {
-            //this.dispoNF = dispoNF;
-            //this.scanCode = scanCode;
             this.digit = digit;
 
             Width = w;
@@ -63,28 +59,5 @@ namespace LearningKeyboard
             return (s, b1);
         }
 
-
-    //    private static string GetCharsFromKeys(Keys keys, bool shift, bool altGr, out bool isDeadKey)
-    //    {
-    //        var buf = new StringBuilder(256);
-    //        var keyboardState = new byte[256];
-    //        if (shift)
-    //            keyboardState[(int)Keys.ShiftKey] = 0xff;
-    //        if (altGr)
-    //        {
-    //            keyboardState[(int)Keys.ControlKey] = 0xff;
-    //            keyboardState[(int)Keys.Menu] = 0xff;
-    //        }
-
-    //        int n = ToUnicode((uint)keys, 0, keyboardState, buf, 256, 0);
-    //        if (n < 0)
-    //        {
-    //            isDeadKey = true;
-    //            n = 1;
-    //        }
-    //        else
-    //            isDeadKey = false;
-    //        return buf.Length==0 ? "" : buf.ToString().Substring(0, n);
-    //    }
     }
 }

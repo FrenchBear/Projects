@@ -551,6 +551,7 @@ namespace UniDataNS
         /// <returns>An enumeration of CharacterRecord from str</returns>
         public static IEnumerable<CharacterRecord> EnumCharacterRecords(this string str)
         {
+            if (str == null) throw new ArgumentNullException(nameof(str));
             for (int i = 0; i < str.Length; i++)
             {
                 int cp = (int)str[i];

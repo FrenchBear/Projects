@@ -2,18 +2,17 @@
 // Formatting numbers in Roman, Arabic and Chinese
 //
 // 2019-03-21   PV
-// 2919-12-27   PV      Icon
+// 2019-12-27   PV      WPF Core; Icon
 
+#nullable enable
 #pragma warning disable IDE0060 // Remove unused parameter
 
 using System;
-using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
-
-namespace IntlNumbersWPF
+namespace IntlNumbersWPFCore
 {
     public partial class MainWindow : Window
     {
@@ -56,7 +55,7 @@ namespace IntlNumbersWPF
         {
             string digits = "٠١٢٣٤٥٦٧٨٩";
             string s = n.ToString();
-            for(int d=0; d<=9; d++)
+            for (int d = 0; d <= 9; d++)
             {
                 s = s.Replace((char)('0' + d), digits[d]);
             }

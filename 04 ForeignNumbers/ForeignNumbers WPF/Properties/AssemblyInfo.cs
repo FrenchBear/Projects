@@ -8,11 +8,11 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("ForeignNumbersWPF")]
-[assembly: AssemblyDescription("Formatting numbers in Arabic and Chinese")]
+[assembly: AssemblyDescription("Formatting numbers in Roman, Arabic and Chinese")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("ForeignNumbersWPF")]
-[assembly: AssemblyCopyright("Copyright ©2019 Pierre Violent")]
+[assembly: AssemblyCopyright("Copyright ©2019-2020 Pierre Violent")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -51,5 +51,5 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.0.1.0")]
+[assembly: AssemblyFileVersion("1.0.1.0")]

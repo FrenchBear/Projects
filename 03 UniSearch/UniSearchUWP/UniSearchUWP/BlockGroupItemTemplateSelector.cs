@@ -20,9 +20,11 @@ namespace UniSearchUWPNS
         // Used by binding
         protected override DataTemplate SelectTemplateCore(object item)
         {
-            var blockItem = (BlockNode)item;
-            if (blockItem.Level == 0) return BlockTemplate;
-            if (blockItem.Level == 1) return GroupL1Template;
+            if (item is BlockNode blockItem)
+            {
+                if (blockItem.Level == 0) return BlockTemplate;
+                if (blockItem.Level == 1) return GroupL1Template;
+            }
             return GroupTemplate;
         }
     }

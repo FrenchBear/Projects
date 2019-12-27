@@ -39,6 +39,8 @@ namespace UniSearchUWPNS
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
+            if (args == null) throw new ArgumentNullException(nameof(args));
+
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
             if (!(Window.Current.Content is Frame rootFrame))

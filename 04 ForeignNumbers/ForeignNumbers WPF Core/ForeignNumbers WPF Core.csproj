@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>IntlNumbersWPFCore</RootNamespace>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>ForeignNumbers.ico</ApplicationIcon>
+    <Description>Formatting numbers in Roman, Arabic and Chinese</Description>
+    <Copyright>© 2019-2020 Pierre Violent</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="ForeignNumbers.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="ForeignNumbers.ico" />
+  </ItemGroup>
+
+</Project>
