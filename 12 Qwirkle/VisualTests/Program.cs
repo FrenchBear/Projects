@@ -12,22 +12,24 @@ namespace VisualTests
             var b = new Board();
             b.AddTile((0, 0), "A3");
             b.UpdateBoardPlayability();
-            TracePrint(b);
             b.PlayTile((0, 1), "A4");
             b.UpdatePlayedPlayability();
             TracePrint(b);
-            b.CommitPlay();
+            b.PlayTile((1, 0), "B3");
+            b.UpdatePlayedPlayability();
             TracePrint(b);
+            //b.CommitPlay();
+            //TracePrint(b);
         }
 
         private static void TracePrint(Board b)
         {
             b.Print("// ");
-            for (int row = b.RowMin; row <= b.RowMax; row++)
-                for (int col = b.ColMin; col <= b.ColMax; col++)
-                    if (!string.IsNullOrEmpty(b[(row, col)].ToString()))
-                        WriteLine($"Assert.AreEqual(b[({row},{col})].ToString(), \"{b[(row, col)].ToString()}\");");
-            WriteLine();
+            //for (int row = b.RowMin; row <= b.RowMax; row++)
+            //    for (int col = b.ColMin; col <= b.ColMax; col++)
+            //        if (!string.IsNullOrEmpty(b[(row, col)].ToString()))
+            //            WriteLine($"Assert.AreEqual(b[({row},{col})].ToString(), \"{b[(row, col)].ToString()}\");");
+            //WriteLine();
         }
     }
 }

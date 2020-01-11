@@ -56,11 +56,38 @@ namespace QwirkleLib
 
         public void SetPlayedSquare((int row, int col) coord, Square value)
         {
+            // Can't play over a tiled board square
+            if (BoardDict.ContainsKey(coord))
+                Debug.Assert(BoardDict[coord].Tile == null);
+            // Can't play over a tiled or blocked played square
             if (PlayedDict.ContainsKey(coord))
             {
-                var s = PlayedDict[coord];
+                Square s = PlayedDict[coord];
                 Debug.Assert(s.State == SquareState.Playable || s.State == SquareState.Unknown || s.State == SquareState.Empty);
             }
+
+            // If we place a tile, check constraints
+            if (value.Tile != null)
+            {
+                if (!PlayedDict.ContainsKey(coord))
+                    PlayedDict[coord] = Square.Empty;
+                UpdateSquarePlayability(coord, true);
+                var ps = PlayedDict[coord];
+                Debug.Assert(ps.State == SquareState.Playable);
+
+                Debug.Assert(ps.ShapeConstraint != null);
+                var sc = ps.ShapeConstraint.Value;
+                bool matchShapeConstraint = false;
+                if (sc.LineAttribute >= 0) matchShapeConstraint= sc.LineAttribute==value.Tile.Shape &&  (sc.BlockedMask & (1 << value.Tile.Color)) == 0;
+
+                Debug.Assert(ps.ColorConstraint != null);
+                bool matchColorConstraint = false;
+                var cc = ps.ColorConstraint.Value;
+                if (cc.LineAttribute >= 0) matchColorConstraint = cc.LineAttribute == value.Tile.Color && (sc.BlockedMask & (1 << value.Tile.Shape)) == 0;
+
+                Debug.Assert(matchShapeConstraint || matchColorConstraint);
+            }
+
             PlayedDict[coord] = value;
             if (coord.row < RowMinPlayed) RowMinPlayed = coord.row;
             if (coord.row > RowMaxPlayed) RowMaxPlayed = coord.row;
@@ -249,7 +276,7 @@ namespace QwirkleLib
         /// <summary>
         /// Simple text print of the board
         /// </summary>
-        public void Print(string linePrefix="")
+        public void Print(string linePrefix = "")
         {
             for (int row = RowMin; row <= RowMax; row++)
             {
