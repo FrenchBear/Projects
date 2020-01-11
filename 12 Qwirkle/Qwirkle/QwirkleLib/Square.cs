@@ -1,0 +1,61 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+#nullable enable
+
+namespace QwirkleLib
+{
+    public enum SquareState
+    {
+        /// <summary>
+        /// Default, empty state, not playable
+        /// </summary>
+        Empty,
+
+        /// <summary>
+        /// Does not contain a tile, but playability and constraints unknown
+        /// </summary>
+        Unknown,
+
+        /// <summary>
+        /// Contains a tile
+        /// </summary>
+        Tiled,
+
+        /// <summary>
+        /// Empty but uneplayable because of constraints or conflicting constraints
+        /// </summary>
+        Blocked,
+
+        /// <summary>
+        /// Empty and playable
+        /// </summary>
+        Playable,
+    }
+
+    /// <summary>
+    /// A square on the game board, that can be empty or contain a tile
+    /// </summary>
+    public class Square
+    {
+        internal static Square Empty => new Square(null);
+
+        public SquareState State;
+        public QTile? Tile;
+        public Constraint? ColorConstraint;
+        public Constraint? ShapeConstraint;
+
+
+        public Square(QTile? tile)
+        {
+            if (tile == null)
+                State = SquareState.Empty;
+            else
+            {
+                Tile = tile;
+                State = SquareState.Tiled;
+            }
+        }
+    }
+}
