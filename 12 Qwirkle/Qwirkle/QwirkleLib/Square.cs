@@ -46,7 +46,6 @@ namespace QwirkleLib
         public Constraint? ColorConstraint;
         public Constraint? ShapeConstraint;
 
-
         public Square(QTile? tile)
         {
             if (tile == null)
@@ -57,5 +56,16 @@ namespace QwirkleLib
                 State = SquareState.Tiled;
             }
         }
+
+        public override string ToString() =>
+            State switch
+            {
+                SquareState.Empty => "",
+                SquareState.Unknown => "u",
+                SquareState.Tiled => Tile!.ToString(),
+                SquareState.Blocked => "b",
+                SquareState.Playable => "p," + ShapeConstraint!.Value.ToShapeConstraint() + "," + ColorConstraint!.Value.ToColorConstraint(),
+                _ => ""
+            };
     }
 }

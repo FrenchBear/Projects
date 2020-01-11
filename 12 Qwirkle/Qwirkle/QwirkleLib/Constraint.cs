@@ -29,10 +29,10 @@ namespace QwirkleLib
         }
 
 
-        public string ToShapeConstraint => ToStringConstraint(65, 49);
-        public string ToColorConstraint => ToStringConstraint(49, 65);
+        public string ToShapeConstraint() => ToStringConstraint(65, 49);
+        public string ToColorConstraint() => ToStringConstraint(49, 65);
 
-        public string ToStringConstraint(int i1, int i2)
+        private string ToStringConstraint(int i1, int i2)
         {
             if (LineAttribute == -2)
                 return "Blocked";
