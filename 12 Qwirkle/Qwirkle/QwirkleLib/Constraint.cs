@@ -35,7 +35,7 @@ namespace QwirkleLib
         private string ToStringConstraint(int i1, int i2)
         {
             if (LineAttribute == -2)
-                return "Blocked";
+                return "N/A    ";
             if (LineAttribute == -1)
                 return "Unconst";
 

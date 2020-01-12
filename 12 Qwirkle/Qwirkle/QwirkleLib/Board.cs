@@ -68,25 +68,7 @@ namespace QwirkleLib
 
             // If we place a tile, check constraints
             if (value.Tile != null)
-            {
-                if (!PlayedDict.ContainsKey(coord))
-                    PlayedDict[coord] = Square.Empty;
-                UpdateSquarePlayability(coord, true);
-                var ps = PlayedDict[coord];
-                Debug.Assert(ps.State == SquareState.Playable);
-
-                Debug.Assert(ps.ShapeConstraint != null);
-                var sc = ps.ShapeConstraint.Value;
-                bool matchShapeConstraint = false;
-                if (sc.LineAttribute >= 0) matchShapeConstraint= sc.LineAttribute==value.Tile.Shape &&  (sc.BlockedMask & (1 << value.Tile.Color)) == 0;
-
-                Debug.Assert(ps.ColorConstraint != null);
-                bool matchColorConstraint = false;
-                var cc = ps.ColorConstraint.Value;
-                if (cc.LineAttribute >= 0) matchColorConstraint = cc.LineAttribute == value.Tile.Color && (sc.BlockedMask & (1 << value.Tile.Shape)) == 0;
-
-                Debug.Assert(matchShapeConstraint || matchColorConstraint);
-            }
+                Debug.Assert(CanPlayTile(coord, value.Tile, out _));
 
             PlayedDict[coord] = value;
             if (coord.row < RowMinPlayed) RowMinPlayed = coord.row;
@@ -132,6 +114,121 @@ namespace QwirkleLib
         /// Add a played tile to the board that will be evaluated later for score
         /// </summary>
         public void PlayTile((int, int) coord, string tile) => PlayTile(coord, new QTile(tile));
+
+
+        /// <summary>
+        /// Check it a tile can be played at a given location given rules and constraints 
+        /// </summary>
+        public bool CanPlayTile((int row, int col) coord, QTile tile, out string msg)
+        {
+            bool isTiled((int, int) coord) => this[coord].Tile != null;
+
+            // Check that there is no tile already there
+            if (isTiled(coord))
+            {
+                msg = "Il y a déjà une tuile à cet emplacement";
+                return false;
+            }
+
+            // Check that there is a tile in the 4 adjacent locations (skipped for very 1st tile)
+            if (!isTiled((coord.row + 1,coord.col)) &&
+                !isTiled((coord.row - 1, coord.col)) &&
+                !isTiled((coord.row, coord.col + 1)) &&
+                !isTiled((coord.row, coord.col - 1)) &&
+                PlayedDict.Count+BoardDict.Count>0)
+            {
+                msg = "Il y n'a pas de tuile adjecente à cet emplacement";
+                return false;
+            }
+
+            // Check playability
+            if (!PlayedDict.ContainsKey(coord))
+                PlayedDict[coord] = Square.Empty;
+            UpdateSquarePlayability(coord, true);
+            var ps = PlayedDict[coord];
+            Debug.Assert(ps.State == SquareState.Blocked || ps.State == SquareState.Playable);
+            if (ps.State == SquareState.Blocked)
+            {
+                msg = "Cet emplacement n'est pas jouable";
+                return false;
+            }
+
+            // Check compatibility with constraints
+            Debug.Assert(ps.ShapeConstraint != null);
+            var sc = ps.ShapeConstraint.Value;
+            bool matchShapeConstraint = false;
+            if (sc.LineAttribute >= 0) matchShapeConstraint = sc.LineAttribute == tile.Shape && (sc.BlockedMask & (1 << tile.Color)) == 0;
+
+            Debug.Assert(ps.ColorConstraint != null);
+            bool matchColorConstraint = false;
+            var cc = ps.ColorConstraint.Value;
+            if (cc.LineAttribute >= 0) matchColorConstraint = cc.LineAttribute == tile.Color && (sc.BlockedMask & (1 << tile.Shape)) == 0;
+
+            if (!matchShapeConstraint && !matchColorConstraint)
+            {
+                msg = "Cette tuile ne respecte pas les contraintes";
+                return false;
+            }
+
+            // Check that all played tiles are in the same direction
+            int nt = 0;
+            int playRow=0, playCol=0;
+            bool playInRow = false, playInCol = false;
+            foreach (var pt in PlayedDict.Where(kv => kv.Value.Tile != null))
+            {
+                nt++;
+                if (nt==1)
+                {
+                    playRow = pt.Key.Item1;
+                    playCol = pt.Key.Item2;
+                }
+                else if (nt==2)
+                {
+                    if (pt.Key.Item1 == playRow)
+                        playInRow = true;
+                    else
+                    {
+                        Debug.Assert(pt.Key.Item2 == playCol);
+                        playInCol = true;
+                    }
+                    break;
+                }
+            }
+            if (nt>=1)
+            {
+                if (nt==1 && coord.row != playRow && coord.col!=playCol
+                    || nt>1 && (playInRow && coord.row!=playRow || playInCol && coord.col!=playCol))
+                {
+                    msg = "Les tuiles doivent être jouées dans une seule ligne ou colonne";
+                    return false;
+                }
+
+                // Check that play is contiguous
+                int deltaRow = Math.Sign(playRow - coord.row);
+                int deltaCol = Math.Sign(playCol - coord.col);
+                var ic = coord;
+                for (; ; )
+                {
+                    ic = (ic.row + deltaRow, ic.col + deltaCol);
+                    if (ic == (playRow, playCol))
+                        break;
+                    if (!isTiled(ic))
+                    {
+                        msg = "Pas de trou entre les tuiles jouées";
+                        return false;
+                    }
+                }
+            }
+
+            msg = "";
+            return true;
+        }
+
+        /// <summary>
+        /// Check it a tile can be played at a given location given rules and constraints 
+        /// </summary>
+        public bool CanPlayTile((int, int) coord, string tile, out string msg) => CanPlayTile(coord, new QTile(tile), out msg);
+
 
         /// <summary>
         /// Make played tiles permanent

@@ -10,14 +10,23 @@ namespace VisualTests
         static void Main()
         {
             var b = new Board();
-            b.AddTile((0, 0), "A3");
+            b.AddTile((0, 0), "A1");
+            b.AddTile((0, 2), "A2");
             b.UpdateBoardPlayability();
-            b.PlayTile((0, 1), "A4");
+            b.PlayTile((0, 3), "A3");
             b.UpdatePlayedPlayability();
             TracePrint(b);
-            b.PlayTile((1, 0), "B3");
-            b.UpdatePlayedPlayability();
-            TracePrint(b);
+
+            string msg;
+            WriteLine($"Can play (0, 1) A4: {b.CanPlayTile((0, 1), "A4", out msg)}, {msg}");
+            WriteLine($"Can play (0, -1) A4: {b.CanPlayTile((0, -1), "A4", out msg)}, {msg}");
+            WriteLine($"Can play (1, 0) A2: {b.CanPlayTile((1, 0), "A2", out msg)}, {msg}");
+            //b.PlayTile((0, 1), "A4");
+            //b.UpdatePlayedPlayability();
+            //TracePrint(b);
+            //b.PlayTile((1, 0), "B3");
+            //b.UpdatePlayedPlayability();
+            //TracePrint(b);
             //b.CommitPlay();
             //TracePrint(b);
         }
