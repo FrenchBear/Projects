@@ -43,12 +43,39 @@ namespace QwirkleLib
 
         public SquareState State;
         public QTile? Tile;
-        public Constraint? ColorConstraint;
-        public Constraint? ShapeConstraint;
+
+        /// <summary>
+        /// Shape constraint from above and below
+        /// </summary>
+        public ShapeConstraint? RowShapeConstraint;
+
+        /// <summary>
+        /// Color constraint from above and below
+        /// </summary>
+        public ColorConstraint? RowColorConstraint;
+
+        /// <summary>
+        /// Shape constraint from left and right
+        /// </summary>
+        public ShapeConstraint? ColShapeConstraint;
+
+        /// <summary>
+        /// Color constraint from left and right
+        /// </summary>
+        public ColorConstraint? ColColorConstraint;
+
 
         // Helpers to evaluate a play
-        internal bool pointsInRow;      // When true, the tile has already been evaluated in a row
-        internal bool pointsInCol;      // When true, the tile has already been evaluated in a Column
+        /// <summary>
+        /// During points evaluation, true indicates that the tile has already been evaluated in a row
+        /// </summary>
+        internal bool pointsInRow;
+
+        /// <summary>
+        /// During points evaluation, true indicates that the tile has already been evaluated in a column
+        /// </summary>
+        internal bool pointsInCol;
+
 
         public Square(QTile? tile)
         {
@@ -68,7 +95,7 @@ namespace QwirkleLib
                 SquareState.Unknown => "u",
                 SquareState.Tiled => Tile!.ToString(),
                 SquareState.Blocked => "b",
-                SquareState.Playable => "p," + ShapeConstraint!.Value.ToShapeConstraint() + "," + ColorConstraint!.Value.ToColorConstraint(),
+                SquareState.Playable => "p," + RowShapeConstraint!.ToString() + "," + RowColorConstraint!.ToString() + "," + ColShapeConstraint!.ToString() + "," + ColColorConstraint!.ToString(),
                 _ => ""
             };
     }

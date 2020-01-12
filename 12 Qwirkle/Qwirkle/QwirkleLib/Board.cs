@@ -153,19 +153,49 @@ namespace QwirkleLib
             }
 
             // Check compatibility with constraints
-            Debug.Assert(ps.ShapeConstraint != null);
-            var sc = ps.ShapeConstraint.Value;
-            bool matchShapeConstraint = false;
-            if (sc.LineAttribute >= 0) matchShapeConstraint = sc.LineAttribute == tile.Shape && (sc.BlockedMask & (1 << tile.Color)) == 0;
-
-            Debug.Assert(ps.ColorConstraint != null);
-            bool matchColorConstraint = false;
-            var cc = ps.ColorConstraint.Value;
-            if (cc.LineAttribute >= 0) matchColorConstraint = cc.LineAttribute == tile.Color && (cc.BlockedMask & (1 << tile.Shape)) == 0;
-
-            if (!matchShapeConstraint && !matchColorConstraint)
+            bool matchRowShapeConstraint=true, matchRowColorConstraint=true;
+            if (ps.RowShapeConstraint != null)
             {
-                msg = "Cette tuile ne respecte pas les contraintes";
+                var sc = ps.RowShapeConstraint;
+                if (sc.LineAttribute >= 0)
+                    matchRowShapeConstraint = sc.LineAttribute == tile.Shape && (sc.BlockedMask & (1 << tile.Color)) == 0;
+                else if (sc.LineAttribute == -2)
+                    matchRowShapeConstraint = false;
+            }
+            if (ps.RowColorConstraint != null)
+            {
+                var cc = ps.RowColorConstraint;
+                if (cc.LineAttribute >= 0)
+                    matchRowColorConstraint = cc.LineAttribute == tile.Color && (cc.BlockedMask & (1 << tile.Shape)) == 0;
+                else if (cc.LineAttribute == -2)
+                    matchRowColorConstraint = false;
+            }
+            if (!matchRowShapeConstraint && !matchRowColorConstraint)
+            {
+                msg = "Cette tuile ne respecte pas les contraintes de ligne";
+                return false;
+            }
+
+            bool matchColShapeConstraint=true, matchColColorConstraint=true;
+            if (ps.ColShapeConstraint != null)
+            {
+                var sc = ps.ColShapeConstraint;
+                if (sc.LineAttribute >= 0)
+                    matchColShapeConstraint = sc.LineAttribute == tile.Shape && (sc.BlockedMask & (1 << tile.Color)) == 0;
+                else if (sc.LineAttribute == -2)
+                    matchColShapeConstraint = false;
+            }
+            if (ps.ColColorConstraint != null)
+            {
+                var cc = ps.ColColorConstraint;
+                if (cc.LineAttribute >= 0)
+                    matchColColorConstraint = cc.LineAttribute == tile.Color && (cc.BlockedMask & (1 << tile.Shape)) == 0;
+                else if (cc.LineAttribute == -2)
+                    matchColColorConstraint = false;
+            }
+            if (!matchColShapeConstraint && !matchColColorConstraint)
+            {
+                msg = "Cette tuile ne respecte pas les contraintes de colonne";
                 return false;
             }
 
@@ -274,8 +304,10 @@ namespace QwirkleLib
             if (s.State == SquareState.Unknown) return;     // Already unknown, won't change
 
             s.State = SquareState.Unknown;
-            s.ColorConstraint = null;
-            s.ShapeConstraint = null;
+            s.RowColorConstraint = null;
+            s.RowShapeConstraint = null;
+            s.ColColorConstraint = null;
+            s.ColShapeConstraint = null;
 
             if (isPlayed)
                 SetPlayedSquare(coord, s);
@@ -316,57 +348,49 @@ namespace QwirkleLib
 
         private void UpdateSquarePlayability((int row, int col) coord, bool isPlayed)
         {
-            if (coord == (5,1))
-                Debugger.Break();
-
             var dic = isPlayed ? PlayedDict : BoardDict;
             Debug.Assert(dic.ContainsKey(coord));
 
             // First get constraints from all directions
-            var (sc1, cc1) = GetConstraintsFromDirection(coord, -1, 0, isPlayed);
-            var (sc2, cc2) = GetConstraintsFromDirection(coord, 1, 0, isPlayed);
-            var (sc3, cc3) = GetConstraintsFromDirection(coord, 0, 1, isPlayed);
-            var (sc4, cc4) = GetConstraintsFromDirection(coord, 0, -1, isPlayed);
+            var (sc1r, cc1r) = GetConstraintsFromDirection(coord, -1, 0, isPlayed);
+            var (sc2r, cc2r) = GetConstraintsFromDirection(coord, 1, 0, isPlayed);
+            var (sc3c, cc3c) = GetConstraintsFromDirection(coord, 0, 1, isPlayed);
+            var (sc4c, cc4c) = GetConstraintsFromDirection(coord, 0, -1, isPlayed);
 
-            var sc1s = sc1.ToShapeConstraint(); var cc1s = cc1.ToColorConstraint();
-            var sc2s = sc2.ToShapeConstraint(); var cc2s = cc2.ToColorConstraint();
-            var sc3s = sc3.ToShapeConstraint(); var cc3s = cc3.ToColorConstraint();
-            var sc4s = sc4.ToShapeConstraint(); var cc4s = cc4.ToColorConstraint();
+            var scr = sc1r.Inter(sc2r);
+            var ccr = cc1r.Inter(cc2r);
+            var scc = sc3c.Inter(sc4c);
+            var ccc = cc3c.Inter(cc4c);
 
-            var zzca = cc1.Inter(cc2); var zzcas = zzca.ToColorConstraint();
-            var zzcb = zzca.Inter(cc3); var zzcbs = zzcb.ToColorConstraint();
-            var zzcc = zzcb.Inter(cc4); var zzccs = zzcc.ToColorConstraint();
-
-            var sc = sc1.Inter(sc2).Inter(sc3).Inter(sc4);
-            var cc = cc1.Inter(cc2).Inter(cc3).Inter(cc4);
-            var scs = sc.ToShapeConstraint(); var ccs = cc.ToColorConstraint();
-
-            if ((cc.LineAttribute == -2 || cc.BlockedMask == 63) &&
-                 (sc.LineAttribute == -2 || sc.BlockedMask == 63))
+            if ((scr.LineAttribute == -2 || scr.BlockedMask == 63) && (ccr.LineAttribute == -2 || ccr.BlockedMask == 63) ||
+                (scc.LineAttribute == -2 || scc.BlockedMask == 63) && (ccc.LineAttribute == -2 || ccc.BlockedMask == 63)
+                )
             {
                 dic[coord].State = SquareState.Blocked;
             }
             else
             {
                 dic[coord].State = SquareState.Playable;
-                dic[coord].ColorConstraint = cc;
-                dic[coord].ShapeConstraint = sc;
+                dic[coord].RowShapeConstraint = scr;
+                dic[coord].RowColorConstraint = ccr;
+                dic[coord].ColShapeConstraint = scc;
+                dic[coord].ColColorConstraint = ccc;
             }
         }
 
-        private (Constraint, Constraint) GetConstraintsFromDirection((int row, int col) coord, int deltaRow, int deltaCol, bool isPlayed)
+        private (ShapeConstraint, ColorConstraint) GetConstraintsFromDirection((int row, int col) coord, int deltaRow, int deltaCol, bool isPlayed)
         {
             Square s;
-            var shapeConstraint = Constraint.None;
-            var colorConstraint = Constraint.None;
+            var shapeConstraint = ShapeConstraint.None;
+            var colorConstraint = ColorConstraint.None;
 
             for (; ; )
             {
                 coord = (coord.row + deltaRow, coord.col + deltaCol);
                 s = isPlayed ? this[coord] : BoardDict.GetValueOrDefault(coord, Square.Empty);
                 if (s.Tile == null) return (shapeConstraint, colorConstraint);
-                shapeConstraint = shapeConstraint.Inter(new Constraint(s.Tile.Shape, 1 << s.Tile.Color));
-                colorConstraint = colorConstraint.Inter(new Constraint(s.Tile.Color, 1 << s.Tile.Shape));
+                shapeConstraint = shapeConstraint.Inter(new ShapeConstraint(s.Tile.Shape, 1 << s.Tile.Color));
+                colorConstraint = colorConstraint.Inter(new ColorConstraint(s.Tile.Color, 1 << s.Tile.Shape));
             }
         }
 
@@ -493,7 +517,7 @@ namespace QwirkleLib
                     {
                         SquareState.Tiled => $"|  {(char)(65 + s.Tile!.Shape)} {(char)(49 + s.Tile!.Color)}  ",
                         SquareState.Blocked => "|Blocked",
-                        SquareState.Playable => "|" + s.ShapeConstraint!.Value.ToShapeConstraint(),
+                        SquareState.Playable => "|" + s.RowShapeConstraint!.ToString(),
                         SquareState.Unknown => "|Unknown",
                         _ => "|       "
                     });
@@ -502,7 +526,21 @@ namespace QwirkleLib
                 Write(linePrefix);
                 for (int col = ColMin; col <= ColMax; col++)
                     if (this[(row, col)].State == SquareState.Playable)
-                        Write("|" + this[(row, col)].ColorConstraint!.Value.ToColorConstraint());
+                        Write("|" + this[(row, col)].RowColorConstraint!.ToString());
+                    else
+                        Write("|       ");
+                WriteLine("|");
+                Write(linePrefix);
+                for (int col = ColMin; col <= ColMax; col++)
+                    if (this[(row, col)].State == SquareState.Playable)
+                        Write("|" + this[(row, col)].ColShapeConstraint!.ToString());
+                    else
+                        Write("|       ");
+                WriteLine("|");
+                Write(linePrefix);
+                for (int col = ColMin; col <= ColMax; col++)
+                    if (this[(row, col)].State == SquareState.Playable)
+                        Write("|" + this[(row, col)].ColColorConstraint!.ToString());
                     else
                         Write("|       ");
                 WriteLine("|");
