@@ -46,6 +46,10 @@ namespace QwirkleLib
         public Constraint? ColorConstraint;
         public Constraint? ShapeConstraint;
 
+        // Helpers to evaluate a play
+        internal bool pointsInRow;      // When true, the tile has already been evaluated in a row
+        internal bool pointsInCol;      // When true, the tile has already been evaluated in a Column
+
         public Square(QTile? tile)
         {
             if (tile == null)

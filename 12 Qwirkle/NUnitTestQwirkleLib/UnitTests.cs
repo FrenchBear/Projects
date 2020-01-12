@@ -1,6 +1,8 @@
 using NUnit.Framework;
 using QwirkleLib;
 
+#nullable enable
+
 namespace NUnitTestQwirkleLib
 {
     public class Tests
@@ -37,18 +39,18 @@ namespace NUnitTestQwirkleLib
             // |       |       |       |       |
             // +-------+-------+-------+-------+
 
-            Assert.AreEqual(b[(-1, -1)].ToString(), "");
-            Assert.AreEqual(b[(-1, 0)].ToString(), "u");
-            Assert.AreEqual(b[(-1, 1)].ToString(), "u");
-            Assert.AreEqual(b[(-1, 2)].ToString(), "");
-            Assert.AreEqual(b[(0, -1)].ToString(), "u");
-            Assert.AreEqual(b[(0, 0)].ToString(), "A3");
-            Assert.AreEqual(b[(0, 1)].ToString(), "A4");
-            Assert.AreEqual(b[(0, 2)].ToString(), "u");
-            Assert.AreEqual(b[(1, -1)].ToString(), "");
-            Assert.AreEqual(b[(1, 0)].ToString(), "u");
-            Assert.AreEqual(b[(1, 1)].ToString(), "u");
-            Assert.AreEqual(b[(1, 2)].ToString(), "");
+            Assert.AreEqual("", b[(-1, -1)].ToString());
+            Assert.AreEqual("u", b[(-1, 0)].ToString());
+            Assert.AreEqual("u", b[(-1, 1)].ToString());
+            Assert.AreEqual("", b[(-1, 2)].ToString());
+            Assert.AreEqual("u", b[(0, -1)].ToString());
+            Assert.AreEqual("A3", b[(0, 0)].ToString());
+            Assert.AreEqual("A4", b[(0, 1)].ToString());
+            Assert.AreEqual("u", b[(0, 2)].ToString());
+            Assert.AreEqual("", b[(1, -1)].ToString());
+            Assert.AreEqual("u", b[(1, 0)].ToString());
+            Assert.AreEqual("u", b[(1, 1)].ToString());
+            Assert.AreEqual("", b[(1, 2)].ToString());
         }
 
         [Test]
@@ -73,18 +75,18 @@ namespace NUnitTestQwirkleLib
             // |       |3_BCDEF|4_BCDEF|       |
             // +-------+-------+-------+-------+
 
-            Assert.AreEqual(b[(-1, -1)].ToString(), "");
-            Assert.AreEqual(b[(-1, 0)].ToString(), "p,A12_456,3_BCDEF");
-            Assert.AreEqual(b[(-1, 1)].ToString(), "p,A123_56,4_BCDEF");
-            Assert.AreEqual(b[(-1, 2)].ToString(), "");
-            Assert.AreEqual(b[(0, -1)].ToString(), "p,A12__56,N/A    ");
-            Assert.AreEqual(b[(0, 0)].ToString(), "A3");
-            Assert.AreEqual(b[(0, 1)].ToString(), "A4");
-            Assert.AreEqual(b[(0, 2)].ToString(), "p,A12__56,N/A    ");
-            Assert.AreEqual(b[(1, -1)].ToString(), "");
-            Assert.AreEqual(b[(1, 0)].ToString(), "p,A12_456,3_BCDEF");
-            Assert.AreEqual(b[(1, 1)].ToString(), "p,A123_56,4_BCDEF");
-            Assert.AreEqual(b[(1, 2)].ToString(), "");
+            Assert.AreEqual("", b[(-1, -1)].ToString());
+            Assert.AreEqual("p,A12_456,3_BCDEF", b[(-1, 0)].ToString());
+            Assert.AreEqual("p,A123_56,4_BCDEF", b[(-1, 1)].ToString());
+            Assert.AreEqual("", b[(-1, 2)].ToString());
+            Assert.AreEqual("p,A12__56,N/A    ", b[(0, -1)].ToString());
+            Assert.AreEqual("A3", b[(0, 0)].ToString());
+            Assert.AreEqual("A4", b[(0, 1)].ToString());
+            Assert.AreEqual("p,A12__56,N/A    ", b[(0, 2)].ToString());
+            Assert.AreEqual("", b[(1, -1)].ToString());
+            Assert.AreEqual("p,A12_456,3_BCDEF", b[(1, 0)].ToString());
+            Assert.AreEqual("p,A123_56,4_BCDEF", b[(1, 1)].ToString());
+            Assert.AreEqual("", b[(1, 2)].ToString());
         }
 
         [Test]
@@ -109,15 +111,15 @@ namespace NUnitTestQwirkleLib
             // |       |1_BCDEF|       |2A_CDEF|       |
             // +-------+-------+-------+-------+-------+
 
-            Assert.AreEqual(b[(-1, 0)].ToString()[0], 'p');
-            Assert.AreEqual(b[(-1, 2)].ToString()[0], 'p');
-            Assert.AreEqual(b[(0, -1)].ToString()[0], 'p');
-            Assert.AreEqual(b[(0, 0)].ToString(), "A1");
-            Assert.AreEqual(b[(0, 1)].ToString()[0], 'b');
-            Assert.AreEqual(b[(0, 2)].ToString(), "B2");
-            Assert.AreEqual(b[(0, 3)].ToString()[0], 'p');
-            Assert.AreEqual(b[(1, 0)].ToString()[0], 'p');
-            Assert.AreEqual(b[(1, 2)].ToString()[0], 'p');
+            Assert.AreEqual('p', b[(-1, 0)].ToString()[0]);
+            Assert.AreEqual('p', b[(-1, 2)].ToString()[0]);
+            Assert.AreEqual('p', b[(0, -1)].ToString()[0]);
+            Assert.AreEqual("A1", b[(0, 0)].ToString());
+            Assert.AreEqual('b', b[(0, 1)].ToString()[0]);
+            Assert.AreEqual("B2", b[(0, 2)].ToString());
+            Assert.AreEqual('p', b[(0, 3)].ToString()[0]);
+            Assert.AreEqual('p', b[(1, 0)].ToString()[0]);
+            Assert.AreEqual('p', b[(1, 2)].ToString()[0]);
 
         }
 
@@ -143,11 +145,11 @@ namespace NUnitTestQwirkleLib
             // |       |3_BCDEF|       |
             // +-------+-------+-------+
 
-            Assert.AreEqual(b[(-1, 0)].ToString(), "p,A12_456,3_BCDEF");
-            Assert.AreEqual(b[(0, -1)].ToString(), "p,A12_456,3_BCDEF");
-            Assert.AreEqual(b[(0, 0)].ToString(), "A3");
-            Assert.AreEqual(b[(0, 1)].ToString(), "p,A12_456,3_BCDEF");
-            Assert.AreEqual(b[(1, 0)].ToString(), "p,A12_456,3_BCDEF");
+            Assert.AreEqual("p,A12_456,3_BCDEF", b[(-1, 0)].ToString());
+            Assert.AreEqual("p,A12_456,3_BCDEF", b[(0, -1)].ToString());
+            Assert.AreEqual("A3", b[(0, 0)].ToString());
+            Assert.AreEqual("p,A12_456,3_BCDEF", b[(0, 1)].ToString());
+            Assert.AreEqual("p,A12_456,3_BCDEF", b[(1, 0)].ToString());
 
 
             b.PlayTile((0, 1), "A4");
@@ -167,14 +169,14 @@ namespace NUnitTestQwirkleLib
             // |       |3_BCDEF|4_BCDEF|       |
             // +-------+-------+-------+-------+
 
-            Assert.AreEqual(b[(-1, 0)].ToString(), "p,A12_456,3_BCDEF");
-            Assert.AreEqual(b[(-1, 1)].ToString(), "p,A123_56,4_BCDEF");
-            Assert.AreEqual(b[(0, -1)].ToString(), "p,A12__56,N/A    ");
-            Assert.AreEqual(b[(0, 0)].ToString(), "A3");
-            Assert.AreEqual(b[(0, 1)].ToString(), "A4");
-            Assert.AreEqual(b[(0, 2)].ToString(), "p,A12__56,N/A    ");
-            Assert.AreEqual(b[(1, 0)].ToString(), "p,A12_456,3_BCDEF");
-            Assert.AreEqual(b[(1, 1)].ToString(), "p,A123_56,4_BCDEF");
+            Assert.AreEqual("p,A12_456,3_BCDEF", b[(-1, 0)].ToString());
+            Assert.AreEqual("p,A123_56,4_BCDEF", b[(-1, 1)].ToString());
+            Assert.AreEqual("p,A12__56,N/A    ", b[(0, -1)].ToString());
+            Assert.AreEqual("A3", b[(0, 0)].ToString());
+            Assert.AreEqual("A4", b[(0, 1)].ToString());
+            Assert.AreEqual("p,A12__56,N/A    ", b[(0, 2)].ToString());
+            Assert.AreEqual("p,A12_456,3_BCDEF", b[(1, 0)].ToString());
+            Assert.AreEqual("p,A123_56,4_BCDEF", b[(1, 1)].ToString());
 
 
             b.RollbackPlay();
@@ -193,11 +195,11 @@ namespace NUnitTestQwirkleLib
             // |       |3_BCDEF|       |
             // +-------+-------+-------+
 
-            Assert.AreEqual(b[(-1, 0)].ToString(), "p,A12_456,3_BCDEF");
-            Assert.AreEqual(b[(0, -1)].ToString(), "p,A12_456,3_BCDEF");
-            Assert.AreEqual(b[(0, 0)].ToString(), "A3");
-            Assert.AreEqual(b[(0, 1)].ToString(), "p,A12_456,3_BCDEF");
-            Assert.AreEqual(b[(1, 0)].ToString(), "p,A12_456,3_BCDEF");
+            Assert.AreEqual("p,A12_456,3_BCDEF", b[(-1, 0)].ToString());
+            Assert.AreEqual("p,A12_456,3_BCDEF", b[(0, -1)].ToString());
+            Assert.AreEqual("A3", b[(0, 0)].ToString());
+            Assert.AreEqual("p,A12_456,3_BCDEF", b[(0, 1)].ToString());
+            Assert.AreEqual("p,A12_456,3_BCDEF", b[(1, 0)].ToString());
         }
 
 
@@ -222,11 +224,11 @@ namespace NUnitTestQwirkleLib
             // |       |3_BCDEF|       |
             // +-------+-------+-------+
 
-            Assert.AreEqual(b[(-1, 0)].ToString(), "p,A12_456,3_BCDEF");
-            Assert.AreEqual(b[(0, -1)].ToString(), "p,A12_456,3_BCDEF");
-            Assert.AreEqual(b[(0, 0)].ToString(), "A3");
-            Assert.AreEqual(b[(0, 1)].ToString(), "p,A12_456,3_BCDEF");
-            Assert.AreEqual(b[(1, 0)].ToString(), "p,A12_456,3_BCDEF");
+            Assert.AreEqual("p,A12_456,3_BCDEF", b[(-1, 0)].ToString());
+            Assert.AreEqual("p,A12_456,3_BCDEF", b[(0, -1)].ToString());
+            Assert.AreEqual("A3", b[(0, 0)].ToString());
+            Assert.AreEqual("p,A12_456,3_BCDEF", b[(0, 1)].ToString());
+            Assert.AreEqual("p,A12_456,3_BCDEF", b[(1, 0)].ToString());
 
 
             b.PlayTile((0, 1), "A4");
@@ -246,14 +248,14 @@ namespace NUnitTestQwirkleLib
             // |       |3_BCDEF|4_BCDEF|       |
             // +-------+-------+-------+-------+
 
-            Assert.AreEqual(b[(-1, 0)].ToString(), "p,A12_456,3_BCDEF");
-            Assert.AreEqual(b[(-1, 1)].ToString(), "p,A123_56,4_BCDEF");
-            Assert.AreEqual(b[(0, -1)].ToString(), "p,A12__56,N/A    ");
-            Assert.AreEqual(b[(0, 0)].ToString(), "A3");
-            Assert.AreEqual(b[(0, 1)].ToString(), "A4");
-            Assert.AreEqual(b[(0, 2)].ToString(), "p,A12__56,N/A    ");
-            Assert.AreEqual(b[(1, 0)].ToString(), "p,A12_456,3_BCDEF");
-            Assert.AreEqual(b[(1, 1)].ToString(), "p,A123_56,4_BCDEF");
+            Assert.AreEqual("p,A12_456,3_BCDEF", b[(-1, 0)].ToString());
+            Assert.AreEqual("p,A123_56,4_BCDEF", b[(-1, 1)].ToString());
+            Assert.AreEqual("p,A12__56,N/A    ", b[(0, -1)].ToString());
+            Assert.AreEqual("A3", b[(0, 0)].ToString());
+            Assert.AreEqual("A4", b[(0, 1)].ToString());
+            Assert.AreEqual("p,A12__56,N/A    ", b[(0, 2)].ToString());
+            Assert.AreEqual("p,A12_456,3_BCDEF", b[(1, 0)].ToString());
+            Assert.AreEqual("p,A123_56,4_BCDEF", b[(1, 1)].ToString());
 
 
             b.CommitPlay();
@@ -272,14 +274,14 @@ namespace NUnitTestQwirkleLib
             // |       |3_BCDEF|4_BCDEF|       |
             // +-------+-------+-------+-------+
 
-            Assert.AreEqual(b[(-1, 0)].ToString(), "p,A12_456,3_BCDEF");
-            Assert.AreEqual(b[(-1, 1)].ToString(), "p,A123_56,4_BCDEF");
-            Assert.AreEqual(b[(0, -1)].ToString(), "p,A12__56,N/A    ");
-            Assert.AreEqual(b[(0, 0)].ToString(), "A3");
-            Assert.AreEqual(b[(0, 1)].ToString(), "A4");
-            Assert.AreEqual(b[(0, 2)].ToString(), "p,A12__56,N/A    ");
-            Assert.AreEqual(b[(1, 0)].ToString(), "p,A12_456,3_BCDEF");
-            Assert.AreEqual(b[(1, 1)].ToString(), "p,A123_56,4_BCDEF");
+            Assert.AreEqual("p,A12_456,3_BCDEF", b[(-1, 0)].ToString());
+            Assert.AreEqual("p,A123_56,4_BCDEF", b[(-1, 1)].ToString());
+            Assert.AreEqual("p,A12__56,N/A    ", b[(0, -1)].ToString());
+            Assert.AreEqual("A3", b[(0, 0)].ToString());
+            Assert.AreEqual("A4", b[(0, 1)].ToString());
+            Assert.AreEqual("p,A12__56,N/A    ", b[(0, 2)].ToString());
+            Assert.AreEqual("p,A12_456,3_BCDEF", b[(1, 0)].ToString());
+            Assert.AreEqual("p,A123_56,4_BCDEF", b[(1, 1)].ToString());
         }
 
         [Test]
@@ -341,15 +343,52 @@ namespace NUnitTestQwirkleLib
             // |       |1_BCDEF|       |2_BCDEF|3_BCDEF|       |
             // +-------+-------+-------+-------+-------+-------+
 
-            bool cp1 = b.CanPlayTile((0, 1),  "A4", out string msg1);
+            bool cp1 = b.CanPlayTile((0, 1), "A4", out _);
             Assert.IsTrue(cp1);
             bool cp2 = b.CanPlayTile((0, -1), "A4", out string msg2);
             Assert.IsFalse(cp2);
             Assert.AreEqual("Pas de trou entre les tuiles jouées", msg2);
-            bool cp3 = b.CanPlayTile((1, 0),  "A2", out string msg3);
+            bool cp3 = b.CanPlayTile((1, 0), "A2", out string msg3);
             Assert.IsFalse(cp3);
             Assert.AreEqual("Les tuiles doivent être jouées dans une seule ligne ou colonne", msg3);
         }
+
+
+        [Test]
+        public void Test6a_Points()
+        {
+            var b = new Board();
+            b.AddTile((0, 0), "A1");
+            b.AddTile((0, 1), "A2");
+            b.AddTile((1, 0), "A3");
+            b.PlayTile((1, 1), "A4");
+            Assert.AreEqual(4, b.PlayPoints());
+        }
+
+        [Test]
+        public void Test6b_12Points1()
+        {
+            var b = new Board();
+            b.AddTile((0, 0), "A1");
+            b.AddTile((0, 1), "A2");
+            b.AddTile((0, 2), "A3");
+            b.AddTile((0, 3), "A4");
+            b.AddTile((0, 4), "A5");
+            b.PlayTile((0, 5), "A6");
+            Assert.AreEqual(12, b.PlayPoints());
+        }
+
+        [Test]
+        public void Test6b_12Points2()
+        {
+            var b = new Board();
+            b.AddTile((0, 0), "A1");
+            b.AddTile((0, 2), "A3");
+            b.AddTile((0, 4), "A5");
+            b.PlayTile((0, 1), "A2");
+            b.PlayTile((0, 3), "A4");
+            b.PlayTile((0, 5), "A6");
+            Assert.AreEqual(12, b.PlayPoints());
+        }
     }
 }
-

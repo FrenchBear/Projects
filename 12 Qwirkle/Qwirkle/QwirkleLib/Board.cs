@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using static System.Console;
 
-
 #nullable enable
 
 namespace QwirkleLib
@@ -39,6 +38,8 @@ namespace QwirkleLib
         public Board() { }
 
         public Square this[(int row, int col) coord] => PlayedDict.GetValueOrDefault(coord, BoardDict.GetValueOrDefault(coord, Square.Empty));
+
+        private bool IsTiled((int, int) coord) => this[coord].Tile != null;
 
         public void SetBoardSquare((int row, int col) coord, Square value)
         {
@@ -121,21 +122,19 @@ namespace QwirkleLib
         /// </summary>
         public bool CanPlayTile((int row, int col) coord, QTile tile, out string msg)
         {
-            bool isTiled((int, int) coord) => this[coord].Tile != null;
-
             // Check that there is no tile already there
-            if (isTiled(coord))
+            if (IsTiled(coord))
             {
                 msg = "Il y a déjà une tuile à cet emplacement";
                 return false;
             }
 
             // Check that there is a tile in the 4 adjacent locations (skipped for very 1st tile)
-            if (!isTiled((coord.row + 1,coord.col)) &&
-                !isTiled((coord.row - 1, coord.col)) &&
-                !isTiled((coord.row, coord.col + 1)) &&
-                !isTiled((coord.row, coord.col - 1)) &&
-                PlayedDict.Count+BoardDict.Count>0)
+            if (!IsTiled((coord.row + 1, coord.col)) &&
+                !IsTiled((coord.row - 1, coord.col)) &&
+                !IsTiled((coord.row, coord.col + 1)) &&
+                !IsTiled((coord.row, coord.col - 1)) &&
+                PlayedDict.Count + BoardDict.Count > 0)
             {
                 msg = "Il y n'a pas de tuile adjecente à cet emplacement";
                 return false;
@@ -162,7 +161,7 @@ namespace QwirkleLib
             Debug.Assert(ps.ColorConstraint != null);
             bool matchColorConstraint = false;
             var cc = ps.ColorConstraint.Value;
-            if (cc.LineAttribute >= 0) matchColorConstraint = cc.LineAttribute == tile.Color && (sc.BlockedMask & (1 << tile.Shape)) == 0;
+            if (cc.LineAttribute >= 0) matchColorConstraint = cc.LineAttribute == tile.Color && (cc.BlockedMask & (1 << tile.Shape)) == 0;
 
             if (!matchShapeConstraint && !matchColorConstraint)
             {
@@ -172,17 +171,17 @@ namespace QwirkleLib
 
             // Check that all played tiles are in the same direction
             int nt = 0;
-            int playRow=0, playCol=0;
+            int playRow = 0, playCol = 0;
             bool playInRow = false, playInCol = false;
             foreach (var pt in PlayedDict.Where(kv => kv.Value.Tile != null))
             {
                 nt++;
-                if (nt==1)
+                if (nt == 1)
                 {
                     playRow = pt.Key.Item1;
                     playCol = pt.Key.Item2;
                 }
-                else if (nt==2)
+                else if (nt == 2)
                 {
                     if (pt.Key.Item1 == playRow)
                         playInRow = true;
@@ -194,10 +193,10 @@ namespace QwirkleLib
                     break;
                 }
             }
-            if (nt>=1)
+            if (nt >= 1)
             {
-                if (nt==1 && coord.row != playRow && coord.col!=playCol
-                    || nt>1 && (playInRow && coord.row!=playRow || playInCol && coord.col!=playCol))
+                if (nt == 1 && coord.row != playRow && coord.col != playCol
+                    || nt > 1 && (playInRow && coord.row != playRow || playInCol && coord.col != playCol))
                 {
                     msg = "Les tuiles doivent être jouées dans une seule ligne ou colonne";
                     return false;
@@ -212,7 +211,7 @@ namespace QwirkleLib
                     ic = (ic.row + deltaRow, ic.col + deltaCol);
                     if (ic == (playRow, playCol))
                         break;
-                    if (!isTiled(ic))
+                    if (!IsTiled(ic))
                     {
                         msg = "Pas de trou entre les tuiles jouées";
                         return false;
@@ -317,17 +316,30 @@ namespace QwirkleLib
 
         private void UpdateSquarePlayability((int row, int col) coord, bool isPlayed)
         {
+            if (coord == (5,1))
+                Debugger.Break();
+
             var dic = isPlayed ? PlayedDict : BoardDict;
             Debug.Assert(dic.ContainsKey(coord));
 
             // First get constraints from all directions
-            var (cc1, sc1) = GetConstraintsFromDirection(coord, -1, 0, isPlayed);
-            var (cc2, sc2) = GetConstraintsFromDirection(coord, 1, 0, isPlayed);
-            var (cc3, sc3) = GetConstraintsFromDirection(coord, 0, 1, isPlayed);
-            var (cc4, sc4) = GetConstraintsFromDirection(coord, 0, -1, isPlayed);
+            var (sc1, cc1) = GetConstraintsFromDirection(coord, -1, 0, isPlayed);
+            var (sc2, cc2) = GetConstraintsFromDirection(coord, 1, 0, isPlayed);
+            var (sc3, cc3) = GetConstraintsFromDirection(coord, 0, 1, isPlayed);
+            var (sc4, cc4) = GetConstraintsFromDirection(coord, 0, -1, isPlayed);
 
-            var cc = cc1.Inter(cc2).Inter(cc3).Inter(cc4);
+            var sc1s = sc1.ToShapeConstraint(); var cc1s = cc1.ToColorConstraint();
+            var sc2s = sc2.ToShapeConstraint(); var cc2s = cc2.ToColorConstraint();
+            var sc3s = sc3.ToShapeConstraint(); var cc3s = cc3.ToColorConstraint();
+            var sc4s = sc4.ToShapeConstraint(); var cc4s = cc4.ToColorConstraint();
+
+            var zzca = cc1.Inter(cc2); var zzcas = zzca.ToColorConstraint();
+            var zzcb = zzca.Inter(cc3); var zzcbs = zzcb.ToColorConstraint();
+            var zzcc = zzcb.Inter(cc4); var zzccs = zzcc.ToColorConstraint();
+
             var sc = sc1.Inter(sc2).Inter(sc3).Inter(sc4);
+            var cc = cc1.Inter(cc2).Inter(cc3).Inter(cc4);
+            var scs = sc.ToShapeConstraint(); var ccs = cc.ToColorConstraint();
 
             if ((cc.LineAttribute == -2 || cc.BlockedMask == 63) &&
                  (sc.LineAttribute == -2 || sc.BlockedMask == 63))
@@ -352,11 +364,87 @@ namespace QwirkleLib
             {
                 coord = (coord.row + deltaRow, coord.col + deltaCol);
                 s = isPlayed ? this[coord] : BoardDict.GetValueOrDefault(coord, Square.Empty);
-                if (s.Tile == null) return (colorConstraint, shapeConstraint);
+                if (s.Tile == null) return (shapeConstraint, colorConstraint);
                 shapeConstraint = shapeConstraint.Inter(new Constraint(s.Tile.Shape, 1 << s.Tile.Color));
                 colorConstraint = colorConstraint.Inter(new Constraint(s.Tile.Color, 1 << s.Tile.Shape));
             }
         }
+
+        public int PlayPoints()
+        {
+            // Reset evaluation helpers
+            foreach (var pt in PlayedDict.Where(kv => kv.Value.Tile != null))
+            {
+                pt.Value.pointsInRow = false;
+                pt.Value.pointsInCol = false;
+            }
+
+            // ToDo: replace with sum
+            var points = 0;
+            foreach (var pt in PlayedDict.Where(kv => kv.Value.Tile != null))
+                points += PlayPointsForTile(pt.Key);
+
+            return points;
+        }
+
+        private int PlayPointsForTile((int, int) coord)
+        {
+            var points = 0;
+            var s = this[coord];
+            Debug.Assert(s.Tile != null);
+            if (!s.pointsInRow)
+            {
+                int r = GetTilesCount(coord, 0, -1, true) + 1 + GetTilesCount(coord, 0, +1, true);
+                s.pointsInRow = true;
+                if (r > 1)
+                {
+                    if (r == 6) r = 12;
+                    points += r;
+                }
+            }
+            if (!s.pointsInCol)
+            {
+                int r = GetTilesCount(coord, -1, 0, false) + 1 + GetTilesCount(coord, 1, 0, false);
+                s.pointsInCol = true;
+                if (r > 1)
+                {
+                    if (r == 6) r = 12;
+                    points += r;
+                }
+            }
+            return points;
+        }
+
+        private int GetTilesCount((int row, int col) coord, int deltaRow, int deltaCol, bool isInRow)
+        {
+            int n = 0;
+            for (; ; )
+            {
+                coord = (coord.row + deltaRow, coord.col + deltaCol);
+                if (!IsTiled(coord))
+                    return n;
+                n++;
+                if (PlayedDict.ContainsKey(coord))
+                {
+                    // PlayedDict cannot contain anything if the board is contining a tile
+                    // So if we have something in PlayedDict, it must be a tile since we
+                    // know that ccord is tiled
+                    Debug.Assert(PlayedDict[coord].Tile != null);
+
+                    if (isInRow)
+                    {
+                        Debug.Assert(!PlayedDict[coord].pointsInRow);
+                        PlayedDict[coord].pointsInRow = true;
+                    }
+                    else
+                    {
+                        Debug.Assert(!PlayedDict[coord].pointsInCol);
+                        PlayedDict[coord].pointsInCol = true;
+                    }
+                }
+            }
+        }
+
 
         /*
         +-------+-------+
@@ -427,4 +515,3 @@ namespace QwirkleLib
         }
     }
 }
-

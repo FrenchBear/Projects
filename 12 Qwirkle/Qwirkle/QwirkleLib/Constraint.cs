@@ -2,6 +2,8 @@
 using System.Diagnostics;
 using System.Text;
 
+#nullable enable
+
 namespace QwirkleLib
 {
     // A playing constraint
@@ -50,3 +52,4 @@ namespace QwirkleLib
         }
     }
 }
+
