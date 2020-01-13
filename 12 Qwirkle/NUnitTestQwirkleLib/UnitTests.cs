@@ -461,5 +461,85 @@ namespace NUnitTestQwirkleLib
             Assert.AreEqual(84, b.PlayPoints());
         }
 
+        [Test]
+        public void Test7_RuleExample()
+        {
+            var b = new Board();
+
+            // A
+            b.PlayTile((0, 0), "F1");
+            b.PlayTile((1, 0), "D1");
+            b.PlayTile((2, 0), "A1");
+            Assert.AreEqual(3, b.PlayPoints());
+            b.CommitPlay();
+
+            // B
+            b.PlayTile((3, 0), "C1");
+            b.PlayTile((3, 1), "C5");
+            b.PlayTile((3, 2), "C6");
+            Assert.AreEqual(7, b.PlayPoints());
+            b.CommitPlay();
+
+            // C
+            b.PlayTile((2, 1), "A5");
+            Assert.AreEqual(4, b.PlayPoints());
+            b.CommitPlay();
+
+            // D
+            b.PlayTile((0, -1), "F4");
+            b.PlayTile((1, -1), "D4");
+            Assert.AreEqual(6, b.PlayPoints());
+            b.CommitPlay();
+
+            // E
+            b.PlayTile((-1, -1), "E4");
+            b.PlayTile((2, -1), "A4");
+            Assert.AreEqual(7, b.PlayPoints());
+            b.CommitPlay();
+
+            // F
+            b.PlayTile((3, 3), "C2");
+            b.PlayTile((4, 3), "C1");
+            Assert.AreEqual(6, b.PlayPoints());
+            b.CommitPlay();
+
+            // G
+            b.PlayTile((-1, -2), "E3");
+            b.PlayTile((-1, -3), "E2");
+            Assert.AreEqual(3, b.PlayPoints());
+            b.CommitPlay();
+
+            // H
+            b.PlayTile((0, -3), "B2");
+            b.PlayTile((1, -3), "D2");
+            Assert.AreEqual(3, b.PlayPoints());
+            b.CommitPlay();
+
+            // I
+            b.PlayTile((1, -2), "D3");
+            b.PlayTile((2, -2), "A3");
+            Assert.AreEqual(10, b.PlayPoints());
+            b.CommitPlay();
+
+            // J
+            b.PlayTile((-1, 0), "E1");
+            Assert.AreEqual(9, b.PlayPoints());
+            b.CommitPlay();
+
+            // K
+            b.PlayTile((4, 1), "B5");
+            b.PlayTile((4, 0), "B1");
+            b.PlayTile((4, -1), "B2");
+            Assert.AreEqual(18, b.PlayPoints());
+            b.CommitPlay();
+
+            // L
+            b.PlayTile((3, 4), "C3");
+            b.PlayTile((4, 4), "C5");
+            Assert.AreEqual(9, b.PlayPoints());
+            b.CommitPlay();
+        }
+
+
     }
 }

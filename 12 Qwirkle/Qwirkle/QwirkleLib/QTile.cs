@@ -19,6 +19,7 @@ namespace QwirkleLib
             Color = color;
         }
 
+        [DebuggerStepThrough]
         public QTile(string s)
         {
             Debug.Assert(s.Length == 2);

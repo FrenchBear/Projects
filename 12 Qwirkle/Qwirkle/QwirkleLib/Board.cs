@@ -12,7 +12,7 @@ namespace QwirkleLib
     /// <summary>
     /// Qwirkle game board, a grid of BoardSquare
     /// </summary>
-    public class Board
+    public partial class Board
     {
         private readonly Dictionary<(int, int), Square> BoardDict = new Dictionary<(int, int), Square>();
         private readonly Dictionary<(int, int), Square> PlayedDict = new Dictionary<(int, int), Square>();
@@ -153,7 +153,7 @@ namespace QwirkleLib
             }
 
             // Check compatibility with constraints
-            bool matchRowShapeConstraint=true, matchRowColorConstraint=true;
+            bool matchRowShapeConstraint = true, matchRowColorConstraint = true;
             if (ps.RowShapeConstraint != null)
             {
                 var sc = ps.RowShapeConstraint;
@@ -176,7 +176,7 @@ namespace QwirkleLib
                 return false;
             }
 
-            bool matchColShapeConstraint=true, matchColColorConstraint=true;
+            bool matchColShapeConstraint = true, matchColColorConstraint = true;
             if (ps.ColShapeConstraint != null)
             {
                 var sc = ps.ColShapeConstraint;
@@ -335,6 +335,9 @@ namespace QwirkleLib
         /// </summary>
         public void UpdatePlayedPlayability()
         {
+            if (PlayedDict.Count == 0)
+                return;
+
             Debug.Assert(RowMinPlayed != 999 && ColMinPlayed != 999);
             for (int row = RowMinPlayed; row <= RowMaxPlayed; row++)
                 for (int col = ColMinPlayed; col <= ColMaxPlayed; col++)
@@ -551,5 +554,32 @@ namespace QwirkleLib
             WriteLine("+");
             WriteLine();
         }
+
+
+        public void PrettyPrint()
+        {
+            string shapes = "○¤■♦☼♣";
+            int[] colors = { 12,4,14,10,11,13 };
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+            for (int row = RowMin; row <= RowMax; row++)
+            {
+                for (int col = ColMin; col <= ColMax; col++)
+                {
+                    var t = this[(row, col)].Tile;
+                    if (t!=null)
+                    {
+                        Console.ForegroundColor = (ConsoleColor)colors[t.Color];
+                        Write(shapes[t.Shape]);
+                    }
+                    else
+                        Write(' ');
+                }
+                WriteLine();
+            }
+            Console.ForegroundColor = ConsoleColor.White;
+            WriteLine();
+        }
     }
 }
+
