@@ -41,23 +41,7 @@ namespace QwirkleLib
 
         private void ExploreSolutions(List<Solution> solutions, KeyValuePair<(int, int), Square> startingPoint, List<QTile> hand)
         {
-            // for test
-            if (solutions.Count > 0) return;
-
-            RollbackPlay();
-
             var oneSol = new Solution();
-            PlayTile((3, 0), "C1");
-            PlayTile((3, 1), "C5");
-            PlayTile((3, 2), "C6");
-            oneSol.RowMin = RowMin;
-            oneSol.RowMin = RowMax;
-            oneSol.ColMin = ColMin;
-            oneSol.ColMax = ColMax;
-            oneSol.Points = PlayPoints();
-            foreach (var kv in PlayedDict.Where(kv => kv.Value.Tile != null))
-                oneSol.Moves.Add(new CoordSquare(kv.Key, kv.Value));
-
             solutions.Add(oneSol);
         }
     }
