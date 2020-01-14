@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Solution.cs - Contains one solution during solution analysis
+// Qwirkle simulation project
+// 2019-01-12   PV
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 

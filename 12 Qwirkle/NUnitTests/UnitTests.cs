@@ -1,3 +1,7 @@
+// Qwirkle NUnit Tests
+// Qwirkle simulation project
+// 2019-01-12   PV
+
 using NUnit.Framework;
 using QwirkleLib;
 

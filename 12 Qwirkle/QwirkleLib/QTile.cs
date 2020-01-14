@@ -1,13 +1,27 @@
-﻿using System;
+﻿// QTile.cs - A game tile
+// Qwirkle simulation project
+// 2019-01-12   PV
+
+using System;
 using System.Diagnostics;
 
 #nullable enable
 
 namespace QwirkleLib
 {
+    /// <summary>
+    /// A game tile with a specific color and shape
+    /// </summary>
     public class QTile
     {
+        /// <summary>
+        /// Tile shape on a scale 0..5, represented as a letter A..F
+        /// </summary>
         public int Shape { get; private set; }
+
+        /// <summary>
+        /// Tile color on a scale 0..5, represented as a digit 1..6
+        /// </summary>
         public int Color { get; private set; }
 
         public QTile(int shape, int color)

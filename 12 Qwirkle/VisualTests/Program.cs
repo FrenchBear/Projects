@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Visual Tester, simple command line application to write and test code
+// Qwirkle simulation project
+// 2019-01-12   PV
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using QwirkleLib;

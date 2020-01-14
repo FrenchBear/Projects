@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Quare.cs - One element of Board, contains optionally a tile and other attributes
+// Qwirkle simulation project
+// 2019-01-12   PV
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 

@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Qwirkle\QwirkleLib\QwirkleLib.csproj" />
+    <ProjectReference Include="..\QwirkleLib\QwirkleLib.csproj" />
   </ItemGroup>
 
 </Project>

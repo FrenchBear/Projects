@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Constraint.cs - Represents a tile placement constraint
+// Qwirkle simulation project
+// 2019-01-12   PV
+
+using System;
 using System.Diagnostics;
 using System.Text;
 
@@ -6,7 +10,7 @@ using System.Text;
 
 namespace QwirkleLib
 {
-    // A playing constraint
+    // Playing constraint base class, either a shape or a color constraint
     public abstract class Constraint
     {
         public int LineAttribute;   // -2=blocked, -1=not constrained, 0..5=constrained
@@ -17,9 +21,6 @@ namespace QwirkleLib
             LineAttribute = lineAttribute;
             BlockedMask = blockedMask;
         }
-
-        //public string ToShapeConstraint() => ToStringConstraint(65, 49);
-        //public string ToColorConstraint() => ToStringConstraint(49, 65);
 
         protected string ToStringConstraint(int i1, int i2)
         {

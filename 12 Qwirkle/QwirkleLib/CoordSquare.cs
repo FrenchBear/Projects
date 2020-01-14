@@ -1,4 +1,8 @@
-﻿using System;
+﻿// CoordSquare.cs - Convenient class grouping coordinates and a Square for solution analysis
+// Qwirkle simulation project
+// 2019-01-12   PV
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;

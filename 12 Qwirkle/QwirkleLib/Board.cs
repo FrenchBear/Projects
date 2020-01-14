@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Board.cs - Main class simulating a Qwirkle grid of Squares
+// Qwirkle simulation project
+// 2019-01-12   PV
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;

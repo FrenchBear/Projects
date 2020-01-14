@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Solver.cs - Solution analyzer
+// Qwirkle simulation project
+// 2019-01-12   PV
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
