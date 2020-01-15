@@ -16,91 +16,63 @@ namespace ConsoleApp1
     {
         static void Main()
         {
-            var l = new List<int> { 1, 2, 3, 4, 5, 6 };
+            var l = new List<int> { 1, 2, 3 };
             var sw = Stopwatch.StartNew();
-            var sols = GetLRPerm2(l);
-            Console.WriteLine(sw.ElapsedMilliseconds);
-            Console.WriteLine(sols.Count());
-            //foreach (var oneList in sols)
-            //{
-            //    foreach (IntPos item in oneList)
-            //        Console.Write($"{item.value}{item.pos} ");
-            //    Console.WriteLine();
-            //}
-        }
-
-
-        static IEnumerable<List<IntPos>> GetLRPerm1(List<int> l)
-            => GetLRPerm1Sub(0, l);
-
-        static IEnumerable<List<IntPos>> GetLRPerm1Sub(int depth, List<int> l)
-        {
-            var ret = new List<List<IntPos>>();
-            if (l.Count == 1)
+            var (perms, skipTab) = GetLRPerm2(l);
+            Console.WriteLine($"Elapsed (ms): {sw.ElapsedMilliseconds}");
+            Console.WriteLine($"Perms count: {perms.Count()}");
+            Console.WriteLine();
+            foreach (var oneList in perms)
             {
-                var r1 = new List<IntPos>();
-                r1.Add(new IntPos { value = l[0], pos = depth == 0 ? '.' : 'L' });
-                ret.Add(r1);
-                if (depth > 0)
-                {
-                    r1 = new List<IntPos>();
-                    r1.Add(new IntPos { value = l[0], pos = 'R' });
-                    ret.Add(r1);
-                }
-                return ret;
+                foreach (IntPos item in oneList)
+                    Console.Write($"{item.value}{item.pos} ");
+                Console.WriteLine();
             }
-
-            foreach (var item in l)
-            {
-                List<int> l2 = new List<int>(l);
-                l2.Remove(item);
-                foreach (List<IntPos> onePerm in GetLRPerm1Sub(depth + 1, l2))
-                {
-                    var l3 = new List<IntPos>();
-                    l3.Add(new IntPos { value = item, pos = depth == 0 ? '.' : 'L' });
-                    l3.AddRange(onePerm);
-                    ret.Add(l3);
-
-                    if (depth > 0)
-                    {
-                        l3 = new List<IntPos>();
-                        l3.Add(new IntPos { value = item, pos = 'R' });
-                        l3.AddRange(onePerm);
-                        ret.Add(l3);
-                    }
-                }
-            }
-            return ret;
+            Console.WriteLine();
+            Console.Write("SkipTab: ");
+            foreach (var s in skipTab)
+                Console.Write($"{s} ");
+            Console.WriteLine();
         }
 
 
         // ==================================================================================
-        // Classical implementation of a permutator
+        // Classical implementation of a permutator with a twist, each element but the first
+        // can be in Left and Right position
 
-        private static IEnumerable<List<IntPos>> GetLRPerm2(List<int> l)
+        private static (IEnumerable<List<IntPos>>, int[]) GetLRPerm2(List<int> l)
         {
             var l2 = new List<IntPos>();
             foreach (var item in l)
                 l2.Add(new IntPos { value = item, pos = '.' });
 
             var sol = new List<List<IntPos>>();
-            ClassicalPermutatorSub(sol, l2, 0);
-            return sol;
+            PermutatorSub(sol, l2, 0);
+
+            // Prepare skipping table: if item[n] of a permutation doesn't fit, skip skipTab[n]
+            // permutations to get the next one with item[n] different
+            var skipTab = new int[l.Count];
+            int div = l.Count;
+            skipTab[0] = sol.Count / div;
+            for (int i = 1; --div >= 1; i++)
+                skipTab[i] = skipTab[i - 1] / (2 * div);
+
+            return (sol, skipTab);
         }
 
-        private static void ClassicalPermutatorSub(IList<List<IntPos>> res, List<IntPos> l, int from)
+        private static void PermutatorSub(IList<List<IntPos>> res, List<IntPos> l, int from)
         {
             if (from + 1 == l.Count)
             {
                 var l2 = new List<IntPos>(l);
-                var zz = l[from];
-                zz.pos = 'L';
-                l2[from] = zz;
+                l2[from] = l2[from].SetPos(from == 0 ? '.' : 'L');
                 res.Add(l2);
-                l2 = new List<IntPos>(l);
-                zz.pos = 'R';
-                l2[from] = zz;
-                res.Add(l2);
+                if (from > 0)
+                {
+                    l2 = new List<IntPos>(l);
+                    l2[from] = l2[from].SetPos('R');
+                    res.Add(l2);
+                }
             }
             else
                 for (int i = from; i < l.Count; i++)
@@ -112,13 +84,8 @@ namespace ConsoleApp1
                         l2[from] = l2[i];
                         l2[i] = temp;
                     }
-
-                    var zz = l2[from];
-                    zz.pos = from == 0 ? '.' : 'L';
-                    l2[from] = zz;
-
-                    ClassicalPermutatorSub(res, l2, from + 1);
-
+                    l2[from] = l2[from].SetPos(from == 0 ? '.' : 'L');
+                    PermutatorSub(res, l2, from + 1);
                     if (from > 0)
                     {
                         l2 = new List<IntPos>(l);
@@ -128,12 +95,8 @@ namespace ConsoleApp1
                             l2[from] = l2[i];
                             l2[i] = temp;
                         }
-
-                        zz = l2[from];
-                        zz.pos = 'R';
-                        l2[from] = zz;
-
-                        ClassicalPermutatorSub(res, l2, from + 1);
+                        l2[from] = l2[from].SetPos('R');
+                        PermutatorSub(res, l2, from + 1);
                     }
                 }
         }
@@ -143,5 +106,7 @@ namespace ConsoleApp1
     {
         public int value;
         public char pos;
+
+        internal IntPos SetPos(char newPos) => new IntPos { value = this.value, pos = newPos };
     }
 }
