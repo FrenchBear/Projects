@@ -7,10 +7,10 @@ using System.Diagnostics;
 
 #nullable enable
 
-namespace QwirkleLib
+namespace ConsoleApp1
 {
     /// <summary>
-    /// A game tile with a specific color and shape.  Immutable
+    /// A game tile with a specific color and shape
     /// </summary>
     public class QTile
     {

@@ -1,9 +1,7 @@
-﻿// IntPosPermutator
-// 2020-01-14       PV      Test for Qwirkle solver
-//
-// Next step: during solution iteration, at some point "skip" all solutions that begin with the same permutation
-// Useful if at some point of the play of an iteration a tile is not playable, there is no point in looking at
-// all following permutations that will attempt to place the same combination
+﻿// TileSidePermutator
+// Sidework for Qwirkle solver, generates all permutations of a hand
+// 2020-01-14       PV      Tests 
+
 
 using System;
 using System.Collections.Generic;
@@ -16,16 +14,26 @@ namespace ConsoleApp1
     {
         static void Main()
         {
-            var l = new List<int> { 1, 2, 3 };
+            var l = new List<QTile> {
+                new QTile("A1"),
+                new QTile("B2"),
+                new QTile("C3"),
+                //new QTile("D3"),
+                //new QTile("E5"),
+                //new QTile("F6"),
+            };
             var sw = Stopwatch.StartNew();
             var (perms, skipTab) = GetLRPerm2(l);
             Console.WriteLine($"Elapsed (ms): {sw.ElapsedMilliseconds}");
             Console.WriteLine($"Perms count: {perms.Count()}");
             Console.WriteLine();
+            int n = 0;
             foreach (var oneList in perms)
             {
-                foreach (IntPos item in oneList)
-                    Console.Write($"{item.value}{item.pos} ");
+                if (++n > 20)
+                    break;
+                foreach (QtileSide item in oneList)
+                    Console.Write($"{item.tile}{item.side} ");
                 Console.WriteLine();
             }
             Console.WriteLine();
@@ -38,15 +46,15 @@ namespace ConsoleApp1
 
         // ==================================================================================
         // Classical implementation of a permutator with a twist, each element but the first
-        // can be in Left and Right position
+        // can be on - or + side
 
-        private static (IEnumerable<List<IntPos>>, int[]) GetLRPerm2(List<int> l)
+        private static (IEnumerable<List<QtileSide>>, int[]) GetLRPerm2(List<QTile> l)
         {
-            var l2 = new List<IntPos>();
+            var l2 = new List<QtileSide>();
             foreach (var item in l)
-                l2.Add(new IntPos { value = item, pos = '.' });
+                l2.Add(new QtileSide { tile = item, side = '.' });
 
-            var sol = new List<List<IntPos>>();
+            var sol = new List<List<QtileSide>>();
             PermutatorSub(sol, l2, 0);
 
             // Prepare skipping table: if item[n] of a permutation doesn't fit, skip skipTab[n]
@@ -60,53 +68,53 @@ namespace ConsoleApp1
             return (sol, skipTab);
         }
 
-        private static void PermutatorSub(IList<List<IntPos>> res, List<IntPos> l, int from)
+        private static void PermutatorSub(IList<List<QtileSide>> res, List<QtileSide> l, int from)
         {
             if (from + 1 == l.Count)
             {
-                var l2 = new List<IntPos>(l);
-                l2[from] = l2[from].SetPos(from == 0 ? '.' : 'L');
+                var l2 = new List<QtileSide>(l);
+                l2[from] = l2[from].SetSide(from == 0 ? '.' : '+');
                 res.Add(l2);
                 if (from > 0)
                 {
-                    l2 = new List<IntPos>(l);
-                    l2[from] = l2[from].SetPos('R');
+                    l2 = new List<QtileSide>(l);
+                    l2[from] = l2[from].SetSide('-');
                     res.Add(l2);
                 }
             }
             else
                 for (int i = from; i < l.Count; i++)
                 {
-                    var l2 = new List<IntPos>(l);
+                    var l2 = new List<QtileSide>(l);
                     if (i != from)
                     {
                         var temp = l2[from];
                         l2[from] = l2[i];
                         l2[i] = temp;
                     }
-                    l2[from] = l2[from].SetPos(from == 0 ? '.' : 'L');
+                    l2[from] = l2[from].SetSide(from == 0 ? '.' : '+');
                     PermutatorSub(res, l2, from + 1);
                     if (from > 0)
                     {
-                        l2 = new List<IntPos>(l);
+                        l2 = new List<QtileSide>(l);
                         if (i != from)
                         {
                             var temp = l2[from];
                             l2[from] = l2[i];
                             l2[i] = temp;
                         }
-                        l2[from] = l2[from].SetPos('R');
+                        l2[from] = l2[from].SetSide('-');
                         PermutatorSub(res, l2, from + 1);
                     }
                 }
         }
     }
 
-    struct IntPos
+    struct QtileSide
     {
-        public int value;
-        public char pos;
+        public QTile tile;
+        public char side;
 
-        internal IntPos SetPos(char newPos) => new IntPos { value = this.value, pos = newPos };
+        internal QtileSide SetSide(char newSide) => new QtileSide { tile = this.tile, side = newSide };
     }
 }

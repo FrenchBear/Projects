@@ -31,7 +31,7 @@ namespace VisualTests
                 new QTile("C5"),
                 new QTile("C6"),
                 new QTile("D4"),
-                new QTile("F6")
+                new QTile("F6"),
             };
 
             var s = b.Solve(hand);

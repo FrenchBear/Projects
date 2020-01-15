@@ -18,22 +18,25 @@ namespace QwirkleLib
     /// </summary>
     public partial class Board
     {
-        private readonly Dictionary<(int, int), Square> BoardDict = new Dictionary<(int, int), Square>();
-        private readonly Dictionary<(int, int), Square> PlayedDict = new Dictionary<(int, int), Square>();
+        //private readonly Dictionary<(int, int), Square> Base.dict = new Dictionary<(int, int), Square>();
+        //private readonly Dictionary<(int, int), Square> Played.dict = new Dictionary<(int, int), Square>();
 
-        private int RowMinBoard = 0;
-        private int RowMaxBoard = 0;
-        private int ColMinBoard = 0;
-        private int ColMaxBoard = 0;
-        private int RowMinPlayed = 999;
-        private int RowMaxPlayed = -999;
-        private int ColMinPlayed = 999;
-        private int ColMaxPlayed = -999;
+        private readonly BoardLayer Base = new BoardLayer();
+        private BoardLayer Played = new BoardLayer();
 
-        public int RowMin => Math.Min(RowMinBoard, RowMinPlayed);
-        public int RowMax => Math.Max(RowMaxBoard, RowMaxPlayed);
-        public int ColMin => Math.Min(ColMinBoard, ColMinPlayed);
-        public int ColMax => Math.Max(ColMaxBoard, ColMaxPlayed);
+        //private int RowMinBoard = 0;
+        //private int RowMaxBoard = 0;
+        //private int ColMinBoard = 0;
+        //private int ColMaxBoard = 0;
+        //private int RowMinPlayed = 999;
+        //private int RowMaxPlayed = -999;
+        //private int ColMinPlayed = 999;
+        //private int ColMaxPlayed = -999;
+
+        public int RowMin => Math.Min(Base.RowMin, Played.RowMin);
+        public int RowMax => Math.Max(Base.RowMax, Played.RowMax);
+        public int ColMin => Math.Min(Base.ColMin, Played.ColMin);
+        public int ColMax => Math.Max(Base.ColMax, Played.ColMax);
 
 
         /// <summary>
@@ -41,33 +44,33 @@ namespace QwirkleLib
         /// </summary>
         public Board() { }
 
-        public Square this[(int row, int col) coord] => PlayedDict.GetValueOrDefault(coord, BoardDict.GetValueOrDefault(coord, Square.Empty));
+        public Square this[(int row, int col) coord] => Played.dict.GetValueOrDefault(coord, Base.dict.GetValueOrDefault(coord, Square.Empty));
 
         private bool IsTiled((int, int) coord) => this[coord].Tile != null;
 
         public void SetBoardSquare((int row, int col) coord, Square value)
         {
-            if (BoardDict.ContainsKey(coord))
+            if (Base.dict.ContainsKey(coord))
             {
-                var s = BoardDict[coord];
+                var s = Base.dict[coord];
                 Debug.Assert(s.State == SquareState.Playable || s.State == SquareState.Unknown || s.State == SquareState.Empty);
             }
-            BoardDict[coord] = value;
-            if (coord.row < RowMinBoard) RowMinBoard = coord.row;
-            if (coord.row > RowMaxBoard) RowMaxBoard = coord.row;
-            if (coord.col < ColMinBoard) ColMinBoard = coord.col;
-            if (coord.col > ColMaxBoard) ColMaxBoard = coord.col;
+            Base.dict[coord] = value;
+            if (coord.row < Base.RowMin) Base.RowMin = coord.row;
+            if (coord.row > Base.RowMax) Base.RowMax = coord.row;
+            if (coord.col < Base.ColMin) Base.ColMin = coord.col;
+            if (coord.col > Base.ColMax) Base.ColMax = coord.col;
         }
 
         public void SetPlayedSquare((int row, int col) coord, Square value)
         {
             // Can't play over a tiled board square
-            if (BoardDict.ContainsKey(coord))
-                Debug.Assert(BoardDict[coord].Tile == null);
+            if (Base.dict.ContainsKey(coord))
+                Debug.Assert(Base.dict[coord].Tile == null);
             // Can't play over a tiled or blocked played square
-            if (PlayedDict.ContainsKey(coord))
+            if (Played.dict.ContainsKey(coord))
             {
-                Square s = PlayedDict[coord];
+                Square s = Played.dict[coord];
                 Debug.Assert(s.State == SquareState.Playable || s.State == SquareState.Unknown || s.State == SquareState.Empty);
             }
 
@@ -75,11 +78,11 @@ namespace QwirkleLib
             if (value.Tile != null)
                 Debug.Assert(CanPlayTile(coord, value.Tile, out _));
 
-            PlayedDict[coord] = value;
-            if (coord.row < RowMinPlayed) RowMinPlayed = coord.row;
-            if (coord.row > RowMaxPlayed) RowMaxPlayed = coord.row;
-            if (coord.col < ColMinPlayed) ColMinPlayed = coord.col;
-            if (coord.col > ColMaxPlayed) ColMaxPlayed = coord.col;
+            Played.dict[coord] = value;
+            if (coord.row < Played.RowMin) Played.RowMin = coord.row;
+            if (coord.row > Played.RowMax) Played.RowMax = coord.row;
+            if (coord.col < Played.ColMin) Played.ColMin = coord.col;
+            if (coord.col > Played.ColMax) Played.ColMax = coord.col;
         }
 
 
@@ -138,17 +141,17 @@ namespace QwirkleLib
                 !IsTiled((coord.row - 1, coord.col)) &&
                 !IsTiled((coord.row, coord.col + 1)) &&
                 !IsTiled((coord.row, coord.col - 1)) &&
-                PlayedDict.Count + BoardDict.Count > 0)
+                Played.dict.Count + Base.dict.Count > 0)
             {
                 msg = "Il y n'a pas de tuile adjecente à cet emplacement";
                 return false;
             }
 
             // Check playability
-            if (!PlayedDict.ContainsKey(coord))
-                PlayedDict[coord] = Square.Empty;
+            if (!Played.dict.ContainsKey(coord))
+                Played.dict[coord] = Square.Empty;
             UpdateSquarePlayability(coord, true);
-            var ps = PlayedDict[coord];
+            var ps = Played.dict[coord];
             Debug.Assert(ps.State == SquareState.Blocked || ps.State == SquareState.Playable);
             if (ps.State == SquareState.Blocked)
             {
@@ -207,7 +210,7 @@ namespace QwirkleLib
             int nt = 0;
             int playRow = 0, playCol = 0;
             bool playInRow = false, playInCol = false;
-            foreach (var pt in PlayedDict.Where(kv => kv.Value.Tile != null))
+            foreach (var pt in Played.dict.Where(kv => kv.Value.Tile != null))
             {
                 nt++;
                 if (nt == 1)
@@ -268,9 +271,9 @@ namespace QwirkleLib
         /// </summary>
         public void CommitPlay()
         {
-            foreach (var kv in PlayedDict)
+            foreach (var kv in Played.dict)
                 SetBoardSquare(kv.Key, kv.Value);
-            ClearPlayedDict();
+            Played.dict.Clear();
         }
 
         /// <summary>
@@ -278,11 +281,11 @@ namespace QwirkleLib
         /// </summary>
         private void ClearPlayedDict()
         {
-            PlayedDict.Clear();
-            RowMinPlayed = 999;
-            RowMaxPlayed = -999;
-            ColMinPlayed = 999;
-            ColMaxPlayed = -999;
+            Played.dict.Clear();
+            Played.RowMin = 999;
+            Played.RowMax = -999;
+            Played.ColMin = 999;
+            Played.ColMax = -999;
         }
 
         public void RollbackPlay()
@@ -302,7 +305,7 @@ namespace QwirkleLib
                     break;
             }
 
-            var dic = isPlayed ? PlayedDict : BoardDict;
+            var dic = isPlayed ? Played.dict : Base.dict;
             var s = dic.GetValueOrDefault(coord, Square.Empty);
             if (s.State == SquareState.Blocked) return;     // Blocked state is final
             if (s.State == SquareState.Unknown) return;     // Already unknown, won't change
@@ -324,11 +327,14 @@ namespace QwirkleLib
         /// </summary>
         public void UpdateBoardPlayability()
         {
-            for (int row = RowMinBoard; row <= RowMaxBoard; row++)
-                for (int col = ColMinBoard; col <= ColMaxBoard; col++)
-                    if (BoardDict.ContainsKey((row, col)))
+            if (Base.dict.Count == 0)
+                return;
+
+            for (int row = Base.RowMin; row <= Base.RowMax; row++)
+                for (int col = Base.ColMin; col <= Base.ColMax; col++)
+                    if (Base.dict.ContainsKey((row, col)))
                     {
-                        var s = BoardDict[(row, col)];
+                        var s = Base.dict[(row, col)];
                         if (s.State == SquareState.Unknown)
                             UpdateSquarePlayability((row, col), false);
                     }
@@ -339,15 +345,15 @@ namespace QwirkleLib
         /// </summary>
         public void UpdatePlayedPlayability()
         {
-            if (PlayedDict.Count == 0)
+            if (Played.dict.Count == 0)
                 return;
 
-            Debug.Assert(RowMinPlayed != 999 && ColMinPlayed != 999);
-            for (int row = RowMinPlayed; row <= RowMaxPlayed; row++)
-                for (int col = ColMinPlayed; col <= ColMaxPlayed; col++)
-                    if (PlayedDict.ContainsKey((row, col)))
+            Debug.Assert(Played.RowMin != 999 && Played.ColMin != 999);
+            for (int row = Played.RowMin; row <= Played.RowMax; row++)
+                for (int col = Played.ColMin; col <= Played.ColMax; col++)
+                    if (Played.dict.ContainsKey((row, col)))
                     {
-                        var s = PlayedDict[(row, col)];
+                        var s = Played.dict[(row, col)];
                         if (s.State == SquareState.Unknown)
                             UpdateSquarePlayability((row, col), true);
                     }
@@ -355,7 +361,7 @@ namespace QwirkleLib
 
         private void UpdateSquarePlayability((int row, int col) coord, bool isPlayed)
         {
-            var dic = isPlayed ? PlayedDict : BoardDict;
+            var dic = isPlayed ? Played.dict : Base.dict;
             Debug.Assert(dic.ContainsKey(coord));
 
             // First get constraints from all directions
@@ -394,7 +400,7 @@ namespace QwirkleLib
             for (; ; )
             {
                 coord = (coord.row + deltaRow, coord.col + deltaCol);
-                s = isPlayed ? this[coord] : BoardDict.GetValueOrDefault(coord, Square.Empty);
+                s = isPlayed ? this[coord] : Base.dict.GetValueOrDefault(coord, Square.Empty);
                 if (s.Tile == null) return (shapeConstraint, colorConstraint);
                 shapeConstraint = shapeConstraint.Inter(new ShapeConstraint(s.Tile.Shape, 1 << s.Tile.Color));
                 colorConstraint = colorConstraint.Inter(new ColorConstraint(s.Tile.Color, 1 << s.Tile.Shape));
@@ -404,7 +410,7 @@ namespace QwirkleLib
         public int PlayPoints()
         {
             // Reset evaluation helpers
-            foreach (var pt in PlayedDict.Where(kv => kv.Value.Tile != null))
+            foreach (var pt in Played.dict.Where(kv => kv.Value.Tile != null))
             {
                 pt.Value.pointsInRow = false;
                 pt.Value.pointsInCol = false;
@@ -412,7 +418,7 @@ namespace QwirkleLib
 
             // ToDo: replace with sum
             var points = 0;
-            foreach (var pt in PlayedDict.Where(kv => kv.Value.Tile != null))
+            foreach (var pt in Played.dict.Where(kv => kv.Value.Tile != null))
                 points += PlayPointsForTile(pt.Key);
 
             return points;
@@ -455,22 +461,22 @@ namespace QwirkleLib
                 if (!IsTiled(coord))
                     return n;
                 n++;
-                if (PlayedDict.ContainsKey(coord))
+                if (Played.dict.ContainsKey(coord))
                 {
-                    // PlayedDict cannot contain anything if the board is contining a tile
-                    // So if we have something in PlayedDict, it must be a tile since we
+                    // Played.dict cannot contain anything if the board is contining a tile
+                    // So if we have something in Played.dict, it must be a tile since we
                     // know that ccord is tiled
-                    Debug.Assert(PlayedDict[coord].Tile != null);
+                    Debug.Assert(Played.dict[coord].Tile != null);
 
                     if (isInRow)
                     {
-                        Debug.Assert(!PlayedDict[coord].pointsInRow);
-                        PlayedDict[coord].pointsInRow = true;
+                        Debug.Assert(!Played.dict[coord].pointsInRow);
+                        Played.dict[coord].pointsInRow = true;
                     }
                     else
                     {
-                        Debug.Assert(!PlayedDict[coord].pointsInCol);
-                        PlayedDict[coord].pointsInCol = true;
+                        Debug.Assert(!Played.dict[coord].pointsInCol);
+                        Played.dict[coord].pointsInCol = true;
                     }
                 }
             }
@@ -500,9 +506,9 @@ namespace QwirkleLib
                 for (int col = ColMin; col <= ColMax; col++)
                 {
                     char source;
-                    if (PlayedDict.ContainsKey((row, col)))
+                    if (Played.dict.ContainsKey((row, col)))
                         source = 'P';
-                    else if (BoardDict.ContainsKey((row, col)))
+                    else if (Base.dict.ContainsKey((row, col)))
                         source = 'B';
                     else
                         source = 'D';

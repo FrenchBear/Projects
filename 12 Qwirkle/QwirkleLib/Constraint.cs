@@ -46,6 +46,8 @@ namespace QwirkleLib
 
         public ShapeConstraint(int lineAttribute, int blockedMask) : base(lineAttribute, blockedMask) { }
 
+        public ShapeConstraint(ShapeConstraint copy) : base(copy.LineAttribute, copy.BlockedMask) { }
+
         public ShapeConstraint Inter(ShapeConstraint c2)
         {
             // Either one is blocked or different lined consraints -> blocked
@@ -64,6 +66,8 @@ namespace QwirkleLib
         internal static readonly ColorConstraint None = new ColorConstraint(-1, 0);
 
         public ColorConstraint(int lineAttribute, int blockedMask) : base(lineAttribute, blockedMask) { }
+
+        public ColorConstraint(ColorConstraint copy) : base(copy.LineAttribute, copy.BlockedMask) { }
 
         public ColorConstraint Inter(ColorConstraint c2)
         {

@@ -43,7 +43,7 @@ namespace QwirkleLib
     /// </summary>
     public class Square
     {
-        internal static Square Empty => new Square(null);
+        internal static Square Empty => new Square();
 
         public SquareState State;
         public QTile? Tile;
@@ -80,18 +80,35 @@ namespace QwirkleLib
         /// </summary>
         internal bool pointsInCol;
 
-
-        public Square(QTile? tile)
+        public Square()
         {
-            if (tile == null)
-                State = SquareState.Empty;
-            else
-            {
-                Tile = tile;
-                State = SquareState.Tiled;
-            }
+            State = SquareState.Empty;
         }
 
+        public Square(QTile tile)
+        {
+            State = SquareState.Tiled;
+            Tile = tile;
+        }
+
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        public Square(Square copy)
+        {
+            State = copy.State;
+            Tile = copy.Tile;       // immutable
+            RowShapeConstraint = copy.RowShapeConstraint==null ? null : new ShapeConstraint(copy.RowShapeConstraint);
+            RowColorConstraint = copy.RowColorConstraint == null ? null : new ColorConstraint(copy.RowColorConstraint);
+            ColShapeConstraint = copy.ColShapeConstraint == null ? null : new ShapeConstraint(copy.ColShapeConstraint);
+            ColColorConstraint = copy.ColColorConstraint == null ? null : new ColorConstraint(copy.ColColorConstraint);
+            pointsInRow = copy.pointsInRow;
+            pointsInCol = copy.pointsInCol;
+        }
+
+        /// <summary>
+        /// String representation of a square, for debug and unit tests
+        /// </summary>
         public override string ToString() =>
             State switch
             {
