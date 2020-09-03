@@ -7,9 +7,9 @@
     <Platforms>AnyCPU;x64</Platforms>
     <LangVersion>8.0</LangVersion>
     <Authors>Pierre VIolent</Authors>
-    <Copyright>Copyright ©2018-2019 Pierre Violent</Copyright>
-    <Version>1.1.0</Version>
-    <Description>Unicode Character Search Tool [WPF .Net Core 3 C#8 Nullable]</Description>
+    <Copyright>Copyright ©2018-2020 Pierre Violent</Copyright>
+    <Version>1.2.0</Version>
+    <Description>Unicode Character Search Tool [WPF .Net Core 3.1 C#8 Nullable]</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

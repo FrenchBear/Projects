@@ -7,6 +7,7 @@
 // 2018-09-20   PV      1.2 Read NamesList.txt
 // 2018-09-28	PV		1.2.1 Subheaders merging
 // 2019-03-06	PV		1.3 Unicode 12 (no code change, only UCD data updated)
+// 2020-09-03   PV      1.4 Unicode 13; Backportining .Net Code Nullable fixes
 
 using System;
 using System.Collections.Generic;
@@ -75,6 +76,8 @@ namespace UniDataNS
             this.Name = Name;
             this.Category = Category;
             this.IsPrintable = IsPrintable;
+            this.Age = string.Empty;
+            this.Subheader = string.Empty;
         }
 
         public string AsString => $"{Character}\t{CodepointHex}\t{Name}";
@@ -166,7 +169,7 @@ namespace UniDataNS
             using (var sr = new StreamReader(GetResourceStream("MetaBlocks.txt")))
                 while (!sr.EndOfStream)
                 {
-                    string line = sr.ReadLine();
+                    string line = sr.ReadLine() ?? string.Empty;
                     if (line.Length == 0 || line[0] == '#') continue;
                     string[] fields = line.Split(';');
                     string[] field0 = fields[0].Replace("..", ";").Split(';');
@@ -254,7 +257,7 @@ namespace UniDataNS
             using (var sr = new StreamReader(GetResourceStream("UnicodeData.txt")))
                 while (!sr.EndOfStream)
                 {
-                    string[] fields = sr.ReadLine().Split(';');
+                    string[] fields = (sr.ReadLine() ?? string.Empty).Split(';');
                     int codepoint = int.Parse(fields[0], NumberStyles.HexNumber);
                     string char_name = fields[1];
                     string char_category = fields[2];
@@ -270,7 +273,7 @@ namespace UniDataNS
                     if (is_range)   // Add all characters within a specified range
                     {
                         char_name = char_name.Replace(", First>", String.Empty).Replace("<", string.Empty).ToUpperInvariant(); //remove range indicator from name
-                        fields = sr.ReadLine().Split(';');
+                        fields = (sr.ReadLine() ?? String.Empty).Split(';');
                         int end_char_code = int.Parse(fields[0], NumberStyles.HexNumber);
                         if (!fields[1].EndsWith(", Last>", StringComparison.OrdinalIgnoreCase))
                             Debugger.Break();
@@ -310,7 +313,7 @@ namespace UniDataNS
             using (var sr = new StreamReader(GetResourceStream("DerivedAge.txt")))
                 while (!sr.EndOfStream)
                 {
-                    string line = sr.ReadLine();
+                    string line = sr.ReadLine() ?? string.Empty;
                     if (line.Length == 0 || line[0] == '#') continue;
                     int p = line.IndexOf('#');
                     if (p >= 0) line = line.Substring(0, p - 1);
@@ -335,7 +338,7 @@ namespace UniDataNS
                 }
 
             // Read NamesList
-            string subheader = null;
+            string subheader = string.Empty;
             // Optimizations: Do not use Regex, looks costly to performance profiler
             //Regex CodepointRegex = new Regex(@"^[0-9A-F]{4,6}\t");
 
@@ -358,7 +361,7 @@ namespace UniDataNS
             using (var sr = new StreamReader(GetResourceStream("NamesList.txt")))
                 while (!sr.EndOfStream)
                 {
-                    string line = sr.ReadLine();
+                    string line = sr.ReadLine() ?? string.Empty;
                     if (line.StartsWith(";", StringComparison.Ordinal)) { }
                     //else if (line.StartsWith("@@@+", StringComparison.Ordinal)) { }
                     //else if (line.StartsWith("@@@~", StringComparison.Ordinal)) { }
@@ -371,7 +374,7 @@ namespace UniDataNS
                             MergeSubheaders();
                         blockCodepoints = new HashSet<int>();
                         blockSubheaders = new HashSet<string>();
-                        subheader = null;
+                        subheader = string.Empty;
                     }
                     else if (line.StartsWith("@@", StringComparison.Ordinal)) { }
                     else if (line.StartsWith("@+", StringComparison.Ordinal)) { }
@@ -406,8 +409,8 @@ namespace UniDataNS
 
                         if (char_map.ContainsKey(cp16))
                         {
-                            blockCodepoints.Add(cp16);
-                            blockSubheaders.Add(subheader);
+                            blockCodepoints?.Add(cp16);
+                            blockSubheaders?.Add(subheader);
                             char_map[cp16].Subheader = subheader;
                         }
                     }
@@ -442,9 +445,11 @@ namespace UniDataNS
             var assembly = typeof(UniData).GetTypeInfo().Assembly;
             var qualifiedName = assembly.GetManifestResourceNames().FirstOrDefault(n => n.EndsWith(name, StringComparison.OrdinalIgnoreCase));
             if (qualifiedName == null)
-                return null;
-            else
-                return assembly.GetManifestResourceStream(qualifiedName);
+                throw new ArgumentException("Can't get resource (#1) " + name);
+            var st = assembly.GetManifestResourceStream(qualifiedName);
+            if (st == null)
+                throw new ArgumentException("Can't get resource (#2) " + name);
+            return st;
         }
 
 

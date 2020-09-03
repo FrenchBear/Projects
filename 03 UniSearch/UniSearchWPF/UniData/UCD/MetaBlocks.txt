@@ -7,6 +7,7 @@
 # 2016-12-09	PV		Unicode 10
 # 2018-08-18	PV		Unicode 11
 # 2019-03-06	PV		Unicode 12
+# 2020-09-03	PV		Unicode 13
 
 0000..001F;ASCII Controls C0;;Specials;Symbols and Punctuation
 0020..007F;Basic Latin (ASCII);Latin;European Scripts;Scripts
@@ -215,8 +216,10 @@ FFF0..FFFF;Specials;;Specials;Symbols and Punctuation
 10C80..10CFF;Old Hungarian;Latin;European Scripts;Scripts
 10D00..10D3F;Hanifi Rohingya;;Southeast Asian Scripts;Scripts
 10E60..10E7F;Rumi Numeral Symbols;;Numbers & Digits;Symbols and Punctuation
+10E80..10EBF;Yezidi;;Middle Eastern Scripts;Scripts
 10F00..10F2F;Old Sogdian;;Central Asian Scripts;Scripts
 10F30..10F6F;Sogdian;;Central Asian Scripts;Scripts
+10FB0..10FDF;Chorasmian;;Middle Eastern Scripts;Scripts
 10FE0..10FFF;Elymaic;;Middle Eastern Scripts;Scripts
 11000..1107F;Brahmi;;South Asian Scripts;Scripts
 11080..110CF;Kaithi;;South Asian Scripts;Scripts
@@ -238,6 +241,7 @@ FFF0..FFFF;Specials;;Specials;Symbols and Punctuation
 11700..1173F;Ahom;;South Asian Scripts;Scripts
 11800..1184F;Dogra;;South Asian Scripts;Scripts
 118A0..118FF;Warang Citi;;South Asian Scripts;Scripts
+11900..1195F;Dives Akuru;;South Asian Scripts;Scripts
 119A0..119FF;Nandinagari;;South Asian Scripts;Scripts
 11A00..11A4F;Zanabazar Square;;Central Asian Scripts;Scripts
 11A50..11AAF;Soyombo;;Central Asian Scripts;Scripts
@@ -247,6 +251,7 @@ FFF0..FFFF;Specials;;Specials;Symbols and Punctuation
 11D00..11D5F;Masaram Gondi;;South Asian Scripts;Scripts
 11D60..11DAF;Gunjala Gondi;;South Asian Scripts;Scripts
 11EE0..11EFF;Makasar;;Indonesia & Oceania Scripts;Scripts
+11FB0..11FBF;Lisu Supplement;Lisu;East Asian Scripts;Scripts
 11FC0..11FFF;Tamil Supplement;Tamil;South Asian Scripts;Scripts
 12000..123FF;Cuneiform;Cuneiform;Middle Eastern Scripts;Scripts
 12400..1247F;Cuneiform Numbers and Punctuation;Cuneiform;Middle Eastern Scripts;Scripts
@@ -263,6 +268,8 @@ FFF0..FFFF;Specials;;Specials;Symbols and Punctuation
 16FE0..16FFF;Ideographic Symbols and Punctuation;;CJK Symbols and Punctuation;Symbols and Punctuation
 17000..187FF;Tangut;Tangut;East Asian Scripts;Scripts
 18800..18AFF;Tangut Components;Tangut;East Asian Scripts;Scripts
+18B00..18CFF;Khitan Small Script;;East Asian Scripts;Scripts
+18D00..18D8F;Tangut Supplement;Tangut;East Asian Scripts;Scripts
 1B000..1B0FF;Kana Supplement;Katakana;East Asian Scripts;Scripts
 1B100..1B12F;Kana Extended-A;;East Asian Scripts;Scripts
 1B130..1B16F;Small Kana Extension;;East Asian Scripts;Scripts
@@ -300,6 +307,7 @@ FFF0..FFFF;Specials;;Specials;Symbols and Punctuation
 1F900..1F9FF;Supplemental Symbols and Pictographs;;Emoji & Pictographs;Symbols and Punctuation
 1FA00..1FA6F;Chess Symbols;Game Symbols;Other Symbols;Symbols and Punctuation
 1FA70..1FAFF;Symbols and Pictographs Extended-A;;Emoji & Pictographs;Symbols and Punctuation
+1FB00..1FBFF;Symbols for Legacy Computing;;Other Symbols;Symbols and Punctuation
 1FFFE..1FFFF;Specials End of Plane 1;;Specials;Symbols and Punctuation
 20000..2A6DF;CJK Unified Ideographs Extension B;CJK Unified Ideographs (Han);East Asian Scripts;Scripts
 2A700..2B73F;CJK Unified Ideographs Extension C;CJK Unified Ideographs (Han);East Asian Scripts;Scripts
@@ -308,6 +316,7 @@ FFF0..FFFF;Specials;;Specials;Symbols and Punctuation
 2CEB0..2EBEF;CJK Unified Ideographs Extension F;CJK Unified Ideographs (Han);East Asian Scripts;Scripts
 2F800..2FA1F;CJK Compatibility Ideographs Supplement;CJK Compatibility Ideographs;East Asian Scripts;Scripts
 2FFFE..2FFFF;Specials End of Plane 2;;Specials;Symbols and Punctuation
+30000..3134F;CJK Unified Ideographs Extension G;CJK Unified Ideographs (Han);East Asian Scripts;Scripts
 3FFFE..3FFFF;Specials End of Plane 3;;Specials;Symbols and Punctuation
 4FFFE..4FFFF;Specials End of Plane 4;;Specials;Symbols and Punctuation
 5FFFE..5FFFF;Specials End of Plane 5;;Specials;Symbols and Punctuation
