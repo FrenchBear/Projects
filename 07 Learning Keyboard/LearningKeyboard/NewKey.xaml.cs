@@ -38,7 +38,6 @@ namespace LearningKeyboard
             SimpleTextTB.Height = 20;
             SimpleTextTB.SetValue(Canvas.TopProperty, H / 2.0 - H / 4);
             SimpleTextTB.LineStackingStrategy = LineStackingStrategy.BlockLineHeight;
-            //SimpleTextTB.Background = Brushes.Yellow;
 
             NormalTextTB.SetValue(Canvas.TopProperty, H / 2.0);
             NormalTextTB.SetValue(Canvas.LeftProperty, 0.0);
@@ -63,6 +62,31 @@ namespace LearningKeyboard
             ShiftAltGrTextTB.Width = W / 2;
             ShiftAltGrTextTB.LineHeight = H / 2;
             ShiftAltGrTextTB.LineStackingStrategy = LineStackingStrategy.BlockLineHeight;
+
+
+            ADNormalTextTB.SetValue(Canvas.TopProperty, H / 2.0);
+            ADNormalTextTB.SetValue(Canvas.LeftProperty, 0.0);
+            ADNormalTextTB.Width = W / 2;
+            ADNormalTextTB.LineHeight = H / 2;
+            ADNormalTextTB.LineStackingStrategy = LineStackingStrategy.BlockLineHeight;
+
+            ADShiftTextTB.SetValue(Canvas.TopProperty, 0.0);
+            ADShiftTextTB.SetValue(Canvas.LeftProperty, 0.0);
+            ADShiftTextTB.Width = W / 2;
+            ADShiftTextTB.LineHeight = H / 2;
+            ADShiftTextTB.LineStackingStrategy = LineStackingStrategy.BlockLineHeight;
+
+            ADResultTextTB.SetValue(Canvas.TopProperty, H / 2.0);
+            ADResultTextTB.SetValue(Canvas.LeftProperty, W / 2.0);
+            ADResultTextTB.Width = W / 2;
+            ADResultTextTB.LineHeight = H / 2;
+            ADResultTextTB.LineStackingStrategy = LineStackingStrategy.BlockLineHeight;
+
+            ADShiftResultTextTB.SetValue(Canvas.TopProperty, 0.0);
+            ADShiftResultTextTB.SetValue(Canvas.LeftProperty, W / 2.0);
+            ADShiftResultTextTB.Width = W / 2;
+            ADShiftResultTextTB.LineHeight = H / 2;
+            ADShiftResultTextTB.LineStackingStrategy = LineStackingStrategy.BlockLineHeight;
         }
 
 
@@ -108,6 +132,55 @@ namespace LearningKeyboard
 
         public static readonly DependencyProperty ShiftAltGrTextProperty =
             DependencyProperty.Register("ShiftAltGrText", typeof(string), typeof(NewKey), new UIPropertyMetadata("", new PropertyChangedCallback(OnTextChanged)));
+
+
+
+
+        public string ADNormalText
+        {
+            get { return (string)GetValue(ADNormalTextProperty); }
+            set { SetValue(ADNormalTextProperty, value); }
+        }
+
+        public static readonly DependencyProperty ADNormalTextProperty =
+            DependencyProperty.Register("ADNormalText", typeof(string), typeof(NewKey), new UIPropertyMetadata("", new PropertyChangedCallback(OnTextChanged)));
+
+
+
+        public string ADShiftText
+        {
+            get { return (string)GetValue(ADShiftTextProperty); }
+            set { SetValue(ADShiftTextProperty, value); }
+        }
+
+        public static readonly DependencyProperty ADShiftTextProperty =
+            DependencyProperty.Register("ADShiftText", typeof(string), typeof(NewKey), new UIPropertyMetadata("", new PropertyChangedCallback(OnTextChanged)));
+
+
+
+        public string ADResultText
+        {
+            get { return (string)GetValue(ADResultTextProperty); }
+            set { SetValue(ADResultTextProperty, value); }
+        }
+
+        public static readonly DependencyProperty ADResultTextProperty =
+            DependencyProperty.Register("ADResultText", typeof(string), typeof(NewKey), new UIPropertyMetadata("", new PropertyChangedCallback(OnTextChanged)));
+
+
+
+        public string ADShiftResultText
+        {
+            get { return (string)GetValue(ADShiftResultTextProperty); }
+            set { SetValue(ADShiftResultTextProperty, value); }
+        }
+
+        public static readonly DependencyProperty ADShiftResultTextProperty =
+            DependencyProperty.Register("ADShiftResultText", typeof(string), typeof(NewKey), new UIPropertyMetadata("", new PropertyChangedCallback(OnTextChanged)));
+
+
+
+
 
         private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -158,9 +231,10 @@ namespace LearningKeyboard
 
         public enum NewKeyStyle
         {
-            Normal = 1,         // All 4 texts are shown together
-            Simple = 2,         // Only 1 among 4 text is shown at a time
-            Static = 3          // Always show NormalText, nothing else
+            Normal = 1,         // All 4 texts are shown together.  User for &/1, é/2, ...
+            Simple = 2,         // Only 1 among 4 text is shown at a time.  Used for a, z, ...
+            Static = 3,         // Always show NormalText, nothing else.  User for Shift, Tab, ...
+            AfterDead = 4,      // After a dead key, shows all 4 AD texts
         }
 
         private NewKeyStyle DefaultKeyStyle = (NewKeyStyle)0;
@@ -190,7 +264,27 @@ namespace LearningKeyboard
                     key.ShiftTextTB.Visibility = Visibility.Visible;
                     key.AltGrTextTB.Visibility = Visibility.Visible;
                     key.ShiftAltGrTextTB.Visibility = Visibility.Visible;
+                    
                     key.SimpleTextTB.Visibility = Visibility.Hidden;
+                    
+                    key.ADNormalTextTB.Visibility = Visibility.Hidden;
+                    key.ADShiftTextTB.Visibility = Visibility.Hidden;
+                    key.ADResultTextTB.Visibility = Visibility.Hidden;
+                    key.ADShiftResultTextTB.Visibility = Visibility.Hidden;
+                    break;
+
+                case NewKeyStyle.AfterDead:
+                    key.NormalTextTB.Visibility = Visibility.Hidden;
+                    key.ShiftTextTB.Visibility = Visibility.Hidden;
+                    key.AltGrTextTB.Visibility = Visibility.Hidden;
+                    key.ShiftAltGrTextTB.Visibility = Visibility.Hidden;
+
+                    key.SimpleTextTB.Visibility = Visibility.Hidden;
+                    
+                    key.ADNormalTextTB.Visibility = Visibility.Visible;
+                    key.ADShiftTextTB.Visibility = Visibility.Visible;
+                    key.ADResultTextTB.Visibility = Visibility.Visible;
+                    key.ADShiftResultTextTB.Visibility = Visibility.Visible;
                     break;
 
                 case NewKeyStyle.Simple:
@@ -199,7 +293,13 @@ namespace LearningKeyboard
                     key.ShiftTextTB.Visibility = Visibility.Hidden;
                     key.AltGrTextTB.Visibility = Visibility.Hidden;
                     key.ShiftAltGrTextTB.Visibility = Visibility.Hidden;
+                    
                     key.SimpleTextTB.Visibility = Visibility.Visible;
+                    
+                    key.ADNormalTextTB.Visibility = Visibility.Hidden;
+                    key.ADShiftTextTB.Visibility = Visibility.Hidden;
+                    key.ADResultTextTB.Visibility = Visibility.Hidden;
+                    key.ADShiftResultTextTB.Visibility = Visibility.Hidden;
 
                     if (key.KeyStyle == NewKeyStyle.Simple)
                     {
@@ -211,7 +311,6 @@ namespace LearningKeyboard
                         key.SimpleTextTB.FontSize = 14;
                         key.SimpleTextTB.FontWeight = FontWeights.Light;
                     }
-
                     break;
             }
             key.SetNewKeyState();
@@ -381,7 +480,9 @@ namespace LearningKeyboard
             Normal,
             Shift,
             AltGr,
-            ShiftAltGr
+            ShiftAltGr,
+            ADNormal,
+            ADShift,
         }
 
         private KeyState _NewKeyState = KeyState.Normal;
@@ -428,22 +529,27 @@ namespace LearningKeyboard
                             SimpleTextTB.Text = ShiftText;
                             break;
 
+                        case KeyState.ADNormal:
+                        case KeyState.ADShift:
+                            KeyStyle = NewKeyStyle.AfterDead;
+                            SimpleTextTB.Text = "";
+                            ActiveAllText(false);
+                            break;
+
                         default:
                             KeyStyle = NewKeyStyle.Normal;
                             SimpleTextTB.Text = "";
                             ActiveAllText(false);
                             return;
-                            //case KeyState.AltGr:
-                            //    SimpleTextTB.Text = AltGrText;
-                            //    break;
-                            //case KeyState.ShiftAltGr:
-                            //    SimpleTextTB.Text = ShiftAltGrText;
-                            //    break;
                     }
                     SimpleTextTB.Foreground = NormalForeground;
                     break;
 
                 case NewKeyStyle.Normal:
+                    if (_NewKeyState == KeyState.ADNormal || _NewKeyState == KeyState.ADShift)
+                        KeyStyle = NewKeyStyle.AfterDead;
+                    else
+                        KeyStyle = NewKeyStyle.Normal;
                     ActiveAllText(false);
                     break;
             }
@@ -455,6 +561,9 @@ namespace LearningKeyboard
             ActiveText(ShiftTextTB, _NewKeyState == KeyState.Shift, isPressed);
             ActiveText(AltGrTextTB, _NewKeyState == KeyState.AltGr, isPressed);
             ActiveText(ShiftAltGrTextTB, _NewKeyState == KeyState.ShiftAltGr, isPressed);
+
+            ActiveADText(ADNormalTextTB, ADResultTextTB, _NewKeyState == KeyState.ADNormal, isPressed);
+            ActiveADText(ADShiftTextTB, ADShiftResultTextTB, _NewKeyState == KeyState.ADShift, isPressed);
         }
 
         private void ActiveText(TextBlock tb, bool isActive, bool isPressed)
@@ -468,6 +577,24 @@ namespace LearningKeyboard
             {
                 tb.Foreground = GhostedForeground;
                 tb.FontWeight = FontWeights.Regular;
+            }
+        }
+
+        private void ActiveADText(TextBlock tbRef, TextBlock tbAD, bool isActive, bool isPressed)
+        {
+            if (isActive)
+            {
+                tbRef.Foreground = GhostedForeground;
+                tbRef.FontWeight = FontWeights.Bold;
+                tbAD.Foreground = isPressed ? NormalBackground : NormalForeground;
+                tbAD.FontWeight = FontWeights.Bold;
+            }
+            else
+            {
+                tbRef.Foreground = GhostedForeground;
+                tbRef.FontWeight = FontWeights.Regular;
+                tbAD.Foreground = GhostedForeground;
+                tbAD.FontWeight = FontWeights.Bold;
             }
         }
     }

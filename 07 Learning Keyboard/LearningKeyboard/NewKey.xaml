@@ -28,6 +28,23 @@
             <TextBlock Name="ShiftAltGrTextTB" TextAlignment="Center"
                        Canvas.Top="0" Canvas.Left="19" Width="19" Height="19"
                        Text="{Binding ShiftAltGrText,FallbackValue=®}" Background="{Binding ShiftAltGrTextBackground}" />
+
+            <TextBlock Name="ADNormalTextTB" TextAlignment="Center"
+                       Canvas.Top="19" Canvas.Left="0" Width="19" Height="19"
+                       Foreground="{Binding GhostedForeground}"
+                       Text="{Binding ADNormalText,FallbackValue=e}" Background="{Binding NormalBackground}" />
+            <TextBlock Name="ADShiftTextTB" TextAlignment="Center"
+                       Canvas.Top="0" Canvas.Left="0" Width="19" Height="19"
+                       Foreground="{Binding GhostedForeground}"
+                       Text="{Binding ADShiftText,FallbackValue=E}" Background="{Binding NormalBackground}" />
+            <TextBlock Name="ADResultTextTB" TextAlignment="Center"
+                       Canvas.Top="19" Canvas.Left="19" Width="19" Height="19"
+                       Foreground="{Binding NormalForeground}"
+                       Text="{Binding ADResultText,FallbackValue=ê}" Background="{Binding NormalBackground}" />
+            <TextBlock Name="ADShiftResultTextTB" TextAlignment="Center"
+                       Canvas.Top="0" Canvas.Left="19" Width="19" Height="19"
+                       Foreground="{Binding NormalForeground}"
+                       Text="{Binding ADShiftResultText,FallbackValue=Ê}" Background="{Binding NormalBackground}" />
         </Canvas>
     </Border>
 </UserControl>

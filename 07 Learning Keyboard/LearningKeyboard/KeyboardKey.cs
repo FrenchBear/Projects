@@ -44,6 +44,9 @@ namespace LearningKeyboard
                 (ShiftAltGrText, IsShiftAltGrDeadKey) = GetCharsFromKeys2(vk, true, true);
             }
 
+            (ADNormalText, _) = GetCharsFromKeys2(vk, false, false);
+            (ADShiftText, _) = GetCharsFromKeys2(vk, true, false);
+
             // Initial display
             IsPressed = false;
         }

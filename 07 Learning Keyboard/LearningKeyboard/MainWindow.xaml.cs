@@ -26,6 +26,7 @@ namespace LearningKeyboard
         private bool shift;
         private bool control;
         private bool alt;
+        private bool dead;
 
         private NotifyIcon NotificationIcon;
 
@@ -69,19 +70,8 @@ namespace LearningKeyboard
             Assembly myAssembly = Assembly.GetExecutingAssembly();
             AssemblyTitleAttribute aTitleAttr = (AssemblyTitleAttribute)Attribute.GetCustomAttribute(myAssembly, typeof(AssemblyTitleAttribute));
             string sAssemblyVersion = myAssembly.GetName().Version.ToString();
-            NotificationIcon.Text = aTitleAttr.Title+" "+sAssemblyVersion;
+            NotificationIcon.Text = aTitleAttr.Title + " " + sAssemblyVersion;
         }
-
-        //private static Stream GetInternalConfigFile(string fileName)
-        //{
-        //    // Internal resource
-        //    Type type = typeof(KeyboardKey);      // Trick to get base namespace instead of hardcoding the string Eurofins.SharedComponents.RounLib
-        //    string streamName = type.FullName.Substring(0, type.FullName.LastIndexOf('.')) + ".Resources." + fileName;
-        //    Stream manifestStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(streamName);
-        //    if (manifestStream == null)
-        //        throw new ArgumentException("Invalid internal resource name " + fileName);
-        //    return manifestStream;
-        //}
 
         private void ApplyWPFTextOptions()
         {
@@ -135,14 +125,40 @@ namespace LearningKeyboard
                 int scanCode = e2.ScanCode;
                 if (e.KeyCode == Keys.RControlKey) scanCode += 300;
                 else if (e.KeyCode == Keys.RMenu) scanCode = 0;
-                UpdateModifiers(e.KeyCode, true);
+
+                var dki = new Tuple<Keys, bool, bool>(e.KeyCode, e.Shift, e.Alt && e.Control);
+                var isDead = dicCombi.ContainsKey(dki);
+
+                UpdateModifiers(e.KeyCode, true, isDead);
 
                 if (AllKeys.ContainsKey(scanCode))
                     AllKeys[scanCode].IsPressed = true;
 
-                var dki = new Tuple<Keys, bool, bool>(e.KeyCode, e.Shift, e.Alt && e.Control);
-                if (dicCombi.ContainsKey(dki))
+                // Special processing for dead keys.
+                // V1.3: Show all combinations in a side panel
+                // V1.4: Show combinations on keyboard in dead key mode
+                if (dicCombi.ContainsKey(dki) && dead)
                 {
+                    foreach (var k in AllKeys.Values)
+                    {
+                        k.ADResultText = "";
+                        k.ADShiftResultText = "";
+                    }
+                    foreach (var item in dicCombi[dki])
+                        foreach (var k in AllKeys.Values)
+                        {
+                            if (k.ADNormalText == item.Item1)
+                            {
+                                k.ADResultText = item.Item2;
+                                break;
+                            }
+                            if (k.ADShiftText == item.Item1)
+                            {
+                                k.ADShiftResultText = item.Item2;
+                                break;
+                            }
+                        }
+
                     CombinationsWrapPanel.Children.Clear();
                     foreach (var item in dicCombi[dki])
                     {
@@ -183,7 +199,7 @@ namespace LearningKeyboard
                 int scanCode = e2.ScanCode;
                 if (e.KeyCode == Keys.RControlKey) scanCode += 300;
                 else if (e.KeyCode == Keys.RMenu) scanCode = 0;
-                UpdateModifiers(e.KeyCode, false);
+                UpdateModifiers(e.KeyCode, false, false);
 
                 if (e.KeyCode == Keys.CapsLock || e.KeyCode == Keys.LShiftKey || e.KeyCode == Keys.RShiftKey)
                     // 58 = ScanCode of CapsLock
@@ -194,35 +210,55 @@ namespace LearningKeyboard
             }
         }
 
-        private void UpdateModifiers(Keys KeyCode, bool isPressed)
+        private void UpdateModifiers(Keys KeyCode, bool isPressed, bool isDead)
         {
             var m_shift = shift;
             var m_control = control;
             var m_alt = alt;
+            var m_dead = dead;
 
             if (KeyCode == Keys.CapsLock) m_shift = System.Windows.Forms.Control.IsKeyLocked(Keys.CapsLock);
             if (KeyCode == Keys.LShiftKey || KeyCode == Keys.RShiftKey) m_shift = isPressed;
             if (KeyCode == Keys.LControlKey || KeyCode == Keys.RControlKey) m_control = isPressed;
             if (KeyCode == Keys.LMenu || KeyCode == Keys.RMenu) m_alt = isPressed;
+            if (isPressed && isDead)
+            {   // Two dead keys in a row cancel dead state
+                if (m_dead)
+                    m_dead = false;
+                else
+                    m_dead = true;
+            }
+            else
+            {
+                // Any other key than shift cancels dead state (even if the second key is a dead key)
+                if (isPressed && KeyCode != Keys.LShiftKey && KeyCode != Keys.RShiftKey)
+                    m_dead = false;
+            }
 
-            if (m_shift != shift || m_control != control || m_alt != alt)
+            if (m_shift != shift || m_control != control || m_alt != alt || m_dead != dead)
             {
                 shift = m_shift;
                 control = m_control;
                 alt = m_alt;
+                dead = m_dead;
 
                 NewKey.KeyState ks = NewKey.KeyState.Normal;
-                if (shift && !(control && alt))
+                if (dead && !shift)
+                    ks = NewKey.KeyState.ADNormal;
+                else if (dead && shift)
+                    ks = NewKey.KeyState.ADShift;
+                else if (shift && !(control && alt))
                     ks = NewKey.KeyState.Shift;
                 else if ((!shift) && control && alt)
                     ks = NewKey.KeyState.AltGr;
                 else if (shift && control && alt)
                     ks = NewKey.KeyState.ShiftAltGr;
 
+                //if (isPressed)
+                //    Debug.WriteLine($"{KeyCode} {isPressed} {isDead} {ks.ToString()}");
+
                 foreach (var k in AllKeys.Values)
-                {
                     k.NewKeyState = ks;
-                }
             }
         }
 
@@ -368,10 +404,6 @@ namespace LearningKeyboard
         private void AddKey(string dispoNF, int keyCode, int p1X, int p1Y, int w, int h, string digit, NewKey.NewKeyStyle style, string simpleTextOverride = "")
         {
             KeyboardKey k = new KeyboardKey(dispoNF, keyCode, digit, style, simpleTextOverride, w, h);
-            //{
-            //    Width = w,
-            //    Height = h
-            //};
             // Special color for F and J keys to replace physical bump
             if (keyCode == 33 || keyCode == 36)
                 k.NormalForeground = Brushes.Red;
