@@ -5,6 +5,8 @@
 // is handled by recycling current window and implement a back navigation mechanism
 //
 // 2018-09-18   PV
+// 2020-11-11   PV      1.3 Hyperlinks to block and subheader
+// 2020-11-11   PV      nullable enable
 
 
 using System;
@@ -13,6 +15,8 @@ using UniDataNS;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
+#nullable enable
+
 
 namespace UniSearchUWPNS
 {
@@ -20,12 +24,11 @@ namespace UniSearchUWPNS
     {
         readonly CharDetailViewModel ViewModel;
 
-
-        internal CharDetailDialog(int codepoint)
+        internal CharDetailDialog(int codepoint, ViewModel mainViewModel)
         {
             InitializeComponent();
 
-            ViewModel = new CharDetailViewModel(this, UniData.CharacterRecords[codepoint]);
+            ViewModel = new CharDetailViewModel(this, UniData.CharacterRecords[codepoint], mainViewModel);
             DataContext = ViewModel;
 
             Loaded += (s, e) =>
@@ -38,13 +41,12 @@ namespace UniSearchUWPNS
         }
 
         // Static function for easy opening
-        public async static Task ShowDetail(int codepoint)
+        internal async static Task ShowDetail(int codepoint, ViewModel mainViewModel)
         {
-            var w = new CharDetailDialog(codepoint);
+            var w = new CharDetailDialog(codepoint, mainViewModel);
             await w.ShowAsync();
         }
 
-#pragma warning disable IDE0060 // Remove unused parameter
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.Back();
@@ -61,6 +63,5 @@ namespace UniSearchUWPNS
             string s = $"Character\t{cr.Character}\r\nCodepoint\t{cr.CodepointHex}\r\nName\t{cr.Name}\r\nCategories\t{cr.CategoryRecord.Categories}\r\nAge\t{cr.Age}\r\nBlock\t{cr.Block.BlockNameAndRange}\r\nSubheader\t{cr.Subheader}\r\nUTF-16\t{cr.UTF16}\r\nUTF-8\t{cr.UTF8}\r\n";
             UniSearchUWPNS.ViewModel.ClipboardSetData(s);
         }
-#pragma warning restore IDE0060 // Remove unused parameter
     }
 }

@@ -3,10 +3,12 @@
 // Common binding converter
 //
 // 2018-09-18   PV
-
+// 2020-11-11   PV      nullable enable
 
 using System;
 using Windows.UI.Xaml.Data;
+
+#nullable enable
 
 
 namespace UniSearchUWPNS
@@ -24,8 +26,8 @@ namespace UniSearchUWPNS
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            if (value is bool)
-                return (bool)value;
+            if (value is bool boolean)
+                return boolean;
             return false;
         }
     }

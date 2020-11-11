@@ -3,18 +3,17 @@
 // Learning app for UWP model
 //
 // 2018-09-18   PV
+// 2020-11-11   PV      nullable enable
 
-
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using UniDataNS;
-using Windows.ApplicationModel.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
-#pragma warning disable IDE0060 // Remove unused parameter
+#nullable enable
+
 
 namespace UniSearchUWPNS
 {
@@ -40,7 +39,7 @@ namespace UniSearchUWPNS
                 CharacterFilterTextBox.Focus(FocusState.Programmatic);
 
                 // Main app info
-                (string Title, string Description, string Version, string Copyright) = AboutDialog.GetAppVersion();
+                (string Title, string Description, string Version, string Copyright) = AboutDialog.GetAppVersion(System.Reflection.Assembly.GetExecutingAssembly());
                 AssemblyTitle.Text = Title;
                 AssemblyDescription.Text = Description;
                 AssemblyVersion.Text = "Version " + Version;
@@ -91,7 +90,8 @@ namespace UniSearchUWPNS
 
         private async void GridViewCell_DoubleTap(object sender, Windows.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
         {
-            await CharDetailDialog.ShowDetail(vm.SelectedChar.Codepoint);
+            if (vm.SelectedChar != null)
+                await CharDetailDialog.ShowDetail(vm.SelectedChar.Codepoint, vm);
         }
 
         // Show details when pressing Enter of Space
@@ -100,7 +100,8 @@ namespace UniSearchUWPNS
             if (e.Key == Windows.System.VirtualKey.Space || e.Key == Windows.System.VirtualKey.Enter)
             {
                 e.Handled = true;
-                await CharDetailDialog.ShowDetail(vm.SelectedChar.Codepoint);
+                if (vm.SelectedChar != null)
+                    await CharDetailDialog.ShowDetail(vm.SelectedChar.Codepoint, vm);
             }
         }
 
@@ -117,8 +118,6 @@ namespace UniSearchUWPNS
         }
 
 
-
-#pragma warning disable IDE0060 // Remove unused parameter
         // Simulate "SelectionChanged" missing event with mouse and key events
         // But this is unreliable, doubletap event gets fired before SelectedNodes has been refreshed...
         private void BlocksTreeView_Tapped(object sender, TappedRoutedEventArgs e)
@@ -152,23 +151,23 @@ namespace UniSearchUWPNS
         // On a click on a TreeViewItem text
         private void BlocksTreeView_ItemInvoked(TreeView sender, TreeViewItemInvokedEventArgs args)
         {
-            var n = args.InvokedItem as BlockNode;
-            // Only synchronize for blocks
-            if (n.Level == 0)
-            {
-                // Find 1st character of selected block
-                foreach (var cr in vm.CharactersRecordsFilteredList)
+            if (args.InvokedItem is BlockNode bn)
+                // Only synchronize for blocks
+                if (bn.Level == 0)
                 {
-                    if (cr.Block == n.Block)
+                    // Find 1st character of selected block
+                    foreach (var cr in vm.CharactersRecordsFilteredList)
                     {
-                        if (IsGridViewVisible)
-                            CharGridView.ScrollIntoView(cr);
-                        else
-                            CharListView.ScrollIntoView(cr);
-                        return;
+                        if (cr.Block == bn.Block)
+                        {
+                            if (IsGridViewVisible)
+                                CharGridView.ScrollIntoView(cr);
+                            else
+                                CharListView.ScrollIntoView(cr);
+                            return;
+                        }
                     }
                 }
-            }
         }
 
     }

@@ -2,10 +2,13 @@
 // http://jake.ginnivan.net/awaitable-RelayCommand/
 //
 // 2016-09-15   PV
+// 2020-11-11   PV      nullable enable
 
 using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
+
+#nullable enable
 
 
 namespace RelayCommandNS
@@ -46,7 +49,7 @@ namespace RelayCommandNS
         {
         }
 
-        public AwaitableRelayCommand(Func<T, Task> executeMethod, Predicate<T> canExecuteMethod)
+        public AwaitableRelayCommand(Func<T, Task> executeMethod, Predicate<T>? canExecuteMethod)
         {
             _executeMethod = executeMethod;
             _underlyingCommand = new RelayCommand<T>(x => { }, canExecuteMethod);
@@ -69,7 +72,7 @@ namespace RelayCommandNS
 
         public ICommand Command { get { return this; } }
 
-        public bool CanExecute(object parameter)
+        public bool CanExecute(object? parameter)
         {
             // PV: Replace null by default(T), otherwise we've problems with RelayCommand<int> when CanExecute is not specified
             return !_isExecuting && _underlyingCommand.CanExecute(parameter==null ? default : (T)parameter);
@@ -84,9 +87,7 @@ namespace RelayCommandNS
 
 
         // Should return a Task, but ICommand interface expects void for Execute
-#pragma warning disable RECS0165 // Asynchronous methods should return a Task instead of void
         public async void Execute(object parameter)
-#pragma warning restore RECS0165 // Asynchronous methods should return a Task instead of void
         {
             await ExecuteAsync((T)parameter);
         }

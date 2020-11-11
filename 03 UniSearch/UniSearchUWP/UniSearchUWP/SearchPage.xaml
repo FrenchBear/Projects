@@ -305,7 +305,7 @@
                                             <TextBlock>
                                 Enter a list of words to filter character names (case insensitive, accent insensitive).
                                 <LineBreak/>
-                                A single-letter word filters on character itself, not on name.
+                                A single-letter word is always searched for a strict full-word match.
                                 <LineBreak/>
                                 Use w: to search for full words, w:cat does not match multipli<Bold>cat</Bold>ion
                                 <LineBreak/>
@@ -457,12 +457,12 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
 
-                            <Border Background="White" BorderThickness="2" BorderBrush="{ThemeResource SystemControlHighlightAltListAccentMediumBrush}" Grid.RowSpan="5" VerticalAlignment="Top" Margin="0,3,12,0"
+                            <Border BorderThickness="2" BorderBrush="{ThemeResource SystemControlHighlightAltListAccentMediumBrush}" Grid.RowSpan="5" VerticalAlignment="Top" Margin="0,3,12,0"
                                     Width="96" Height="96" >
-                                <Border Name="CharImageBorder" x:FieldModifier="internal" >
+                                <Border Name="CharImageBorder" Background="White" x:FieldModifier="internal" >
                                     <Viewbox>
                                         <TextBlock Name="CharImage" x:FieldModifier="internal" Foreground="{ThemeResource SystemControlHighlightAltListAccentHighBrush}" Text="{Binding SelectedChar.Character}"  
-                                                   FontSize="64" HorizontalAlignment="Center" Margin="0,-4,0,4" />
+                                                   FontSize="64" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                     </Viewbox>
                                 </Border>
                                 <Border.ContextFlyout>
@@ -502,9 +502,9 @@
                             <TextBlock Grid.Row="2" Grid.Column="1" Text="Character" FontWeight="SemiBold" />
                             <ContentPresenter Grid.Row="2" Grid.Column="2" Content="{Binding StrContent}" />
                             <TextBlock Grid.Row="3" Grid.Column="1" Text="Block" FontWeight="SemiBold" />
-                            <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding SelectedChar.Block.BlockNameAndRange}" />
+                            <ContentPresenter Grid.Row="3" Grid.Column="2" Content="{Binding BlockContent}" />
                             <TextBlock Grid.Row="4" Grid.Column="1" Text="Subheader " FontWeight="SemiBold" />
-                            <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding SelectedChar.Subheader}" />
+                            <ContentPresenter Grid.Row="4" Grid.Column="2" Content="{Binding SubheaderContent}" />
                         </Grid>
 
 

@@ -2,25 +2,15 @@
 // First attempt of an About window for an UWP app, even though it's not standard
 //
 // 2018-09-29   PV
-
+// 2020-11-11   PV      nullable enable
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using UniDataNS;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
+
+#nullable enable
 
 
 namespace UniSearchUWPNS
@@ -32,7 +22,7 @@ namespace UniSearchUWPNS
             this.InitializeComponent();
 
             // Main app info
-            (string Title, string Description, string Version, string Copyright) = GetAppVersion();
+            (string Title, string Description, string Version, string Copyright) = GetAppVersion(System.Reflection.Assembly.GetExecutingAssembly());
             AssemblyTitle.Text = Title;
             AssemblyDescription.Text = Description;
             AssemblyVersion.Text = "Version " + Version;
@@ -47,7 +37,7 @@ namespace UniSearchUWPNS
         }
 
 
-        public static (string Title, string Description, string Version, string Copyright) GetAppVersion(Assembly myAssembly = null)
+        public static (string Title, string Description, string Version, string Copyright) GetAppVersion(Assembly myAssembly)
         {
             if (myAssembly == null)
                 myAssembly = System.Reflection.Assembly.GetExecutingAssembly();

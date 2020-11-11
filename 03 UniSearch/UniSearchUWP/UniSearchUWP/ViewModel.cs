@@ -3,6 +3,7 @@
 //
 // 2018-09-12   PV
 // 2018-10-08   PV      v1.2 CopyImage (finally!)
+// 2020-11-11   PV      nullable enable
 
 
 using RelayCommandNS;
@@ -27,6 +28,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media.Imaging;
 
+#nullable enable
+
 
 namespace UniSearchUWPNS
 {
@@ -40,7 +43,7 @@ namespace UniSearchUWPNS
 
 
         // INotifyPropertyChanged interface
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         internal void NotifyPropertyChanged(string propertyName)
           => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -52,6 +55,7 @@ namespace UniSearchUWPNS
         public ICommand AboutCommand { get; private set; }
         public ICommand ShowLevelCommand { get; private set; }
         public ICommand ShowDetailCommand { get; private set; }
+        public ICommand NewFilterCommand { get; private set; }
 
 
         // Dictionary of BlockNodes indexed by Begin block value, to help uncheck some blocks at the end
@@ -69,6 +73,7 @@ namespace UniSearchUWPNS
             AboutCommand = new AwaitableRelayCommand<object>(AboutExecute);
             ShowLevelCommand = new RelayCommand<object>(ShowLevelExecute);
             ShowDetailCommand = new AwaitableRelayCommand<int>(ShowDetailExecute);
+            NewFilterCommand = new RelayCommand<string>(NewFilterExecute);
 
             // Get Unicode data
             CharactersRecordsList = UniData.CharacterRecords.Values.OrderBy(cr => cr.Codepoint).ToArray();
@@ -148,7 +153,7 @@ namespace UniSearchUWPNS
                 {
                     apply |= bn.Name.IndexOf(name, StringComparison.Ordinal) >= 0;
                     foreach (var child in bn.Children)
-                        UnselectName(child as BlockNode, name, apply);
+                        UnselectName((child as BlockNode)!, name, apply);
                 }
             }
 
@@ -178,7 +183,7 @@ namespace UniSearchUWPNS
 
         public BlockRecord[] BlocksRecordsList { get; set; }
 
-        private string _CharNameFilter;
+        private string _CharNameFilter="";
 
         public string CharNameFilter
         {
@@ -194,7 +199,7 @@ namespace UniSearchUWPNS
             }
         }
 
-        private string _BlockNameFilter;
+        private string _BlockNameFilter="";
 
         public string BlockNameFilter
         {
@@ -210,9 +215,9 @@ namespace UniSearchUWPNS
             }
         }
 
-        private CharacterRecord _SelectedChar;
+        private CharacterRecord? _SelectedChar;
 
-        public CharacterRecord SelectedChar
+        public CharacterRecord? SelectedChar
         {
             get { return _SelectedChar; }
             set
@@ -222,6 +227,8 @@ namespace UniSearchUWPNS
                     _SelectedChar = value;
                     NotifyPropertyChanged(nameof(SelectedChar));
                     NotifyPropertyChanged(nameof(StrContent));
+                    NotifyPropertyChanged(nameof(BlockContent));
+                    NotifyPropertyChanged(nameof(SubheaderContent));
                     // In a UWP app, it's done manually...
                     CopyRecordsCommand.RaiseCanExecuteChanged();
                     CopyImageCommand.RaiseCanExecuteChanged();
@@ -239,7 +246,7 @@ namespace UniSearchUWPNS
 
         public int FilBlocks => SelectedBlocksSet.Count;
 
-        public UIElement StrContent
+        public UIElement? StrContent
         {
             get
             {
@@ -247,6 +254,25 @@ namespace UniSearchUWPNS
                 return GetStrContent(SelectedChar.Codepoint, ShowDetailCommand);
             }
         }
+
+        private UIElement? GetBlockHyperlink(string? content, string commandParameter)
+        {
+            if (content == null) return null;
+
+            return new HyperlinkButton
+            {
+                Margin = new Thickness(0,0,0,1),
+                Padding = new Thickness(0),
+                Content = content,
+                Command = NewFilterCommand,
+                CommandParameter = commandParameter
+            };
+        }
+
+        public UIElement? BlockContent => GetBlockHyperlink(SelectedChar?.Block.BlockNameAndRange, "b:\"" + SelectedChar?.Block.BlockName + "\"");
+
+        public UIElement? SubheaderContent => GetBlockHyperlink(SelectedChar?.Subheader, "s:\"" + SelectedChar?.Subheader + "\"");
+
 
         // Returns a grid containing char information (character itself, codepoint, name) and an hyperlink on
         // CodePoint that executes Command
@@ -265,7 +291,7 @@ namespace UniSearchUWPNS
 
             HyperlinkButton t2 = new HyperlinkButton
             {
-                Margin = new Thickness(0),
+                Margin = new Thickness(0,0,0,1),
                 Padding = new Thickness(0),
                 Content = cr.CodepointHex,
                 Command = command,
@@ -286,11 +312,15 @@ namespace UniSearchUWPNS
         // ==============================================================================================
         // Delay processing of TextChanged event 250ms using a DispatcherTimer
 
-        private DispatcherTimer dispatcherTimer;
+        private DispatcherTimer? dispatcherTimer;
         private readonly object dispatcherTimerLock = new object();
 
         private void DispatcherTimer_Tick(object sender, object e)
         {
+            // Avoid a nullability warning
+            if (dispatcherTimer == null)
+                return;
+
             lock (dispatcherTimerLock)
             {
                 dispatcherTimer.Stop();
@@ -345,7 +375,6 @@ namespace UniSearchUWPNS
                 p2 = p1;
 
             var SavedSelectedChar = SelectedChar;
-
 
             // Build filtered list, used directly by ListView and to build grouped version for GridView
             CharactersRecordsFilteredList.Clear();
@@ -460,9 +489,9 @@ namespace UniSearchUWPNS
             var newSelectedBlocksSet = new HashSet<BlockRecord>();
             foreach (var item in page.BlocksTreeView.SelectedNodes)
             {
-                var b = (item as BlockNode).Block;
-                if (b != null)
-                    newSelectedBlocksSet.Add((item as BlockNode).Block);
+                if (item is BlockNode bn)
+                    if (bn.Block != null)
+                        newSelectedBlocksSet.Add(bn.Block);
             }
 
             // Optimization: Don't filter chars if blocks selection has not changed and filtering
@@ -518,8 +547,6 @@ namespace UniSearchUWPNS
 
         private async Task CopyImageExecute(object obj)
         {
-            string s = SelectedChar.Character;
-
             // Get RenderTargetBitmap of character image
             var control = page.CharImageBorder;
             RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap();
@@ -534,11 +561,11 @@ namespace UniSearchUWPNS
             // Convert IBuffer in a RandomAccessStreamReference (not easy to find!!!)
             var rasr = await CopyImageUsingMemoryStream(pixelBuffer, width, height);
 
-            ClipboardSetData(s, rasr);
+            ClipboardSetData(null, rasr);
         }
 
 
-        private static InMemoryRandomAccessStream imas;
+        private static InMemoryRandomAccessStream? imas;
 
         // Copy image using a stream provided by InMemoryRandomAccessStream
         // Key point: declare ma at class level to prevent GC destruction
@@ -555,10 +582,10 @@ namespace UniSearchUWPNS
 
 
         // Convenient helper
-        internal static void ClipboardSetData(string s, RandomAccessStreamReference bmp = null)
+        internal static void ClipboardSetData(string? s, RandomAccessStreamReference? bmp = null)
         {
             var dataPackage = new DataPackage();
-            dataPackage.SetText(s);
+            if (s!=null) dataPackage.SetText(s);
             if (bmp != null) dataPackage.SetBitmap(bmp);
             try
             {
@@ -584,7 +611,13 @@ namespace UniSearchUWPNS
         // From Hyperlink
         private async Task ShowDetailExecute(int codepoint)
         {
-            await CharDetailDialog.ShowDetail(codepoint);
+            await CharDetailDialog.ShowDetail(codepoint, this);
+        }
+
+        // From hyperlink
+        private void NewFilterExecute(string filter)
+        {
+            CharNameFilter = filter;
         }
 
         // Helper performing a given action on a node and all its descendants

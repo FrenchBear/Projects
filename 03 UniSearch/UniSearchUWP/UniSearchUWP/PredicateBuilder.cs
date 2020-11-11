@@ -8,17 +8,24 @@
 // 2018-09-20   PV      Filter on letters using l:
 // 2018-09-26   PV      Use helper WordStartsWithPrefix for better code detecting special flags
 // 2019-04-29   PV      ParseQuery accepts prefix:"words with spaces" since it's more natural than "prefix:words with spaces"
+// 2020-11-11   PV      New rule for single letter search: only searches full word in the description, much more efficient than former rule (only search for letters equivalent to this one).
+//                      New rule is always case-insensitive and accent-insensitive, a A â Ä all return the same matching set
+//                      Note that for single letters, full word search is strict, for instance, F foes not match "PHASE-F" in char name, while W: prefix actually does.
+//                      For T, the old rule found 17 matches (TtŢţŤťȚțṪṫṬṭṮṯṰṱẗ)
+//                      The new rule finds 90 matches (TtŢţŤťŦŧƫƬƭƮȚțȶȾʇʈͭᑦᛏᛐᣕᰳᴛᵀᵗᵵᶵṪṫṬṭṮṯṰṱẗₜ⒯ⓉⓣⱦꞆꞇꞱꩅﬅ𐊗𐊭𐤯𑫞𖹈𖹨𛰃𛰲𛰳𛰶𛰷𝐓𝐭𝑇𝑡𝑻𝒕𝒯𝓉𝓣𝓽𝔗𝔱𝕋𝕥𝕿𝖙𝖳𝗍𝗧𝘁𝘛𝘵𝙏𝙩𝚃𝚝🄣🅃🅣🆃🇹)
 
 #pragma warning disable CA1031 // Do not catch general exception types
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using UniDataNS;
+
+#nullable enable
+
 
 namespace UniSearchUWPNS
 {
@@ -29,7 +36,7 @@ namespace UniSearchUWPNS
         private readonly bool isAS;
         private readonly bool isRE;
         private readonly bool isWW;
-        private readonly int options;
+        // private readonly int options;        // For old single-letter filtering rule
 
         public PredicateBuilder(string filter, bool isCS, bool isAS, bool isRE, bool isWW)
         {
@@ -87,7 +94,7 @@ namespace UniSearchUWPNS
             this.isWW = isWW;       // Whole Word
 
             // Compact version of options stored as bits in an integer
-            this.options = (isCS ? 1 : 0) + (isAS ? 2 : 0) + (isRE ? 4 : 0) + (isWW ? 8 : 0);
+            //this.options = (isCS ? 1 : 0) + (isAS ? 2 : 0) + (isRE ? 4 : 0) + (isWW ? 8 : 0);       // For old single-letter filtering rule
         }
 
         // Helper that breaks white-separated words in a List<string>, but words "between quotes" are considered a single
@@ -165,7 +172,8 @@ namespace UniSearchUWPNS
 
         public bool GetBlockNodeFilter(object searched)
         {
-            BlockNode cn = searched as BlockNode;
+            if (searched is not BlockNode cn)
+                return true;
 
             foreach (string aWord in words)
             {
@@ -231,7 +239,8 @@ namespace UniSearchUWPNS
         // Specific version to search CharacterRecords
         public bool GetCharacterRecordFilter(object searched)
         {
-            CharacterRecord cr = searched as CharacterRecord;
+            if (searched is not CharacterRecord cr)
+                return true;
 
             foreach (string aWord in words)
             {
@@ -269,8 +278,12 @@ namespace UniSearchUWPNS
 
                 // If searched word is exactly 1 Unicode character, test directly character itself
                 // Don't care if searched word is denormalized
+                // 2020-11-11: Change the rule, a single letter searches for a full word.  Otherwise searches for T for instance miss many letters that 
+                // are not equivalent to T but are real T (math letters, upside-down letters, ...)
                 if (UniData.UnicodeLength(word) == 1)
                 {
+                    // Old rule
+                    /*
                     switch (this.options & 3)
                     {
                         case 0:    // CI AI
@@ -286,6 +299,21 @@ namespace UniSearchUWPNS
                             wordFilter = cr.Character == word;
                             break;
                     }
+                    */
+                    
+                    // New rule
+                    word = @" " + Regex.Escape(RemoveDiacritics(word).ToUpperInvariant()) + @" ";
+
+                    try
+                    {
+                        wordFilter = Regex.IsMatch(" "+cr.Name+" ", word, isCS ? 0 : RegexOptions.IgnoreCase);
+                    }
+#pragma warning disable CA1031 // Do not catch general exception types
+                    catch (Exception)
+                    {
+                        wordFilter = true;
+                    }
+#pragma warning restore CA1031 // Do not catch general exception types
                 }
 
                 // If searched string is U+ followed by 1 to 6 hex digits, search for Codepoint value

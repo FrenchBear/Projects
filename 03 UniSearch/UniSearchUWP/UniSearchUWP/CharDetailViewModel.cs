@@ -4,18 +4,20 @@
 // In UWP version, selected character can change during drill down, so INotifyPropertyChanged is implemented.
 //
 // 2018-09-18   PV
+// 2020-11-11   PV      1.3 Hyperlinks to block and subheader; nullable enable
+
 
 using RelayCommandNS;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using UniDataNS;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+
+#nullable enable
 
 
 namespace UniSearchUWPNS
@@ -25,10 +27,11 @@ namespace UniSearchUWPNS
         // Private variables
         private readonly Stack<int> History = new Stack<int>();
         private readonly CharDetailDialog window;
+        private readonly ViewModel MainViewModel;
 
 
         // INotifyPropertyChanged interface
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         private void NotifyPropertyChanged(string propertyName)
           => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -36,21 +39,25 @@ namespace UniSearchUWPNS
 
         // Commands public interface
         public ICommand ShowDetailCommand { get; private set; }
+        public ICommand NewFilterCommand { get; private set; }
 
 
         // Constructor
-        public CharDetailViewModel(CharDetailDialog window, CharacterRecord cr)
+        public CharDetailViewModel(CharDetailDialog window, CharacterRecord cr, ViewModel mainViewModel)
         {
             this.window = window;
             SelectedChar = cr;
+            MainViewModel = mainViewModel;
+
             ShowDetailCommand = new RelayCommand<int>(ShowDetailExecute);
+            NewFilterCommand = new RelayCommand<string>(NewFilterExecute);
         }
 
 
         // ==============================================================================================
         // Bindable properties
 
-        private CharacterRecord _SelectedChar;
+        private CharacterRecord _SelectedChar = UniData.CharacterRecords[0];    // To avoid making it nullable
         public CharacterRecord SelectedChar
         {
             get { return _SelectedChar; }
@@ -72,12 +79,12 @@ namespace UniSearchUWPNS
         public string Title => SelectedChar == null ? "Character Detail" : SelectedChar.CodepointHex + " – Character Detail";
 
 
-        public Object NormalizationNFDContent => NormalizationContent(NormalizationForm.FormD);
+        public UIElement? NormalizationNFDContent => NormalizationContent(NormalizationForm.FormD);
 
-        public Object NormalizationNFKDContent => NormalizationContent(NormalizationForm.FormKD);
+        public UIElement? NormalizationNFKDContent => NormalizationContent(NormalizationForm.FormKD);
 
 
-        private UIElement NormalizationContent(NormalizationForm form)
+        private UIElement? NormalizationContent(NormalizationForm form)
         {
             if (!SelectedChar.IsPrintable) return null;
 
@@ -93,14 +100,29 @@ namespace UniSearchUWPNS
             return sp;
         }
 
+        private UIElement GetBlockHyperlink(string content, string commandParameter)
+        {
+            return new HyperlinkButton
+            {
+                Margin = new Thickness(0),
+                Padding = new Thickness(0),
+                Content = content,
+                Command = NewFilterCommand,
+                CommandParameter = commandParameter
+            };
+        }
+
+        public UIElement BlockContent => GetBlockHyperlink(SelectedChar.Block.BlockNameAndRange, "b:\"" + SelectedChar?.Block.BlockName + "\"");
+
+        public UIElement SubheaderContent => GetBlockHyperlink(SelectedChar.Subheader, "s:\"" + SelectedChar?.Subheader + "\"");
 
 
-        public Object LowercaseContent => CaseContent(true);
+        public UIElement? LowercaseContent => CaseContent(true);
 
-        public Object UppercaseContent => CaseContent(false);
+        public UIElement? UppercaseContent => CaseContent(false);
 
 
-        private UIElement CaseContent(bool lower)
+        private UIElement? CaseContent(bool lower)
         {
             if (!SelectedChar.IsPrintable) return null;
 
@@ -136,5 +158,13 @@ namespace UniSearchUWPNS
 
             SelectedChar = UniData.CharacterRecords[codepoint];
         }
+
+        // From hyperlink
+        private void NewFilterExecute(string filter)
+        {
+            window.Hide();
+            MainViewModel.CharNameFilter = filter;
+        }
+
     }
 }

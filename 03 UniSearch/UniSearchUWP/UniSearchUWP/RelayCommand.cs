@@ -2,9 +2,12 @@
 //
 // 2016-09-26   PV
 // 2018-09-15   PV      Adaptation for UWP
+// 2020-11-11   PV      nullable enable
 
 using System;
 using System.Windows.Input;
+
+#nullable enable
 
 
 namespace RelayCommandNS
@@ -38,12 +41,12 @@ namespace RelayCommandNS
     public class RelayCommand<T> : ICommand, IRaiseCanExecuteChanged
     {
         private readonly Action<T> _execute;
-        private readonly Predicate<T> _canExecute;
+        private readonly Predicate<T>? _canExecute;
 
         /// <summary>
         /// Raised when RaiseCanExecuteChanged is called.
         /// </summary>
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler? CanExecuteChanged;
 
         /// <summary>
         /// Creates a new command that can always execute.
@@ -59,7 +62,7 @@ namespace RelayCommandNS
         /// </summary>
         /// <param name="execute">The execution logic.</param>
         /// <param name="canExecute">The execution status logic.</param>
-        public RelayCommand(Action<T> execute, Predicate<T> canExecute)
+        public RelayCommand(Action<T> execute, Predicate<T>? canExecute)
         {
             _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             _canExecute = canExecute;
@@ -72,9 +75,10 @@ namespace RelayCommandNS
         /// Data used by the command. If the command does not require data to be passed, this object can be set to null.
         /// </param>
         /// <returns>true if this command can be executed; otherwise, false.</returns>
-        public bool CanExecute(object parameter)
+        public bool CanExecute(object? parameter)
         {
-            return _canExecute == null || _canExecute((T)parameter);
+            if (_canExecute == null) return true;
+            return (parameter == null) ? _canExecute(default!) : _canExecute((T)parameter);
         }
 
         /// <summary>
