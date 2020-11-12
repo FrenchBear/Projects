@@ -3,6 +3,8 @@
 //
 // 2018-09-10   PV
 // 2019-08-09   PV      1.1 .Net Core 3.0, C#8, Nullable
+// 2020-11-11   PV      1.2 .Net 5; New rule for 1-letter filters
+// 2020-11-12   PV      1.3 Copy Full Info; #Nullable Enable generalized; Synonyms, Cross-Refs and Comments
 
 using System;
 using System.Windows;

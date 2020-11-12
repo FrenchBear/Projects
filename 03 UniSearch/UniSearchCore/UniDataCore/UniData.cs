@@ -1,6 +1,6 @@
 ﻿// UniData
 // Library providing characters and blocks information reading Unicode UCD files
-// Aé♫山??
+// Aé♫山𝄞🐗
 //
 // 2018-09-11   PV
 // 2018-09-17   PV      1.1 Store UCD Data in embedded streams; Skip characters from planes 15 and 16
@@ -9,6 +9,8 @@
 // 2019-03-06	PV		1.3 Unicode 12 (no code change, only UCD data updated)
 // 2019-08-09   PV      1.4 .Net Core 3.0, C#8, Nullable
 // 2020-09-03   PV      1.5 .Net Core 3.1, Unicode 13
+// 2020-11-11   PV      1.6 .Net 5, C#9.  Add Synonyms, Cross-Refs and Comments to CharacterRecords
+// 2020-11-12   PV      1.6.1 Process ranges >=20000 (were incorrectly skipped, causing problem wuth U+FA6C -> NFD U+242EE)
 
 #nullable enable
 
@@ -36,6 +38,9 @@ namespace UniDataNS
         public int BlockBegin { get; internal set; } = -1;       // -1 for tests, to make sure at the end all supported chars have a block
         public string Subheader { get; internal set; }
 
+        public List<string>? Synonyms;       // Lines <tab> = in NamesList.txt
+        public List<string>? CrossRefs;      // Lines <tab> x in NamesList.txt
+        public List<string>? Comments;       // Lines <tab> * in NamesList.txt
 
         // When True, Character method will return an hex codepoint representation instead of the actual string
         public bool IsPrintable { get; private set; }
@@ -261,6 +266,7 @@ namespace UniDataNS
                 while (!sr.EndOfStream)
                 {
                     string[] fields = (sr.ReadLine() ?? string.Empty).Split(';');
+                    //if (fields[0] == "20000") Debugger.Break();
                     int codepoint = int.Parse(fields[0], NumberStyles.HexNumber);
                     string char_name = fields[1];
                     string char_category = fields[2];
@@ -281,7 +287,7 @@ namespace UniDataNS
                         if (!fields[1].EndsWith(", Last>", StringComparison.OrdinalIgnoreCase))
                             Debugger.Break();
                         // Skip planes 15 and 16 private use
-                        if (codepoint != 0xF0000 && codepoint != 0x100000 && codepoint < 0x20000)
+                        if (codepoint != 0xF0000 && codepoint != 0x100000)
                             for (int code = codepoint; code <= end_char_code; code++)
                                 char_map.Add(code, new CharacterRecord(code, $"{char_name}-{code:X4}", char_category, is_printable));
                     }
@@ -362,6 +368,7 @@ namespace UniDataNS
             }
 
 
+            int cp16 = -1;
             using (var sr = new StreamReader(GetResourceStream("NamesList.txt")))
                 while (!sr.EndOfStream)
                 {
@@ -387,10 +394,48 @@ namespace UniDataNS
                     {
                         subheader = line[3..];
                     }
+                    else if (line.StartsWith("\t=", StringComparison.Ordinal))
+                    {
+                        // Synonyms, new in 1.6
+                        if (!char_map.ContainsKey(cp16))
+                            continue;
+
+                        string synonym = line[3..];
+                        if (synonym != char_map[cp16].Name)
+                        {
+                            if (char_map[cp16].Synonyms == null)
+                                char_map[cp16].Synonyms = new List<string>();
+                            char_map[cp16].Synonyms!.Add(synonym);
+                        }
+                    }
+                    else if (line.StartsWith("\tx", StringComparison.Ordinal))
+                    {
+                        // Cross-references, new in 1.6
+                        if (!char_map.ContainsKey(cp16))
+                            continue;
+
+                        string crossRef = line[3..];
+                        if (crossRef[0] == '(' && crossRef[^1] == ')')
+                            crossRef = crossRef[1..^1];
+                        if (char_map[cp16].CrossRefs == null)
+                            char_map[cp16].CrossRefs = new List<string>();
+                        char_map[cp16].CrossRefs!.Add(crossRef);
+                    }
+                    else if (line.StartsWith("\t*", StringComparison.Ordinal))
+                    {
+                        // Comments, new in 1.6
+                        if (!char_map.ContainsKey(cp16))
+                            continue;
+
+                        string comment = line[3..];
+                        if (char_map[cp16].Comments == null)
+                            char_map[cp16].Comments = new List<string>();
+                        char_map[cp16].Comments!.Add(comment);
+                    }
                     else if (line.StartsWith("\t", StringComparison.Ordinal)) { }
                     else
                     {
-                        int cp16 = 0;
+                        cp16 = 0;
                         for (int p = 0; ; p++)
                         {
                             char c = line[p];
@@ -405,11 +450,6 @@ namespace UniDataNS
                                 break;
                             }
                         }
-
-                        //Match ma = CodepointRegex.Match(line);
-                        //if (!ma.Success) Debugger.Break();
-                        //int cp = int.Parse(line.Substring(0, ma.Length - 1), NumberStyles.HexNumber);
-                        //if (cp != cp16) Debugger.Break();
 
                         if (char_map.ContainsKey(cp16))
                         {

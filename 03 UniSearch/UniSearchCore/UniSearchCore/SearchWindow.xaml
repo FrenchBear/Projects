@@ -73,6 +73,7 @@
         <KeyBinding Command="{Binding CopyRecordsCommand}" CommandParameter="0" Key="C" Modifiers="Ctrl" />
         <KeyBinding Command="{Binding CopyRecordsCommand}" CommandParameter="1" Key="L" Modifiers="Ctrl" />
         <KeyBinding Command="{Binding CopyRecordsCommand}" CommandParameter="2" Key="D" Modifiers="Ctrl" />
+        <KeyBinding Command="{Binding CopyRecordsCommand}" CommandParameter="3" Key="F" Modifiers="Ctrl" />
     </Window.InputBindings>
 
     <Grid >
@@ -129,8 +130,9 @@
                     <Label Content="Copy " />
                     <Button Content=" _Chars " Margin="0,0,6,0"  Command="{Binding CopyRecordsCommand}" CommandParameter="0" ToolTip="Copy selected chars (Ctrl+C)" />
                     <Button Content=" _Lines " Margin="0,0,6,0"  Command="{Binding CopyRecordsCommand}" CommandParameter="1" ToolTip="Copy Character, Codepoint and Name of selected chars (Ctrl+L)"/>
-                    <Button Content=" _Details " Margin="0,0,12,0" Command="{Binding CopyRecordsCommand}" CommandParameter="2" ToolTip="Copy full details of selected chars (Ctrl+D)" />
-                    <Button Content=" _Image " Margin="0,0,6,0" Command="{Binding CopyImageCommand}" />
+                    <Button Content=" _Details " Margin="0,0,6,0" Command="{Binding CopyRecordsCommand}" CommandParameter="2" ToolTip="Copy full details of selected chars (Ctrl+D)" />
+                    <Button Content=" _Full Info " Margin="0,0,6,0" Command="{Binding CopyRecordsCommand}" CommandParameter="3" ToolTip="Copy all information on selected chars (Ctrl+F)" />
+                    <Button Content=" _Image " Margin="6,0,6,0" Command="{Binding CopyImageCommand}" />
                 </StackPanel>
             </StackPanel>
 

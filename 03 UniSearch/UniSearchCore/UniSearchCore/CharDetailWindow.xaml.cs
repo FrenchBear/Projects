@@ -15,11 +15,11 @@ namespace UniSearchNS
 {
     internal sealed partial class CharDetailWindow : Window
     {
-        internal CharDetailWindow(int codepoint)
+        internal CharDetailWindow(int codepoint, ViewModel mainViewModel)
         {
             InitializeComponent();
 
-            DataContext = new CharDetailViewModel(UniData.CharacterRecords[codepoint]);
+            DataContext = new CharDetailViewModel(this, UniData.CharacterRecords[codepoint], mainViewModel);
 
             // Esc closes the window
             PreviewKeyDown += (s, e) =>
@@ -29,9 +29,9 @@ namespace UniSearchNS
             };
         }
 
-        public static void ShowDetail(int codepoint)
+        public static void ShowDetail(int codepoint, ViewModel mainViewModel)
         {
-            var w = new CharDetailWindow(codepoint);
+            var w = new CharDetailWindow(codepoint, mainViewModel);
             w.ShowDialog();
         }
     }
