@@ -27,6 +27,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="PredicateBuilder.cs.bak" />
+    <None Remove="SearchWindow.xaml.cs.bak" />
     <None Remove="Unicorn.ico" />
     <None Remove="Unicorn.png" />
   </ItemGroup>

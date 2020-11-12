@@ -8,6 +8,9 @@ using System.Windows;
 using System.Windows.Input;
 using UniDataNS;
 
+#nullable enable
+
+
 namespace UniSearchNS
 {
     internal sealed partial class CharDetailWindow : Window

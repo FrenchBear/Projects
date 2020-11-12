@@ -1,1 +1,2 @@
 Identify manually extra groupings for subheaders (s not only at the end)
+Show more information on characters, such as confusables

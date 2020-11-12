@@ -5,6 +5,9 @@
 using System;
 using System.Runtime.InteropServices;
 
+#nullable enable
+
+
 namespace UniSearchNS
 {
     internal static class NativeMethods

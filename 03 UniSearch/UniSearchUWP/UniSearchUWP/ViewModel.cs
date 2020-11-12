@@ -255,25 +255,6 @@ namespace UniSearchUWPNS
             }
         }
 
-        private UIElement? GetBlockHyperlink(string? content, string commandParameter)
-        {
-            if (content == null) return null;
-
-            return new HyperlinkButton
-            {
-                Margin = new Thickness(0,0,0,1),
-                Padding = new Thickness(0),
-                Content = content,
-                Command = NewFilterCommand,
-                CommandParameter = commandParameter
-            };
-        }
-
-        public UIElement? BlockContent => GetBlockHyperlink(SelectedChar?.Block.BlockNameAndRange, "b:\"" + SelectedChar?.Block.BlockName + "\"");
-
-        public UIElement? SubheaderContent => GetBlockHyperlink(SelectedChar?.Subheader, "s:\"" + SelectedChar?.Subheader + "\"");
-
-
         // Returns a grid containing char information (character itself, codepoint, name) and an hyperlink on
         // CodePoint that executes Command
         public static UIElement GetStrContent(int codepoint, ICommand command)
@@ -307,6 +288,25 @@ namespace UniSearchUWPNS
 
             return g;
         }
+
+        // Returns a hyperlink to NewFilterCommand with commandParameter parameter, using content as text
+        private UIElement? GetBlockHyperlink(string? content, string commandParameter)
+        {
+            if (content == null) return null;
+
+            return new HyperlinkButton
+            {
+                Margin = new Thickness(0, 0, 0, 1),
+                Padding = new Thickness(0),
+                Content = content,
+                Command = NewFilterCommand,
+                CommandParameter = commandParameter
+            };
+        }
+
+        public UIElement? BlockContent => GetBlockHyperlink(SelectedChar?.Block.BlockNameAndRange, "b:\"" + SelectedChar?.Block.BlockName + "\"");
+
+        public UIElement? SubheaderContent => GetBlockHyperlink(SelectedChar?.Subheader, "s:\"" + SelectedChar?.Subheader + "\"");
 
 
         // ==============================================================================================
@@ -601,24 +601,17 @@ namespace UniSearchUWPNS
 
 
 
-
         // Show app information
-        private async Task AboutExecute(object param)
-        {
+        private async Task AboutExecute(object param) =>
             await AboutDialog.ShowAbout();
-        }
 
         // From Hyperlink
-        private async Task ShowDetailExecute(int codepoint)
-        {
+        private async Task ShowDetailExecute(int codepoint) =>
             await CharDetailDialog.ShowDetail(codepoint, this);
-        }
 
         // From hyperlink
-        private void NewFilterExecute(string filter)
-        {
+        private void NewFilterExecute(string filter) =>
             CharNameFilter = filter;
-        }
 
         // Helper performing a given action on a node and all its descendants
         private void ActionAllNodes(BlockNode n, Action<BlockNode> a)

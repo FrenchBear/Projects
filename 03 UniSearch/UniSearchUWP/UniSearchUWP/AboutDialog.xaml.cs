@@ -5,6 +5,7 @@
 // 2020-11-11   PV      nullable enable
 
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
 using UniDataNS;
@@ -39,8 +40,8 @@ namespace UniSearchUWPNS
 
         public static (string Title, string Description, string Version, string Copyright) GetAppVersion(Assembly myAssembly)
         {
-            if (myAssembly == null)
-                myAssembly = System.Reflection.Assembly.GetExecutingAssembly();
+            if (myAssembly == null) throw new NullReferenceException();
+
             AssemblyTitleAttribute aTitleAttr = (AssemblyTitleAttribute)Attribute.GetCustomAttribute(myAssembly, typeof(AssemblyTitleAttribute));
             AssemblyDescriptionAttribute aDescAttr = (AssemblyDescriptionAttribute)Attribute.GetCustomAttribute(myAssembly, typeof(AssemblyDescriptionAttribute));
             AssemblyCopyrightAttribute aCopyrightAttr = (AssemblyCopyrightAttribute)Attribute.GetCustomAttribute(myAssembly, typeof(AssemblyCopyrightAttribute));

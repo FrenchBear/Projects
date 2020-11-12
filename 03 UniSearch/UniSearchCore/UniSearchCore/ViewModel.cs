@@ -9,10 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Linq;
@@ -23,6 +21,8 @@ using System.Windows.Media.Imaging;
 using DirectDrawWrite;
 using System.Windows.Controls;
 using System.Windows.Documents;
+
+#nullable enable
 
 
 namespace UniSearchNS
@@ -36,7 +36,7 @@ namespace UniSearchNS
 
 
         // INotifyPropertyChanged interface
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         private void NotifyPropertyChanged(string propertyName)
           => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -48,6 +48,7 @@ namespace UniSearchNS
         public ICommand ShowLevelCommand { get; private set; }
         public ICommand SelectAllCommand { get; private set; }
         public ICommand ShowDetailCommand { get; private set; }
+        public ICommand NewFilterCommand { get; private set; }
 
 
         // Constructor
@@ -61,13 +62,14 @@ namespace UniSearchNS
             ShowLevelCommand = new RelayCommand<object>(ShowLevelExecute);
             SelectAllCommand = new RelayCommand<string>(SelectAllExecute);
             ShowDetailCommand = new RelayCommand<int>(ShowDetailExecute);
+            NewFilterCommand = new RelayCommand<string>(NewFilterExecute);
 
             // Get Unicode data
             CharactersRecordsList = UniData.CharacterRecords.Values.OrderBy(cr => cr.Codepoint).ToArray();
             ReadOnlyDictionary<int, BlockRecord>.ValueCollection BlockRecordsList = UniData.BlockRecords.Values;
 
             // Add grouping
-            CollectionView view = CollectionViewSource.GetDefaultView(CharactersRecordsList) as CollectionView;
+            CollectionView view = (CollectionViewSource.GetDefaultView(CharactersRecordsList) as CollectionView)!;
             PropertyGroupDescription groupDescription = new PropertyGroupDescription("GroupName");
             view.GroupDescriptions.Add(groupDescription);
 
@@ -143,7 +145,7 @@ namespace UniSearchNS
         public CharacterRecord[] CharactersRecordsList { get; set; }
 
 
-        private string _CharNameFilter;
+        private string _CharNameFilter = "";
         public string CharNameFilter
         {
             get { return _CharNameFilter; }
@@ -158,7 +160,7 @@ namespace UniSearchNS
             }
         }
 
-        private string _BlockNameFilter;
+        private string _BlockNameFilter = "";
         public string BlockNameFilter
         {
             get { return _BlockNameFilter; }
@@ -175,8 +177,8 @@ namespace UniSearchNS
 
 
 
-        private CharacterRecord _SelectedChar;
-        public CharacterRecord SelectedChar
+        private CharacterRecord? _SelectedChar;
+        public CharacterRecord? SelectedChar
         {
             get { return _SelectedChar; }
             set
@@ -187,11 +189,13 @@ namespace UniSearchNS
                     NotifyPropertyChanged(nameof(SelectedChar));
                     NotifyPropertyChanged(nameof(SelectedCharImage));
                     NotifyPropertyChanged(nameof(StrContent));
+                    NotifyPropertyChanged(nameof(BlockContent));
+                    NotifyPropertyChanged(nameof(SubheaderContent));
                 }
             }
         }
 
-        public BitmapSource SelectedCharImage
+        public BitmapSource? SelectedCharImage
         {
             get
             {
@@ -270,7 +274,7 @@ namespace UniSearchNS
             }
         }
 
-        public UIElement StrContent
+        public UIElement? StrContent
         {
             get
             {
@@ -309,6 +313,22 @@ namespace UniSearchNS
             return g;
         }
 
+        // Returns a hyperlink to NewFilterCommand with commandParameter parameter, using content as text
+        private UIElement? GetBlockHyperlink(string? content, string commandParameter)
+        {
+            if (content == null) return null;
+
+            var h = new Hyperlink(new Run(content))
+            {
+                Command = NewFilterCommand,
+                CommandParameter = commandParameter
+            };
+            return new TextBlock(h);
+        }
+
+        public UIElement? BlockContent => GetBlockHyperlink(SelectedChar?.Block.BlockNameAndRange, "b:\"" + SelectedChar?.Block.BlockName + "\"");
+
+        public UIElement? SubheaderContent => GetBlockHyperlink(SelectedChar?.Subheader, "s:\"" + SelectedChar?.Subheader + "\"");
 
 
         // ==============================================================================================
@@ -324,16 +344,21 @@ namespace UniSearchNS
 
         private void RefreshSelBlocks()
         {
-            SelBlocks = BlocksCheckableNodesDictionary.Values.Count(cn => cn.IsChecked.Value && cn.Level == 0);
+            SelBlocks = BlocksCheckableNodesDictionary.Values.Count(cn => (cn.IsChecked ?? false) && cn.Level == 0);
         }
 
 
         // ==============================================================================================
         // Delay processing of TextChanged event 250ms using a DispatcherTimer
-        DispatcherTimer dispatcherTimer;
 
-        private void DispatcherTimer_Tick(object sender, object e)
+        private DispatcherTimer? dispatcherTimer;
+
+        private void DispatcherTimer_Tick(object? sender, object e)
         {
+            // Avoid a nullability warning
+            if (dispatcherTimer == null)
+                return;
+
             dispatcherTimer.Stop();
             dispatcherTimer.Tick -= DispatcherTimer_Tick;
             dispatcherTimer = null;
@@ -358,13 +383,13 @@ namespace UniSearchNS
 
         private void FilterCharList()
         {
-            CollectionView view = CollectionViewSource.GetDefaultView(CharactersRecordsList) as CollectionView;
+            CollectionView view = (CollectionViewSource.GetDefaultView(CharactersRecordsList) as CollectionView)!;
             //PropertyGroupDescription groupDescription = new PropertyGroupDescription("Subheader");
             //view.GroupDescriptions.Add(groupDescription);
 
 
             // Block part of the filtering predicate
-            bool bp(object o) => BlocksCheckableNodesDictionary[((CharacterRecord)o).BlockBegin].IsChecked.Value;
+            bool bp(object o) => BlocksCheckableNodesDictionary[((CharacterRecord)o).BlockBegin].IsChecked ?? false;
 
             // Character part of the filtering predicate
             if (string.IsNullOrEmpty(CharNameFilter))
@@ -466,10 +491,10 @@ namespace UniSearchNS
                 ActionAllNodes(child, a);
         }
 
-        private void ShowLevelExecute(object param)
+        private void ShowLevelExecute(object? param)
         {
-            int level = int.Parse(param as string);
-            ActionAllNodes(BlocksRoot, n => { n.IsNodeExpanded = (n.Level != level); });
+            if (param != null && int.TryParse((string)param, out int level))
+                ActionAllNodes(BlocksRoot, n => { n.IsNodeExpanded = (n.Level != level); });
         }
 
 
@@ -482,8 +507,13 @@ namespace UniSearchNS
         }
 
 
+        // From hyperlink
         private void ShowDetailExecute(int codepoint) =>
             CharDetailWindow.ShowDetail(codepoint);
+
+        // From hyperlink
+        private void NewFilterExecute(string filter) =>
+            CharNameFilter = filter;
 
     }
 }

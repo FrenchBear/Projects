@@ -3,7 +3,6 @@
 //
 // 2018-09-15   PV
 
-
 using System;
 using System.ComponentModel;
 using System.Windows;
@@ -14,6 +13,8 @@ using DirectDrawWrite;
 using System.Text;
 using System.Windows.Controls;
 using System.Globalization;
+
+#nullable enable
 
 
 namespace UniSearchNS
@@ -43,9 +44,9 @@ namespace UniSearchNS
         // ==============================================================================================
         // Bindable properties
 
-        public CharacterRecord SelectedChar { get; set; }
+        public CharacterRecord SelectedChar { get; set; } = UniData.CharacterRecords[0];    // To avoid making it nullable
 
-        public BitmapSource SelectedCharImage
+        public BitmapSource? SelectedCharImage
         {
             get
             {
@@ -55,7 +56,7 @@ namespace UniSearchNS
                 {
                     string s = SelectedChar.Character;
                     if (s.StartsWith("U+", StringComparison.Ordinal))
-                        s = "U+ " + s.Substring(2);
+                        s = "U+ " + s[2..];
                     return D2DDrawText.GetBitmapSource(s);
                 }
             }
@@ -64,12 +65,12 @@ namespace UniSearchNS
         public string Title => SelectedChar == null ? "Character Detail" : SelectedChar.CodepointHex + " – Character Detail";
 
 
-        public Object NormalizationNFDContent => NormalizationContent(NormalizationForm.FormD);
+        public UIElement? NormalizationNFDContent => NormalizationContent(NormalizationForm.FormD);
 
-        public Object NormalizationNFKDContent => NormalizationContent(NormalizationForm.FormKD);
+        public UIElement? NormalizationNFKDContent => NormalizationContent(NormalizationForm.FormKD);
 
 
-        private UIElement NormalizationContent(NormalizationForm form)
+        private UIElement? NormalizationContent(NormalizationForm form)
         {
             if (!SelectedChar.IsPrintable) return null;
 
@@ -87,12 +88,12 @@ namespace UniSearchNS
 
 
 
-        public Object LowercaseContent => CaseContent(true);
+        public UIElement? LowercaseContent => CaseContent(true);
 
-        public Object UppercaseContent => CaseContent(false);
+        public UIElement? UppercaseContent => CaseContent(false);
 
 
-        private UIElement CaseContent(bool lower)
+        private UIElement? CaseContent(bool lower)
         {
             if (!SelectedChar.IsPrintable) return null;
 

@@ -10,6 +10,9 @@ using System.Windows.Markup;
 using System.Windows.Media.Imaging;
 using UniDataNS;
 
+#nullable enable
+
+
 namespace UniSearchNS
 {
     /// <summary>
@@ -22,7 +25,7 @@ namespace UniSearchNS
             InitializeComponent();
 
             // Main app info
-            (string Title, string Description, string Version, string Copyright) = GetAppVersion();
+            (string Title, string Description, string Version, string Copyright) = GetAppVersion(System.Reflection.Assembly.GetExecutingAssembly());
             AssemblyTitle.Text = Title;
             AssemblyDescription.Text = Description;
             AssemblyVersion.Text = "Version " + Version;
@@ -38,17 +41,17 @@ namespace UniSearchNS
             Loaded += (s, e) => { OKButton.Focus(); };
         }
 
-        public static (string Title, string Description, string Version, string Copyright) GetAppVersion(Assembly myAssembly = null)
+        public static (string Title, string Description, string Version, string Copyright) GetAppVersion(Assembly myAssembly)
         {
-            if (myAssembly == null)
-                myAssembly = System.Reflection.Assembly.GetExecutingAssembly();
-            AssemblyTitleAttribute aTitleAttr = (AssemblyTitleAttribute)Attribute.GetCustomAttribute(myAssembly, typeof(AssemblyTitleAttribute));
-            AssemblyDescriptionAttribute aDescAttr = (AssemblyDescriptionAttribute)Attribute.GetCustomAttribute(myAssembly, typeof(AssemblyDescriptionAttribute));
-            AssemblyCopyrightAttribute aCopyrightAttr = (AssemblyCopyrightAttribute)Attribute.GetCustomAttribute(myAssembly, typeof(AssemblyCopyrightAttribute));
+            if (myAssembly == null) throw new NullReferenceException();
+
+            AssemblyTitleAttribute? aTitleAttr = (AssemblyTitleAttribute?)Attribute.GetCustomAttribute(myAssembly, typeof(AssemblyTitleAttribute));
+            AssemblyDescriptionAttribute? aDescAttr = (AssemblyDescriptionAttribute?)Attribute.GetCustomAttribute(myAssembly, typeof(AssemblyDescriptionAttribute));
+            AssemblyCopyrightAttribute? aCopyrightAttr = (AssemblyCopyrightAttribute?)Attribute.GetCustomAttribute(myAssembly, typeof(AssemblyCopyrightAttribute));
             //AssemblyProductAttribute aProductAttr = (AssemblyProductAttribute)Attribute.GetCustomAttribute(myAssembly, typeof(AssemblyProductAttribute));
 
-            string version = myAssembly.GetName().Version.Major.ToString() + "." + myAssembly.GetName().Version.Minor.ToString() + "." + myAssembly.GetName().Version.Build.ToString();
-            return (aTitleAttr.Title, aDescAttr.Description, version, aCopyrightAttr.Copyright);
+            string version = myAssembly.GetName()?.Version?.Major.ToString() + "." + myAssembly.GetName()?.Version?.Minor.ToString() + "." + myAssembly.GetName()?.Version?.Build.ToString();
+            return (aTitleAttr?.Title ?? string.Empty, aDescAttr?.Description ?? string.Empty, version, aCopyrightAttr?.Copyright ?? string.Empty);
         }
 
 

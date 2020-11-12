@@ -3,7 +3,7 @@
 //
 // 2018-09-12   PV
 // 2018-09-28   PV      New blocks filtering controlling node expansion and not visibility
-// 2020-11-11   PV      Refilter char list after a block filter update; New 1-letter filtering rule; Dot Net 5.0
+
 
 using System;
 using System.Collections.Generic;
@@ -207,7 +207,7 @@ namespace UniSearchNS
             }
         }
 
-        public static int GetNumChars() => UniData.CharacterRecords.Count;
+        public static int NumChars => UniData.CharacterRecords.Count;
 
         public int NumBlocks => BlocksCheckableNodesDictionary.Count;
 
@@ -475,10 +475,9 @@ namespace UniSearchNS
 
         private void SelectAllExecute(string sparam)
         {
-            _ = int.TryParse(sparam, out int param);
+            int.TryParse(sparam, out int param);
             ActionAllNodes(BlocksRoot, n => { n.IsChecked = param == 1; });
             RefreshSelBlocks();
-            FilterCharList();
         }
 
 

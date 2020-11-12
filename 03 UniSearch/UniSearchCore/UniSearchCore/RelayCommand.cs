@@ -1,8 +1,10 @@
 ﻿// UnISearch RelayCommand for MVVM CommandBinding
 // 2016-09-26   PV
+// 2020-11-11   PV      Support of #nullable enable too difficult here
 
 using System;
 using System.Windows.Input;
+
 
 namespace UniSearchNS
 {
