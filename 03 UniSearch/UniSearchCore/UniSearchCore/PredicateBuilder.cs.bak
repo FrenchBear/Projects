@@ -12,7 +12,7 @@
 //                      New rule is always case-insensitive and accent-insensitive, a A â Ä all return the same matching set
 //                      Note that for single letters, full word search is strict, for instance, F foes not match "PHASE-F" in char name, while W: prefix actually does.
 //                      For T, the old rule found 17 matches (TtŢţŤťȚțṪṫṬṭṮṯṰṱẗ)
-//                      The new rule finds 95 matches (TtŢţŤťŦŧƫƬƭƮȚțȶȾʇʈͭᑦᛏᛐᣕᰳᴛᵀᵗᵵᶵṪṫṬṭṮṯṰṱẗₜ⒯Ⓣⓣⱦㄊㆵ㇀ꞆꞇꞱꩅﬅＴｔ𐊗𐊭𐤯𑫞𖹈𖹨𛰃𛰲𛰳𛰶𛰷𝐓𝐭𝑇𝑡𝑻𝒕𝒯𝓉𝓣𝓽𝔗𝔱𝕋𝕥𝕿𝖙𝖳𝗍𝗧𝘁𝘛𝘵𝙏𝙩𝚃𝚝🄣🅃🅣🆃🇹)
+//                      The new rule finds 90 matches (TtŢţŤťŦŧƫƬƭƮȚțȶȾʇʈͭᑦᛏᛐᣕᰳᴛᵀᵗᵵᶵṪṫṬṭṮṯṰṱẗₜ⒯ⓉⓣⱦꞆꞇꞱꩅﬅ𐊗𐊭𐤯𑫞𖹈𖹨𛰃𛰲𛰳𛰶𛰷𝐓𝐭𝑇𝑡𝑻𝒕𝒯𝓉𝓣𝓽𝔗𝔱𝕋𝕥𝕿𝖙𝖳𝗍𝗧𝘁𝘛𝘵𝙏𝙩𝚃𝚝🄣🅃🅣🆃🇹)
 
 using System;
 using System.Collections.Generic;
@@ -25,7 +25,7 @@ using UniDataNS;
 #nullable enable
 
 
-namespace UniSearchUWPNS
+namespace UniSearchNS
 {
     class PredicateBuilder
     {
@@ -34,7 +34,7 @@ namespace UniSearchUWPNS
         private readonly bool isAS;
         private readonly bool isRE;
         private readonly bool isWW;
-        private readonly int options;
+        // private readonly int options;        // For old single-letter filtering rule
 
         public PredicateBuilder(string filter, bool isCS, bool isAS, bool isRE, bool isWW)
         {
@@ -77,7 +77,7 @@ namespace UniSearchUWPNS
                         // But a leading - is not part of the word but an indicator for search exclusion,
                         // and remains ahead of the Regex so it can later be processed correctly by GetFilter
                         if (word.StartsWith("-", StringComparison.OrdinalIgnoreCase))
-                            word = "-" + @"\b" + Regex.Escape(word.Substring(1)) + @"\b";
+                            word = "-" + @"\b" + Regex.Escape(word[1..]) + @"\b";
                         else
                             word = @"\b" + Regex.Escape(word) + @"\b";
                     }
@@ -92,7 +92,7 @@ namespace UniSearchUWPNS
             this.isWW = isWW;       // Whole Word
 
             // Compact version of options stored as bits in an integer
-            this.options = (isCS ? 1 : 0) + (isAS ? 2 : 0) + (isRE ? 4 : 0) + (isWW ? 8 : 0);
+            //this.options = (isCS ? 1 : 0) + (isAS ? 2 : 0) + (isRE ? 4 : 0) + (isWW ? 8 : 0);       // For old single-letter filtering rule
         }
 
         // Helper that breaks white-separated words in a List<string>, but words "between quotes" are considered a single
@@ -168,9 +168,9 @@ namespace UniSearchUWPNS
             return sb.ToString().Normalize(NormalizationForm.FormC);
         }
 
-        public bool GetBlockNodeFilter(object searched)
+        public bool GetCheckableNodeFilter(object searched)
         {
-            if (searched is not BlockNode cn)
+            if (searched is not CheckableNode cn)
                 return true;
 
             foreach (string aWord in words)
@@ -180,7 +180,7 @@ namespace UniSearchUWPNS
 
                 if (aWord.StartsWith("-", StringComparison.Ordinal))
                 {
-                    word = aWord.Substring(1);
+                    word = aWord[1..];
                     invertFlag = true;
                     if (word.Length == 0)
                         continue;
@@ -206,12 +206,10 @@ namespace UniSearchUWPNS
                                 return false;
                         }
                     }
-#pragma warning disable CA1031 // Do not catch general exception types
                     catch (Exception)
                     {
                         return true;
                     }
-#pragma warning restore CA1031 // Do not catch general exception types
                 }
                 else
                 {
@@ -247,7 +245,7 @@ namespace UniSearchUWPNS
 
                 if (aWord.StartsWith("-", StringComparison.Ordinal))
                 {
-                    word = aWord.Substring(1);
+                    word = aWord[1..];
                     invertFlag = true;
                     if (word.Length == 0)
                         continue;
@@ -267,7 +265,7 @@ namespace UniSearchUWPNS
                     if (p <= 0 || p > prefix.Length) return false;      // p<=0 since starting with : is not a valid prefix
                     bool match= string.Compare(word.Substring(0, p), prefix.Substring(0, p), StringComparison.InvariantCultureIgnoreCase) == 0;
                     if (match)
-                        word = word.Substring(p + 1);
+                        word = word[(p + 1)..];
                     return match;
                 }
 
@@ -281,6 +279,7 @@ namespace UniSearchUWPNS
                 if (UniData.UnicodeLength(word) == 1)
                 {
                     // Old rule
+                    /*
                     switch (this.options & 3)
                     {
                         case 0:    // CI AI
@@ -296,7 +295,7 @@ namespace UniSearchUWPNS
                             wordFilter = cr.Character == word;
                             break;
                     }
-                    if (wordFilter) return true;
+                    */
                     
                     // New rule
                     word = @" " + Regex.Escape(RemoveDiacritics(word).ToUpperInvariant()) + @" ";
@@ -305,19 +304,17 @@ namespace UniSearchUWPNS
                     {
                         wordFilter = Regex.IsMatch(" "+cr.Name+" ", word, isCS ? 0 : RegexOptions.IgnoreCase);
                     }
-#pragma warning disable CA1031 // Do not catch general exception types
                     catch (Exception)
                     {
                         wordFilter = true;
                     }
-#pragma warning restore CA1031 // Do not catch general exception types
                 }
 
                 // If searched string is U+ followed by 1 to 6 hex digits, search for Codepoint value
                 // StartsWith U+ is for optimization, no need to start interpreting a regex for all chars
                 else if (word.StartsWith("U+", StringComparison.OrdinalIgnoreCase) && CodepointRegex.IsMatch(word))
                 {
-                    int n = int.Parse(word.Substring(2), NumberStyles.HexNumber);
+                    int n = int.Parse(word[2..], NumberStyles.HexNumber);
                     wordFilter = cr.Codepoint == n;
                 }
 
@@ -336,7 +333,7 @@ namespace UniSearchUWPNS
                         if (word.StartsWith(o, StringComparison.Ordinal))
                         {
                             op = o;
-                            word = word.Substring(o.Length);
+                            word = word[o.Length..];
                             break;
                         }
 
@@ -378,7 +375,7 @@ namespace UniSearchUWPNS
                     if (word.StartsWith("W:", StringComparison.OrdinalIgnoreCase))
                     {
                         isWWLocal = true;
-                        word = @"\b" + Regex.Escape(word.Substring(2)) + @"\b";
+                        word = @"\b" + Regex.Escape(word[2..]) + @"\b";
                     }
 
                     if (isRE || isWWLocal)
@@ -390,19 +387,17 @@ namespace UniSearchUWPNS
                             else
                                 wordFilter = Regex.IsMatch(RemoveDiacritics(cr.Name), word, isCS ? 0 : RegexOptions.IgnoreCase);
                         }
-#pragma warning disable CA1031 // Do not catch general exception types
                         catch (Exception)
                         {
                             wordFilter = true;
                         }
-#pragma warning restore CA1031 // Do not catch general exception types
                     }
                     else
                     {
                         if (isAS)
-                            wordFilter = cr.Name.IndexOf(word, isCS ? StringComparison.CurrentCulture : StringComparison.InvariantCultureIgnoreCase) >= 0;
+                            wordFilter = cr.Name.Contains(word, isCS ? StringComparison.CurrentCulture : StringComparison.InvariantCultureIgnoreCase);
                         else
-                            wordFilter = RemoveDiacritics(cr.Name).IndexOf(word, isCS ? StringComparison.CurrentCulture : StringComparison.InvariantCultureIgnoreCase) >= 0;
+                            wordFilter = RemoveDiacritics(cr.Name).Contains(word, isCS ? StringComparison.CurrentCulture : StringComparison.InvariantCultureIgnoreCase);
                     }
                 }
 

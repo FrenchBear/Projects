@@ -101,7 +101,28 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Label Grid.Column="0" Content="Character _Name Filter " FontWeight="SemiBold" Target="{Binding ElementName=CharacterFilterTextBox}" />
-                    <TextBox Grid.Column="1" Name="CharacterFilterTextBox" Text="{Binding CharNameFilter, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" />
+                    <TextBox Grid.Column="1" Name="CharacterFilterTextBox" Text="{Binding CharNameFilter, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center">
+                        <TextBox.ToolTip>
+                            <TextBlock>
+                            Enter a list of words to filter character names (case insensitive, accent insensitive).
+                            <LineBreak/>
+                            A single-letter word is always searched for a strict full-word match.
+                            <LineBreak/>
+                            Use w: to search for full words, w:cat does not match multipli<Bold>cat</Bold>ion
+                            <LineBreak/>
+                            use U+ prefix to search for a specific hex code, such as U+CAFE
+                            <LineBreak/>
+                            Use b: to filter on block name
+                            <LineBreak/>
+                            Use s: to filter on subheader name
+                            <LineBreak/>
+                            Use a: to filter on character age.  Also support comparison operators such as a:&lt;=10
+                            <LineBreak/>
+                            Use l: to filter on letters of a word
+                            <LineBreak/>
+                            Use gc: to filer on a Unicode category such as D (digits) or LU (Letter Uppercase)</TextBlock>
+                        </TextBox.ToolTip>
+                    </TextBox>
                 </Grid>
 
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,6">

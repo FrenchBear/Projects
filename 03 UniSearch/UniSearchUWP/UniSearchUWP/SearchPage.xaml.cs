@@ -62,7 +62,10 @@ namespace UniSearchUWPNS
 
         // Some controls such as AutoSuggestBox do not get focused just by defining AccessKey property for some reason.
         // This generic helper launched by AccessKeyInvoked event makes it work.
+        // Must remain non-static despite suggestions since it's dynamically called from XAML
+#pragma warning disable CA1822 // Mark members as static
         private void SetFocus(UIElement sender, Windows.UI.Xaml.Input.AccessKeyInvokedEventArgs args)
+#pragma warning restore CA1822 // Mark members as static
         {
             if (sender is Control c)
                 c.Focus(FocusState.Keyboard);

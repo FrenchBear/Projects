@@ -4,10 +4,15 @@
 // 2016-12-13   PV      v2.1 Full rewrite in a separate, clean class
 // 2017-01-01   PV      v2.5.1 Exclusion of search words starting with -; move filter parsing from VM to here
 // 2018-09-08   PV      Adaptation to UniSearch with dedicated predicates for CharacterRecord and BlockRecord
-// 2018-09-20   PV      Filter on subheader using s:
+// 2018-09-20   PV      Filter on Subheader using s:
 // 2018-09-20   PV      Filter on letters using l:
 // 2018-09-26   PV      Use helper WordStartsWithPrefix for better code detecting special flags
 // 2019-04-29   PV      ParseQuery accepts prefix:"words with spaces" since it's more natural than "prefix:words with spaces"
+// 2020-11-11   PV      New rule for single letter search: only searches full word in the description, much more efficient than former rule (only search for letters equivalent to this one).
+//                      New rule is always case-insensitive and accent-insensitive, a A â Ä all return the same matching set
+//                      Note that for single letters, full word search is strict, for instance, F foes not match "PHASE-F" in char name, while W: prefix actually does.
+//                      For T, the old rule found 17 matches (TtŢţŤťȚțṪṫṬṭṮṯṰṱẗ)
+//                      The new rule finds 95 matches (TtŢţŤťŦŧƫƬƭƮȚțȶȾʇʈͭᑦᛏᛐᣕᰳᴛᵀᵗᵵᶵṪṫṬṭṮṯṰṱẗₜ⒯Ⓣⓣⱦㄊㆵ㇀ꞆꞇꞱꩅﬅＴｔ𐊗𐊭𐤯𑫞𖹈𖹨𛰃𛰲𛰳𛰶𛰷𝐓𝐭𝑇𝑡𝑻𝒕𝒯𝓉𝓣𝓽𝔗𝔱𝕋𝕥𝕿𝖙𝖳𝗍𝗧𝘁𝘛𝘵𝙏𝙩𝚃𝚝🄣🅃🅣🆃🇹)
 
 using System;
 using System.Collections.Generic;
@@ -16,6 +21,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using UniDataNS;
+
+#nullable enable
 
 
 namespace UniSearchNS
@@ -70,7 +77,7 @@ namespace UniSearchNS
                         // But a leading - is not part of the word but an indicator for search exclusion,
                         // and remains ahead of the Regex so it can later be processed correctly by GetFilter
                         if (word.StartsWith("-", StringComparison.OrdinalIgnoreCase))
-                            word = "-" + @"\b" + Regex.Escape(word.Substring(1)) + @"\b";
+                            word = "-" + @"\b" + Regex.Escape(word[1..]) + @"\b";
                         else
                             word = @"\b" + Regex.Escape(word) + @"\b";
                     }
@@ -163,7 +170,8 @@ namespace UniSearchNS
 
         public bool GetCheckableNodeFilter(object searched)
         {
-            CheckableNode cn = searched as CheckableNode;
+            if (searched is not CheckableNode cn)
+                return true;
 
             foreach (string aWord in words)
             {
@@ -172,7 +180,7 @@ namespace UniSearchNS
 
                 if (aWord.StartsWith("-", StringComparison.Ordinal))
                 {
-                    word = aWord.Substring(1);
+                    word = aWord[1..];
                     invertFlag = true;
                     if (word.Length == 0)
                         continue;
@@ -227,7 +235,8 @@ namespace UniSearchNS
         // Specific version to search CharacterRecords
         public bool GetCharacterRecordFilter(object searched)
         {
-            CharacterRecord cr = searched as CharacterRecord;
+            if (searched is not CharacterRecord cr)
+                return true;
 
             foreach (string aWord in words)
             {
@@ -236,7 +245,7 @@ namespace UniSearchNS
 
                 if (aWord.StartsWith("-", StringComparison.Ordinal))
                 {
-                    word = aWord.Substring(1);
+                    word = aWord[1..];
                     invertFlag = true;
                     if (word.Length == 0)
                         continue;
@@ -256,7 +265,7 @@ namespace UniSearchNS
                     if (p <= 0 || p > prefix.Length) return false;      // p<=0 since starting with : is not a valid prefix
                     bool match= string.Compare(word.Substring(0, p), prefix.Substring(0, p), StringComparison.InvariantCultureIgnoreCase) == 0;
                     if (match)
-                        word = word.Substring(p + 1);
+                        word = word[(p + 1)..];
                     return match;
                 }
 
@@ -265,8 +274,11 @@ namespace UniSearchNS
 
                 // If searched word is exactly 1 Unicode character, test directly character itself
                 // Don't care if searched word is denormalized
+                // 2020-11-11: Change the rule, a single letter searches for a full word.  Otherwise searches for T for instance miss many letters that 
+                // are not equivalent to T but are real T (math letters, upside-down letters, ...)
                 if (UniData.UnicodeLength(word) == 1)
                 {
+                    // Old rule
                     switch (this.options & 3)
                     {
                         case 0:    // CI AI
@@ -282,13 +294,26 @@ namespace UniSearchNS
                             wordFilter = cr.Character == word;
                             break;
                     }
+                    if (wordFilter) return true;
+                    
+                    // New rule
+                    word = @" " + Regex.Escape(RemoveDiacritics(word).ToUpperInvariant()) + @" ";
+
+                    try
+                    {
+                        wordFilter = Regex.IsMatch(" "+cr.Name+" ", word, isCS ? 0 : RegexOptions.IgnoreCase);
+                    }
+                    catch (Exception)
+                    {
+                        wordFilter = true;
+                    }
                 }
 
                 // If searched string is U+ followed by 1 to 6 hex digits, search for Codepoint value
                 // StartsWith U+ is for optimization, no need to start interpreting a regex for all chars
                 else if (word.StartsWith("U+", StringComparison.OrdinalIgnoreCase) && CodepointRegex.IsMatch(word))
                 {
-                    int n = int.Parse(word.Substring(2), NumberStyles.HexNumber);
+                    int n = int.Parse(word[2..], NumberStyles.HexNumber);
                     wordFilter = cr.Codepoint == n;
                 }
 
@@ -307,7 +332,7 @@ namespace UniSearchNS
                         if (word.StartsWith(o, StringComparison.Ordinal))
                         {
                             op = o;
-                            word = word.Substring(o.Length);
+                            word = word[o.Length..];
                             break;
                         }
 
@@ -349,7 +374,7 @@ namespace UniSearchNS
                     if (word.StartsWith("W:", StringComparison.OrdinalIgnoreCase))
                     {
                         isWWLocal = true;
-                        word = @"\b" + Regex.Escape(word.Substring(2)) + @"\b";
+                        word = @"\b" + Regex.Escape(word[2..]) + @"\b";
                     }
 
                     if (isRE || isWWLocal)
@@ -369,9 +394,9 @@ namespace UniSearchNS
                     else
                     {
                         if (isAS)
-                            wordFilter = cr.Name.IndexOf(word, isCS ? StringComparison.CurrentCulture : StringComparison.InvariantCultureIgnoreCase) >= 0;
+                            wordFilter = cr.Name.Contains(word, isCS ? StringComparison.CurrentCulture : StringComparison.InvariantCultureIgnoreCase);
                         else
-                            wordFilter = RemoveDiacritics(cr.Name).IndexOf(word, isCS ? StringComparison.CurrentCulture : StringComparison.InvariantCultureIgnoreCase) >= 0;
+                            wordFilter = RemoveDiacritics(cr.Name).Contains(word, isCS ? StringComparison.CurrentCulture : StringComparison.InvariantCultureIgnoreCase);
                     }
                 }
 

@@ -152,7 +152,7 @@
                             <KeyboardAccelerator Modifiers="Control" Key="C" />
                         </AppBarButton.KeyboardAccelerators>
                         <ToolTipService.ToolTip>
-                            <ToolTip>Copy selected chars (Ctrl+C)</ToolTip>
+                            <ToolTip Content="Copy selected chars (Ctrl+C)" />
                         </ToolTipService.ToolTip>
                     </AppBarButton>
                     <AppBarButton Name="CopyLinesButton" AccessKey="L" Icon="Copy" Label="Lines" Command="{Binding CopyRecordsCommand}" CommandParameter="1"  >
@@ -160,7 +160,7 @@
                             <KeyboardAccelerator Modifiers="Control" Key="L" />
                         </AppBarButton.KeyboardAccelerators>
                         <ToolTipService.ToolTip>
-                            <ToolTip>Copy Character, Codepoint and Name of selected chars (Ctrl+L)</ToolTip>
+                            <ToolTip Content="Copy Character, Codepoint and Name of selected chars (Ctrl+L)" />
                         </ToolTipService.ToolTip>
                     </AppBarButton>
                     <AppBarButton Name="CopyDetailsButton" AccessKey="D" Icon="Copy" Label="Details" Command="{Binding CopyRecordsCommand}" CommandParameter="2" >
@@ -168,7 +168,7 @@
                             <KeyboardAccelerator Modifiers="Control" Key="D" />
                         </AppBarButton.KeyboardAccelerators>
                         <ToolTipService.ToolTip>
-                            <ToolTip>Copy full details of selected chars (Ctrl+D)</ToolTip>
+                            <ToolTip Content="Copy full details of selected chars (Ctrl+D)" />
                         </ToolTipService.ToolTip>
                     </AppBarButton>
 
@@ -177,7 +177,7 @@
                             <KeyboardAccelerator Modifiers="Control" Key="I" />
                         </AppBarButton.KeyboardAccelerators>
                         <ToolTipService.ToolTip>
-                            <ToolTip>Copy image of selected char (Ctrl+I)</ToolTip>
+                            <ToolTip Content="Copy image of selected char (Ctrl+I)" />
                         </ToolTipService.ToolTip>
                     </AppBarButton>
 
@@ -189,7 +189,7 @@
                             <KeyboardAccelerator Modifiers="Control" Key="G" />
                         </AppBarButton.KeyboardAccelerators>
                         <ToolTipService.ToolTip>
-                            <ToolTip>Toggle between Grid and List view (Ctrl+G)</ToolTip>
+                            <ToolTip Content="Toggle between Grid and List view (Ctrl+G)" />
                         </ToolTipService.ToolTip>
 
                     </AppBarButton>
@@ -238,7 +238,6 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-
 
                         <Grid Margin="12">
                             <Grid.ColumnDefinitions>
@@ -303,22 +302,23 @@
                                     <ToolTipService.ToolTip>
                                         <ToolTip Style="{StaticResource LargeTooltipStyle}" >
                                             <TextBlock>
-                                Enter a list of words to filter character names (case insensitive, accent insensitive).
-                                <LineBreak/>
-                                A single-letter word is always searched for a strict full-word match.
-                                <LineBreak/>
-                                Use w: to search for full words, w:cat does not match multipli<Bold>cat</Bold>ion
-                                <LineBreak/>
-                                use U+ prefix to search for a specific hex code, such as U+CAFE
-                                <LineBreak/>
-                                Use b: to filter on block name
-                                <LineBreak/>
-                                Use s: to filter on subheader name
-                                <LineBreak/>
-                                Use a: to filter on character age.  Also support comparison operators such as a:&lt;=10
-                                <LineBreak/>
-                                Use l: to filter on letters of a word
-                                            </TextBlock>
+                                        Enter a list of words to filter character names (case insensitive, accent insensitive).
+                                        <LineBreak/>
+                                        A single-letter word is always searched for a strict full-word match.
+                                        <LineBreak/>
+                                        Use w: to search for full words, w:cat does not match multipli<Bold>cat</Bold>ion
+                                        <LineBreak/>
+                                        use U+ prefix to search for a specific hex code, such as U+CAFE
+                                        <LineBreak/>
+                                        Use b: to filter on block name
+                                        <LineBreak/>
+                                        Use s: to filter on subheader name
+                                        <LineBreak/>
+                                        Use a: to filter on character age.  Also support comparison operators such as a:&lt;=10
+                                        <LineBreak/>
+                                        Use l: to filter on letters of a word
+                                        <LineBreak/>
+                                        Use gc: to filer on a Unicode category such as D (digits) or LU (Letter Uppercase)</TextBlock>
                                         </ToolTip>
                                     </ToolTipService.ToolTip>
                                 </AutoSuggestBox>
@@ -351,7 +351,7 @@
                                                                 <KeyboardAccelerator Modifiers="Control" Key="C" />
                                                             </MenuFlyoutItem.KeyboardAccelerators>
                                                         </MenuFlyoutItem>
-                                                        
+
                                                         <MenuFlyoutItem Text="Copy Lines" Command="{Binding ElementName=MainPage, Path=DataContext.CopyRecordsCommand}" CommandParameter="1"  >
                                                             <MenuFlyoutItem.KeyboardAccelerators>
                                                                 <KeyboardAccelerator Modifiers="Control" Key="L" />

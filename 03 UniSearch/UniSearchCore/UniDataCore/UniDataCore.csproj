@@ -1,16 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>UniDataNS</RootNamespace>
     <Platforms>AnyCPU;x64</Platforms>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>1.5.0</Version>
+    <Version>1.6.0</Version>
     <Authors>Pierre Violent</Authors>
     <Company>Pierre Violent</Company>
     <Copyright>Copyright ©2018-2020 Pierre Violent</Copyright>
-    <Description>Unicode characters and blocks information (Unicode 13) [.Net Core 3.1 C#8 Nullable]</Description>
+    <Description>Unicode characters and blocks information (Unicode 13) [.Net 5 C#9 Nullable]</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -331,7 +331,7 @@ namespace UniDataNS
                     }
                     else
                     {
-                        int end_char_code = int.Parse(fields[0].Substring(p + 2), NumberStyles.HexNumber);
+                        int end_char_code = int.Parse(fields[0][(p + 2)..], NumberStyles.HexNumber);
                         // Skip planes 15 and 16 private use
                         if (codepoint != 0xF0000 && codepoint != 0x100000)
                             for (int code = codepoint; code <= end_char_code; code++)
@@ -351,6 +351,7 @@ namespace UniDataNS
 
             void MergeSubheaders()
             {
+                Debug.Assert(blockSubheaders != null);
                 foreach (string sungularsh in blockSubheaders.Where(s => !s.EndsWith("s", StringComparison.Ordinal)))
                     if (blockSubheaders!.Contains(sungularsh + "s"))
                         foreach (int cp in blockCodepoints!)
@@ -384,7 +385,7 @@ namespace UniDataNS
                     else if (line.StartsWith("@~", StringComparison.Ordinal)) { }
                     else if (line.StartsWith("@", StringComparison.Ordinal))
                     {
-                        subheader = line.Substring(3);
+                        subheader = line[3..];
                     }
                     else if (line.StartsWith("\t", StringComparison.Ordinal)) { }
                     else
