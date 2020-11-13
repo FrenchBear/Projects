@@ -163,12 +163,20 @@
                             <ToolTip Content="Copy Character, Codepoint and Name of selected chars (Ctrl+L)" />
                         </ToolTipService.ToolTip>
                     </AppBarButton>
-                    <AppBarButton Name="CopyDetailsButton" AccessKey="D" Icon="Copy" Label="Details" Command="{Binding CopyRecordsCommand}" CommandParameter="2" >
+                    <AppBarButton Name="CopyDetailsButton" AccessKey="D" Icon="Copy" Label="Details" Command="{Binding CopyRecordsCommand}" CommandParameter="2" HorizontalAlignment="Center" >
                         <AppBarButton.KeyboardAccelerators>
                             <KeyboardAccelerator Modifiers="Control" Key="D" />
                         </AppBarButton.KeyboardAccelerators>
                         <ToolTipService.ToolTip>
-                            <ToolTip Content="Copy full details of selected chars (Ctrl+D)" />
+                            <ToolTip Content="Copy details of selected chars (Ctrl+D)" />
+                        </ToolTipService.ToolTip>
+                    </AppBarButton>
+                    <AppBarButton Name="CopyFullInfoButton" AccessKey="F" Icon="Copy" Label="Full Info" Command="{Binding CopyRecordsCommand}" CommandParameter="3" HorizontalAlignment="Center" >
+                        <AppBarButton.KeyboardAccelerators>
+                            <KeyboardAccelerator Modifiers="Control" Key="F" />
+                        </AppBarButton.KeyboardAccelerators>
+                        <ToolTipService.ToolTip>
+                            <ToolTip Content="Copy full information of selected chars (Ctrl+F)" />
                         </ToolTipService.ToolTip>
                     </AppBarButton>
 

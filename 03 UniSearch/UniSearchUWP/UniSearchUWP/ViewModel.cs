@@ -183,7 +183,7 @@ namespace UniSearchUWPNS
 
         public BlockRecord[] BlocksRecordsList { get; set; }
 
-        private string _CharNameFilter="";
+        private string _CharNameFilter = "";
 
         public string CharNameFilter
         {
@@ -199,7 +199,7 @@ namespace UniSearchUWPNS
             }
         }
 
-        private string _BlockNameFilter="";
+        private string _BlockNameFilter = "";
 
         public string BlockNameFilter
         {
@@ -272,7 +272,7 @@ namespace UniSearchUWPNS
 
             HyperlinkButton t2 = new HyperlinkButton
             {
-                Margin = new Thickness(0,0,0,1),
+                Margin = new Thickness(0, 0, 0, 1),
                 Padding = new Thickness(0),
                 Content = cr.CodepointHex,
                 Command = command,
@@ -521,9 +521,13 @@ namespace UniSearchUWPNS
         private void CopyRecordsExecute(object param)
         {
             var selectedCharRecords = page.CharCurrentView.SelectedItems.Cast<CharacterRecord>();
+            DoCopyRecords(param?.ToString() ?? "0", selectedCharRecords);
+        }
 
+        internal static void DoCopyRecords(string param, IEnumerable<CharacterRecord>? records)
+        { 
             var sb = new StringBuilder();
-            foreach (CharacterRecord r in selectedCharRecords.OrderBy(cr => cr.Codepoint))
+            foreach (CharacterRecord r in records.OrderBy(cr => cr.Codepoint))
                 switch (param)
                 {
                     case "0":
@@ -539,9 +543,78 @@ namespace UniSearchUWPNS
                             r.CategoryRecord.Categories + "\t" + r.Age + "\t" + r.Block.BlockNameAndRange + "\t" +
                             r.Subheader + "\t" + r.UTF16 + "\t" + r.UTF8);
                         break;
+
+                    case "3":
+                        sb.AppendLine("Character");
+                        sb.AppendLine("\tChar\t" + r.Character);
+                        sb.AppendLine("\tCodepoint\t" + r.CodepointHex);
+                        sb.AppendLine("\tName\t" + r.Name);
+                        sb.AppendLine("\tCategories\t" + r.CategoryRecord.Categories);
+                        sb.AppendLine("\tSince\t" + r.Age);
+                        sb.AppendLine("Block");
+                        sb.AppendLine("\tLevel 3\t" + r.Block.Level3Name);
+                        sb.AppendLine("\tLevel 2\t" + r.Block.Level2Name);
+                        sb.AppendLine("\tLevel 1\t" + r.Block.Level1Name);
+                        sb.AppendLine("\tBlock\t" + r.Block.BlockNameAndRange);
+                        sb.AppendLine("\tSubheader\t" + r.Subheader);
+                        sb.AppendLine("Encoding");
+                        sb.AppendLine("\tUTF-8\t" + r.UTF8);
+                        sb.AppendLine("\tUTF-16\t" + r.UTF16);
+                        sb.AppendLine("Decomposition and Case");
+                        sb.AppendLine("\tNFD");
+                        AppendNormalizationContent(sb, r, NormalizationForm.FormD);
+                        sb.AppendLine("\tNFKD");
+                        AppendNormalizationContent(sb, r, NormalizationForm.FormKD);
+                        sb.AppendLine("\tLowercase");
+                        AppendCaseContent(sb, r, true);
+                        sb.AppendLine("\tUppercase");
+                        AppendCaseContent(sb, r, false);
+                        sb.AppendLine("Extra Information");
+                        sb.AppendLine("\tSynonyms");
+                        if (r.Synonyms != null)
+                            foreach (string line in r.Synonyms)
+                                sb.AppendLine("\t\t" + line);
+                        sb.AppendLine("\tCross-Refs");
+                        if (r.CrossRefs != null)
+                            foreach (string line in r.CrossRefs)
+                                sb.AppendLine("\t\t" + line);
+                        sb.AppendLine("\tComments");
+                        if (r.Comments != null)
+                            foreach (string line in r.Comments)
+                                sb.AppendLine("\t\t" + line);
+                        sb.AppendLine();
+                        break;
                 }
 
             ClipboardSetData(sb.ToString());
+        }
+
+        private static void AppendNormalizationContent(StringBuilder sb, CharacterRecord SelectedChar, NormalizationForm form)
+        {
+            if (!SelectedChar.IsPrintable) return;
+
+            string s = SelectedChar.Character;
+            string sn = s.Normalize(form);
+            if (s == sn) return;
+            if (form == NormalizationForm.FormKD && sn == s.Normalize(NormalizationForm.FormD))
+            {
+                sb.AppendLine("\t\tSame as NFD");
+                return;
+            }
+            foreach (var cr in sn.EnumCharacterRecords())
+                sb.AppendLine("\t\t" + cr.AsString);
+        }
+
+        private static void AppendCaseContent(StringBuilder sb, CharacterRecord SelectedChar, bool lower)
+        {
+            if (!SelectedChar.IsPrintable) return;
+
+            string s = SelectedChar.Character;
+            string sc = lower ? s.ToLowerInvariant() : s.ToUpperInvariant();
+            if (s == sc) return;
+
+            foreach (var cr in sc.EnumCharacterRecords())
+                sb.AppendLine("\t\t" + cr.AsString);
         }
 
 
@@ -585,7 +658,7 @@ namespace UniSearchUWPNS
         internal static void ClipboardSetData(string? s, RandomAccessStreamReference? bmp = null)
         {
             var dataPackage = new DataPackage();
-            if (s!=null) dataPackage.SetText(s);
+            if (s != null) dataPackage.SetText(s);
             if (bmp != null) dataPackage.SetBitmap(bmp);
             try
             {

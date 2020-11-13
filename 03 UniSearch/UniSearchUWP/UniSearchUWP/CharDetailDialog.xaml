@@ -8,7 +8,7 @@
     mc:Ignorable="d"  d:DataContext="{d:DesignInstance Type=local:CharDetailViewModel}"
     Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"
     Title="{Binding Title}">
-    
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -57,7 +57,11 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="100" />
@@ -101,6 +105,15 @@
                 <ContentPresenter Grid.Row="17" Grid.Column="1" Content="{Binding LowercaseContent}" />
                 <TextBlock Grid.Row="18" Grid.Column="0" Text="  Uppercase" FontWeight="SemiBold" />
                 <ContentPresenter Grid.Row="18" Grid.Column="1" Content="{Binding UppercaseContent}" />
+
+                <TextBlock Grid.Row="19" Grid.Column="0" Text="Extra Information" Grid.ColumnSpan="2" FontWeight="Bold" Margin="0,12,0,0"/>
+                <TextBlock Grid.Row="20" Grid.Column="0" Text="  Synonyms " FontWeight="SemiBold" />
+                <ContentPresenter Grid.Row="20" Grid.Column="1" MaxWidth="500" Content="{Binding SynonymsContent}" />
+                <TextBlock Grid.Row="21" Grid.Column="0" Text="  Cross-Refs " FontWeight="SemiBold" />
+                <ContentPresenter Grid.Row="21" Grid.Column="1" MaxWidth="500" Content="{Binding CrossRefsContent}" />
+                <TextBlock Grid.Row="22" Grid.Column="0" Text="  Comments " FontWeight="SemiBold" />
+                <ContentPresenter Grid.Row="22" Grid.Column="1" MaxWidth="500" Content="{Binding CommentsContent}" />
+
             </Grid>
         </ScrollViewer>
 

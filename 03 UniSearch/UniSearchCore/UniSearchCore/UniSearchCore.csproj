@@ -10,6 +10,7 @@
     <Copyright>Copyright ©2018-2020 Pierre Violent</Copyright>
     <Version>1.3.0</Version>
     <Description>Unicode Character Search Tool [WPF .Net 5 C#9 Nullable]</Description>
+    <ApplicationIcon>Unicorn.ico</ApplicationIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

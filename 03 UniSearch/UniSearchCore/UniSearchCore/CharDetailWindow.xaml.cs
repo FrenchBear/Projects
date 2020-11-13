@@ -2,6 +2,8 @@
 // Show more information on a character after a click on hyperlink
 //
 // 2018-09-15   PV
+// 2020-11-11   PV      1.3 Hyperlinks to block and subheader
+
 
 
 using System.Windows;

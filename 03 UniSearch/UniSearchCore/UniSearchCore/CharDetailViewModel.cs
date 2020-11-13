@@ -2,6 +2,7 @@
 // Support for CharDetailWindow binding
 //
 // 2018-09-15   PV
+// 2020-11-11   PV      Hyperlinks to block and subheader; nullable enable
 // 2020-11-12   PV      Added Synonyms, Comments and Cross-refs.  Block/Subheaders hyperlinks.  Copy buttons.  Scrollviewer
 
 using System;
@@ -88,7 +89,7 @@ namespace UniSearchNS
 
             StackPanel sp = new StackPanel();
             foreach (var cr in sn.EnumCharacterRecords())
-                sp.Children.Add(ViewModel.GetStrContent(cr.Codepoint, ShowDetailCommand));
+                sp.Children.Add(ViewModel.GetStrContent(cr.Codepoint, ShowDetailCommand, true));
             return sp;
         }
 
@@ -122,43 +123,50 @@ namespace UniSearchNS
 
             StackPanel sp = new StackPanel();
             foreach (var cr in sc.EnumCharacterRecords())
-                sp.Children.Add(ViewModel.GetStrContent(cr.Codepoint, ShowDetailCommand));
+                sp.Children.Add(ViewModel.GetStrContent(cr.Codepoint, ShowDetailCommand, true));
             return sp;
         }
 
-        public UIElement? SynonymsContent => GetExtraInfo(SelectedChar.Synonyms);
-        public UIElement? CrossRefsContent => GetExtraInfo(SelectedChar.CrossRefs);
-        public UIElement? CommentsContent => GetExtraInfo(SelectedChar.Comments);
+        public UIElement? SynonymsContent => GetExtraInfo(SelectedChar.Synonyms, false);
+        public UIElement? CrossRefsContent => GetExtraInfo(SelectedChar.CrossRefs, true);
+        public UIElement? CommentsContent => GetExtraInfo(SelectedChar.Comments, true);
 
-        private readonly Regex reCP = new Regex(@"\b1?[0-9A-F]{4,5}\b");
+        private static readonly Regex reCP = new Regex(@"\b1?[0-9A-F]{4,5}\b");
 
-        private UIElement? GetExtraInfo(List<string>? list)
+        private UIElement? GetExtraInfo(List<string>? list, bool autoHyperlink)
         {
             if (list == null)
                 return null;
 
-            TextBlock tb = new TextBlock();
-            foreach (string altName in list)
+            TextBlock tb = new TextBlock { TextWrapping = TextWrapping.Wrap };
+            foreach (string s in list)
             {
                 if (tb.Inlines.Count > 0)
                     tb.Inlines.Add(new LineBreak());
-                string s = (altName[0..1].ToUpper() + altName[1..]).Replace(" - ", " ");
-                int sp = 0;
-                for (; ; )
+
+                if (autoHyperlink)
                 {
-                    var ma = reCP.Match(s, sp);
-                    if (!ma.Success)
+                    int sp = 0;
+                    for (; ; )
                     {
-                        tb.Inlines.Add(new Run(s[sp..]));
-                        break;
+                        var ma = reCP.Match(s, sp);
+                        if (!ma.Success)
+                        {
+                            tb.Inlines.Add(new Run(s[sp..]));
+                            break;
+                        }
+
+                        if (ma.Index > sp)
+                            tb.Inlines.Add(new Run(s[sp..ma.Index]));
+                        int cp = Convert.ToInt32(ma.ToString(), 16);
+                        tb.Inlines.Add(ViewModel.GetCodepointHyperlink(cp, ShowDetailCommand, true));
+                        sp = ma.Index + ma.Length;
                     }
-                    if (ma.Index > sp)
-                        tb.Inlines.Add(new Run(s[sp..ma.Index]));
-                    int cp = Convert.ToInt32(ma.ToString(), 16);
-                    tb.Inlines.Add(ViewModel.GetCodepointHyperlink(cp, ShowDetailCommand, true));
-                    sp = ma.Index + ma.Length;
                 }
+                else
+                    tb.Inlines.Add(new Run(s));
             }
+
             return tb;
         }
 

@@ -78,14 +78,14 @@
 
     <Grid >
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
 
 
         <!-- Left grid, character -->
-        <Grid Margin="6,6,0,6" Grid.Column="0">
+        <Grid Margin="0,6,6,6" Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
@@ -230,14 +230,13 @@
                 </StackPanel>
             </WrapPanel>
 
-
         </Grid>
 
 
         <GridSplitter Grid.Column="1" HorizontalAlignment="Center" Cursor="SizeWE" Width="6" Background="Transparent" Focusable="False" />
 
         <!-- Right grid, block -->
-        <Grid Margin="0,6,6,6" Grid.Column="2">
+        <Grid Margin="6,6,0,6" Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />

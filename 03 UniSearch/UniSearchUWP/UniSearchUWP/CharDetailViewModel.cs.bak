@@ -4,8 +4,7 @@
 // In UWP version, selected character can change during drill down, so INotifyPropertyChanged is implemented.
 //
 // 2018-09-18   PV
-// 2020-11-11   PV      Hyperlinks to block and subheader; nullable enable
-// 2020-11-12   PV      Added Synonyms, Comments and Cross-refs.  Block/Subheaders hyperlinks.  Copy buttons.  Scrollviewer
+// 2020-11-11   PV      1.3 Hyperlinks to block and subheader; nullable enable
 
 
 using RelayCommandNS;
@@ -13,14 +12,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows.Input;
 using UniDataNS;
-using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Media;
 
 #nullable enable
 
@@ -77,11 +72,6 @@ namespace UniSearchUWPNS
                     NotifyPropertyChanged(nameof(NormalizationNFKDContent));
                     NotifyPropertyChanged(nameof(LowercaseContent));
                     NotifyPropertyChanged(nameof(UppercaseContent));
-                    NotifyPropertyChanged(nameof(BlockContent));
-                    NotifyPropertyChanged(nameof(SubheaderContent));
-                    NotifyPropertyChanged(nameof(SynonymsContent));
-                    NotifyPropertyChanged(nameof(CrossRefsContent));
-                    NotifyPropertyChanged(nameof(CommentsContent));
                 }
             }
         }
@@ -146,115 +136,6 @@ namespace UniSearchUWPNS
             return sp;
         }
 
-        public UIElement? SynonymsContent => GetExtraInfo(SelectedChar.Synonyms, false);
-        public UIElement? CrossRefsContent => GetExtraInfo(SelectedChar.CrossRefs, true);
-        public UIElement? CommentsContent => GetExtraInfo(SelectedChar.Comments, true);
-
-        private static readonly Regex reCP = new Regex(@"\b1?[0-9A-F]{4,5}\b");
-
-        private UIElement? GetExtraInfo(List<string>? list, bool autoHyperlink)
-        {
-            if (list == null)
-                return null;
-
-            TextBlock tb = new TextBlock { TextWrapping = TextWrapping.Wrap };
-            foreach (string s in list)
-            {
-                if (tb.Inlines.Count > 0)
-                    tb.Inlines.Add(new LineBreak());
-
-                if (autoHyperlink)
-                {
-                    // Empirical mechanism to convert 4 or 5 hex characters by an hyperlink to a character
-                    // Exception: FEED
-                    int sp = 0;
-                    for (; ; )
-                    {
-                        var ma = reCP.Match(s, sp);
-                        if (!ma.Success)
-                        {
-                            tb.Inlines.Add(new Run { Text = s.Substring(sp) });
-                            break;
-                        }
-
-                        if (ma.Index > sp)
-                            tb.Inlines.Add(new Run { Text = s.Substring(sp, ma.Index - sp) });
-                        int cp = Convert.ToInt32(ma.ToString(), 16);
-                        tb.Inlines.Add(GetCodepointHyperlink(cp, Hyperlink_Click, true));
-                        sp = ma.Index + ma.Length;
-                    }
-                }
-                else
-                    tb.Inlines.Add(new Run { Text = s });
-            }
-
-            return tb;
-        }
-
-
-        // Returns an hyperlink to a specific codepoint, with optional tooltip containing codepoint glyph
-        // Also called from CharDetailViewModel
-        internal static Hyperlink GetCodepointHyperlink(int codepoint, TypedEventHandler<Hyperlink, HyperlinkClickEventArgs> Click, bool withToolTip)
-        {
-            // \x2060 is Unicode Word Joiner, to prevent line wrap here
-            Run r = new Run { Text = $"U\x2060+\x2060{codepoint:X4}" };
-
-            Hyperlink h = new Hyperlink();
-            h.Inlines.Add(r);
-            h.Click += Click;
-
-            if (withToolTip)
-            {
-                var cps = UniData.CodepointToString(codepoint);
-
-                var tb = new TextBlock
-                {
-                    FontSize = 64,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    Foreground = new SolidColorBrush(Windows.UI.Colors.Black),
-                    Text = cps
-                };
-
-                var vb = new Viewbox { Child = tb };
-
-                var b = new Border
-                {
-                    Width = 96,
-                    Height = 96,
-                    Background = new SolidColorBrush(Windows.UI.Colors.CornflowerBlue),
-                    Child = vb
-                };
-
-                ToolTip tooltip = new ToolTip
-                {
-                    Content = b,
-                    HorizontalOffset = 120,
-                    VerticalOffset = 50
-                };
-                ToolTipService.SetToolTip(h, tooltip);
-            }
-
-            return h;
-        }
-
-
-        // Helper to work around the limitaion of a Hyperlink in UWP
-        // Hyperlink can be placed in an Inlines(), but does not support Command/Parameter
-        // HyperlinkButton do support COmmand/Parameter, but can't be added to Inlines()
-        // Solution: handle the click event of Hyperlink...
-        private void Hyperlink_Click(Hyperlink sender, HyperlinkClickEventArgs args)
-        {
-            if (sender.Inlines[0] is Run r)
-            {
-                string s = r.Text;
-                if (s.StartsWith("U\x2060+\x2060", StringComparison.OrdinalIgnoreCase))
-                {
-                    int cp = Convert.ToInt32(s.Substring(4), 16);
-                    NavigateToCodepoint(cp, true);
-                }
-            }
-        }
 
         // ==============================================================================================
         // Commands

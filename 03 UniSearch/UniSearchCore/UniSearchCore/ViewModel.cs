@@ -211,7 +211,7 @@ namespace UniSearchNS
             }
         }
 
-        public static int NumChars() => UniData.CharacterRecords.Count;
+        public static int NumChars => UniData.CharacterRecords.Count;
 
         public int NumBlocks => BlocksCheckableNodesDictionary.Count;
 
@@ -279,11 +279,11 @@ namespace UniSearchNS
             get
             {
                 if (SelectedChar == null) return null;
-                return GetStrContent(SelectedChar.Codepoint, ShowDetailCommand);
+                return GetStrContent(SelectedChar.Codepoint, ShowDetailCommand, false);
             }
         }
 
-        public static UIElement GetStrContent(int codepoint, ICommand command)
+        public static UIElement GetStrContent(int codepoint, ICommand command, bool withToolTip)
         {
             var cr = UniData.CharacterRecords[codepoint];
 
@@ -296,7 +296,7 @@ namespace UniSearchNS
             Grid.SetColumn(t1, 0);
             g.Children.Add(t1);
 
-            TextBlock t2 = new TextBlock(GetCodepointHyperlink(cr.Codepoint, command, false));
+            TextBlock t2 = new TextBlock(GetCodepointHyperlink(cr.Codepoint, command, withToolTip));
             Grid.SetColumn(t2, 1);
             g.Children.Add(t2);
 
@@ -311,8 +311,8 @@ namespace UniSearchNS
         // Also called from CharDetailViewModel
         internal static Hyperlink GetCodepointHyperlink(int codepoint, ICommand command, bool withToolTip)
         {
-            var cps = new string((char)codepoint, 1);
-            Run r = new Run($"U+{codepoint:X4}");
+            // \x2060 is Unicode Word Joiner, to prevent line wrap here
+            Run r = new Run($"U\x2060+\x2060{codepoint:X4}");
             Hyperlink h = new Hyperlink(r)
             {
                 Command = command,
@@ -321,6 +321,7 @@ namespace UniSearchNS
 
             if (withToolTip)
             {
+                var cps = UniData.CodepointToString(codepoint);
                 ToolTip tooltip = new ToolTip
                 {
                     Content = new Image { Source = D2DDrawText.GetBitmapSource(cps) },
@@ -523,15 +524,15 @@ namespace UniSearchNS
                         sb.AppendLine("\tSynonyms");
                         if (r.Synonyms != null)
                             foreach (string line in r.Synonyms)
-                                sb.AppendLine("\t\t" + line[0..1].ToUpper()+line[1..]);
+                                sb.AppendLine("\t\t" + line);
                         sb.AppendLine("\tCross-Refs");
                         if (r.CrossRefs != null)
                             foreach (string line in r.CrossRefs)
-                                sb.AppendLine("\t\t" + line[0..1].ToUpper() + line[1..]);
+                                sb.AppendLine("\t\t" + line);
                         sb.AppendLine("\tComments");
                         if (r.Comments != null)
                             foreach (string line in r.Comments)
-                                sb.AppendLine("\t\t" + line[0..1].ToUpper() + line[1..]);
+                                sb.AppendLine("\t\t" + line);
                         sb.AppendLine();
                         break;
                 }
@@ -552,7 +553,7 @@ namespace UniSearchNS
                 return;
             }
             foreach (var cr in sn.EnumCharacterRecords())
-                sb.AppendLine("\t\t"+cr.AsString);
+                sb.AppendLine("\t\t" + cr.AsString);
         }
 
         private static void AppendCaseContent(StringBuilder sb, CharacterRecord SelectedChar, bool lower)

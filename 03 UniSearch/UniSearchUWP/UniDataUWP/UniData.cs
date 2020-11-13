@@ -1,6 +1,6 @@
 ﻿// UniData
 // Static class providing characters and blocks information reading Unicode UCD files
-// Aé♫山??
+// Aé♫山𝄞🐗
 //
 // 2018-09-11   PV
 // 2018-09-17   PV      1.1 Store UCD Data in embedded streams; Skip characters from planes 15 and 16
@@ -8,6 +8,9 @@
 // 2018-09-28	PV		1.2.1 Subheaders merging
 // 2018-10-08	PV		XML comments
 // 2019-03-06   PV      1.3 Unicode 12 UCD
+// 2020-09-03   PV      1.5 Unicode 13
+// 2020-11-11   PV      1.6 Add Synonyms, Cross-Refs and Comments to CharacterRecords
+// 2020-11-12   PV      1.6.1 Process ranges >=20000 (were incorrectly skipped, causing problem wuth U+FA6C -> NFD U+242EE)
 
 using System;
 using System.Collections.Generic;
@@ -17,7 +20,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
+#nullable enable
 
 namespace UniDataNS
 {
@@ -58,6 +63,20 @@ namespace UniDataNS
         /// </summary>
         public string Subheader { get; internal set; }
 
+        /// <summary>
+        /// Lines <tab> = and <tab> % in NamesList.txt
+        /// </summary>
+        public List<string>? Synonyms { get; internal set; }
+
+        /// <summary>
+        /// Lines <tab> x in NamesList.txt
+        /// </summary>
+        public List<string>? CrossRefs { get; internal set; }
+
+        /// <summary>
+        /// Lines <tab> * and <tab> ~ in NamesList.txt
+        /// </summary>
+        public List<string>? Comments { get; internal set; }
 
         /// <summary>
         /// When True, Character method will return an hex codepoint representation instead of the actual string.
@@ -114,6 +133,8 @@ namespace UniDataNS
             this.Name = Name;
             this.Category = Category;
             this.IsPrintable = IsPrintable;
+            this.Age = string.Empty;
+            this.Subheader = string.Empty;
         }
 
         /// <summary>
@@ -246,17 +267,20 @@ namespace UniDataNS
         public static ReadOnlyDictionary<int, BlockRecord> BlockRecords { get; } = new ReadOnlyDictionary<int, BlockRecord>(block_map);
 
 
-        // Static constructor, loads data from resources, executed when application starts
+        // To extract a CP from a Cross-Ref
+        private static readonly Regex reCP = new Regex(@"\b1?[0-9A-F]{4,5}\b");
+
+        // Static constructor, loads data from resources
         static UniData()
         {
             // Read blocks
             using (var sr = new StreamReader(GetResourceStream("MetaBlocks.txt")))
                 while (!sr.EndOfStream)
                 {
-                    string line = sr.ReadLine();
+                    string line = sr.ReadLine() ?? string.Empty;
                     if (line.Length == 0 || line[0] == '#') continue;
                     string[] fields = line.Split(';');
-                    string[] field0 = fields[0].Replace("..", ";", StringComparison.InvariantCulture).Split(';');
+                    string[] field0 = fields[0].Replace("..", ";", StringComparison.OrdinalIgnoreCase).Split(';');
                     int begin = int.Parse(field0[0], NumberStyles.HexNumber);
                     int end = int.Parse(field0[1], NumberStyles.HexNumber);
                     BlockRecord br = new BlockRecord(begin, end, fields[1], fields[2], fields[3], fields[4]);
@@ -341,12 +365,15 @@ namespace UniDataNS
             using (var sr = new StreamReader(GetResourceStream("UnicodeData.txt")))
                 while (!sr.EndOfStream)
                 {
-                    string[] fields = sr.ReadLine().Split(';');
+                    string[] fields = (sr.ReadLine() ?? string.Empty).Split(';');
                     int codepoint = int.Parse(fields[0], NumberStyles.HexNumber);
                     string char_name = fields[1];
                     string char_category = fields[2];
                     if (char_name == "<control>")
-                        char_name = "CONTROL-" + fields[10];
+                        if (fields[10].Length == 0)
+                            char_name = "CONTROL";
+                        else
+                            char_name = "CONTROL - " + fields[10];
                     bool is_range = char_name.EndsWith(", First>", StringComparison.OrdinalIgnoreCase);
                     bool is_printable = !(codepoint < 32                                // Control characters 0-31
                                         || codepoint >= 0x7f && codepoint < 0xA0        // Control characters 127-160
@@ -356,13 +383,13 @@ namespace UniDataNS
                                         );
                     if (is_range)   // Add all characters within a specified range
                     {
-                        char_name = char_name.Replace(", First>", String.Empty, StringComparison.InvariantCulture).Replace("<", string.Empty, StringComparison.InvariantCulture).ToUpperInvariant(); //remove range indicator from name
-                        fields = sr.ReadLine().Split(';');
+                        char_name = char_name.Replace(", First>", String.Empty, StringComparison.OrdinalIgnoreCase).Replace("<", string.Empty, StringComparison.OrdinalIgnoreCase).ToUpperInvariant(); //remove range indicator from name
+                        fields = (sr.ReadLine() ?? String.Empty).Split(';');
                         int end_char_code = int.Parse(fields[0], NumberStyles.HexNumber);
                         if (!fields[1].EndsWith(", Last>", StringComparison.OrdinalIgnoreCase))
                             Debugger.Break();
                         // Skip planes 15 and 16 private use
-                        if (codepoint != 0xF0000 && codepoint != 0x100000 && codepoint < 0x20000)
+                        if (codepoint != 0xF0000 && codepoint != 0x100000)
                             for (int code = codepoint; code <= end_char_code; code++)
                                 char_map.Add(code, new CharacterRecord(code, $"{char_name}-{code:X4}", char_category, is_printable));
                     }
@@ -397,7 +424,7 @@ namespace UniDataNS
             using (var sr = new StreamReader(GetResourceStream("DerivedAge.txt")))
                 while (!sr.EndOfStream)
                 {
-                    string line = sr.ReadLine();
+                    string line = sr.ReadLine() ?? string.Empty;
                     if (line.Length == 0 || line[0] == '#') continue;
                     int p = line.IndexOf('#');
                     if (p >= 0) line = line.Substring(0, p - 1);
@@ -422,18 +449,19 @@ namespace UniDataNS
                 }
 
             // Read NamesList
-            string subheader = null;
+            string subheader = string.Empty;
             // Optimizations: Do not use Regex, looks costly to performance profiler
             //Regex CodepointRegex = new Regex(@"^[0-9A-F]{4,6}\t");
 
             // Subheaders merging
-            HashSet<int> blockCodepoints = null;
-            HashSet<string> blockSubheaders = null;
+            HashSet<int>? blockCodepoints = null;
+            HashSet<string>? blockSubheaders = null;
 
             void MergeSubheaders()
             {
+                Debug.Assert(blockSubheaders != null);
                 foreach (string sungularsh in blockSubheaders.Where(s => !s.EndsWith("s", StringComparison.Ordinal)))
-                    if (blockSubheaders.Contains(sungularsh+"s"))
+                    if (blockSubheaders!.Contains(sungularsh+"s"))
                         foreach (int cp in blockCodepoints)
                             if (char_map[cp].Subheader == sungularsh)
                                 char_map[cp].Subheader += "s";
@@ -441,10 +469,12 @@ namespace UniDataNS
                 blockSubheaders = null;
             }
 
+
+            int cp16 = -1;
             using (var sr = new StreamReader(GetResourceStream("NamesList.txt")))
                 while (!sr.EndOfStream)
                 {
-                    string line = sr.ReadLine();
+                    string line = sr.ReadLine() ?? string.Empty;
                     if (line.StartsWith(";", StringComparison.Ordinal)) { }
                     //else if (line.StartsWith("@@@+", StringComparison.Ordinal)) { }
                     //else if (line.StartsWith("@@@~", StringComparison.Ordinal)) { }
@@ -457,7 +487,7 @@ namespace UniDataNS
                             MergeSubheaders();
                         blockCodepoints = new HashSet<int>();
                         blockSubheaders = new HashSet<string>();
-                        subheader = null;
+                        subheader = string.Empty;
                     }
                     else if (line.StartsWith("@@", StringComparison.Ordinal)) { }
                     else if (line.StartsWith("@+", StringComparison.Ordinal)) { }
@@ -466,10 +496,63 @@ namespace UniDataNS
                     {
                         subheader = line.Substring(3);
                     }
+                    else if (line.StartsWith("\t=", StringComparison.Ordinal) || line.StartsWith("\t%", StringComparison.Ordinal))
+                    {
+                        // Synonyms, new in 1.6
+                        if (!char_map.ContainsKey(cp16))
+                            continue;
+
+                        if (char_map[cp16].Synonyms == null)
+                            char_map[cp16].Synonyms = new List<string>();
+                        char_map[cp16].Synonyms!.Add(line.Substring(3, 1).ToUpperInvariant() + line.Substring(4));
+                    }
+                    else if (line.StartsWith("\tx", StringComparison.Ordinal))
+                    {
+                        // Cross-references, new in 1.6
+                        if (!char_map.ContainsKey(cp16))
+                            continue;
+
+                        string crossRef = line.Substring(3).Replace(" - ", " ", StringComparison.OrdinalIgnoreCase);
+                        if (crossRef[0] == '(' && crossRef[crossRef.Length-1] == ')')
+                            crossRef = crossRef.Substring(1, crossRef.Length - 2);
+                        if (char_map[cp16].CrossRefs == null)
+                            char_map[cp16].CrossRefs = new List<string>();
+                        char_map[cp16].CrossRefs!.Add((crossRef.Substring(0,1).ToUpperInvariant() + crossRef.Substring(1)));
+                    }
+                    else if (line.StartsWith("\t*", StringComparison.Ordinal) || line.StartsWith("\t~", StringComparison.Ordinal))
+                    {
+                        // Comments, new in 1.6
+                        if (!char_map.ContainsKey(cp16))
+                            continue;
+
+                        string comment = line.Substring(3,1).ToUpperInvariant() + line.Substring(4);
+
+                        // Special processing for variations, add variation combination at the end
+                        if (line.StartsWith("\t~", StringComparison.Ordinal))
+                        {
+                            var maColl = reCP.Matches(line);
+                            if (maColl.Count == 2)
+                            {
+                                int cp1 = -1, cp2 = -1;
+                                foreach (var ma in maColl)
+                                {
+                                    if (cp1 < 0)
+                                        cp1 = Convert.ToInt32(ma.ToString(), 16);
+                                    else
+                                        cp2 = Convert.ToInt32(ma.ToString(), 16);
+                                }
+                                comment += " → " + CodepointToString(cp1) + CodepointToString(cp2);
+                            }
+                        }
+
+                        if (char_map[cp16].Comments == null)
+                            char_map[cp16].Comments = new List<string>();
+                        char_map[cp16].Comments!.Add(comment);
+                    }
                     else if (line.StartsWith("\t", StringComparison.Ordinal)) { }
                     else
                     {
-                        int cp16 = 0;
+                        cp16 = 0;
                         for (int p = 0; ; p++)
                         {
                             char c = line[p];
@@ -485,15 +568,10 @@ namespace UniDataNS
                             }
                         }
 
-                        //Match ma = CodepointRegex.Match(line);
-                        //if (!ma.Success) Debugger.Break();
-                        //int cp = int.Parse(line.Substring(0, ma.Length - 1), NumberStyles.HexNumber);
-                        //if (cp != cp16) Debugger.Break();
-
                         if (char_map.ContainsKey(cp16))
                         {
-                            blockCodepoints.Add(cp16);
-                            blockSubheaders.Add(subheader);
+                            blockCodepoints?.Add(cp16);
+                            blockSubheaders?.Add(subheader);
                             char_map[cp16].Subheader = subheader;
                         }
                     }
@@ -510,7 +588,7 @@ namespace UniDataNS
             var assembly = typeof(UniData).GetTypeInfo().Assembly;
             var qualifiedName = assembly.GetManifestResourceNames().FirstOrDefault(n => n.EndsWith(name, StringComparison.OrdinalIgnoreCase));
             if (qualifiedName == null)
-                return null;
+                throw new ArgumentException("Can't get resource (#1) " + name);
             else
                 return assembly.GetManifestResourceStream(qualifiedName);
         }

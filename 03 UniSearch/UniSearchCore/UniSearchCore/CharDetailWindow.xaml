@@ -5,9 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UniSearchNS"
         FontSize="13" FontFamily="Segoe UI"
-        SizeToContent="WidthAndHeight" 
         mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=local:CharDetailViewModel}"
-        Title="{Binding Title}" Height="450" Width="450">
+        Title="{Binding Title}" Height="550" Width="550">
 
     <Grid Margin="12,6,6,6">
         <Grid.RowDefinitions>
@@ -30,8 +29,10 @@
             <Button Content="Copy Char" Padding="3" Command="{Binding CopyCharCommand}"/>
         </StackPanel>
 
-        <ScrollViewer Grid.Column="1" Grid.RowSpan="2" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto">
-            <Grid Margin="0,0,12,0">
+        <ScrollViewer Grid.Column="1" Grid.RowSpan="2" 
+                      VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled" 
+                      BorderThickness="0">
+            <Grid Margin="0,0,12,0" >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -60,56 +61,55 @@
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="1" Text="Character" FontWeight="Bold" />
-                <TextBlock Grid.Row="1" Grid.Column="1" Text="  Codepoint  " FontWeight="SemiBold" />
-                <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding SelectedChar.CodepointHex}" />
-                <TextBlock Grid.Row="2" Grid.Column="1" Text="  Name  " FontWeight="SemiBold" />
-                <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding SelectedChar.Name}" />
-                <TextBlock Grid.Row="3" Grid.Column="1" Text="  Categories  " FontWeight="SemiBold" />
-                <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding SelectedChar.CategoryRecord.Categories}" />
-                <TextBlock Grid.Row="4" Grid.Column="1" Text="  Since " FontWeight="SemiBold" />
-                <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding SelectedChar.Age}" />
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Character" FontWeight="Bold" />
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="  Codepoint  " FontWeight="SemiBold" />
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedChar.CodepointHex}" />
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="  Name  " FontWeight="SemiBold" />
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedChar.Name}" />
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="  Categories  " FontWeight="SemiBold" />
+                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedChar.CategoryRecord.Categories}" />
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="  Since " FontWeight="SemiBold" />
+                <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedChar.Age}" />
 
-                <TextBlock Grid.Row="5" Grid.Column="1" Text="Block" FontWeight="Bold" Margin="0,12,0,0"/>
-                <TextBlock Grid.Row="6" Grid.Column="1" Text="  Level 3  " FontWeight="SemiBold" />
-                <TextBlock Grid.Row="6" Grid.Column="2" Text="{Binding SelectedChar.Block.Level3Name}" />
-                <TextBlock Grid.Row="7" Grid.Column="1" Text="  Level 2  " FontWeight="SemiBold" />
-                <TextBlock Grid.Row="7" Grid.Column="2" Text="{Binding SelectedChar.Block.Level2Name}" />
-                <TextBlock Grid.Row="8" Grid.Column="1" Text="  Level 1  " FontWeight="SemiBold" />
-                <TextBlock Grid.Row="8" Grid.Column="2" Text="{Binding SelectedChar.Block.Level1Name}" />
-                <TextBlock Grid.Row="9" Grid.Column="1" Text="  Block " FontWeight="SemiBold" />
-                <ContentPresenter Grid.Row="9" Grid.Column="2" Content="{Binding BlockContent}" />
-                <TextBlock Grid.Row="10" Grid.Column="1" Text="  Subheader " FontWeight="SemiBold" />
-                <ContentPresenter Grid.Row="10" Grid.Column="2" Content="{Binding SubheaderContent}" />
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="Block" FontWeight="Bold" Margin="0,12,0,0"/>
+                <TextBlock Grid.Row="6" Grid.Column="0" Text="  Level 3  " FontWeight="SemiBold" />
+                <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding SelectedChar.Block.Level3Name}" />
+                <TextBlock Grid.Row="7" Grid.Column="0" Text="  Level 2  " FontWeight="SemiBold" />
+                <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding SelectedChar.Block.Level2Name}" />
+                <TextBlock Grid.Row="8" Grid.Column="0" Text="  Level 1  " FontWeight="SemiBold" />
+                <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding SelectedChar.Block.Level1Name}" />
+                <TextBlock Grid.Row="9" Grid.Column="0" Text="  Block " FontWeight="SemiBold" />
+                <ContentPresenter Grid.Row="9" Grid.Column="1" Content="{Binding BlockContent}" />
+                <TextBlock Grid.Row="10" Grid.Column="0" Text="  Subheader " FontWeight="SemiBold" />
+                <ContentPresenter Grid.Row="10" Grid.Column="1" Content="{Binding SubheaderContent}" />
 
-                <TextBlock Grid.Row="11" Grid.Column="1" Text="Encoding" FontWeight="Bold" Margin="0,12,0,0"/>
-                <TextBlock Grid.Row="12" Grid.Column="1" Text="  UTF-8" FontWeight="SemiBold" />
-                <TextBlock Grid.Row="12" Grid.Column="2" Text="{Binding SelectedChar.UTF8}" />
-                <TextBlock Grid.Row="13" Grid.Column="1" Text="  UTF-16" FontWeight="SemiBold" />
-                <TextBlock Grid.Row="13" Grid.Column="2" Text="{Binding SelectedChar.UTF16}" />
+                <TextBlock Grid.Row="11" Grid.Column="0" Text="Encoding" FontWeight="Bold" Margin="0,12,0,0"/>
+                <TextBlock Grid.Row="12" Grid.Column="0" Text="  UTF-8" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="12" Grid.Column="1" Text="{Binding SelectedChar.UTF8}" />
+                <TextBlock Grid.Row="13" Grid.Column="0" Text="  UTF-16" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="13" Grid.Column="1" Text="{Binding SelectedChar.UTF16}" />
 
-                <TextBlock Grid.Row="14" Grid.Column="1" Text="Decomposition and Case" Grid.ColumnSpan="2" FontWeight="Bold" Margin="0,12,0,0"/>
-                <TextBlock Grid.Row="15" Grid.Column="1" Text="  NFD" FontWeight="SemiBold" />
-                <ContentPresenter Grid.Row="15" Grid.Column="2" Content="{Binding NormalizationNFDContent}" />
-                <TextBlock Grid.Row="16" Grid.Column="1" Text="  NFKD" FontWeight="SemiBold" />
-                <ContentPresenter Grid.Row="16" Grid.Column="2" Content="{Binding NormalizationNFKDContent}" />
-                <TextBlock Grid.Row="17" Grid.Column="1" Text="  Lowercase " FontWeight="SemiBold" />
-                <ContentPresenter Grid.Row="17" Grid.Column="2" Content="{Binding LowercaseContent}" />
-                <TextBlock Grid.Row="18" Grid.Column="1" Text="  Uppercase " FontWeight="SemiBold" />
-                <ContentPresenter Grid.Row="18" Grid.Column="2" Content="{Binding UppercaseContent}" />
-                
-                <TextBlock Grid.Row="19" Grid.Column="1" Text="Extra Information" Grid.ColumnSpan="2" FontWeight="Bold" Margin="0,12,0,0"/>
-                <TextBlock Grid.Row="20" Grid.Column="1" Text="  Synonyms " FontWeight="SemiBold" />
-                <ContentPresenter Grid.Row="20" Grid.Column="2" Content="{Binding SynonymsContent}" />
-                <TextBlock Grid.Row="21" Grid.Column="1" Text="  Cross-Refs " FontWeight="SemiBold" />
-                <ContentPresenter Grid.Row="21" Grid.Column="2" Content="{Binding CrossRefsContent}" />
-                <TextBlock Grid.Row="22" Grid.Column="1" Text="  Comments " FontWeight="SemiBold" />
-                <ContentPresenter Grid.Row="22" Grid.Column="2" Content="{Binding CommentsContent}" />
+                <TextBlock Grid.Row="14" Grid.Column="0" Text="Decomposition and Case" Grid.ColumnSpan="2" FontWeight="Bold" Margin="0,12,0,0"/>
+                <TextBlock Grid.Row="15" Grid.Column="0" Text="  NFD" FontWeight="SemiBold" />
+                <ContentPresenter Grid.Row="15" Grid.Column="1" Content="{Binding NormalizationNFDContent}" />
+                <TextBlock Grid.Row="16" Grid.Column="0" Text="  NFKD" FontWeight="SemiBold" />
+                <ContentPresenter Grid.Row="16" Grid.Column="1" Content="{Binding NormalizationNFKDContent}" />
+                <TextBlock Grid.Row="17" Grid.Column="0" Text="  Lowercase " FontWeight="SemiBold" />
+                <ContentPresenter Grid.Row="17" Grid.Column="1" Content="{Binding LowercaseContent}" />
+                <TextBlock Grid.Row="18" Grid.Column="0" Text="  Uppercase " FontWeight="SemiBold" />
+                <ContentPresenter Grid.Row="18" Grid.Column="1" Content="{Binding UppercaseContent}" />
 
+                <TextBlock Grid.Row="19" Grid.Column="0" Text="Extra Information" Grid.ColumnSpan="2" FontWeight="Bold" Margin="0,12,0,0"/>
+                <TextBlock Grid.Row="20" Grid.Column="0" Text="  Synonyms " FontWeight="SemiBold" />
+                <ContentPresenter Grid.Row="20" Grid.Column="1" Content="{Binding SynonymsContent}" HorizontalAlignment="Left" />
+                <TextBlock Grid.Row="21" Grid.Column="0" Text="  Cross-Refs " FontWeight="SemiBold" />
+                <ContentPresenter Grid.Row="21" Grid.Column="1" Content="{Binding CrossRefsContent}" HorizontalAlignment="Left" />
+                <TextBlock Grid.Row="22" Grid.Column="0" Text="  Comments " FontWeight="SemiBold" />
+                <ContentControl Grid.Row="22" Grid.Column="1" Content="{Binding CommentsContent}" 
+                                HorizontalAlignment="Left" />
             </Grid>
         </ScrollViewer>
     </Grid>
