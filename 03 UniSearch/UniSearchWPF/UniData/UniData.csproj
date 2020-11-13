@@ -8,6 +8,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{75696CE4-5FDA-4018-9CAB-EBB611018208}</ProjectGuid>
     <OutputType>Library</OutputType>
+	<LangVersion>8.0</LangVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UniDataNS</RootNamespace>
     <AssemblyName>UniData</AssemblyName>

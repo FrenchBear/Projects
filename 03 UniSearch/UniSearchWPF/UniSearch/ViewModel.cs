@@ -4,15 +4,13 @@
 // 2018-09-12   PV
 // 2018-09-28   PV      New blocks filtering controlling node expansion and not visibility
 // 2020-11-11   PV      Refilter char list after a block filter update; New 1-letter filtering rule; Dot Net 5.0
+// 2020-11-12   PV      Copy Full Info
 
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Linq;
@@ -23,6 +21,8 @@ using System.Windows.Media.Imaging;
 using DirectDrawWrite;
 using System.Windows.Controls;
 using System.Windows.Documents;
+
+#nullable enable
 
 
 namespace UniSearchNS
@@ -36,7 +36,7 @@ namespace UniSearchNS
 
 
         // INotifyPropertyChanged interface
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         private void NotifyPropertyChanged(string propertyName)
           => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -48,6 +48,7 @@ namespace UniSearchNS
         public ICommand ShowLevelCommand { get; private set; }
         public ICommand SelectAllCommand { get; private set; }
         public ICommand ShowDetailCommand { get; private set; }
+        public ICommand NewFilterCommand { get; private set; }
 
 
         // Constructor
@@ -61,13 +62,14 @@ namespace UniSearchNS
             ShowLevelCommand = new RelayCommand<object>(ShowLevelExecute);
             SelectAllCommand = new RelayCommand<string>(SelectAllExecute);
             ShowDetailCommand = new RelayCommand<int>(ShowDetailExecute);
+            NewFilterCommand = new RelayCommand<string>(NewFilterExecute);
 
             // Get Unicode data
             CharactersRecordsList = UniData.CharacterRecords.Values.OrderBy(cr => cr.Codepoint).ToArray();
             ReadOnlyDictionary<int, BlockRecord>.ValueCollection BlockRecordsList = UniData.BlockRecords.Values;
 
             // Add grouping
-            CollectionView view = CollectionViewSource.GetDefaultView(CharactersRecordsList) as CollectionView;
+            CollectionView view = (CollectionViewSource.GetDefaultView(CharactersRecordsList) as CollectionView)!;
             PropertyGroupDescription groupDescription = new PropertyGroupDescription("GroupName");
             view.GroupDescriptions.Add(groupDescription);
 
@@ -143,7 +145,7 @@ namespace UniSearchNS
         public CharacterRecord[] CharactersRecordsList { get; set; }
 
 
-        private string _CharNameFilter;
+        private string _CharNameFilter = "";
         public string CharNameFilter
         {
             get { return _CharNameFilter; }
@@ -158,7 +160,7 @@ namespace UniSearchNS
             }
         }
 
-        private string _BlockNameFilter;
+        private string _BlockNameFilter = "";
         public string BlockNameFilter
         {
             get { return _BlockNameFilter; }
@@ -175,8 +177,8 @@ namespace UniSearchNS
 
 
 
-        private CharacterRecord _SelectedChar;
-        public CharacterRecord SelectedChar
+        private CharacterRecord? _SelectedChar;
+        public CharacterRecord? SelectedChar
         {
             get { return _SelectedChar; }
             set
@@ -187,11 +189,13 @@ namespace UniSearchNS
                     NotifyPropertyChanged(nameof(SelectedChar));
                     NotifyPropertyChanged(nameof(SelectedCharImage));
                     NotifyPropertyChanged(nameof(StrContent));
+                    NotifyPropertyChanged(nameof(BlockContent));
+                    NotifyPropertyChanged(nameof(SubheaderContent));
                 }
             }
         }
 
-        public BitmapSource SelectedCharImage
+        public BitmapSource? SelectedCharImage
         {
             get
             {
@@ -207,7 +211,7 @@ namespace UniSearchNS
             }
         }
 
-        public static int GetNumChars() => UniData.CharacterRecords.Count;
+        public static int NumChars => UniData.CharacterRecords.Count;
 
         public int NumBlocks => BlocksCheckableNodesDictionary.Count;
 
@@ -270,16 +274,16 @@ namespace UniSearchNS
             }
         }
 
-        public UIElement StrContent
+        public UIElement? StrContent
         {
             get
             {
                 if (SelectedChar == null) return null;
-                return GetStrContent(SelectedChar.Codepoint, ShowDetailCommand);
+                return GetStrContent(SelectedChar.Codepoint, ShowDetailCommand, false);
             }
         }
 
-        public static UIElement GetStrContent(int codepoint, ICommand command)
+        public static UIElement GetStrContent(int codepoint, ICommand command, bool withToolTip)
         {
             var cr = UniData.CharacterRecords[codepoint];
 
@@ -292,13 +296,7 @@ namespace UniSearchNS
             Grid.SetColumn(t1, 0);
             g.Children.Add(t1);
 
-            Run r = new Run(cr.CodepointHex);
-            Hyperlink h = new Hyperlink(r)
-            {
-                Command = command,
-                CommandParameter = cr.Codepoint
-            };
-            TextBlock t2 = new TextBlock(h);
+            TextBlock t2 = new TextBlock(GetCodepointHyperlink(cr.Codepoint, command, withToolTip));
             Grid.SetColumn(t2, 1);
             g.Children.Add(t2);
 
@@ -309,6 +307,50 @@ namespace UniSearchNS
             return g;
         }
 
+        // Returns an hyperlink to a specific codepoint, with optional tooltip containing codepoint glyph
+        // Also called from CharDetailViewModel
+        internal static Hyperlink GetCodepointHyperlink(int codepoint, ICommand command, bool withToolTip)
+        {
+            // \x2060 is Unicode Word Joiner, to prevent line wrap here
+            Run r = new Run($"U\x2060+\x2060{codepoint:X4}");
+            Hyperlink h = new Hyperlink(r)
+            {
+                Command = command,
+                CommandParameter = codepoint
+            };
+
+            if (withToolTip)
+            {
+                var cps = UniData.CodepointToString(codepoint);
+                ToolTip tooltip = new ToolTip
+                {
+                    Content = new Image { Source = D2DDrawText.GetBitmapSource(cps) },
+                    HorizontalOffset = 20,
+                    VerticalOffset = -50
+                };
+                h.ToolTip = tooltip;
+            }
+
+            return h;
+        }
+
+
+        // Returns a hyperlink to NewFilterCommand with commandParameter parameter, using content as text
+        private UIElement? GetBlockHyperlink(string? content, string commandParameter)
+        {
+            if (content == null) return null;
+
+            var h = new Hyperlink(new Run(content))
+            {
+                Command = NewFilterCommand,
+                CommandParameter = commandParameter
+            };
+            return new TextBlock(h);
+        }
+
+        public UIElement? BlockContent => GetBlockHyperlink(SelectedChar?.Block.BlockNameAndRange, "b:\"" + SelectedChar?.Block.BlockName + "\"");
+
+        public UIElement? SubheaderContent => GetBlockHyperlink(SelectedChar?.Subheader, "s:\"" + SelectedChar?.Subheader + "\"");
 
 
         // ==============================================================================================
@@ -324,16 +366,21 @@ namespace UniSearchNS
 
         private void RefreshSelBlocks()
         {
-            SelBlocks = BlocksCheckableNodesDictionary.Values.Count(cn => cn.IsChecked.Value && cn.Level == 0);
+            SelBlocks = BlocksCheckableNodesDictionary.Values.Count(cn => (cn.IsChecked ?? false) && cn.Level == 0);
         }
 
 
         // ==============================================================================================
         // Delay processing of TextChanged event 250ms using a DispatcherTimer
-        DispatcherTimer dispatcherTimer;
 
-        private void DispatcherTimer_Tick(object sender, object e)
+        private DispatcherTimer? dispatcherTimer;
+
+        private void DispatcherTimer_Tick(object? sender, object e)
         {
+            // Avoid a nullability warning
+            if (dispatcherTimer == null)
+                return;
+
             dispatcherTimer.Stop();
             dispatcherTimer.Tick -= DispatcherTimer_Tick;
             dispatcherTimer = null;
@@ -358,13 +405,13 @@ namespace UniSearchNS
 
         private void FilterCharList()
         {
-            CollectionView view = CollectionViewSource.GetDefaultView(CharactersRecordsList) as CollectionView;
+            CollectionView view = (CollectionViewSource.GetDefaultView(CharactersRecordsList) as CollectionView)!;
             //PropertyGroupDescription groupDescription = new PropertyGroupDescription("Subheader");
             //view.GroupDescriptions.Add(groupDescription);
 
 
             // Block part of the filtering predicate
-            bool bp(object o) => BlocksCheckableNodesDictionary[((CharacterRecord)o).BlockBegin].IsChecked.Value;
+            bool bp(object o) => BlocksCheckableNodesDictionary[((CharacterRecord)o).BlockBegin].IsChecked ?? false;
 
             // Character part of the filtering predicate
             if (string.IsNullOrEmpty(CharNameFilter))
@@ -426,9 +473,14 @@ namespace UniSearchNS
         private void CopyRecordsExecute(object param)
         {
             var selectedCharRecords = window.CharListView.SelectedItems.Cast<CharacterRecord>();
+            DoCopyRecords(param?.ToString() ?? "0", selectedCharRecords);
+        }
 
+        internal static void DoCopyRecords(string param, IEnumerable<CharacterRecord>? records)
+        {
+            if (records == null) return;
             var sb = new StringBuilder();
-            foreach (CharacterRecord r in selectedCharRecords.OrderBy(cr => cr.Codepoint))
+            foreach (CharacterRecord r in records.OrderBy(cr => cr.Codepoint))
                 switch (param)
                 {
                     case "0":
@@ -442,11 +494,79 @@ namespace UniSearchNS
                     case "2":
                         sb.AppendLine(r.Character + "\t" + r.CodepointHex + "\t" + r.Name + "\t" + r.CategoryRecord.Categories + "\t" + r.Age + "\t" + r.Block.BlockNameAndRange + "\t" + r.UTF16 + "\t" + r.UTF8);
                         break;
+
+                    case "3":
+                        sb.AppendLine("Character");
+                        sb.AppendLine("\tChar\t" + r.Character);
+                        sb.AppendLine("\tCodepoint\t" + r.CodepointHex);
+                        sb.AppendLine("\tName\t" + r.Name);
+                        sb.AppendLine("\tCategories\t" + r.CategoryRecord.Categories);
+                        sb.AppendLine("\tSince\t" + r.Age);
+                        sb.AppendLine("Block");
+                        sb.AppendLine("\tLevel 3\t" + r.Block.Level3Name);
+                        sb.AppendLine("\tLevel 2\t" + r.Block.Level2Name);
+                        sb.AppendLine("\tLevel 1\t" + r.Block.Level1Name);
+                        sb.AppendLine("\tBlock\t" + r.Block.BlockNameAndRange);
+                        sb.AppendLine("\tSubheader\t" + r.Subheader);
+                        sb.AppendLine("Encoding");
+                        sb.AppendLine("\tUTF-8\t" + r.UTF8);
+                        sb.AppendLine("\tUTF-16\t" + r.UTF16);
+                        sb.AppendLine("Decomposition and Case");
+                        sb.AppendLine("\tNFD");
+                        AppendNormalizationContent(sb, r, NormalizationForm.FormD);
+                        sb.AppendLine("\tNFKD");
+                        AppendNormalizationContent(sb, r, NormalizationForm.FormKD);
+                        sb.AppendLine("\tLowercase");
+                        AppendCaseContent(sb, r, true);
+                        sb.AppendLine("\tUppercase");
+                        AppendCaseContent(sb, r, false);
+                        sb.AppendLine("Extra Information");
+                        sb.AppendLine("\tSynonyms");
+                        if (r.Synonyms != null)
+                            foreach (string line in r.Synonyms)
+                                sb.AppendLine("\t\t" + line);
+                        sb.AppendLine("\tCross-Refs");
+                        if (r.CrossRefs != null)
+                            foreach (string line in r.CrossRefs)
+                                sb.AppendLine("\t\t" + line);
+                        sb.AppendLine("\tComments");
+                        if (r.Comments != null)
+                            foreach (string line in r.Comments)
+                                sb.AppendLine("\t\t" + line);
+                        sb.AppendLine();
+                        break;
                 }
             System.Windows.Clipboard.Clear();
             System.Windows.Clipboard.SetText(sb.ToString());
         }
 
+        private static void AppendNormalizationContent(StringBuilder sb, CharacterRecord SelectedChar, NormalizationForm form)
+        {
+            if (!SelectedChar.IsPrintable) return;
+
+            string s = SelectedChar.Character;
+            string sn = s.Normalize(form);
+            if (s == sn) return;
+            if (form == NormalizationForm.FormKD && sn == s.Normalize(NormalizationForm.FormD))
+            {
+                sb.AppendLine("\t\tSame as NFD");
+                return;
+            }
+            foreach (var cr in sn.EnumCharacterRecords())
+                sb.AppendLine("\t\t" + cr.AsString);
+        }
+
+        private static void AppendCaseContent(StringBuilder sb, CharacterRecord SelectedChar, bool lower)
+        {
+            if (!SelectedChar.IsPrintable) return;
+
+            string s = SelectedChar.Character;
+            string sc = lower ? s.ToLowerInvariant() : s.ToUpperInvariant();
+            if (s == sc) return;
+
+            foreach (var cr in sc.EnumCharacterRecords())
+                sb.AppendLine("\t\t" + cr.AsString);
+        }
 
         private void CopyImageExecute(object param)
         {
@@ -466,10 +586,10 @@ namespace UniSearchNS
                 ActionAllNodes(child, a);
         }
 
-        private void ShowLevelExecute(object param)
+        private void ShowLevelExecute(object? param)
         {
-            int level = int.Parse(param as string);
-            ActionAllNodes(BlocksRoot, n => { n.IsNodeExpanded = (n.Level != level); });
+            if (param != null && int.TryParse((string)param, out int level))
+                ActionAllNodes(BlocksRoot, n => { n.IsNodeExpanded = (n.Level != level); });
         }
 
 
@@ -482,8 +602,13 @@ namespace UniSearchNS
         }
 
 
+        // From hyperlink
         private void ShowDetailExecute(int codepoint) =>
-            CharDetailWindow.ShowDetail(codepoint);
+            CharDetailWindow.ShowDetail(codepoint, this);
+
+        // From hyperlink
+        private void NewFilterExecute(string filter) =>
+            CharNameFilter = filter;
 
     }
 }

@@ -73,18 +73,19 @@
         <KeyBinding Command="{Binding CopyRecordsCommand}" CommandParameter="0" Key="C" Modifiers="Ctrl" />
         <KeyBinding Command="{Binding CopyRecordsCommand}" CommandParameter="1" Key="L" Modifiers="Ctrl" />
         <KeyBinding Command="{Binding CopyRecordsCommand}" CommandParameter="2" Key="D" Modifiers="Ctrl" />
+        <KeyBinding Command="{Binding CopyRecordsCommand}" CommandParameter="3" Key="F" Modifiers="Ctrl" />
     </Window.InputBindings>
 
     <Grid >
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
 
 
         <!-- Left grid, character -->
-        <Grid Margin="6,6,0,6" Grid.Column="0">
+        <Grid Margin="0,6,6,6" Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
@@ -101,15 +102,37 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Label Grid.Column="0" Content="Character _Name Filter " FontWeight="SemiBold" Target="{Binding ElementName=CharacterFilterTextBox}" />
-                    <TextBox Grid.Column="1" Name="CharacterFilterTextBox" Text="{Binding CharNameFilter, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" />
+                    <TextBox Grid.Column="1" Name="CharacterFilterTextBox" Text="{Binding CharNameFilter, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center">
+                        <TextBox.ToolTip>
+                            <TextBlock>
+                            Enter a list of words to filter character names (case insensitive, accent insensitive).
+                            <LineBreak/>
+                            A single-letter word is always searched for a strict full-word match.
+                            <LineBreak/>
+                            Use w: to search for full words, w:cat does not match multipli<Bold>cat</Bold>ion
+                            <LineBreak/>
+                            use U+ prefix to search for a specific hex code, such as U+CAFE
+                            <LineBreak/>
+                            Use b: to filter on block name
+                            <LineBreak/>
+                            Use s: to filter on subheader name
+                            <LineBreak/>
+                            Use a: to filter on character age.  Also support comparison operators such as a:&lt;=10
+                            <LineBreak/>
+                            Use l: to filter on letters of a word
+                            <LineBreak/>
+                            Use gc: to filer on a Unicode category such as D (digits) or LU (Letter Uppercase)</TextBlock>
+                        </TextBox.ToolTip>
+                    </TextBox>
                 </Grid>
 
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
                     <Label Content="Copy " />
                     <Button Content=" _Chars " Margin="0,0,6,0"  Command="{Binding CopyRecordsCommand}" CommandParameter="0" ToolTip="Copy selected chars (Ctrl+C)" />
                     <Button Content=" _Lines " Margin="0,0,6,0"  Command="{Binding CopyRecordsCommand}" CommandParameter="1" ToolTip="Copy Character, Codepoint and Name of selected chars (Ctrl+L)"/>
-                    <Button Content=" _Details " Margin="0,0,12,0" Command="{Binding CopyRecordsCommand}" CommandParameter="2" ToolTip="Copy full details of selected chars (Ctrl+D)" />
-                    <Button Content=" _Image " Margin="0,0,6,0" Command="{Binding CopyImageCommand}" />
+                    <Button Content=" _Details " Margin="0,0,6,0" Command="{Binding CopyRecordsCommand}" CommandParameter="2" ToolTip="Copy full details of selected chars (Ctrl+D)" />
+                    <Button Content=" _Full Info " Margin="0,0,6,0" Command="{Binding CopyRecordsCommand}" CommandParameter="3" ToolTip="Copy all information on selected chars (Ctrl+F)" />
+                    <Button Content=" _Image " Margin="6,0,6,0" Command="{Binding CopyImageCommand}" />
                 </StackPanel>
             </StackPanel>
 
@@ -180,9 +203,9 @@
                 <TextBlock Grid.Row="2" Grid.Column="1" Text="Character" FontWeight="SemiBold" />
                 <ContentPresenter Grid.Row="2" Grid.Column="2" Content="{Binding StrContent}" />
                 <TextBlock Grid.Row="3" Grid.Column="1" Text="Block" FontWeight="SemiBold" />
-                <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding SelectedChar.Block.BlockNameAndRange}" />
+                <ContentPresenter Grid.Row="3" Grid.Column="2" Content="{Binding BlockContent}" />
                 <TextBlock Grid.Row="4" Grid.Column="1" Text="Subheader " FontWeight="SemiBold" />
-                <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding SelectedChar.Subheader}" />
+                <ContentPresenter Grid.Row="4" Grid.Column="2" Content="{Binding SubheaderContent}" />
             </Grid>
 
 
@@ -207,14 +230,13 @@
                 </StackPanel>
             </WrapPanel>
 
-
         </Grid>
 
 
         <GridSplitter Grid.Column="1" HorizontalAlignment="Center" Cursor="SizeWE" Width="6" Background="Transparent" Focusable="False" />
 
         <!-- Right grid, block -->
-        <Grid Margin="0,6,6,6" Grid.Column="2">
+        <Grid Margin="6,6,0,6" Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />

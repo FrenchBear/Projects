@@ -1,6 +1,6 @@
 ﻿// UniData
-// Static class providing characters and blocks information reading Unicode UCD files
-// Aé♫山??
+// Library providing characters and blocks information reading Unicode UCD files
+// Aé♫山𝄞🐗
 //
 // 2018-09-11   PV
 // 2018-09-17   PV      1.1 Store UCD Data in embedded streams; Skip characters from planes 15 and 16
@@ -8,6 +8,10 @@
 // 2018-09-28	PV		1.2.1 Subheaders merging
 // 2019-03-06	PV		1.3 Unicode 12 (no code change, only UCD data updated)
 // 2020-09-03   PV      1.4 Unicode 13; Backportining .Net Code Nullable fixes
+// 2020-11-11   PV      1.6 .Net 5, C#9.  Add Synonyms, Cross-Refs and Comments to CharacterRecords
+// 2020-11-12   PV      1.6.1 Process ranges >=20000 (were incorrectly skipped, causing problem wuth U+FA6C -> NFD U+242EE)
+
+#nullable enable
 
 using System;
 using System.Collections.Generic;
@@ -17,7 +21,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-
+using System.Text.RegularExpressions;
 
 namespace UniDataNS
 {
@@ -26,33 +30,86 @@ namespace UniDataNS
     /// </summary>
     public class CharacterRecord
     {
+        /// <summary>
+        /// Unicode character codepoint, between 0 and 0x10FFFF (from UnicodeData.txt)
+        /// </summary>
         public int Codepoint { get; private set; }
+
+        /// <summary>
+        /// Unicode character name, uppercase string such as LATIN CAPITAL LETTER A (from UnicodeData.txt)
+        /// </summary>
         public string Name { get; private set; }
+
+        /// <summary>
+        /// Unicode general category, 2 characters such as Lu (from UnicodeData.txt)
+        /// </summary>
         public string Category { get; private set; }
+
+        /// <summary>
+        /// First version of Unicode standard the character appeared, such as 3.0 (from DerivedAge.txt)
+        /// </summary>
         public string Age { get; internal set; }
+
+        /// <summary>
+        /// First codepoint of the block assigned to the character, such as 0x100 (from MetaBlocks.txt)
+        /// </summary>
         public int BlockBegin { get; internal set; } = -1;       // -1 for tests, to make sure at the end all supported chars have a block
+
+        /// <summary>
+        /// Name of block subdivision the character belongs to, such as ASCII punctuation and symbols (from NamesList.txt, marker @)
+        /// If both singular and plural form exist for a subheader in a block (ex: "Additional letter" and "Additional letters"), only plural form is used
+        /// Because of name merging, sorting by subheader does not sort characters in codepoint order
+        /// </summary>
         public string Subheader { get; internal set; }
 
+        /// <summary>
+        /// Lines <tab> = and <tab> % in NamesList.txt
+        /// </summary>
+        public List<string>? Synonyms { get; internal set; }
 
-        // When True, Character method will return an hex codepoint representation instead of the actual string
+        /// <summary>
+        /// Lines <tab> x in NamesList.txt
+        /// </summary>
+        public List<string>? CrossRefs { get; internal set; }
+
+        /// <summary>
+        /// Lines <tab> * and <tab> ~ in NamesList.txt
+        /// </summary>
+        public List<string>? Comments { get; internal set; }
+
+        /// <summary>
+        /// When True, Character method will return an hex codepoint representation instead of the actual string.
+        /// </summary>
         public bool IsPrintable { get; private set; }
 
-        // Convert to a C# string representation of the character, except for control characters
-        // 'Safe version' of UnicodeData.CPtoString. U+FFFD is the official replacement character.
+        /// <summary>
+        /// Convert to a C# string representation of the character, except for control characters.
+        /// 'Safe version' of UnicodeData.CPtoString. U+FFFD is the official replacement character. 
+        /// </summary>
         public string Character => UniData.CodepointToString(IsPrintable ? Codepoint : 0xFFFD);
 
+        /// <summary>
         // For grouping
+        /// </summary>
         public string GroupName => UniData.BlockRecords[BlockBegin].BlockName + (string.IsNullOrEmpty(Subheader) ? "" : ": " + Subheader);
 
         // Used by binding
         public BlockRecord Block => UniData.BlockRecords[BlockBegin];
         public CategoryRecord CategoryRecord => UniData.CategoryRecords[Category];
 
+        /// <summary>
+        /// Standard hexadecimal representation of codepoint such as U+0041 (4 to 6 uppercase hex digits)
+        /// </summary>
         public string CodepointHex => $"U+{Codepoint:X4}";
 
-
+        /// <summary>
+        /// string representation of UTF-16 encoding such as "D83D DC17" for U+1F417
+        /// </summary>
         public string UTF16 => Codepoint <= 0xD7FF || (Codepoint >= 0xE000 && Codepoint <= 0xFFFF) ? Codepoint.ToString("X4") : (0xD800 + ((Codepoint - 0x10000) >> 10)).ToString("X4") + " " + (0xDC00 + (Codepoint & 0x3ff)).ToString("X4");
 
+        /// <summary>
+        /// string representation of UTF-8 encoding such as "F0 9F 90 97" for U+1F417
+        /// </summary>
         public string UTF8
         {
             get
@@ -69,7 +126,7 @@ namespace UniDataNS
             }
         }
 
-
+        // internal constructor
         internal CharacterRecord(int Codepoint, string Name, string Category, bool IsPrintable)
         {
             this.Codepoint = Codepoint;
@@ -80,6 +137,9 @@ namespace UniDataNS
             this.Subheader = string.Empty;
         }
 
+        /// <summary>
+        /// Text representation of the form "char(tab)codepoint(tab)name"
+        /// </summary>
         public string AsString => $"{Character}\t{CodepointHex}\t{Name}";
 
         public override string ToString() => $"CharacterRecord({AsString})";
@@ -91,19 +151,47 @@ namespace UniDataNS
     /// </summary>
     public class BlockRecord
     {
+        /// <summary>
+        /// First codepoint of the block
+        /// </summary>
         public int Begin { get; private set; }
+
+        /// <summary>
+        /// Last codepoint of the block (may or may not be an assigned codepoint)
+        /// </summary>
         public int End { get; private set; }
+
+        /// <summary>
+        /// Unicode block name such as "Basic Latin (ASCII)" (from MetaBlocks.txt)
+        /// </summary>
         public string BlockName { get; private set; }
+
+        /// <summary>
+        /// Name of first level of block hierarchy such as "Latin" (from MetaBlocks.txt)
+        /// </summary>
         public string Level1Name { get; private set; }
+
+        /// <summary>
+        /// Name of second level of block hierarchy such as "European Scripts" (from MetaBlocks.txt)
+        /// </summary>
         public string Level2Name { get; private set; }
+
+        /// <summary>
+        /// Name of third level of block hierarchy such as "Scripts" (from MetaBlocks.txt)
+        /// </summary>
         public string Level3Name { get; private set; }
 
-        // Sorting order matching hierarchy
+        /// <summary>
+        /// Sorting key matching hierarchy order
+        /// </summary>
         public int Rank { get; internal set; }
 
+        /// <summary>
+        /// Block name followed by range of codepoints such as "Basic Latin (ASCII) 0020..007F"
+        /// </summary>
         public string BlockNameAndRange => $"{BlockName} {Begin:X4}..{End:X4}";
 
-
+        // internal constructor
         internal BlockRecord(int Begin, int End, string BlockName, string Level1Name, string Level2Name, string Level3Name)
         {
             this.Begin = Begin;
@@ -124,15 +212,32 @@ namespace UniDataNS
     /// </summary>
     public class CategoryRecord
     {
+        /// <summary>
+        /// Unicode general category code, one or two letters such as Lu
+        /// </summary>
         public string Code { get; private set; }
+
+        /// <summary>
+        /// Unicode General Category name with spaces replaced by underscores such as Uppercase_Letter
+        /// </summary>
         public string Name { get; private set; }
+
+        /// <summary>
+        /// For metacategories, a pipe-separated string of included categories such as "Ll|Lm|Lo|Lt|Lu" for category L
+        /// </summary>
         public string Include { get; private set; }
 
+        /// <summary>
+        /// For metacategories, a list of strings of included categories such as ["Ll", "Lm", "Lo", "Lt", "Lu"] for category L
+        /// </summary>
         public IList<string> CategoriesList { get; private set; }
 
+        /// <summary>
+        /// For metacategories, a comma-separated string of included categories such as "Ll, Lm, Lo, Lt, Lu" for category L
+        /// </summary>
         public string Categories => CategoriesList.Aggregate((prev, c) => prev + ", " + c);
 
-
+        // internal constructor
         internal CategoryRecord(string code, string name, string include = "")
         {
             this.Code = code;
@@ -161,6 +266,9 @@ namespace UniDataNS
         public static ReadOnlyDictionary<string, CategoryRecord> CategoryRecords { get; } = new ReadOnlyDictionary<string, CategoryRecord>(cat_map);
         public static ReadOnlyDictionary<int, BlockRecord> BlockRecords { get; } = new ReadOnlyDictionary<int, BlockRecord>(block_map);
 
+
+        // To extract a CP from a Cross-Ref
+        private static readonly Regex reCP = new Regex(@"\b1?[0-9A-F]{4,5}\b");
 
         // Static constructor, loads data from resources
         static UniData()
@@ -262,7 +370,10 @@ namespace UniDataNS
                     string char_name = fields[1];
                     string char_category = fields[2];
                     if (char_name == "<control>")
-                        char_name = "CONTROL-" + fields[10];
+                        if (fields[10].Length == 0)
+                            char_name = "CONTROL";
+                        else
+                            char_name = "CONTROL - " + fields[10];
                     bool is_range = char_name.EndsWith(", First>", StringComparison.OrdinalIgnoreCase);
                     bool is_printable = !(codepoint < 32                                // Control characters 0-31
                                         || codepoint >= 0x7f && codepoint < 0xA0        // Control characters 127-160
@@ -278,7 +389,7 @@ namespace UniDataNS
                         if (!fields[1].EndsWith(", Last>", StringComparison.OrdinalIgnoreCase))
                             Debugger.Break();
                         // Skip planes 15 and 16 private use
-                        if (codepoint != 0xF0000 && codepoint != 0x100000 && codepoint < 0x20000)
+                        if (codepoint != 0xF0000 && codepoint != 0x100000)
                             for (int code = codepoint; code <= end_char_code; code++)
                                 char_map.Add(code, new CharacterRecord(code, $"{char_name}-{code:X4}", char_category, is_printable));
                     }
@@ -291,7 +402,7 @@ namespace UniDataNS
 
 
             // Add missing non-characters
-            void AddNonCharacter(int codepoint) => char_map.Add(codepoint, new CharacterRecord(codepoint, $"<NOT A CHARACTER-{codepoint:X4}>", "", false));
+            static void AddNonCharacter(int codepoint) => char_map.Add(codepoint, new CharacterRecord(codepoint, $"<NOT A CHARACTER-{codepoint:X4}>", "", false));
             // 2 last characters of each plane
             for (int plane = 0; plane <= 16; plane++)
             {
@@ -343,21 +454,22 @@ namespace UniDataNS
             //Regex CodepointRegex = new Regex(@"^[0-9A-F]{4,6}\t");
 
             // Subheaders merging
-            HashSet<int> blockCodepoints = null;
-            HashSet<string> blockSubheaders = null;
+            HashSet<int>? blockCodepoints = null;
+            HashSet<string>? blockSubheaders = null;
 
             void MergeSubheaders()
             {
+                Debug.Assert(blockSubheaders != null);
                 foreach (string sungularsh in blockSubheaders.Where(s => !s.EndsWith("s", StringComparison.Ordinal)))
-                    if (blockSubheaders.Contains(sungularsh+"s"))
-                        foreach (int cp in blockCodepoints)
+                    if (blockSubheaders!.Contains(sungularsh + "s"))
+                        foreach (int cp in blockCodepoints!)
                             if (char_map[cp].Subheader == sungularsh)
                                 char_map[cp].Subheader += "s";
                 blockCodepoints = null;
                 blockSubheaders = null;
             }
 
-
+            int cp16 = 0;
             using (var sr = new StreamReader(GetResourceStream("NamesList.txt")))
                 while (!sr.EndOfStream)
                 {
@@ -383,10 +495,63 @@ namespace UniDataNS
                     {
                         subheader = line.Substring(3);
                     }
+                    else if (line.StartsWith("\t=", StringComparison.Ordinal) || line.StartsWith("\t%", StringComparison.Ordinal))
+                    {
+                        // Synonyms, new in 1.6
+                        if (!char_map.ContainsKey(cp16))
+                            continue;
+
+                        if (char_map[cp16].Synonyms == null)
+                            char_map[cp16].Synonyms = new List<string>();
+                        char_map[cp16].Synonyms!.Add(line.Substring(3, 1).ToUpperInvariant() + line.Substring(4));
+                    }
+                    else if (line.StartsWith("\tx", StringComparison.Ordinal))
+                    {
+                        // Cross-references, new in 1.6
+                        if (!char_map.ContainsKey(cp16))
+                            continue;
+
+                        string crossRef = line.Substring(3).Replace(" - ", " ");
+                        if (crossRef[0] == '(' && crossRef[crossRef.Length-1] == ')')
+                            crossRef = crossRef.Substring(1, crossRef.Length - 2);
+                        if (char_map[cp16].CrossRefs == null)
+                            char_map[cp16].CrossRefs = new List<string>();
+                        char_map[cp16].CrossRefs!.Add((crossRef.Substring(0,1).ToUpperInvariant() + crossRef.Substring(1)));
+                    }
+                    else if (line.StartsWith("\t*", StringComparison.Ordinal) || line.StartsWith("\t~", StringComparison.Ordinal))
+                    {
+                        // Comments, new in 1.6
+                        if (!char_map.ContainsKey(cp16))
+                            continue;
+
+                        string comment = line.Substring(3,1).ToUpperInvariant() + line.Substring(4);
+
+                        // Special processing for variations, add variation combination at the end
+                        if (line.StartsWith("\t~", StringComparison.Ordinal))
+                        {
+                            var maColl = reCP.Matches(line);
+                            if (maColl.Count == 2)
+                            {
+                                int cp1 = -1, cp2 = -1;
+                                foreach (var ma in maColl)
+                                {
+                                    if (cp1 < 0)
+                                        cp1 = Convert.ToInt32(ma.ToString(), 16);
+                                    else
+                                        cp2 = Convert.ToInt32(ma.ToString(), 16);
+                                }
+                                comment += " → " + CodepointToString(cp1) + CodepointToString(cp2);
+                            }
+                        }
+
+                        if (char_map[cp16].Comments == null)
+                            char_map[cp16].Comments = new List<string>();
+                        char_map[cp16].Comments!.Add(comment);
+                    }
                     else if (line.StartsWith("\t", StringComparison.Ordinal)) { }
                     else
                     {
-                        int cp16 = 0;
+                        cp16 = 0;
                         for (int p = 0; ; p++)
                         {
                             char c = line[p];
@@ -402,11 +567,6 @@ namespace UniDataNS
                             }
                         }
 
-                        //Match ma = CodepointRegex.Match(line);
-                        //if (!ma.Success) Debugger.Break();
-                        //int cp = int.Parse(line.Substring(0, ma.Length - 1), NumberStyles.HexNumber);
-                        //if (cp != cp16) Debugger.Break();
-
                         if (char_map.ContainsKey(cp16))
                         {
                             blockCodepoints?.Add(cp16);
@@ -418,25 +578,7 @@ namespace UniDataNS
             if (blockCodepoints != null)
                 MergeSubheaders();
 
-            // Validate data
-            //InternalTests();
         }
-
-        // For development
-        /*
-        private static void InternalTests()
-        {
-            foreach (var cr in char_map.Values)
-            {
-                // Check that all characters are assigned to a valid block
-                Debug.Assert(BlockRecords.ContainsKey(cr.BlockBegin));
-                // Check that all characters are assigned to a valid category
-                Debug.Assert(CategoryRecords.ContainsKey(cr.Category));
-            }
-
-            Debug.Assert(UnicodeLength("Aé♫??") == 5);
-        }
-        */
 
         // Returns stream from embedded resource name
         private static Stream GetResourceStream(string name)
@@ -480,8 +622,15 @@ namespace UniDataNS
 
     public static class ExtensionMethods
     {
+        /// <summary>
+        /// Enumerates CharacterRecord from a C# string (UTF-16 encoded).
+        /// Couples of surrogates return a single CharacterRecord.
+        /// </summary>
+        /// <param name="str">String to decompose</param>
+        /// <returns>An enumeration of CharacterRecord from str</returns>
         public static IEnumerable<CharacterRecord> EnumCharacterRecords(this string str)
         {
+            if (str == null) throw new ArgumentNullException(nameof(str));
             for (int i = 0; i < str.Length; i++)
             {
                 int cp = (int)str[i];

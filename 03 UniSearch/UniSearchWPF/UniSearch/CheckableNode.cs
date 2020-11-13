@@ -8,17 +8,20 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 
+#nullable enable
+
+
 namespace UniSearchNS
 {
     public class CheckableNode : INotifyPropertyChanged
     {
         // Private variables
         private bool? _isChecked = false;
-        private CheckableNode _parent;
+        private CheckableNode? _parent;
 
 
         // INotifyPropertyChanged interface
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         private void NotifyPropertyChanged(string propertyName)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -47,7 +50,7 @@ namespace UniSearchNS
         public bool IsInitiallySelected { get; private set; }
 
 
-        private string _Name;
+        private string _Name = "";
         public string Name
         {
             get { return _Name; }

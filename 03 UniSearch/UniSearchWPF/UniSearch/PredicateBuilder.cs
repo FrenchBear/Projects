@@ -170,7 +170,8 @@ namespace UniSearchNS
 
         public bool GetCheckableNodeFilter(object searched)
         {
-            CheckableNode cn = searched as CheckableNode;
+            if (!(searched is CheckableNode cn))
+                return true;
 
             foreach (string aWord in words)
             {
@@ -234,7 +235,8 @@ namespace UniSearchNS
         // Specific version to search CharacterRecords
         public bool GetCharacterRecordFilter(object searched)
         {
-            CharacterRecord cr = searched as CharacterRecord;
+            if (!(searched is CharacterRecord cr))
+                return true;
 
             foreach (string aWord in words)
             {
@@ -261,7 +263,7 @@ namespace UniSearchNS
                 {
                     int p = word.IndexOf(':');
                     if (p <= 0 || p > prefix.Length) return false;      // p<=0 since starting with : is not a valid prefix
-                    bool match= string.Compare(word.Substring(0, p), prefix.Substring(0, p), StringComparison.InvariantCultureIgnoreCase) == 0;
+                    bool match = string.Compare(word.Substring(0, p), prefix.Substring(0, p), StringComparison.InvariantCultureIgnoreCase) == 0;
                     if (match)
                         word = word.Substring(p + 1);
                     return match;
@@ -293,13 +295,13 @@ namespace UniSearchNS
                             break;
                     }
                     if (wordFilter) return true;
-                    
+
                     // New rule
                     word = @" " + Regex.Escape(RemoveDiacritics(word).ToUpperInvariant()) + @" ";
 
                     try
                     {
-                        wordFilter = Regex.IsMatch(" "+cr.Name+" ", word, isCS ? 0 : RegexOptions.IgnoreCase);
+                        wordFilter = Regex.IsMatch(" " + cr.Name + " ", word, isCS ? 0 : RegexOptions.IgnoreCase);
                     }
                     catch (Exception)
                     {
@@ -335,14 +337,14 @@ namespace UniSearchNS
                         }
 
                     if (word.Length > 0 && double.TryParse(word, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture.NumberFormat, out double v))
-                        switch (op)
+                        wordFilter = op switch
                         {
-                            case ">": wordFilter = crAge > v; break;
-                            case ">=": wordFilter = crAge >= v; break;
-                            case "<": wordFilter = crAge < v; break;
-                            case "<=": wordFilter = crAge <= v; break;
-                            default: wordFilter = Math.Abs(crAge - v) < 0.001; break;
-                        }
+                            ">" => crAge > v,
+                            ">=" => crAge >= v,
+                            "<" => crAge < v,
+                            "<=" => crAge <= v,
+                            _ => Math.Abs(crAge - v) < 0.001,
+                        };
                 }
 
                 // Block filter

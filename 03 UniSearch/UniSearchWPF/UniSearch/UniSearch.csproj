@@ -9,6 +9,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{A46B17E4-4514-454A-BE3A-1A33AB514960}</ProjectGuid>
     <OutputType>WinExe</OutputType>
+    <LangVersion>8.0</LangVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UniSearchNS</RootNamespace>
     <AssemblyName>UniSearch</AssemblyName>

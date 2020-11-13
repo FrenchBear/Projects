@@ -165,8 +165,6 @@ namespace UniSearchUWPNS
 
                 if (autoHyperlink)
                 {
-                    // Empirical mechanism to convert 4 or 5 hex characters by an hyperlink to a character
-                    // Exception: FEED
                     int sp = 0;
                     for (; ; )
                     {

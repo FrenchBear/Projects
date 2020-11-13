@@ -22,7 +22,7 @@ using System.Text.RegularExpressions;
 
 namespace UniSearchNS
 {
-    internal class CharDetailViewModel // : INotifyPropertyChanged
+    internal class CharDetailViewModel
     {
         // Private variables
         private readonly CharDetailWindow window;
