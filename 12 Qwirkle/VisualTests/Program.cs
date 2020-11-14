@@ -42,7 +42,7 @@ namespace VisualTests
                 WriteLine($"Solution à {s.Points} points:");
                 foreach (var move in s.Moves)
                 {
-                    WriteLine($"  {move.ToString()}");
+                    WriteLine($"  {move}");
                 }
             }
         }

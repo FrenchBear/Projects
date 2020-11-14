@@ -22,6 +22,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace UniDataNS
@@ -90,12 +91,18 @@ namespace UniDataNS
         public string Character => UniData.CodepointToString(IsPrintable ? Codepoint : 0xFFFD);
 
         /// <summary>
-        // For grouping
+        // User by ListView tu support grouping
         /// </summary>
         public string GroupName => UniData.BlockRecords[BlockBegin].BlockName + (string.IsNullOrEmpty(Subheader) ? "" : ": " + Subheader);
 
-        // Used by binding
+        /// <summary>
+        /// Block the character blongs to
+        /// </summary>
         public BlockRecord Block => UniData.BlockRecords[BlockBegin];
+
+        /// <summary>
+        /// General category of the character
+        /// </summary>
         public CategoryRecord CategoryRecord => UniData.CategoryRecords[Category];
 
         /// <summary>
@@ -143,6 +150,7 @@ namespace UniDataNS
         /// </summary>
         public string AsString => $"{Character}\t{CodepointHex}\t{Name}";
 
+        // String representation, mostly for debug
         public override string ToString() => $"CharacterRecord({AsString})";
     }
 
@@ -203,6 +211,7 @@ namespace UniDataNS
             this.Level3Name = Level3Name;
         }
 
+        // String representation, mostly for debug
         public override string ToString() =>
             $"BlockRecord(Range={Begin:X4}..{End:X4}, Block={BlockName}, L1={Level1Name}, L2={Level2Name}, L3={Level3Name})";
     }
@@ -235,8 +244,23 @@ namespace UniDataNS
 
         /// <summary>
         /// For metacategories, a comma-separated string of included categories such as "Ll, Lm, Lo, Lt, Lu" for category L
+        /// Used by binding in CharDetailWindow
         /// </summary>
-        public string Categories => CategoriesList.Aggregate((prev, c) => prev + ", " + c);
+        public string Categories
+        {
+            get
+            {
+                var sb = new StringBuilder();
+                foreach (string cat in CategoriesList)
+                {
+                    if (sb.Length > 0)
+                        sb.Append(", ");
+                    sb.Append(cat + ":" + UniData.CategoryRecords[cat].Name);
+                }
+                return sb.ToString();
+            }
+        }
+
 
         // internal constructor
         internal CategoryRecord(string code, string name, string include = "")
@@ -247,6 +271,7 @@ namespace UniDataNS
             CategoriesList = new List<string> { code };
         }
 
+        // String representation, mostly for debug
         public override string ToString() => $"CategoryRecord(Code={Code}, Name={Name}, Include={Include})";
     }
 
@@ -263,8 +288,20 @@ namespace UniDataNS
 
 
         // Public read only dictionaries to access Unicode data
+
+        /// <summary>
+        /// Dictionary of all character records indexed by Codepoints
+        /// </summary>
         public static ReadOnlyDictionary<int, CharacterRecord> CharacterRecords { get; } = new ReadOnlyDictionary<int, CharacterRecord>(char_map);
+
+        /// <summary>
+        /// Dictionary of all categories, indexed by category (case sensitive)
+        /// </summary>
         public static ReadOnlyDictionary<string, CategoryRecord> CategoryRecords { get; } = new ReadOnlyDictionary<string, CategoryRecord>(cat_map);
+
+        /// <summary>
+        /// Dictionary of all blocks, indexed by 1st Codepoint of the block
+        /// </summary>
         public static ReadOnlyDictionary<int, BlockRecord> BlockRecords { get; } = new ReadOnlyDictionary<int, BlockRecord>(block_map);
 
 
@@ -451,21 +488,40 @@ namespace UniDataNS
 
             // Read NamesList
             string subheader = string.Empty;
-            // Optimizations: Do not use Regex, looks costly to performance profiler
-            //Regex CodepointRegex = new Regex(@"^[0-9A-F]{4,6}\t");
 
             // Subheaders merging
             HashSet<int>? blockCodepoints = null;
             HashSet<string>? blockSubheaders = null;
 
+            // Some subheaders in a block are almost the same and should be merged
+            // This dictionary contains subheaders that do not differ only by final s
+            Dictionary<string, string> extraMergeSubheaders = new Dictionary<string, string>
+            {
+                { "Extended Arabic letter for Parkari", "Extended Arabic letters for Parkari" },
+                { "Sign for Yajurvedic", "Signs for Yajurvedic" },
+                { "Additional diacritical mark for symbols", "Additional diacritical marks for symbols" },
+                { "Map symbol from ARIB STD B24", "Map symbols from ARIB STD B24" },
+                { "Letter for African languages", "Letters for African languages" },
+                { "Addition for UPA", "Additions for UPA" },
+            };
+
             void MergeSubheaders()
             {
                 Debug.Assert(blockSubheaders != null);
-                foreach (string sungularsh in blockSubheaders.Where(s => !s.EndsWith("s", StringComparison.Ordinal)))
-                    if (blockSubheaders!.Contains(sungularsh + "s"))
+                foreach (string singular in blockSubheaders.Where(s => !s.EndsWith("s", StringComparison.Ordinal)))
+                    if (blockSubheaders!.Contains(singular + "s"))
+                    {
                         foreach (int cp in blockCodepoints!)
-                            if (char_map[cp].Subheader == sungularsh)
+                            if (char_map[cp].Subheader == singular)
                                 char_map[cp].Subheader += "s";
+                    }
+                    else if (extraMergeSubheaders.ContainsKey(singular))
+                    {
+                        foreach (int cp in blockCodepoints!)
+                            if (char_map[cp].Subheader == singular)
+                                char_map[cp].Subheader = extraMergeSubheaders[singular];
+                    }
+
                 blockCodepoints = null;
                 blockSubheaders = null;
             }
@@ -579,7 +635,6 @@ namespace UniDataNS
                 }
             if (blockCodepoints != null)
                 MergeSubheaders();
-
         }
 
         // Returns stream from embedded resource name

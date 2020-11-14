@@ -121,6 +121,7 @@
       <DependentUpon>CharDetailDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="CharDetailViewModel.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="NullableBooleanToBooleanConverter.cs" />
     <Compile Include="PredicateBuilder.cs" />
     <Compile Include="RelayCommand.cs" />

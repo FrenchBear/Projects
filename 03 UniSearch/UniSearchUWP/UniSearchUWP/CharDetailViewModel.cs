@@ -239,7 +239,7 @@ namespace UniSearchUWPNS
 
         // Helper to work around the limitaion of a Hyperlink in UWP
         // Hyperlink can be placed in an Inlines(), but does not support Command/Parameter
-        // HyperlinkButton do support COmmand/Parameter, but can't be added to Inlines()
+        // HyperlinkButton do support Command/Parameter, but can't be added to Inlines()
         // Solution: handle the click event of Hyperlink...
         private void Hyperlink_Click(Hyperlink sender, HyperlinkClickEventArgs args)
         {

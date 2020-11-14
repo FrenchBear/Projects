@@ -22,7 +22,7 @@ namespace QwirkleLib
         //private readonly Dictionary<(int, int), Square> Played.dict = new Dictionary<(int, int), Square>();
 
         private readonly BoardLayer Base = new BoardLayer();
-        private BoardLayer Played = new BoardLayer();
+        private readonly BoardLayer Played = new BoardLayer();
 
         //private int RowMinBoard = 0;
         //private int RowMaxBoard = 0;
