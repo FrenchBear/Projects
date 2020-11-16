@@ -288,3 +288,4 @@ __pycache__/
 *.xsd.cs
 
 Output/
+/03 UniSearch/UniSearchCore/DirectDrawWrite/DirectDrawWrite.GeneratedMSBuildEditorConfig.editorconfig
