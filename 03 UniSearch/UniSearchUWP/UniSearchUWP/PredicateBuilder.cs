@@ -8,11 +8,13 @@
 // 2018-09-20   PV      Filter on letters using l:
 // 2018-09-26   PV      Use helper WordStartsWithPrefix for better code detecting special flags
 // 2019-04-29   PV      ParseQuery accepts prefix:"words with spaces" since it's more natural than "prefix:words with spaces"
-// 2020-11-11   PV      New rule for single letter search: only searches full word in the description, much more efficient than former rule (only search for letters equivalent to this one).
+// 2020-11-11   PV      New rule for single letter search (character records only): only searches full word in the description, 
+//                      much more efficient than former rule (only search for letters equivalent to this one).
 //                      New rule is always case-insensitive and accent-insensitive, a A â Ä all return the same matching set
 //                      Note that for single letters, full word search is strict, for instance, F foes not match "PHASE-F" in char name, while W: prefix actually does.
 //                      For T, the old rule found 17 matches (TtŢţŤťȚțṪṫṬṭṮṯṰṱẗ)
 //                      The new rule finds 95 matches (TtŢţŤťŦŧƫƬƭƮȚțȶȾʇʈͭᑦᛏᛐᣕᰳᴛᵀᵗᵵᶵṪṫṬṭṮṯṰṱẗₜ⒯Ⓣⓣⱦㄊㆵ㇀ꞆꞇꞱꩅﬅＴｔ𐊗𐊭𐤯𑫞𖹈𖹨𛰃𛰲𛰳𛰶𛰷𝐓𝐭𝑇𝑡𝑻𝒕𝒯𝓉𝓣𝓽𝔗𝔱𝕋𝕥𝕿𝖙𝖳𝗍𝗧𝘁𝘛𝘵𝙏𝙩𝚃𝚝🄣🅃🅣🆃🇹)
+// 2020-11-17   PV      Bug A Squared does not filter like Squared A.  Search on synonyms added.
 
 using System;
 using System.Collections.Generic;
@@ -206,12 +208,10 @@ namespace UniSearchUWPNS
                                 return false;
                         }
                     }
-#pragma warning disable CA1031 // Do not catch general exception types
                     catch (Exception)
                     {
                         return true;
                     }
-#pragma warning restore CA1031 // Do not catch general exception types
                 }
                 else
                 {
@@ -265,12 +265,12 @@ namespace UniSearchUWPNS
                 {
                     int p = word.IndexOf(':');
                     if (p <= 0 || p > prefix.Length) return false;      // p<=0 since starting with : is not a valid prefix
-                    bool match= string.Compare(word.Substring(0, p), prefix.Substring(0, p), StringComparison.InvariantCultureIgnoreCase) == 0;
+                    bool match = string.Compare(word.Substring(0, p), prefix.Substring(0, p), StringComparison.InvariantCultureIgnoreCase) == 0;
                     if (match)
                         word = word.Substring(p + 1);
                     return match;
                 }
-
+                
 
                 bool wordFilter = true;
 
@@ -278,6 +278,7 @@ namespace UniSearchUWPNS
                 // Don't care if searched word is denormalized
                 // 2020-11-11: Change the rule, a single letter searches for a full word.  Otherwise searches for T for instance miss many letters that 
                 // are not equivalent to T but are real T (math letters, upside-down letters, ...)
+                // 2020-11-17: If old rule matches, continue filtering with other words (no more early return true), causing search "A Squared" 
                 if (UniData.UnicodeLength(word) == 1)
                 {
                     // Old rule
@@ -296,21 +297,26 @@ namespace UniSearchUWPNS
                             wordFilter = cr.Character == word;
                             break;
                     }
-                    if (wordFilter) return true;
-                    
-                    // New rule
-                    word = @" " + Regex.Escape(RemoveDiacritics(word).ToUpperInvariant()) + @" ";
+                    if (!wordFilter)
+                    {
+                        // New rule
+                        word = @" " + Regex.Escape(RemoveDiacritics(word).ToUpperInvariant()) + @" ";
 
-                    try
-                    {
-                        wordFilter = Regex.IsMatch(" "+cr.Name+" ", word, isCS ? 0 : RegexOptions.IgnoreCase);
-                    }
-#pragma warning disable CA1031 // Do not catch general exception types
-                    catch (Exception)
-                    {
-                        wordFilter = true;
-                    }
-#pragma warning restore CA1031 // Do not catch general exception types
+                        try
+                        {
+                            wordFilter = Regex.IsMatch(" " + cr.Name + " ", word, isCS ? 0 : RegexOptions.IgnoreCase);
+                            if (!wordFilter && cr.Synonyms!=null)
+                                foreach (string s in cr.Synonyms)
+                                {
+                                    wordFilter = Regex.IsMatch(" " + s + " ", word, isCS ? 0 : RegexOptions.IgnoreCase);
+                                    if (wordFilter) break;
+                                }
+                    	}
+                    	catch (Exception)
+                    	{
+                        	wordFilter = true;
+                    	}
+                	}
                 }
 
                 // If searched string is U+ followed by 1 to 6 hex digits, search for Codepoint value
@@ -381,29 +387,38 @@ namespace UniSearchUWPNS
                         word = @"\b" + Regex.Escape(word.Substring(2)) + @"\b";
                     }
 
-                    if (isRE || isWWLocal)
+                    bool NameCheck(string name)
                     {
-                        try
+                        if (isRE || isWWLocal)
+                        {
+                            try
+                            {
+                                if (isAS)
+                                    return Regex.IsMatch(name, word, isCS ? 0 : RegexOptions.IgnoreCase);
+                                else
+                                    return Regex.IsMatch(RemoveDiacritics(name), word, isCS ? 0 : RegexOptions.IgnoreCase);
+                            }
+                            catch (Exception)
+                            {
+                                return true;
+                            }
+                        }
+                        else
                         {
                             if (isAS)
-                                wordFilter = Regex.IsMatch(cr.Name, word, isCS ? 0 : RegexOptions.IgnoreCase);
+                                return name.Contains(word, isCS ? StringComparison.CurrentCulture : StringComparison.InvariantCultureIgnoreCase);
                             else
-                                wordFilter = Regex.IsMatch(RemoveDiacritics(cr.Name), word, isCS ? 0 : RegexOptions.IgnoreCase);
+                                return RemoveDiacritics(name).Contains(word, isCS ? StringComparison.CurrentCulture : StringComparison.InvariantCultureIgnoreCase);
                         }
-#pragma warning disable CA1031 // Do not catch general exception types
-                        catch (Exception)
+                    }
+
+                    wordFilter = NameCheck(cr.Name);
+                    if (!wordFilter && cr.Synonyms != null)
+                        foreach (string s in cr.Synonyms)
                         {
-                            wordFilter = true;
+                            wordFilter = NameCheck(s);
+                            if (wordFilter) break;
                         }
-#pragma warning restore CA1031 // Do not catch general exception types
-                    }
-                    else
-                    {
-                        if (isAS)
-                            wordFilter = cr.Name.IndexOf(word, isCS ? StringComparison.CurrentCulture : StringComparison.InvariantCultureIgnoreCase) >= 0;
-                        else
-                            wordFilter = RemoveDiacritics(cr.Name).IndexOf(word, isCS ? StringComparison.CurrentCulture : StringComparison.InvariantCultureIgnoreCase) >= 0;
-                    }
                 }
 
                 if (!(wordFilter ^ invertFlag))

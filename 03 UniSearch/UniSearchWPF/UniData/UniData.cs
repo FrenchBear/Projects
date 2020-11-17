@@ -11,8 +11,6 @@
 // 2020-11-11   PV      1.6 .Net 5, C#9.  Add Synonyms, Cross-Refs and Comments to CharacterRecords
 // 2020-11-12   PV      1.6.1 Process ranges >=20000 (were incorrectly skipped, causing problem wuth U+FA6C -> NFD U+242EE)
 
-#nullable enable
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,6 +21,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+
+#nullable enable
+
 
 namespace UniDataNS
 {

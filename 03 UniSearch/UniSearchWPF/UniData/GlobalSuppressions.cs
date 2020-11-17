@@ -6,5 +6,4 @@
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Style", "IDE0057:Use range operator")]
-[assembly: SuppressMessage("Design", "CA1031:Do not catch general exception types")]
-[assembly: SuppressMessage("Design", "CA1822:Mark members as static")]
+[assembly: SuppressMessage("Style", "IDE0056:Use index operator")]

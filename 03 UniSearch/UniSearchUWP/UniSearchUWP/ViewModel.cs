@@ -664,12 +664,10 @@ namespace UniSearchUWPNS
             {
                 Clipboard.SetContent(dataPackage);
             }
-#pragma warning disable CA1031 // Do not catch general exception types
             catch (Exception ex)
             {
                 Debug.WriteLine("Error copying text into clipboard: " + ex.Message);
             }
-#pragma warning restore CA1031 // Do not catch general exception types
         }
 
 

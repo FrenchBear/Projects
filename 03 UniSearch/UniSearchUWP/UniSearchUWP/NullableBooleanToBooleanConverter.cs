@@ -9,6 +9,7 @@ using System;
 using Windows.UI.Xaml.Data;
 
 #nullable enable
+#pragma warning disable CA1822      // Does not work...
 
 
 namespace UniSearchUWPNS
@@ -18,9 +19,7 @@ namespace UniSearchUWPNS
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if (value is bool?)
-            {
                 return (bool)value;
-            }
             return false;
         }
 
