@@ -1,6 +1,8 @@
 ﻿// CharFromKey
 // Helper class to generate the list of dead keys combinations
-// 2017-09  PV
+//
+// 2017-09      PV
+// 2020-11-17   PV      C#8, nullable enable
 
 using System;
 using System.Collections.Generic;
@@ -8,6 +10,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using static LearningKeyboard.NativeMethods;
+
+#nullable enable
 
 
 namespace LearningKeyboard

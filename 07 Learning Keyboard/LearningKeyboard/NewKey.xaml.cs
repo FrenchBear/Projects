@@ -2,18 +2,24 @@
 // UserControl to represent a keyboard key in LearningKeyboard App
 //
 // 2017-09-19   PV
-
+// 2020-11-17   PV      C#8, nullable enable
 
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
+#nullable enable
+
+
 namespace LearningKeyboard
 {
+    /// <summary>
+    /// User control to represent a key on screen, and its own DataContext for binding at the same time.
+    /// </summary>
     public partial class NewKey : UserControl, INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         private void NotifyPropertyChanged(string name)
         {
@@ -184,8 +190,8 @@ namespace LearningKeyboard
 
         private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            NewKey key = d as NewKey;
-            key.SetNewKeyState();
+            if (d is NewKey key)
+                key.SetNewKeyState();
         }
 
 
@@ -228,80 +234,112 @@ namespace LearningKeyboard
             DependencyProperty.Register(nameof(IsShiftAltGrDeadKey), typeof(bool), typeof(NewKey), new UIPropertyMetadata(false));
 
 
-
-        public enum NewKeyStyle
+        /// <summary>
+        /// All possible styles to display a key: Normal for 4 texts, Simple for 1 letter, Static only shows NormalText, AfterDead for display after Dead Key.
+        /// </summary>
+        public enum KeyStyles
         {
-            Normal = 1,         // All 4 texts are shown together.  User for &/1, é/2, ...
-            Simple = 2,         // Only 1 among 4 text is shown at a time.  Used for a, z, ...
-            Static = 3,         // Always show NormalText, nothing else.  User for Shift, Tab, ...
-            AfterDead = 4,      // After a dead key, shows all 4 AD texts
+
+            /// <summary>
+            /// 4 texts are shown together, for &amp;/1, é/2/~, ...
+            /// </summary>
+            Detail = 1,
+
+            /// <summary>
+            /// Only 1 letter is shown at a time (KeyState Normal and Shift only), for a, b...
+            /// </summary>
+            Simple = 2,
+
+            /// <summary>
+            /// Always show NormalText, nothing else.  Used for Shift, Tab, ...
+            /// </summary>
+            Static = 3,        
+
+            /// <summary>
+            /// Style used after a dead key is pressed.  Shows all 4 AD text (key letter/shifted key letter, and dead key+letter key/dead key+shift letter key)
+            /// </summary>
+            AfterDead = 4,
         }
 
-        private NewKeyStyle DefaultKeyStyle = (NewKeyStyle)0;
+        /// <summary>
+        /// Used to restore KeyStyle when AfterDeak style is cleared.
+        /// </summary>
+        private KeyStyles DefaultKeyStyle = (KeyStyles)0;       // Special initial value to force initialization
 
-        public NewKeyStyle KeyStyle
+
+        /// <summary>
+        /// Defines how this key should be shown, among Detail (4 text), Simple (1 text), Static (never changes), AfterDead (key and composed chars).<para />
+        /// Detail and simple will change to AfterDead once a dead key is entered to show combined results, and then back to DefaultKeyStyle.
+        /// </summary>
+        public KeyStyles KeyStyle
         {
-            get { return (NewKeyStyle)GetValue(KeyStyleProperty); }
+            get { return (KeyStyles)GetValue(KeyStyleProperty); }
             set
             {
-                if (DefaultKeyStyle == (NewKeyStyle)0)
+                if (DefaultKeyStyle == (KeyStyles)0)
                     DefaultKeyStyle = value;
                 SetValue(KeyStyleProperty, value);
             }
         }
 
+        // For binding
         public static readonly DependencyProperty KeyStyleProperty =
-            DependencyProperty.Register("KeyStyle", typeof(NewKeyStyle), typeof(NewKey), new UIPropertyMetadata(NewKeyStyle.Normal, new PropertyChangedCallback(OnKeyStyleChanged)));
+            DependencyProperty.Register("KeyStyle", typeof(KeyStyles), typeof(NewKey), new UIPropertyMetadata(KeyStyles.Detail, new PropertyChangedCallback(OnKeyStyleChanged)));
 
+        /// <summary>
+        /// When KeyStyleProperty changes, adjust visible/hidden labels accordingly.<para />
+        /// ToDo: Current code does not set KeyStyles.Detail on startup, so NewKey XAML has to predefine labels visibility according to this case.
+        /// </summary>
         private static void OnKeyStyleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            NewKey key = d as NewKey;
+            if (!(d is NewKey key))
+                return;
 
             switch (key.KeyStyle)
             {
-                case NewKeyStyle.Normal:
+                case KeyStyles.Detail:
                     key.NormalTextTB.Visibility = Visibility.Visible;
                     key.ShiftTextTB.Visibility = Visibility.Visible;
                     key.AltGrTextTB.Visibility = Visibility.Visible;
                     key.ShiftAltGrTextTB.Visibility = Visibility.Visible;
-                    
+
                     key.SimpleTextTB.Visibility = Visibility.Hidden;
-                    
+
                     key.ADNormalTextTB.Visibility = Visibility.Hidden;
                     key.ADShiftTextTB.Visibility = Visibility.Hidden;
                     key.ADResultTextTB.Visibility = Visibility.Hidden;
                     key.ADShiftResultTextTB.Visibility = Visibility.Hidden;
                     break;
 
-                case NewKeyStyle.AfterDead:
+                case KeyStyles.AfterDead:
                     key.NormalTextTB.Visibility = Visibility.Hidden;
                     key.ShiftTextTB.Visibility = Visibility.Hidden;
                     key.AltGrTextTB.Visibility = Visibility.Hidden;
                     key.ShiftAltGrTextTB.Visibility = Visibility.Hidden;
 
                     key.SimpleTextTB.Visibility = Visibility.Hidden;
-                    
+
                     key.ADNormalTextTB.Visibility = Visibility.Visible;
                     key.ADShiftTextTB.Visibility = Visibility.Visible;
                     key.ADResultTextTB.Visibility = Visibility.Visible;
                     key.ADShiftResultTextTB.Visibility = Visibility.Visible;
                     break;
 
-                case NewKeyStyle.Simple:
-                case NewKeyStyle.Static:
+                case KeyStyles.Simple:
+                case KeyStyles.Static:
                     key.NormalTextTB.Visibility = Visibility.Hidden;
                     key.ShiftTextTB.Visibility = Visibility.Hidden;
                     key.AltGrTextTB.Visibility = Visibility.Hidden;
                     key.ShiftAltGrTextTB.Visibility = Visibility.Hidden;
-                    
+
                     key.SimpleTextTB.Visibility = Visibility.Visible;
-                    
+
                     key.ADNormalTextTB.Visibility = Visibility.Hidden;
                     key.ADShiftTextTB.Visibility = Visibility.Hidden;
                     key.ADResultTextTB.Visibility = Visibility.Hidden;
                     key.ADShiftResultTextTB.Visibility = Visibility.Hidden;
 
-                    if (key.KeyStyle == NewKeyStyle.Simple)
+                    if (key.KeyStyle == KeyStyles.Simple)
                     {
                         key.SimpleTextTB.FontWeight = FontWeights.Bold;
                         key.SimpleTextTB.FontSize = 16;
@@ -328,8 +366,8 @@ namespace LearningKeyboard
 
         private static void OnForegroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            NewKey key = d as NewKey;
-            key.SetNewKeyState();
+            if (d is NewKey key)
+                key.SetNewKeyState();
         }
 
 
@@ -355,11 +393,13 @@ namespace LearningKeyboard
 
         private static void OnBackgroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            NewKey key = d as NewKey;
-            if (key.m_IsPressed)
-                key.Pressed();
-            else
-                key.Released();
+            if (d is NewKey key)
+            {
+                if (key.m_IsPressed)
+                    key.Pressed();
+                else
+                    key.Released();
+            }
         }
 
 
@@ -449,7 +489,7 @@ namespace LearningKeyboard
         {
             KeyBorder.BorderBrush = Brushes.Red;
             KeyBorder.Background = NormalForeground;
-            if (KeyStyle == NewKeyStyle.Normal)
+            if (KeyStyle == KeyStyles.Detail)
             {
                 ActiveAllText(true);
             }
@@ -464,7 +504,7 @@ namespace LearningKeyboard
         {
             KeyBorder.BorderBrush = Brushes.Black;
             KeyBorder.Background = NormalBackground;
-            if (KeyStyle == NewKeyStyle.Normal)
+            if (KeyStyle == KeyStyles.Detail)
             {
                 ActiveAllText(false);
             }
@@ -475,17 +515,43 @@ namespace LearningKeyboard
             m_IsPressed = false;
         }
 
+        /// <summary>
+        /// Current key state, that can be normal, after Shift, after AltGr, after Shift+AltGr, after a Dead Key, after Shift+Dead Key
+        /// </summary>
         public enum KeyState
         {
+            /// <summary>
+            /// Normal default state of the key
+            /// </summary>
             Normal,
+
+            /// <summary>
+            /// State of the key after Shift pressed
+            /// </summary>
             Shift,
+
+            /// <summary>
+            /// State of the key after AltGr pressed
+            /// </summary>
             AltGr,
+
+            /// <summary>
+            /// State of the key after Shift+AltGr pressed
+            /// </summary>
             ShiftAltGr,
+
+            /// <summary>
+            /// State of the key after a Dead Key is pressed
+            /// </summary>
             ADNormal,
+
+            /// <summary>
+            /// State of the key after Shift+Dead Key is pressed
+            /// </summary>
             ADShift,
         }
 
-        private KeyState _NewKeyState = KeyState.Normal;
+        private KeyState _NewKeyState = KeyState.Normal;        // Default is normal state
 
         public KeyState NewKeyState
         {
@@ -496,7 +562,7 @@ namespace LearningKeyboard
             set
             {
                 // Shift states do not apply to static keys, they can just be pressed or not
-                if (KeyStyle == NewKeyStyle.Static)
+                if (KeyStyle == KeyStyles.Static)
                     return;
 
                 if (value != _NewKeyState)
@@ -511,33 +577,33 @@ namespace LearningKeyboard
         {
             switch (DefaultKeyStyle)
             {
-                case NewKeyStyle.Static:
+                case KeyStyles.Static:
                     SimpleTextTB.Text = NormalText;
                     SimpleTextTB.Foreground = NormalForeground;
                     break;
 
-                case NewKeyStyle.Simple:
+                case KeyStyles.Simple:
                     switch (_NewKeyState)
                     {
                         case KeyState.Normal:
-                            KeyStyle = NewKeyStyle.Simple;
+                            KeyStyle = KeyStyles.Simple;
                             SimpleTextTB.Text = NormalText;
                             break;
 
                         case KeyState.Shift:
-                            KeyStyle = NewKeyStyle.Simple;
+                            KeyStyle = KeyStyles.Simple;
                             SimpleTextTB.Text = ShiftText;
                             break;
 
                         case KeyState.ADNormal:
                         case KeyState.ADShift:
-                            KeyStyle = NewKeyStyle.AfterDead;
+                            KeyStyle = KeyStyles.AfterDead;
                             SimpleTextTB.Text = "";
                             ActiveAllText(false);
                             break;
 
                         default:
-                            KeyStyle = NewKeyStyle.Normal;
+                            KeyStyle = KeyStyles.Detail;
                             SimpleTextTB.Text = "";
                             ActiveAllText(false);
                             return;
@@ -545,11 +611,11 @@ namespace LearningKeyboard
                     SimpleTextTB.Foreground = NormalForeground;
                     break;
 
-                case NewKeyStyle.Normal:
+                case KeyStyles.Detail:
                     if (_NewKeyState == KeyState.ADNormal || _NewKeyState == KeyState.ADShift)
-                        KeyStyle = NewKeyStyle.AfterDead;
+                        KeyStyle = KeyStyles.AfterDead;
                     else
-                        KeyStyle = NewKeyStyle.Normal;
+                        KeyStyle = KeyStyles.Detail;
                     ActiveAllText(false);
                     break;
             }

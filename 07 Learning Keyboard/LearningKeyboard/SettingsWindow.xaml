@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LearningKeyboard"
         mc:Ignorable="d"
-        Title="LearningKeyboard Settings" Height="300" Width="320" ResizeMode="NoResize"
+        Title="LearningKeyboard Settings" 
+        ResizeMode="NoResize"
+        SizeToContent="WidthAndHeight"
         TextOptions.TextRenderingMode="Auto"
         TextOptions.TextFormattingMode="Ideal"
         Activated="Window_Activated">
@@ -109,7 +111,7 @@
                     <RadioButton Name="TextRenderingClearTypeOption" Content="_ClearType" MouseDoubleClick="Option_MouseDoubleClick" />
                 </StackPanel>
             </GroupBox>
-            <CheckBox Name="AlwaysOnTopCheckBox" >
+            <CheckBox Name="AlwaysOnTopCheckBox" Margin="0,6,0,6" >
                 <Label Content="Always on _top" Padding="0" />
             </CheckBox> 
         </StackPanel>

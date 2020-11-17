@@ -2,13 +2,13 @@
 // Specialization of NewKey UserControl to represent a virtual key
 //
 // 2017-09-19   PV
+// 2020-11-17   PV      C#8, nullable enable
 
-
-using System.Text;
 using System.Windows.Forms;
 using static LearningKeyboard.NativeMethods;
 
-#pragma warning disable IDE0060 // Remove unused parameter
+#nullable enable
+
 
 namespace LearningKeyboard
 {
@@ -18,7 +18,7 @@ namespace LearningKeyboard
         public readonly string digit;       // L5..L2 R2..R5
 
 
-        public KeyboardKey(string dispoNF, int scanCode, string digit, NewKeyStyle style, string simpleTextOverride, int w, int h)
+        public KeyboardKey(string dispoNF, int scanCode, string digit, KeyStyles style, string simpleTextOverride, int w, int h)
         {
             this.digit = digit;
 
@@ -29,7 +29,7 @@ namespace LearningKeyboard
 
             this.KeyStyle = style;
 
-            if (style == NewKeyStyle.Static)
+            if (style == KeyStyles.Static)
             {
                 if (string.IsNullOrEmpty(simpleTextOverride))
                     NormalText = vk.ToString();

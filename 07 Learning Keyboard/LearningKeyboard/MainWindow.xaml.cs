@@ -1,14 +1,14 @@
 ﻿// Learning Keyboard
 // Visual Keyboard to learn typing
+//
 // 2017-09-18   PV
 // 2017-10-20   PV      TextRendering and TextFormatting
 // 2017-12-22   PV      1.1.1 AlwaysOnTop option
+// 2020-11-17   PV      C#8, nullable enable
 
 using Gma.System.MouseKeyHook;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,19 +16,20 @@ using System.Windows.Forms;
 using System.Windows.Media;
 using static LearningKeyboard.CharFromKey;
 
+#nullable enable
+
 
 namespace LearningKeyboard
 {
     public partial class MainWindow : Window
     {
-        private IKeyboardMouseEvents m_GlobalHook;
+        private IKeyboardMouseEvents? m_GlobalHook;
+        private NotifyIcon? NotificationIcon;
 
         private bool shift;
         private bool control;
         private bool alt;
         private bool dead;
-
-        private NotifyIcon NotificationIcon;
 
 
         public MainWindow()
@@ -49,7 +50,7 @@ namespace LearningKeyboard
             Deactivated += (s, e) => { if (AlwaysOnTop) { Topmost = true; Activate(); } };
 
             AddNotifiationIcon();
-            Closed += (s, e) => { NotificationIcon.Visible = false; NotificationIcon.Dispose(); };
+            Closed += (s, e) => { if (!(NotificationIcon is null)) { NotificationIcon.Visible = false; NotificationIcon.Dispose(); } };
         }
 
         private void AddNotifiationIcon()
@@ -262,9 +263,9 @@ namespace LearningKeyboard
             }
         }
 
-        private string ColorScheme;
-        private string TextRendering;
-        private string TextFormatting;
+        private string ColorScheme = "Brown";
+        private string TextFormatting = "Ideal";
+        private string TextRendering = "Auto";
         private bool AlwaysOnTop;
 
         private void DrawKeyboard()
@@ -283,84 +284,84 @@ namespace LearningKeyboard
 
             xc = bo;
             yc = bo;
-            AddKey("E00", 41, nextX(m), yc, m, m, "L5", NewKey.NewKeyStyle.Normal);                    // ²
-            AddKey("E01", 2, nextX(m), yc, m, m, "L5", NewKey.NewKeyStyle.Normal);                     // & 1
-            AddKey("E02", 3, nextX(m), yc, m, m, "L4", NewKey.NewKeyStyle.Normal);                     // é 2 ~
-            AddKey("E03", 4, nextX(m), yc, m, m, "L3", NewKey.NewKeyStyle.Normal);                     // " 3 #
-            AddKey("E04", 5, nextX(m), yc, m, m, "L2", NewKey.NewKeyStyle.Normal);                     // 4 ' {
-            AddKey("E05", 6, nextX(m), yc, m, m, "L2", NewKey.NewKeyStyle.Normal);                     // 5 ( [
+            AddKey("E00", 41, nextX(m), yc, m, m, "L5", NewKey.KeyStyles.Detail);                    // ²
+            AddKey("E01", 2, nextX(m), yc, m, m, "L5", NewKey.KeyStyles.Detail);                     // & 1
+            AddKey("E02", 3, nextX(m), yc, m, m, "L4", NewKey.KeyStyles.Detail);                     // é 2 ~
+            AddKey("E03", 4, nextX(m), yc, m, m, "L3", NewKey.KeyStyles.Detail);                     // " 3 #
+            AddKey("E04", 5, nextX(m), yc, m, m, "L2", NewKey.KeyStyles.Detail);                     // 4 ' {
+            AddKey("E05", 6, nextX(m), yc, m, m, "L2", NewKey.KeyStyles.Detail);                     // 5 ( [
             xc += ms;
-            AddKey("E06", 7, nextX(m), yc, m, m, "R2", NewKey.NewKeyStyle.Normal);                     // 6 - |
-            AddKey("E07", 8, nextX(m), yc, m, m, "R2", NewKey.NewKeyStyle.Normal);                     // 7 è `
-            AddKey("E08", 9, nextX(m), yc, m, m, "R3", NewKey.NewKeyStyle.Normal);                     // 8 _ \
-            AddKey("E09", 10, nextX(m), yc, m, m, "R4", NewKey.NewKeyStyle.Normal);                    // 9 ç ^
-            AddKey("E10", 11, nextX(m), yc, m, m, "R5", NewKey.NewKeyStyle.Normal);                    // 0 à @
-            AddKey("E11", 12, nextX(m), yc, m, m, "R5", NewKey.NewKeyStyle.Normal);                    // ° ) ]
-            AddKey("E12", 13, nextX(m), yc, m, m, "R5", NewKey.NewKeyStyle.Normal);                    // + = }
-            AddKey("E13", 14, xc, yc, rm - xc, m, "R5", NewKey.NewKeyStyle.Static, "\u232B");          // Backspace
+            AddKey("E06", 7, nextX(m), yc, m, m, "R2", NewKey.KeyStyles.Detail);                     // 6 - |
+            AddKey("E07", 8, nextX(m), yc, m, m, "R2", NewKey.KeyStyles.Detail);                     // 7 è `
+            AddKey("E08", 9, nextX(m), yc, m, m, "R3", NewKey.KeyStyles.Detail);                     // 8 _ \
+            AddKey("E09", 10, nextX(m), yc, m, m, "R4", NewKey.KeyStyles.Detail);                    // 9 ç ^
+            AddKey("E10", 11, nextX(m), yc, m, m, "R5", NewKey.KeyStyles.Detail);                    // 0 à @
+            AddKey("E11", 12, nextX(m), yc, m, m, "R5", NewKey.KeyStyles.Detail);                    // ° ) ]
+            AddKey("E12", 13, nextX(m), yc, m, m, "R5", NewKey.KeyStyles.Detail);                    // + = }
+            AddKey("E13", 14, xc, yc, rm - xc, m, "R5", NewKey.KeyStyles.Static, "\u232B");          // Backspace
 
             xc = bo;
             yc += m + sp;
-            AddKey("D00", 15, nextX((int)(1.5 * m)), yc, (int)(1.5 * m), m, "L5", NewKey.NewKeyStyle.Static, "Tab");
-            AddKey("D01", 16, nextX(m), yc, m, m, "L5", NewKey.NewKeyStyle.Simple);                    // a
-            AddKey("D02", 17, nextX(m), yc, m, m, "L4", NewKey.NewKeyStyle.Simple);                    // z
-            AddKey("D03", 18, nextX(m), yc, m, m, "L3", NewKey.NewKeyStyle.Simple);                    // e €
-            AddKey("D04", 19, nextX(m), yc, m, m, "L2", NewKey.NewKeyStyle.Simple);                    // r
-            AddKey("D05", 20, nextX(m), yc, m, m, "L2", NewKey.NewKeyStyle.Simple);                    // t
+            AddKey("D00", 15, nextX((int)(1.5 * m)), yc, (int)(1.5 * m), m, "L5", NewKey.KeyStyles.Static, "Tab");
+            AddKey("D01", 16, nextX(m), yc, m, m, "L5", NewKey.KeyStyles.Simple);                    // a
+            AddKey("D02", 17, nextX(m), yc, m, m, "L4", NewKey.KeyStyles.Simple);                    // z
+            AddKey("D03", 18, nextX(m), yc, m, m, "L3", NewKey.KeyStyles.Simple);                    // e €
+            AddKey("D04", 19, nextX(m), yc, m, m, "L2", NewKey.KeyStyles.Simple);                    // r
+            AddKey("D05", 20, nextX(m), yc, m, m, "L2", NewKey.KeyStyles.Simple);                    // t
             xc += ms;
-            AddKey("D06", 21, nextX(m), yc, m, m, "R2", NewKey.NewKeyStyle.Simple);                    // y
-            AddKey("D07", 22, nextX(m), yc, m, m, "R2", NewKey.NewKeyStyle.Simple);                    // u
-            AddKey("D08", 23, nextX(m), yc, m, m, "R3", NewKey.NewKeyStyle.Simple);                    // i
-            AddKey("D09", 24, nextX(m), yc, m, m, "R4", NewKey.NewKeyStyle.Simple);                    // o
-            AddKey("D10", 25, nextX(m), yc, m, m, "R5", NewKey.NewKeyStyle.Simple);                    // p
-            AddKey("D11", 26, nextX(m), yc, m, m, "R5", NewKey.NewKeyStyle.Normal);                    // ^ ¨
-            AddKey("D12", 27, nextX(m), yc, m, m, "R5", NewKey.NewKeyStyle.Normal);                    // $ £ ¤
+            AddKey("D06", 21, nextX(m), yc, m, m, "R2", NewKey.KeyStyles.Simple);                    // y
+            AddKey("D07", 22, nextX(m), yc, m, m, "R2", NewKey.KeyStyles.Simple);                    // u
+            AddKey("D08", 23, nextX(m), yc, m, m, "R3", NewKey.KeyStyles.Simple);                    // i
+            AddKey("D09", 24, nextX(m), yc, m, m, "R4", NewKey.KeyStyles.Simple);                    // o
+            AddKey("D10", 25, nextX(m), yc, m, m, "R5", NewKey.KeyStyles.Simple);                    // p
+            AddKey("D11", 26, nextX(m), yc, m, m, "R5", NewKey.KeyStyles.Detail);                    // ^ ¨
+            AddKey("D12", 27, nextX(m), yc, m, m, "R5", NewKey.KeyStyles.Detail);                    // $ £ ¤
 
             xc = bo;
             yc += m + sp;
-            AddKey("C00", 58, nextX((int)(1.75 * m)), yc, (int)(1.75 * m), m, "L5", NewKey.NewKeyStyle.Static, "CapsLock");
-            AddKey("C01", 30, nextX(m), yc, m, m, "L5", NewKey.NewKeyStyle.Simple);                    // q
-            AddKey("C02", 31, nextX(m), yc, m, m, "L4", NewKey.NewKeyStyle.Simple);                    // s
-            AddKey("C03", 32, nextX(m), yc, m, m, "L3", NewKey.NewKeyStyle.Simple);                    // d
-            AddKey("C04", 33, nextX(m), yc, m, m, "L2", NewKey.NewKeyStyle.Simple);                    // f
-            AddKey("C05", 34, nextX(m), yc, m, m, "L2", NewKey.NewKeyStyle.Simple);                    // g
+            AddKey("C00", 58, nextX((int)(1.75 * m)), yc, (int)(1.75 * m), m, "L5", NewKey.KeyStyles.Static, "CapsLock");
+            AddKey("C01", 30, nextX(m), yc, m, m, "L5", NewKey.KeyStyles.Simple);                    // q
+            AddKey("C02", 31, nextX(m), yc, m, m, "L4", NewKey.KeyStyles.Simple);                    // s
+            AddKey("C03", 32, nextX(m), yc, m, m, "L3", NewKey.KeyStyles.Simple);                    // d
+            AddKey("C04", 33, nextX(m), yc, m, m, "L2", NewKey.KeyStyles.Simple);                    // f
+            AddKey("C05", 34, nextX(m), yc, m, m, "L2", NewKey.KeyStyles.Simple);                    // g
             xc += ms;
-            AddKey("C06", 35, nextX(m), yc, m, m, "R2", NewKey.NewKeyStyle.Simple);                    // h
-            AddKey("C07", 36, nextX(m), yc, m, m, "R2", NewKey.NewKeyStyle.Simple);                    // j
-            AddKey("C08", 37, nextX(m), yc, m, m, "R3", NewKey.NewKeyStyle.Simple);                    // k
-            AddKey("C09", 38, nextX(m), yc, m, m, "R4", NewKey.NewKeyStyle.Simple);                    // l
-            AddKey("C10", 39, nextX(m), yc, m, m, "R5", NewKey.NewKeyStyle.Simple);                    // m
-            AddKey("C11", 40, nextX(m), yc, m, m, "R5", NewKey.NewKeyStyle.Normal);                    // ù %
-            AddKey("C12", 43, nextX(m), yc, m, m, "R5", NewKey.NewKeyStyle.Normal);                    // * µ
-            AddKey("C13", 28, xc, yc - m - sp, rm - xc, 2 * m + sp, "R5", NewKey.NewKeyStyle.Static, "Enter");
+            AddKey("C06", 35, nextX(m), yc, m, m, "R2", NewKey.KeyStyles.Simple);                    // h
+            AddKey("C07", 36, nextX(m), yc, m, m, "R2", NewKey.KeyStyles.Simple);                    // j
+            AddKey("C08", 37, nextX(m), yc, m, m, "R3", NewKey.KeyStyles.Simple);                    // k
+            AddKey("C09", 38, nextX(m), yc, m, m, "R4", NewKey.KeyStyles.Simple);                    // l
+            AddKey("C10", 39, nextX(m), yc, m, m, "R5", NewKey.KeyStyles.Simple);                    // m
+            AddKey("C11", 40, nextX(m), yc, m, m, "R5", NewKey.KeyStyles.Detail);                    // ù %
+            AddKey("C12", 43, nextX(m), yc, m, m, "R5", NewKey.KeyStyles.Detail);                    // * µ
+            AddKey("C13", 28, xc, yc - m - sp, rm - xc, 2 * m + sp, "R5", NewKey.KeyStyles.Static, "Enter");
 
             xc = bo;
             yc += m + sp;
-            AddKey("BL", 42, nextX((int)(1.125 * m)), yc, (int)(1.125 * m), m, "", NewKey.NewKeyStyle.Static, "Shift");
-            AddKey("B00", 86, nextX(m), yc, m, m, "L5", NewKey.NewKeyStyle.Normal);                    // < >
-            AddKey("B01", 44, nextX(m), yc, m, m, "L5", NewKey.NewKeyStyle.Simple);                    // w
-            AddKey("B02", 45, nextX(m), yc, m, m, "L4", NewKey.NewKeyStyle.Simple);                    // x
-            AddKey("B03", 46, nextX(m), yc, m, m, "L3", NewKey.NewKeyStyle.Simple);                    // c
-            AddKey("B04", 47, nextX(m), yc, m, m, "L2", NewKey.NewKeyStyle.Simple);                    // v
-            AddKey("B05", 48, nextX(m), yc, m, m, "L2", NewKey.NewKeyStyle.Simple);                    // b
+            AddKey("BL", 42, nextX((int)(1.125 * m)), yc, (int)(1.125 * m), m, "", NewKey.KeyStyles.Static, "Shift");
+            AddKey("B00", 86, nextX(m), yc, m, m, "L5", NewKey.KeyStyles.Detail);                    // < >
+            AddKey("B01", 44, nextX(m), yc, m, m, "L5", NewKey.KeyStyles.Simple);                    // w
+            AddKey("B02", 45, nextX(m), yc, m, m, "L4", NewKey.KeyStyles.Simple);                    // x
+            AddKey("B03", 46, nextX(m), yc, m, m, "L3", NewKey.KeyStyles.Simple);                    // c
+            AddKey("B04", 47, nextX(m), yc, m, m, "L2", NewKey.KeyStyles.Simple);                    // v
+            AddKey("B05", 48, nextX(m), yc, m, m, "L2", NewKey.KeyStyles.Simple);                    // b
             xc += ms;
-            AddKey("B06", 49, nextX(m), yc, m, m, "R2", NewKey.NewKeyStyle.Simple);                    // n
-            AddKey("B07", 50, nextX(m), yc, m, m, "R2", NewKey.NewKeyStyle.Normal);                    // , ?
-            AddKey("B08", 51, nextX(m), yc, m, m, "R3", NewKey.NewKeyStyle.Normal);                    // ; .
-            AddKey("B09", 52, nextX(m), yc, m, m, "R4", NewKey.NewKeyStyle.Normal);                    // : /
-            AddKey("B10", 53, nextX(m), yc, m, m, "R5", NewKey.NewKeyStyle.Normal);                    // ! §
-            AddKey("B11", 54, xc, yc, rm - xc, m, "", NewKey.NewKeyStyle.Static, "Shift");
+            AddKey("B06", 49, nextX(m), yc, m, m, "R2", NewKey.KeyStyles.Simple);                    // n
+            AddKey("B07", 50, nextX(m), yc, m, m, "R2", NewKey.KeyStyles.Detail);                    // , ?
+            AddKey("B08", 51, nextX(m), yc, m, m, "R3", NewKey.KeyStyles.Detail);                    // ; .
+            AddKey("B09", 52, nextX(m), yc, m, m, "R4", NewKey.KeyStyles.Detail);                    // : /
+            AddKey("B10", 53, nextX(m), yc, m, m, "R5", NewKey.KeyStyles.Detail);                    // ! §
+            AddKey("B11", 54, xc, yc, rm - xc, m, "", NewKey.KeyStyles.Static, "Shift");
 
             xc = bo;
             yc += m + sp;
-            AddKey("A00", 29, nextX((int)(1.35 * m)), yc, (int)(1.35 * m), m, "", NewKey.NewKeyStyle.Static, "Ctrl");
-            AddKey("A01", 91, nextX((int)(1.35 * m)), yc, (int)(1.35 * m), m, "", NewKey.NewKeyStyle.Static, "W");
-            AddKey("A02", 56, nextX((int)(1.35 * m)), yc, (int)(1.35 * m), m, "", NewKey.NewKeyStyle.Static, "Alt");
-            AddKey("A03", 57, nextX((int)(5.8 * m)), yc, (int)(5.8 * m), m, "", NewKey.NewKeyStyle.Static, "Space");
-            AddKey("A04", 541, nextX((int)(1.35 * m)), yc, (int)(1.35 * m), m, "", NewKey.NewKeyStyle.Static, "Alt Gr");
-            AddKey("A05", 92, nextX((int)(1.35 * m)), yc, (int)(1.35 * m), m, "", NewKey.NewKeyStyle.Static, "W");
-            AddKey("A06", 93, nextX((int)(1.35 * m)), yc, (int)(1.35 * m), m, "", NewKey.NewKeyStyle.Static, "Menu");
-            AddKey("A07", 329, xc, yc, rm - xc, m, "", NewKey.NewKeyStyle.Static, "Ctrl");
+            AddKey("A00", 29, nextX((int)(1.35 * m)), yc, (int)(1.35 * m), m, "", NewKey.KeyStyles.Static, "Ctrl");
+            AddKey("A01", 91, nextX((int)(1.35 * m)), yc, (int)(1.35 * m), m, "", NewKey.KeyStyles.Static, "W");
+            AddKey("A02", 56, nextX((int)(1.35 * m)), yc, (int)(1.35 * m), m, "", NewKey.KeyStyles.Static, "Alt");
+            AddKey("A03", 57, nextX((int)(5.8 * m)), yc, (int)(5.8 * m), m, "", NewKey.KeyStyles.Static, "Space");
+            AddKey("A04", 541, nextX((int)(1.35 * m)), yc, (int)(1.35 * m), m, "", NewKey.KeyStyles.Static, "Alt Gr");
+            AddKey("A05", 92, nextX((int)(1.35 * m)), yc, (int)(1.35 * m), m, "", NewKey.KeyStyles.Static, "W");
+            AddKey("A06", 93, nextX((int)(1.35 * m)), yc, (int)(1.35 * m), m, "", NewKey.KeyStyles.Static, "Menu");
+            AddKey("A07", 329, xc, yc, rm - xc, m, "", NewKey.KeyStyles.Static, "Ctrl");
 
             MyCanvas.Width = rm + 2 * bo + 17;
             MyCanvas.Height = 2 * bo + 5 * m + 4 * sp;
@@ -379,13 +380,13 @@ namespace LearningKeyboard
 
         private void ApplyColorScheme()
         {
-            ResourceDictionary rd = (Resources?[ColorScheme] ?? Resources["Brown"]) as ResourceDictionary;
+            ResourceDictionary rd = ((Resources[ColorScheme] ?? Resources["Brown"]) as ResourceDictionary)!;
 
             foreach (KeyboardKey k in AllKeys.Values)
             {
                 if (rd.Contains(k.digit))
                 {
-                    k.NormalBackground = rd[k.digit] as Brush;
+                    k.NormalBackground = (rd[k.digit] as Brush)!;
                 }
                 else
                 {
@@ -401,7 +402,7 @@ namespace LearningKeyboard
         }
 
 
-        private void AddKey(string dispoNF, int keyCode, int p1X, int p1Y, int w, int h, string digit, NewKey.NewKeyStyle style, string simpleTextOverride = "")
+        private void AddKey(string dispoNF, int keyCode, int p1X, int p1Y, int w, int h, string digit, NewKey.KeyStyles style, string simpleTextOverride = "")
         {
             KeyboardKey k = new KeyboardKey(dispoNF, keyCode, digit, style, simpleTextOverride, w, h);
             // Special color for F and J keys to replace physical bump
@@ -436,8 +437,8 @@ namespace LearningKeyboard
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            var st = new SettingsWindow(ColorScheme, TextFormatting, TextRendering, AlwaysOnTop);
-            if (st.ShowDialog().Value)
+            SettingsWindow st = new SettingsWindow(ColorScheme, TextFormatting, TextRendering, AlwaysOnTop);
+            if (st.ShowDialog().HasValue)
             {
                 if (st.ColorScheme != ColorScheme)
                 {

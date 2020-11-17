@@ -3,19 +3,17 @@
 // Extra class to prepare automatic layout update when keyboard selection changes
 //
 // 2017-12-22   PV      1.1.1 First tests
+// 2020-11-17   PV      C#8, nullable enable
 //
 // It seems that no event is raised when keyboard layout changes (but Ok for language change), so polling
 // GetKbdInfo() regularly should do the trick
 
-
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
+
+#nullable enable
+
 
 namespace LearningKeyboard
 {

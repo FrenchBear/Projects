@@ -1,10 +1,15 @@
 ﻿// About LearningKeyboard
 // Standard code
+//
 // 2017-09-19   PV
+// 2020-11-17   PV      C#8, nullable enable
 
 using System;
 using System.Reflection;
 using System.Windows;
+
+#nullable enable
+
 
 namespace LearningKeyboard
 {

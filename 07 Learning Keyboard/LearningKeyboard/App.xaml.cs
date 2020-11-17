@@ -1,17 +1,22 @@
 ﻿// LearningKeyboard App.xaml.cs
 // SUpport for single-instance app
+//
 // 2017-12-23   PV
+// 2020-11-17   PV      C#8, nullable enable
 
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
 
+#nullable enable
+
+
 namespace LearningKeyboard
 {
     public partial class App : Application
     {
-        static System.Threading.Mutex InstanceMutex;
+        static System.Threading.Mutex? InstanceMutex;
 
         protected override void OnStartup(StartupEventArgs e)
         {

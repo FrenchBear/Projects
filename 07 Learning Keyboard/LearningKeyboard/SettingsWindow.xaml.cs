@@ -1,11 +1,16 @@
 ﻿// LearningKeyboard Settings Window
+//
 // 2017-09-21   PV
 // 2017-10-20   PV      TextRendering and TextFormatting
 // 2017-12-22   PV      AlwaysOnTop
+// 2020-11-17   PV      C#8, nullable enable
 
 using System;
 using System.Windows;
 using System.Windows.Input;
+
+#nullable enable
+
 
 namespace LearningKeyboard
 {
@@ -52,26 +57,25 @@ namespace LearningKeyboard
             };
         }
 
-        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        private void CancelButton_Click(object sender, RoutedEventArgs? e)
         {
             DialogResult = false;
         }
 
-        private void OKButton_Click(object sender, RoutedEventArgs e)
+        private void OKButton_Click(object sender, RoutedEventArgs? e)
         {
-            // ToDo: Optimize if current color scheme has not changed
-            // Apply settings
-            if (BrownOption.IsChecked.Value) ColorScheme = "Brown";
-            else if (RainbowOption.IsChecked.Value) ColorScheme = "Rainbow";
-            else if (PastelOption.IsChecked.Value) ColorScheme = "Pastel";
+            // Apply settings.  IsChecked is never null since checkbox is not tristate
+            if (BrownOption.IsChecked!.Value) ColorScheme = "Brown";
+            else if (RainbowOption.IsChecked!.Value) ColorScheme = "Rainbow";
+            else if (PastelOption.IsChecked!.Value) ColorScheme = "Pastel";
 
-            if (TextFormattingIdealOption.IsChecked.Value) TextFormatting = "Ideal";
-            else if (TextFormattingDisplayOption.IsChecked.Value) TextFormatting = "Display";
+            if (TextFormattingIdealOption.IsChecked!.Value) TextFormatting = "Ideal";
+            else if (TextFormattingDisplayOption.IsChecked!.Value) TextFormatting = "Display";
 
-            if (TextRenderingAutoOption.IsChecked.Value) TextRendering = "Auto";
-            else if (TextRenderingAliasedOption.IsChecked.Value) TextRendering = "Aliased";
-            else if (TextRenderingGrayscaleOption.IsChecked.Value) TextRendering = "Grayscale";
-            else if (TextRenderingClearTypeOption.IsChecked.Value) TextRendering = "ClearType";
+            if (TextRenderingAutoOption.IsChecked!.Value) TextRendering = "Auto";
+            else if (TextRenderingAliasedOption.IsChecked!.Value) TextRendering = "Aliased";
+            else if (TextRenderingGrayscaleOption.IsChecked!.Value) TextRendering = "Grayscale";
+            else if (TextRenderingClearTypeOption.IsChecked!.Value) TextRendering = "ClearType";
 
             AlwaysOnTop = AlwaysOnTopCheckBox.IsChecked ?? false;
 
@@ -80,7 +84,6 @@ namespace LearningKeyboard
             Properties.Settings.Default["TextRendering"] = TextRendering;
             Properties.Settings.Default["AlwaysOnTop"] = AlwaysOnTop;
             Properties.Settings.Default.Save();
-
 
 
             DialogResult = true;

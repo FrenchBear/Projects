@@ -12,10 +12,12 @@
     <Border Name="KeyBorder" BorderBrush="Black" BorderThickness="1">
         <Canvas Name="KeyCanvas" TextBlock.FontFamily="Segoe UI" TextBlock.FontSize="15">
 
+            <!--Text for simple keys such as a -->
             <TextBlock Name="SimpleTextTB" TextAlignment="Center"
                        Canvas.Top="8" Canvas.Left="0" Height="19"  Width="38"
-                       Text="{Binding SimpleText}" />
+                       Text="" />
 
+            <!-- "Normal" 4 texts for normal keys (not simple) such as =+}± -->
             <TextBlock Name="NormalTextTB" TextAlignment="Center"
                        Canvas.Top="19" Canvas.Left="0" Width="19" Height="19"
                        Text="{Binding NormalText,FallbackValue=r}" Background="{Binding NormalTextBackground}" />
@@ -29,21 +31,22 @@
                        Canvas.Top="0" Canvas.Left="19" Width="19" Height="19"
                        Text="{Binding ShiftAltGrText,FallbackValue=®}" Background="{Binding ShiftAltGrTextBackground}" />
 
+            <!-- After Dead texts, hidden by default -->
             <TextBlock Name="ADNormalTextTB" TextAlignment="Center"
                        Canvas.Top="19" Canvas.Left="0" Width="19" Height="19"
-                       Foreground="{Binding GhostedForeground}"
+                       Foreground="{Binding GhostedForeground}" Visibility="Hidden"
                        Text="{Binding ADNormalText,FallbackValue=e}" Background="{Binding NormalBackground}" />
             <TextBlock Name="ADShiftTextTB" TextAlignment="Center"
                        Canvas.Top="0" Canvas.Left="0" Width="19" Height="19"
-                       Foreground="{Binding GhostedForeground}"
+                       Foreground="{Binding GhostedForeground}" Visibility="Hidden"
                        Text="{Binding ADShiftText,FallbackValue=E}" Background="{Binding NormalBackground}" />
             <TextBlock Name="ADResultTextTB" TextAlignment="Center"
                        Canvas.Top="19" Canvas.Left="19" Width="19" Height="19"
-                       Foreground="{Binding NormalForeground}"
+                       Foreground="{Binding NormalForeground}" Visibility="Hidden"
                        Text="{Binding ADResultText,FallbackValue=ê}" Background="{Binding NormalBackground}" />
             <TextBlock Name="ADShiftResultTextTB" TextAlignment="Center"
                        Canvas.Top="0" Canvas.Left="19" Width="19" Height="19"
-                       Foreground="{Binding NormalForeground}"
+                       Foreground="{Binding NormalForeground}" Visibility="Hidden"
                        Text="{Binding ADShiftResultText,FallbackValue=Ê}" Background="{Binding NormalBackground}" />
         </Canvas>
     </Border>
