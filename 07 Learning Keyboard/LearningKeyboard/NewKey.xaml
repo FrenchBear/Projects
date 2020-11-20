@@ -14,7 +14,7 @@
 
             <!--Text for simple keys such as a -->
             <TextBlock Name="SimpleTextTB" TextAlignment="Center"
-                       Canvas.Top="8" Canvas.Left="0" Height="19"  Width="38"
+                       Canvas.Top="8" Canvas.Left="0" Height="20"  Width="38"
                        Text="" />
 
             <!-- "Normal" 4 texts for normal keys (not simple) such as =+}± -->

@@ -4,6 +4,7 @@
 // 2017-10-20   PV      TextRendering and TextFormatting
 // 2017-12-22   PV      AlwaysOnTop
 // 2020-11-17   PV      C#8, nullable enable
+// 2020-11-20   PV      Scale option
 
 using System;
 using System.Windows;
@@ -23,15 +24,17 @@ namespace LearningKeyboard
         internal string TextFormatting;
         internal string TextRendering;
         internal bool AlwaysOnTop;
+        internal double Scale;
 
 
-        internal SettingsWindow(string colorScheme, string textFormatting, string textRendering, bool alwaysOnTop)
+        internal SettingsWindow(string colorScheme, string textFormatting, string textRendering, bool alwaysOnTop, double scale)
         {
             InitializeComponent();
             ColorScheme = colorScheme;
             TextRendering = textRendering;
             TextFormatting = textFormatting;
             AlwaysOnTop = alwaysOnTop;
+            Scale = scale;
 
             Loaded += (s, e) =>
             {
@@ -54,6 +57,7 @@ namespace LearningKeyboard
                     case "ClearType": TextRenderingClearTypeOption.IsChecked = true; break;
                 }
                 AlwaysOnTopCheckBox.IsChecked = AlwaysOnTop;
+                ScaleTextBox.Text = $"{(int)(100 * Scale + 0.5)}";
             };
         }
 
@@ -62,9 +66,22 @@ namespace LearningKeyboard
             DialogResult = false;
         }
 
+        // Apply settings
         private void OKButton_Click(object sender, RoutedEventArgs? e)
         {
-            // Apply settings.  IsChecked is never null since checkbox is not tristate
+            var s = ScaleTextBox.Text;
+            if (!int.TryParse(s, out int sint))
+            {
+                MessageBox.Show("Invalid scale, not numeric", "Learning Keyboard Options", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (sint < 25 || sint > 400)
+            {
+                MessageBox.Show("Invalid scale, not in 25..400 range", "Learning Keyboard Options", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            Scale = sint / 100.0;
+
             if (BrownOption.IsChecked!.Value) ColorScheme = "Brown";
             else if (RainbowOption.IsChecked!.Value) ColorScheme = "Rainbow";
             else if (PastelOption.IsChecked!.Value) ColorScheme = "Pastel";
@@ -83,6 +100,7 @@ namespace LearningKeyboard
             Properties.Settings.Default["TextFormatting"] = TextFormatting;
             Properties.Settings.Default["TextRendering"] = TextRendering;
             Properties.Settings.Default["AlwaysOnTop"] = AlwaysOnTop;
+            Properties.Settings.Default["Scale"] = Scale;
             Properties.Settings.Default.Save();
 
 

@@ -5,18 +5,19 @@
 // 2017-10-20   PV      TextRendering and TextFormatting
 // 2017-12-22   PV      1.1.1 AlwaysOnTop option
 // 2020-11-17   PV      C#8, nullable enable
+// 2020-11-20   PV      Support for dynamic layout change; Scale option
 
-using Gma.System.MouseKeyHook;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Interop;
 using System.Windows.Media;
 using static LearningKeyboard.CharFromKey;
+using Gma.System.MouseKeyHook;
 
 #nullable enable
 
@@ -33,70 +34,68 @@ namespace LearningKeyboard
         private bool alt;
         private bool dead;
 
+        // Settings
+        private string ColorScheme;
+        private string TextFormatting;
+        private string TextRendering;
+        private bool AlwaysOnTop;
+        private double Scale;
+
 
         public MainWindow()
         {
             InitializeComponent();
 
-            TextFormatting = (string)Properties.Settings.Default["TextFormatting"];
-            TextRendering = (string)Properties.Settings.Default["TextRendering"];
+            ColorScheme = (string)Properties.Settings.Default["ColorScheme"];           // = "Brown";
+            TextFormatting = (string)Properties.Settings.Default["TextFormatting"];     // = "Ideal";
+            TextRendering = (string)Properties.Settings.Default["TextRendering"];       // = "Auto";
             ApplyWPFTextOptions();
 
+            Scale = (double)Properties.Settings.Default["Scale"];               // = 1;
+            ApplyWindowScale();
+
             DrawKeyboard();
-            PrepareDicraticalCombinations();
-            ApplyColorScheme();
-            Subscribe();
-            Tests2();
-            
+            RedrawKeyboardAfterLayoutChange();
+            SubscribeGlobalHooks();
+
             AlwaysOnTop = (bool)Properties.Settings.Default["AlwaysOnTop"];
             Activated += (s, e) => { Topmost |= AlwaysOnTop; };
             Deactivated += (s, e) => { if (AlwaysOnTop) { Topmost = true; Activate(); } };
 
             AddNotifiationIcon();
-            Closed += (s, e) => { if (!(NotificationIcon is null)) { NotificationIcon.Visible = false; NotificationIcon.Dispose(); } };
-        }
 
-        // -----------------------------------------------
-        // Get notified when input language changes
-        private void Tests2()
-        {
-            var cc = System.Windows.Input.InputLanguageManager.Current;
-            cc.InputLanguageChanged += (object sender, System.Windows.Input.InputLanguageEventArgs e) =>
+            HwndSource? source = null;
+            HwndSourceHook? hook = null;
+            Loaded += (s, e) =>
             {
-                var ln = System.Windows.Forms.InputLanguage.CurrentInputLanguage.LayoutName;
-                var cc = System.Windows.Input.InputLanguageManager.Current;
-                Debug.WriteLine($"InputLanguageChanged: {cc.CurrentInputLanguage.Name} {ln}");
+                // Hook WndProc for LearningKeyboard main window to listen for WM_INPUTLANGCHANGE messages
+                source = HwndSource.FromHwnd(new WindowInteropHelper(this).Handle);
+                hook = new HwndSourceHook(WndProc);
+                source.AddHook(hook);
+            };
+
+            Closed += (s, e) =>
+            {
+                if (!(NotificationIcon is null)) { NotificationIcon.Visible = false; NotificationIcon.Dispose(); }
+                source?.RemoveHook(hook);
             };
         }
 
-        // Get notified when keyboard layout changes
 
-        // https://stackoverflow.com/questions/8289492/find-out-when-keyboard-layout-is-changed
-        [DllImport("user32.dll")]
-        static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
+        const int WM_INPUTLANGCHANGE = 0x51;
 
-        private const uint WINEVENT_OUTOFCONTEXT = 0;
-        private const uint EVENT_SYSTEM_FOREGROUND = 3;
-
-        delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
-
-        WinEventDelegate? dele = null;
-        private void Tests()
+        // This is a low-vel version of System.Windows.Input.InputLanguageManager.InputLanguageChanged event handler
+        // The .Net version is NOT raised when just layout changes, but not the language (for instance, when switching 
+        // from en-US layout US to en-US layout Custom5b), while the WM_INPUTLANGCHANGE is sent in both cases.
+        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            // SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, WinEventProc, 0, 0, WINEVENT_OUTOFCONTEXT);
-            dele = new WinEventDelegate(WinEventProc);
-            IntPtr m_hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, dele, 0, 0, WINEVENT_OUTOFCONTEXT);
+            if (msg == WM_INPUTLANGCHANGE)
+            {
+                Debug.WriteLine("WndProc: WM_INPUTLANGCHANGE");
+                RedrawKeyboardAfterLayoutChange();
+            }
+            return IntPtr.Zero;
         }
-
-        private void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
-        {
-            var dwhkl = Gma.System.MouseKeyHook.WinApi.KeyboardNativeMethods.GetActiveKeyboard();
-            var ln = System.Windows.Forms.InputLanguage.CurrentInputLanguage.LayoutName;
-            var cc = System.Windows.Input.InputLanguageManager.Current;
-            Debug.WriteLine($"WinEventProc {eventType} {dwhkl} {cc.CurrentInputLanguage.Name} {ln}");
-        }
-
-        // -----------------------------------------------
 
 
         private void AddNotifiationIcon()
@@ -136,6 +135,17 @@ namespace LearningKeyboard
             }
         }
 
+        private void ApplyWindowScale()
+        {
+            if (Scale >= 0.25 && Scale <= 4)
+            {
+                MainScaleTransform.ScaleX = Scale;
+                MainScaleTransform.ScaleY = Scale;
+            }
+        }
+
+
+        // Cache of combinations with dead keys, to speed-up
         private readonly Dictionary<Tuple<Keys, bool, bool>, List<Tuple<string, string>>> dicCombi = new Dictionary<Tuple<Keys, bool, bool>, List<Tuple<string, string>>>();
 
         private void PrepareDicraticalCombinations()
@@ -157,7 +167,7 @@ namespace LearningKeyboard
         }
 
 
-        public void Subscribe()
+        public void SubscribeGlobalHooks()
         {
             m_GlobalHook = Hook.GlobalEvents();
 
@@ -309,15 +319,8 @@ namespace LearningKeyboard
             }
         }
 
-        private string ColorScheme = "Brown";
-        private string TextFormatting = "Ideal";
-        private string TextRendering = "Auto";
-        private bool AlwaysOnTop;
-
         private void DrawKeyboard()
         {
-            ColorScheme = (string)Properties.Settings.Default["ColorScheme"];
-
             const int bo = 5;       // border margin
             const int m = 40;       // width/height of a square key
             const int sp = 1;       // horizontal/vertical space between keys
@@ -421,6 +424,28 @@ namespace LearningKeyboard
             SettingsButton.SetValue(Canvas.LeftProperty, (double)MyCanvas.Width - bo - SettingsButton.Width);
         }
 
+        private void RedrawKeyboardAfterLayoutChange()
+        {
+            foreach (var key in AllKeys.Values)
+                key.InitializeLabels();
+
+            // Use darker background for dead keysm need to be refreshed
+            ApplyColorScheme();
+
+            // Need to rebuild diacritical combinaisons cache
+            dicCombi.Clear();
+            PrepareDicraticalCombinations();
+
+            UpdateMainWindowsTooltip();
+        }
+
+        private void UpdateMainWindowsTooltip()
+        {
+            var ln = System.Windows.Forms.InputLanguage.CurrentInputLanguage.LayoutName;
+            var cc = System.Windows.Input.InputLanguageManager.Current;
+            this.ToolTip = $"Language: {cc.CurrentInputLanguage.Name}\r\nLayout: {ln}";
+        }
+
 
         private static readonly Brush DarkerBrush = new SolidColorBrush(Color.FromArgb(64, 40, 40, 40));
 
@@ -440,10 +465,10 @@ namespace LearningKeyboard
                     k.NormalForeground = Brushes.White;
                 }
 
-                if (k.IsNormalDeadKey) k.NormalTextBackground = DarkerBrush;
-                if (k.IsShiftDeadKey) k.ShiftTextBackground = DarkerBrush;
-                if (k.IsAltGrDeadKey) k.AltGrTextBackground = DarkerBrush;
-                if (k.IsShiftAltGrDeadKey) k.ShiftAltGrTextBackground = DarkerBrush;
+                if (k.IsNormalDeadKey) k.NormalTextBackground = DarkerBrush; else k.NormalTextBackground = Brushes.Transparent;
+                if (k.IsShiftDeadKey) k.ShiftTextBackground = DarkerBrush; else k.ShiftTextBackground = Brushes.Transparent;
+                if (k.IsAltGrDeadKey) k.AltGrTextBackground = DarkerBrush; else k.AltGrTextBackground = Brushes.Transparent;
+                if (k.IsShiftAltGrDeadKey) k.ShiftAltGrTextBackground = DarkerBrush; else k.ShiftAltGrTextBackground = Brushes.Transparent;
             }
         }
 
@@ -451,6 +476,8 @@ namespace LearningKeyboard
         private void AddKey(string dispoNF, int keyCode, int p1X, int p1Y, int w, int h, string digit, NewKey.KeyStyles style, string simpleTextOverride = "")
         {
             KeyboardKey k = new KeyboardKey(dispoNF, keyCode, digit, style, simpleTextOverride, w, h);
+            // Don't need to call InitializeLabels right now, will be taken care of by a call to RedrawKeyboardAfterLayoutChange in MainWindow constructor
+
             // Special color for F and J keys to replace physical bump
             if (keyCode == 33 || keyCode == 36)
                 k.NormalForeground = Brushes.Red;
@@ -483,7 +510,7 @@ namespace LearningKeyboard
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            SettingsWindow st = new SettingsWindow(ColorScheme, TextFormatting, TextRendering, AlwaysOnTop);
+            SettingsWindow st = new SettingsWindow(ColorScheme, TextFormatting, TextRendering, AlwaysOnTop, Scale);
             if (st.ShowDialog().HasValue)
             {
                 if (st.ColorScheme != ColorScheme)
@@ -497,6 +524,12 @@ namespace LearningKeyboard
                     TextRendering = st.TextRendering;
                     ApplyWPFTextOptions();
                 }
+                if (st.Scale != Scale)
+                {
+                    Scale = st.Scale;
+                    ApplyWindowScale();
+                }
+
                 AlwaysOnTop = st.AlwaysOnTop;
                 Topmost = AlwaysOnTop;
             }

@@ -16,6 +16,10 @@
     </Window.Resources>
 
     <Grid>
+        <Grid.LayoutTransform>
+            <ScaleTransform x:Name="MainScaleTransform" ScaleX="1" ScaleY="1" />
+        </Grid.LayoutTransform>
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />

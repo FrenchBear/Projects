@@ -41,7 +41,7 @@ namespace LearningKeyboard
             KeyCanvas.SetValue(TextBlock.FontSizeProperty, H / 38.0 * 15.0);
 
             SimpleTextTB.Width = W;
-            SimpleTextTB.Height = 20;
+            SimpleTextTB.Height = 21;
             SimpleTextTB.SetValue(Canvas.TopProperty, H / 2.0 - H / 4);
             SimpleTextTB.LineStackingStrategy = LineStackingStrategy.BlockLineHeight;
 
@@ -264,7 +264,7 @@ namespace LearningKeyboard
         /// <summary>
         /// Used to restore KeyStyle when AfterDeak style is cleared.
         /// </summary>
-        private KeyStyles DefaultKeyStyle = (KeyStyles)0;       // Special initial value to force initialization
+        protected KeyStyles DefaultKeyStyle = (KeyStyles)0;       // Special initial value to force initialization
 
 
         /// <summary>

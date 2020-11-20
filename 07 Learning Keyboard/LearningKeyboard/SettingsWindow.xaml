@@ -111,9 +111,13 @@
                     <RadioButton Name="TextRenderingClearTypeOption" Content="_ClearType" MouseDoubleClick="Option_MouseDoubleClick" />
                 </StackPanel>
             </GroupBox>
+            <StackPanel Orientation="Horizontal">
+                <Label>Scale (25-400)</Label>
+                <TextBox x:Name="ScaleTextBox" Width="70" Margin="0,5,0,2" />
+            </StackPanel>
             <CheckBox Name="AlwaysOnTopCheckBox" Margin="0,6,0,6" >
                 <Label Content="Always on _top" Padding="0" />
-            </CheckBox> 
+            </CheckBox>
         </StackPanel>
 
         <StackPanel Grid.Column="1">
