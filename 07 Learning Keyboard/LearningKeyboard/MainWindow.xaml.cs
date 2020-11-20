@@ -9,7 +9,9 @@
 using Gma.System.MouseKeyHook;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -44,7 +46,8 @@ namespace LearningKeyboard
             PrepareDicraticalCombinations();
             ApplyColorScheme();
             Subscribe();
-
+            Tests2();
+            
             AlwaysOnTop = (bool)Properties.Settings.Default["AlwaysOnTop"];
             Activated += (s, e) => { Topmost |= AlwaysOnTop; };
             Deactivated += (s, e) => { if (AlwaysOnTop) { Topmost = true; Activate(); } };
@@ -52,6 +55,49 @@ namespace LearningKeyboard
             AddNotifiationIcon();
             Closed += (s, e) => { if (!(NotificationIcon is null)) { NotificationIcon.Visible = false; NotificationIcon.Dispose(); } };
         }
+
+        // -----------------------------------------------
+        // Get notified when input language changes
+        private void Tests2()
+        {
+            var cc = System.Windows.Input.InputLanguageManager.Current;
+            cc.InputLanguageChanged += (object sender, System.Windows.Input.InputLanguageEventArgs e) =>
+            {
+                var ln = System.Windows.Forms.InputLanguage.CurrentInputLanguage.LayoutName;
+                var cc = System.Windows.Input.InputLanguageManager.Current;
+                Debug.WriteLine($"InputLanguageChanged: {cc.CurrentInputLanguage.Name} {ln}");
+            };
+        }
+
+        // Get notified when keyboard layout changes
+
+        // https://stackoverflow.com/questions/8289492/find-out-when-keyboard-layout-is-changed
+        [DllImport("user32.dll")]
+        static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
+
+        private const uint WINEVENT_OUTOFCONTEXT = 0;
+        private const uint EVENT_SYSTEM_FOREGROUND = 3;
+
+        delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
+
+        WinEventDelegate? dele = null;
+        private void Tests()
+        {
+            // SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, WinEventProc, 0, 0, WINEVENT_OUTOFCONTEXT);
+            dele = new WinEventDelegate(WinEventProc);
+            IntPtr m_hhook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, dele, 0, 0, WINEVENT_OUTOFCONTEXT);
+        }
+
+        private void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
+        {
+            var dwhkl = Gma.System.MouseKeyHook.WinApi.KeyboardNativeMethods.GetActiveKeyboard();
+            var ln = System.Windows.Forms.InputLanguage.CurrentInputLanguage.LayoutName;
+            var cc = System.Windows.Input.InputLanguageManager.Current;
+            Debug.WriteLine($"WinEventProc {eventType} {dwhkl} {cc.CurrentInputLanguage.Name} {ln}");
+        }
+
+        // -----------------------------------------------
+
 
         private void AddNotifiationIcon()
         {
