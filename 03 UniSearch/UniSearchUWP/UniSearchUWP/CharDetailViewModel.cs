@@ -6,12 +6,16 @@
 // 2018-09-18   PV
 // 2020-11-11   PV      Hyperlinks to block and subheader; nullable enable
 // 2020-11-12   PV      Added Synonyms, Comments and Cross-refs.  Block/Subheaders hyperlinks.  Copy buttons.  Scrollviewer
+// 2020-11-20   PV      Search fonts containing a given character
 
 
+using Microsoft.Graphics.Canvas.Text;
 using RelayCommandNS;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
@@ -41,11 +45,10 @@ namespace UniSearchUWPNS
         private void NotifyPropertyChanged(string propertyName)
           => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-
         // Commands public interface
         public ICommand ShowDetailCommand { get; private set; }
         public ICommand NewFilterCommand { get; private set; }
-
+        public ICommand SearchFontsCommand { get; private set; }
 
         // Constructor
         public CharDetailViewModel(CharDetailDialog window, CharacterRecord cr, ViewModel mainViewModel)
@@ -56,6 +59,7 @@ namespace UniSearchUWPNS
 
             ShowDetailCommand = new RelayCommand<int>(ShowDetailExecute);
             NewFilterCommand = new RelayCommand<string>(NewFilterExecute);
+            SearchFontsCommand = new RelayCommand<object>(SearchFontsExecute);
         }
 
 
@@ -254,6 +258,85 @@ namespace UniSearchUWPNS
             }
         }
 
+        public ObservableCollection<object> FontsList { get; private set; } = new ObservableCollection<object>();
+
+
+        private Visibility _SearchFontsButtonVisibility = Visibility.Visible;
+        public Visibility SearchFontsButtonVisibility
+        {
+            get => _SearchFontsButtonVisibility;
+            private set
+            {
+                if (value != _SearchFontsButtonVisibility)
+                {
+                    _SearchFontsButtonVisibility = value;
+                    NotifyPropertyChanged(nameof(SearchFontsButtonVisibility));
+                }
+            }
+        }
+
+
+        private Visibility _SearchFontsProgressBarVisibility = Visibility.Collapsed;
+        public Visibility SearchFontsProgressBarVisibility
+        {
+            get => _SearchFontsProgressBarVisibility;
+            private set
+            {
+                if (value != _SearchFontsProgressBarVisibility)
+                {
+                    _SearchFontsProgressBarVisibility = value;
+                    NotifyPropertyChanged(nameof(SearchFontsProgressBarVisibility));
+                }
+            }
+        }
+
+
+        private Visibility _FontsListVisibility = Visibility.Collapsed;
+        public Visibility FontsListVisibility
+        {
+            get => _FontsListVisibility;
+            private set
+            {
+                if (value != _FontsListVisibility)
+                {
+                    _FontsListVisibility = value;
+                    NotifyPropertyChanged(nameof(FontsListVisibility));
+                }
+            }
+        }
+
+
+        private int _SearchFontsProgress;
+        public int SearchFontsProgress
+        {
+            get => _SearchFontsProgress;
+            private set
+            {
+                if (value != _SearchFontsProgress)
+                {
+                    _SearchFontsProgress = value;
+                    NotifyPropertyChanged(nameof(SearchFontsProgress));
+                }
+            }
+        }
+
+
+        private string _FontsLabel = "Fonts";
+        public string FontsLabel
+        {
+            get { return _FontsLabel; }
+            set
+            {
+                if (_FontsLabel != value)
+                {
+                    _FontsLabel = value;
+                    NotifyPropertyChanged(nameof(FontsLabel));
+                }
+            }
+        }
+
+
+
         // ==============================================================================================
         // Commands
 
@@ -282,6 +365,136 @@ namespace UniSearchUWPNS
             window.Hide();
             MainViewModel.CharNameFilter = filter;
         }
+
+        BackgroundWorker? bgWorkerExport;
+
+        private void SearchFontsExecute(object _)
+        {
+            SearchFontsButtonVisibility = Visibility.Collapsed;
+            SearchFontsProgress = 0;
+            SearchFontsProgressBarVisibility = Visibility.Visible;
+            FontsLabel = "Fonts (searching...)";
+
+            bgWorkerExport = new BackgroundWorker { WorkerReportsProgress = true };
+            bgWorkerExport.DoWork += Export_DoWork;
+            bgWorkerExport.RunWorkerCompleted += Export_RunWorkerCompleted;
+            bgWorkerExport.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(Export_ProgressChanged);
+            bgWorkerExport.RunWorkerAsync();
+        }
+
+        private void Export_ProgressChanged(object? sender, ProgressChangedEventArgs e)
+        {
+            SearchFontsProgress = e.ProgressPercentage;
+        }
+
+        private void Export_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
+        {
+            SearchFontsProgressBarVisibility = Visibility.Collapsed;
+            FontsList.Clear();
+            if (e.Result is List<string> ls)
+                foreach (string s in ls)
+                {
+                    //var ts = s.Split('\t');
+                    string fontFamily = s;  // ts[0];
+                    var tb1 = new TextBlock
+                    {
+                        Text = SelectedChar.Character,
+                        FontFamily = new FontFamily(fontFamily),
+                        Width = 50,
+                        Padding = new Thickness(0, 3, 0, 0)
+                    };
+                    var tb2 = new TextBlock { Text = fontFamily /* + " " + ts[1] */ };
+                    var sp = new StackPanel { Orientation = Orientation.Horizontal };
+                    sp.Children.Add(tb1);
+                    sp.Children.Add(tb2);
+                    FontsList.Add(sp);
+                }
+            FontsListVisibility = Visibility.Visible;
+            FontsLabel = $"Fonts ({FontsList.Count})";
+        }
+
+        private void Export_DoWork(object? sender, DoWorkEventArgs e)
+        {
+            var list = new List<string>();
+            var nf = 0;
+            var tnf = CanvasTextFormat.GetSystemFontFamilies().Length;
+
+            foreach (string familyName in CanvasTextFormat.GetSystemFontFamilies().OrderBy(f => f))
+            {
+                if (bgWorkerExport?.CancellationPending == true)
+                {
+                    e.Cancel = true;
+                    break;
+                }
+
+                nf += 1;
+                int progress = (int)(100 * nf / tnf + 0.5);
+                bgWorkerExport?.ReportProgress(progress);
+
+                list.Add(familyName);
+            }
+
+            /*
+            foreach (var family in Fonts.SystemFontFamilies.OrderBy(ff => ff.Source))
+            {
+                if (bgWorkerExport?.CancellationPending == true)
+                {
+                    e.Cancel = true;
+                    break;
+                }
+
+                nf += 1;
+                int progress = (int)(100 * nf / tnf + 0.5);
+                bgWorkerExport?.ReportProgress(progress);
+
+                int p = family.Source.IndexOf('#');
+                StringBuilder familyName = new StringBuilder(p < 0 ? family.Source : family.Source.Substring(p));
+                bool first = true;
+
+                foreach (Typeface typeface in family.GetTypefaces())
+                {
+                    if (typeface.IsBoldSimulated || typeface.IsObliqueSimulated)
+                        continue;
+
+                    typeface.TryGetGlyphTypeface(out GlyphTypeface glyph);
+                    bool included = false;
+                    if (glyph != null)
+                        included = glyph.CharacterToGlyphMap.ContainsKey(SelectedChar.Codepoint);
+
+                    if (included)
+                    {
+                        if (first)
+                        {
+                            first = false;
+                            familyName.Append("\t(");
+                        }
+                        else
+                            familyName.Append(", ");
+                        familyName.Append(GetTypefaceName(typeface));
+                    }
+                }
+
+                if (!first)
+                {
+                    familyName.Append(')');
+                    list.Add(familyName.ToString());
+                }
+            }
+            */
+
+            // Return list of fonts to UI thread
+            e.Result = list;
+        }
+
+        /*
+        private static string GetTypefaceName(Typeface typeface)
+        {
+            XmlLanguage englishLanguage = XmlLanguage.GetLanguage("en-US");
+            if (!typeface.FaceNames.TryGetValue(englishLanguage, out string name))
+                name = "[No name]";     // Find a better fallback!
+            return name;
+        }
+        */
 
     }
 }
