@@ -28,7 +28,7 @@ using System.ComponentModel;
 
 namespace UniSearchNS
 {
-    internal class CharDetailViewModel : INotifyPropertyChanged, IDisposable
+    internal class CharDetailViewModel : INotifyPropertyChanged
     {
         // Private variables
         private readonly CharDetailWindow window;
@@ -46,11 +46,6 @@ namespace UniSearchNS
         public ICommand CopyCharCommand { get; private set; }
         public ICommand CopyAllInfoCommand { get; private set; }
         public ICommand SearchFontsCommand { get; private set; }
-
-
-        // IDispose implementation for owned objects implementing IDisposable
-        public void Dispose() => (bgWorkerExport as IDisposable)?.Dispose();
-
 
         // Constructor
         public CharDetailViewModel(CharDetailWindow window, CharacterRecord cr, ViewModel mainViewModel)
@@ -82,7 +77,7 @@ namespace UniSearchNS
                 {
                     string s = SelectedChar.Character;
                     if (s.StartsWith("U+", StringComparison.Ordinal))
-                        s = "U+ " + s[2..];
+                        s = "U+ " + s.Substring(2);
                     return D2DDrawText.GetBitmapSource(s);
                 }
             }
@@ -171,12 +166,12 @@ namespace UniSearchNS
                         var ma = reCP.Match(s, sp);
                         if (!ma.Success)
                         {
-                            tb.Inlines.Add(new Run(s[sp..]));
+                            tb.Inlines.Add(new Run(s.Substring(sp)));
                             break;
                         }
 
                         if (ma.Index > sp)
-                            tb.Inlines.Add(new Run(s[sp..ma.Index]));
+                            tb.Inlines.Add(new Run(s.Substring(sp, ma.Index - sp)));
                         int cp = Convert.ToInt32(ma.ToString(), 16);
                         tb.Inlines.Add(ViewModel.GetCodepointHyperlink(cp, ShowDetailCommand, true));
                         sp = ma.Index + ma.Length;
@@ -189,7 +184,7 @@ namespace UniSearchNS
             return tb;
         }
 
-        public ObservableCollection<object> FontsList { get; private set; } = new();
+        public ObservableCollection<object> FontsList { get; private set; } = new ObservableCollection<object>();
 
 
         private Visibility _SearchFontsButtonVisibility = Visibility.Visible;
@@ -243,7 +238,7 @@ namespace UniSearchNS
             get => _SearchFontsProgress;
             private set
             {
-                if (value != _SearchFontsProgress)
+                if (value!=_SearchFontsProgress)
                 {
                     _SearchFontsProgress = value;
                     NotifyPropertyChanged(nameof(SearchFontsProgress));
@@ -314,32 +309,27 @@ namespace UniSearchNS
 
         private void Export_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
         {
-            var sbres = new StringBuilder();
             SearchFontsProgressBarVisibility = Visibility.Hidden;
             FontsList.Clear();
             if (e.Result is List<string> ls)
                 foreach (string s in ls)
                 {
-                    sbres.AppendLine(s);
                     var ts = s.Split('\t');
                     string fontFamily = ts[0];
-                    TextBlock tb1 = new();
-                    tb1.Text = SelectedChar.Character;
-                    tb1.FontFamily = new FontFamily(fontFamily);
-                    tb1.Width = 50;
-                    TextBlock tb2 = new();
-                    tb2.Text = fontFamily + " " + ts[1];
-                    StackPanel sp = new();
-                    sp.Orientation = Orientation.Horizontal;
+                    var tb1 = new TextBlock
+                    {
+                        Text = SelectedChar.Character,
+                        FontFamily = new FontFamily(fontFamily),
+                        Width = 50
+                    };
+                    var tb2 = new TextBlock { Text = fontFamily + " " + ts[1] };
+                    var sp = new StackPanel { Orientation = Orientation.Horizontal };
                     sp.Children.Add(tb1);
                     sp.Children.Add(tb2);
                     FontsList.Add(sp);
                 }
             FontsListVisibility = Visibility.Visible;
             FontsLabel = $"Fonts ({FontsList.Count})";
-
-            Clipboard.Clear();
-            Clipboard.SetText(sbres.ToString());
         }
 
         private void Export_DoWork(object? sender, DoWorkEventArgs e)
@@ -347,7 +337,7 @@ namespace UniSearchNS
             var list = new List<string>();
             var nf = 0;
             var tnf = Fonts.SystemFontFamilies.Count;
-            foreach (var family in Fonts.SystemFontFamilies.OrderBy(ff => ff.Source, StringComparer.OrdinalIgnoreCase))
+            foreach (var family in Fonts.SystemFontFamilies.OrderBy(ff => ff.Source))
             {
                 if (bgWorkerExport?.CancellationPending == true)
                 {
@@ -360,7 +350,7 @@ namespace UniSearchNS
                 bgWorkerExport?.ReportProgress(progress);
 
                 int p = family.Source.IndexOf('#');
-                StringBuilder familyName = new StringBuilder(p < 0 ? family.Source : family.Source[p..]);
+                StringBuilder familyName = new StringBuilder(p < 0 ? family.Source : family.Source.Substring(p));
                 bool first = true;
 
                 foreach (Typeface typeface in family.GetTypefaces())

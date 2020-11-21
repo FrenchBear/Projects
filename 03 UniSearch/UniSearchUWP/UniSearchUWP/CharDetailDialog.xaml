@@ -36,8 +36,8 @@
         </Grid>
 
 
-        <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="0,0,20,20">
-            <Grid  >
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled" Padding="0,0,20,20">
+            <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -66,7 +66,7 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="85" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
@@ -117,13 +117,14 @@
                 <ContentPresenter Grid.Row="22" Grid.Column="1" MaxWidth="500" Content="{Binding CommentsContent}" />
 
                 <TextBlock Grid.Row="23" Grid.Column="0" Text="{Binding FontsLabel, FallbackValue=Fonts}" Grid.ColumnSpan="2" FontWeight="Bold" Margin="0,12,0,0"/>
-                <Button Visibility="{Binding SearchFontsButtonVisibility}" Grid.Row="24" Margin="0,6" Content="Search fonts" Height="24" Padding="0,0,0,0" Command="{Binding SearchFontsCommand}" >
+                <Button Visibility="{Binding SearchFontsButtonVisibility}" Grid.Row="24" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="0,6" Content="Search fonts" Height="24" Padding="6,0,6,0" Command="{Binding SearchFontsCommand}" >
                     <ToolTipService.ToolTip>
                         List fonts containing a glyph for this codepoint
                     </ToolTipService.ToolTip>
                 </Button>
                 <ProgressBar Visibility="{Binding SearchFontsProgressBarVisibility}" Grid.Row="24" Margin="0,6" Height="24" Grid.ColumnSpan="2" Minimum="0" Maximum="100" Value="{Binding SearchFontsProgress, Mode=OneWay}" />
-                <ListView Visibility="{Binding FontsListVisibility, FallbackValue=Hidden}" Grid.Row="24" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding FontsList}">
+                <ListView Visibility="{Binding FontsListVisibility, FallbackValue=Hidden}" Grid.Row="24" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding FontsList}"
+                          MaxWidth="800" ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.HorizontalScrollBarVisibility="Visible">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="Height" Value="24" />
@@ -132,7 +133,6 @@
                         </Style>
                     </ListView.ItemContainerStyle>
                 </ListView>
-
             </Grid>
         </ScrollViewer>
 

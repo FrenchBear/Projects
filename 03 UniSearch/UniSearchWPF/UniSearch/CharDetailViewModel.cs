@@ -238,7 +238,7 @@ namespace UniSearchNS
             get => _SearchFontsProgress;
             private set
             {
-                if (value!=_SearchFontsProgress)
+                if (value != _SearchFontsProgress)
                 {
                     _SearchFontsProgress = value;
                     NotifyPropertyChanged(nameof(SearchFontsProgress));

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:UniSearchNS"
         FontSize="13" FontFamily="Segoe UI"
         mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=local:CharDetailViewModel}"
-        Title="{Binding Title}" Height="550" Width="550">
+        Title="{Binding Title}" Height="570" Width="550">
 
     <Grid Margin="12,6,6,6">
         <Grid.RowDefinitions>

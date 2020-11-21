@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -31,7 +32,7 @@ using Windows.UI.Xaml.Media;
 
 namespace UniSearchUWPNS
 {
-    internal class CharDetailViewModel : INotifyPropertyChanged
+    internal class CharDetailViewModel : INotifyPropertyChanged, IDisposable
     {
         // Private variables
         private readonly Stack<int> History = new Stack<int>();
@@ -49,6 +50,11 @@ namespace UniSearchUWPNS
         public ICommand ShowDetailCommand { get; private set; }
         public ICommand NewFilterCommand { get; private set; }
         public ICommand SearchFontsCommand { get; private set; }
+
+
+        // IDispose implementation for owned objects implementing IDisposable
+        public void Dispose() => (bgWorkerExport as IDisposable)?.Dispose();
+
 
         // Constructor
         public CharDetailViewModel(CharDetailDialog window, CharacterRecord cr, ViewModel mainViewModel)
@@ -356,6 +362,14 @@ namespace UniSearchUWPNS
                 window.BackButton.IsEnabled = true;
             }
 
+            FontsList.Clear();
+            SearchFontsButtonVisibility = Visibility.Visible;
+            SearchFontsProgressBarVisibility = Visibility.Collapsed;
+            FontsListVisibility = Visibility.Collapsed;
+            SearchFontsProgress = 0;
+            FontsLabel = "Fonts";
+
+
             SelectedChar = UniData.CharacterRecords[codepoint];
         }
 
@@ -394,8 +408,8 @@ namespace UniSearchUWPNS
             if (e.Result is List<string> ls)
                 foreach (string s in ls)
                 {
-                    //var ts = s.Split('\t');
-                    string fontFamily = s;  // ts[0];
+                    var ts = s.Split('\t');
+                    string fontFamily = ts[0];
                     var tb1 = new TextBlock
                     {
                         Text = SelectedChar.Character,
@@ -403,7 +417,7 @@ namespace UniSearchUWPNS
                         Width = 50,
                         Padding = new Thickness(0, 3, 0, 0)
                     };
-                    var tb2 = new TextBlock { Text = fontFamily /* + " " + ts[1] */ };
+                    var tb2 = new TextBlock { Text = fontFamily + " " + ts[1] };
                     var sp = new StackPanel { Orientation = Orientation.Horizontal };
                     sp.Children.Add(tb1);
                     sp.Children.Add(tb2);
@@ -415,86 +429,51 @@ namespace UniSearchUWPNS
 
         private void Export_DoWork(object? sender, DoWorkEventArgs e)
         {
+            var dic = new Dictionary<string, string>();
+            var sfs = CanvasFontSet.GetSystemFontSet();
+            var fontsCount = sfs.Fonts.Count;
+            int nf = 0;
+            foreach (var font in sfs.Fonts)
+            {
+                if (bgWorkerExport?.CancellationPending == true)
+                {
+                    e.Cancel = true;
+                    break;
+                }
+
+                nf += 1;
+                int progress = (int)(100 * nf / fontsCount + 0.5);
+                bgWorkerExport?.ReportProgress(progress);
+
+                if (font.Simulations != CanvasFontSimulations.None)
+                    continue;
+
+                if (font.HasCharacter((uint)SelectedChar.Codepoint))
+                {
+                    string familyName, faceName;
+                    if (font.FamilyNames.ContainsKey("en-us"))
+                        familyName = font.FamilyNames["en-us"];
+                    else
+                        familyName = font.FamilyNames.Values.First();
+
+                    if (font.FaceNames.ContainsKey("en-us"))
+                        faceName = font.FaceNames["en-us"];
+                    else
+                        faceName = font.FaceNames.Values.First();
+
+                    if (!dic.ContainsKey(familyName))
+                        dic.Add(familyName, faceName);
+                    else
+                        dic[familyName] += ", " + faceName;
+                }
+            }
+
+            // Return sorted list of fonts to UI thread
             var list = new List<string>();
-            var nf = 0;
-            var tnf = CanvasTextFormat.GetSystemFontFamilies().Length;
-
-            foreach (string familyName in CanvasTextFormat.GetSystemFontFamilies().OrderBy(f => f))
-            {
-                if (bgWorkerExport?.CancellationPending == true)
-                {
-                    e.Cancel = true;
-                    break;
-                }
-
-                nf += 1;
-                int progress = (int)(100 * nf / tnf + 0.5);
-                bgWorkerExport?.ReportProgress(progress);
-
-                list.Add(familyName);
-            }
-
-            /*
-            foreach (var family in Fonts.SystemFontFamilies.OrderBy(ff => ff.Source))
-            {
-                if (bgWorkerExport?.CancellationPending == true)
-                {
-                    e.Cancel = true;
-                    break;
-                }
-
-                nf += 1;
-                int progress = (int)(100 * nf / tnf + 0.5);
-                bgWorkerExport?.ReportProgress(progress);
-
-                int p = family.Source.IndexOf('#');
-                StringBuilder familyName = new StringBuilder(p < 0 ? family.Source : family.Source.Substring(p));
-                bool first = true;
-
-                foreach (Typeface typeface in family.GetTypefaces())
-                {
-                    if (typeface.IsBoldSimulated || typeface.IsObliqueSimulated)
-                        continue;
-
-                    typeface.TryGetGlyphTypeface(out GlyphTypeface glyph);
-                    bool included = false;
-                    if (glyph != null)
-                        included = glyph.CharacterToGlyphMap.ContainsKey(SelectedChar.Codepoint);
-
-                    if (included)
-                    {
-                        if (first)
-                        {
-                            first = false;
-                            familyName.Append("\t(");
-                        }
-                        else
-                            familyName.Append(", ");
-                        familyName.Append(GetTypefaceName(typeface));
-                    }
-                }
-
-                if (!first)
-                {
-                    familyName.Append(')');
-                    list.Add(familyName.ToString());
-                }
-            }
-            */
-
-            // Return list of fonts to UI thread
+            foreach (var familyName in dic.Keys.OrderBy(k => k, StringComparer.OrdinalIgnoreCase))
+                list.Add($"{familyName}\t({dic[familyName]})");
             e.Result = list;
         }
-
-        /*
-        private static string GetTypefaceName(Typeface typeface)
-        {
-            XmlLanguage englishLanguage = XmlLanguage.GetLanguage("en-US");
-            if (!typeface.FaceNames.TryGetValue(englishLanguage, out string name))
-                name = "[No name]";     // Find a better fallback!
-            return name;
-        }
-        */
 
     }
 }
