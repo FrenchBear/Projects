@@ -304,9 +304,9 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0" Text="Character" FontWeight="SemiBold" Margin="0,5,12,0" />
-                                <AutoSuggestBox Grid.Column="1" Name="CharacterFilterTextBox" QueryIcon="Filter" PlaceholderText="Name filter"
+                                <AutoSuggestBox Grid.Column="1" Name="CharacterFilterTextBox" PlaceholderText="Name filter"
                                     AccessKey="N" AccessKeyInvoked="SetFocus"
-                                    Text="{Binding CharNameFilter, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" >
+                                    Text="{Binding CharNameFilter, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" QueryIcon="Filter" >
                                     <ToolTipService.ToolTip>
                                         <ToolTip Style="{StaticResource LargeTooltipStyle}" >
                                             <TextBlock>

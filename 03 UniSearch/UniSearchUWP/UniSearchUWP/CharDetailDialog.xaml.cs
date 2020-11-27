@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace UniSearchUWPNS
 {
-    public sealed partial class CharDetailDialog : ContentDialog
+    public sealed partial class CharDetailDialog : ContentDialog, IDisposable
     {
         readonly CharDetailViewModel ViewModel;
 
@@ -41,11 +41,17 @@ namespace UniSearchUWPNS
             // Esc closes the window automatically, nothing to do
         }
 
+        public void Dispose()
+        {
+            ViewModel.Dispose();
+        }
+
         // Static function for easy opening
         internal async static Task ShowDetail(int codepoint, ViewModel mainViewModel)
         {
             var w = new CharDetailDialog(codepoint, mainViewModel);
             await w.ShowAsync();
+            w.Dispose();
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
