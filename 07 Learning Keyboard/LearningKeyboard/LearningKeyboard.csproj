@@ -70,6 +70,7 @@
     </ApplicationDefinition>
     <Compile Include="CharFromKey.cs" />
     <Compile Include="Extra.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>

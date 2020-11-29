@@ -34,6 +34,8 @@ namespace LearningKeyboard
         private bool alt;
         private bool dead;
 
+        private string CurrentLayoutName = string.Empty;
+
         // Settings
         private string ColorScheme;
         private string TextFormatting;
@@ -91,7 +93,7 @@ namespace LearningKeyboard
         {
             if (msg == WM_INPUTLANGCHANGE)
             {
-                Debug.WriteLine("WndProc: WM_INPUTLANGCHANGE");
+                //Debug.WriteLine("WndProc: WM_INPUTLANGCHANGE");
                 RedrawKeyboardAfterLayoutChange();
             }
             return IntPtr.Zero;
@@ -426,6 +428,10 @@ namespace LearningKeyboard
 
         private void RedrawKeyboardAfterLayoutChange()
         {
+            var LayoutName = System.Windows.Forms.InputLanguage.CurrentInputLanguage.LayoutName;
+            if (LayoutName == CurrentLayoutName) return;
+            CurrentLayoutName = LayoutName;
+
             foreach (var key in AllKeys.Values)
                 key.InitializeLabels();
 

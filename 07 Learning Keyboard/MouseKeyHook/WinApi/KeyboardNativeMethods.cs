@@ -10,7 +10,7 @@ using Gma.System.MouseKeyHook.Implementation;
 
 namespace Gma.System.MouseKeyHook.WinApi
 {
-    public static class KeyboardNativeMethods
+    internal static class KeyboardNativeMethods
     {
         //values from Winuser.h in Microsoft SDK.
         public const byte VK_SHIFT = 0x10;
