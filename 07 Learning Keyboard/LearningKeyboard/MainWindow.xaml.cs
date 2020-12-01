@@ -92,10 +92,7 @@ namespace LearningKeyboard
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             if (msg == WM_INPUTLANGCHANGE)
-            {
-                //Debug.WriteLine("WndProc: WM_INPUTLANGCHANGE");
                 RedrawKeyboardAfterLayoutChange();
-            }
             return IntPtr.Zero;
         }
 
@@ -429,7 +426,7 @@ namespace LearningKeyboard
         private void RedrawKeyboardAfterLayoutChange()
         {
             var LayoutName = System.Windows.Forms.InputLanguage.CurrentInputLanguage.LayoutName;
-            if (LayoutName == CurrentLayoutName) return;
+            if (LayoutName == CurrentLayoutName) return;        // Don't need to do it if layout has not changed
             CurrentLayoutName = LayoutName;
 
             foreach (var key in AllKeys.Values)
