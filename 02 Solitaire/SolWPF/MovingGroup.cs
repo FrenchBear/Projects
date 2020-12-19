@@ -2,29 +2,29 @@
 // class MovingGroup
 // A group of cards moving together between two GameStacks
 // 2019-04-12   PV
+// 2020-12-19   PV      .Net 5, C#9, nullable enable
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
+#nullable enable
 
 namespace SolWPF
 {
-    class MovingGroup
+    internal class MovingGroup
     {
         public readonly GameStack FromStack;
-        public GameStack ToStack;
-        public readonly List<PlayingCard> MovingCards;
+        public GameStack? ToStack;
+        public readonly List<PlayingCard>? MovingCards;
         public readonly bool IsMovable;
 
-        private readonly List<Vector> offVec;
-        private PlayingCard cardMadeVisibleDuringMove;
+        private readonly List<Vector>? offVec;
+        private PlayingCard? cardMadeVisibleDuringMove;
 
-
-        public MovingGroup(GameStack from, List<PlayingCard> hitList, bool isMovable)
+        public MovingGroup(GameStack from, List<PlayingCard>? hitList, bool isMovable)
         {
             FromStack = from;
             IsMovable = isMovable;
@@ -48,7 +48,7 @@ namespace SolWPF
             var sb = new StringBuilder();
             sb.Append($"MovingGroup FromStack={FromStack.Name}, ToStack={ToStack?.Name}, IsMovable={IsMovable}, MovingCards=");
             if (MovingCards == null)
-                sb.Append("∅");
+                sb.Append('∅');
             else
                 foreach (var c in MovingCards)
                     sb.Append(c.Signature()).Append(' ');
@@ -67,6 +67,9 @@ namespace SolWPF
 
         internal void SetTopLeft(Point P)
         {
+            Debug.Assert(MovingCards is not null);
+            Debug.Assert(offVec is not null);
+
             for (int i = 0; i < MovingCards.Count; i++)
             {
                 MovingCards[i].SetValue(Canvas.LeftProperty, P.X + offVec[i].X);
@@ -77,6 +80,9 @@ namespace SolWPF
         internal void DoMove(bool withAnimation = false)
         {
 #if DEBUG
+            Debug.Assert(MovingCards is not null);
+            Debug.Assert(ToStack is not null);
+
             var sb = new StringBuilder($"\nDoMove From=({FromStack}) To=({ToStack}) MovingCards=");
             foreach (var c in MovingCards)
                 sb.Append(c.Signature()).Append(' ');
@@ -89,7 +95,7 @@ namespace SolWPF
             else
                 for (int i = 0; i < MovingCards.Count; i++)
                     Debug.Assert(FromStack.PlayingCards[i] == MovingCards[i]);
-#endif 
+#endif
             cardMadeVisibleDuringMove = FromStack.MoveOutCards(MovingCards);
             ToStack.MoveInCards(MovingCards, withAnimation);
             ToStack.ClearTargetHighlight();
@@ -110,14 +116,15 @@ namespace SolWPF
 
         internal void UndoMove()
         {
+            Debug.Assert(ToStack is not null);
 #if DEBUG
+            Debug.Assert(MovingCards is not null);
             var sb = new StringBuilder($"\nUndoMove From=({FromStack}) To=({ToStack}) MovingCards=");
             foreach (var c in MovingCards)
                 sb.Append(c.Signature()).Append(' ');
             sb.Append($" CMV={cardMadeVisibleDuringMove?.Signature()}");
             Debug.WriteLine(sb.ToString());
 #endif
-
 
             if (cardMadeVisibleDuringMove != null) cardMadeVisibleDuringMove.IsFaceUp = false;
             ToStack.MoveOutCards(MovingCards);

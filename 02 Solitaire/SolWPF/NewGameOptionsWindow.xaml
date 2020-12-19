@@ -15,22 +15,20 @@
             <Setter Property="Validation.ErrorTemplate">
                 <Setter.Value>
                     <ControlTemplate TargetType="Control">
-                        <Grid ClipToBounds="False" >
+                        <Grid ClipToBounds="False">
                             <Border BorderBrush="Red" BorderThickness="1" Margin="-1">
                                 <AdornedElementPlaceholder Name="adornedElement" />
                             </Border>
-                            <Image HorizontalAlignment="Right" VerticalAlignment="Top" 
-                               Width="16" Height="16" Margin="0,-8,-8,0" 
-                               Source="{StaticResource ErrorImage}" 
-                               ToolTip="{Binding ErrorContent}"/>
+                            <Image HorizontalAlignment="Right" VerticalAlignment="Top"
+                               Width="16" Height="16" Margin="0,-8,-8,0"
+                               Source="{StaticResource ErrorImage}"
+                               ToolTip="{Binding ErrorContent}" />
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-
     </Window.Resources>
-
 
     <Grid Margin="6,12">
         <Grid.ColumnDefinitions>
@@ -44,21 +42,20 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Label VerticalAlignment="Top" Content="Game # (1..999999, 0=random)" Padding="0,3,6,0"/>
+        <Label VerticalAlignment="Top" Content="Game # (1..999999, 0=random)" Padding="0,3,6,0" />
         <TextBox Name="GameSerialTextBox" Style="{StaticResource MinMaxIntTextBoxStyle}" Grid.Column="1" VerticalAlignment="Top" Padding="3,2,0,0" Margin="0,0,0,6">
             <Binding Path="GameSerial" ValidatesOnDataErrors="True" UpdateSourceTrigger="PropertyChanged">
                 <Binding.ValidationRules>
-                    <local:MinMaxIntValidationRule Minimum="0" Maximum="999999" Message="Game # out of range"  ValidatesOnTargetUpdated="True"/>
+                    <local:MinMaxIntValidationRule Minimum="0" Maximum="999999" Message="Game # out of range"  ValidatesOnTargetUpdated="True" />
                 </Binding.ValidationRules>
             </Binding>
         </TextBox>
-        
-        <Label Grid.Row="1" VerticalAlignment="Top" Content="With A and K visible" Padding="0,3,6,0"/>
+
+        <Label Grid.Row="1" VerticalAlignment="Top" Content="With A and K visible" Padding="0,3,6,0" />
         <CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding IsWithAAndK}" Margin="0,3" IsThreeState="False" />
-        <StackPanel Orientation="Vertical" Grid.Column="2" Grid.RowSpan="3" Width="55"  >
+        <StackPanel Orientation="Vertical" Grid.Column="2" Grid.RowSpan="3" Width="55">
             <Button Content="OK" IsDefault="True" Command="{Binding OKCommand}" Margin="6,0,0,6" />
             <Button Content="Cancel" IsCancel="True" Click="CancelButton_Click" Margin="6,0,0,6" />
         </StackPanel>
-        
     </Grid>
 </Window>

@@ -35,7 +35,7 @@ namespace SolLib
         internal bool IsGameSolvable()
         {
             foreach (var c in Columns)
-                if (c.PlayingCards.Count > 0 && !c.PlayingCards[c.PlayingCards.Count - 1].IsFaceUp)
+                if (c.PlayingCards.Count > 0 && !c.PlayingCards[^1].IsFaceUp)
                     return false;
             return true;
         }

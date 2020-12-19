@@ -2,13 +2,11 @@
 // class MinMaxIntValidationRule
 // A general validation rule with min/max attributes to be used directly inside a biding
 // 2012-04-28   PV  First version
+// 2020-12-19   PV      .Net 5, C#9, nullable enable
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Controls;
 
+#nullable enable
 
 namespace SolWPF
 {
@@ -17,7 +15,7 @@ namespace SolWPF
     {
         public int Minimum { get; set; }
         public int Maximum { get; set; }
-        public string Message { get; set; }
+        public string Message { get; set; } = string.Empty;
 
         public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
         {

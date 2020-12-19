@@ -7,8 +7,7 @@
         mc:Ignorable="d"
         Title="Solitaire WPF" Height="800" Width="800"
         Loaded="Window_Loaded"
-        Icon="SolWPF.ico"
-        >
+        Icon="SolWPF.ico">
 
     <Window.InputBindings>
         <!--<KeyBinding Key="N" Modifiers="Shift+Ctrl" Command="{Binding ApplicationsCommands.New}" />-->
@@ -26,7 +25,6 @@
                         Executed="PlayCommand_Executed" />
     </Window.CommandBindings>
 
-
     <Grid Name="mainGrid" MouseMove="MainGrid_MouseMoveWhenUp" PreviewMouseDown="MainGrid_MouseDown" MouseUp="MainGrid_MouseUp" MouseWheel="MainGrid_MouseWheel" Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -34,9 +32,9 @@
         </Grid.RowDefinitions>
 
         <Grid Background="SeaGreen">
-            <Canvas Name="PlayingCanvas" HorizontalAlignment="Left" VerticalAlignment="Top" >
+            <Canvas Name="PlayingCanvas" HorizontalAlignment="Left" VerticalAlignment="Top">
                 <Canvas.RenderTransform>
-                    <MatrixTransform x:Name="mainMatrixTransform"/>
+                    <MatrixTransform x:Name="mainMatrixTransform" />
                 </Canvas.RenderTransform>
 
                 <Rectangle Name="Base0" StrokeThickness="3" Stroke="Black" Canvas.Left="10" Canvas.Top="10" RadiusX="12" RadiusY="12" />
@@ -68,27 +66,26 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel Orientation="Horizontal" Grid.Column="0" Margin="0,0,12,0">
                     <TextBlock Margin="0,0,6,0">Moves:</TextBlock>
-                    <TextBlock Text="{Binding MoveCount}"/>
+                    <TextBlock Text="{Binding MoveCount}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Column="1" Margin="0,0,12,0">
                     <TextBlock Margin="0,0,6,0">Status:</TextBlock>
-                    <TextBlock Text="{Binding GameStatus}"/>
+                    <TextBlock Text="{Binding GameStatus}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Column="2" Margin="0,0,12,0">
                     <TextBlock Margin="0,0,6,0">Solver:</TextBlock>
-                    <TextBlock Text="{Binding SolverStatus}"/>
+                    <TextBlock Text="{Binding SolverStatus}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Column="3" Margin="0,0,12,0">
                     <TextBlock Margin="0,0,6,0">Game #:</TextBlock>
-                    <TextBlock Text="{Binding GameSerial}"/>
+                    <TextBlock Text="{Binding GameSerial}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Column="4">
-                    <Button Content="New Game" Command="ApplicationCommands.New" Padding="3,0" Margin="0,0,6,0"/>
-                    <Button Content="Undo" Command="ApplicationCommands.Undo" Padding="3,0" Margin="0,0,6,0"/>
-                    <Button Content="Play" Command="ApplicationCommands.Print" Padding="3,0"/>
+                    <Button Content="New Game" Command="ApplicationCommands.New" Padding="3,0" Margin="0,0,6,0" />
+                    <Button Content="Undo" Command="ApplicationCommands.Undo" Padding="3,0" Margin="0,0,6,0" />
+                    <Button Content="Play" Command="ApplicationCommands.Print" Padding="3,0" />
                 </StackPanel>
             </Grid>
         </StatusBar>
-
     </Grid>
 </Window>

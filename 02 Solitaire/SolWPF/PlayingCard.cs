@@ -3,21 +3,24 @@
 // A visual class (inherits from ButtonBase) to represent a Solitaire card and its representation.
 // Use Face dependency property to select correct representation in PlayingCards.xaml when visually rendered.
 // 2019-04-12   PV
+// 2020-12-19   PV      .Net 5, C#9, nullable enable
 
 using System;
-using System.Windows.Controls.Primitives;
-using System.Windows;
 using System.Diagnostics;
+using System.Windows;
+using System.Windows.Controls.Primitives;
+
+#nullable enable
 
 namespace SolWPF
 {
-
     [DebuggerDisplay("PlayingCard {Signature()}")]
     public class PlayingCard : ButtonBase
     {
         // Declare and register dependency properties
-        public static DependencyProperty FaceProperty = DependencyProperty.Register("Face", typeof(string), typeof(PlayingCard));
-        public static DependencyProperty IsFaceUpProperty = DependencyProperty.Register("IsFaceUp", typeof(bool), typeof(PlayingCard));
+        public static readonly DependencyProperty FaceProperty = DependencyProperty.Register("Face", typeof(string), typeof(PlayingCard));
+
+        public static readonly DependencyProperty IsFaceUpProperty = DependencyProperty.Register("IsFaceUp", typeof(bool), typeof(PlayingCard));
 
         public const string Colors = "HSDC";
         public const string Values = "A23456789XJQK";
@@ -26,7 +29,6 @@ namespace SolWPF
         private const string SignatureValues = "A23456789XJQK";
         private const string SignatureFaceUp = "˄";
         private const string SignatureFaceDown = "˅";
-
 
         static PlayingCard()
         {
@@ -60,9 +62,9 @@ namespace SolWPF
             return $"PlayingCard {Face}, IsFaceUp={IsFaceUp}";
         }
 
-        // 
+        //
         public int Color => Colors.IndexOf(Face[0], StringComparison.Ordinal);        // 0..3; %2==0 => Red, %2==1 => Black
+
         public int Value => Values.IndexOf(Face[1], StringComparison.Ordinal) + 1;    // 1..13
     }
-
 }

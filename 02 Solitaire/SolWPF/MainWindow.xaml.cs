@@ -2,26 +2,22 @@
 // SolWPF
 // Main Window = Startup code + interface (drag and drop) interactions
 // 2019-04-09   PV
+// 2020-12-19   PV      .Net 5, C#9, nullable enable
 
 using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shapes;
-using System.Linq;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
+
+#nullable enable
 
 namespace SolWPF
 {
-
     public partial class MainWindow : Window
     {
-        public static double cardWidth = 100, cardHeight = 140;
+        public static readonly double cardWidth = 100, cardHeight = 140;
         private readonly GameDeck b;
-
 
         public MainWindow()
         {
@@ -41,8 +37,8 @@ namespace SolWPF
                 Key.P,
                 ModifierKeys.Control | ModifierKeys.Shift);
 
-            this.InputBindings.Add(OpenCmdKeyBinding);
-            this.InputBindings.Add(PlayCmdKeyBinding);
+            InputBindings.Add(OpenCmdKeyBinding);
+            InputBindings.Add(PlayCmdKeyBinding);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -77,7 +73,6 @@ namespace SolWPF
             */
         }
 
-
         /*
         private void GenerateDeck_Click(object sender, RoutedEventArgs e)
         {
@@ -101,16 +96,16 @@ namespace SolWPF
             Application.Current.Shutdown();
         }
 
-
         // Mouse click and drag management
-        Point previousMousePosition;
-        delegate void ProcessMouseMove(Point p);
-        ProcessMouseMove pmm;               // Delegate to run when mouse is moved in a down state
-        Point StartingPoint;
-        bool isMovingMode;
-        DateTime lastMouseUpDateTime = DateTime.MinValue;
-        private MovingGroup movingGroup;    // Current interactive moving group of cards
+        private Point previousMousePosition;
 
+        private delegate void ProcessMouseMove(Point p);
+
+        private ProcessMouseMove? pmm;          // Delegate to run when mouse is moved in a down state
+        private Point StartingPoint;
+        private bool isMovingMode;
+        private DateTime lastMouseUpDateTime = DateTime.MinValue;
+        private MovingGroup? movingGroup;       // Current interactive moving group of cards
 
         private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -157,17 +152,16 @@ namespace SolWPF
             movingGroup = null;
         }
 
-
-        void MainGrid_MouseMoveWhenUp(object sender, MouseEventArgs e)
+        private void MainGrid_MouseMoveWhenUp(object sender, MouseEventArgs e)
         {
             // Nothing special to do
             // Cards will react to hovering themselves
         }
 
-
         // Do not really start moving unless the group is movable the mouse has moved 4 pixels in any direction, makes detection of clicks easier
-        void MainGrid_MouseMoveWhenDown(object sender, MouseEventArgs e)
+        private void MainGrid_MouseMoveWhenDown(object sender, MouseEventArgs e)
         {
+            if (movingGroup is null) return;
             var newMousePosition = e.GetPosition(mainGrid);
             // We only consider a real move beyond a system-defined threshold, configured at 4 pixels (both X and Y) on my machine
             if (!isMovingMode && movingGroup.IsMovable && (Math.Abs(newMousePosition.X - previousMousePosition.X) >= SystemParameters.MinimumHorizontalDragDistance || Math.Abs(newMousePosition.Y - previousMousePosition.Y) >= SystemParameters.MinimumVerticalDragDistance))
@@ -177,7 +171,7 @@ namespace SolWPF
             {
                 Matrix m = mainMatrixTransform.Matrix;
                 m.Invert();     // By construction, all applied transformations are reversible, so m is invertible
-                pmm(m.Transform(newMousePosition));
+                pmm?.Invoke(m.Transform(newMousePosition));
             }
         }
 
@@ -201,7 +195,7 @@ namespace SolWPF
             // Note that movingGroup.ToStack is null in this case
             if (!isMovingMode)
             {
-                var mouseUpDateTime = System.DateTime.Now;
+                var mouseUpDateTime = DateTime.Now;
                 if ((mouseUpDateTime - lastMouseUpDateTime).TotalMilliseconds <= 300 /* GetDoubleClickTime()*/ )
                 {
                     //DoubleClickOnGroup(movingGroup);      // For now, all is done using simple click
@@ -229,7 +223,6 @@ namespace SolWPF
             }
         }
 
-
         private void ClickOnGroup(MovingGroup movingGroup)
         {
             if (movingGroup.FromStack is TalonFaceDownStack)
@@ -253,17 +246,17 @@ namespace SolWPF
             AutoActionOnGroup(movingGroup);
         }
 
-
         /*
         private void DoubleClickOnGroup(MovingGroup movingGroup)
         {
         }
         */
 
-
         // Shortcuts (automatic moves) to be executed either from a click or a double click
         private void AutoActionOnGroup(MovingGroup movingGroup)
         {
+            Debug.Assert(movingGroup.MovingCards is not null);
+
             // First check if we can move to a base
             if (movingGroup.MovingCards.Count == 1)
             {
@@ -286,7 +279,7 @@ namespace SolWPF
             for (int i = 0; i < 7; i++)
             {
                 // If moved group starts with a King, only an empty column can accept it
-                if (movingGroup.MovingCards[movingGroup.MovingCards.Count - 1].Value == 13 && b.Columns[i].PlayingCards.Count == 0)
+                if (movingGroup.MovingCards[^1].Value == 13 && b.Columns[i].PlayingCards.Count == 0)
                 {
                     movingGroup.ToStack = b.Columns[i];
                     movingGroup.DoMove(true);
@@ -295,18 +288,17 @@ namespace SolWPF
 
                 // Otherwise we need a matching column (decreasing order/alternating colors)
                 if (b.Columns[i].PlayingCards.Count > 0
-                    && b.Columns[i].PlayingCards[0].Value == movingGroup.MovingCards[movingGroup.MovingCards.Count - 1].Value + 1
-                    && b.Columns[i].PlayingCards[0].Color % 2 != movingGroup.MovingCards[movingGroup.MovingCards.Count - 1].Color % 2)
+                    && b.Columns[i].PlayingCards[0].Value == movingGroup.MovingCards[^1].Value + 1
+                    && b.Columns[i].PlayingCards[0].Color % 2 != movingGroup.MovingCards[^1].Color % 2)
                 {
                     movingGroup.ToStack = b.Columns[i];
                     movingGroup.DoMove(true);
                     return;
                 }
             }
+        }   
 
-        }
-
-        private BaseStack GetCompatibleBaseStack(PlayingCard playingCard)
+        private BaseStack? GetCompatibleBaseStack(PlayingCard playingCard)
         {
             if (playingCard.Value == 1)
             {
@@ -320,15 +312,12 @@ namespace SolWPF
                     if (b.Bases[i].PlayingCards.Count > 0)
                         if (b.Bases[i].PlayingCards[0].Color == playingCard.Color && b.Bases[i].PlayingCards[0].Value + 1 == playingCard.Value)
                             return b.Bases[i];
-
             }
             return null;
         }
 
         private void UndoCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = b?.CanUndo() ?? false;
-        }
+            => e.CanExecute = b?.CanUndo() ?? false;
 
         private void UndoCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
@@ -357,10 +346,7 @@ namespace SolWPF
         }
 
         internal static bool IsShiftPressed()
-        {
-            return System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftShift) ||
-                   System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightShift);
-        }
+            => Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
 
         private void PlayCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
@@ -391,17 +377,13 @@ namespace SolWPF
             }
         }
 
-
-
-
-
         // Just to test if mouse coordinates transformations are correct
         private void MainGrid_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             var m = mainMatrixTransform.Matrix;
 
             // Ctrl+MouseWheel for rotation
-            if (System.Windows.Input.Keyboard.IsKeyDown(Key.LeftCtrl))
+            if (Keyboard.IsKeyDown(Key.LeftCtrl))
             {
                 var newPosition = e.GetPosition(mainGrid);
                 double angle = e.Delta / 16.0;

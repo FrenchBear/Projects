@@ -1,6 +1,6 @@
 <!-- From WPF Unleashed book, with simplifications and support for card background visual @@ -->
 <!-- 2019-04 PV -->
-    
+
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -1736,8 +1736,8 @@
     </DrawingBrush>
 
     <Style TargetType="{x:Type local:PlayingCard}">
-        <Setter Property="ClipToBounds" Value="False"/>
-        <Setter Property="Background" Value="{StaticResource CardNormalBrush}"/>
+        <Setter Property="ClipToBounds" Value="False" />
+        <Setter Property="Background" Value="{StaticResource CardNormalBrush}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:PlayingCard}">
@@ -1747,25 +1747,25 @@
                             <Grid.RenderTransform>
                                 <TransformGroup>
                                     <RotateTransform Angle="0" CenterX="50" CenterY="70" />
-                                    <TranslateTransform X="0" Y="0"/>
+                                    <TranslateTransform X="0" Y="0" />
                                     <ScaleTransform ScaleX="1" ScaleY="1" />
                                 </TransformGroup>
                             </Grid.RenderTransform>
                             <Rectangle Name="TheShadow" Opacity="0.1" Fill="{StaticResource Shadow}">
                                 <Rectangle.RenderTransform>
-                                    <TranslateTransform X="-2" Y="2"/>
+                                    <TranslateTransform X="-2" Y="2" />
                                 </Rectangle.RenderTransform>
                             </Rectangle>
                             <Grid Name="TheCard" Cursor="Hand">
                                 <Viewbox Width="100" Height="140">
                                     <Path Fill="#FFFFFF" Data="M1467.5,1852.5c0,110-90,200-200,200h-1067c-110,0-200-90-200-200v-1652 c0-110,90-200,200-200h1067c110,0,200,90,200,200V1852.5z" />
                                 </Viewbox>
-                                <Rectangle Name="faceRect"/>
+                                <Rectangle Name="faceRect" />
                                 <!--<Viewbox Width="100" Height="140">
                                     <Path Name="TheHighlight" Fill="{TemplateBinding Background}" Data="M1467.5,1852.5c0,110-90,200-200,200h-1067c-110,0-200-90-200-200v-1652 c0-110,90-200,200-200h1067c110,0,200,90,200,200V1852.5z" />
                                 </Viewbox>-->
                                 <Grid.RenderTransform>
-                                    <TranslateTransform X="0" Y="0"/>
+                                    <TranslateTransform X="0" Y="0" />
                                 </Grid.RenderTransform>
                             </Grid>
                             <Grid Name="TheBorder" Cursor="Hand" Opacity="0.25">
@@ -1775,209 +1775,204 @@
                     </Viewbox>
                     <ControlTemplate.Triggers>
                         <Trigger Property="Face" Value="@@">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource @@}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource @@}" />
                         </Trigger>
                         <Trigger Property="Face" Value="HA">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource HA}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource HA}" />
                         </Trigger>
                         <Trigger Property="Face" Value="H2">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource H2}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource H2}" />
                         </Trigger>
                         <Trigger Property="Face" Value="H3">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource H3}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource H3}" />
                         </Trigger>
                         <Trigger Property="Face" Value="H4">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource H4}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource H4}" />
                         </Trigger>
                         <Trigger Property="Face" Value="H5">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource H5}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource H5}" />
                         </Trigger>
                         <Trigger Property="Face" Value="H6">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource H6}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource H6}" />
                         </Trigger>
                         <Trigger Property="Face" Value="H7">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource H7}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource H7}" />
                         </Trigger>
                         <Trigger Property="Face" Value="H8">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource H8}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource H8}" />
                         </Trigger>
                         <Trigger Property="Face" Value="H9">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource H9}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource H9}" />
                         </Trigger>
                         <Trigger Property="Face" Value="HX">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource HX}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource HX}" />
                         </Trigger>
                         <Trigger Property="Face" Value="HJ">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource HJ}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource HJ}" />
                         </Trigger>
                         <Trigger Property="Face" Value="HQ">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource HQ}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource HQ}" />
                         </Trigger>
                         <Trigger Property="Face" Value="HK">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource HK}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource HK}" />
                         </Trigger>
                         <Trigger Property="Face" Value="SA">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource SA}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource SA}" />
                         </Trigger>
                         <Trigger Property="Face" Value="S2">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource S2}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource S2}" />
                         </Trigger>
                         <Trigger Property="Face" Value="S3">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource S3}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource S3}" />
                         </Trigger>
                         <Trigger Property="Face" Value="S4">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource S4}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource S4}" />
                         </Trigger>
                         <Trigger Property="Face" Value="S5">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource S5}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource S5}" />
                         </Trigger>
                         <Trigger Property="Face" Value="S6">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource S6}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource S6}" />
                         </Trigger>
                         <Trigger Property="Face" Value="S7">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource S7}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource S7}" />
                         </Trigger>
                         <Trigger Property="Face" Value="S8">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource S8}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource S8}" />
                         </Trigger>
                         <Trigger Property="Face" Value="S9">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource S9}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource S9}" />
                         </Trigger>
                         <Trigger Property="Face" Value="SX">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource SX}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource SX}" />
                         </Trigger>
                         <Trigger Property="Face" Value="SJ">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource SJ}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource SJ}" />
                         </Trigger>
                         <Trigger Property="Face" Value="SQ">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource SQ}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource SQ}" />
                         </Trigger>
                         <Trigger Property="Face" Value="SK">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource SK}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource SK}" />
                         </Trigger>
                         <Trigger Property="Face" Value="DA">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource DA}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource DA}" />
                         </Trigger>
                         <Trigger Property="Face" Value="D2">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource D2}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource D2}" />
                         </Trigger>
                         <Trigger Property="Face" Value="D3">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource D3}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource D3}" />
                         </Trigger>
                         <Trigger Property="Face" Value="D4">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource D4}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource D4}" />
                         </Trigger>
                         <Trigger Property="Face" Value="D5">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource D5}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource D5}" />
                         </Trigger>
                         <Trigger Property="Face" Value="D6">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource D6}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource D6}" />
                         </Trigger>
                         <Trigger Property="Face" Value="D7">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource D7}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource D7}" />
                         </Trigger>
                         <Trigger Property="Face" Value="D8">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource D8}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource D8}" />
                         </Trigger>
                         <Trigger Property="Face" Value="D9">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource D9}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource D9}" />
                         </Trigger>
                         <Trigger Property="Face" Value="DX">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource DX}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource DX}" />
                         </Trigger>
                         <Trigger Property="Face" Value="DJ">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource DJ}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource DJ}" />
                         </Trigger>
                         <Trigger Property="Face" Value="DQ">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource DQ}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource DQ}" />
                         </Trigger>
                         <Trigger Property="Face" Value="DK">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource DK}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource DK}" />
                         </Trigger>
                         <Trigger Property="Face" Value="CA">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource CA}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource CA}" />
                         </Trigger>
                         <Trigger Property="Face" Value="C2">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource C2}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource C2}" />
                         </Trigger>
                         <Trigger Property="Face" Value="C3">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource C3}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource C3}" />
                         </Trigger>
                         <Trigger Property="Face" Value="C4">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource C4}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource C4}" />
                         </Trigger>
                         <Trigger Property="Face" Value="C5">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource C5}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource C5}" />
                         </Trigger>
                         <Trigger Property="Face" Value="C6">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource C6}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource C6}" />
                         </Trigger>
                         <Trigger Property="Face" Value="C7">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource C7}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource C7}" />
                         </Trigger>
                         <Trigger Property="Face" Value="C8">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource C8}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource C8}" />
                         </Trigger>
                         <Trigger Property="Face" Value="C9">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource C9}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource C9}" />
                         </Trigger>
                         <Trigger Property="Face" Value="CX">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource CX}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource CX}" />
                         </Trigger>
                         <Trigger Property="Face" Value="CJ">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource CJ}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource CJ}" />
                         </Trigger>
                         <Trigger Property="Face" Value="CQ">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource CQ}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource CQ}" />
                         </Trigger>
                         <Trigger Property="Face" Value="CK">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource CK}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource CK}" />
                         </Trigger>
                         <Trigger Property="Face" Value="@@">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource @@}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource @@}" />
                         </Trigger>
 
                         <Trigger Property="IsFaceUp" Value="False">
-                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource @@}"/>
+                            <Setter TargetName="faceRect" Property="Fill" Value="{StaticResource @@}" />
                         </Trigger>
 
                         <!--<EventTrigger RoutedEvent="ButtonBase.Checked">
                             <BeginStoryboard>
                                 <Storyboard>
-
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
 
-
                         <EventTrigger RoutedEvent="ButtonBase.Unchecked">
                             <BeginStoryboard>
                                 <Storyboard>
-
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>-->
-
 
                         <EventTrigger SourceName="TheCard" RoutedEvent="Mouse.MouseEnter">
                             <BeginStoryboard>
                                 <Storyboard>
                                     <!-- Border visibility -->
                                     <DoubleAnimation
-                    Storyboard.TargetName="TheBorder" 
+                    Storyboard.TargetName="TheBorder"
                     Storyboard.TargetProperty="(Rectangle.Opacity)"
                     To="1" DecelerationRatio="1" Duration="0:0:0.25" AutoReverse="false" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
 
-
                         <EventTrigger SourceName="TheCard" RoutedEvent="Mouse.MouseLeave">
                             <BeginStoryboard>
                                 <Storyboard>
                                     <!-- Border visibility -->
                                     <DoubleAnimation
-                    Storyboard.TargetName="TheBorder" 
+                    Storyboard.TargetName="TheBorder"
                     Storyboard.TargetProperty="(Rectangle.Opacity)"
                     To="0.25" DecelerationRatio="1" Duration="0:0:0.25" AutoReverse="false" />
                                 </Storyboard>
@@ -1988,5 +1983,4 @@
             </Setter.Value>
         </Setter>
     </Style>
-
 </ResourceDictionary>

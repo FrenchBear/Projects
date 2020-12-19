@@ -1,13 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>SolWPF.ico</ApplicationIcon>
     <Authors>Pierre Violent</Authors>
-    <Copyright>©Pierre Violent 2019</Copyright>
+    <Copyright>©Pierre Violent 2019-2020</Copyright>
     <Description>A simple WPF version of Solitaire classic card game with a solver</Description>
   </PropertyGroup>
 

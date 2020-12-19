@@ -2,29 +2,26 @@
 // class NewGameOptionsViewModel
 // Simple VM for NewGameOptionsWindow binding
 // 2019-04-18   PV
+// 2020-12-19   PV      .Net 5, C#9, nullable enable
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 using System.Windows.Controls;
 using System.Windows.Input;
+
+#nullable enable
 
 namespace SolWPF
 {
     public class NewGameOptionsViewModel : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         private void NotifyPropertyChanged(string name) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-
-
         public ICommand OKCommand { get; private set; }
 
-        private NewGameOptionsWindow dlg;
-
+        private NewGameOptionsWindow? dlg;
 
 
         public NewGameOptionsViewModel()
@@ -35,13 +32,11 @@ namespace SolWPF
         }
 
         internal void SetWindow(NewGameOptionsWindow dlg)
-        {
-            this.dlg = dlg;
-        }
-
-
+            => this.dlg = dlg;
 
         private int _GameSerial;
+
+
         public int GameSerial
         {
             get { return _GameSerial; }
@@ -56,6 +51,7 @@ namespace SolWPF
         }
 
         private bool? _IsWithAAndK;
+
         public bool? IsWithAAndK
         {
             get { return _IsWithAAndK; }
@@ -69,35 +65,30 @@ namespace SolWPF
             }
         }
 
-
-        private bool CanOK(object obj)
-        {
-            return !Validation.GetHasError(dlg.GameSerialTextBox);
-        }
+        private bool CanOK(object obj) => !Validation.GetHasError(dlg?.GameSerialTextBox);
 
         private void OKExecute(object obj)
         {
-            dlg.DialogResult = true;
+            if (dlg is not null) dlg.DialogResult = true;
         }
-
-
 
 
         // =====================================================================================================
         // IDataErrorInfo
 
 #pragma warning disable CA1822 // Mark members as static
-        public string Error
+
+        public string? Error
 #pragma warning restore CA1822 // Mark members as static
         {
             get { return null; }
         }
 
-        public string this[string name]
+        public string? this[string name]
         {
             get
             {
-                string result = null;
+                string? result = null;
 
                 if (name == "GameSerialTextBox")
                 {
@@ -109,6 +100,5 @@ namespace SolWPF
                 return result;
             }
         }
-
     }
 }

@@ -3,13 +3,11 @@
 // Data set of a solitaire session = View Model
 // 2019-04-18   PV
 
-
 using SolLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -50,7 +48,6 @@ namespace SolWPF
 
         private void NotifyPropertyChanged(string name) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-
 
         // Helper
         public IEnumerable<GameStack> AllStacks()
@@ -117,7 +114,6 @@ namespace SolWPF
                 b.Clear();
         }
 
-
         internal bool IsGameFinished()
         {
             foreach (var b in Bases)
@@ -129,7 +125,7 @@ namespace SolWPF
         internal bool IsGameSolvable()
         {
             foreach (var c in Columns)
-                if (c.PlayingCards.Count > 0 && !c.PlayingCards[c.PlayingCards.Count - 1].IsFaceUp)
+                if (c.PlayingCards.Count > 0 && !c.PlayingCards[^1].IsFaceUp)
                     return false;
             return true;
         }
@@ -154,7 +150,6 @@ namespace SolWPF
 
             return new SolverDeck(SolverBases, SolverColumns, SolverTalonFU, SolverTalonFD);
         }
-
 
         public List<MovingGroup> GetNextMoves()
         {
@@ -187,8 +182,8 @@ namespace SolWPF
             return lmg;
         }
 
-
 #if DEBUG
+
         private void CheckDeck()
         {
             int nc = 0;
@@ -216,6 +211,7 @@ namespace SolWPF
             nc += TalonFU.PlayingCards.Count + TalonFD.PlayingCards.Count;
             Debug.Assert(nc == 52);
         }
+
 #endif
 
         internal bool CanUndo() => UndoStack.Count > 0;
@@ -239,7 +235,6 @@ namespace SolWPF
             // PushUndo, called after the move has been performed
         }
 
-
         internal void UpdateGameStatus()
         {
 #if DEBUG
@@ -259,9 +254,8 @@ namespace SolWPF
             ComputeAndUpdateGameSolvability();
         }
 
-
         // Used to abort a running previous computation if it's not finished
-        CancellationTokenSource cts;
+        private CancellationTokenSource cts;
 
         // Do the job in a background task, that can be interrupted if needed
         private void ComputeAndUpdateGameSolvability()
@@ -286,8 +280,8 @@ namespace SolWPF
             t.Start();      // Don't care about task ending
         }
 
-
         private int _MoveCount;
+
         public int MoveCount
         {
             get { return _MoveCount; }
@@ -302,6 +296,7 @@ namespace SolWPF
         }
 
         private string _GameStatus;
+
         public string GameStatus
         {
             get { return _GameStatus; }
@@ -316,6 +311,7 @@ namespace SolWPF
         }
 
         private string _SolverStatus;
+
         public string SolverStatus
         {
             get { return _SolverStatus; }
@@ -330,6 +326,7 @@ namespace SolWPF
         }
 
         private int _GameSerial;
+
         public int GameSerial
         {
             get { return _GameSerial; }
@@ -344,6 +341,7 @@ namespace SolWPF
         }
 
 #if DEBUG
+
         internal void PrintGame()
         {
             Debug.WriteLine("----------------------------------------------------------");
@@ -363,21 +361,21 @@ namespace SolWPF
                 Debug.Write(c.Signature() + " ");
             Debug.WriteLine("");
         }
+
 #endif
     }
-}
 
-
-public static class ExtensionMethods
-{
-    private static readonly Action EmptyDelegate = delegate () { };
-
-    // Extension method to force the refresh of a UIElement
-    public static void Refresh(this UIElement uiElement)
+    public static class ExtensionMethods
     {
-        // By calling Dispatcher.Invoke, the code essentially asks the system to execute all operations that are Render or higher priority, 
-        // thus the control will then render itself (drawing the new content).  Afterwards, it will then execute the provided delegate,
-        // which is our empty method.
-        uiElement.Dispatcher.Invoke(DispatcherPriority.Render, EmptyDelegate);
+        private static readonly Action EmptyDelegate = delegate () { };
+
+        // Extension method to force the refresh of a UIElement
+        public static void Refresh(this UIElement uiElement)
+        {
+            // By calling Dispatcher.Invoke, the code essentially asks the system to execute all operations that are Render or higher priority,
+            // thus the control will then render itself (drawing the new content).  Afterwards, it will then execute the provided delegate,
+            // which is our empty method.
+            uiElement.Dispatcher.Invoke(DispatcherPriority.Render, EmptyDelegate);
+        }
     }
 }

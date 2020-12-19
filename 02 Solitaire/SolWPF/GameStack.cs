@@ -2,6 +2,7 @@
 // GameStack class
 // A hierarchy of classes to represent a location and a collection of PlayingCards
 // 2019-04-11   PV
+// 2020-12-19   PV      .Net 5, C#9, nullable enable
 
 using System;
 using System.Collections.Generic;
@@ -14,10 +15,11 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 
+#nullable enable
 
 namespace SolWPF
 {
-    class GameStack
+    internal class GameStack
     {
         public readonly GameDeck b;
         public readonly string Name;
@@ -26,7 +28,7 @@ namespace SolWPF
         protected readonly Canvas PlayingCanvas;
         protected readonly Rectangle BaseRect;
 
-        public GameStack(GameDeck b, String n, Canvas c, Rectangle r)
+        public GameStack(GameDeck b, string n, Canvas c, Rectangle r)
         {
             this.b = b;
             Name = n;
@@ -47,10 +49,7 @@ namespace SolWPF
 
         // Must be called BEFORE adding the card to PlayingCards list
         protected virtual Point GetNewCardPosition()
-        {
-            var P = new Point((double)BaseRect.GetValue(Canvas.LeftProperty), (double)BaseRect.GetValue(Canvas.TopProperty));
-            return P;
-        }
+            => new Point((double)BaseRect.GetValue(Canvas.LeftProperty), (double)BaseRect.GetValue(Canvas.TopProperty));
 
         public void AddCard(string face, bool isFaceUp)
         {
@@ -73,10 +72,9 @@ namespace SolWPF
             PlayingCards.Clear();
         }
 
-
         // MouveOut is responsible for putting moved cards on top of display stack
         // Returns a PlayingCard if it's been made visible in the process, null otherwise
-        internal protected virtual PlayingCard MoveOutCards(List<PlayingCard> movedCards)
+        protected internal virtual PlayingCard? MoveOutCards(List<PlayingCard> movedCards)
         {
             Debug.Assert(PlayingCards.Count >= movedCards.Count);
             for (int i = movedCards.Count - 1; i >= 0; i--)
@@ -90,10 +88,11 @@ namespace SolWPF
         }
 
         // Storyboard and animation is static, there's only one animation in progress for all stacks
-        private static Storyboard sb;
-        private static Action AnimationCompleted;
+        private static Storyboard? sb;
 
-        internal protected virtual void MoveInCards(List<PlayingCard> movedCards, bool withAnimation = false)
+        private static Action? AnimationCompleted;
+
+        protected internal virtual void MoveInCards(List<PlayingCard> movedCards, bool withAnimation = false)
         {
             if (withAnimation)
             {
@@ -135,7 +134,7 @@ namespace SolWPF
                     };
                 };
 
-                sb.Completed += (object sender, EventArgs e) => AnimationCompleted?.Invoke();
+                sb.Completed += (object? sender, EventArgs e) => AnimationCompleted?.Invoke();
                 sb.Begin();
             }
             else
@@ -148,11 +147,10 @@ namespace SolWPF
                 }
         }
 
-
         // Internal hit test
         // Base version should only check rectangle, derived classes are responsible to implement
         // specialized versions with possible offsets
-        protected virtual bool IsStackHit(Point P, bool onlyTopCard, bool includeCardFaceDown, bool includeEmptyStack, out List<PlayingCard> hitList, out bool isMovable)
+        protected virtual bool IsStackHit(Point P, bool onlyTopCard, bool includeCardFaceDown, bool includeEmptyStack, out List<PlayingCard>? hitList, out bool isMovable)
         {
             Point Q;
             hitList = null;
@@ -167,7 +165,7 @@ namespace SolWPF
                 isMovable = false;  // An empty stack is never movable
                 // Note that hitList is returned null in this case
                 Q = new Point((double)BaseRect.GetValue(Canvas.LeftProperty), (double)BaseRect.GetValue(Canvas.TopProperty));
-                return (P.X >= Q.X && P.X <= Q.X + MainWindow.cardWidth && P.Y >= Q.Y && P.Y <= Q.Y + MainWindow.cardHeight);
+                return P.X >= Q.X && P.X <= Q.X + MainWindow.cardWidth && P.Y >= Q.Y && P.Y <= Q.Y + MainWindow.cardHeight;
             }
 
             int iMax = onlyTopCard ? 1 : PlayingCards.Count;
@@ -189,29 +187,24 @@ namespace SolWPF
             return false;
         }
 
-        protected virtual bool IsStackFromHit(Point P, out List<PlayingCard> hitList, out bool isMovable)
-        {
-            return IsStackHit(P, true, false, false, out hitList, out isMovable);
-        }
+        protected virtual bool IsStackFromHit(Point P, out List<PlayingCard>? hitList, out bool isMovable)
+            => IsStackHit(P, true, false, false, out hitList, out isMovable);
 
         protected virtual bool IsStackToHit(Point P)
-        {
-            return IsStackHit(P, true, false, true, out _, out _);
-        }
-
+            => IsStackHit(P, true, false, true, out _, out _);
 
         // Main function to detect a valid click on a stack, that can either start a move or not.
         // Returns NULL if point P does not match any valid area of the stack or the stack is empty.
         // Otherwise returns a MovingGroup containing a list of potentially moved cards.
         // IsMovable is True for group of cards that can move, in this case, the group of cards is already on top of display stack.
-        // IsMovable is always False for TalonFaceDown, if there is at least one card in TalonFaceDown, then hitList contains this card, 
+        // IsMovable is always False for TalonFaceDown, if there is at least one card in TalonFaceDown, then hitList contains this card,
         // otherwise hitList is empty, indicating that TalonFaceDown must be reset
-        public virtual MovingGroup FromHitTest(Point P)
+        public virtual MovingGroup? FromHitTest(Point P)
         {
-            if (!IsStackFromHit(P, out List<PlayingCard> hitList, out bool isMovable)) return null;
+            if (!IsStackFromHit(P, out List<PlayingCard>? hitList, out bool isMovable)) return null;
 
             var mg = new MovingGroup(this, hitList, isMovable);
-            if (isMovable)
+            if (isMovable && hitList is not null)
                 for (int i = hitList.Count - 1; i >= 0; i--)
                 {
                     PlayingCanvas.Children.Remove(hitList[i]);
@@ -220,7 +213,6 @@ namespace SolWPF
                 }
             return mg;
         }
-
 
         public virtual bool ToHitTest(Point P, MovingGroup mg)
         {
@@ -237,10 +229,7 @@ namespace SolWPF
             }
         }
 
-        protected virtual bool RulesAllowMoveInCards(MovingGroup mg)
-        {
-            return true;
-        }
+        protected virtual bool RulesAllowMoveInCards(MovingGroup mg) => true;
 
         internal void ClearTargetHighlight()
         {
@@ -249,31 +238,25 @@ namespace SolWPF
         }
 
 #if DEBUG
-        public virtual void CheckStack()
-        {
-        }
+        public virtual void CheckStack() { }
 #endif
     }
 
-
-    abstract class TalonBaseStack : GameStack
+    internal abstract class TalonBaseStack : GameStack
     {
-        public TalonBaseStack(GameDeck b, String n, Canvas c, Rectangle r) : base(b, n, c, r) { }
+        public TalonBaseStack(GameDeck b, string n, Canvas c, Rectangle r) : base(b, n, c, r) { }
 
         // Talon is never a target
-        public override bool ToHitTest(Point P, MovingGroup mg)
-        {
-            return false;
-        }
+        public override bool ToHitTest(Point P, MovingGroup mg) => false;
+
     }   // class TalonBaseStack
 
-
-    class TalonFaceDownStack : TalonBaseStack
+    internal class TalonFaceDownStack : TalonBaseStack
     {
-        public TalonFaceDownStack(GameDeck b, String n, Canvas c, Rectangle r) : base(b, n, c, r) { }
+        public TalonFaceDownStack(GameDeck b, string n, Canvas c, Rectangle r) : base(b, n, c, r) { }
 
         // For Talon face down, empty stack is valid to generate a Click to reset the talon
-        protected override bool IsStackFromHit(Point P, out List<PlayingCard> hitList, out bool isMovable)
+        protected override bool IsStackFromHit(Point P, out List<PlayingCard>? hitList, out bool isMovable)
         {
             var r = IsStackHit(P, true, true, true, out hitList, out isMovable);
             Debug.Assert(r == false || isMovable == false);
@@ -295,8 +278,7 @@ namespace SolWPF
             mg.DoMove(true);        // Can do animation, since ResetTalon is not called during Undo
         }
 
-
-        internal protected override void MoveInCards(List<PlayingCard> movedCards, bool withAnimation = false)
+        protected internal override void MoveInCards(List<PlayingCard> movedCards, bool withAnimation = false)
         {
             base.MoveInCards(movedCards, withAnimation);        // No standard animation for now
             // In TalonFD, in cards are always face down (only called during a ResetTalon)
@@ -304,7 +286,7 @@ namespace SolWPF
                 c.IsFaceUp = false;
         }
 
-        internal protected override PlayingCard MoveOutCards(List<PlayingCard> movedCards)
+        protected internal override PlayingCard? MoveOutCards(List<PlayingCard> movedCards)
         {
             Debug.Assert(PlayingCards.Count >= movedCards.Count);
             for (int i = movedCards.Count - 1; i >= 0; i--)
@@ -317,25 +299,21 @@ namespace SolWPF
             }
             return null;
         }
+
 #if DEBUG
         public override void CheckStack()
-        {
-            Debug.Assert(PlayingCards.All(c => !c.IsFaceUp));
-        }
+            => Debug.Assert(PlayingCards.All(c => !c.IsFaceUp));
 #endif
     }   // class TalonFaceDownStack
 
-
-    class TalonFaceUpStack : TalonBaseStack
+    internal class TalonFaceUpStack : TalonBaseStack
     {
         public TalonFaceUpStack(GameDeck b, string n, Canvas c, Rectangle r) : base(b, n, c, r) { }
 
-        protected override bool IsStackFromHit(Point P, out List<PlayingCard> hitList, out bool isMovable)
-        {
-            return IsStackHit(P, true, false, false, out hitList, out isMovable);
-        }
+        protected override bool IsStackFromHit(Point P, out List<PlayingCard>? hitList, out bool isMovable)
+            => IsStackHit(P, true, false, false, out hitList, out isMovable);
 
-        internal protected override void MoveInCards(List<PlayingCard> movedCards, bool withAnimation = false)
+        protected internal override void MoveInCards(List<PlayingCard> movedCards, bool withAnimation = false)
         {
             // TalonFU inverts cards to support Undo correctly
             base.MoveInCards(movedCards.Reverse<PlayingCard>().ToList(), withAnimation);
@@ -347,18 +325,15 @@ namespace SolWPF
 
 #if DEBUG
         public override void CheckStack()
-        {
-            Debug.Assert(PlayingCards.All(c => c.IsFaceUp));
-        }
+            => Debug.Assert(PlayingCards.All(c => c.IsFaceUp));
 #endif
     }   // class TalonFaceUpStack
 
-
     // New cards are shown in a visible stack
-    class ColumnStack : GameStack
+    internal class ColumnStack : GameStack
     {
-        const double visibleYOffset = 45.0;
-        const double notVvisibleYOffset = 10.0;
+        private const double visibleYOffset = 45.0;
+        private const double notVvisibleYOffset = 10.0;
 
         public ColumnStack(GameDeck b, string n, Canvas c, Rectangle r) : base(b, n, c, r) { }
 
@@ -373,26 +348,24 @@ namespace SolWPF
             return new Point(P.X, P.Y + off);
         }
 
-        protected override bool IsStackFromHit(Point P, out List<PlayingCard> hitList, out bool isMovable)
-        {
-            return IsStackHit(P, false, false, false, out hitList, out isMovable);
-        }
+        protected override bool IsStackFromHit(Point P, out List<PlayingCard>? hitList, out bool isMovable)
+            => IsStackHit(P, false, false, false, out hitList, out isMovable);
 
         protected override bool RulesAllowMoveInCards(MovingGroup mg)
         {
-            Debug.Assert(mg.MovingCards.Count > 0);
+            Debug.Assert(mg.MovingCards is not null && mg.MovingCards.Count > 0);
 
             // If column is empty, can only add a group starting with a King
             if (PlayingCards.Count == 0)
-                return mg.MovingCards[mg.MovingCards.Count - 1].Value == 13;
+                return mg.MovingCards[^1].Value == 13;
 
-            Debug.WriteLine($"ST.C={PlayingCards[0].Color % 2}  MG.C={mg.MovingCards[mg.MovingCards.Count - 1].Color % 2}  ST.V={PlayingCards[0].Value}  MG.V={mg.MovingCards[mg.MovingCards.Count - 1].Value}");
+            Debug.WriteLine($"ST.C={PlayingCards[0].Color % 2}  MG.C={mg.MovingCards[^1].Color % 2}  ST.V={PlayingCards[0].Value}  MG.V={mg.MovingCards[^1].Value}");
 
             // Otherwise alternate color, decreasing value
-            return PlayingCards[0].Color % 2 != mg.MovingCards[mg.MovingCards.Count - 1].Color % 2 && PlayingCards[0].Value - 1 == mg.MovingCards[mg.MovingCards.Count - 1].Value;
+            return PlayingCards[0].Color % 2 != mg.MovingCards[^1].Color % 2 && PlayingCards[0].Value - 1 == mg.MovingCards[^1].Value;
         }
 
-        internal protected override PlayingCard MoveOutCards(List<PlayingCard> movedCards)
+        protected internal override PlayingCard? MoveOutCards(List<PlayingCard> movedCards)
         {
             base.MoveOutCards(movedCards);
 
@@ -426,16 +399,16 @@ namespace SolWPF
             }
         }
 #endif
-
     }   // class ColumnStack
 
-
-    class BaseStack : GameStack
+    internal class BaseStack : GameStack
     {
-        public BaseStack(GameDeck b, String n, Canvas c, Rectangle r) : base(b, n, c, r) { }
+        public BaseStack(GameDeck b, string n, Canvas c, Rectangle r) : base(b, n, c, r) { }
 
         protected override bool RulesAllowMoveInCards(MovingGroup mg)
         {
+            Debug.Assert(mg.MovingCards is not null);
+
             // Can only add 1 card to a base
             if (mg.MovingCards.Count != 1)
                 return false;
@@ -464,5 +437,4 @@ namespace SolWPF
 #endif
 
     }   // class BaseStack
-
 }

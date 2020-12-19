@@ -3,9 +3,11 @@
 // A quick-and-dirty WPF window to enter options for a new game
 //
 // 2019-04-21   PV
+// 2020-12-19   PV      .Net 5, C#9, nullable enable
 
 using System.Windows;
 
+#nullable enable
 
 namespace SolWPF
 {
