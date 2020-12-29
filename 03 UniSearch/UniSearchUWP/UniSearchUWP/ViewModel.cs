@@ -602,7 +602,7 @@ namespace UniSearchUWPNS
                 return;
             }
             foreach (var cr in sn.EnumCharacterRecords())
-                sb.AppendLine("\t\t" + cr.AsString);
+                sb.AppendLine("\t\t" + cr.AsDetailedString);
         }
 
         private static void AppendCaseContent(StringBuilder sb, CharacterRecord SelectedChar, bool lower)
@@ -614,7 +614,7 @@ namespace UniSearchUWPNS
             if (s == sc) return;
 
             foreach (var cr in sc.EnumCharacterRecords())
-                sb.AppendLine("\t\t" + cr.AsString);
+                sb.AppendLine("\t\t" + cr.AsDetailedString);
         }
 
 

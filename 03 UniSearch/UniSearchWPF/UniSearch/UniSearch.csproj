@@ -124,6 +124,7 @@
     <Compile Include="CharDetailWindow.xaml.cs">
       <DependentUpon>CharDetailWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ExtensionMethods.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="PredicateBuilder.cs" />

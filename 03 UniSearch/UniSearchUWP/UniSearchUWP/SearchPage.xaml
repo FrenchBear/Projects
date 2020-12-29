@@ -302,34 +302,46 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0" Text="Character" FontWeight="SemiBold" Margin="0,5,12,0" />
                                 <AutoSuggestBox Grid.Column="1" Name="CharacterFilterTextBox" PlaceholderText="Name filter"
                                     AccessKey="N" AccessKeyInvoked="SetFocus"
                                     Text="{Binding CharNameFilter, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" QueryIcon="Filter" >
                                     <ToolTipService.ToolTip>
-                                        <ToolTip Style="{StaticResource LargeTooltipStyle}" >
-                                            <TextBlock>
-                                        Enter a list of words to filter character names (case insensitive, accent insensitive).
-                                        <LineBreak/>
-                                        A single-letter word is always searched for a strict full-word match.
-                                        <LineBreak/>
-                                        Use w: to search for full words, w:cat does not match multipli<Bold>cat</Bold>ion
-                                        <LineBreak/>
-                                        use U+ prefix to search for a specific hex code, such as U+CAFE
-                                        <LineBreak/>
-                                        Use b: to filter on block name
-                                        <LineBreak/>
-                                        Use s: to filter on subheader name
-                                        <LineBreak/>
-                                        Use a: to filter on character age.  Also support comparison operators such as a:&lt;=10
-                                        <LineBreak/>
-                                        Use l: to filter on letters of a word
-                                        <LineBreak/>
-                                        Use gc: to filer on a Unicode category such as D (digits) or LU (Letter Uppercase)</TextBlock>
-                                        </ToolTip>
+                                        <ToolTip Style="{StaticResource LargeTooltipStyle}" Content="Enter a list of words to filter character names, or use an advanced filter." />
                                     </ToolTipService.ToolTip>
                                 </AutoSuggestBox>
+                                <ToggleButton Name="CharFilterHelp" Grid.Column="2" Content="?" />
+                                <Popup IsOpen="{Binding IsChecked, ElementName=CharFilterHelp}" HorizontalOffset="150" VerticalOffset="40" >
+                                    <ToolTip Style="{StaticResource LargeTooltipStyle}">
+                                        <TextBlock>
+                                            Enter a list of words to filter character names (case insensitive, accent insensitive).
+                                            <LineBreak/>
+                                            Use - before a word to exclude it: <Run Foreground="Green">interro -ornament</Run>.
+                                            <LineBreak/>
+                                            Put double quotes around a word for an exact match: <Run Foreground="Green">&quot;cat face&quot;</Run>.
+                                            <LineBreak/>
+                                            A single-letter word is always searched for a strict full-word match.
+                                            <LineBreak/>
+                                            Use w: to search for full words: <Run Foreground="Green">w:cat</Run> does not match multipli<Bold>cat</Bold>ion.
+                                            <LineBreak/>
+                                            Use U+ prefix to search for a specific hex codepoint or range: <Run Foreground="Green">U+CAFE</Run> or <Run Foreground="Green">U+0020..00FF</Run>.
+                                            <LineBreak/>
+                                            Use b: to filter on block name: <Run Foreground="Green">b:Mahjong</Run>.
+                                            <LineBreak/>
+                                            Use s: to filter on subheader name: <Run Foreground="Green">s:musical</Run>.
+                                            <LineBreak/>
+                                            Use a: to filter on character age. Also support comparison operators such as <Run Foreground="Green">a:&lt;=10</Run>.
+                                            <LineBreak/>
+                                            Use l: to filter on letters of a word: <Run Foreground="Green">l:&quot;Où ça?&quot;</Run>.
+                                            <LineBreak/>
+                                            Use gc: to filer on a Unicode Category: <Run Foreground="Green">gc:D</Run> for digits, or <Run Foreground="Green">gc:LU</Run> for uppercase letters.
+                                            <LineBreak/>
+                                            Use sc: to filer on a Unicode Script: <Run Foreground="Green">sc:javanese</Run>.
+                                        </TextBlock>
+                                    </ToolTip>
+                                </Popup>
                             </Grid>
                         </StackPanel>
 

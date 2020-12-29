@@ -189,7 +189,7 @@ namespace UniSearchNS
             return tb;
         }
 
-        public ObservableCollection<object> FontsList { get; private set; } = new();
+        public ObservableCollection<object> FontsList { get; private set; } = new ObservableCollection<object>();
 
 
         private Visibility _SearchFontsButtonVisibility = Visibility.Visible;
@@ -323,14 +323,14 @@ namespace UniSearchNS
                     sbres.AppendLine(s);
                     var ts = s.Split('\t');
                     string fontFamily = ts[0];
-                    TextBlock tb1 = new();
-                    tb1.Text = SelectedChar.Character;
-                    tb1.FontFamily = new FontFamily(fontFamily);
-                    tb1.Width = 50;
-                    TextBlock tb2 = new();
-                    tb2.Text = fontFamily + " " + ts[1];
-                    StackPanel sp = new();
-                    sp.Orientation = Orientation.Horizontal;
+                    var tb1 = new TextBlock
+                    {
+                        Text = SelectedChar.Character,
+                        FontFamily = new FontFamily(fontFamily),
+                        Width = 50
+                    };
+                    var tb2 = new TextBlock { Text = fontFamily + " " + ts[1] };
+                    var sp = new StackPanel { Orientation = Orientation.Horizontal };
                     sp.Children.Add(tb1);
                     sp.Children.Add(tb2);
                     FontsList.Add(sp);

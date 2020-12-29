@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:UniSearchNS"
         FontSize="13" FontFamily="Segoe UI"
         mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=local:CharDetailViewModel}"
-        Title="{Binding Title}" Height="550" Width="550">
+        Title="{Binding Title}" Height="570" Width="550">
 
     <Grid Margin="12,6,6,6">
         <Grid.RowDefinitions>
@@ -32,27 +32,8 @@
         <ScrollViewer Grid.Column="1" Grid.RowSpan="2" 
                       VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled" 
                       Focusable="False">
-            <Grid Margin="0,0,12,0" >
+            <Grid Margin="0,0,12,0" IsSharedSizeScope="True">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -61,61 +42,144 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+                <Grid Grid.Row="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="Character" FontWeight="Bold" />
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="  Codepoint  " FontWeight="SemiBold" />
-                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedChar.CodepointHex}" />
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="  Name  " FontWeight="SemiBold" />
-                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedChar.Name}" />
-                <TextBlock Grid.Row="3" Grid.Column="0" Text="  Categories  " FontWeight="SemiBold" />
-                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedChar.CategoryRecord.Categories}" />
-                <TextBlock Grid.Row="4" Grid.Column="0" Text="  Since " FontWeight="SemiBold" />
-                <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedChar.Age}" />
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="Label" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="5" Grid.Column="0" Text="Block" FontWeight="Bold" Margin="0,12,0,0"/>
-                <TextBlock Grid.Row="6" Grid.Column="0" Text="  Level 3  " FontWeight="SemiBold" />
-                <TextBlock Grid.Row="6" Grid.Column="1" Text="{Binding SelectedChar.Block.Level3Name}" />
-                <TextBlock Grid.Row="7" Grid.Column="0" Text="  Level 2  " FontWeight="SemiBold" />
-                <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding SelectedChar.Block.Level2Name}" />
-                <TextBlock Grid.Row="8" Grid.Column="0" Text="  Level 1  " FontWeight="SemiBold" />
-                <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding SelectedChar.Block.Level1Name}" />
-                <TextBlock Grid.Row="9" Grid.Column="0" Text="  Block " FontWeight="SemiBold" />
-                <ContentPresenter Grid.Row="9" Grid.Column="1" Content="{Binding BlockContent}" />
-                <TextBlock Grid.Row="10" Grid.Column="0" Text="  Subheader " FontWeight="SemiBold" />
-                <ContentPresenter Grid.Row="10" Grid.Column="1" Content="{Binding SubheaderContent}" />
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Character" FontWeight="Bold" />
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="  Codepoint  " FontWeight="SemiBold" />
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedChar.CodepointHex}" />
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="  Name  " FontWeight="SemiBold" />
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedChar.Name}" />
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="  Script  " FontWeight="SemiBold" />
+                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedChar.Script}" />
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="  Categories  " FontWeight="SemiBold" />
+                    <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding SelectedChar.CategoryRecord.Categories}" />
+                    <TextBlock Grid.Row="5" Grid.Column="0" Text="  Since " FontWeight="SemiBold" />
+                    <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding SelectedChar.Age}" />
+                </Grid>
 
-                <TextBlock Grid.Row="11" Grid.Column="0" Text="Encoding" FontWeight="Bold" Margin="0,12,0,0"/>
-                <TextBlock Grid.Row="12" Grid.Column="0" Text="  UTF-8" FontWeight="SemiBold" />
-                <TextBlock Grid.Row="12" Grid.Column="1" Text="{Binding SelectedChar.UTF8}" />
-                <TextBlock Grid.Row="13" Grid.Column="0" Text="  UTF-16" FontWeight="SemiBold" />
-                <TextBlock Grid.Row="13" Grid.Column="1" Text="{Binding SelectedChar.UTF16}" />
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="14" Grid.Column="0" Text="Decomposition and Case" Grid.ColumnSpan="2" FontWeight="Bold" Margin="0,12,0,0"/>
-                <TextBlock Grid.Row="15" Grid.Column="0" Text="  NFD" FontWeight="SemiBold" />
-                <ContentPresenter Grid.Row="15" Grid.Column="1" Content="{Binding NormalizationNFDContent}" />
-                <TextBlock Grid.Row="16" Grid.Column="0" Text="  NFKD" FontWeight="SemiBold" />
-                <ContentPresenter Grid.Row="16" Grid.Column="1" Content="{Binding NormalizationNFKDContent}" />
-                <TextBlock Grid.Row="17" Grid.Column="0" Text="  Lowercase " FontWeight="SemiBold" />
-                <ContentPresenter Grid.Row="17" Grid.Column="1" Content="{Binding LowercaseContent}" />
-                <TextBlock Grid.Row="18" Grid.Column="0" Text="  Uppercase " FontWeight="SemiBold" />
-                <ContentPresenter Grid.Row="18" Grid.Column="1" Content="{Binding UppercaseContent}" />
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="Label" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="19" Grid.Column="0" Text="Extra Information" Grid.ColumnSpan="2" FontWeight="Bold" Margin="0,12,0,0"/>
-                <TextBlock Grid.Row="20" Grid.Column="0" Text="  Synonyms " FontWeight="SemiBold" />
-                <ContentPresenter Grid.Row="20" Grid.Column="1" Content="{Binding SynonymsContent}" HorizontalAlignment="Left" />
-                <TextBlock Grid.Row="21" Grid.Column="0" Text="  Cross-Refs " FontWeight="SemiBold" />
-                <ContentPresenter Grid.Row="21" Grid.Column="1" Content="{Binding CrossRefsContent}" HorizontalAlignment="Left" />
-                <TextBlock Grid.Row="22" Grid.Column="0" Text="  Comments " FontWeight="SemiBold" />
-                <ContentControl Grid.Row="22" Grid.Column="1" Content="{Binding CommentsContent}" 
-                                HorizontalAlignment="Left" />
-                <TextBlock Grid.Row="23" Grid.Column="0" Text="{Binding FontsLabel, FallbackValue=Fonts}" Grid.ColumnSpan="2" FontWeight="Bold" Margin="0,12,0,0"/>
-                <Button Visibility="{Binding SearchFontsButtonVisibility}" Grid.Row="24" Margin="0,6" Content="Search fonts" Height="24" Command="{Binding SearchFontsCommand}" ToolTip="List fonts containing a glyph for this codepoint" />
-                <ProgressBar Visibility="{Binding SearchFontsProgressBarVisibility}" Grid.Row="24" Margin="0,6" Grid.ColumnSpan="2" Minimum="0" Maximum="100" Value="{Binding SearchFontsProgress, Mode=OneWay}" />
-                <ListBox Visibility="{Binding FontsListVisibility, FallbackValue=Hidden}" Grid.Row="24" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding FontsList}" />
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Block" FontWeight="Bold" Margin="0,12,0,0"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="  Level 3  " FontWeight="SemiBold" />
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedChar.Block.Level3Name}" />
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="  Level 2  " FontWeight="SemiBold" />
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedChar.Block.Level2Name}" />
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="  Level 1  " FontWeight="SemiBold" />
+                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding SelectedChar.Block.Level1Name}" />
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="  Block " FontWeight="SemiBold" />
+                    <ContentPresenter Grid.Row="4" Grid.Column="1" Content="{Binding BlockContent}" />
+                    <TextBlock Grid.Row="5" Grid.Column="0" Text="  Subheader " FontWeight="SemiBold" />
+                    <ContentPresenter Grid.Row="5" Grid.Column="1" Content="{Binding SubheaderContent}" />
+                </Grid>
+
+                <Grid Grid.Row="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="Label" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Encoding" FontWeight="Bold" Margin="0,12,0,0"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="  UTF-8" FontWeight="SemiBold" />
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedChar.UTF8}" />
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="  UTF-16" FontWeight="SemiBold" />
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedChar.UTF16}" />
+                </Grid>
+
+                <Grid Grid.Row="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="Label" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Decomposition and Case" Grid.ColumnSpan="2" FontWeight="Bold" Margin="0,12,0,0"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="  NFD" FontWeight="SemiBold" />
+                    <ContentPresenter Grid.Row="1" Grid.Column="1" Content="{Binding NormalizationNFDContent}" />
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="  NFKD" FontWeight="SemiBold" />
+                    <ContentPresenter Grid.Row="2" Grid.Column="1" Content="{Binding NormalizationNFKDContent}" />
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="  Lowercase " FontWeight="SemiBold" />
+                    <ContentPresenter Grid.Row="3" Grid.Column="1" Content="{Binding LowercaseContent}" />
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="  Uppercase " FontWeight="SemiBold" />
+                    <ContentPresenter Grid.Row="4" Grid.Column="1" Content="{Binding UppercaseContent}" />
+                </Grid>
+
+                <Grid Grid.Row="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="Label" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Extra Information" Grid.ColumnSpan="2" FontWeight="Bold" Margin="0,12,0,0"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="  Synonyms " FontWeight="SemiBold" />
+                    <ContentPresenter Grid.Row="1" Grid.Column="1" Content="{Binding SynonymsContent}" HorizontalAlignment="Left" />
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="  Cross-Refs " FontWeight="SemiBold" />
+                    <ContentPresenter Grid.Row="2" Grid.Column="1" Content="{Binding CrossRefsContent}" HorizontalAlignment="Left" />
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="  Comments " FontWeight="SemiBold" />
+                    <ContentControl Grid.Row="3" Grid.Column="1" Content="{Binding CommentsContent}" HorizontalAlignment="Left" />
+                </Grid>
+
+                <Grid Grid.Row="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="Label" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding FontsLabel, FallbackValue=Fonts}" Grid.ColumnSpan="2" FontWeight="Bold" Margin="0,12,0,0"/>
+                    <Button Visibility="{Binding SearchFontsButtonVisibility}" Grid.Row="1" Margin="0,6" Content="Search fonts" Height="24" Command="{Binding SearchFontsCommand}" ToolTip="List fonts containing a glyph for this codepoint" />
+                    <ProgressBar Visibility="{Binding SearchFontsProgressBarVisibility}" Grid.Row="1" Margin="0,6" Grid.ColumnSpan="2" Minimum="0" Maximum="100" Value="{Binding SearchFontsProgress, Mode=OneWay}" />
+                    <ListBox Visibility="{Binding FontsListVisibility, FallbackValue=Hidden}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding FontsList}" />
+                </Grid>
             </Grid>
         </ScrollViewer>
     </Grid>

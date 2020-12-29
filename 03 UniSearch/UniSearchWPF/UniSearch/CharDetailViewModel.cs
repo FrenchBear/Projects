@@ -47,6 +47,11 @@ namespace UniSearchNS
         public ICommand CopyAllInfoCommand { get; private set; }
         public ICommand SearchFontsCommand { get; private set; }
 
+
+        // IDispose implementation for owned objects implementing IDisposable
+        public void Dispose() => (bgWorkerExport as IDisposable)?.Dispose();
+
+
         // Constructor
         public CharDetailViewModel(CharDetailWindow window, CharacterRecord cr, ViewModel mainViewModel)
         {
@@ -309,11 +314,13 @@ namespace UniSearchNS
 
         private void Export_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
         {
+            var sbres = new StringBuilder();
             SearchFontsProgressBarVisibility = Visibility.Hidden;
             FontsList.Clear();
             if (e.Result is List<string> ls)
                 foreach (string s in ls)
                 {
+                    sbres.AppendLine(s);
                     var ts = s.Split('\t');
                     string fontFamily = ts[0];
                     var tb1 = new TextBlock
@@ -330,6 +337,9 @@ namespace UniSearchNS
                 }
             FontsListVisibility = Visibility.Visible;
             FontsLabel = $"Fonts ({FontsList.Count})";
+
+            Clipboard.Clear();
+            Clipboard.SetText(sbres.ToString());
         }
 
         private void Export_DoWork(object? sender, DoWorkEventArgs e)
@@ -337,7 +347,7 @@ namespace UniSearchNS
             var list = new List<string>();
             var nf = 0;
             var tnf = Fonts.SystemFontFamilies.Count;
-            foreach (var family in Fonts.SystemFontFamilies.OrderBy(ff => ff.Source))
+            foreach (var family in Fonts.SystemFontFamilies.OrderBy(ff => ff.Source, StringComparer.OrdinalIgnoreCase))
             {
                 if (bgWorkerExport?.CancellationPending == true)
                 {

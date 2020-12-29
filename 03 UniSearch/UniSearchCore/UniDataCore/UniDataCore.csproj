@@ -5,7 +5,7 @@
     <RootNamespace>UniDataNS</RootNamespace>
     <Platforms>AnyCPU;x64</Platforms>
     <Nullable>enable</Nullable>
-    <Version>1.6.1</Version>
+    <Version>1.7.0</Version>
     <Authors>Pierre Violent</Authors>
     <Company>Pierre Violent</Company>
     <Copyright>Copyright ©2018-2020 Pierre Violent</Copyright>
@@ -30,6 +30,7 @@
     <None Remove="UCD\DerivedAge.txt" />
     <None Remove="UCD\MetaBlocks.txt" />
     <None Remove="UCD\NamesList.txt" />
+    <None Remove="UCD\Scripts.txt" />
     <None Remove="UCD\UnicodeData.txt" />
   </ItemGroup>
 
@@ -37,6 +38,7 @@
     <EmbeddedResource Include="UCD\DerivedAge.txt" />
     <EmbeddedResource Include="UCD\MetaBlocks.txt" />
     <EmbeddedResource Include="UCD\NamesList.txt" />
+    <EmbeddedResource Include="UCD\Scripts.txt" />
     <EmbeddedResource Include="UCD\UnicodeData.txt" />
   </ItemGroup>
 

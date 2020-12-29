@@ -15,6 +15,7 @@
 //                      For T, the old rule found 17 matches (TtŢţŤťȚțṪṫṬṭṮṯṰṱẗ)
 //                      The new rule finds 95 matches (TtŢţŤťŦŧƫƬƭƮȚțȶȾʇʈͭᑦᛏᛐᣕᰳᴛᵀᵗᵵᶵṪṫṬṭṮṯṰṱẗₜ⒯Ⓣⓣⱦㄊㆵ㇀ꞆꞇꞱꩅﬅＴｔ𐊗𐊭𐤯𑫞𖹈𖹨𛰃𛰲𛰳𛰶𛰷𝐓𝐭𝑇𝑡𝑻𝒕𝒯𝓉𝓣𝓽𝔗𝔱𝕋𝕥𝕿𝖙𝖳𝗍𝗧𝘁𝘛𝘵𝙏𝙩𝚃𝚝🄣🅃🅣🆃🇹)
 // 2020-11-17   PV      Bug A Squared does not filter like Squared A.  Search on synonyms added.
+// 2020-12-29   PV      Script filtering; U+hhhh ranges
 
 using System;
 using System.Collections.Generic;
@@ -231,8 +232,9 @@ namespace UniSearchUWPNS
         }
 
 
-        // To search for U+hhhh words (1 to 6 hex digits)
-        static readonly Regex CodepointRegex = new Regex(@"^U\+[0-9A-F]{1,6}$", RegexOptions.IgnoreCase);
+        // To search for U+hhhh[..hhhh] sequences  (1 to 6 hex digits)
+        private static readonly Regex CodepointRangeRegex = new Regex(@"^U\+(1?[0-9A-F]{4,5})(?:(\.\.|-)(?:U\+)?(1?[0-9A-F]{4,5}))?$", RegexOptions.IgnoreCase);            // U+1234..U+2345
+
 
         // Specific version to search CharacterRecords
         public bool GetCharacterRecordFilter(object searched)
@@ -270,7 +272,7 @@ namespace UniSearchUWPNS
                         word = word.Substring(p + 1);
                     return match;
                 }
-                
+
 
                 bool wordFilter = true;
 
@@ -305,32 +307,45 @@ namespace UniSearchUWPNS
                         try
                         {
                             wordFilter = Regex.IsMatch(" " + cr.Name + " ", word, isCS ? 0 : RegexOptions.IgnoreCase);
-                            if (!wordFilter && cr.Synonyms!=null)
+                            if (!wordFilter && cr.Synonyms != null)
                                 foreach (string s in cr.Synonyms)
                                 {
                                     wordFilter = Regex.IsMatch(" " + s + " ", word, isCS ? 0 : RegexOptions.IgnoreCase);
                                     if (wordFilter) break;
                                 }
-                    	}
-                    	catch (Exception)
-                    	{
-                        	wordFilter = true;
-                    	}
-                	}
+                        }
+                        catch (Exception)
+                        {
+                            wordFilter = true;
+                        }
+                    }
                 }
 
                 // If searched string is U+ followed by 1 to 6 hex digits, search for Codepoint value
                 // StartsWith U+ is for optimization, no need to start interpreting a regex for all chars
-                else if (word.StartsWith("U+", StringComparison.OrdinalIgnoreCase) && CodepointRegex.IsMatch(word))
+                else if (word.StartsWith("U+", StringComparison.OrdinalIgnoreCase) && CodepointRangeRegex.IsMatchMatch(word, out Match ma))
                 {
-                    int n = int.Parse(word.Substring(2), NumberStyles.HexNumber);
-                    wordFilter = cr.Codepoint == n;
+                    if (int.TryParse(ma.Groups[1].ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int cpFrom))
+                    {
+                        int cpTo = cpFrom;
+                        if (ma.Groups[2].Success && int.TryParse(ma.Groups[3].ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int n))
+                            cpTo = n;
+                        wordFilter = cr.Codepoint >= cpFrom && cr.Codepoint <= cpTo;
+                    }
+                    else
+                        wordFilter = true;
                 }
 
                 // If searched string starts with GC:, it's a category filter
                 else if (WordStartsWithPrefix("GC"))
                 {
                     wordFilter = cr.CategoryRecord.CategoriesList.Any(s => string.Compare(s, word, StringComparison.OrdinalIgnoreCase) == 0);
+                }
+
+                // If searched string starts with SC:, it's a script filter
+                else if (WordStartsWithPrefix("SC"))
+                {
+                    wordFilter = string.Compare(cr.Script, word, StringComparison.OrdinalIgnoreCase) == 0;
                 }
 
                 // Age filter
@@ -429,6 +444,5 @@ namespace UniSearchUWPNS
 
             return true;
         }
-
     }
 }
