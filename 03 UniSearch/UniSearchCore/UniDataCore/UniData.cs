@@ -34,17 +34,13 @@ namespace UniDataNS
     /// </summary>
     public class CharacterRecord
     {
-        /// <summary>Last valid codepoint</summary>
-        public const int MaxCodepoint = 0x10FFFF;
-
-
-        /// <summary>Unicode character codepoint, between 0 and 0x10FFFF (from UnicodeData.txt)</summary>
+        /// <summary>Unicode Character Codepoint, between 0 and 0x10FFFF (from UnicodeData.txt).</summary>
         public int Codepoint { get; private set; }
 
-        /// <summary>Unicode character name, uppercase string such as LATIN CAPITAL LETTER A (from UnicodeData.txt)</summary>
+        /// <summary>Unicode Character Name, uppercase string such as LATIN CAPITAL LETTER A (from UnicodeData.txt).</summary>
         public string Name { get; private set; }
 
-        /// <summary>Unicode general category, 2 characters such as Lu (from UnicodeData.txt)</summary>
+        /// <summary>Unicode General Category, 2 characters such as Lu (from UnicodeData.txt).</summary>
         public string Category { get; private set; }
 
         /// <summary>Unicode script (from Scripts.txt)</summary>
@@ -80,7 +76,7 @@ namespace UniDataNS
         /// Convert to a C# string representation of the character, except for control characters.
         /// 'Safe version' of UnicodeData.CPtoString. U+FFFD is the official replacement character. 
         /// </summary>
-        public string Character => UniData.CodepointToString(IsPrintable ? Codepoint : 0xFFFD);
+        public string Character => UniData.AsString(IsPrintable ? Codepoint : 0xFFFD);
 
         /// <summary>Used by ListView to support grouping</summary>
         public string GroupName => UniData.BlockRecords[BlockBegin].BlockName + (string.IsNullOrEmpty(Subheader) ? "" : ": " + Subheader);
@@ -225,9 +221,9 @@ namespace UniDataNS
         /// <summary>Internal constructor</summary>
         internal CategoryRecord(string code, string name, string include = "")
         {
-            this.Code = code;
-            this.Name = name;
-            this.Include = include;
+            Code = code;
+            Name = name;
+            Include = include;
             CategoriesList = new List<string> { code };
         }
 
@@ -249,14 +245,18 @@ namespace UniDataNS
 
         // Public read only dictionaries to access Unicode data
 
-        /// <summary>Dictionary of all character records indexed by Codepoints</summary>
+        /// <summary>Dictionary of all valid character records indexed by Codepoints.</summary>
         public static ReadOnlyDictionary<int, CharacterRecord> CharacterRecords { get; } = new ReadOnlyDictionary<int, CharacterRecord>(char_map);
 
-        /// <summary>Dictionary of all categories, indexed by category (case sensitive)</summary>
+        /// <summary>Dictionary of all categories, indexed by category (case sensitive).</summary>
         public static ReadOnlyDictionary<string, CategoryRecord> CategoryRecords { get; } = new ReadOnlyDictionary<string, CategoryRecord>(cat_map);
 
-        /// <summary>Dictionary of all blocks, indexed by 1st Codepoint of the block</summary>
+        /// <summary>Dictionary of all blocks, indexed by 1st Codepoint of the block.</summary>
         public static ReadOnlyDictionary<int, BlockRecord> BlockRecords { get; } = new ReadOnlyDictionary<int, BlockRecord>(block_map);
+
+
+        /// <summary>Last valid codepoint.</summary>
+        public const int MaxCodepoint = 0x10FFFF;
 
 
         // To extract a CP from a Cross-Ref
@@ -269,8 +269,9 @@ namespace UniDataNS
             Stopwatch BlocksStopwatch = ReadBlocks();
             Stopwatch CategoriesStopwatch = ReadCategories();
             Stopwatch UnicodeDataStopwatch = ReadUnicodeData();
+            AddBlockBegin();
             Stopwatch AgeStopwatch = ReadAges();
-            Stopwatch NamesStopwatch = ReadNames();
+            Stopwatch NamesStopwatch = ReadNamesList();
             Stopwatch ScriptsStopwatch = ReadScripts();
             TotalStopwatch.Stop();
 
@@ -284,9 +285,9 @@ namespace UniDataNS
             Debug.WriteLine($"TOTAL:       {TotalStopwatch.Elapsed}");
         }
 
+        /// <summary>Read blocks info from MetaBlocks.txt: Block Name, Level 1 Name, Level 2 Name and Level3 Name.  Note that this file does not come from Unicode.org but is manually managed.</summary>
         private static Stopwatch ReadBlocks()
         {
-            // Read blocks
             Stopwatch BlocksStopwatch = Stopwatch.StartNew();
             using (var sr = new StreamReader(GetResourceStream("MetaBlocks.txt")))
                 while (!sr.EndOfStream)
@@ -327,9 +328,67 @@ namespace UniDataNS
             return BlocksStopwatch;
         }
 
+
+        /// <summary>Initialize Categories, from https://unicode.org/reports/tr44/#GC_Values_Table</summary>
+        private static Stopwatch ReadCategories()
+        {
+            Stopwatch CategoriesStopwatch = Stopwatch.StartNew();
+            foreach (var cat in new CategoryRecord[] {
+                new CategoryRecord("", "Unassigned"),
+                new CategoryRecord("C", "Other", "Cc|Cf|Cn|Co|Cs"),
+                new CategoryRecord("Cc", "Control"),
+                new CategoryRecord("Cf", "Format"),
+                new CategoryRecord("Cn", "Unassigned"),
+                new CategoryRecord("Co", "Private_Use"),
+                new CategoryRecord("Cs", "Surrogate"),
+                new CategoryRecord("L", "Letter", "Ll|Lm|Lo|Lt|Lu"),
+                new CategoryRecord("LC", "Cased_Letter", "Ll|Lt|Lu"),
+                new CategoryRecord("Ll", "Lowercase_Letter"),
+                new CategoryRecord("Lm", "Modifier_Letter"),
+                new CategoryRecord("Lo", "Other_Letter"),
+                new CategoryRecord("Lt", "Titlecase_Letter"),
+                new CategoryRecord("Lu", "Uppercase_Letter"),
+                new CategoryRecord("M", "Mark", "Mc|Me|Mn"),
+                new CategoryRecord("Mc", "Spacing_Mark"),
+                new CategoryRecord("Me", "Enclosing_Mark"),
+                new CategoryRecord("Mn", "Nonspacing_Mark"),
+                new CategoryRecord("N", "Number", "Nd|Nl|No"),
+                new CategoryRecord("Nd", "Decimal_Number"),
+                new CategoryRecord("Nl", "Letter_Number"),
+                new CategoryRecord("No", "Other_Number"),
+                new CategoryRecord("P", "Punctuation", "Pc|Pd|Pe|Pf|Pi|Po|Ps"),
+                new CategoryRecord("Pc", "Connector_Punctuation"),
+                new CategoryRecord("Pd", "Dash_Punctuation"),
+                new CategoryRecord("Pe", "Close_Punctuation"),
+                new CategoryRecord("Pf", "Final_Punctuation"),
+                new CategoryRecord("Pi", "Initial_Punctuation"),
+                new CategoryRecord("Po", "Other_Punctuation"),
+                new CategoryRecord("Ps", "Open_Punctuation"),
+                new CategoryRecord("S", "Symbol", "Sc|Sk|Sm|So"),
+                new CategoryRecord("Sc", "Currency_Symbol"),
+                new CategoryRecord("Sk", "Modifier_Symbol"),
+                new CategoryRecord("Sm", "Math_Symbol"),
+                new CategoryRecord("So", "Other_Symbol"),
+                new CategoryRecord("Z", "Separator", "Zl|Zp|Zs"),
+                new CategoryRecord("Zl", "Line_Separator"),
+                new CategoryRecord("Zp", "Paragraph_Separator"),
+                new CategoryRecord("Zs", "Space_Separator"),})
+            {
+                cat_map.Add(cat.Code, cat);
+            }
+
+            // Second pass, fill AllCategories
+            foreach (CategoryRecord cr in cat_map.Values.Where(c => c.Include.Length > 0))
+                foreach (string other in cr.Include.Split('|'))
+                    cat_map[other].CategoriesList.Add(cr.Code);
+            CategoriesStopwatch.Stop();
+            return CategoriesStopwatch;
+        }
+
+
+        /// <summary>Read characters info from UnicodeData.txt: Name, Category, IsPrintable</summary>
         private static Stopwatch ReadUnicodeData()
         {
-            // Read characters
             Stopwatch UnicodeDataStopwatch = Stopwatch.StartNew();
             using (var sr = new StreamReader(GetResourceStream("UnicodeData.txt")))
                 while (!sr.EndOfStream)
@@ -391,75 +450,24 @@ namespace UniDataNS
             for (int code = 0xFDD0; code <= 0xFDEF; code++)
                 AddNonCharacter(code);
 
-
-            // Add BlockBegin info to each character, done separately for efficiency
-            foreach (var br in block_map.Values)
-                for (int ch = br.Begin; ch <= br.End; ch++)
-                    if (char_map.ContainsKey(ch))
-                        char_map[ch].BlockBegin = br.Begin;
             UnicodeDataStopwatch.Stop();
             return UnicodeDataStopwatch;
         }
 
-        private static Stopwatch ReadCategories()
+        // Add BlockBegin info to each character, done separately for efficiency.
+        // Code is separated from ReadUnicodeData() to share its source with apps that don't use block info (ex: UniView)
+        private static void AddBlockBegin()
         {
-            // Initialize Categories, from https://unicode.org/reports/tr44/#GC_Values_Table
-            Stopwatch CategoriesStopwatch = Stopwatch.StartNew();
-            foreach (var cat in new CategoryRecord[] {
-                new CategoryRecord("", "Unassigned"),
-                new CategoryRecord("C", "Other", "Cc|Cf|Cn|Co|Cs"),
-                new CategoryRecord("Cc", "Control"),
-                new CategoryRecord("Cf", "Format"),
-                new CategoryRecord("Cn", "Unassigned"),
-                new CategoryRecord("Co", "Private_Use"),
-                new CategoryRecord("Cs", "Surrogate"),
-                new CategoryRecord("L", "Letter", "Ll|Lm|Lo|Lt|Lu"),
-                new CategoryRecord("LC", "Cased_Letter", "Ll|Lt|Lu"),
-                new CategoryRecord("Ll", "Lowercase_Letter"),
-                new CategoryRecord("Lm", "Modifier_Letter"),
-                new CategoryRecord("Lo", "Other_Letter"),
-                new CategoryRecord("Lt", "Titlecase_Letter"),
-                new CategoryRecord("Lu", "Uppercase_Letter"),
-                new CategoryRecord("M", "Mark", "Mc|Me|Mn"),
-                new CategoryRecord("Mc", "Spacing_Mark"),
-                new CategoryRecord("Me", "Enclosing_Mark"),
-                new CategoryRecord("Mn", "Nonspacing_Mark"),
-                new CategoryRecord("N", "Number", "Nd|Nl|No"),
-                new CategoryRecord("Nd", "Decimal_Number"),
-                new CategoryRecord("Nl", "Letter_Number"),
-                new CategoryRecord("No", "Other_Number"),
-                new CategoryRecord("P", "Punctuation", "Pc|Pd|Pe|Pf|Pi|Po|Ps"),
-                new CategoryRecord("Pc", "Connector_Punctuation"),
-                new CategoryRecord("Pd", "Dash_Punctuation"),
-                new CategoryRecord("Pe", "Close_Punctuation"),
-                new CategoryRecord("Pf", "Final_Punctuation"),
-                new CategoryRecord("Pi", "Initial_Punctuation"),
-                new CategoryRecord("Po", "Other_Punctuation"),
-                new CategoryRecord("Ps", "Open_Punctuation"),
-                new CategoryRecord("S", "Symbol", "Sc|Sk|Sm|So"),
-                new CategoryRecord("Sc", "Currency_Symbol"),
-                new CategoryRecord("Sk", "Modifier_Symbol"),
-                new CategoryRecord("Sm", "Math_Symbol"),
-                new CategoryRecord("So", "Other_Symbol"),
-                new CategoryRecord("Z", "Separator", "Zl|Zp|Zs"),
-                new CategoryRecord("Zl", "Line_Separator"),
-                new CategoryRecord("Zp", "Paragraph_Separator"),
-                new CategoryRecord("Zs", "Space_Separator"),})
-            {
-                cat_map.Add(cat.Code, cat);
-            }
-
-            // Second pass, fill AllCategories
-            foreach (CategoryRecord cr in cat_map.Values.Where(c => c.Include.Length > 0))
-                foreach (string other in cr.Include.Split('|'))
-                    cat_map[other].CategoriesList.Add(cr.Code);
-            CategoriesStopwatch.Stop();
-            return CategoriesStopwatch;
+            foreach (var br in block_map.Values)
+                for (int ch = br.Begin; ch <= br.End; ch++)
+                    if (char_map.ContainsKey(ch))
+                        char_map[ch].BlockBegin = br.Begin;
         }
 
+
+        /// <summary>Read characters age info from DerivedAge.txt.  Age is the version of Unicode standard that character appeared for the first time.</summary>
         private static Stopwatch ReadAges()
         {
-            // Read age
             Stopwatch AgeStopwatch = Stopwatch.StartNew();
             using (var sr = new StreamReader(GetResourceStream("DerivedAge.txt")))
                 while (!sr.EndOfStream)
@@ -491,9 +499,9 @@ namespace UniDataNS
             return AgeStopwatch;
         }
 
-        private static Stopwatch ReadNames()
+        /// <summary>Read block subheaders, synonyms and cross-references from NamesList.txt.</summary>
+        private static Stopwatch ReadNamesList()
         {
-            // Read NamesList
             Stopwatch NamesStopwatch = Stopwatch.StartNew();
             string subheader = string.Empty;
 
@@ -606,7 +614,7 @@ namespace UniDataNS
                                     else
                                         cp2 = Convert.ToInt32(ma.ToString(), 16);
                                 }
-                                comment += " → " + CodepointToString(cp1) + CodepointToString(cp2);
+                                comment += " → " + AsString(cp1) + AsString(cp2);
                             }
                         }
 
@@ -647,9 +655,10 @@ namespace UniDataNS
             return NamesStopwatch;
         }
 
+
+        /// <summary>Read script associated with characters from Scripts.txt.</summary>
         private static Stopwatch ReadScripts()
         {
-            // Read Scripts
             Stopwatch ScriptsStopwatch = Stopwatch.StartNew();
             using (var sr = new StreamReader(GetResourceStream("Scripts.txt")))
                 while (!sr.EndOfStream)
@@ -670,9 +679,9 @@ namespace UniDataNS
                     else
                     {
                         int end_char_code = int.Parse(fields[0][(p + 2)..], NumberStyles.HexNumber);
-                            for (int code = codepoint; code <= end_char_code; code++)
-                                if (char_map.ContainsKey(code))
-                                    char_map[code].script = script;
+                        for (int code = codepoint; code <= end_char_code; code++)
+                            if (char_map.ContainsKey(code))
+                                char_map[code].script = script;
                     }
                 }
 
@@ -682,7 +691,7 @@ namespace UniDataNS
 
 
 
-        // Returns stream from embedded resource name
+        /// <summary>Returns stream from embedded resource name.</summary>
         private static Stream GetResourceStream(string name)
         {
             name = "." + name;
@@ -697,8 +706,14 @@ namespace UniDataNS
         }
 
 
-        // Converts a codepoint to an UTF-16 encoded string (.Net string)
-        public static string CodepointToString(int cp) => cp <= 0xD7FF || (cp >= 0xE000 && cp <= 0xFFFF) ? new string((char)cp, 1) : new string((char)(0xD800 + ((cp - 0x10000) >> 10)), 1) + new string((char)(0xDC00 + (cp & 0x3ff)), 1);
+        /// <summary>
+        /// Converts a codepoint to an UTF-16 encoded string (.Net string).
+        /// Do not name it ToString since it's a static class and it can't override object.ToString(.)
+        /// </summary>
+        /// <param name="cp">Codepoint to convert.</param>
+        /// <returns>A string of one character for cp&lt;0xFFFF, or two surrogate characters for cp&gt;=0x10000.
+        /// No check is made for invalid codepoints, returned string is undefined in this case.</returns>
+        public static string AsString(int cp) => cp <= 0xD7FF || (cp >= 0xE000 && cp <= 0xFFFF) ? new string((char)cp, 1) : new string((char)(0xD800 + ((cp - 0x10000) >> 10)), 1) + new string((char)(0xDC00 + (cp & 0x3ff)), 1);
 
 
         // Returns number of Unicode characters in a (valid) UTF-16 encoded string
@@ -735,11 +750,11 @@ namespace UniDataNS
             if (str == null) throw new ArgumentNullException(nameof(str));
             for (int i = 0; i < str.Length; i++)
             {
-                int cp = (int)str[i];
+                int cp = str[i];
                 if (cp >= 0xD800 && cp <= 0xDBFF)
                 {
                     i += 1;
-                    cp = 0x10000 + ((cp & 0x3ff) << 10) + ((int)str[i] & 0x3ff);
+                    cp = 0x10000 + ((cp & 0x3ff) << 10) + (str[i] & 0x3ff);
                 }
                 var cr = UniData.CharacterRecords[cp];
                 yield return cr;

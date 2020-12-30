@@ -303,7 +303,7 @@ namespace UniSearchNS
             bgWorkerExport = new BackgroundWorker { WorkerReportsProgress = true };
             bgWorkerExport.DoWork += Export_DoWork;
             bgWorkerExport.RunWorkerCompleted += Export_RunWorkerCompleted;
-            bgWorkerExport.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(Export_ProgressChanged);
+            bgWorkerExport.ProgressChanged += new ProgressChangedEventHandler(Export_ProgressChanged);
             bgWorkerExport.RunWorkerAsync();
         }
 
@@ -338,8 +338,14 @@ namespace UniSearchNS
             FontsListVisibility = Visibility.Visible;
             FontsLabel = $"Fonts ({FontsList.Count})";
 
-            Clipboard.Clear();
-            Clipboard.SetText(sbres.ToString());
+            try
+            {
+                Clipboard.Clear();
+                Clipboard.SetText(sbres.ToString());
+            }
+            catch (Exception)
+            {
+            }
         }
 
         private void Export_DoWork(object? sender, DoWorkEventArgs e)

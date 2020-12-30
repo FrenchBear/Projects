@@ -19,7 +19,7 @@ namespace DirectDrawWrite
         // Main entry point, could be extended with more parameters...
         public static BitmapSource GetBitmapSource(string s)
         {
-            byte[] xx = D2DDrawText.TextToBytesArray(s, 96);
+            byte[] xx = TextToBytesArray(s, 96);
             return CroppedBitmapSourceFromArray(xx, 400, 400);
         }
 

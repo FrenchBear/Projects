@@ -28,7 +28,7 @@ using System.ComponentModel;
 
 namespace UniSearchNS
 {
-    internal class CharDetailViewModel : INotifyPropertyChanged
+    internal class CharDetailViewModel : INotifyPropertyChanged, IDisposable
     {
         // Private variables
         private readonly CharDetailWindow window;
@@ -303,7 +303,7 @@ namespace UniSearchNS
             bgWorkerExport = new BackgroundWorker { WorkerReportsProgress = true };
             bgWorkerExport.DoWork += Export_DoWork;
             bgWorkerExport.RunWorkerCompleted += Export_RunWorkerCompleted;
-            bgWorkerExport.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(Export_ProgressChanged);
+            bgWorkerExport.ProgressChanged += new ProgressChangedEventHandler(Export_ProgressChanged);
             bgWorkerExport.RunWorkerAsync();
         }
 

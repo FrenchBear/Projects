@@ -1,4 +1,6 @@
-﻿using System;
+﻿// VirtualToggleButton.cs
+// Helper for a WPF TreeView that enables automatic updates or child and hierarchy when a button is clicked
+
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -21,18 +23,14 @@ namespace UniSearchNS.Controls
         /// indicates whether the toggle button is checked.
         /// </summary>
         public static bool? GetIsChecked(DependencyObject d)
-        {
-            return (bool?)d?.GetValue(IsCheckedProperty);
-        }
+            => (bool?)d?.GetValue(IsCheckedProperty);
 
         /// <summary>
         /// Sets the IsChecked property.  This dependency property 
         /// indicates whether the toggle button is checked.
         /// </summary>
         public static void SetIsChecked(DependencyObject d, bool? value)
-        {
-            d?.SetValue(IsCheckedProperty, value);
-        }
+            => d?.SetValue(IsCheckedProperty, value);
 
         /// <summary>
         /// Handles changes to the IsChecked property.
@@ -62,8 +60,7 @@ namespace UniSearchNS.Controls
         /// IsThreeState Attached Dependency Property
         /// </summary>
         public static readonly DependencyProperty IsThreeStateProperty =
-            DependencyProperty.RegisterAttached("IsThreeState", typeof(bool), typeof(VirtualToggleButton),
-                new FrameworkPropertyMetadata((bool)false));
+            DependencyProperty.RegisterAttached("IsThreeState", typeof(bool), typeof(VirtualToggleButton), new FrameworkPropertyMetadata(false));
 
         /// <summary>
         /// Gets the IsThreeState property.  This dependency property 
@@ -71,9 +68,7 @@ namespace UniSearchNS.Controls
         /// IsChecked can be set to null as a third state when IsThreeState is true.
         /// </summary>
         public static bool GetIsThreeState(DependencyObject d)
-        {
-            return (bool)d?.GetValue(IsThreeStateProperty);
-        }
+            => (bool)d?.GetValue(IsThreeStateProperty);
 
         /// <summary>
         /// Sets the IsThreeState property.  This dependency property 
@@ -81,9 +76,7 @@ namespace UniSearchNS.Controls
         /// IsChecked can be set to null as a third state when IsThreeState is true.
         /// </summary>
         public static void SetIsThreeState(DependencyObject d, bool value)
-        {
-            d?.SetValue(IsThreeStateProperty, value);
-        }
+            => d?.SetValue(IsThreeStateProperty, value);
 
 
         /// <summary>
@@ -91,8 +84,7 @@ namespace UniSearchNS.Controls
         /// </summary>
         public static readonly DependencyProperty IsVirtualToggleButtonProperty =
             DependencyProperty.RegisterAttached("IsVirtualToggleButton", typeof(bool), typeof(VirtualToggleButton),
-                new FrameworkPropertyMetadata((bool)false,
-                    new PropertyChangedCallback(OnIsVirtualToggleButtonChanged)));
+                new FrameworkPropertyMetadata(false, new PropertyChangedCallback(OnIsVirtualToggleButtonChanged)));
 
         /// <summary>
         /// Gets the IsVirtualToggleButton property.  This dependency property 
@@ -100,9 +92,7 @@ namespace UniSearchNS.Controls
         /// If true, the object will respond to keyboard and mouse input the same way a ToggleButton would.
         /// </summary>
         public static bool GetIsVirtualToggleButton(DependencyObject d)
-        {
-            return (bool)d?.GetValue(IsVirtualToggleButtonProperty);
-        }
+            => (bool)d?.GetValue(IsVirtualToggleButtonProperty);
 
         /// <summary>
         /// Sets the IsVirtualToggleButton property.  This dependency property 
@@ -110,9 +100,7 @@ namespace UniSearchNS.Controls
         /// If true, the object will respond to keyboard and mouse input the same way a ToggleButton would.
         /// </summary>
         public static void SetIsVirtualToggleButton(DependencyObject d, bool value)
-        {
-            d?.SetValue(IsVirtualToggleButtonProperty, value);
-        }
+            => d?.SetValue(IsVirtualToggleButtonProperty, value);
 
         /// <summary>
         /// Handles changes to the IsVirtualToggleButton property.
@@ -218,13 +206,9 @@ namespace UniSearchNS.Controls
         {
             bool? isChecked = GetIsChecked(d);
             if (isChecked == true)
-            {
-                SetIsChecked(d, GetIsThreeState(d) ? (bool?)null : (bool?)false);
-            }
+                SetIsChecked(d, GetIsThreeState(d) ? null : (bool?)false);
             else
-            {
                 SetIsChecked(d, isChecked.HasValue);
-            }
         }
 
         private static void RaiseEvent(DependencyObject target, RoutedEventArgs args)

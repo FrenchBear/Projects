@@ -95,7 +95,7 @@ namespace UniSearchNS
             this.isWW = isWW;       // Whole Word
 
             // Compact version of options stored as bits in an integer
-            this.options = (isCS ? 1 : 0) + (isAS ? 2 : 0) + (isRE ? 4 : 0) + (isWW ? 8 : 0);
+            options = (isCS ? 1 : 0) + (isAS ? 2 : 0) + (isRE ? 4 : 0) + (isWW ? 8 : 0);
         }
 
         // Helper that breaks white-separated words in a List<string>, but words "between quotes" are considered a single
@@ -284,7 +284,7 @@ namespace UniSearchNS
                 if (UniData.UnicodeLength(word) == 1)
                 {
                     // Old rule
-                    switch (this.options & 3)
+                    switch (options & 3)
                     {
                         case 0:    // CI AI
                             wordFilter = RemoveDiacritics(cr.Character).ToUpperInvariant() == RemoveDiacritics(word).ToUpperInvariant();
@@ -345,7 +345,7 @@ namespace UniSearchNS
                 // If searched string starts with SC:, it's a script filter
                 else if (WordStartsWithPrefix("SC"))
                 {
-                    wordFilter = string.Compare(cr.Script, word, true) == 0;
+                    wordFilter = string.Compare(cr.Script, word, StringComparison.OrdinalIgnoreCase) == 0;
                 }
 
                 // Age filter

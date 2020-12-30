@@ -213,7 +213,7 @@ namespace UniSearchUWPNS
 
             if (withToolTip)
             {
-                var cps = UniData.CodepointToString(codepoint);
+                var cps = UniData.AsString(codepoint);
 
                 var tb = new TextBlock
                 {

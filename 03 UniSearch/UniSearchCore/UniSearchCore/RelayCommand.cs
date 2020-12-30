@@ -1,9 +1,7 @@
-﻿// UnISearch RelayCommand for MVVM CommandBinding
+﻿// UniSearch RelayCommand for MVVM CommandBinding
 // 2016-09-26   PV
 // 2020-01-02   PV  v3 Not Net Core
 // 2020-11-13   PV  Full support for #nullable enable
-
-#nullable enable
 
 using System;
 using System.Windows.Input;

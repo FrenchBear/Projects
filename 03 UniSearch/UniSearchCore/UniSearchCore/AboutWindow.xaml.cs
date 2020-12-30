@@ -25,7 +25,7 @@ namespace UniSearchNS
             InitializeComponent();
 
             // Main app info
-            (string Title, string Description, string Version, string Copyright) = GetAppVersion(System.Reflection.Assembly.GetExecutingAssembly());
+            (string Title, string Description, string Version, string Copyright) = GetAppVersion(Assembly.GetExecutingAssembly());
             AssemblyTitle.Text = Title;
             AssemblyDescription.Text = Description;
             AssemblyVersion.Text = "Version " + Version;

@@ -321,7 +321,7 @@ namespace UniSearchNS
 
             if (withToolTip)
             {
-                var cps = UniData.CodepointToString(codepoint);
+                var cps = UniData.AsString(codepoint);
                 ToolTip tooltip = new ToolTip
                 {
                     Content = new Image { Source = D2DDrawText.GetBitmapSource(cps) },
@@ -357,7 +357,6 @@ namespace UniSearchNS
         // Events processing
 
         // Called from Window
-        // ToDo: FInd a way to call VM directly
         internal void AfterCheckboxFlip()
         {
             RefreshSelBlocks();
@@ -438,7 +437,7 @@ namespace UniSearchNS
 
 
             // Filtering Predicate
-            bool fp(CheckableNode bn) => String.IsNullOrEmpty(BlockNameFilter) || bn.Name.IndexOf(BlockNameFilter, 0, StringComparison.InvariantCultureIgnoreCase) >= 0;
+            bool fp(CheckableNode bn) => string.IsNullOrEmpty(BlockNameFilter) || bn.Name.IndexOf(BlockNameFilter, 0, StringComparison.InvariantCultureIgnoreCase) >= 0;
 
 
             bool FilterBlock(CheckableNode n)
@@ -480,6 +479,10 @@ namespace UniSearchNS
         {
             if (records == null) return;
             var sb = new StringBuilder();
+            if (param == "1")
+                sb.AppendLine("Character\tCodepoint\tName");
+            if (param == "2")
+                sb.AppendLine("Character\tCodepoint\tName\tScript\tCategories\tAge\tBlock\tUTF16\tUTF8");
             foreach (CharacterRecord r in records.OrderBy(cr => cr.Codepoint))
                 switch (param)
                 {
@@ -492,7 +495,7 @@ namespace UniSearchNS
                         break;
 
                     case "2":
-                        sb.AppendLine(r.Character + "\t" + r.CodepointHex + "\t" + r.Name + "\t" + r.CategoryRecord.Categories + "\t" + r.Age + "\t" + r.Block.BlockNameAndRange + "\t" + r.UTF16 + "\t" + r.UTF8);
+                        sb.AppendLine(r.Character + "\t" + r.CodepointHex + "\t" + r.Name + "\t" + r.Script + "\t" + r.CategoryRecord.Categories + "\t" + r.Age + "\t" + r.Block.BlockNameAndRange + "\t" + r.UTF16 + "\t" + r.UTF8);
                         break;
 
                     case "3":
@@ -500,6 +503,7 @@ namespace UniSearchNS
                         sb.AppendLine("\tChar\t" + r.Character);
                         sb.AppendLine("\tCodepoint\t" + r.CodepointHex);
                         sb.AppendLine("\tName\t" + r.Name);
+                        sb.AppendLine("\tScript\t" + r.Script);
                         sb.AppendLine("\tCategories\t" + r.CategoryRecord.Categories);
                         sb.AppendLine("\tSince\t" + r.Age);
                         sb.AppendLine("Block");
@@ -536,9 +540,23 @@ namespace UniSearchNS
                         sb.AppendLine();
                         break;
                 }
-            System.Windows.Clipboard.Clear();
-            System.Windows.Clipboard.SetText(sb.ToString());
+            ClipboardSetTextData(sb.ToString());
         }
+
+        internal static void ClipboardSetTextData(string s)
+        {
+            // Sometimes clipboard access raises an error
+            try
+            {
+                Clipboard.Clear();
+                Clipboard.SetText(s);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error accessing clipboard: " + ex.ToString(), "UniSearch", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
 
         private static void AppendNormalizationContent(StringBuilder sb, CharacterRecord SelectedChar, NormalizationForm form)
         {
@@ -571,10 +589,15 @@ namespace UniSearchNS
         private void CopyImageExecute(object param)
         {
             if (SelectedChar != null)
-            {
-                System.Windows.Clipboard.Clear();
-                System.Windows.Clipboard.SetImage(SelectedCharImage);
-            }
+                try
+                {
+                    Clipboard.Clear();
+                    Clipboard.SetImage(SelectedCharImage);
+                }
+                catch (Exception)
+                {
+
+                }
         }
 
 
@@ -589,7 +612,7 @@ namespace UniSearchNS
         private void ShowLevelExecute(object? param)
         {
             if (param != null && int.TryParse((string)param, out int level))
-                ActionAllNodes(BlocksRoot, n => { n.IsNodeExpanded = (n.Level != level); });
+                ActionAllNodes(BlocksRoot, n => { n.IsNodeExpanded = n.Level != level; });
         }
 
 
