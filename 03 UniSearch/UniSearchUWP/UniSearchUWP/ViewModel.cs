@@ -527,6 +527,10 @@ namespace UniSearchUWPNS
         internal static void DoCopyRecords(string param, IEnumerable<CharacterRecord>? records)
         { 
             var sb = new StringBuilder();
+            if (param == "1")
+                sb.AppendLine("Character\tCodepoint\tName");
+            if (param == "2")
+                sb.AppendLine("Character\tCodepoint\tName\tScript\tCategories\tAge\tBlock\tUTF16\tUTF8");
             foreach (CharacterRecord r in records.OrderBy(cr => cr.Codepoint))
                 switch (param)
                 {
@@ -539,7 +543,7 @@ namespace UniSearchUWPNS
                         break;
 
                     case "2":
-                        sb.AppendLine(r.Character + "\t" + r.CodepointHex + "\t" + r.Name + "\t" +
+                        sb.AppendLine(r.Character + "\t" + r.CodepointHex + "\t" + r.Name + "\t" + r.Script + "\t" +
                             r.CategoryRecord.Categories + "\t" + r.Age + "\t" + r.Block.BlockNameAndRange + "\t" +
                             r.Subheader + "\t" + r.UTF16 + "\t" + r.UTF8);
                         break;
@@ -549,6 +553,7 @@ namespace UniSearchUWPNS
                         sb.AppendLine("\tChar\t" + r.Character);
                         sb.AppendLine("\tCodepoint\t" + r.CodepointHex);
                         sb.AppendLine("\tName\t" + r.Name);
+                        sb.AppendLine("\tScript\t" + r.Script);
                         sb.AppendLine("\tCategories\t" + r.CategoryRecord.Categories);
                         sb.AppendLine("\tSince\t" + r.Age);
                         sb.AppendLine("Block");
