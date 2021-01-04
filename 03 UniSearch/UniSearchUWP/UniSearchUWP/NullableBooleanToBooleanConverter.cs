@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Data;
 #pragma warning disable CA1822      // Does not work...
 
 
-namespace UniSearchUWPNS
+namespace UniSearchNS
 {
     public class NullableBooleanToBooleanConverter : IValueConverter
     {

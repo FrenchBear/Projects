@@ -338,8 +338,14 @@ namespace UniSearchNS
             FontsListVisibility = Visibility.Visible;
             FontsLabel = $"Fonts ({FontsList.Count})";
 
-            Clipboard.Clear();
-            Clipboard.SetText(sbres.ToString());
+            try
+            {
+                Clipboard.Clear();
+                Clipboard.SetText(sbres.ToString());
+            }
+            catch (Exception)
+            {
+            }
         }
 
         private void Export_DoWork(object? sender, DoWorkEventArgs e)

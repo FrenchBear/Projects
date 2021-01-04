@@ -16,6 +16,7 @@
 //                      The new rule finds 95 matches (TtŢţŤťŦŧƫƬƭƮȚțȶȾʇʈͭᑦᛏᛐᣕᰳᴛᵀᵗᵵᶵṪṫṬṭṮṯṰṱẗₜ⒯Ⓣⓣⱦㄊㆵ㇀ꞆꞇꞱꩅﬅＴｔ𐊗𐊭𐤯𑫞𖹈𖹨𛰃𛰲𛰳𛰶𛰷𝐓𝐭𝑇𝑡𝑻𝒕𝒯𝓉𝓣𝓽𝔗𝔱𝕋𝕥𝕿𝖙𝖳𝗍𝗧𝘁𝘛𝘵𝙏𝙩𝚃𝚝🄣🅃🅣🆃🇹)
 // 2020-11-17   PV      Bug A Squared does not filter like Squared A.  Search on synonyms added.
 // 2020-12-29   PV      Script filtering; U+hhhh ranges
+// 2021-01-04   PV      Bug conflicting prefixes S: and SC: fixed (now only allow short prefix forms)
 
 using System;
 using System.Collections.Generic;
@@ -261,16 +262,14 @@ namespace UniSearchNS
                 }
 
 
-                // Checks if word starts with the first letters of prefix followed by :
+                // Checks if word starts with the prefix followed by :
                 // If there is a match, returns true and removes prefix from word
                 bool WordStartsWithPrefix(string prefix)
                 {
-                    int p = word.IndexOf(':');
-                    if (p <= 0 || p > prefix.Length) return false;      // p<=0 since starting with : is not a valid prefix
-                    bool match = string.Compare(word.Substring(0, p), prefix.Substring(0, p), StringComparison.InvariantCultureIgnoreCase) == 0;
-                    if (match)
-                        word = word[(p + 1)..];
-                    return match;
+                    bool res = word.StartsWith(prefix + ":", StringComparison.InvariantCultureIgnoreCase);
+                    if (res)
+                        word = word[(prefix.Length + 1)..];
+                    return res;
                 }
 
 
@@ -345,11 +344,11 @@ namespace UniSearchNS
                 // If searched string starts with SC:, it's a script filter
                 else if (WordStartsWithPrefix("SC"))
                 {
-                    wordFilter = string.Compare(cr.Script, word, true) == 0;
+                    wordFilter = string.Compare(cr.Script, word, StringComparison.OrdinalIgnoreCase) == 0;
                 }
 
                 // Age filter
-                else if (WordStartsWithPrefix("Age"))
+                else if (WordStartsWithPrefix("A"))
                 {
                     double crAge = double.Parse(cr.Age, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture.NumberFormat);
                     string op = "";
@@ -373,20 +372,20 @@ namespace UniSearchNS
                 }
 
                 // Block filter
-                else if (WordStartsWithPrefix("Block"))
+                else if (WordStartsWithPrefix("B"))
                 {
                     wordFilter = cr.Block.BlockName.IndexOf(word, 0, StringComparison.OrdinalIgnoreCase) >= 0;
                 }
 
                 // Subheader filter
-                else if (WordStartsWithPrefix("Subheader"))
+                else if (WordStartsWithPrefix("S"))
                 {
                     if (word.Length > 0)
                         wordFilter = cr.Subheader != null && cr.Subheader.IndexOf(word, 0, StringComparison.OrdinalIgnoreCase) >= 0;
                 }
 
                 // Letters filter: matches all letters of word
-                else if (WordStartsWithPrefix("Letters"))
+                else if (WordStartsWithPrefix("L"))
                 {
                     wordFilter = word.EnumCharacterRecords().Any(r => r == cr);
                 }

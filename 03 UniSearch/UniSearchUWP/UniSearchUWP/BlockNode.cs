@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Controls;
 #nullable enable
 
 
-namespace UniSearchUWPNS
+namespace UniSearchNS
 {
     internal class BlockNode : TreeViewNode
     {

@@ -1,9 +1,10 @@
-﻿<Application x:Class="UniSearchCore.App"
+﻿<Application
+    x:Class="UniSearchNS.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:UniSearchCore"
+    xmlns:local="clr-namespace:UniSearchNS"
     StartupUri="SearchWindow.xaml">
     <Application.Resources>
-         
+        <FontFamily x:Key="LastResortHE-Regular">pack://application:,,,/Fonts/#Last Resort High-Efficiency</FontFamily>
     </Application.Resources>
 </Application>

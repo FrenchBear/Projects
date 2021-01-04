@@ -336,7 +336,30 @@ namespace UniSearchNS
 
 
         // Returns a hyperlink to NewFilterCommand with commandParameter parameter, using content as text
-        private UIElement? GetBlockHyperlink(string? content, string commandParameter)
+        private UIElement? GetBlockHyperlink(CharacterRecord? cr, string? content, string commandParameter)
+        {
+            if (cr==null || content == null) return null;
+
+            var t1 = new TextBlock(new Run(cr.Character))
+            {
+                Style = window.FindResource("ZoomableTB") as Style
+            };
+
+            var h = new Hyperlink(new Run(content))
+            {
+                Command = NewFilterCommand,
+                CommandParameter = commandParameter
+            };
+
+            var tb = new TextBlock();
+            tb.Inlines.Add(t1);
+            tb.Inlines.Add(h);
+
+            return tb;
+        }
+
+        // Returns a hyperlink to NewFilterCommand with commandParameter parameter, using content as text
+        private UIElement? GetSubheaderHyperlink(string? content, string commandParameter)
         {
             if (content == null) return null;
 
@@ -348,9 +371,9 @@ namespace UniSearchNS
             return new TextBlock(h);
         }
 
-        public UIElement? BlockContent => GetBlockHyperlink(SelectedChar?.Block.BlockNameAndRange, "b:\"" + SelectedChar?.Block.BlockName + "\"");
+        public UIElement? BlockContent => GetBlockHyperlink(SelectedChar, SelectedChar?.Block.BlockNameAndRange, "b:\"" + SelectedChar?.Block.BlockName + "\"");
 
-        public UIElement? SubheaderContent => GetBlockHyperlink(SelectedChar?.Subheader, "s:\"" + SelectedChar?.Subheader + "\"");
+        public UIElement? SubheaderContent => GetSubheaderHyperlink(SelectedChar?.Subheader, "s:\"" + SelectedChar?.Subheader + "\"");
 
 
         // ==============================================================================================

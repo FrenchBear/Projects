@@ -64,6 +64,7 @@
     <None Include="..\.editorconfig">
       <Link>.editorconfig</Link>
     </None>
+    <Content Include="Assets\Fonts\LastResortHE-Regular.ttf" />
     <None Include="UniSearchUWP.ruleset" />
     <None Include="UniSearchUWP_TemporaryKey.pfx" />
   </ItemGroup>
@@ -156,6 +157,7 @@
       <Name>UniDataUWP</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

@@ -3,7 +3,7 @@
 
 using System.Text.RegularExpressions;
 
-namespace UniSearchUWPNS
+namespace UniSearchNS
 {
     internal static class ExtensionMethods
     {

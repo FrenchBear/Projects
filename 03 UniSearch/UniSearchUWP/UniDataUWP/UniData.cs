@@ -81,6 +81,9 @@ namespace UniDataNS
         /// </summary>
         public string Character => UniData.AsString(IsPrintable ? Codepoint : 0xFFFD);
 
+        /// <summary>Direct string representation, used for LastResortFont binding</summary>
+        public string AsString => UniData.AsString(Codepoint);
+
         /// <summary>Used by ListView to support grouping</summary>
         public string GroupName => UniData.BlockRecords[BlockBegin].BlockName + (string.IsNullOrEmpty(Subheader) ? "" : ": " + Subheader);
 

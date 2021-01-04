@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Controls;
 #nullable enable
 
 
-namespace UniSearchUWPNS
+namespace UniSearchNS
 {
     public sealed partial class CharDetailDialog : ContentDialog, IDisposable
     {
@@ -67,7 +67,7 @@ namespace UniSearchUWPNS
         private void CopyButton_Click(object sender, RoutedEventArgs e)
         {
             var records = new List<CharacterRecord> { ViewModel.SelectedChar };
-            UniSearchUWPNS.ViewModel.DoCopyRecords("3", records);
+            UniSearchNS.ViewModel.DoCopyRecords("3", records);
         }
     }
 }

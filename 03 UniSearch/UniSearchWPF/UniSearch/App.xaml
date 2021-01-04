@@ -3,6 +3,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     StartupUri="SearchWindow.xaml">
     <Application.Resources>
-         
+        <FontFamily x:Key="LastResortHE-Regular">pack://application:,,,/Fonts/#Last Resort High-Efficiency</FontFamily>
     </Application.Resources>
 </Application>

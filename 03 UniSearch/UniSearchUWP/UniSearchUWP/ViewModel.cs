@@ -31,7 +31,7 @@ using Windows.UI.Xaml.Media.Imaging;
 #nullable enable
 
 
-namespace UniSearchUWPNS
+namespace UniSearchNS
 {
     internal class ViewModel : INotifyPropertyChanged
     {

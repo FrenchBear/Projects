@@ -12,6 +12,7 @@
 // 2020-11-11   PV      1.6 .Net 5, C#9.  Add Synonyms, Cross-Refs and Comments to CharacterRecords
 // 2020-11-12   PV      1.6.1 Process ranges >=20000 (were incorrectly skipped, causing problem wuth U+FA6C -> NFD U+242EE)
 // 2020-12-29   PV      1.7 Refactoring and Scripts
+// 2021-01-04	PV		1.7.1 AsString Binding for LastResortFont
 
 using System;
 using System.Collections.Generic;
@@ -45,7 +46,7 @@ namespace UniDataNS
 
         /// <summary>Unicode script (from Scripts.txt)</summary>
         public string Script { get => script ?? "Unknown"; }
-        internal string? script = null;
+        internal string? script;
 
         /// <summary>First version of Unicode standard the character appeared, such as 3.0 (from DerivedAge.txt)</summary>
         public string Age { get; internal set; }
@@ -77,6 +78,9 @@ namespace UniDataNS
         /// 'Safe version' of UnicodeData.CPtoString. U+FFFD is the official replacement character. 
         /// </summary>
         public string Character => UniData.AsString(IsPrintable ? Codepoint : 0xFFFD);
+
+        /// <summary>Direct string representation, used for LastResortFont binding</summary>
+        public string AsString => UniData.AsString(Codepoint);
 
         /// <summary>Used by ListView to support grouping</summary>
         public string GroupName => UniData.BlockRecords[BlockBegin].BlockName + (string.IsNullOrEmpty(Subheader) ? "" : ": " + Subheader);

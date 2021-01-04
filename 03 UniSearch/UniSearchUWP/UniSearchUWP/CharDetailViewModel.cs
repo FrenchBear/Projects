@@ -30,7 +30,7 @@ using Windows.UI.Xaml.Media;
 #nullable enable
 
 
-namespace UniSearchUWPNS
+namespace UniSearchNS
 {
     internal class CharDetailViewModel : INotifyPropertyChanged, IDisposable
     {

@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Input;
 #nullable enable
 
 
-namespace UniSearchUWPNS
+namespace UniSearchNS
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.

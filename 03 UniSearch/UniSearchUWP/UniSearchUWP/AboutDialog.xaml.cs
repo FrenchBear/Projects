@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Controls;
 #nullable enable
 
 
-namespace UniSearchUWPNS
+namespace UniSearchNS
 {
     public sealed partial class AboutDialog : ContentDialog
     {

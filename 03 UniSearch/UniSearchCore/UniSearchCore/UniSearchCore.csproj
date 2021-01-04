@@ -6,12 +6,12 @@
     <UseWPF>true</UseWPF>
     <Platforms>AnyCPU;x64</Platforms>
     <Authors>Pierre VIolent</Authors>
-    <Copyright>Copyright ©2018-2020 Pierre Violent</Copyright>
-    <Version>1.4.0</Version>
+    <Copyright>Copyright ©2018-2021 Pierre Violent</Copyright>
+    <Version>1.5.0</Version>
     <Description>Unicode Character Search Tool [WPF .Net 5 C#9 Nullable]</Description>
     <ApplicationIcon>Unicorn.ico</ApplicationIcon>
-    <AssemblyVersion>1.4.0.0</AssemblyVersion>
-    <FileVersion>1.4.0.0</FileVersion>
+    <AssemblyVersion>1.5.0.0</AssemblyVersion>
+    <FileVersion>1.5.0.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -29,8 +29,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="PredicateBuilder.cs.bak" />
-    <None Remove="SearchWindow.xaml.cs.bak" />
     <None Remove="Unicorn.ico" />
     <None Remove="Unicorn.png" />
   </ItemGroup>
@@ -49,6 +47,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Fonts\LastResortHE-Regular.ttf" />
     <Resource Include="Unicorn.ico" />
     <Resource Include="Unicorn.png" />
   </ItemGroup>

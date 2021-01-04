@@ -1,8 +1,8 @@
 ﻿<Page Name="MainPage"
-      x:Class="UniSearchUWPNS.SearchPage"
+      x:Class="UniSearchNS.SearchPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:local="using:UniSearchUWPNS"
+      xmlns:local="using:UniSearchNS"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=local:ViewModel}"
@@ -122,9 +122,8 @@
 
         <local:NullableBooleanToBooleanConverter x:Key="nullableBooleanToBooleanConverter" />
 
+        
     </Page.Resources>
-
-
 
 
     <Grid>

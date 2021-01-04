@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Navigation;
 #nullable enable
 
 
-namespace UniSearchUWPNS
+namespace UniSearchNS
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
