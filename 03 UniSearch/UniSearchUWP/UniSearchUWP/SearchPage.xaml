@@ -122,7 +122,17 @@
 
         <local:NullableBooleanToBooleanConverter x:Key="nullableBooleanToBooleanConverter" />
 
-        
+        <!--<Style TargetType="TextBlock" x:Key="ZoomableTB">
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform x:Name="transform" CenterX="7" CenterY="16" />
+                </Setter.Value>
+            </Setter>
+            <Setter Property="FontFamily" Value="{StaticResource LastResortHE-Regular}" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="Margin" Value="0,0,6,0" />
+        </Style>-->
+
     </Page.Resources>
 
 
@@ -521,9 +531,33 @@
                             <TextBlock Grid.Row="2" Grid.Column="1" Text="Character" FontWeight="SemiBold" />
                             <ContentPresenter Grid.Row="2" Grid.Column="2" Content="{Binding StrContent}" />
                             <TextBlock Grid.Row="3" Grid.Column="1" Text="Block" FontWeight="SemiBold" />
-                            <ContentPresenter Grid.Row="3" Grid.Column="2" Content="{Binding BlockContent}" />
                             <TextBlock Grid.Row="4" Grid.Column="1" Text="Subheader " FontWeight="SemiBold" />
                             <ContentPresenter Grid.Row="4" Grid.Column="2" Content="{Binding SubheaderContent}" />
+                            <Grid Grid.Row="3" Grid.Column="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <ContentPresenter Grid.Column="1" Content="{Binding BlockContent}" />
+                                <Border Grid.Column="0" PointerEntered="ZommableTB_PointerEntered" PointerExited="ZommableTB_PointerExited" Background="Black" Margin="0,0,6,0" >
+                                    <Border.Child>
+                                        <TextBlock FontFamily="{StaticResource LastResortHE-Regular}" FontSize="16" Text="{Binding SelectedChar.AsString}" Foreground="White" />
+                                    </Border.Child>
+                                    <Border.RenderTransform>
+                                        <ScaleTransform x:Name="transform" CenterX="7" CenterY="16" />
+                                    </Border.RenderTransform>
+                                    <Border.Resources>
+                                        <Storyboard x:Name="ZoomIn" Storyboard.TargetName="transform">
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" To="8" Duration="00:00:00.25" />
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" To="8" Duration="00:00:00.25" />
+                                        </Storyboard>
+                                        <Storyboard x:Name="ZoomOut" Storyboard.TargetName="transform">
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" To="1" Duration="00:00:00.25" />
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" To="1" Duration="00:00:00.25" />
+                                        </Storyboard>
+                                    </Border.Resources>
+                                </Border>
+                            </Grid>
                         </Grid>
 
 

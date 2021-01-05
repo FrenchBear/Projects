@@ -23,13 +23,16 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <Border Background="Black" BorderThickness="2" BorderBrush="White" Margin="0,3,12,0" VerticalAlignment="Top"
-                        MinWidth="90" MaxWidth="160" Height="90">
-                <TextBlock Name="CharImage" Foreground="CornflowerBlue" Text="{Binding SelectedChar.Character}"  
-                               FontSize="72" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-10" >
-                </TextBlock>
-            </Border>
 
+            <StackPanel>
+                <Border Background="Black" BorderThickness="2" BorderBrush="White" Margin="0,3,12,0" VerticalAlignment="Top"
+                        MinWidth="90" MaxWidth="160" Height="90">
+                    <TextBlock Name="CharImage" Foreground="CornflowerBlue" Text="{Binding SelectedChar.Character}"  
+                               FontSize="72" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-10" >
+                    </TextBlock>
+                </Border>
+                <TextBlock FontFamily="{StaticResource LastResortHE-Regular}" Text="{Binding SelectedChar.AsString, FallbackValue=A}" FontSize="85" Margin="-3,12" HorizontalAlignment="Left"  />
+            </StackPanel>
             <Button Name="CopyButton" Grid.Row="1" Content="Copy" HorizontalAlignment="Stretch" Click="CopyButton_Click" Margin="0,12,12,0" />
             <Button Name="BackButton" x:FieldModifier="internal" IsEnabled="False" Grid.Row="2" Content="Back" HorizontalAlignment="Stretch" Click="BackButton_Click" Margin="0,12,12,0" />
             <Button Name="CloseButton" Grid.Row="3" Content="Close" HorizontalAlignment="Stretch" Click="CloseButton_Click" Margin="0,12,12,0" />

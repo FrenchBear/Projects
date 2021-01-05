@@ -5,12 +5,16 @@
 // 2018-09-18   PV
 // 2020-11-11   PV      nullable enable
 
+#pragma warning disable IDE0083 // Use pattern matching
+
 using System.Linq;
 using System.Reflection;
 using UniDataNS;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 
 #nullable enable
 
@@ -171,6 +175,19 @@ namespace UniSearchNS
                 }
         }
 
+        private void ZommableTB_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            if (!(sender is Border b)) return;
+            if (!(b.Resources["ZoomIn"] is Storyboard sb)) return;
+            sb.Begin();
+        }
+
+        private void ZommableTB_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            if (!(sender is Border b)) return;
+            if (!(b.Resources["ZoomOut"] is Storyboard sb)) return;
+            sb.Begin();
+        }
     }
 }
 
