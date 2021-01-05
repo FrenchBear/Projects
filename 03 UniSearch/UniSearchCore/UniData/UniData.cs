@@ -461,7 +461,7 @@ namespace UniDataNS
                     else if (codepoint == 31)
                         char_name = "CONTROL - UNIT SEPARATOR";
                     else if (codepoint < 32 || codepoint >= 0x7f && codepoint < 0xA0)
-                        char_name = "CONTROL - " + (fields[10].Length > 0 ? fields[10] : fields[0].Substring(2));
+                        char_name = "CONTROL - " + (fields[10].Length > 0 ? fields[10] : fields[0][2..]);
 
                     bool is_range = char_name.EndsWith(", First>", StringComparison.OrdinalIgnoreCase);
                     bool is_printable = !(codepoint < 32                                // Control characters 0-31
@@ -539,7 +539,7 @@ namespace UniDataNS
                     }
                     else
                     {
-                        int end_char_code = int.Parse(fields[0].Substring(p + 2), NumberStyles.HexNumber);
+                        int end_char_code = int.Parse(fields[0][(p + 2)..], NumberStyles.HexNumber);
                         // Skip planes 15 and 16 private use
                         if (codepoint != 0xF0000 && codepoint != 0x100000)
                             for (int code = codepoint; code <= end_char_code; code++)
@@ -619,7 +619,7 @@ namespace UniDataNS
                     else if (line.StartsWith("@~", StringComparison.Ordinal)) { }
                     else if (line.StartsWith("@", StringComparison.Ordinal))
                     {
-                        subheader = line.Substring(3);
+                        subheader = line[3..];
                     }
                     else if (line.StartsWith("\t=", StringComparison.Ordinal) || line.StartsWith("\t%", StringComparison.Ordinal))
                     {
@@ -629,7 +629,7 @@ namespace UniDataNS
 
                         if (char_map[cp16].Synonyms == null)
                             char_map[cp16].Synonyms = new List<string>();
-                        char_map[cp16].Synonyms!.Add(line.Substring(3, 1).ToUpperInvariant() + line.Substring(4));
+                        char_map[cp16].Synonyms!.Add(line[3..4].ToUpperInvariant() + line[4..]);
                     }
                     else if (line.StartsWith("\tx", StringComparison.Ordinal))
                     {
@@ -637,12 +637,12 @@ namespace UniDataNS
                         if (!char_map.ContainsKey(cp16))
                             continue;
 
-                        string crossRef = line.Substring(3).Replace(" - ", " ");
-                        if (crossRef[0] == '(' && crossRef[crossRef.Length-1] == ')')
-                            crossRef = crossRef.Substring(1, crossRef.Length - 2);
+                        string crossRef = line[3..].Replace(" - ", " ");
+                        if (crossRef[0] == '(' && crossRef[^1] == ')')
+                            crossRef = crossRef[1..^1];
                         if (char_map[cp16].CrossRefs == null)
                             char_map[cp16].CrossRefs = new List<string>();
-                        char_map[cp16].CrossRefs!.Add((crossRef.Substring(0,1).ToUpperInvariant() + crossRef.Substring(1)));
+                        char_map[cp16].CrossRefs!.Add(crossRef[0..1].ToUpperInvariant() + crossRef[1..]);
                     }
                     else if (line.StartsWith("\t*", StringComparison.Ordinal) || line.StartsWith("\t~", StringComparison.Ordinal))
                     {
@@ -650,7 +650,7 @@ namespace UniDataNS
                         if (!char_map.ContainsKey(cp16))
                             continue;
 
-                        string comment = line.Substring(3,1).ToUpperInvariant() + line.Substring(4);
+                        string comment = line[3..4].ToUpperInvariant() + line[4..];
 
                         // Special processing for variations, add variation combination at the end
                         if (line.StartsWith("\t~", StringComparison.Ordinal))
@@ -730,7 +730,7 @@ namespace UniDataNS
                     }
                     else
                     {
-                        int end_char_code = int.Parse(fields[0].Substring(p + 2), NumberStyles.HexNumber);
+                        int end_char_code = int.Parse(fields[0][(p + 2)..], NumberStyles.HexNumber);
                         for (int code = codepoint; code <= end_char_code; code++)
                             if (char_map.ContainsKey(code))
                                 char_map[code].script = script;

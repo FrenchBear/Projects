@@ -10,6 +10,36 @@
   WindowStartupLocation="CenterScreen" Icon="Unicorn.ico">
 
     <Window.Resources>
+        <Style TargetType="TextBlock" x:Key="ZoomableTB" >
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform x:Name="transform" CenterX="7" CenterY="16" />
+                </Setter.Value>
+            </Setter>
+            <Setter Property="FontFamily" Value="{StaticResource LastResortHE-Regular}" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="Background" Value="Wheat" />
+            <Setter Property="Margin" Value="0,0,6,0" />
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <BeginStoryboard Name="zoomIn">
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" To="8" Duration="00:00:00.25" />
+                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" To="8" Duration="00:00:00.25" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger  RoutedEvent="MouseLeave">
+                    <BeginStoryboard  Name="zoomOut">
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" To="1" Duration="00:00:00.25" />
+                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" To="1" Duration="00:00:00.25" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+
         <Style x:Key="TreeViewItemStyle" TargetType="TreeViewItem">
             <Setter Property="KeyboardNavigation.AcceptsReturn" Value="True" />
             <Setter Property="dw:VirtualToggleButton.IsVirtualToggleButton" Value="True" />
@@ -49,9 +79,9 @@
         <HierarchicalDataTemplate x:Key="CheckBoxItemTemplate" ItemsSource="{Binding Children, Mode=OneTime}"  >
             <StackPanel Orientation="Horizontal">
                 <!-- These elements are bound to a CheckableNode object. -->
-                <CheckBox Focusable="False" IsChecked="{Binding IsChecked}" VerticalAlignment="Center" 
-                          Click="CheckBox_Flip" />
-                <ContentPresenter  Content="{Binding Name}" Margin="3,0" />
+                <CheckBox Grid.Column="0" Focusable="False" IsChecked="{Binding IsChecked}" VerticalAlignment="Center" Click="CheckBox_Flip" />
+                <TextBlock Grid.Column="1" Visibility="{Binding LRFIconVisibility}" Text="{Binding RepresentantCharacter}" Margin="6,0,0,0" FontSize="16" MinWidth="20" FontFamily="{StaticResource LastResortHE-Regular}" />
+                <ContentPresenter Grid.Column="2" Content="{Binding Name}" Margin="3,0" />
             </StackPanel>
         </HierarchicalDataTemplate>
 
@@ -66,36 +96,6 @@
                 </Hyperlink>
             </TextBlock>
         </DataTemplate>
-
-        <Style TargetType="TextBlock" x:Key="ZoomableTB">
-            <Setter Property="RenderTransform">
-                <Setter.Value>
-                    <ScaleTransform x:Name="transform" CenterX="7" CenterY="16" />
-                </Setter.Value>
-            </Setter>
-            <Setter Property="FontFamily" Value="{StaticResource LastResortHE-Regular}" />
-            <Setter Property="FontSize" Value="16" />
-            <Setter Property="Background" Value="Wheat" />
-            <Setter Property="Margin" Value="0,0,6,0" />
-            <Style.Triggers>
-                <EventTrigger RoutedEvent="MouseEnter">
-                    <BeginStoryboard Name="zoomIn">
-                        <Storyboard>
-                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" To="8" Duration="00:00:00.25" />
-                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" To="8" Duration="00:00:00.25" />
-                        </Storyboard>
-                    </BeginStoryboard>
-                </EventTrigger>
-                <EventTrigger  RoutedEvent="MouseLeave">
-                    <BeginStoryboard  Name="zoomOut">
-                        <Storyboard>
-                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" To="1" Duration="00:00:00.25" />
-                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" To="1" Duration="00:00:00.25" />
-                        </Storyboard>
-                    </BeginStoryboard>
-                </EventTrigger>
-            </Style.Triggers>
-        </Style>
 
     </Window.Resources>
 
@@ -309,7 +309,7 @@
 
             <TreeView Grid.Row="1" ItemContainerStyle="{StaticResource TreeViewItemStyle}" 
                   ItemsSource="{Binding Roots, Mode=OneTime}" 
-                  ItemTemplate="{StaticResource CheckBoxItemTemplate}" />
+                  ItemTemplate="{StaticResource CheckBoxItemTemplate}" MouseDoubleClick="TreeView_MouseDoubleClick" />
 
             <WrapPanel Grid.Row="2" Background="LightGray" Margin="0,6,0,0">
                 <TextBlock Text="{Binding NumBlocks}" />

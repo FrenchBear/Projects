@@ -24,7 +24,7 @@
             <Border BorderThickness="2" BorderBrush="Black" Padding="6" VerticalAlignment="Top" Margin="0,4,12,0">
                 <Image Name="CharImage" Source="{Binding SelectedCharImage}" Grid.Row="0" Grid.Column="0" MinHeight="80" MinWidth="90" MaxWidth="160" Stretch="Uniform" StretchDirection="DownOnly" />
             </Border>
-            <TextBlock FontFamily="{StaticResource LastResortHE-Regular}" Text="{Binding SelectedChar.AsString, FallbackValue=A}" FontSize="100" Margin="0,12" HorizontalAlignment="Left" />
+            <TextBlock FontFamily="{StaticResource LastResortHE-Regular}" Text="{Binding SelectedChar.Block.RepresentantCharacter, FallbackValue=A}" FontSize="100" Margin="0,12" HorizontalAlignment="Left" />
         </StackPanel>
         <StackPanel Orientation="Vertical" Grid.Row="1" Margin="0,0,12,0">
             <Button Content="Copy Full Info" Margin="0,0,0,12" Padding="3" Command="{Binding CopyAllInfoCommand}"/>

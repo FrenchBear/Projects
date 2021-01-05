@@ -7,11 +7,11 @@
     <Platforms>AnyCPU;x64</Platforms>
     <Authors>Pierre VIolent</Authors>
     <Copyright>Copyright ©2018-2021 Pierre Violent</Copyright>
-    <Version>1.5.0</Version>
+    <Version>1.5.1</Version>
     <Description>Unicode Character Search Tool [WPF .Net 5 C#9 Nullable]</Description>
     <ApplicationIcon>Unicorn.ico</ApplicationIcon>
-    <AssemblyVersion>1.5.0.0</AssemblyVersion>
-    <FileVersion>1.5.0.0</FileVersion>
+    <AssemblyVersion>1.5.1.0</AssemblyVersion>
+    <FileVersion>1.5.1.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -43,7 +43,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DirectDrawWrite\DirectDrawWrite.csproj" />
-    <ProjectReference Include="..\UniDataCore\UniDataCore.csproj" />
+    <ProjectReference Include="..\UniData\UniData.csproj" />
   </ItemGroup>
 
   <ItemGroup>

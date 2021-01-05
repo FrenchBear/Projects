@@ -1,18 +1,20 @@
 ﻿// UniData
-// Library providing characters and blocks information reading Unicode UCD files
+// Static class providing characters and blocks information reading Unicode UCD files
 // Aé♫山𝄞🐗
 //
 // 2018-09-11   PV
 // 2018-09-17   PV      1.1 Store UCD Data in embedded streams; Skip characters from planes 15 and 16
 // 2018-09-20   PV      1.2 Read NamesList.txt
 // 2018-09-28	PV		1.2.1 Subheaders merging
-// 2019-03-06	PV		1.3 Unicode 12 (no code change, only UCD data updated)
-// 2019-08-09   PV      1.4 .Net Core 3.0, C#8, Nullable
-// 2020-09-03   PV      1.5 .Net Core 3.1, Unicode 13
-// 2020-11-11   PV      1.6 .Net 5, C#9.  Add Synonyms, Cross-Refs and Comments to CharacterRecords
+// 2018-10-08	PV		XML comments
+// 2019-03-06   PV      1.3 Unicode 12 UCD
+// 2020-09-03   PV      1.5 Unicode 13
+// 2020-11-11   PV      1.6 Add Synonyms, Cross-Refs and Comments to CharacterRecords
 // 2020-11-12   PV      1.6.1 Process ranges >=20000 (were incorrectly skipped, causing problem wuth U+FA6C -> NFD U+242EE)
 // 2020-12-29   PV      1.7 Refactoring and Scripts
-// 2021-01-04	PV		1.7.1 AsString Binding for LastResortFont
+
+#pragma warning disable IDE0057 // Use range operator
+#pragma warning disable IDE0056 // Use index operator
 
 using System;
 using System.Collections.Generic;
@@ -412,7 +414,7 @@ namespace UniDataNS
                     else if (codepoint == 31)
                         char_name = "CONTROL - UNIT SEPARATOR";
                     else if (codepoint < 32 || codepoint >= 0x7f && codepoint < 0xA0)
-                        char_name = "CONTROL - " + (fields[10].Length > 0 ? fields[10] : fields[0][2..]);
+                        char_name = "CONTROL - " + (fields[10].Length > 0 ? fields[10] : fields[0].Substring(2));
 
                     bool is_range = char_name.EndsWith(", First>", StringComparison.OrdinalIgnoreCase);
                     bool is_printable = !(codepoint < 32                                // Control characters 0-31
@@ -491,7 +493,7 @@ namespace UniDataNS
                     }
                     else
                     {
-                        int end_char_code = int.Parse(fields[0][(p + 2)..], NumberStyles.HexNumber);
+                        int end_char_code = int.Parse(fields[0].Substring(p + 2), NumberStyles.HexNumber);
                         // Skip planes 15 and 16 private use
                         if (codepoint != 0xF0000 && codepoint != 0x100000)
                             for (int code = codepoint; code <= end_char_code; code++)
@@ -571,7 +573,7 @@ namespace UniDataNS
                     else if (line.StartsWith("@~", StringComparison.Ordinal)) { }
                     else if (line.StartsWith("@", StringComparison.Ordinal))
                     {
-                        subheader = line[3..];
+                        subheader = line.Substring(3);
                     }
                     else if (line.StartsWith("\t=", StringComparison.Ordinal) || line.StartsWith("\t%", StringComparison.Ordinal))
                     {
@@ -581,7 +583,7 @@ namespace UniDataNS
 
                         if (char_map[cp16].Synonyms == null)
                             char_map[cp16].Synonyms = new List<string>();
-                        char_map[cp16].Synonyms!.Add(line[3..4].ToUpperInvariant() + line[4..]);
+                        char_map[cp16].Synonyms!.Add(line.Substring(3, 1).ToUpperInvariant() + line.Substring(4));
                     }
                     else if (line.StartsWith("\tx", StringComparison.Ordinal))
                     {
@@ -589,12 +591,12 @@ namespace UniDataNS
                         if (!char_map.ContainsKey(cp16))
                             continue;
 
-                        string crossRef = line[3..].Replace(" - ", " ");
-                        if (crossRef[0] == '(' && crossRef[^1] == ')')
-                            crossRef = crossRef[1..^1];
+                        string crossRef = line.Substring(3).Replace(" - ", " ");
+                        if (crossRef[0] == '(' && crossRef[crossRef.Length-1] == ')')
+                            crossRef = crossRef.Substring(1, crossRef.Length - 2);
                         if (char_map[cp16].CrossRefs == null)
                             char_map[cp16].CrossRefs = new List<string>();
-                        char_map[cp16].CrossRefs!.Add(crossRef[0..1].ToUpperInvariant() + crossRef[1..]);
+                        char_map[cp16].CrossRefs!.Add((crossRef.Substring(0,1).ToUpperInvariant() + crossRef.Substring(1)));
                     }
                     else if (line.StartsWith("\t*", StringComparison.Ordinal) || line.StartsWith("\t~", StringComparison.Ordinal))
                     {
@@ -602,7 +604,7 @@ namespace UniDataNS
                         if (!char_map.ContainsKey(cp16))
                             continue;
 
-                        string comment = line[3..4].ToUpperInvariant() + line[4..];
+                        string comment = line.Substring(3,1).ToUpperInvariant() + line.Substring(4);
 
                         // Special processing for variations, add variation combination at the end
                         if (line.StartsWith("\t~", StringComparison.Ordinal))
@@ -682,7 +684,7 @@ namespace UniDataNS
                     }
                     else
                     {
-                        int end_char_code = int.Parse(fields[0][(p + 2)..], NumberStyles.HexNumber);
+                        int end_char_code = int.Parse(fields[0].Substring(p + 2), NumberStyles.HexNumber);
                         for (int code = codepoint; code <= end_char_code; code++)
                             if (char_map.ContainsKey(code))
                                 char_map[code].script = script;
@@ -703,10 +705,8 @@ namespace UniDataNS
             var qualifiedName = assembly.GetManifestResourceNames().FirstOrDefault(n => n.EndsWith(name, StringComparison.OrdinalIgnoreCase));
             if (qualifiedName == null)
                 throw new ArgumentException("Can't get resource (#1) " + name);
-            var st = assembly.GetManifestResourceStream(qualifiedName);
-            if (st == null)
-                throw new ArgumentException("Can't get resource (#2) " + name);
-            return st;
+            else
+                return assembly.GetManifestResourceStream(qualifiedName);
         }
 
 

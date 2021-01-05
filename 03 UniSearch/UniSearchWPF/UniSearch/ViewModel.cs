@@ -5,6 +5,7 @@
 // 2018-09-28   PV      New blocks filtering controlling node expansion and not visibility
 // 2020-11-11   PV      Refilter char list after a block filter update; New 1-letter filtering rule; Dot Net 5.0
 // 2020-11-12   PV      Copy Full Info
+// 2021-01-04   PV      GetBlockHyperlink includes LastResortFont element
 
 using System;
 using System.Collections.Generic;
@@ -75,17 +76,17 @@ namespace UniSearchNS
 
 
             // root is *not* added to the TreeView on purpose
-            BlocksRoot = new CheckableNode("root", 4);
+            BlocksRoot = new CheckableNode("root", 4, null);
             // Dictionary of CheckableNodes indexed by Begin block value
             BlocksCheckableNodesDictionary = new Dictionary<int, CheckableNode>();
 
             foreach (var l3 in BlockRecordsList.GroupBy(b => b.Level3Name).OrderBy(g => g.Key))
             {
-                var r3 = new CheckableNode(l3.Key, 3);
+                var r3 = new CheckableNode(l3.Key, 3, null);
                 BlocksRoot.Children.Add(r3);
                 foreach (var l2 in l3.GroupBy(b => b.Level2Name))
                 {
-                    var r2 = new CheckableNode(l2.Key, 2);
+                    var r2 = new CheckableNode(l2.Key, 2, null);
                     r3.Children.Add(r2);
                     foreach (var l1 in l2.GroupBy(b => b.Level1Name))
                     {
@@ -93,7 +94,7 @@ namespace UniSearchNS
                         CheckableNode r1;
                         if (l1.Key.Length > 0)
                         {
-                            r1 = new CheckableNode(l1.Key, 1);
+                            r1 = new CheckableNode(l1.Key, 1, null);
                             r2.Children.Add(r1);
                         }
                         else
@@ -101,7 +102,7 @@ namespace UniSearchNS
                         // Blocks
                         foreach (var l0 in l1)
                         {
-                            var blockCheckableNode = new CheckableNode(l0.BlockName, 0);
+                            var blockCheckableNode = new CheckableNode(l0.BlockName, 0, l0.RepresentantCharacter);
                             r1.Children.Add(blockCheckableNode);
                             BlocksCheckableNodesDictionary.Add(l0.Begin, blockCheckableNode);
                         }
@@ -338,9 +339,9 @@ namespace UniSearchNS
         // Returns a hyperlink to NewFilterCommand with commandParameter parameter, using content as text
         private UIElement? GetBlockHyperlink(CharacterRecord? cr, string? content, string commandParameter)
         {
-            if (cr==null || content == null) return null;
+            if (cr == null || content == null) return null;
 
-            var t1 = new TextBlock(new Run(cr.Character))
+            var t1 = new TextBlock(new Run(cr.Block.RepresentantCharacter))
             {
                 Style = window.FindResource("ZoomableTB") as Style
             };

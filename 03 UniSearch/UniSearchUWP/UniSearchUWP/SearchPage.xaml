@@ -541,7 +541,7 @@
                                 <ContentPresenter Grid.Column="1" Content="{Binding BlockContent}" />
                                 <Border Grid.Column="0" PointerEntered="ZommableTB_PointerEntered" PointerExited="ZommableTB_PointerExited" Background="Black" Margin="0,0,6,0" >
                                     <Border.Child>
-                                        <TextBlock FontFamily="{StaticResource LastResortHE-Regular}" FontSize="16" Text="{Binding SelectedChar.AsString}" Foreground="White" />
+                                        <TextBlock FontFamily="{StaticResource LastResortHE-Regular}" FontSize="16" Text="{Binding SelectedChar.Block.RepresentantCharacter, FallbackValue=A}" Foreground="White" />
                                     </Border.Child>
                                     <Border.RenderTransform>
                                         <ScaleTransform x:Name="transform" CenterX="7" CenterY="16" />

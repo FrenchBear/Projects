@@ -2,10 +2,11 @@
 // Implementation of a visual class to be used as node in a TreeView
 // Original code from internet, forgot to record source address, but since I've found many copies...
 // 2018-09-23   PV
-
+// 2021-01-05   PV      RepresentantCharacter, LRFIconVisibility
 
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Windows;
 
 #nullable enable
 
@@ -27,10 +28,11 @@ namespace UniSearchNS
 
 
         // Constructor
-        public CheckableNode(string name, int level)
+        public CheckableNode(string name, int level, string? representantCharacter)
         {
             Name = name;
             Level = level;
+            RepresentantCharacter = representantCharacter;
             Children = new List<CheckableNode>();
         }
 
@@ -62,6 +64,13 @@ namespace UniSearchNS
                 }
             }
         }
+
+
+        public string? RepresentantCharacter { get; }
+
+        public Visibility LRFIconVisibility
+            => Level == 0 ? Visibility.Visible : Visibility.Collapsed;
+
 
         private int _Level;
         public int Level

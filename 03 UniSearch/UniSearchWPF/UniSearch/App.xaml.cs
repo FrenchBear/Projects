@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace UniSearchCore
+namespace UniSearchNS
 {
     public partial class App : Application
     {

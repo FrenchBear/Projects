@@ -8,7 +8,9 @@
 //                      Swapped Block and Character grids to have a similar layout than UWP version
 
 using System;
+using System.Diagnostics;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Interop;
 using static UniSearchNS.NativeMethods;
 
@@ -76,11 +78,16 @@ namespace UniSearchNS
         }
 
 
-
-        // ToDo: Move this to VM
         private void CheckBox_Flip(object sender, RoutedEventArgs e)
         {
             vm.AfterCheckboxFlip();
+        }
+
+        private void TreeView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (!(sender is TreeView tv)) return;
+            if (!(tv.SelectedItem is CheckableNode cn)) return;
+            CharacterFilterTextBox.Text = "b:\"" + cn.Name + "\"";
         }
     }
 }

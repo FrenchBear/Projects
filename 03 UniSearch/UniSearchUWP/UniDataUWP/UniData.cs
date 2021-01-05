@@ -12,6 +12,8 @@
 // 2020-11-11   PV      1.6 Add Synonyms, Cross-Refs and Comments to CharacterRecords
 // 2020-11-12   PV      1.6.1 Process ranges >=20000 (were incorrectly skipped, causing problem wuth U+FA6C -> NFD U+242EE)
 // 2020-12-29   PV      1.7 Refactoring and Scripts
+// 2021-01-04	PV		1.7.1 AsString Binding for LastResortFont
+// 2021-01-05   PV      1.8 BlockRecord: FirstAssignedCodepoint and RepresentantCharacter
 
 #pragma warning disable IDE0057 // Use range operator
 #pragma warning disable IDE0056 // Use index operator
@@ -146,11 +148,49 @@ namespace UniDataNS
     /// </summary>
     public class BlockRecord
     {
-        /// <summary>First codepoint of the block</summary>
+        /// <summary>First codepoint of the block.  Beware, this is based on block definition and not guaranteed to be a valid codepoint: block Gurmukhi 0A00..0A7F but 0A00 is not a valid codepoint.  Use property FirstBlockCodepoint to get the first valid Codepoint of the block.</summary>
         public int Begin { get; private set; }
 
         /// <summary>Last codepoint of the block (may or may not be an assigned codepoint)</summary>
         public int End { get; private set; }
+
+        /// <summary>First assigned codepoint of the block, it's sometimes different of Begin.</summary>
+        public int FirstAssignedCodepoint
+        {
+            get
+            {
+                for (int cp = Begin; cp <= End; cp++)
+                    if (UniData.IsValidCodepoint(cp))
+                        return cp;
+                return Begin;
+            }
+        }
+
+        /// <summary>A character that can be used with LastResortFont to represent the block.
+        /// It's usually the first assigned codepoint of the block, except when it's a character rendered with a placeholder circle, which is shown using two glyphs with LRF.
+        /// To avoid this case, a manual list of exceptions is maintained.  Example: for Hewbrew block 0590..05FF, representant is 05D0 Aleph instead of 0591.</summary>
+        public string RepresentantCharacter
+        {
+            get
+            {
+                int cp = Begin switch
+                {
+                    0x0590 => 0x05D0,       // Hebrew: HEBREW LETTER ALEF
+                    0xA880 => 0xA882,       // Saurashtra: SAURASHTRA LETTER A
+                    0x11000 => 0x11005,     // Brahmi: BRAHMI LETTER A
+                    0x11080 => 0x11083,     // Kaithi: KAITHI LETTER A
+                    0x11100 => 0x11103,     // Chakma: CHAKMA LETTER AA
+                    0x11180 => 0x11183,     // Sharada: SHARADA LETTER A
+                    0x11300 => 0x11305,     // Grantha: GRANTHA LETTER A
+                    0x13430 => 0x13437,     // Egyptian Hieroglyphs Format Controls: EGYPTIAN HIEROGLYPH BEGIN SEGMENT
+                    0x1B00 => 0x1B05,       // Balinese: BALINESE LETTER AKARA
+                    0xA980 => 0xA984,       // Javanese: JAVANESE LETTER A
+                    0x1B80 => 0x1B83,       // Sundanese: SUNDANESE LETTER A
+                    _ => FirstAssignedCodepoint
+                };
+                return UniData.AsString(cp);
+            }
+        }
 
         /// <summary>Unicode block name such as "Basic Latin (ASCII)" (from MetaBlocks.txt)</summary>
         public string BlockName { get; private set; }
@@ -267,6 +307,16 @@ namespace UniDataNS
 
         // To extract a CP from a Cross-Ref
         private static readonly Regex reCP = new Regex(@"\b1?[0-9A-F]{4,5}\b");
+
+        /// <summary>True for assigned codepoints.  By convention, codepoints in surrogates ranges are not valid.</summary>
+        public static bool IsValidCodepoint(int cp) => !IsSurrogate(cp) && char_map.ContainsKey(cp) && cp <= MaxCodepoint;
+
+        /// <summary>True for any character in suggogate range 0xD800..0xDFFF (no distinction between low and high surrogates, or private high surrogates</summary>
+        internal static bool IsSurrogate(int cp) => cp >= 0xD800 && cp <= 0xDFFF;
+
+        /// <summary>True for "Not a character": FDD0..FDED and last two characters of each page</summary>
+        internal static bool IsNonCharacter(int cp) => cp >= 0xFDD0 && cp <= 0xFDEF || (cp & 0xFFFF) == 0xFFFE || (cp & 0xFFFF) == 0xFFFF;
+
 
         /// <summary>Static constructor, loads data from resources</summary>
         static UniData()
@@ -437,8 +487,7 @@ namespace UniDataNS
                     }
                     else
                     {
-                        if (codepoint < 0x20000)
-                            char_map.Add(codepoint, new CharacterRecord(codepoint, char_name, char_category, is_printable));
+                        char_map.Add(codepoint, new CharacterRecord(codepoint, char_name, char_category, is_printable));
                     }
                 }
 

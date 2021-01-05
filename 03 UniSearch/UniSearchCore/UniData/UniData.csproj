@@ -5,7 +5,7 @@
     <RootNamespace>UniDataNS</RootNamespace>
     <Platforms>AnyCPU;x64</Platforms>
     <Nullable>enable</Nullable>
-    <Version>1.7.1</Version>
+    <Version>1.8.0</Version>
     <Authors>Pierre Violent</Authors>
     <Company>Pierre Violent</Company>
     <Copyright>Copyright ©2018-2021 Pierre Violent</Copyright>

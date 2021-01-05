@@ -8,6 +8,7 @@
 # 2018-08-18	PV		Unicode 11
 # 2019-03-06	PV		Unicode 12
 # 2020-09-03	PV		Unicode 13
+# 2021-01-01	PV		Specials End of Plane 15 and 16
 
 0000..001F;ASCII Controls C0;;Specials;Symbols and Punctuation
 0020..007F;Basic Latin (ASCII);Latin;European Scripts;Scripts
@@ -331,5 +332,7 @@ DFFFE..DFFFF;Specials End of Plane 13;;Specials;Symbols and Punctuation
 E0000..E007F;Tags;;Specials;Symbols and Punctuation
 E0100..E01EF;Variation Selectors Supplement;Variation Selectors;Specials;Symbols and Punctuation
 EFFFE..EFFFF;Specials End of Plane 14;;Specials;Symbols and Punctuation
-F0000..FFFFF;Supplementary Private Use Area-A;;Private Use;Symbols and Punctuation
-100000..10FFFF;Supplementary Private Use Area-B;;Private Use;Symbols and Punctuation
+F0000..FFFFD;Supplementary Private Use Area-A;;Private Use;Symbols and Punctuation
+FFFFE..FFFFF;Specials End of Plane 15;;Specials;Symbols and Punctuation
+100000..10FFFD;Supplementary Private Use Area-B;;Private Use;Symbols and Punctuation
+10FFFE..10FFFF;Specials End of Plane 16;;Specials;Symbols and Punctuation
