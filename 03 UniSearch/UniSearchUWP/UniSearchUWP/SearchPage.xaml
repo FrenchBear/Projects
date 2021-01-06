@@ -14,7 +14,12 @@
     <Page.Resources>
         <DataTemplate x:Key="BlockTemplate">
             <Grid>
-                <TextBlock
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="24" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="{Binding Block.RepresentantCharacter}" FontFamily="{StaticResource LastResortHE-Regular}" FontSize="18" />
+                <TextBlock Grid.Column="1"
                     Text="{Binding Content}" 
                     HorizontalAlignment="Left" 
                     VerticalAlignment="Center"
