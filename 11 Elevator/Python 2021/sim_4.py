@@ -1,5 +1,5 @@
 # Simulator 2021
-# v3, with regular time slices and storyboards based on duration
+# v4, with regular time slices and storyboards.  Acceleration based on target speed, not duration
 # Simulation with actors
 # 2021-04-08    PV
 # 2021-04-10    PV      Storyboards
@@ -8,7 +8,6 @@
 from __future__ import annotations
 from datetime import datetime, timedelta
 from typing import Optional, Iterable
-
 
 class Actor:
     def __init__(self, name: str) -> None:
@@ -78,13 +77,16 @@ class Cruise(Storyboard):
         self.actor.state = self.next_state
         return True
 
+
 class Acceleration(Storyboard):
-    def __init__(self, a:Actor, next_state: str, accel: float, tmax:float) -> None:
+    def __init__(self, a:Actor, next_state: str, accel: float, target_speed:float) -> None:
         super().__init__(a, 'Acceleration', next_state)
         self.accel = accel
-        self.tmax = tmax
+        self.target_speed = target_speed
 
     def start(self) -> None:
+        if self.accel>0 and self.actor.speed>self.target_speed: breakpoint()
+        if self.accel<0 and self.actor.speed<self.target_speed: breakpoint()
         super().start()
         self.start_dist = self.actor.dist
         self.start_speed = self.actor.speed
@@ -93,20 +95,23 @@ class Acceleration(Storyboard):
     # Returns True if state has changed
     def set_clock(self, dt: datetime) -> bool:
         super().set_clock(dt)
-        if self.t<=self.tmax:
+
+        if (self.accel>0 and self.actor.speed<self.target_speed) or (self.accel<0 and self.actor.speed>self.target_speed):
             self.speed = self.start_speed + self.t*self.accel
             if self.speed<0: self.speed = 0
             self.dist = self.start_dist + self.start_speed*self.t + 0.5*self.accel*self.t**2
             self.actor.speed = self.speed
             self.actor.dist = self.dist
-            if self.t<self.tmax:
+            if (self.accel>0 and self.actor.speed<self.target_speed) or (self.accel<0 and self.actor.speed>self.target_speed):
                 return False
-        if self.t>self.tmax:
-            self.speed = self.start_speed + self.tmax*self.accel
-            if self.speed<0: self.speed = 0
-            self.dist = self.start_dist + 0.5*self.accel*self.tmax**2
+
+        if (self.accel>0 and self.actor.speed>self.target_speed) or (self.accel<0 and self.actor.speed<self.target_speed):
+            self.speed = self.target_speed
+            t = self.speed/self.accel
+            self.dist = self.start_dist + self.start_speed*t + 0.5*self.accel*t**2
             self.actor.speed = self.speed
             self.actor.dist = self.dist
+
         self.actor.state = self.next_state
         return True
 
@@ -152,13 +157,13 @@ class Car(Actor):
             self.storyboard = Wait(self, 'End_Wait', 2.0)
             self.storyboard.start()
         elif self.state == 'End_Wait':
-            self.storyboard = Acceleration(self, 'End_Acceleration', Car.car_accel, 10.0)
+            self.storyboard = Acceleration(self, 'End_Acceleration', Car.car_accel, target_speed=10.0)
             self.storyboard.start()
         elif self.state == 'End_Acceleration':
             self.storyboard = Cruise(self, 'End_Cruise', 30.0)
             self.storyboard.start()
         elif self.state == 'End_Cruise':
-            self.storyboard = Acceleration(self, 'End_Deceleration', -Car.car_accel, 10.0)
+            self.storyboard = Acceleration(self, 'End_Deceleration', -Car.car_accel, target_speed=0.0)
             self.storyboard.start()
         elif self.state == 'End_Deceleration':
             self.next_transition_clock = None
