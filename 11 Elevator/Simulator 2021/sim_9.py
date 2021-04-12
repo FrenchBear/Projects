@@ -317,13 +317,14 @@ class SimMan:
             # First actors check environment to adjust storybords if needed
             for a in self.actors:
                 a.react()
+            # Simulation clock advaces one step
+            sim.set_clock(sim.sim_clock+timedelta(seconds=1))
             # Then execute storybard time slice
             for s in self.storyboards.values():
                 s.set_clock(self.sim_clock)
             # End of simulation when all storboards are in 'End' state
             if all(s.state == 'End' for s in self.storyboards):
                 break
-            sim.set_clock(sim.sim_clock+timedelta(seconds=1))
 
         print('Simulation ends at cycle', self.cycle)
 
