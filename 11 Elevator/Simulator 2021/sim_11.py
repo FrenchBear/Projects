@@ -437,7 +437,7 @@ class SimMan:
             # if all(s.state == 'End' for s in self.storyboards):
             #    break
             # No, some actors such as traffic light have a looping storyboard and never end
-            # For now, simulation ends when all cars are in End state
+            # For now, simulation ends when all cars are in Final state
             if all(a.storyboard and type(a.storyboard) is Final for a in self.actors if type(a) is Car):
                 break
 
