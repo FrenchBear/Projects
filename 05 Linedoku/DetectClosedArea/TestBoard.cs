@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static System.Console;
 
 
@@ -12,7 +9,7 @@ namespace DetectClosedArea
     class TestBoard
     {
         private readonly int Side;
-        private int[,] PointLine;
+        private readonly int[,] PointLine;
 
         internal TestBoard(int side)
         {
@@ -111,14 +108,14 @@ namespace DetectClosedArea
             {
                 for (int column = 0; column < Side; column++)
                 {
-                    Console.ForegroundColor = GetColor(row, column);
+                    ForegroundColor = GetColor(row, column);
                     Write("■");
                     if (column < Side - 1)
                         Write(" ");
                 }
                 WriteLine();
             }
-            Console.ForegroundColor = ConsoleColor.White;
+            ForegroundColor = ConsoleColor.White;
             WriteLine();
         }
 

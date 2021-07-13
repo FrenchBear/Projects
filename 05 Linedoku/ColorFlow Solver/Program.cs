@@ -2,12 +2,9 @@
 // 2017-10-27   PV
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using static System.Console;
 
 namespace ColorFlow_Solver
@@ -86,7 +83,7 @@ namespace ColorFlow_Solver
 
         internal static void Test1()
         {
-            Board(5, new Line[] { });
+            Board(5, Array.Empty<Line>());
             SetHzWall(0, 1); SetHzWall(0, 2); SetHzWall(0, 3);
             SetHzWall(1, 0); SetHzWall(1, 1); SetHzWall(1, 3);
             SetHzWall(2, 0); SetHzWall(2, 2); SetHzWall(2, 3);
@@ -104,7 +101,7 @@ namespace ColorFlow_Solver
 
         internal static void Test2()
         {
-            Board(11, new Line[] { });
+            Board(11, Array.Empty<Line>());
             SetHzWall(0, 0); SetHzWall(0, 1); SetHzWall(0, 2); SetHzWall(0, 3); SetHzWall(0, 4); SetHzWall(0, 5); SetHzWall(0, 6); SetHzWall(0, 7); SetHzWall(0, 8); SetHzWall(0, 9); SetHzWall(1, 0); SetHzWall(1, 1); SetHzWall(1, 2); SetHzWall(1, 3); SetHzWall(1, 4); SetHzWall(1, 5); SetHzWall(1, 7); SetHzWall(1, 8); SetHzWall(1, 9); SetHzWall(2, 6); SetHzWall(2, 7); SetHzWall(2, 8); SetHzWall(3, 0); SetHzWall(3, 1); SetHzWall(3, 2); SetHzWall(3, 3); SetHzWall(3, 4); SetHzWall(3, 5); SetHzWall(3, 6); SetHzWall(3, 7); SetHzWall(3, 8); SetHzWall(4, 0); SetHzWall(4, 1); SetHzWall(4, 2); SetHzWall(4, 3); SetHzWall(4, 4); SetHzWall(4, 5); SetHzWall(4, 6); SetHzWall(4, 7); SetHzWall(4, 8); SetHzWall(4, 9); SetHzWall(5, 0); SetHzWall(5, 1); SetHzWall(5, 2); SetHzWall(5, 3); SetHzWall(5, 4); SetHzWall(5, 5); SetHzWall(5, 6); SetHzWall(5, 7); SetHzWall(5, 8); SetHzWall(5, 9); SetHzWall(6, 0); SetHzWall(6, 1); SetHzWall(6, 2); SetHzWall(6, 3); SetHzWall(6, 4); SetHzWall(6, 5); SetHzWall(6, 6); SetHzWall(6, 7); SetHzWall(7, 1); SetHzWall(7, 2); SetHzWall(7, 3); SetHzWall(7, 5); SetHzWall(7, 8); SetHzWall(7, 9); SetHzWall(8, 1); SetHzWall(8, 4); SetHzWall(8, 6); SetHzWall(8, 7); SetHzWall(8, 8); SetHzWall(8, 9); SetHzWall(9, 2); SetHzWall(9, 4); SetHzWall(9, 5); SetHzWall(9, 6); SetHzWall(9, 7); SetHzWall(10, 3); SetHzWall(10, 4); SetHzWall(10, 5); SetHzWall(10, 6); SetHzWall(10, 7);
             SetVtWall(0, 0); SetVtWall(0, 10); SetVtWall(1, 6); SetVtWall(2, 9); SetVtWall(3, 0); SetVtWall(4, 10); SetVtWall(5, 0); SetVtWall(6, 8); SetVtWall(7, 1); SetVtWall(7, 4); SetVtWall(7, 5); SetVtWall(7, 6); SetVtWall(7, 10); SetVtWall(8, 2); SetVtWall(9, 3); SetVtWall(9, 8);
             PrintBoard("Test2");
