@@ -2,12 +2,9 @@
 // Regroup P/Invoke declarations, to follow code analysis recommendations
 //
 // 2017-09-21   PV
-// 2020-11-17   PV      C#8, nullable enable
 
 using System.Runtime.InteropServices;
 using System.Text;
-
-#nullable enable
 
 
 namespace LearningKeyboard

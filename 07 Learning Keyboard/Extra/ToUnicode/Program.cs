@@ -1,7 +1,7 @@
 ﻿// ToUnicode
 // Exercices to understand/test keyboard related stuff
-// 2017-09  PV
-
+// 2017-09      PV
+// 2021-14-13   PV      .Net 4.8
 
 using System;
 using System.Runtime.InteropServices;
@@ -10,7 +10,9 @@ using System.Windows.Forms;
 using static System.Console;
 using static LearningKeyboard.NativeMethods;
 using System.Collections.Generic;
-using System.Diagnostics;
+
+#pragma warning disable IDE0059 // Unnecessary assignment of a value
+
 
 namespace ToUnicodeApp
 {
@@ -96,7 +98,7 @@ namespace ToUnicodeApp
             }
         }
 
-        static Dictionary<Tuple<Keys, bool, bool>, List<Tuple<string, string>>> dicCombi = new Dictionary<Tuple<Keys, bool, bool>, List<Tuple<string, string>>>();
+        static readonly Dictionary<Tuple<Keys, bool, bool>, List<Tuple<string, string>>> dicCombi = new Dictionary<Tuple<Keys, bool, bool>, List<Tuple<string, string>>>();
         private static void PrepareDicraticalCombinationsOneKey(Keys vk, bool shift, bool altGr)
         {
             var combinations = GetDeadKeyCombinations(vk, shift, altGr);
@@ -106,11 +108,11 @@ namespace ToUnicodeApp
 
         /// <summary>
         /// Returns a list of tuples (string Key, string NewKey) giving new generated key
-        /// when dicratical key passed in parameter is combined with Key
+        /// when diacritical key passed in parameter is combined with Key
         /// </summary>
-        /// <param name="dic">Virtual key of dicratical</param>
-        /// <param name="shiftDic">Shift state to get dicratical</param>
-        /// <param name="altGrDic">AltGr state to get dicratical</param>
+        /// <param name="dic">Virtual key of diacritical</param>
+        /// <param name="shiftDic">Shift state to get diacritical</param>
+        /// <param name="altGrDic">AltGr state to get diacritical</param>
         private static List<Tuple<string, string>> GetDeadKeyCombinations(Keys dic, bool shiftDic, bool altGrDic)
         {
             var l = new List<Tuple<string, string>>();
@@ -144,7 +146,7 @@ namespace ToUnicodeApp
         }
 
         // The apparently useless calls to GetCharsFromKeys
-        // clean internal buffer state, perturbed by previous dicratical
+        // clean internal buffer state, perturbed by previous diacritical
         // characters such as ~ or ^
         private static (string, bool) GetCharsFromKeys2(Keys vk, bool shift, bool altGr)
         {
@@ -247,7 +249,7 @@ namespace ToUnicodeApp
             AddKey("A07", 329, "", "Ctrl");
         }
 
-        static Dictionary<int, AKey> AllKeys = new Dictionary<int, AKey>();
+        static readonly Dictionary<int, AKey> AllKeys = new Dictionary<int, AKey>();
 
 
         private static void AddKey(string dispoNF, int scanCode, string finger, string label)
