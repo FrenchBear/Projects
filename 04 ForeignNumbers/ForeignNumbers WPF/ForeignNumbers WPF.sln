@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 16.0.28721.148
+VisualStudioVersion = 16.0.31424.327
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForeignNumbers WPF", "ForeignNumbers WPF.csproj", "{D05FF19E-73B5-428F-8926-9DA51C6BEA64}"
 EndProject
@@ -20,6 +20,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {987E97C5-4C83-4C77-A01C-6B1BC6564181}
+		SolutionGuid = {C3AEED6D-D659-44EF-A1BF-EF25B72E919D}
 	EndGlobalSection
 EndGlobal
