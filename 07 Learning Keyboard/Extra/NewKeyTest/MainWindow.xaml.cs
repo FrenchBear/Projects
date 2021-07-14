@@ -18,8 +18,7 @@ namespace NewKeyTestApp
     /// </summary>
     public partial class MainWindow : Window
     {
-
-        Dictionary<Key, NewKey> keysDictionary = new Dictionary<Key, NewKey>();
+        readonly Dictionary<Key, NewKey> keysDictionary = new Dictionary<Key, NewKey>();
 
         public MainWindow()
         {

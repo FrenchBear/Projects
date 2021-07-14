@@ -56,7 +56,7 @@ namespace ConsoleApplication1
             long scanCode = MapVirtualKey((uint)keyCode, MAPVK_VK_TO_VSC);
 
             // shift the scancode to the high word
-            scanCode = (scanCode << 16); // | (1 << 24);
+            scanCode <<= 16; // | (1 << 24);
             if (keyCode == 45 ||
                 keyCode == 46 ||
                 keyCode == 144 ||
