@@ -58,9 +58,7 @@ namespace Keyboard
 
         private static void CurrentDomain_UnhandledException(Object sender, UnhandledExceptionEventArgs e)
         {
-            var ex = e.ExceptionObject as Exception;
-
-            if (null == ex) return;
+            if (!(e.ExceptionObject is Exception ex)) return;
 
             // Log this error. Logging the exception doesn't correct the problem but at least now
             // you may have more insight as to why the exception is being thrown.

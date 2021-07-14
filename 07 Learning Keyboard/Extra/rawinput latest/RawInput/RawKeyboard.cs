@@ -154,12 +154,9 @@ namespace RawInput_dll
 			keyPressEvent.Message = _rawBuffer.data.keyboard.Message;
 			keyPressEvent.VKeyName = KeyMapper.GetKeyName(VirtualKeyCorrection(virtualKey, isE0BitSet, makeCode)).ToUpper();
 			keyPressEvent.VKey = virtualKey;
-		   
-			if (KeyPressed != null)
-			{
-				KeyPressed(this, new RawInputEventArg(keyPressEvent));
-			}
-		}
+
+            KeyPressed?.Invoke(this, new RawInputEventArg(keyPressEvent));
+        }
 
 		private static int VirtualKeyCorrection(int virtualKey, bool isE0BitSet, int makeCode)
 		{
