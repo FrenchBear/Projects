@@ -12,7 +12,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using static System.Console;
 
-#pragma warning disable CA1031 // Do not catch general exception types
 
 namespace RunANSI
 {
@@ -166,7 +165,7 @@ namespace RunANSI
             if (Verbose)
             {
                 WriteLine($"Command to execute: <{args[iCmdArg]}>");
-                WriteLine($"Options: <{sb.ToString()}>");
+                WriteLine($"Options: <{sb}>");
             }
 
             Stopwatch sw = null;
