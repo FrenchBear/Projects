@@ -52,7 +52,7 @@ namespace UniSearchNS
                 {
                     // reTest is not used, it's there to raise an exception and skip words.Add(filter)
                     // if filter is an invalid or incomplete Regex, so we ignore it
-                    Regex reTest = new Regex(filter);
+                    Regex reTest = new(filter);
                     words.Add(filter);
                 }
                 catch (ArgumentException)
@@ -165,7 +165,7 @@ namespace UniSearchNS
             if (!accentFound)
                 return text;
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             foreach (char ch in denorm)
                 if (CharUnicodeInfo.GetUnicodeCategory(ch) != UnicodeCategory.NonSpacingMark)
                     sb.Append(ch);
@@ -234,7 +234,7 @@ namespace UniSearchNS
 
 
         // To search for U+hhhh[..hhhh] sequences  (1 to 6 hex digits)
-        private static readonly Regex CodepointRangeRegex = new Regex(@"^U\+(1?[0-9A-F]{4,5})(?:(\.\.|-)(?:U\+)?(1?[0-9A-F]{4,5}))?$", RegexOptions.IgnoreCase);            // U+1234..U+2345
+        private static readonly Regex CodepointRangeRegex = new(@"^U\+(1?[0-9A-F]{4,5})(?:(\.\.|-)(?:U\+)?(1?[0-9A-F]{4,5}))?$", RegexOptions.IgnoreCase);            // U+1234..U+2345
 
 
         // Specific version to search CharacterRecords

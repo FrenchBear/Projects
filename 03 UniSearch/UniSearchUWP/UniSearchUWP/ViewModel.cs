@@ -39,7 +39,7 @@ namespace UniSearchNS
         private readonly SearchPage page;                               // Access to main window
 
         private readonly BlockNode BlocksRoot;                          // TreeView root
-        private HashSet<BlockRecord> SelectedBlocksSet = new HashSet<BlockRecord>();    // Set of selected blocks in TreeView
+        private HashSet<BlockRecord> SelectedBlocksSet = new();    // Set of selected blocks in TreeView
 
 
         // INotifyPropertyChanged interface
@@ -59,7 +59,7 @@ namespace UniSearchNS
 
 
         // Dictionary of BlockNodes indexed by Begin block value, to help uncheck some blocks at the end
-        private readonly Dictionary<int, BlockNode> BlocksBlockNodesDictionary = new Dictionary<int, BlockNode>();
+        private readonly Dictionary<int, BlockNode> BlocksBlockNodesDictionary = new();
 
 
         // Constructor
@@ -176,7 +176,7 @@ namespace UniSearchNS
         // Source of CharListView and used to build the grouped version
         public ObservableCollection<CharacterRecord> CharactersRecordsFilteredList { get; set; } = new ObservableCollection<CharacterRecord>();
 
-        private readonly CollectionViewSource _CharactersRecordsCVS = new CollectionViewSource();
+        private readonly CollectionViewSource _CharactersRecordsCVS = new();
         public CollectionViewSource CharactersRecordsCVS => _CharactersRecordsCVS;
 
         public List<BlockNode> NodesList { get; set; }
@@ -261,7 +261,7 @@ namespace UniSearchNS
         {
             var cr = UniData.CharacterRecords[codepoint];
 
-            Grid g = new Grid();
+            Grid g = new();
             g.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(40) });
             g.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(70) });
             g.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
@@ -270,7 +270,7 @@ namespace UniSearchNS
             Grid.SetColumn(t1, 0);
             g.Children.Add(t1);
 
-            HyperlinkButton t2 = new HyperlinkButton
+            HyperlinkButton t2 = new()
             {
                 Margin = new Thickness(0, 0, 0, 1),
                 Padding = new Thickness(0),
@@ -313,7 +313,7 @@ namespace UniSearchNS
         // Delay processing of TextChanged event 250ms using a DispatcherTimer
 
         private DispatcherTimer? dispatcherTimer;
-        private readonly object dispatcherTimerLock = new object();
+        private readonly object dispatcherTimerLock = new();
 
         private void DispatcherTimer_Tick(object sender, object e)
         {
@@ -627,7 +627,7 @@ namespace UniSearchNS
         {
             // Get RenderTargetBitmap of character image
             var control = page.CharImageBorder;
-            RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap();
+            RenderTargetBitmap renderTargetBitmap = new();
             await renderTargetBitmap.RenderAsync(control); //, (int)control.Width, (int)control.Height);
 
             // Get the pixels BGRA8-format.

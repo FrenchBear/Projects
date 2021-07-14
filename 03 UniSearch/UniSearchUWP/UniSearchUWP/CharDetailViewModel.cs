@@ -35,7 +35,7 @@ namespace UniSearchNS
     internal class CharDetailViewModel : INotifyPropertyChanged, IDisposable
     {
         // Private variables
-        private readonly Stack<int> History = new Stack<int>();
+        private readonly Stack<int> History = new();
         private readonly CharDetailDialog window;
         private readonly ViewModel MainViewModel;
 
@@ -114,7 +114,7 @@ namespace UniSearchNS
             if (form == NormalizationForm.FormKD && sn == s.Normalize(NormalizationForm.FormD))
                 return new TextBlock { Text = "Same as NFD" };
 
-            StackPanel sp = new StackPanel();
+            StackPanel sp = new();
             foreach (var cr in sn.EnumCharacterRecords())
                 sp.Children.Add(ViewModel.GetStrContent(cr.Codepoint, ShowDetailCommand));
             return sp;
@@ -150,7 +150,7 @@ namespace UniSearchNS
             string sc = lower ? s.ToLowerInvariant() : s.ToUpperInvariant();
             if (s == sc) return null;
 
-            StackPanel sp = new StackPanel();
+            StackPanel sp = new();
             foreach (var cr in sc.EnumCharacterRecords())
                 sp.Children.Add(ViewModel.GetStrContent(cr.Codepoint, ShowDetailCommand));
             return sp;
@@ -160,14 +160,14 @@ namespace UniSearchNS
         public UIElement? CrossRefsContent => GetExtraInfo(SelectedChar.CrossRefs, true);
         public UIElement? CommentsContent => GetExtraInfo(SelectedChar.Comments, true);
 
-        private static readonly Regex reCP = new Regex(@"\b1?[0-9A-F]{4,5}\b");
+        private static readonly Regex reCP = new(@"\b1?[0-9A-F]{4,5}\b");
 
         private UIElement? GetExtraInfo(List<string>? list, bool autoHyperlink)
         {
             if (list == null)
                 return null;
 
-            TextBlock tb = new TextBlock { TextWrapping = TextWrapping.Wrap };
+            TextBlock tb = new() { TextWrapping = TextWrapping.Wrap };
             foreach (string s in list)
             {
                 if (tb.Inlines.Count > 0)
@@ -205,9 +205,9 @@ namespace UniSearchNS
         internal static Hyperlink GetCodepointHyperlink(int codepoint, TypedEventHandler<Hyperlink, HyperlinkClickEventArgs> Click, bool withToolTip)
         {
             // \x2060 is Unicode Word Joiner, to prevent line wrap here
-            Run r = new Run { Text = $"U\x2060+\x2060{codepoint:X4}" };
+            Run r = new() { Text = $"U\x2060+\x2060{codepoint:X4}" };
 
-            Hyperlink h = new Hyperlink();
+            Hyperlink h = new();
             h.Inlines.Add(r);
             h.Click += Click;
 
@@ -234,7 +234,7 @@ namespace UniSearchNS
                     Child = vb
                 };
 
-                ToolTip tooltip = new ToolTip
+                ToolTip tooltip = new()
                 {
                     Content = b,
                     HorizontalOffset = 120,
