@@ -6,8 +6,6 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using WindowsDesktop;
 
-#pragma warning disable CA1031 // Do not catch general exception types
-
 namespace VirtualDesktopManager
 {
     public partial class Form1 : Form
