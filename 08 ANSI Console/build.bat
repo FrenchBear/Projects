@@ -1,1 +1,0 @@
-cl /W4 /Zi ANSIConsole.c
