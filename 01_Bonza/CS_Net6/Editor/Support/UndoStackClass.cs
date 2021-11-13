@@ -39,10 +39,7 @@ internal class UndoStackClass
     // So List<PositionOrientation> represents the position the List<WordPositon> must return to in case on undo
     private Stack<UndoAction> undoStack;
 
-    internal void Clear()
-    {
-        undoStack = null;
-    }
+    internal void Clear() => undoStack = null;
 
     private void MemorizeUndoableAction(UndoActions action, IList<WordAndCanvas> wordAndCanvasList, IList<PositionOrientation> topLeftList)
     {
@@ -73,15 +70,9 @@ internal class UndoStackClass
     }
 
     // Memorize a list of Words about to be deleted
-    internal void MemorizeDelete(IList<WordAndCanvas> wordAndCanvasList)
-    {
-        MemorizeUndoableAction(UndoActions.Delete, wordAndCanvasList, null);
-    }
+    internal void MemorizeDelete(IList<WordAndCanvas> wordAndCanvasList) => MemorizeUndoableAction(UndoActions.Delete, wordAndCanvasList, null);
 
-    public void MemorizeAdd(IList<WordAndCanvas> wordAndCanvasList)
-    {
-        MemorizeUndoableAction(UndoActions.Add, wordAndCanvasList, null);
-    }
+    public void MemorizeAdd(IList<WordAndCanvas> wordAndCanvasList) => MemorizeUndoableAction(UndoActions.Add, wordAndCanvasList, null);
 
     internal void MemorizeSwapOrientation(IList<WordAndCanvas> wordAndCanvasList)
     {

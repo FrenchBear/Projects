@@ -23,10 +23,7 @@ internal class EditorModel
         NewGrille();
     }
 
-    internal void NewGrille()
-    {
-        grille = new Grille();
-    }
+    internal void NewGrille() => grille = new Grille();
 
     internal void LoadGrille(string wordsFile)
     {
@@ -72,24 +69,13 @@ internal class EditorModel
     }
 
     // Removes a word from current Layout
-    internal void RemoveWordPosition(WordPosition wordPosition)
-    {
-        Layout.RemoveWordPosition(wordPosition);
-    }
+    internal void RemoveWordPosition(WordPosition wordPosition) => Layout.RemoveWordPosition(wordPosition);
 
-    internal PlaceWordStatus AddWordPosition(WordPosition wordPosition)
-    {
-        return Layout.AddWordPosition(wordPosition);
-    }
+    internal PlaceWordStatus AddWordPosition(WordPosition wordPosition) => Layout.AddWordPosition(wordPosition);
 
-    public string CheckWordsList(List<string> wordsList)
-    {
-        return grille.CheckWordsList(wordsList);
-    }
+    public string CheckWordsList(List<string> wordsList) => grille.CheckWordsList(wordsList);
 
-    public IEnumerable<WordPosition> AddWordsList(List<string> wordsList)
-    {
+    public IEnumerable<WordPosition> AddWordsList(List<string> wordsList) =>
         // Use backup option to avoid half updating layout
-        return grille.PlaceWordsList(wordsList, true);
-    }
+        grille.PlaceWordsList(wordsList, true);
 }

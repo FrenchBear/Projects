@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Authors>Pierre Violent</Authors>
+		<Copyright>Copyright © Pierre Violent 2019-2021</Copyright>
+		<Description>A simplified (no backtracking) Solitaire solver (Net6 C#10)</Description>
+		<Authors>Pierre Violent</Authors>
+		<Version>1.0.0</Version>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="SolitaireDeck.badcs" />
+		<None Remove="SolitaireDeck.cs.bak" />
+		<None Remove="SolitaireDeck.goodcs" />
+	</ItemGroup>
+
+</Project>

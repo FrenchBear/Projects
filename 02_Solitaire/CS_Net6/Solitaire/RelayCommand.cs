@@ -1,21 +1,24 @@
-﻿// BonzaEditor - WPF Tool to prepare Bonza-style puzzles
-// RelayCommand: Helper class for easy implementation of commands in VewModel through delegates
+﻿// RelayCommand: Helper class for easy implementation of commands in VewModel through delegates
 // A simple bonus is the generic interface to support parameter types less abstract than 'object'
 //
 // 2012-04-17   PV      First version
+// 2016-09-26   PV	    Use in Solitaire
+// 2020-11-13   PV      Full support for #nullable enable
 // 2021-11-13   PV      Net6 C#10
 
 using System;
 using System.Windows.Input;
 
-namespace Bonza.Editor.Support;
+#nullable enable
+
+namespace SolWPF;
 
 internal class RelayCommand<T>: ICommand
 {
-    private readonly Predicate<T> canExecute;
+    private readonly Predicate<T>? canExecute;
     private readonly Action<T> execute;
 
-    public RelayCommand(Action<T> execute, Predicate<T> canExecute)
+    public RelayCommand(Action<T> execute, Predicate<T>? canExecute)
     {
         this.canExecute = canExecute;
         this.execute = execute;
@@ -27,11 +30,19 @@ internal class RelayCommand<T>: ICommand
 
     /* From ICommand */
 
-    public bool CanExecute(object parameter) => canExecute == null || canExecute((T)parameter);
+    public bool CanExecute(object? parameter)
+    {
+        if (canExecute == null)
+            return true;
+        if (parameter == null)
+            return canExecute(default!);
+        else
+            return canExecute((T)parameter);
+    }
 
     /* From ICommand */
 
-    public void Execute(object parameter) => execute?.Invoke((T)parameter);
+    public void Execute(object? parameter) => execute?.Invoke((T)parameter!);
 
     // The 'black magic' part: according to help, CommandManager.RequerySuggested Event occurs when the
     // CommandManager """detects conditions that might change the ability of a command to execute"""...
@@ -45,7 +56,7 @@ internal class RelayCommand<T>: ICommand
 
     /* From ICommand */
 
-    public event EventHandler CanExecuteChanged
+    public event EventHandler? CanExecuteChanged
     {
         add => CommandManager.RequerySuggested += value;
         remove => CommandManager.RequerySuggested -= value;

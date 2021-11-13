@@ -33,10 +33,7 @@ public class FindWordViewModel: INotifyPropertyChanged
         CancelCommand = new RelayCommand<object>(CancelExecute);
     }
 
-    public void SetView(View.FindWordView view)
-    {
-        this.view = view;
-    }
+    public void SetView(View.FindWordView view) => this.view = view;
 
     // -------------------------------------------------
     // Bindings
@@ -59,19 +56,10 @@ public class FindWordViewModel: INotifyPropertyChanged
     // -------------------------------------------------
     // Commands
 
-    private bool OkCanExecute(object obj)
-    {
-        return !string.IsNullOrEmpty(SearchText);
-    }
+    private bool OkCanExecute(object obj) => !string.IsNullOrEmpty(SearchText);
 
-    private void OkExecute(object obj)
-    {
-        view.DialogResult = true;
-    }
+    private void OkExecute(object obj) => view.DialogResult = true;
 
-    private void CancelExecute(object obj)
-    {
-        view.DialogResult = false;
-    }
+    private void CancelExecute(object obj) => view.DialogResult = false;
 
 }

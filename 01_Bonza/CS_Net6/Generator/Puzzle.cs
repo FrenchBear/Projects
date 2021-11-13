@@ -115,20 +115,17 @@ public partial class Grille
     }
 
     // Empirical function to stop accumulation of squares in a chuck around averageCount
-    private bool OkAccumulation(int accumulatedCount, int averageCount)
+    private bool OkAccumulation(int accumulatedCount, int averageCount) => (accumulatedCount - averageCount) switch
     {
-        return (accumulatedCount - averageCount) switch
-        {
-            // ReSharper disable once PatternAlwaysMatches
-            int x when x < -3 => true,
-            -3 => rnd.NextDouble() < 0.95,
-            -2 => rnd.NextDouble() < 0.9,
-            -1 => rnd.NextDouble() < 0.8,
-            0 => rnd.NextDouble() < 0.5,
-            1 => rnd.NextDouble() < 0.2,
-            2 => rnd.NextDouble() < 0.9,
-            3 => rnd.NextDouble() < 0.05,
-            _ => false,
-        };
-    }
+        // ReSharper disable once PatternAlwaysMatches
+        int x when x < -3 => true,
+        -3 => rnd.NextDouble() < 0.95,
+        -2 => rnd.NextDouble() < 0.9,
+        -1 => rnd.NextDouble() < 0.8,
+        0 => rnd.NextDouble() < 0.5,
+        1 => rnd.NextDouble() < 0.2,
+        2 => rnd.NextDouble() < 0.9,
+        3 => rnd.NextDouble() < 0.05,
+        _ => false,
+    };
 }

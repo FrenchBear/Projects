@@ -306,10 +306,7 @@ public partial class EditorView: Window
 
     // Event handler when MatrixAnimation is completed, need to "free" animated properties otherwise
     // they're "hold" by animation
-    private void MatrixAnimationCompleted(object sender, EventArgs e)
-    {
-        EndMatrixAnimation();
-    }
+    private void MatrixAnimationCompleted(object sender, EventArgs e) => EndMatrixAnimation();
 
     // Terminate transformation in a clean way, "freeing" animated properties
     private void EndMatrixAnimation()
@@ -517,10 +514,7 @@ public partial class EditorView: Window
         }
     }
 
-    internal PlaceWordStatus RecolorizeAllWords()
-    {
-        return RecolorizeWordAndCanvasList(m_WordAndCanvasList);
-    }
+    internal PlaceWordStatus RecolorizeAllWords() => RecolorizeWordAndCanvasList(m_WordAndCanvasList);
 
     internal PlaceWordStatus RecolorizeWordAndCanvasList(List<WordAndCanvas> wordAndCanvasList)
     {
@@ -671,10 +665,7 @@ public partial class EditorView: Window
         sb.Begin();
     }
 
-    private void Sb_Completed(object sender, EventArgs e)
-    {
-        EndMoveWordAnimation();
-    }
+    private void Sb_Completed(object sender, EventArgs e) => EndMoveWordAnimation();
 
     private bool IsMoveWordAnimationInProgress;
     private List<(Canvas, DependencyProperty, double)> finalMoveWordAnimationData;

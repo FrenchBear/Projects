@@ -11,6 +11,8 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 
+namespace Bonza;
+
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false, Inherited = true)]
 [Serializable]
 public sealed class ImmutableAttribute: Attribute
@@ -45,10 +47,7 @@ public sealed class ImmutableAttribute: Attribute
         }
     }
 
-    private static bool IsMarkedImmutable(Type type)
-    {
-        return ReflectionHelper.TypeHasAttribute<ImmutableAttribute>(type);
-    }
+    private static bool IsMarkedImmutable(Type type) => ReflectionHelper.TypeHasAttribute<ImmutableAttribute>(type);
 
     private class WritableFieldException: ImmutableFailureException
     {
@@ -62,10 +61,7 @@ public sealed class ImmutableAttribute: Attribute
         {
         }
 
-        private static string FormatMessage(FieldInfo fieldInfo)
-        {
-            return string.Format("'{0}' is mutable because field '{1}' is not marked 'readonly'.", fieldInfo.DeclaringType, fieldInfo.Name);
-        }
+        private static string FormatMessage(FieldInfo fieldInfo) => string.Format("'{0}' is mutable because field '{1}' is not marked 'readonly'.", fieldInfo.DeclaringType, fieldInfo.Name);
     }
 
     private class MutableFieldException: ImmutableFailureException
@@ -80,10 +76,7 @@ public sealed class ImmutableAttribute: Attribute
         {
         }
 
-        private static string FormatMessage(FieldInfo fieldInfo)
-        {
-            return string.Format("'{0}' is mutable because '{1}' of type '{2}' is mutable.", fieldInfo.DeclaringType, fieldInfo.Name, fieldInfo.FieldType);
-        }
+        private static string FormatMessage(FieldInfo fieldInfo) => string.Format("'{0}' is mutable because '{1}' of type '{2}' is mutable.", fieldInfo.DeclaringType, fieldInfo.Name, fieldInfo.FieldType);
     }
 
     private class MutableBaseException: ImmutableFailureException
@@ -98,10 +91,7 @@ public sealed class ImmutableAttribute: Attribute
         {
         }
 
-        private static string FormatMessage(Type type)
-        {
-            return string.Format("'{0}' is mutable because its base type ('[{1}]') is mutable.", type, type.BaseType);
-        }
+        private static string FormatMessage(Type type) => string.Format("'{0}' is mutable because its base type ('[{1}]') is mutable.", type, type.BaseType);
     }
 
     public class ImmutableFailureException: Exception
@@ -194,45 +184,30 @@ public static class ReflectionHelper
     /// <summary>
     /// Find all types in 'assembly' that derive from 'baseType'
     /// </summary>
-    internal static IEnumerable<Type> FindAllTypesThatDeriveFrom<TBase>(Assembly assembly)
-    {
-        return from type in assembly.GetTypes()
-               where type.IsSubclassOf(typeof(TBase))
-               select type;
-    }
+    internal static IEnumerable<Type> FindAllTypesThatDeriveFrom<TBase>(Assembly assembly) => from type in assembly.GetTypes()
+                                                                                              where type.IsSubclassOf(typeof(TBase))
+                                                                                              select type;
 
     /// <summary>
     /// Check if the given type has the given attribute on it.  Don't look at base classes.
     /// </summary>
     public static bool TypeHasAttribute<TAttribute>(Type type)
-        where TAttribute : Attribute
-    {
-        return Attribute.IsDefined(type, typeof(TAttribute));
-    }
+        where TAttribute : Attribute => Attribute.IsDefined(type, typeof(TAttribute));
 
     // I find that the default GetFields behavior is not suitable to my needs
-    internal static IEnumerable<FieldInfo> GetAllDeclaredInstanceFields(Type type)
-    {
-        return type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-    }
+    internal static IEnumerable<FieldInfo> GetAllDeclaredInstanceFields(Type type) => type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 
     /// <summary>
     /// A type safe wrapper for Attribute.GetCustomAttribute
     /// </summary>
     /// <remarks>TODO: add overloads for Assembly, Module, and ParameterInfo</remarks>
     internal static TAttribute GetCustomAttribute<TAttribute>(MemberInfo element)
-        where TAttribute : Attribute
-    {
-        return (TAttribute)Attribute.GetCustomAttribute(element, typeof(TAttribute));
-    }
+        where TAttribute : Attribute => (TAttribute)Attribute.GetCustomAttribute(element, typeof(TAttribute));
 
     /// <summary>
     /// All types across multiple assemblies
     /// </summary>
-    public static IEnumerable<Type> GetTypes(this IEnumerable<Assembly> assemblies)
-    {
-        return from assembly in assemblies
-               from type in assembly.GetTypes()
-               select type;
-    }
+    public static IEnumerable<Type> GetTypes(this IEnumerable<Assembly> assemblies) => from assembly in assemblies
+                                                                                       from type in assembly.GetTypes()
+                                                                                       select type;
 }

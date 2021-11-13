@@ -96,10 +96,7 @@ internal class AddWordsViewModel: INotifyPropertyChanged
     // -------------------------------------------------
     // Commands
 
-    private bool OkCanExecute(object obj)
-    {
-        return wordsList.Count > 0 && string.IsNullOrEmpty(StatusText);
-    }
+    private bool OkCanExecute(object obj) => wordsList.Count > 0 && string.IsNullOrEmpty(StatusText);
 
     private void OkExecute(object obj)
     {
@@ -107,8 +104,5 @@ internal class AddWordsViewModel: INotifyPropertyChanged
         view.Close();
     }
 
-    private void CancelExecute(object obj)
-    {
-        view.Close();
-    }
+    private void CancelExecute(object obj) => view.Close();
 }

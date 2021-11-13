@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Runtime.CompilerServices;
+using Bonza;
 
 namespace Bonza_Generator_UnitTests;
 

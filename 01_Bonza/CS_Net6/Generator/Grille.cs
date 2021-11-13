@@ -28,10 +28,7 @@ public partial class Grille
     }
 
     /// <summary>Complete reinitialization of layout, WordPosition and Words</summary>
-    public void NewLayout()
-    {
-        Layout = new WordPositionLayout();
-    }
+    public void NewLayout() => Layout = new WordPositionLayout();
 
     /// <summary>
     /// Adds a list of words from a file to current layout.
@@ -306,10 +303,7 @@ public partial class Grille
     /// <param name="width">Bounding rectangle width</param>
     /// <param name="height">Bounding rectangle height</param>
     /// <returns>Empirically adjusted: surface x (difference width-height)</returns>
-    private static int ComputeAdjustedSurface(int width, int height)
-    {
-        return width * height * (width - height) * (width - height);
-    }
+    private static int ComputeAdjustedSurface(int width, int height) => width * height * (width - height) * (width - height);
 
     /// <summary>Find all the ways to add WordToPlace to placedWord, iterator returning an enumeration of matching WordPosition</summary>
     /// <param name="canonizedWordToPlace">Canonized form of Word to place (ex: NON·SEQUITUR)</param>

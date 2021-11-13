@@ -149,10 +149,7 @@ public class WordPositionLayout
 
     // Specialized helper for performance, returns true if there's no square at this position
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private bool IsOccupiedSquare(int row, int column)
-    {
-        return m_Squares.ContainsKey(Index(row, column));
-    }
+    private bool IsOccupiedSquare(int row, int column) => m_Squares.ContainsKey(Index(row, column));
 
     // Helper: Return letter placed at coordinates (row, column), or EmptyLetter if there is nothing there
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -360,10 +357,7 @@ public class WordPositionLayout
     }
 
     // Public version, returns words connected to wordPosition (not including wordPosition) from current layout
-    public IEnumerable<WordPosition> GetConnectedWordPositions(WordPosition wordPosition)
-    {
-        return GetConnectedWordPositions(wordPosition, m_WordPositionList);
-    }
+    public IEnumerable<WordPosition> GetConnectedWordPositions(WordPosition wordPosition) => GetConnectedWordPositions(wordPosition, m_WordPositionList);
 
     // Returns true if the two WordPosition intersect
     private static bool DoWordsIntersect(WordPosition word1, WordPosition word2)

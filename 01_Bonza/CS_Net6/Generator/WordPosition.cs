@@ -32,8 +32,5 @@ public class WordPosition
     public override string ToString() => "'" + Word + "' " + (IsVertical ? "V" : "H") + $"({StartRow}, {StartColumn})";
 
     // Not immutable because of this
-    public void SetNewPositionOrientation(PositionOrientation positionOrientation)
-    {
-        m_PositionOrientation = positionOrientation;
-    }
+    public void SetNewPositionOrientation(PositionOrientation positionOrientation) => m_PositionOrientation = positionOrientation;
 }

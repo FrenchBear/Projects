@@ -31,10 +31,7 @@ internal class EditorViewModel: INotifyPropertyChanged
     // Implementation of INotifyPropertyChanged, standard since View is only linked through DataBinding
     public event PropertyChangedEventHandler PropertyChanged;
 
-    private void NotifyPropertyChanged(string name)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-    }
+    private void NotifyPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
     // Commands
 
@@ -98,48 +95,24 @@ internal class EditorViewModel: INotifyPropertyChanged
 
     public IEnumerable<WordPosition> WordPositionList => model?.Layout?.WordPositionList;
 
-    internal WordPositionLayout GetLayoutExcludingWordPositionList(IEnumerable<WordPosition> wordPositionList)
-    {
-        return model.GetLayoutExcludingWordPositionList(wordPositionList);
-    }
+    internal WordPositionLayout GetLayoutExcludingWordPositionList(IEnumerable<WordPosition> wordPositionList) => model.GetLayoutExcludingWordPositionList(wordPositionList);
 
-    internal WordPositionLayout GetLayoutExcludingWordPosition(WordPosition wordPosition)
-    {
-        return model.GetLayoutExcludingWordPositionList(new List<WordPosition> { wordPosition });
-    }
+    internal WordPositionLayout GetLayoutExcludingWordPosition(WordPosition wordPosition) => model.GetLayoutExcludingWordPositionList(new List<WordPosition> { wordPosition });
 
-    internal static PlaceWordStatus CanPlaceWordAtPositionInLayout(WordPositionLayout layout, WordPosition wordPosition, PositionOrientation positionOrientation)
-    {
-        return EditorModel.CanPlaceWordAtPositionInLayout(layout, wordPosition, positionOrientation);
-    }
+    internal static PlaceWordStatus CanPlaceWordAtPositionInLayout(WordPositionLayout layout, WordPosition wordPosition, PositionOrientation positionOrientation) => EditorModel.CanPlaceWordAtPositionInLayout(layout, wordPosition, positionOrientation);
 
-    internal void RemoveWordPosition(WordPosition wordPosition)
-    {
-        model.RemoveWordPosition(wordPosition);
-    }
+    internal void RemoveWordPosition(WordPosition wordPosition) => model.RemoveWordPosition(wordPosition);
 
-    internal void AddWordPosition(WordPosition wordPosition)
-    {
-        model.AddWordPosition(wordPosition);
-    }
+    internal void AddWordPosition(WordPosition wordPosition) => model.AddWordPosition(wordPosition);
 
-    internal PlaceWordStatus CanPlaceWord(WordAndCanvas wac, bool withTooClose)
-    {
-        return Layout.CanPlaceWord(wac.WordPosition, withTooClose);
-    }
+    internal PlaceWordStatus CanPlaceWord(WordAndCanvas wac, bool withTooClose) => Layout.CanPlaceWord(wac.WordPosition, withTooClose);
 
-    internal static PlaceWordStatus CanPlaceWordInLayout(WordPositionLayout layout, WordAndCanvas wac)
-    {
-        return layout.CanPlaceWord(wac.WordPosition, true);
-    }
+    internal static PlaceWordStatus CanPlaceWordInLayout(WordPositionLayout layout, WordAndCanvas wac) => layout.CanPlaceWord(wac.WordPosition, true);
 
     // -------------------------------------------------
     // Selection helpers
 
-    public void RecolorizeWordAndCanvasList(List<WordAndCanvas> wordAndCanvasList)
-    {
-        view.RecolorizeWordAndCanvasList(wordAndCanvasList);
-    }
+    public void RecolorizeWordAndCanvasList(List<WordAndCanvas> wordAndCanvasList) => view.RecolorizeWordAndCanvasList(wordAndCanvasList);
 
     // -------------------------------------------------
     // Bindings
@@ -242,10 +215,7 @@ internal class EditorViewModel: INotifyPropertyChanged
         view.FinalRefreshAfterUpdate();
     }
 
-    internal void AddCanvasForWordPositionList(IEnumerable<WordPosition> wordPositionList)
-    {
-        view.AddCanvasForWordPositionList(wordPositionList);
-    }
+    internal void AddCanvasForWordPositionList(IEnumerable<WordPosition> wordPositionList) => view.AddCanvasForWordPositionList(wordPositionList);
 
     // -------------------------------------------------
     // View helpers
@@ -302,10 +272,7 @@ internal class EditorViewModel: INotifyPropertyChanged
     // -------------------------------------------------
     // Commands
 
-    private bool SaveCanExecute(object obj)
-    {
-        return true;       // For now
-    }
+    private bool SaveCanExecute(object obj) => true;       // For now
 
     // Temp version that saves layout as C# code
     private void SaveExecute(object obj)
@@ -427,15 +394,9 @@ internal class EditorViewModel: INotifyPropertyChanged
         }
     }
 
-    private void RecenterLayoutViewExecute(object obj)
-    {
-        view.RescaleAndCenter(true);        // Use animations
-    }
+    private void RecenterLayoutViewExecute(object obj) => view.RescaleAndCenter(true);        // Use animations
 
-    private bool DeleteCanExecute(object obj)
-    {
-        return model.Layout != null && SelectedWordCount > 0;
-    }
+    private bool DeleteCanExecute(object obj) => model.Layout != null && SelectedWordCount > 0;
 
     private void DeleteExecute(object obj)
     {
@@ -444,10 +405,7 @@ internal class EditorViewModel: INotifyPropertyChanged
         view.FinalRefreshAfterUpdate();
     }
 
-    private bool UndoCanExecute(object obj)
-    {
-        return UndoStack.CanUndo;
-    }
+    private bool UndoCanExecute(object obj) => UndoStack.CanUndo;
 
     private void UndoExecute(object obj)
     {
@@ -455,10 +413,7 @@ internal class EditorViewModel: INotifyPropertyChanged
         PerformUndo();
     }
 
-    private bool SwapOrientationCanExecute(object obj)
-    {
-        return SelectedWordCount == 1;
-    }
+    private bool SwapOrientationCanExecute(object obj) => SelectedWordCount == 1;
 
     private void SwapOrientationExecute(object obj)
     {
@@ -466,10 +421,7 @@ internal class EditorViewModel: INotifyPropertyChanged
         view.SwapOrientation();
     }
 
-    private bool AutoPlaceCanExecute(object obj)
-    {
-        return model.Layout != null && SelectedWordCount >= 1;
-    }
+    private bool AutoPlaceCanExecute(object obj) => model.Layout != null && SelectedWordCount >= 1;
 
     private void AutoPlaceExecute(object obj)
     {
@@ -478,10 +430,7 @@ internal class EditorViewModel: INotifyPropertyChanged
         view.AutoPlace();
     }
 
-    private bool FindWordCanExecute(object obj)
-    {
-        return model.Layout != null;
-    }
+    private bool FindWordCanExecute(object obj) => model.Layout != null;
 
     private void FindWordExecute(object obj)
     {
@@ -500,10 +449,7 @@ internal class EditorViewModel: INotifyPropertyChanged
         ClearLayout();
     }
 
-    private void QuitExecute(object obj)
-    {
-        Environment.Exit(0);
-    }
+    private void QuitExecute(object obj) => Environment.Exit(0);
 
     private void AboutExecute(object obj)
     {

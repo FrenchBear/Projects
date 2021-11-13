@@ -27,15 +27,9 @@ public struct Position: IEquatable<Position>
         Column = column;
     }
 
-    public override string ToString()
-    {
-        return $"Pos({Row}, {Column})";
-    }
+    public override string ToString() => $"Pos({Row}, {Column})";
 
-    public override int GetHashCode()
-    {
-        return Row ^ Column;
-    }
+    public override int GetHashCode() => Row ^ Column;
 
     public override bool Equals(object obj)
     {
@@ -45,10 +39,7 @@ public struct Position: IEquatable<Position>
         return Equals((Position)obj);
     }
 
-    public bool Equals(Position other)
-    {
-        return Row == other.Row && Column == other.Column;
-    }
+    public bool Equals(Position other) => Row == other.Row && Column == other.Column;
 
     public static bool operator ==(Position position1, Position position2) => position1.Equals(position2);
 

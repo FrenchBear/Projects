@@ -75,10 +75,7 @@ public class MatrixAnimation: MatrixAnimationBase
         FillBehavior = fillBehavior;
     }
 
-    protected override Freezable CreateInstanceCore()
-    {
-        return new MatrixAnimation();
-    }
+    protected override Freezable CreateInstanceCore() => new MatrixAnimation();
 
     protected override Matrix GetCurrentValueCore(Matrix defaultOriginValue, Matrix defaultDestinationValue, AnimationClock animationClock)
     {

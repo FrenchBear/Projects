@@ -30,8 +30,5 @@ public partial class AboutWindow: Window
         AssemblyCopyright.Text = aCopyrightAttr.Copyright;
     }
 
-    private void OKButton_Click(object sender, RoutedEventArgs e)
-    {
-        Close();
-    }
+    private void OKButton_Click(object sender, RoutedEventArgs e) => Close();
 }

@@ -20,13 +20,7 @@ internal class WordAndCanvas
         WordCanvas = wc;
     }
 
-    internal void SetColor(Brush foreground, Brush background)
-    {
-        WordCanvas.SetColor(foreground, background);
-    }
+    internal void SetColor(Brush foreground, Brush background) => WordCanvas.SetColor(foreground, background);
 
-    internal void RebuildCanvasAfterOrientationSwap()
-    {
-        WordCanvas.RebuildCanvasAfterOrientationSwap();
-    }
+    internal void RebuildCanvasAfterOrientationSwap() => WordCanvas.RebuildCanvasAfterOrientationSwap();
 }

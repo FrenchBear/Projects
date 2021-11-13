@@ -23,15 +23,9 @@ public struct BoundingRectangle: IEquatable<BoundingRectangle>
         Max = new Position(maxRow, maxColumn);
     }
 
-    public override string ToString()
-    {
-        return $"Bounds[{Min}-{Max}]";
-    }
+    public override string ToString() => $"Bounds[{Min}-{Max}]";
 
-    public override int GetHashCode()
-    {
-        return Min.GetHashCode() ^ Max.GetHashCode();
-    }
+    public override int GetHashCode() => Min.GetHashCode() ^ Max.GetHashCode();
 
     public override bool Equals(object obj)
     {
@@ -41,10 +35,7 @@ public struct BoundingRectangle: IEquatable<BoundingRectangle>
         return Equals((BoundingRectangle)obj);
     }
 
-    public bool Equals(BoundingRectangle other)
-    {
-        return Min == other.Min && Max == other.Max;
-    }
+    public bool Equals(BoundingRectangle other) => Min == other.Min && Max == other.Max;
 
     public static bool operator ==(BoundingRectangle br1, BoundingRectangle br2) => br1.Equals(br2);
 

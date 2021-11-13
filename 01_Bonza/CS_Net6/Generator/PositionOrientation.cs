@@ -33,15 +33,9 @@ public struct PositionOrientation: IEquatable<PositionOrientation>
         IsVertical = copy.IsVertical;
     }
 
-    public override string ToString()
-    {
-        return $"PosOrient({StartRow}, {StartColumn}, {(IsVertical ? "V" : "H")})";
-    }
+    public override string ToString() => $"PosOrient({StartRow}, {StartColumn}, {(IsVertical ? "V" : "H")})";
 
-    public override int GetHashCode()
-    {
-        return StartRow ^ StartColumn;
-    }
+    public override int GetHashCode() => StartRow ^ StartColumn;
 
     public override bool Equals(object obj)
     {
@@ -51,10 +45,7 @@ public struct PositionOrientation: IEquatable<PositionOrientation>
         return Equals((PositionOrientation)obj);
     }
 
-    public bool Equals(PositionOrientation other)
-    {
-        return StartRow == other.StartRow && StartColumn == other.StartColumn && IsVertical == other.IsVertical;
-    }
+    public bool Equals(PositionOrientation other) => StartRow == other.StartRow && StartColumn == other.StartColumn && IsVertical == other.IsVertical;
 
     public static bool operator ==(PositionOrientation po1, PositionOrientation po2) => po1.Equals(po2);
 

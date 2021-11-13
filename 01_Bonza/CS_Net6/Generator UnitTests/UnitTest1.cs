@@ -45,10 +45,7 @@ public class UnitTest1
     // TestInitialize and TestCleanup are executed before each test
     // Use TestInitialize to run code before running each test
     [TestInitialize()]
-    public void Initialize()
-    {
-        g = new Grille(123);        // Use seed to be reproducible
-    }
+    public void Initialize() => g = new Grille(123);        // Use seed to be reproducible
 
     // Use TestCleanup to run code after each test has run
     [TestCleanup()]
