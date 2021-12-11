@@ -7,28 +7,83 @@ using System;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Collections.Generic;
-using System.Diagnostics;
-
-#pragma warning disable IDE0051 // Remove unused private members
+using System.Drawing.Printing;
 
 namespace Plotter;
 public partial class MainForm: Form
 {
+    private readonly Plotter p;
+
     public MainForm()
     {
         InitializeComponent();
-        Test1();
-        //BosseDesMaths();
-        //XTimesSinInvX();
-        //ContinuousButNotDerivable();
-        //Turtle1();
-        //Cardioide();
-        WindowState = FormWindowState.Minimized;
+
+        // Fill printers list
+        foreach (string printer in PrinterSettings.InstalledPrinters)
+            PrintersList.Items.Add(printer.ToString());
+        if (PrintersList.Items.Count > 0)
+            PrintersList.SelectedIndex = 0;
+
+        p = new();
+        p.Output(picOut);
+
+        TestComboBox.Items.AddRange(new string[] {
+            "Test 1",
+            "Bosse des maths",
+            "x * Sin(x⁻¹)",
+            "Continuous but not derivable",
+            "Turtle 1",
+            "Cardioïde",
+        });
+
+        TestComboBox.SelectedIndex = 0;
     }
 
-    private static void Test1()
+    private void TestComboBox_SelectedIndexChanged(object sender, EventArgs e)
     {
-        var p = new Plotter();
+        switch (TestComboBox.SelectedIndex)
+        {
+            case 0:
+                Test1();
+                break;
+            case 1:
+                BosseDesMaths();
+                break;
+            case 2:
+                XTimesSinInvX();
+                break;
+            case 3:
+                ContinuousButNotDerivable();
+                break;
+            case 4:
+                Turtle1();
+                break;
+            case 5:
+                Cardioide();
+                break;
+        }
+    }
+
+    private void MainForm_Resize(object sender, EventArgs e)
+    {
+        if (p != null)
+            p.Refresh();
+    }
+
+    private void PrintButton_Click(object sender, EventArgs e)
+    {
+        if (PrintersList.SelectedItem == null)
+        {
+            MessageBox.Show("Select a printer first!");
+            return;
+        }
+
+        p.Print(PrintersList.SelectedItem.ToString());
+    }
+
+    private void Test1()
+    {
+        p.Clear();
 
         p.ScaleP1P2(-10, -10, 10, 10);
 
@@ -54,17 +109,17 @@ public partial class MainForm: Form
             p.Plot(f, (float)(0.02 * (f - 2.0) * (f + 1.0) * (f + 2.0)));
 
         p.Text(0, 0, "Origin");
-        p.Text(0, 9.5f, "Y Axis",0,1);
+        p.Text(0, 9.5f, "Y Axis", 0, 1);
         p.Text(9.5f, 0, "X Axis", 1);
 
         p.Refresh();
     }
 
-    private static void XTimesSinInvX()
+    private void XTimesSinInvX()
     {
-        var p = new Plotter();
+        p.Clear();
 
-        p.ScaleP1P2(-1, -0.3f, 1, 0.9f);
+        p.ScaleP1P2(-0.4f, -0.4f, 0.4f, 0.4f);
 
         p.PenWidth(1);
         p.PenColor(Color.LightGray);
@@ -76,15 +131,24 @@ public partial class MainForm: Form
 
         p.PenColor(Color.Purple);
         p.PenWidth(3);
-        for (float f = -1; f <= 1; f += 0.001f)
+
+        // Variable step
+        static float Inc(float f) => Math.Abs(f) switch
+        {
+            >0.1f => 0.001f,
+            >0.01f => 0.0001f,
+            _ => 0.00001f
+        };
+
+        for (float f = -1; f <= 1; f += Inc(f))
             p.Plot(f, (float)(f * Math.Sin(1.0 / f)));
         p.WindowTitle("x * Sin(x⁻¹)");
         p.Refresh();
     }
 
-    private static void BosseDesMaths()
+    private void BosseDesMaths()
     {
-        var p = new Plotter();
+        p.Clear();
         p.ScaleP1P2(0, 0, 10.8f, 9);
         p.DrawBox(0, 0, 10.8f, 9);
         p.PenWidth(3);
@@ -120,9 +184,9 @@ public partial class MainForm: Form
         p.Refresh();
     }
 
-    private static void ContinuousButNotDerivable()
+    private void ContinuousButNotDerivable()
     {
-        var p = new Plotter();
+        p.Clear();
         p.ScaleP1P2(0, 0, 1, 1);
 
         var l = new List<(float, float)>
@@ -141,7 +205,7 @@ public partial class MainForm: Form
             Color.Orange,
             Color.LightPink,
             Color.SkyBlue,
-            Color.Purple
+            Color.Purple,
         };
 
         int div = 64;
@@ -194,9 +258,9 @@ public partial class MainForm: Form
         p.Refresh();
     }
 
-    private static void Turtle1()
+    private void Turtle1()
     {
-        var p = new Plotter();
+        p.Clear();
         p.ScaleP1P2(-10, -10, 10, 10);
 
         void DrawSquare()
@@ -223,9 +287,9 @@ public partial class MainForm: Form
         p.Refresh();
     }
 
-    private static void Cardioide()
+    private void Cardioide()
     {
-        var p = new Plotter();
+        p.Clear();
         p.ScaleP1P2(-1.1f, -1.1f, 1.1f, 1.2f);
 
         p.PenColor(Color.Black);
@@ -238,4 +302,5 @@ public partial class MainForm: Form
         p.WindowTitle("Cardioïde");
         p.Refresh();
     }
+
 }

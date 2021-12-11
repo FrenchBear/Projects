@@ -39,18 +39,16 @@ partial class RenderingForm
             this.PrintersList.AllowDrop = true;
             this.PrintersList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.PrintersList.FormattingEnabled = true;
-            this.PrintersList.Location = new System.Drawing.Point(231, 22);
-            this.PrintersList.Margin = new System.Windows.Forms.Padding(4);
+            this.PrintersList.Location = new System.Drawing.Point(154, 15);
             this.PrintersList.Name = "PrintersList";
-            this.PrintersList.Size = new System.Drawing.Size(824, 45);
+            this.PrintersList.Size = new System.Drawing.Size(551, 33);
             this.PrintersList.TabIndex = 5;
             // 
             // PrintButton
             // 
-            this.PrintButton.Location = new System.Drawing.Point(17, 22);
-            this.PrintButton.Margin = new System.Windows.Forms.Padding(4);
+            this.PrintButton.Location = new System.Drawing.Point(11, 15);
             this.PrintButton.Name = "PrintButton";
-            this.PrintButton.Size = new System.Drawing.Size(170, 49);
+            this.PrintButton.Size = new System.Drawing.Size(113, 33);
             this.PrintButton.TabIndex = 4;
             this.PrintButton.Text = "&Print";
             this.PrintButton.UseVisualStyleBackColor = true;
@@ -62,24 +60,24 @@ partial class RenderingForm
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.picOut.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.picOut.Location = new System.Drawing.Point(17, 96);
-            this.picOut.Margin = new System.Windows.Forms.Padding(8, 9, 8, 9);
+            this.picOut.Location = new System.Drawing.Point(14, 57);
+            this.picOut.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.picOut.Name = "picOut";
-            this.picOut.Size = new System.Drawing.Size(1791, 1057);
-            this.picOut.TabIndex = 3;
+            this.picOut.Size = new System.Drawing.Size(1189, 719);
+            this.picOut.TabIndex = 6;
             this.picOut.TabStop = false;
             // 
             // RenderingForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(15F, 37F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1825, 1171);
+            this.ClientSize = new System.Drawing.Size(1217, 791);
+            this.Controls.Add(this.picOut);
             this.Controls.Add(this.PrintersList);
             this.Controls.Add(this.PrintButton);
-            this.Controls.Add(this.picOut);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "RenderingForm";
             this.Text = "Plotter Rendering";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.RenderingForm_FormClosed);
             this.Resize += new System.EventHandler(this.RenderingForm_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.picOut)).EndInit();
             this.ResumeLayout(false);
@@ -90,5 +88,5 @@ partial class RenderingForm
 
     private System.Windows.Forms.ComboBox PrintersList;
     private System.Windows.Forms.Button PrintButton;
-    private System.Windows.Forms.PictureBox picOut;
+    public System.Windows.Forms.PictureBox picOut;
 }

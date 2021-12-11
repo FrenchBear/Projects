@@ -6,10 +6,11 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace Plotter;
 
-internal class Plotter
+internal partial class Plotter
 {
     private readonly List<PlotterCommand> Commands = new();
     private RenderingForm rf = null;
@@ -97,14 +98,19 @@ internal class Plotter
         Commands.Add(cmd);
     }
 
+    private PictureBox picOut = null;
+
+    internal void Output(PictureBox picOut) => this.picOut = picOut;
+
     internal void Refresh()
     {
-        if (rf == null)
+        if (picOut == null)
         {
-            rf = new RenderingForm();
+            rf = new RenderingForm(this);
             rf.Show();
+            picOut = rf.picOut;
         }
-        rf.RefreshPlot(new List<PlotterCommand>(Commands));
+        RefreshPlot();
     }
 
     // Turtle commands
@@ -215,4 +221,5 @@ internal class CurrentPenAttributes
         FontSize = 12;
         FontStyle = FontStyle.Regular;
     }
+
 }
