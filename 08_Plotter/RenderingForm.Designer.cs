@@ -1,6 +1,6 @@
 ﻿namespace Plotter;
 
-partial class RenderingForm
+internal partial class RenderingForm
 {
     /// <summary>
     /// Required designer variable.

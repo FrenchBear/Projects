@@ -34,9 +34,10 @@ public partial class MainForm: Form
             "Continuous but not derivable",
             "Turtle 1",
             "Cardioïde",
+            "AutoScale",
         });
 
-        TestComboBox.SelectedIndex = 0;
+        TestComboBox.SelectedIndex = 6;
     }
 
     private void TestComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -60,6 +61,9 @@ public partial class MainForm: Form
                 break;
             case 5:
                 Cardioide();
+                break;
+            case 6:
+                AutoScaleTest();
                 break;
         }
     }
@@ -135,8 +139,8 @@ public partial class MainForm: Form
         // Variable step
         static float Inc(float f) => Math.Abs(f) switch
         {
-            >0.1f => 0.001f,
-            >0.01f => 0.0001f,
+            > 0.1f => 0.001f,
+            > 0.01f => 0.0001f,
             _ => 0.00001f
         };
 
@@ -299,7 +303,20 @@ public partial class MainForm: Form
         p.PenColor(Color.Red);
         p.TextFont("Verdana", 18.0f, FontStyle.Bold | FontStyle.Underline);
         p.Text(0, 1.12f, "Cardioïde", 2, 2);
+
         p.WindowTitle("Cardioïde");
+        p.Refresh();
+    }
+
+    private void AutoScaleTest()
+    {
+        p.Clear();
+
+        p.DrawLine(0, 0, 5, 5);
+        p.DrawLine(0, 5, 5, 0);
+        p.DrawCircle(4, 4, 3);
+        p.AutoScale();
+
         p.Refresh();
     }
 

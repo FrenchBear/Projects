@@ -14,6 +14,7 @@ internal partial class Plotter
 {
     private readonly List<PlotterCommand> Commands = new();
     private RenderingForm rf = null;
+    private DrawingExtent Extent = new();
 
     /// <summary>
     /// All current pen attributes (position, color, width...)
@@ -26,7 +27,8 @@ internal partial class Plotter
     internal void Clear()
     {
         Commands.Clear();
-        Pen.Reset();
+        Pen.Clear();
+        Extent.Clear();
     }
 
     internal void ScaleP1P2(float p1x, float p1y, float p2x, float p2y)
@@ -34,6 +36,44 @@ internal partial class Plotter
         var cmd = new PC_ScaleP1P2 { P1X = p1x, P1Y = p1y, P2X = p2x, P2Y = p2y };
         Commands.Add(cmd);
     }
+
+    internal void AutoScale()
+    {
+        // Simple attempt to determine scale automatically based on lines and circles extent (only text origin is guaranteed to be in extent)
+        // Override manual scale if it exists
+        const float km = 0.02f;
+        var newScale = new PC_ScaleP1P2
+        {
+            P1X = Extent.XMin - (Extent.XMax - Extent.XMin) * km,
+            P1Y = Extent.YMin - (Extent.YMax - Extent.YMin) * km,
+            P2X = Extent.XMax + (Extent.XMax - Extent.XMin) * km,
+            P2Y = Extent.YMax + (Extent.YMax - Extent.YMin) * km
+        };
+
+        bool found = false;
+        for (int i = 0; i < Commands.Count; i++)
+            if (Commands[i] is PC_ScaleP1P2)
+            {
+                Commands[i] = newScale;
+                found = true;
+                break;
+            }
+        if (!found)
+            Commands.Insert(0, newScale);
+    }
+
+    private void AdjustExtent(float x, float y)
+    {
+        if (x > Extent.XMax)
+            Extent.XMax = x;
+        if (x < Extent.XMin)
+            Extent.XMin = x;
+        if (y > Extent.YMax)
+            Extent.YMax = y;
+        if (y < Extent.YMin)
+            Extent.YMin = y;
+    }
+
 
     internal void PenColor(Color color)
         => Pen.Color = color;
@@ -45,12 +85,16 @@ internal partial class Plotter
     {
         var cmd = new PC_DrawLine { Color = Pen.Color, Width = Pen.Width, P1X = p1x, P1Y = p1y, P2X = p2x, P2Y = p2y };
         Commands.Add(cmd);
+        AdjustExtent(p1x, p1y);
+        AdjustExtent(p2x, p2y);
     }
 
     internal void DrawBox(float p1x, float p1y, float p2x, float p2y)
     {
         var cmd = new PC_DrawBox { Color = Pen.Color, Width = Pen.Width, P1X = p1x, P1Y = p1y, P2X = p2x, P2Y = p2y };
         Commands.Add(cmd);
+        AdjustExtent(p1x, p1y);
+        AdjustExtent(p2x, p2y);
     }
 
     internal void DrawAxes(float ox, float oy, float stepx, float stepy)
@@ -75,6 +119,8 @@ internal partial class Plotter
     {
         var cmd = new PC_DrawCircle { Color = Pen.Color, Width = Pen.Width, CX = cx, CY = cy, R = r };
         Commands.Add(cmd);
+        AdjustExtent(cx + r, cy + r);
+        AdjustExtent(cx - r, cy - r);
     }
 
     internal void PenUp()
@@ -147,8 +193,9 @@ internal partial class Plotter
     // VerticalAlignment:   0=Top, 1=Bottom, 2=Middle
     internal void Text(float px, float py, string text, int hz = 0, int vt = 0)
     {
-        var cmd = new PC_Text { PX = px, PY = py, Text = text, Hz = hz, Vt = vt, Color = Pen.Color, FontFamily=Pen.FontFamily, FontSize = Pen.FontSize, FontStyle=Pen.FontStyle };
+        var cmd = new PC_Text { PX = px, PY = py, Text = text, Hz = hz, Vt = vt, Color = Pen.Color, FontFamily = Pen.FontFamily, FontSize = Pen.FontSize, FontStyle = Pen.FontStyle };
         Commands.Add(cmd);
+        AdjustExtent(px, py);       // We don't know the extent in user coordinates, so we just ajust extent using text origin, that may not be enough...
     }
 }
 
@@ -203,12 +250,12 @@ internal class CurrentPenAttributes
 
     // Constructor, make sure structure is initialized with known defaults
     internal CurrentPenAttributes()
-        => Reset();
+        => Clear();
 
     /// <summary>
     /// Reset pen attributes to known defaults: X=Y=0, black, pen up, width 1, angle 0
     /// </summary>
-    internal void Reset()
+    internal void Clear()
     {
         X = 0;
         Y = 0;
@@ -222,4 +269,20 @@ internal class CurrentPenAttributes
         FontStyle = FontStyle.Regular;
     }
 
+}
+
+internal struct DrawingExtent
+{
+    public float XMin { get; set; } = float.MaxValue;
+    public float XMax { get; set; } = float.MinValue;
+    public float YMin { get; set; } = float.MaxValue;
+    public float YMax { get; set; } = float.MinValue;
+
+    public void Clear()
+    {
+        XMin = float.MaxValue;
+        YMin = float.MaxValue;
+        XMax = float.MinValue;
+        YMax = float.MinValue;
+    }
 }
