@@ -29,11 +29,13 @@ public partial class LSystemForm: Form
             PrintersList.SelectedIndex = 0;
 
         // Fill L-Systems
-        var Dragon = new LSystem { Name = "Dragon", Comment = "Original Dragon curve", Angle = 8, Axiom = "FX", Rules = "F=\r\nX=-FX++FY-\r\nY=+FX--FY+" };
-        var Hilbert = new LSystem { Name = "Hilbert", Comment = "Basic Hilbert curve", Angle = 4, Axiom = "X", Rules = "X=-YF+XFX+FY-\r\nY=+XF-YFY-FX+" };
+        var Dragon = new LSystem("Dragon", "Original Dragon curve", 8, "FX", "F=\r\nX=-FX++FY-\r\nY=+FX--FY+");
+        var Hilbert = new LSystem("Hilbert", "Basic Hilbert curve", 4, "X", "X=-YF+XFX+FY-\r\nY=+XF-YFY-FX+");
+        var Flocon = new LSystem("Flocon", "Von Koch curve", 6, "FX", "F=\r\nX=FX-FX++FX-FX");
         LSystemsComboBox.Items.AddRange(new LSystem[] {
             Hilbert,
             Dragon,
+            Flocon,
         });
         LSystemsComboBox.SelectedIndex = 0;
 
@@ -52,12 +54,14 @@ public partial class LSystemForm: Form
 
     private void LSystemsComboBox_SelectedIndexChanged(object sender, EventArgs e)
     {
-        var s = LSystemsComboBox.SelectedItem as LSystem;
-        NameTextBox.Text = s.Name;
-        CommentTextBox.Text = s.Comment;
-        AngleTextBox.Text = s.Angle.ToString();
-        AxiomTextBox.Text = s.Axiom;
-        RulesTextBox.Text = s.Rules;
+        if (LSystemsComboBox.SelectedItem is LSystem s)
+        {
+            NameTextBox.Text = s.Name;
+            CommentTextBox.Text = s.Comment;
+            AngleTextBox.Text = s.Angle.ToString();
+            AxiomTextBox.Text = s.Axiom;
+            RulesTextBox.Text = s.Rules;
+        }
     }
 
     private void MainForm_Resize(object sender, EventArgs e)
@@ -74,7 +78,7 @@ public partial class LSystemForm: Form
             return;
         }
 
-        p.Print(PrintersList.SelectedItem.ToString());
+        p.Print((string)PrintersList.SelectedItem);
     }
 
     private void SmoothingTest()
@@ -102,19 +106,14 @@ public partial class LSystemForm: Form
                 new PointD(6, 0.5f)
             };
 
+        p.Clear();
         PlotSmoothed(testPoints);
+        p.AutoScale();
+        p.Refresh();
     }
 
     private void PlotSmoothed(List<PointD> points)
     {
-        p.Clear();
-        p.PenWidth(1);
-
-// ToDo: Add a checkbox ?        
-        //p.PenColor(Color.Blue);
-        //p.DrawPoints(points);
-        //p.PenUp();
-
         var smooth = SmoothingMethodsComboBox.SelectedIndex switch
         {
             0 => Smoothing.GetSplineInterpolationCatmullRom(points, (int)IterationsUpDown.Value),
@@ -122,11 +121,9 @@ public partial class LSystemForm: Form
             2 => Smoothing.GetCutCorners(points, (float)TensionUpDown.Value),
             _ => points,
         };
-        p.PenColor(Color.Blue);
+        p.PenColor(Color.Black);
+        p.PenWidth(0.1f);
         p.DrawPoints(smooth);
-
-        p.AutoScale();
-        p.Refresh();
     }
 
     private void SmoothingMethodsComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -193,7 +190,7 @@ public partial class LSystemForm: Form
         RefreshDrawing();
     }
 
-    private Action CurrentDrawingAction;
+    private Action? CurrentDrawingAction;
 
     private void RefreshDrawing()
         => CurrentDrawingAction?.Invoke();
@@ -214,8 +211,8 @@ public partial class LSystemForm: Form
     {
         if (p == null)
             return;
-
-        var ls = LSystemsComboBox.SelectedItem as LSystem;
+        if (LSystemsComboBox.SelectedItem is not LSystem ls)
+            return;
 
         Dictionary<char, string> rules = new();
         foreach (string s in ls.Rules.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
@@ -227,19 +224,28 @@ public partial class LSystemForm: Form
             else
                 rules.Add(c, r);
         }
-        var drawString = LSystemProcessor.LSystemIterator((int)DepthUpDown.Value, ls.Axiom, rules);
+        int depth = (int)DepthUpDown.Value;
+        var drawString = LSystemProcessor.LSystemIterator(depth, ls.Axiom, rules);
         StringBuilder sb = new();
         foreach (char c in drawString)
             sb.Append(c);
         string ss = sb.ToString();
 
         // Generation of points
-        var points = new List<PointD>();
+        var pointsLists = new List<List<PointD>>();
+        List<PointD> points;
+
+        void StartNewStroke()
+        {
+            points = new List<PointD>();
+            pointsLists.Add(points);
+        }
+        StartNewStroke();
 
         AngleAndPosition ap = new()
         {
-            SegmentLength = 1.0f
-        };     // All fields start at 0.0
+            SegmentLength = 1.0f            // Scale factor 1
+        };
 
         Stack<AngleAndPosition> apStack = new();
 
@@ -353,34 +359,30 @@ public partial class LSystemForm: Form
                     if (apStack.Count > 0)
                     {
                         ap = apStack.Pop();
-                        // Draw a fake unstroked segment to restore correctly current position for rendering subsystems
-                        // that memorize current position
-                        p.PenUp();
-                        p.Plot(ap.Px, ap.Py);
+                        StartNewStroke();
                     }
                     break;
 
                 case 'F':
                 case 'G':
-                    nx = (float)(ap.Px + ap.SegmentLength * Math.Cos(ap.Angle));
-                    ny = (float)(ap.Py + ap.SegmentLength * Math.Sin(ap.Angle));
-                    // ToDo: handle multiple strokes
-                    //if (c == 'G')
-                    //    p.PenUp();
-                    //p.DrawLine(ap.Px, ap.Py, nx, ny);
-                    points.Add(new PointD(nx, ny));
+                    nx = (float)(ap.Px + ap.SegmentLength * Math.Cos(-ap.Angle));
+                    ny = (float)(ap.Py + ap.SegmentLength * Math.Sin(-ap.Angle));
+                    if (c == 'G')
+                        StartNewStroke();
+                    else
+                        points.Add(new PointD(nx, ny));
                     ap.Px = nx;
                     ap.Py = ny;
                     break;
 
                 case 'D':
                 case 'M':
-                    nx = (float)(ap.Px + ap.SegmentLength * Math.Cos(ap.DirectAngle));
-                    ny = (float)(ap.Py + ap.SegmentLength * Math.Sin(ap.DirectAngle));
-                    // ToDo: handle multiple strokes
-                    //if (c == 'M')
-                    //    p.PenUp();
-                    points.Add(new PointD(nx, ny));
+                    nx = (float)(ap.Px + ap.SegmentLength * Math.Cos(-ap.DirectAngle));
+                    ny = (float)(ap.Py + ap.SegmentLength * Math.Sin(-ap.DirectAngle));
+                    if (c == 'M')
+                        StartNewStroke();
+                    else
+                        points.Add(new PointD(nx, ny));
                     ap.Px = nx;
                     ap.Py = ny;
                     break;
@@ -388,7 +390,21 @@ public partial class LSystemForm: Form
         }
 
         // Rendring
-        PlotSmoothed(points);
+        p.Clear();
+        foreach (var list in pointsLists)
+            PlotSmoothed(list);
+
+        p.PenColor(Color.Black);
+
+        var smoothingMethod = (string)SmoothingMethodsComboBox.SelectedItem;
+        var iterations = (int)IterationsUpDown.Value;
+        var tension = (float)TensionUpDown.Value;
+
+        p.Text(p.Extent.XMin, p.Extent.YMin - 0.5f, $"{ls.Name}\nAngle={ls.Angle}\nAxiom={ls.Axiom}\nRules:\n{ls.Rules}\nDepth={depth}\n\nSmoothing={smoothingMethod}\nIterations={iterations}\nTension={tension:F2}", 0, 1);
+        p.Move(p.Extent.XMin, p.Extent.YMin - 0.5f - (p.Extent.YMax-p.Extent.YMin) / 2);
+
+        p.AutoScale();
+        p.Refresh();
     }
 }
 

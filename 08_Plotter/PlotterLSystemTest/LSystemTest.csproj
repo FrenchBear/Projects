@@ -5,10 +5,11 @@
 		<TargetFramework>net6.0-windows</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
 		<StartupObject>LSystemTest.Program</StartupObject>
-		<Description>Plotter test using LSystem</Description>
+		<Description>Plotter library tests using LSystem</Description>
 		<Version>1.0.0</Version>
 		<Authors>Pierre Violent</Authors>
 		<Copyright>Copyright ©2021 Pierre Violent</Copyright>
+		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -30,7 +30,7 @@ public partial class TestForm: Form
         p.Output(picOut);
 
         TestComboBox.Items.AddRange(new string[] {
-            "Test 1",
+            "First test",
             "Bosse des maths",
             "x * Sin(x⁻¹)",
             "Continuous but not derivable",
@@ -39,7 +39,7 @@ public partial class TestForm: Form
             "AutoScale",
         });
 
-        TestComboBox.SelectedIndex = 6;
+        TestComboBox.SelectedIndex = 0;
     }
 
     private void TestComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -84,7 +84,7 @@ public partial class TestForm: Form
             return;
         }
 
-        p.Print(PrintersList.SelectedItem.ToString());
+        p.Print((string)PrintersList.SelectedItem);
     }
 
     private void Test1()
@@ -157,7 +157,7 @@ public partial class TestForm: Form
         p.Clear();
         p.ScaleP1P2(0, 0, 10.8f, 9);
         p.DrawBox(0, 0, 10.8f, 9);
-        p.PenWidth(3);
+        p.PenWidth(2);
         p.PenColor(Color.BlueViolet);
 
         const float gridStep = (float)(Math.PI / 15.0);

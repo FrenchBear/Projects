@@ -1,5 +1,5 @@
 ﻿// Plotter - Rendering form
-// Reponsible for onscreen and printed rendering using GDI
+// Provides onscreen and printed rendering using GDI if application doesn't provide a picOut
 //
 // 2021-12-09   PV
 
@@ -36,6 +36,6 @@ internal partial class RenderingForm: Form
             return;
         }
 
-        p.Print(PrintersList.SelectedItem.ToString());
+        p.Print((string)PrintersList.SelectedItem);
     }
 }

@@ -72,14 +72,14 @@ internal class PC_DrawGrid: PlotterCommandWidthAndColor
 
 internal class PC_WindowTitle: PlotterCommand
 {
-    public string WindowTitle { get; init; }
+    public string WindowTitle { get; init; } = "";
 }
 
 internal class PC_Text: PlotterCommand
 {
     public float PX { get; init; }
     public float PY { get; init; }
-    public string Text { get; init; }
+    public string Text { get; init; } = "";
 
     /// <summary>
     /// HorizontalAlignment: 0=Left, 1=Right, 2=Center
@@ -92,7 +92,7 @@ internal class PC_Text: PlotterCommand
     public int Vt { get; init; }
 
     public Color Color { get; init; }
-    public string FontFamily { get; init; }
+    public string FontFamily { get; init; } = "Arial";
     public float FontSize { get; init; }
     public FontStyle FontStyle { get; init; }
 }

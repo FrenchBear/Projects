@@ -13,9 +13,8 @@ internal static class Smoothing
 {
     static internal List<PointD> GetCurveSmoothingChaikin(List<PointD> points, float tension, int nrOfIterations)
     {
-        // checks
-        if (points == null || points.Count < 3)
-            return null;
+        if (points.Count < 3)
+            return points;
 
         if (nrOfIterations < 1)
             nrOfIterations = 1;

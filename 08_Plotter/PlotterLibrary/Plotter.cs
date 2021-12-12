@@ -1,5 +1,4 @@
 ﻿// Plotter - Plotter.cs
-// Plotter - Plotter.cs
 // Public API of plotter (Plotter class)
 //
 // 2021-12-09   PV
@@ -14,9 +13,9 @@ namespace PlotterLibrary;
 public partial class Plotter
 {
     private readonly List<PlotterCommand> Commands = new();
-    private RenderingForm rf = null;
-    private DrawingExtent Extent = new();
-    private PictureBox picOut = null;
+    private RenderingForm? rf = null;
+    public DrawingExtent Extent = new();
+    private PictureBox? picOut = null;
 
     /// <summary>
     /// All current pen attributes (position, color, width...)
@@ -134,6 +133,15 @@ public partial class Plotter
     {
         if (Pen.PenDown)
             DrawLine(Pen.X, Pen.Y, x, y);
+        AdjustExtent(x, y);
+        Pen.X = x;
+        Pen.Y = y;
+        Pen.PenDown = true;
+    }
+
+    public void Move(float x, float y)
+    {
+        AdjustExtent(x, y);
         Pen.X = x;
         Pen.Y = y;
         Pen.PenDown = true;
@@ -228,10 +236,10 @@ public class CurrentPenAttributes
         get => width;
         set
         {
-            if (value > 0)
+            if (value >= 0)
                 width = value;
             else
-                throw new ArgumentException("Width must be >0");
+                throw new ArgumentException("Width must be >=0");
         }
     }
     private float width;
@@ -241,7 +249,7 @@ public class CurrentPenAttributes
     /// </summary>
     public float Angle { get; set; }
 
-    public string FontFamily { get; internal set; }
+    public string FontFamily { get; internal set; } = "Arial";
 
     public float FontSize { get; internal set; }
 
@@ -270,12 +278,12 @@ public class CurrentPenAttributes
 
 }
 
-internal struct DrawingExtent
+public struct DrawingExtent
 {
-    public float XMin { get; set; } = float.MaxValue;
-    public float XMax { get; set; } = float.MinValue;
-    public float YMin { get; set; } = float.MaxValue;
-    public float YMax { get; set; } = float.MinValue;
+    public float XMin { get; internal set; } = float.MaxValue;
+    public float XMax { get; internal set; } = float.MinValue;
+    public float YMin { get; internal set; } = float.MaxValue;
+    public float YMax { get; internal set; } = float.MinValue;
 
     public void Clear()
     {
