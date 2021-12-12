@@ -1,4 +1,5 @@
 ﻿// Plotter - Plotter.cs
+// Plotter - Plotter.cs
 // Public API of plotter (Plotter class)
 //
 // 2021-12-09   PV
@@ -8,36 +9,37 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Plotter;
+namespace PlotterLibrary;
 
-internal partial class Plotter
+public partial class Plotter
 {
     private readonly List<PlotterCommand> Commands = new();
     private RenderingForm rf = null;
     private DrawingExtent Extent = new();
+    private PictureBox picOut = null;
 
     /// <summary>
     /// All current pen attributes (position, color, width...)
     /// </summary>
-    internal CurrentPenAttributes Pen = new();
+    public CurrentPenAttributes Pen = new();
 
     /// <summary>
     /// Reset plotter: clear all commands, reset pen attributes to default values
     /// </summary>
-    internal void Clear()
+    public void Clear()
     {
         Commands.Clear();
         Pen.Clear();
         Extent.Clear();
     }
 
-    internal void ScaleP1P2(float p1x, float p1y, float p2x, float p2y)
+    public void ScaleP1P2(float p1x, float p1y, float p2x, float p2y)
     {
         var cmd = new PC_ScaleP1P2 { P1X = p1x, P1Y = p1y, P2X = p2x, P2Y = p2y };
         Commands.Add(cmd);
     }
 
-    internal void AutoScale()
+    public void AutoScale()
     {
         // Simple attempt to determine scale automatically based on lines and circles extent (only text origin is guaranteed to be in extent)
         // Override manual scale if it exists
@@ -62,7 +64,7 @@ internal partial class Plotter
             Commands.Insert(0, newScale);
     }
 
-    private void AdjustExtent(float x, float y)
+    public void AdjustExtent(float x, float y)
     {
         if (x > Extent.XMax)
             Extent.XMax = x;
@@ -74,14 +76,13 @@ internal partial class Plotter
             Extent.YMin = y;
     }
 
-
-    internal void PenColor(Color color)
+    public void PenColor(Color color)
         => Pen.Color = color;
 
-    internal void PenWidth(float w)
+    public void PenWidth(float w)
         => Pen.Width = w;
 
-    internal void DrawLine(float p1x, float p1y, float p2x, float p2y)
+    public void DrawLine(float p1x, float p1y, float p2x, float p2y)
     {
         var cmd = new PC_DrawLine { Color = Pen.Color, Width = Pen.Width, P1X = p1x, P1Y = p1y, P2X = p2x, P2Y = p2y };
         Commands.Add(cmd);
@@ -89,7 +90,7 @@ internal partial class Plotter
         AdjustExtent(p2x, p2y);
     }
 
-    internal void DrawBox(float p1x, float p1y, float p2x, float p2y)
+    public void DrawBox(float p1x, float p1y, float p2x, float p2y)
     {
         var cmd = new PC_DrawBox { Color = Pen.Color, Width = Pen.Width, P1X = p1x, P1Y = p1y, P2X = p2x, P2Y = p2y };
         Commands.Add(cmd);
@@ -97,7 +98,7 @@ internal partial class Plotter
         AdjustExtent(p2x, p2y);
     }
 
-    internal void DrawAxes(float ox, float oy, float stepx, float stepy)
+    public void DrawAxes(float ox, float oy, float stepx, float stepy)
     {
         var cmd = new PC_DrawAxes { Color = Pen.Color, Width = Pen.Width, OX = ox, OY = oy, StepX = stepx, StepY = stepy };
         Commands.Add(cmd);
@@ -106,7 +107,7 @@ internal partial class Plotter
         Pen.PenDown = false;
     }
 
-    internal void DrawGrid(float ox, float oy, float stepx, float stepy)
+    public void DrawGrid(float ox, float oy, float stepx, float stepy)
     {
         var cmd = new PC_DrawGrid { Color = Pen.Color, Width = Pen.Width, OX = ox, OY = oy, StepX = stepx, StepY = stepy };
         Commands.Add(cmd);
@@ -115,7 +116,7 @@ internal partial class Plotter
         Pen.PenDown = false;
     }
 
-    internal void DrawCircle(float cx, float cy, float r)
+    public void DrawCircle(float cx, float cy, float r)
     {
         var cmd = new PC_DrawCircle { Color = Pen.Color, Width = Pen.Width, CX = cx, CY = cy, R = r };
         Commands.Add(cmd);
@@ -123,13 +124,13 @@ internal partial class Plotter
         AdjustExtent(cx - r, cy - r);
     }
 
-    internal void PenUp()
+    public void PenUp()
         => Pen.PenDown = false;
 
-    internal void PenDown()
+    public void PenDown()
         => Pen.PenDown = true;
 
-    internal void Plot(float x, float y)
+    public void Plot(float x, float y)
     {
         if (Pen.PenDown)
             DrawLine(Pen.X, Pen.Y, x, y);
@@ -138,17 +139,15 @@ internal partial class Plotter
         Pen.PenDown = true;
     }
 
-    internal void WindowTitle(string title)
+    public void WindowTitle(string title)
     {
         var cmd = new PC_WindowTitle { WindowTitle = title };
         Commands.Add(cmd);
     }
 
-    private PictureBox picOut = null;
+    public void Output(PictureBox picOut) => this.picOut = picOut;
 
-    internal void Output(PictureBox picOut) => this.picOut = picOut;
-
-    internal void Refresh()
+    public void Refresh()
     {
         if (picOut == null)
         {
@@ -160,29 +159,29 @@ internal partial class Plotter
     }
 
     // Turtle commands
-    private static float CosDegree(float alpha)
+    public static float CosDegree(float alpha)
         => (float)Math.Cos(alpha / 180 * Math.PI);
 
-    private static float SinDegree(float alpha)
+    public static float SinDegree(float alpha)
     => (float)Math.Sin(alpha / 180 * Math.PI);
 
-    internal void Forward(float dist)
+    public void Forward(float dist)
     {
         float newX = Pen.X + dist * CosDegree(Pen.Angle);
         float newY = Pen.Y + dist * SinDegree(Pen.Angle);
         Plot(newX, newY);
     }
 
-    internal void Right(float delta)
+    public void Right(float delta)
         => Pen.Angle -= delta;
 
-    internal void Left(float delta)
+    public void Left(float delta)
         => Pen.Angle += delta;
 
-    internal void Angle(float angle)
+    public void Angle(float angle)
         => Pen.Angle = angle;
 
-    internal void TextFont(string fontFamily, float size, FontStyle style)
+    public void TextFont(string fontFamily, float size, FontStyle style)
     {
         Pen.FontFamily = fontFamily;
         Pen.FontSize = size;
@@ -191,7 +190,7 @@ internal partial class Plotter
 
     // HorizontalAlignment: 0=Left, 1=Right, 2=Center
     // VerticalAlignment:   0=Top, 1=Bottom, 2=Middle
-    internal void Text(float px, float py, string text, int hz = 0, int vt = 0)
+    public void Text(float px, float py, string text, int hz = 0, int vt = 0)
     {
         var cmd = new PC_Text { PX = px, PY = py, Text = text, Hz = hz, Vt = vt, Color = Pen.Color, FontFamily = Pen.FontFamily, FontSize = Pen.FontSize, FontStyle = Pen.FontStyle };
         Commands.Add(cmd);
@@ -199,7 +198,7 @@ internal partial class Plotter
     }
 }
 
-internal class CurrentPenAttributes
+public class CurrentPenAttributes
 {
     /// <summary>
     /// Current Pen X coordinate

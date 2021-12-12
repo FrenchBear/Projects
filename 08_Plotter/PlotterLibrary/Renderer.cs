@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Printing;
 
-namespace Plotter;
+namespace PlotterLibrary;
 
-internal partial class Plotter
+public partial class Plotter
 {
     private void RefreshPlot()
     {
@@ -214,7 +214,7 @@ internal partial class Plotter
     }
 
     // Printing support
-    internal void Print(string prinerName)
+    public void Print(string prinerName)
     {
         var pd = new PrintDocument();
         pd.PrinterSettings.PrinterName = prinerName;

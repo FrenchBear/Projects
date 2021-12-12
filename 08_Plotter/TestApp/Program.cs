@@ -6,7 +6,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace Plotter;
+namespace TestPlotter;
 
 internal static class Program
 {
@@ -17,6 +17,6 @@ internal static class Program
     static void Main()
     {
         ApplicationConfiguration.Initialize();
-        Application.Run(new MainForm());
+        Application.Run(new TestForm());
     }
 }

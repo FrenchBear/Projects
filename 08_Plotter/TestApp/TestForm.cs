@@ -8,13 +8,15 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Collections.Generic;
 using System.Drawing.Printing;
+using PlotterLibrary;
 
-namespace Plotter;
-public partial class MainForm: Form
+namespace TestPlotter;
+
+public partial class TestForm: Form
 {
     private readonly Plotter p;
 
-    public MainForm()
+    public TestForm()
     {
         InitializeComponent();
 

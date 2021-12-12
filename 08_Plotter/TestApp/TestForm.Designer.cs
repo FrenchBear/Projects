@@ -1,6 +1,6 @@
-﻿namespace Plotter;
+﻿namespace TestPlotter;
 
-partial class MainForm
+partial class TestForm
 {
     /// <summary>
     /// Required designer variable.

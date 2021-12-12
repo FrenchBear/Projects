@@ -7,7 +7,7 @@ using System;
 using System.Drawing.Printing;
 using System.Windows.Forms;
 
-namespace Plotter;
+namespace PlotterLibrary;
 
 internal partial class RenderingForm: Form
 {

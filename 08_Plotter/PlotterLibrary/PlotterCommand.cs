@@ -3,9 +3,9 @@
 //
 // 2021-12-09   PV
 
-namespace Plotter;
-
 using System.Drawing;
+
+namespace PlotterLibrary;
 
 /// <summary>
 /// General base class for plotter commands persistence
