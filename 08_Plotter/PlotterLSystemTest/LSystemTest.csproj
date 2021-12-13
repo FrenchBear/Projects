@@ -16,4 +16,22 @@
 	  <ProjectReference Include="..\PlotterLibrary\PlotterLibrary.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Update="Systems\fract205.l">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Systems\fractint.l">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Systems\lsysfp.l">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Systems\penrose.l">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Systems\tiling.l">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
 </Project>

@@ -83,8 +83,8 @@ internal static class Smoothing
             spoints.Add(new PointD(p));
 
         // always extrapolate the first and last point out
-        float dx = spoints[1].X - spoints[0].X;
-        float dy = spoints[1].Y - spoints[0].Y;
+        double dx = spoints[1].X - spoints[0].X;
+        double dy = spoints[1].Y - spoints[0].Y;
         spoints.Insert(0, new PointD(spoints[0].X - dx, spoints[0].Y - dy));
         dx = spoints[^1].X - spoints[^2].X;
         dy = spoints[^1].Y - spoints[^2].Y;

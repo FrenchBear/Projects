@@ -99,7 +99,12 @@ public partial class Plotter
     };
 
     public void PenColor(int colorIndex)
-        => Pen.Color = ColorsTable[colorIndex % ColorsTable.Length];
+    {
+        int ix = colorIndex % ColorsTable.Length;
+        if (ix < 0)
+            ix += ColorsTable.Length;
+        Pen.Color = ColorsTable[ix];
+    }
 
     public void PenWidth(float w)
         => Pen.Width = w;

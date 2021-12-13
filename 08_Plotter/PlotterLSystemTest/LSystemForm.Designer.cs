@@ -35,20 +35,20 @@ partial class LSystemForm
             this.MainSplitContainer = new System.Windows.Forms.SplitContainer();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this.label2 = new System.Windows.Forms.Label();
+            this.SourcesComboBox = new System.Windows.Forms.ComboBox();
             this.RulesTextBox = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.AxiomTextBox = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.AngleTextBox = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.NameTextBox = new System.Windows.Forms.TextBox();
             this.CommentTextBox = new System.Windows.Forms.TextBox();
             this.LSystemsComboBox = new System.Windows.Forms.ComboBox();
-            this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
-            this.DrawLSystemButton = new System.Windows.Forms.Button();
-            this.DrawTestButton = new System.Windows.Forms.Button();
+            this.DepthUpDown = new System.Windows.Forms.NumericUpDown();
+            this.label1 = new System.Windows.Forms.Label();
             this.SmoothingGroupBox = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.SmoothingMethodsComboBox = new System.Windows.Forms.ComboBox();
@@ -59,8 +59,6 @@ partial class LSystemForm
             this.IterationsTrackBar = new System.Windows.Forms.TrackBar();
             this.TensionUpDown = new System.Windows.Forms.NumericUpDown();
             this.TensionTrackBar = new System.Windows.Forms.TrackBar();
-            this.label1 = new System.Windows.Forms.Label();
-            this.DepthUpDown = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.picOut)).BeginInit();
             this.PrintingGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MainSplitContainer)).BeginInit();
@@ -69,13 +67,13 @@ partial class LSystemForm
             this.MainSplitContainer.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DepthUpDown)).BeginInit();
             this.SmoothingGroupBox.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.IterationsUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.IterationsTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TensionUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TensionTrackBar)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.DepthUpDown)).BeginInit();
             this.SuspendLayout();
             // 
             // picOut
@@ -84,10 +82,10 @@ partial class LSystemForm
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.picOut.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.picOut.Location = new System.Drawing.Point(0, 398);
+            this.picOut.Location = new System.Drawing.Point(0, 436);
             this.picOut.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.picOut.Name = "picOut";
-            this.picOut.Size = new System.Drawing.Size(1924, 1198);
+            this.picOut.Size = new System.Drawing.Size(1785, 995);
             this.picOut.TabIndex = 4;
             this.picOut.TabStop = false;
             // 
@@ -140,12 +138,10 @@ partial class LSystemForm
             // 
             this.MainSplitContainer.Panel2.Controls.Add(this.DepthUpDown);
             this.MainSplitContainer.Panel2.Controls.Add(this.label1);
-            this.MainSplitContainer.Panel2.Controls.Add(this.DrawLSystemButton);
-            this.MainSplitContainer.Panel2.Controls.Add(this.DrawTestButton);
             this.MainSplitContainer.Panel2.Controls.Add(this.SmoothingGroupBox);
             this.MainSplitContainer.Panel2.Controls.Add(this.PrintingGroupBox);
-            this.MainSplitContainer.Size = new System.Drawing.Size(1929, 399);
-            this.MainSplitContainer.SplitterDistance = 933;
+            this.MainSplitContainer.Size = new System.Drawing.Size(1790, 427);
+            this.MainSplitContainer.SplitterDistance = 864;
             this.MainSplitContainer.TabIndex = 11;
             // 
             // groupBox1
@@ -155,10 +151,10 @@ partial class LSystemForm
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(933, 380);
+            this.groupBox1.Size = new System.Drawing.Size(864, 424);
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Smoothing";
+            this.groupBox1.Text = "L-System";
             // 
             // tableLayoutPanel3
             // 
@@ -168,29 +164,52 @@ partial class LSystemForm
             this.tableLayoutPanel3.ColumnCount = 2;
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 120F));
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 120F));
+            this.tableLayoutPanel3.Controls.Add(this.label2, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this.SourcesComboBox, 1, 0);
             this.tableLayoutPanel3.Controls.Add(this.RulesTextBox, 1, 5);
             this.tableLayoutPanel3.Controls.Add(this.label6, 0, 5);
             this.tableLayoutPanel3.Controls.Add(this.AxiomTextBox, 1, 4);
             this.tableLayoutPanel3.Controls.Add(this.label4, 0, 4);
             this.tableLayoutPanel3.Controls.Add(this.AngleTextBox, 1, 3);
             this.tableLayoutPanel3.Controls.Add(this.label3, 0, 3);
-            this.tableLayoutPanel3.Controls.Add(this.NameTextBox, 1, 2);
-            this.tableLayoutPanel3.Controls.Add(this.CommentTextBox, 0, 1);
-            this.tableLayoutPanel3.Controls.Add(this.LSystemsComboBox, 1, 0);
-            this.tableLayoutPanel3.Controls.Add(this.label10, 0, 2);
-            this.tableLayoutPanel3.Controls.Add(this.label11, 0, 1);
-            this.tableLayoutPanel3.Controls.Add(this.label12, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this.CommentTextBox, 1, 2);
+            this.tableLayoutPanel3.Controls.Add(this.LSystemsComboBox, 1, 1);
+            this.tableLayoutPanel3.Controls.Add(this.label11, 0, 2);
+            this.tableLayoutPanel3.Controls.Add(this.label12, 0, 1);
             this.tableLayoutPanel3.Location = new System.Drawing.Point(6, 30);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 6;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 100F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(921, 350);
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(852, 394);
             this.tableLayoutPanel3.TabIndex = 1;
+            // 
+            // label2
+            // 
+            this.label2.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(3, 7);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(66, 25);
+            this.label2.TabIndex = 25;
+            this.label2.Text = "Source";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // SourcesComboBox
+            // 
+            this.SourcesComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.SourcesComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SourcesComboBox.FormattingEnabled = true;
+            this.SourcesComboBox.Location = new System.Drawing.Point(123, 3);
+            this.SourcesComboBox.Name = "SourcesComboBox";
+            this.SourcesComboBox.Size = new System.Drawing.Size(726, 33);
+            this.SourcesComboBox.TabIndex = 24;
+            this.SourcesComboBox.SelectedIndexChanged += new System.EventHandler(this.SourcesComboBox_SelectedIndexChanged);
             // 
             // RulesTextBox
             // 
@@ -200,14 +219,14 @@ partial class LSystemForm
             this.RulesTextBox.Location = new System.Drawing.Point(123, 263);
             this.RulesTextBox.Multiline = true;
             this.RulesTextBox.Name = "RulesTextBox";
-            this.RulesTextBox.Size = new System.Drawing.Size(795, 84);
+            this.RulesTextBox.Size = new System.Drawing.Size(726, 128);
             this.RulesTextBox.TabIndex = 23;
             // 
             // label6
             // 
             this.label6.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(3, 292);
+            this.label6.Location = new System.Drawing.Point(3, 314);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(54, 25);
             this.label6.TabIndex = 22;
@@ -219,7 +238,7 @@ partial class LSystemForm
             this.AxiomTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.AxiomTextBox.Location = new System.Drawing.Point(123, 224);
             this.AxiomTextBox.Name = "AxiomTextBox";
-            this.AxiomTextBox.Size = new System.Drawing.Size(795, 31);
+            this.AxiomTextBox.Size = new System.Drawing.Size(726, 31);
             this.AxiomTextBox.TabIndex = 21;
             // 
             // label4
@@ -252,23 +271,15 @@ partial class LSystemForm
             this.label3.Text = "Angle";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // NameTextBox
-            // 
-            this.NameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.NameTextBox.Location = new System.Drawing.Point(123, 144);
-            this.NameTextBox.Name = "NameTextBox";
-            this.NameTextBox.Size = new System.Drawing.Size(795, 31);
-            this.NameTextBox.TabIndex = 17;
-            // 
             // CommentTextBox
             // 
             this.CommentTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.CommentTextBox.Location = new System.Drawing.Point(123, 43);
+            this.CommentTextBox.Location = new System.Drawing.Point(123, 83);
             this.CommentTextBox.Multiline = true;
             this.CommentTextBox.Name = "CommentTextBox";
-            this.CommentTextBox.Size = new System.Drawing.Size(795, 94);
+            this.CommentTextBox.Size = new System.Drawing.Size(726, 94);
             this.CommentTextBox.TabIndex = 16;
             // 
             // LSystemsComboBox
@@ -276,28 +287,17 @@ partial class LSystemForm
             this.LSystemsComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.LSystemsComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.LSystemsComboBox.FormattingEnabled = true;
-            this.LSystemsComboBox.Location = new System.Drawing.Point(123, 3);
+            this.LSystemsComboBox.Location = new System.Drawing.Point(123, 43);
             this.LSystemsComboBox.Name = "LSystemsComboBox";
-            this.LSystemsComboBox.Size = new System.Drawing.Size(795, 33);
+            this.LSystemsComboBox.Size = new System.Drawing.Size(726, 33);
             this.LSystemsComboBox.TabIndex = 12;
             this.LSystemsComboBox.SelectedIndexChanged += new System.EventHandler(this.LSystemsComboBox_SelectedIndexChanged);
-            // 
-            // label10
-            // 
-            this.label10.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(3, 147);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(59, 25);
-            this.label10.TabIndex = 11;
-            this.label10.Text = "Name";
-            this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label11
             // 
             this.label11.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(3, 77);
+            this.label11.Location = new System.Drawing.Point(3, 117);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(91, 25);
             this.label11.TabIndex = 10;
@@ -308,32 +308,44 @@ partial class LSystemForm
             // 
             this.label12.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(3, 7);
+            this.label12.Location = new System.Drawing.Point(3, 47);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(97, 25);
             this.label12.TabIndex = 9;
             this.label12.Text = "Predefined";
             this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // DrawLSystemButton
+            // DepthUpDown
             // 
-            this.DrawLSystemButton.Location = new System.Drawing.Point(340, 317);
-            this.DrawLSystemButton.Name = "DrawLSystemButton";
-            this.DrawLSystemButton.Size = new System.Drawing.Size(150, 34);
-            this.DrawLSystemButton.TabIndex = 13;
-            this.DrawLSystemButton.Text = "Draw LSystem";
-            this.DrawLSystemButton.UseVisualStyleBackColor = true;
-            this.DrawLSystemButton.Click += new System.EventHandler(this.DrawLSystemButton_Click);
+            this.DepthUpDown.Location = new System.Drawing.Point(76, 318);
+            this.DepthUpDown.Maximum = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            this.DepthUpDown.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.DepthUpDown.Name = "DepthUpDown";
+            this.DepthUpDown.Size = new System.Drawing.Size(80, 31);
+            this.DepthUpDown.TabIndex = 15;
+            this.DepthUpDown.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.DepthUpDown.ValueChanged += new System.EventHandler(this.DepthUpDown_ValueChanged);
             // 
-            // DrawTestButton
+            // label1
             // 
-            this.DrawTestButton.Location = new System.Drawing.Point(6, 319);
-            this.DrawTestButton.Name = "DrawTestButton";
-            this.DrawTestButton.Size = new System.Drawing.Size(150, 34);
-            this.DrawTestButton.TabIndex = 12;
-            this.DrawTestButton.Text = "Draw Test";
-            this.DrawTestButton.UseVisualStyleBackColor = true;
-            this.DrawTestButton.Click += new System.EventHandler(this.DrawTestButton_Click);
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(0, 320);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(61, 25);
+            this.label1.TabIndex = 14;
+            this.label1.Text = "Depth";
             // 
             // SmoothingGroupBox
             // 
@@ -342,7 +354,7 @@ partial class LSystemForm
             this.SmoothingGroupBox.Dock = System.Windows.Forms.DockStyle.Top;
             this.SmoothingGroupBox.Location = new System.Drawing.Point(0, 0);
             this.SmoothingGroupBox.Name = "SmoothingGroupBox";
-            this.SmoothingGroupBox.Size = new System.Drawing.Size(992, 167);
+            this.SmoothingGroupBox.Size = new System.Drawing.Size(922, 167);
             this.SmoothingGroupBox.TabIndex = 11;
             this.SmoothingGroupBox.TabStop = false;
             this.SmoothingGroupBox.Text = "Smoothing";
@@ -371,7 +383,7 @@ partial class LSystemForm
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(980, 121);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(910, 121);
             this.tableLayoutPanel2.TabIndex = 1;
             // 
             // SmoothingMethodsComboBox
@@ -382,7 +394,7 @@ partial class LSystemForm
             this.SmoothingMethodsComboBox.FormattingEnabled = true;
             this.SmoothingMethodsComboBox.Location = new System.Drawing.Point(123, 3);
             this.SmoothingMethodsComboBox.Name = "SmoothingMethodsComboBox";
-            this.SmoothingMethodsComboBox.Size = new System.Drawing.Size(854, 33);
+            this.SmoothingMethodsComboBox.Size = new System.Drawing.Size(784, 33);
             this.SmoothingMethodsComboBox.TabIndex = 12;
             this.SmoothingMethodsComboBox.SelectedIndexChanged += new System.EventHandler(this.SmoothingMethodsComboBox_SelectedIndexChanged);
             // 
@@ -483,42 +495,11 @@ partial class LSystemForm
             this.TensionTrackBar.Value = 50;
             this.TensionTrackBar.Scroll += new System.EventHandler(this.TensionTrackBar_Scroll);
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(513, 322);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(61, 25);
-            this.label1.TabIndex = 14;
-            this.label1.Text = "Depth";
-            // 
-            // DepthUpDown
-            // 
-            this.DepthUpDown.Location = new System.Drawing.Point(580, 320);
-            this.DepthUpDown.Maximum = new decimal(new int[] {
-            20,
-            0,
-            0,
-            0});
-            this.DepthUpDown.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.DepthUpDown.Name = "DepthUpDown";
-            this.DepthUpDown.Size = new System.Drawing.Size(100, 31);
-            this.DepthUpDown.TabIndex = 15;
-            this.DepthUpDown.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
             // LSystemForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1929, 1611);
+            this.ClientSize = new System.Drawing.Size(1790, 1446);
             this.Controls.Add(this.MainSplitContainer);
             this.Controls.Add(this.picOut);
             this.Margin = new System.Windows.Forms.Padding(2);
@@ -535,6 +516,7 @@ partial class LSystemForm
             this.groupBox1.ResumeLayout(false);
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DepthUpDown)).EndInit();
             this.SmoothingGroupBox.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
@@ -542,7 +524,6 @@ partial class LSystemForm
             ((System.ComponentModel.ISupportInitialize)(this.IterationsTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.TensionUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.TensionTrackBar)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.DepthUpDown)).EndInit();
             this.ResumeLayout(false);
 
     }
@@ -567,7 +548,6 @@ partial class LSystemForm
     private System.Windows.Forms.GroupBox groupBox1;
     private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
     private System.Windows.Forms.ComboBox LSystemsComboBox;
-    private System.Windows.Forms.Label label10;
     private System.Windows.Forms.Label label11;
     private System.Windows.Forms.Label label12;
     private System.Windows.Forms.TextBox CommentTextBox;
@@ -577,9 +557,8 @@ partial class LSystemForm
     private System.Windows.Forms.Label label4;
     private System.Windows.Forms.TextBox AngleTextBox;
     private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.TextBox NameTextBox;
-    private System.Windows.Forms.Button DrawLSystemButton;
-    private System.Windows.Forms.Button DrawTestButton;
     private System.Windows.Forms.NumericUpDown DepthUpDown;
     private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.ComboBox SourcesComboBox;
 }
