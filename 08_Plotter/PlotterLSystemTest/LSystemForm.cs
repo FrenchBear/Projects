@@ -32,12 +32,14 @@ public partial class LSystemForm: Form
         var Dragon = new LSystem("Dragon", "Original Dragon curve", 8, "FX", "F=\r\nX=-FX++FY-\r\nY=+FX--FY+");
         var Hilbert = new LSystem("Hilbert", "Basic Hilbert curve", 4, "X", "X=-YF+XFX+FY-\r\nY=+XF-YFY-FX+");
         var Flocon = new LSystem("Flocon", "Von Koch curve", 6, "FX", "F=\r\nX=FX-FX++FX-FX");
+        var F5 = new LSystem("F5", "Carré 5x5", 4, "α45FX", "F=\r\nX=@2FX-FX+@I2FX+FX-FX+FX+@2FX-FX@I2-FX-FX+FX-FX+FX");
         LSystemsComboBox.Items.AddRange(new LSystem[] {
             Hilbert,
             Dragon,
             Flocon,
+            F5,
         });
-        LSystemsComboBox.SelectedIndex = 0;
+        LSystemsComboBox.SelectedIndex = 3;
 
         // Fill smooting methods
         SmoothingMethodsComboBox.Items.AddRange(new string[] {
@@ -273,6 +275,10 @@ public partial class LSystemForm: Form
                 }
                 switch (escapeChar)
                 {
+                    case 'α':
+                        ap.Angle = (float)(generalOrientation * double.Parse(argumentNum, CultureInfo.InvariantCulture) * Math.PI / 180);
+                        break;
+
                     case '/':
                         ap.DirectAngle -= (float)(generalOrientation * double.Parse(argumentNum, CultureInfo.InvariantCulture) * Math.PI / 180);
                         escapeChar = '\0';
@@ -328,6 +334,11 @@ public partial class LSystemForm: Form
 
                 case '!':
                     generalOrientation = -generalOrientation;
+                    break;
+
+                case 'α':
+                    escapeChar = c;
+                    argumentNum = "";
                     break;
 
                 case '\\':
