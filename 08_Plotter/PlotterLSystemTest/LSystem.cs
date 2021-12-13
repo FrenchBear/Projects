@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// LSystem.cs
+// Simple data class to store the parameters of a L-System
+//
+// 2021-12-09  PV
 
 namespace LSystemTest;
 
@@ -25,4 +24,3 @@ internal class LSystem
 
     public override string ToString() => Name;
 }
-

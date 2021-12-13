@@ -37,4 +37,6 @@ internal class PointD
     public static PointD operator /(PointD p, float d) => new(p.X / d, p.Y / d);
 
     public static PointD operator /(float d, PointD p) => new(d / p.X, d / p.Y);
+
+    public override string ToString() => $"PointD({X:F3}, {Y:F3})";
 }

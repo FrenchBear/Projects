@@ -78,6 +78,29 @@ public partial class Plotter
     public void PenColor(Color color)
         => Pen.Color = color;
 
+    private readonly Color[] ColorsTable = new Color[]
+    {
+        Color.Black,
+        Color.Red,
+        Color.Blue,
+        Color.Green,
+        Color.Magenta,
+        Color.Gray,
+        Color.Orange,
+        Color.LightPink,
+        Color.SkyBlue,
+        Color.Gold,
+        Color.Purple,
+        Color.Brown,
+        Color.Chartreuse,
+        Color.DarkSalmon,
+        Color.CornflowerBlue,
+        Color.Goldenrod,
+    };
+
+    public void PenColor(int colorIndex)
+        => Pen.Color = ColorsTable[colorIndex % ColorsTable.Length];
+
     public void PenWidth(float w)
         => Pen.Width = w;
 

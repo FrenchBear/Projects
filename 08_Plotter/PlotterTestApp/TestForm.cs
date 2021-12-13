@@ -37,6 +37,7 @@ public partial class TestForm: Form
             "Turtle 1",
             "Cardioïde",
             "AutoScale",
+            "Predefined colors",
         });
 
         TestComboBox.SelectedIndex = 0;
@@ -66,6 +67,9 @@ public partial class TestForm: Form
                 break;
             case 6:
                 AutoScaleTest();
+                break;
+            case 7:
+                PredefinedColors();
                 break;
         }
     }
@@ -203,6 +207,7 @@ public partial class TestForm: Form
 
         var ColorsTable = new Color[]
         {
+            Color.Black,
             Color.Red,
             Color.Blue,
             Color.Yellow,
@@ -318,6 +323,22 @@ public partial class TestForm: Form
         p.DrawLine(0, 5, 5, 0);
         p.DrawCircle(4, 4, 3);
         p.AutoScale();
+
+        p.Refresh();
+    }
+
+    private void PredefinedColors()
+    {
+        p.Clear();
+
+        p.ScaleP1P2(-1, -1, 10, 16);
+        p.PenWidth(6);
+        for (int i = 0; i < 16; i++)
+        {
+            p.PenColor(i);
+            p.Text(0, i-0.3f, $"Color {i}");
+            p.DrawLine(3, i, 9, i);
+        }
 
         p.Refresh();
     }

@@ -64,56 +64,52 @@ internal static class Smoothing
 
     static internal List<PointD> GetSplineInterpolationCatmullRom(List<PointD> points, int nrOfInterpolatedPoints)
     {
-        try
+        if (points.Count < 3)
+            return points;
+
+        // The Catmull-Rom Spline, requires at least 4 points so it is possible to extrapolate from 3 points, but not from 2.
+        // you would get a straight line anyway
+        //if (points.Count < 3)
+        //    throw new Exception("Catmull-Rom Spline requires at least 3 points");
+
+        // could throw an error on the following, but it is easily fixed implicitly
+        if (nrOfInterpolatedPoints < 1)
+            nrOfInterpolatedPoints = 1;
+
+        // create a new pointlist to do splining on
+        // if you don't do this, the original pointlist gets extended with the exptrapolated points
+        var spoints = new List<PointD>();
+        foreach (PointD p in points)
+            spoints.Add(new PointD(p));
+
+        // always extrapolate the first and last point out
+        float dx = spoints[1].X - spoints[0].X;
+        float dy = spoints[1].Y - spoints[0].Y;
+        spoints.Insert(0, new PointD(spoints[0].X - dx, spoints[0].Y - dy));
+        dx = spoints[^1].X - spoints[^2].X;
+        dy = spoints[^1].Y - spoints[^2].Y;
+        spoints.Insert(spoints.Count, new PointD(spoints[^1].X + dx, spoints[^1].Y + dy));
+
+        // Note the nrOfInterpolatedPoints acts as a kind of tension factor between 0 and 1 because it is normalised
+        // to 1/nrOfInterpolatedPoints. It can never be 0
+        float t = 0;
+        PointD spoint;
+        var spline = new List<PointD>();
+        var loopTo = spoints.Count - 4;
+        for (int i = 0; i <= loopTo; i++)
         {
-            // The Catmull-Rom Spline, requires at least 4 points so it is possible to extrapolate from 3 points, but not from 2.
-            // you would get a straight line anyway
-            if (points.Count < 3)
-                throw new Exception("Catmull-Rom Spline requires at least 3 points");
-
-            // could throw an error on the following, but it is easily fixed implicitly
-            if (nrOfInterpolatedPoints < 1)
-                nrOfInterpolatedPoints = 1;
-
-            // create a new pointlist to do splining on
-            // if you don't do this, the original pointlist gets extended with the exptrapolated points
-            var spoints = new List<PointD>();
-            foreach (PointD p in points)
-                spoints.Add(new PointD(p));
-
-            // always extrapolate the first and last point out
-            float dx = spoints[1].X - spoints[0].X;
-            float dy = spoints[1].Y - spoints[0].Y;
-            spoints.Insert(0, new PointD(spoints[0].X - dx, spoints[0].Y - dy));
-            dx = spoints[^1].X - spoints[^2].X;
-            dy = spoints[^1].Y - spoints[^2].Y;
-            spoints.Insert(spoints.Count, new PointD(spoints[^1].X + dx, spoints[^1].Y + dy));
-
-            // Note the nrOfInterpolatedPoints acts as a kind of tension factor between 0 and 1 because it is normalised
-            // to 1/nrOfInterpolatedPoints. It can never be 0
-            float t = 0;
-            PointD spoint;
-            var spline = new List<PointD>();
-            var loopTo = spoints.Count - 4;
-            for (int i = 0; i <= loopTo; i++)
+            var loopTo1 = nrOfInterpolatedPoints - 1;
+            for (int intp = 0; intp <= loopTo1; intp++)
             {
-                var loopTo1 = nrOfInterpolatedPoints - 1;
-                for (int intp = 0; intp <= loopTo1; intp++)
-                {
-                    t = 1 / (float)nrOfInterpolatedPoints * intp;
-                    spoint = 0.5f * (2 * spoints[i + 1] + (-1 * spoints[i] + spoints[i + 2]) * t + (2 * spoints[i] - 5 * spoints[i + 1] + 4 * spoints[i + 2] - spoints[i + 3]) * (float)Math.Pow(t, 2) + (-1 * spoints[i] + 3 * spoints[i + 1] - 3 * spoints[i + 2] + spoints[i + 3]) * (float)Math.Pow(t, 3));
-                    spline.Add(new PointD(spoint));
-                }
+                t = 1 / (float)nrOfInterpolatedPoints * intp;
+                spoint = 0.5f * (2 * spoints[i + 1] + (-1 * spoints[i] + spoints[i + 2]) * t + (2 * spoints[i] - 5 * spoints[i + 1] + 4 * spoints[i + 2] - spoints[i + 3]) * (float)Math.Pow(t, 2) + (-1 * spoints[i] + 3 * spoints[i + 1] - 3 * spoints[i + 2] + spoints[i + 3]) * (float)Math.Pow(t, 3));
+                spline.Add(new PointD(spoint));
             }
+        }
 
-            // add the last point, but skip the interpolated last point, so second last...
-            spline.Add(spoints[^2]);
-            return spline;
-        }
-        catch (Exception)
-        {
-            throw;
-        }
+        // add the last point, but skip the interpolated last point, so second last...
+        spline.Add(spoints[^2]);
+        return spline;
     }
 
     // My own method
