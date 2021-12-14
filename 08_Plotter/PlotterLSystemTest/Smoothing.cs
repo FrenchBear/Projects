@@ -11,7 +11,7 @@ namespace LSystemTest;
 
 internal static class Smoothing
 {
-    static internal List<PointD> GetCurveSmoothingChaikin(List<PointD> points, float tension, int nrOfIterations)
+    static internal List<PointD> GetCurveSmoothingChaikin(List<PointD> points, double tension, int nrOfIterations)
     {
         if (points.Count < 3)
             return points;
@@ -30,7 +30,7 @@ internal static class Smoothing
         // the tension factor defines a scale between corner cutting distance in segment half length, i.e. between 0.05 and 0.45
         // the opposite corner will be cut by the inverse (i.e. 1-cutting distance) to keep symmetry
         // with a tension value of 0.5 this amounts to 0.25 = 1/4 and 0.75 = 3/4 the original Chaikin values
-        float cutdist = 0.05f + tension * 0.4f;
+        double cutdist = 0.05 + tension * 0.4;
 
         // make a copy of the pointlist and feed it to the iteration
         var nl = new List<PointD>();
@@ -44,7 +44,7 @@ internal static class Smoothing
         return nl;
     }
 
-    static private List<PointD> GetSmootherChaikin(List<PointD> points, float cuttingDist)
+    static private List<PointD> GetSmootherChaikin(List<PointD> points, double cuttingDist)
     {
         PointD q, r;
         var loopTo = points.Count - 2;
@@ -92,7 +92,7 @@ internal static class Smoothing
 
         // Note the nrOfInterpolatedPoints acts as a kind of tension factor between 0 and 1 because it is normalised
         // to 1/nrOfInterpolatedPoints. It can never be 0
-        float t = 0;
+        double t = 0;
         PointD spoint;
         var spline = new List<PointD>();
         var loopTo = spoints.Count - 4;
@@ -101,8 +101,8 @@ internal static class Smoothing
             var loopTo1 = nrOfInterpolatedPoints - 1;
             for (int intp = 0; intp <= loopTo1; intp++)
             {
-                t = 1 / (float)nrOfInterpolatedPoints * intp;
-                spoint = 0.5f * (2 * spoints[i + 1] + (-1 * spoints[i] + spoints[i + 2]) * t + (2 * spoints[i] - 5 * spoints[i + 1] + 4 * spoints[i + 2] - spoints[i + 3]) * (float)Math.Pow(t, 2) + (-1 * spoints[i] + 3 * spoints[i + 1] - 3 * spoints[i + 2] + spoints[i + 3]) * (float)Math.Pow(t, 3));
+                t = 1 / (double)nrOfInterpolatedPoints * intp;
+                spoint = 0.5 * (2 * spoints[i + 1] + (-1 * spoints[i] + spoints[i + 2]) * t + (2 * spoints[i] - 5 * spoints[i + 1] + 4 * spoints[i + 2] - spoints[i + 3]) * (double)Math.Pow(t, 2) + (-1 * spoints[i] + 3 * spoints[i + 1] - 3 * spoints[i + 2] + spoints[i + 3]) * (double)Math.Pow(t, 3));
                 spline.Add(new PointD(spoint));
             }
         }
@@ -114,7 +114,7 @@ internal static class Smoothing
 
     // My own method
     // Cuts lines at factor% of the center point left/right
-    internal static List<PointD> GetCutCorners(List<PointD> points, float factor)
+    internal static List<PointD> GetCutCorners(List<PointD> points, double factor)
     {
         var newList = new List<PointD> { points[0] };        // First point kept as is
         for (int i = 1; i < points.Count - 1; i++)

@@ -19,10 +19,10 @@ internal class LSystem
 
     public LSystem(string name, string comment, int angle, string axiom, string rules)
     {
-        Debug.Assert(!string.IsNullOrWhiteSpace(name));
-        Debug.Assert(angle >= 3 && angle <= 360);
-        Debug.Assert(!string.IsNullOrWhiteSpace(axiom));
-        Debug.Assert(!string.IsNullOrWhiteSpace(rules));
+        //Debug.Assert(!string.IsNullOrWhiteSpace(name));
+        //Debug.Assert(angle >= 3 && angle <= 360);
+        //Debug.Assert(!string.IsNullOrWhiteSpace(axiom));
+        //Debug.Assert(!string.IsNullOrWhiteSpace(rules));
 
         Name = name;
         Comment = comment;

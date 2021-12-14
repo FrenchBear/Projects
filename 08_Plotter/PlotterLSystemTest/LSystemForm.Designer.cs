@@ -227,6 +227,7 @@ partial class LSystemForm
             this.RulesTextBox.Name = "RulesTextBox";
             this.RulesTextBox.Size = new System.Drawing.Size(726, 128);
             this.RulesTextBox.TabIndex = 23;
+            this.RulesTextBox.TextChanged += new System.EventHandler(this.RulesTextBox_TextChanged);
             // 
             // label6
             // 
@@ -246,6 +247,7 @@ partial class LSystemForm
             this.AxiomTextBox.Name = "AxiomTextBox";
             this.AxiomTextBox.Size = new System.Drawing.Size(726, 31);
             this.AxiomTextBox.TabIndex = 21;
+            this.AxiomTextBox.TextChanged += new System.EventHandler(this.AxiomTextBox_TextChanged);
             // 
             // label4
             // 
@@ -265,6 +267,7 @@ partial class LSystemForm
             this.AngleTextBox.Name = "AngleTextBox";
             this.AngleTextBox.Size = new System.Drawing.Size(94, 31);
             this.AngleTextBox.TabIndex = 19;
+            this.AngleTextBox.TextChanged += new System.EventHandler(this.AngleTextBox_TextChanged);
             // 
             // label3
             // 

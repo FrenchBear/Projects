@@ -41,15 +41,16 @@ public partial class LSystemForm: Form
 
         // Fill L-Systems
         var Internal = new List<LSystem> {
+            new LSystem("Hexa", "Hexagonal fractal (ma propre version)", 6, "α210X", "X=XF-YF--YF+XF++XFXF+YF->1\r\nY=+XF-YFYF--YF-XF++XF+YF<1\r\nF="),
             new LSystem("Dragon", "Original Dragon curve", 8, "FX", "F=\r\nX=-FX++FY-\r\nY=+FX--FY+"),
             new LSystem("Hilbert", "Basic Hilbert curve", 4, "X", "X=-YF+XFX+FY-\r\nY=+XF-YFY-FX+"),
             new LSystem("Flocon", "Von Koch curve", 6, "F", "F=F-F++F-F"),
-            new LSystem("F5", "Carré 5x5", 4, "α45F", "F=@2F-F+@I2>1F+F-F+F+<1@2F-F@I2>1-F-F+F-F+F<1"),
+            new LSystem("F5", "Carré 5x5", 4, "α315F", "F=@2F-F+@I2>1F+F-F+F+<1@2F-F@I2>1-F-F+F-F+F<1"),
             new LSystem("F3", "Carré 3x3", 4, "α45F", "F=F-F+F+F+F-F-F-F+F"),
             new LSystem("Alternatif", "Courant alternatif carré", 4, "F", "F=F-F+F+FF-F-F+F"),
             new LSystem("Triangle", "Triangle évidé", 6, "--X", "X=++FXF++FXF++FXF>1\r\nF=FF"),
             new LSystem("Penrose", "Color Penrose", 10, "+WC02F--XC04F---YC04F--ZC02F", "W=YC04F++ZC02F----XC04F[-YC04F----WC02F]++\r\nX=+YC04F--ZC02F[---WC02F--XC04F]+\r\nY=-WC02F++XC04F[+++YC04F++ZC02F]-\r\nZ=--YC04F++++WC02F[+ZC02F++++XC04F]--XC04F\n\rF="),
-            new LSystem("Test", "FGF", 4, "FGF", "F=FGF"),
+            //new LSystem("Hexa", "Hexagonal fractal", 6, "α210X", "X=XF-YF--YF+XF++XFXF+YF\r\nY=F+FF++F+F--F-F\r\nF="),
         };
 
         List<Source> Sources = new();
@@ -161,11 +162,13 @@ public partial class LSystemForm: Form
     {
         if (LSystemsComboBox.SelectedItem is LSystem s)
         {
+            IgnoreEvents = true;
             CommentTextBox.Text = s.Comment;
             AngleTextBox.Text = s.Angle.ToString();
             AxiomTextBox.Text = s.Axiom;
             RulesTextBox.Text = s.Rules;
             LSystemDrawing();
+            IgnoreEvents = false;
         }
         else
         {
@@ -268,8 +271,9 @@ public partial class LSystemForm: Form
     {
         if (p == null)
             return;
-        if (LSystemsComboBox.SelectedItem is not LSystem ls)
+        if (LSystemsComboBox.SelectedItem is not LSystem ls0)
             return;
+        var ls = new LSystem(ls0.Name, CommentTextBox.Text, int.Parse(AngleTextBox.Text), AxiomTextBox.Text, RulesTextBox.Text);
 
         Dictionary<char, string> rules = new();
         foreach (string s in ls.Rules.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
@@ -310,7 +314,7 @@ public partial class LSystemForm: Form
 
         double nx;                          // New X position
         double ny;                          // New Y position
-        double angleIncrement = (float)(2 * Math.PI / ls.Angle);
+        double angleIncrement = 2 * Math.PI / ls.Angle;
         int generalOrientation = 1;         // General orientation, changed to -1 by !
         char escapeChar = '\0';             // Different than \0 when processing @ or \ or / escape sequence
         string escapeOptions = "";          // Accumulated I and or Q for @ sequence
@@ -334,17 +338,17 @@ public partial class LSystemForm: Form
                 switch (escapeChar)
                 {
                     case 'α':
-                        ap.Angle = (float)(generalOrientation * double.Parse(argumentNum, CultureInfo.InvariantCulture) * Math.PI / 180);
+                        ap.Angle = -generalOrientation * double.Parse(argumentNum, CultureInfo.InvariantCulture) * Math.PI / 180;
                         escapeChar = '\0';
                         break;
 
                     case '/':
-                        ap.DirectAngle -= (float)(generalOrientation * double.Parse(argumentNum, CultureInfo.InvariantCulture) * Math.PI / 180);
+                        ap.DirectAngle -= generalOrientation * double.Parse(argumentNum, CultureInfo.InvariantCulture) * Math.PI / 180;
                         escapeChar = '\0';
                         break;
 
                     case '\\':
-                        ap.DirectAngle += (float)(generalOrientation * double.Parse(argumentNum, CultureInfo.InvariantCulture) * Math.PI / 180);
+                        ap.DirectAngle += generalOrientation * double.Parse(argumentNum, CultureInfo.InvariantCulture) * Math.PI / 180;
                         escapeChar = '\0';
                         break;
 
@@ -354,7 +358,7 @@ public partial class LSystemForm: Form
                             escapeOptions += c;
                             continue;
                         }
-                        double f = float.Parse(argumentNum, CultureInfo.InvariantCulture);
+                        double f = double.Parse(argumentNum, CultureInfo.InvariantCulture);
                         if (escapeOptions == "IQ")
                             f = 1.0 / Math.Sqrt(f);
                         else if (escapeOptions == "QI")
@@ -414,7 +418,7 @@ public partial class LSystemForm: Form
 
                 case '|':
                     if (ls.Angle % 2 == 0)
-                        ap.Angle += (float)Math.PI;
+                        ap.Angle += Math.PI;
                     else
                         ap.Angle += generalOrientation * (int)(ls.Angle / 2) * angleIncrement;
                     break;
@@ -479,16 +483,24 @@ public partial class LSystemForm: Form
 
         // Rendring
         p.Clear();
+        bool first = false;
         foreach (var sac in pointsLists)
             if (sac.points.Count > 0)
+            {
+                if (!first)
+                {
+                    p.DrawCircle((float)sac.points[0].X, (float)sac.points[0].Y, 0.25f);
+                    first = true;
+                }
                 PlotSmoothed(sac.points, sac.color);
+            }
 
         // Legend in black
         p.PenColor(Color.Black);
 
         var smoothingMethod = (string)SmoothingMethodsComboBox.SelectedItem;
         var iterations = (int)IterationsUpDown.Value;
-        var tension = (float)TensionUpDown.Value;
+        var tension = (double)TensionUpDown.Value;
 
         p.Text(p.Extent.XMin, p.Extent.YMin - 0.5f, $"{ls.Name}\nAngle={ls.Angle}\nAxiom={ls.Axiom}\nRules:\n{ls.Rules}\nDepth={depth}\n\nSmoothing={smoothingMethod}\nIterations={iterations}\nTension={tension:F2}", 0, 1);
         p.Move(p.Extent.XMin, p.Extent.YMin - 0.5f - (p.Extent.YMax - p.Extent.YMin) / 2);
@@ -502,8 +514,8 @@ public partial class LSystemForm: Form
         var smooth = SmoothingMethodsComboBox.SelectedIndex switch
         {
             0 => Smoothing.GetSplineInterpolationCatmullRom(points, (int)IterationsUpDown.Value),
-            1 => Smoothing.GetCurveSmoothingChaikin(points, (float)TensionUpDown.Value, (int)IterationsUpDown.Value),
-            2 => Smoothing.GetCutCorners(points, (float)TensionUpDown.Value),
+            1 => Smoothing.GetCurveSmoothingChaikin(points, (double)TensionUpDown.Value, (int)IterationsUpDown.Value),
+            2 => Smoothing.GetCutCorners(points, (double)TensionUpDown.Value),
             _ => points,
         };
         p.PenColor(colorIndex);
@@ -512,6 +524,23 @@ public partial class LSystemForm: Form
         p.DrawPoints(smooth);
     }
 
+    private void AngleTextBox_TextChanged(object sender, EventArgs e)
+    {
+        if (!IgnoreEvents)
+            LSystemDrawing();
+    }
+
+    private void AxiomTextBox_TextChanged(object sender, EventArgs e)
+    {
+        if (!IgnoreEvents)
+            LSystemDrawing();
+    }
+
+    private void RulesTextBox_TextChanged(object sender, EventArgs e)
+    {
+        if (!IgnoreEvents)
+            LSystemDrawing();
+    }
 }
 
 struct AngleAndPosition
