@@ -78,7 +78,7 @@ public partial class Plotter
     public void PenColor(Color color)
         => Pen.Color = color;
 
-    private readonly Color[] ColorsTable = new Color[]
+    public readonly Color[] ColorsTable = new Color[]
     {
         Color.Black,
         Color.Red,

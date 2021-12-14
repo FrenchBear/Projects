@@ -47,6 +47,9 @@ partial class LSystemForm
             this.LSystemsComboBox = new System.Windows.Forms.ComboBox();
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
+            this.ForceMonochromeCheckBox = new System.Windows.Forms.CheckBox();
+            this.ColorsComboBox = new System.Windows.Forms.ComboBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.DepthUpDown = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.SmoothingGroupBox = new System.Windows.Forms.GroupBox();
@@ -136,6 +139,9 @@ partial class LSystemForm
             // 
             // MainSplitContainer.Panel2
             // 
+            this.MainSplitContainer.Panel2.Controls.Add(this.ForceMonochromeCheckBox);
+            this.MainSplitContainer.Panel2.Controls.Add(this.ColorsComboBox);
+            this.MainSplitContainer.Panel2.Controls.Add(this.label5);
             this.MainSplitContainer.Panel2.Controls.Add(this.DepthUpDown);
             this.MainSplitContainer.Panel2.Controls.Add(this.label1);
             this.MainSplitContainer.Panel2.Controls.Add(this.SmoothingGroupBox);
@@ -315,9 +321,39 @@ partial class LSystemForm
             this.label12.Text = "Predefined";
             this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // ForceMonochromeCheckBox
+            // 
+            this.ForceMonochromeCheckBox.AutoSize = true;
+            this.ForceMonochromeCheckBox.Location = new System.Drawing.Point(603, 353);
+            this.ForceMonochromeCheckBox.Name = "ForceMonochromeCheckBox";
+            this.ForceMonochromeCheckBox.Size = new System.Drawing.Size(194, 29);
+            this.ForceMonochromeCheckBox.TabIndex = 18;
+            this.ForceMonochromeCheckBox.Text = "Force monochrome";
+            this.ForceMonochromeCheckBox.UseVisualStyleBackColor = true;
+            this.ForceMonochromeCheckBox.CheckedChanged += new System.EventHandler(this.ForceMonochromeCheckBox_CheckedChanged);
+            // 
+            // ColorsComboBox
+            // 
+            this.ColorsComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ColorsComboBox.FormattingEnabled = true;
+            this.ColorsComboBox.Location = new System.Drawing.Point(129, 351);
+            this.ColorsComboBox.Name = "ColorsComboBox";
+            this.ColorsComboBox.Size = new System.Drawing.Size(424, 33);
+            this.ColorsComboBox.TabIndex = 17;
+            this.ColorsComboBox.SelectedIndexChanged += new System.EventHandler(this.ColorsComboBox_SelectedIndexChanged);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(9, 354);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(114, 25);
+            this.label5.TabIndex = 16;
+            this.label5.Text = "Default color";
+            // 
             // DepthUpDown
             // 
-            this.DepthUpDown.Location = new System.Drawing.Point(76, 318);
+            this.DepthUpDown.Location = new System.Drawing.Point(129, 312);
             this.DepthUpDown.Maximum = new decimal(new int[] {
             20,
             0,
@@ -341,7 +377,7 @@ partial class LSystemForm
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(0, 320);
+            this.label1.Location = new System.Drawing.Point(9, 318);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(61, 25);
             this.label1.TabIndex = 14;
@@ -561,4 +597,7 @@ partial class LSystemForm
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.ComboBox SourcesComboBox;
+    private System.Windows.Forms.CheckBox ForceMonochromeCheckBox;
+    private System.Windows.Forms.ComboBox ColorsComboBox;
+    private System.Windows.Forms.Label label5;
 }

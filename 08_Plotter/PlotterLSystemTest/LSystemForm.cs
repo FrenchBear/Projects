@@ -12,6 +12,7 @@ using System.Drawing.Printing;
 using PlotterLibrary;
 using System.Globalization;
 using System.IO;
+using System.Diagnostics;
 
 namespace LSystemTest;
 
@@ -59,6 +60,10 @@ public partial class LSystemForm: Form
 
         p = new();
         p.Output(picOut);
+
+        foreach (var color in p.ColorsTable)
+            ColorsComboBox.Items.Add(color.ToString());
+        ColorsComboBox.SelectedIndex = 0;
 
         foreach (var source in Sources)
             SourcesComboBox.Items.Add(source);
@@ -253,6 +258,12 @@ public partial class LSystemForm: Form
     private void DepthUpDown_ValueChanged(object sender, EventArgs e)
         => LSystemDrawing();
 
+    private void ColorsComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        => LSystemDrawing();
+
+    private void ForceMonochromeCheckBox_CheckedChanged(object sender, EventArgs e)
+        => LSystemDrawing();
+
     private void LSystemDrawing()
     {
         if (p == null)
@@ -271,6 +282,7 @@ public partial class LSystemForm: Form
                 rules.Add(c, r);
         }
         int depth = (int)DepthUpDown.Value;
+        bool isMonochrome = ForceMonochromeCheckBox.Checked;
 
         // Apply the rules recursively to produce final drawString
         var drawString = LSystemProcessor.LSystemIterator(depth, ls.Axiom, rules);
@@ -278,7 +290,7 @@ public partial class LSystemForm: Form
         // Generation of points
         AngleAndPosition ap = new()
         {
-            SegmentLength = 1.0f            // Scale factor 1
+            color = ColorsComboBox.SelectedIndex,
         };
 
         var pointsLists = new List<StrokeAndColor>();
@@ -292,7 +304,7 @@ public partial class LSystemForm: Form
             points.Add(new PointD(pX, pY));
             pointsLists.Add(sac);
         }
-        StartNewStroke(0,0);
+        StartNewStroke(0, 0);
 
         Stack<AngleAndPosition> apStack = new();
 
@@ -304,8 +316,14 @@ public partial class LSystemForm: Form
         string escapeOptions = "";          // Accumulated I and or Q for @ sequence
         string argumentNum = "";            // Buffer to accumulate @, \ and / numeric argument
 
+        var sw = Stopwatch.StartNew();
+
         foreach (char c in drawString)
         {
+            // Max 2 seconds of rendering to avoir issues with too complex drawings
+            if (sw.ElapsedMilliseconds > 2000)
+                break;
+
             if (escapeChar != '\0')
             {
                 if (c is >= '0' and <= '9' || c == '.')
@@ -350,26 +368,35 @@ public partial class LSystemForm: Form
                         break;
 
                     case 'C':
-                        ap.color = int.Parse(argumentNum, CultureInfo.InvariantCulture);
-                        StartNewStroke(ap.Px, ap.Py);
+                        if (!isMonochrome)
+                        {
+                            ap.color = int.Parse(argumentNum, CultureInfo.InvariantCulture);
+                            StartNewStroke(ap.Px, ap.Py);
+                        }
                         escapeChar = '\0';
                         break;
 
                     case '>':
-                        var deltaColor = int.Parse(argumentNum, CultureInfo.InvariantCulture);
-                        if (deltaColor == 0)
-                            deltaColor = 1;
-                        ap.color += deltaColor;
-                        StartNewStroke(ap.Px, ap.Py);
+                        if (!isMonochrome)
+                        {
+                            var deltaColor = int.Parse(argumentNum, CultureInfo.InvariantCulture);
+                            if (deltaColor == 0)
+                                deltaColor = 1;
+                            ap.color += deltaColor;
+                            StartNewStroke(ap.Px, ap.Py);
+                        }
                         escapeChar = '\0';
                         break;
 
                     case '<':
-                        deltaColor = int.Parse(argumentNum, CultureInfo.InvariantCulture);
-                        if (deltaColor == 0)
-                            deltaColor = -1;
-                        ap.color -= deltaColor;
-                        StartNewStroke(ap.Px, ap.Py);
+                        if (!isMonochrome)
+                        {
+                            var deltaColor = int.Parse(argumentNum, CultureInfo.InvariantCulture);
+                            if (deltaColor == 0)
+                                deltaColor = -1;
+                            ap.color -= deltaColor;
+                            StartNewStroke(ap.Px, ap.Py);
+                        }
                         escapeChar = '\0';
                         break;
                 }
@@ -429,7 +456,7 @@ public partial class LSystemForm: Form
                     nx = ap.Px + ap.SegmentLength * Math.Cos(-ap.Angle);
                     ny = ap.Py + ap.SegmentLength * Math.Sin(-ap.Angle);
                     if (c == 'G')
-                        StartNewStroke(nx,ny);
+                        StartNewStroke(nx, ny);
                     else
                         points.Add(new PointD(nx, ny));
                     ap.Px = nx;
@@ -441,7 +468,7 @@ public partial class LSystemForm: Form
                     nx = ap.Px + ap.SegmentLength * Math.Cos(-ap.DirectAngle);
                     ny = ap.Py + ap.SegmentLength * Math.Sin(-ap.DirectAngle);
                     if (c == 'M')
-                        StartNewStroke(nx,ny);
+                        StartNewStroke(nx, ny);
                     else
                         points.Add(new PointD(nx, ny));
                     ap.Px = nx;
@@ -456,6 +483,7 @@ public partial class LSystemForm: Form
             if (sac.points.Count > 0)
                 PlotSmoothed(sac.points, sac.color);
 
+        // Legend in black
         p.PenColor(Color.Black);
 
         var smoothingMethod = (string)SmoothingMethodsComboBox.SelectedItem;
@@ -483,6 +511,7 @@ public partial class LSystemForm: Form
         p.PenWidth(0.1f);
         p.DrawPoints(smooth);
     }
+
 }
 
 struct AngleAndPosition
@@ -491,8 +520,8 @@ struct AngleAndPosition
     public double Py;                       // Current Y
     public double Angle;                    // Angle in radians controlled by + and -
     public double DirectAngle;              // Angle in radians controlled by / and \
-    public double SegmentLength;            // Stroke length
-    public int color;                       // 0=black, the rest in undefined
+    public double SegmentLength = 1;        // Stroke length
+    public int color;                       // 0=Black
 }
 
 class StrokeAndColor
