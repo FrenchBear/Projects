@@ -38,9 +38,10 @@ public partial class TestForm: Form
             "Cardioïde",
             "AutoScale",
             "Predefined colors",
+            "Color Squares",
         });
 
-        TestComboBox.SelectedIndex = 0;
+        TestComboBox.SelectedIndex = 8;
     }
 
     private void TestComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -70,6 +71,9 @@ public partial class TestForm: Form
                 break;
             case 7:
                 PredefinedColors();
+                break;
+            case 8:
+                ColorSquares();
                 break;
         }
     }
@@ -336,10 +340,33 @@ public partial class TestForm: Form
         for (int i = 0; i < 16; i++)
         {
             p.PenColor(i);
-            p.Text(0, i-0.3f, $"Color {i}");
+            p.Text(0, i - 0.3f, $"Color {i}");
             p.DrawLine(3, i, 9, i);
         }
 
+        p.Refresh();
+    }
+
+    private void ColorSquares()
+    {
+        p.Clear();
+
+        p.ScaleP1P2(-11, -11, 11, 11);
+        p.PenWidth(3);
+        double a = Math.PI / 4;
+        double r = 2;   // 9 * Math.Sqrt(2);
+        for (; ; )
+        {
+            for (int c = 0; c < 4; c++)
+            {
+                p.PenColor(c);
+                p.DrawLine((float)(r * Math.Cos(a + c * Math.PI / 2)), (float)(r * Math.Sin(a + c * Math.PI / 2)), (float)(r * Math.Cos(a + (c + 1) * Math.PI / 2)), (float)(r * Math.Sin(a + (c + 1) * Math.PI / 2)));
+            }
+            a += 0.085;
+            r *= 1.02;
+            if (r >= 10.7)
+                break;
+        }
         p.Refresh();
     }
 

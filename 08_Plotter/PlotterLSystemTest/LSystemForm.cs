@@ -41,7 +41,7 @@ public partial class LSystemForm: Form
 
         // Fill L-Systems
         var Internal = new List<LSystem> {
-            new LSystem("Hexa", "Hexagonal fractal (ma propre version)", 6, "α210X", "X=XF-YF--YF+XF++XFXF+YF->1\r\nY=+XF-YFYF--YF-XF++XF+YF<1\r\nF="),
+            new LSystem("HilbertDonut", "Hilbert curve on a circle", 4, "XFXFXFXF", "X=-YF+XFX+FY-\r\nY=+XF-YFY-FX+"),
             new LSystem("Dragon", "Original Dragon curve", 8, "FX", "F=\r\nX=-FX++FY-\r\nY=+FX--FY+"),
             new LSystem("Hilbert", "Basic Hilbert curve", 4, "X", "X=-YF+XFX+FY-\r\nY=+XF-YFY-FX+"),
             new LSystem("Flocon", "Von Koch curve", 6, "F", "F=F-F++F-F"),
@@ -50,7 +50,7 @@ public partial class LSystemForm: Form
             new LSystem("Alternatif", "Courant alternatif carré", 4, "F", "F=F-F+F+FF-F-F+F"),
             new LSystem("Triangle", "Triangle évidé", 6, "--X", "X=++FXF++FXF++FXF>1\r\nF=FF"),
             new LSystem("Penrose", "Color Penrose", 10, "+WC02F--XC04F---YC04F--ZC02F", "W=YC04F++ZC02F----XC04F[-YC04F----WC02F]++\r\nX=+YC04F--ZC02F[---WC02F--XC04F]+\r\nY=-WC02F++XC04F[+++YC04F++ZC02F]-\r\nZ=--YC04F++++WC02F[+ZC02F++++XC04F]--XC04F\n\rF="),
-            //new LSystem("Hexa", "Hexagonal fractal", 6, "α210X", "X=XF-YF--YF+XF++XFXF+YF\r\nY=F+FF++F+F--F-F\r\nF="),
+            new LSystem("Hexa", "Hexagonal fractal (ma propre version)", 6, "α210X", "X=XF-YF--YF+XF++XFXF+YF->1\r\nY=+XF-YFYF--YF-XF++XF+YF<1\r\nF="),
         };
 
         List<Source> Sources = new();
@@ -319,6 +319,7 @@ public partial class LSystemForm: Form
         char escapeChar = '\0';             // Different than \0 when processing @ or \ or / escape sequence
         string escapeOptions = "";          // Accumulated I and or Q for @ sequence
         string argumentNum = "";            // Buffer to accumulate @, \ and / numeric argument
+        double xmin = 0, xmax = 0, ymin = 0, ymax = 0;
 
         var sw = Stopwatch.StartNew();
 
@@ -465,6 +466,14 @@ public partial class LSystemForm: Form
                         points.Add(new PointD(nx, ny));
                     ap.Px = nx;
                     ap.Py = ny;
+                    if (nx > xmax)
+                        xmax = nx;
+                    if (nx < xmin)
+                        xmin = nx;
+                    if (ny > ymax)
+                        ymax = ny;
+                    if (ny < ymin)
+                        ymin = ny;
                     break;
 
                 case 'D':
@@ -477,6 +486,14 @@ public partial class LSystemForm: Form
                         points.Add(new PointD(nx, ny));
                     ap.Px = nx;
                     ap.Py = ny;
+                    if (nx > xmax)
+                        xmax = nx;
+                    if (nx < xmin)
+                        xmin = nx;
+                    if (ny > ymax)
+                        ymax = ny;
+                    if (ny < ymin)
+                        ymin = ny;
                     break;
             }
         }
@@ -492,7 +509,7 @@ public partial class LSystemForm: Form
                     p.DrawCircle((float)sac.points[0].X, (float)sac.points[0].Y, 0.25f);
                     first = true;
                 }
-                PlotSmoothed(sac.points, sac.color);
+                PlotSmoothed(sac.points, sac.color, xmin, ymin, xmax, ymax);
             }
 
         // Legend in black
@@ -509,7 +526,7 @@ public partial class LSystemForm: Form
         p.Refresh();
     }
 
-    private void PlotSmoothed(List<PointD> points, int colorIndex = 0)
+    private void PlotSmoothed(List<PointD> points, int colorIndex, double xmin, double ymin, double xmax, double ymax)
     {
         var smooth = SmoothingMethodsComboBox.SelectedIndex switch
         {
@@ -521,7 +538,22 @@ public partial class LSystemForm: Form
         p.PenColor(colorIndex);
         p.PenUp();
         p.PenWidth(0.1f);
-        p.DrawPoints(smooth);
+
+        if (LSystemsComboBox.SelectedItem is LSystem ls && ls.Name == "HilbertDonut")
+        {
+            // Special transformation
+            var newList = new List<PointD>();
+            foreach (var point in smooth)
+            {
+                double a = (point.X-xmin) / (xmax - xmin) * 2 * Math.PI;
+                double r = 2 + 2*(point.Y-ymin)/(ymax - ymin);
+                var tp = new PointD(2+r*Math.Cos(a), 2+r*Math.Sin(a));
+                newList.Add(tp);
+            }
+            p.DrawPoints(newList);
+        }
+        else
+            p.DrawPoints(smooth);
     }
 
     private void AngleTextBox_TextChanged(object sender, EventArgs e)
