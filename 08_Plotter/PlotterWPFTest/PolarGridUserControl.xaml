@@ -1,12 +1,12 @@
-﻿<UserControl x:Class="PlotterWPFTest.SpirographUserControl"
+﻿<UserControl x:Class="PlotterWPFTest.PolarGridUserControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PlotterWPFTest" 
              mc:Ignorable="d" 
-             d:DataContext="{d:DesignInstance Type=local:SpirographViewModel}"
-             d:DesignHeight="150" d:DesignWidth="800">
+             d:DataContext="{d:DesignInstance Type=local:PolarGridViewModel}"
+             d:DesignHeight="450" d:DesignWidth="800">
 
     <StackPanel Orientation="Vertical">
         <Label Background="LightSkyBlue" FontWeight="DemiBold">Spirograph</Label>
@@ -32,17 +32,17 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <Label Grid.Row="0" Grid.Column="0">Z1</Label>
-                <TextBox Grid.Row="0" Grid.Column="1" Width="40" Text="{Binding Z1, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" />
-                <Slider Grid.Row="0" Grid.Column="2" Width="150" Minimum="1" Maximum="400" Value="{Binding Z1}" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="12,0,0,0" />
+                <Label Grid.Row="0" Grid.Column="0" Content="Large Grid" />
+                <TextBox Grid.Row="0" Grid.Column="1" Width="40" Text="{Binding LargeGrid, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" />
+                <Slider Grid.Row="0" Grid.Column="2" Width="150" Minimum="2" Maximum="100" Value="{Binding LargeGrid}" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="12,0,0,0" />
 
-                <Label Grid.Row="1" Grid.Column="0" Content="Z2" Margin="0,6,0,0" />
-                <TextBox Grid.Row="1" Grid.Column="1" Width="40" Text="{Binding Z2, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="0,6,0,0" />
-                <Slider Grid.Row="1" Grid.Column="2" Width="150" Minimum="1" Maximum="400" Value="{Binding Z2}" VerticalAlignment="Center" Margin="12,6,0,0" />
+                <Label Grid.Row="1" Grid.Column="0" Content="Small Grid" Margin="0,6,0,0" />
+                <TextBox Grid.Row="1" Grid.Column="1" Width="40" Text="{Binding SmallGrid, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="0,6,0,0" />
+                <Slider Grid.Row="1" Grid.Column="2" Width="150" Minimum="2" Maximum="200" Value="{Binding SmallGrid}" VerticalAlignment="Center" Margin="12,6,0,0" />
 
-                <Label Grid.Row="2" Grid.Column="0" Content="K2" Margin="0,6,0,0" />
-                <TextBox Grid.Row="2" Grid.Column="1" Width="60" Text="{Binding K2, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:F2}}" VerticalContentAlignment="Center" Margin="0,6,0,0"/>
-                <Slider Grid.Row="2" Grid.Column="2" Width="150" Minimum="-1" Maximum="2" Value="{Binding K2}" VerticalAlignment="Center" Margin="12,6,0,0" />
+                <Label Grid.Row="2" Grid.Column="0" Content="K1" Margin="0,6,0,0" />
+                <TextBox Grid.Row="2" Grid.Column="1" Width="60" Text="{Binding K1, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:F2}}" VerticalContentAlignment="Center" Margin="0,6,0,0"/>
+                <Slider Grid.Row="2" Grid.Column="2" Width="150" Minimum="-1" Maximum="2" Value="{Binding K1}" VerticalAlignment="Center" Margin="12,6,0,0" />
 
             </Grid>
 

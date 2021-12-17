@@ -1,4 +1,4 @@
-﻿// SpirographUserControl
+﻿// PolarGridUserControl
 // First UC for PlotterWPFTest combining UI and plotting code
 //
 // 2021-12-17   PV
@@ -11,14 +11,14 @@ namespace PlotterWPFTest;
 /// <summary>
 /// Interaction logic for SirographUserControl.xaml
 /// </summary>
-public partial class SpirographUserControl: UserControl
+public partial class PolarGridUserControl: UserControl
 {
-    readonly SpirographViewModel vm;
+    readonly PolarGridViewModel vm;
 
-    public SpirographUserControl()
+    public PolarGridUserControl()
     {
         InitializeComponent();
-        vm = new SpirographViewModel(this);
+        vm = new PolarGridViewModel(this);
         DataContext = vm;
         MyPlotterCommonUserControl.DataContext = vm.Pcvm;
     }
@@ -37,5 +37,5 @@ public partial class SpirographUserControl: UserControl
 
     // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
     public static readonly DependencyProperty MyPlotterProperty =
-        DependencyProperty.RegisterAttached("MyPlotter", typeof(Plotter), typeof(SpirographViewModel), new PropertyMetadata(null));
+        DependencyProperty.RegisterAttached("MyPlotter", typeof(Plotter), typeof(PolarGridViewModel), new PropertyMetadata(null));
 }

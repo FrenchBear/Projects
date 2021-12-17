@@ -7,16 +7,24 @@
         xmlns:local="clr-namespace:PlotterWPFTest"
         mc:Ignorable="d"
         Title="WPF Plotter Test" Height="450" Width="800">
-    
-    <Grid Margin="12">
+
+    <Grid Margin="6">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <local:SpirographUserControl x:Name="MyPage" Grid.Row="0" Grid.Column="0" />
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,6">
+            <Button x:Name="SpirographButton" Content="Spirograph" Padding="6,1" Click="SpirographButton_Click" />
+            <Button x:Name="PolarGridButton" Content="Polar grid" Padding="6,1" Margin="12,0,0,0" Click="PolarGridButton_Click" />
+        </StackPanel>
 
-        <WindowsFormsHost Name="WFHost" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="AliceBlue" Margin="0,12,0,0">
+        <Border x:Name="DrawControlBorder" Grid.Row="1" Grid.Column="0">
+            <!--<local:SpirographUserControl x:Name="MyPage" />-->
+        </Border>
+        
+        <WindowsFormsHost Name="WFHost" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="AliceBlue" Margin="0,12,0,0">
             <wf:PictureBox x:Name="MyPic"/>
         </WindowsFormsHost>
 
