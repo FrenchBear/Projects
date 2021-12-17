@@ -2,6 +2,7 @@
 // Test application
 //
 // 2021-12-09   PV
+// 2021-12-17   PV      Spirograph
 
 using System;
 using System.Windows.Forms;
@@ -39,9 +40,10 @@ public partial class TestForm: Form
             "AutoScale",
             "Predefined colors",
             "Color Squares",
+            "Spirograph",
         });
 
-        TestComboBox.SelectedIndex = 8;
+        TestComboBox.SelectedIndex = 9;
     }
 
     private void TestComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -74,6 +76,9 @@ public partial class TestForm: Form
                 break;
             case 8:
                 ColorSquares();
+                break;
+            case 9:
+                Spirograph();
                 break;
         }
     }
@@ -370,4 +375,57 @@ public partial class TestForm: Form
         p.Refresh();
     }
 
+    private void Spirograph()
+    {
+        p.Clear();
+
+        const int z1 = 40;
+        const int z2 = 45;
+        const double k2 = 1.75;      // Position of pen on wheel 2 as a percentage of wheel 2 radius, 0=center, 1=edge, but can be byond [0..1] range
+        double r1 = z1 / (2 * Math.PI);
+        double r2 = z2 / (2 * Math.PI);
+        int zper = PPMC(z1, z2);
+
+        p.ScaleP1P2((float)(-r1 - 2 * r2 * k2 - 1), (float)(-r1 - 2 * r2 * k2 - 1), (float)(r1 + 2 * r2 * k2 + 1), (float)(r1 + 2 * r2 * k2 + 1));
+        p.PenColor(1);
+        p.PenWidth(1);
+        for (int z = 0; z <= 2 * zper; z++)
+        {
+            // a1 = angle of rotation of contact point wheel 1/wheel 2
+            double a1 = z / (double)z1 * Math.PI;
+
+            // a2 = weel 2 proper angle of rotation (real angle of rotation of wheel 2 is a1+a2)
+            double a2 = a1 * z1 / z2;
+
+            // Center of wheel 2
+            double xc2 = (r1 + r2) * Math.Cos(a1);
+            double yc2 = (r1 + r2) * Math.Sin(a1);
+
+            // Pen position
+            double xp = xc2 + r2 * k2 * Math.Cos(a1 + a2);
+            double yp = yc2 + r2 * k2 * Math.Sin(a1 + a2);
+
+            p.Plot((float)xp, (float)yp);
+        }
+
+        p.Refresh();
+    }
+
+    /// <summary>
+    /// Return Greatest Common Divisor using Euclidean Algorithm (Plus Grand Diviseur Commun)
+    /// </summary>
+    private static int PGDC(int a, int b)
+    {
+        if (a <= 0 || b <= 0)
+            throw new ArgumentException("Negative or zero argument not supported");
+        while (b != 0)
+            (a, b) = (b, a % b);
+        return a;
+    }
+
+    /// <summary>
+    /// Smallest Common Multiple (Plus Petit Multiple Commun)
+    /// </summary>
+    private static int PPMC(int a, int b)
+        => a * b / PGDC(a, b);
 }

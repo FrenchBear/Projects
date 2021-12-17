@@ -13,7 +13,7 @@ namespace PlotterLibrary;
 public partial class Plotter
 {
     private readonly List<PlotterCommand> Commands = new();
-    private RenderingForm? rf = null;
+    //private RenderingForm? rf = null;
     public DrawingExtent Extent = new();
     private PictureBox? picOut = null;
 
@@ -83,7 +83,7 @@ public partial class Plotter
         Color.Black,
         Color.Red,
         Color.Blue,
-        Color.Green,
+        Color.DarkGreen,
         Color.Magenta,
         Color.Gray,
         Color.Orange,
@@ -185,13 +185,14 @@ public partial class Plotter
 
     public void Refresh()
     {
-        if (picOut == null)
-        {
-            rf = new RenderingForm(this);
-            rf.Show();
-            picOut = rf.picOut;
-        }
-        RefreshPlot();
+        //if (picOut == null)
+        //{
+        //    rf = new RenderingForm(this);
+        //    rf.Show();
+        //    picOut = rf.picOut;
+        //}
+        if (picOut != null)
+            RefreshPlot();
     }
 
     // Turtle commands

@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Printing;
 
 namespace PlotterLibrary;
@@ -58,6 +59,7 @@ public partial class Plotter
         }
 
         outGraphics.Clear(Color.White);
+        outGraphics.SmoothingMode = SmoothingMode.HighQuality;
         SetUserScale(-15, -15, 15, 15);            // Default user scale 
         for (int i = 0; i < Commands.Count; i++)
         {

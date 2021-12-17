@@ -15,6 +15,7 @@ internal partial class RenderingForm: Form
 
     public RenderingForm(Plotter p)
     {
+        this.p = p;
         InitializeComponent();
 
         // Fill printers list
@@ -23,7 +24,6 @@ internal partial class RenderingForm: Form
         if (PrintersList.Items.Count > 0)
             PrintersList.SelectedIndex = 0;
 
-        this.p = p;
     }
 
     private void RenderingForm_Resize(object sender, EventArgs e) => p.Refresh();
