@@ -18,14 +18,13 @@
         <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,6">
             <Button x:Name="SpirographButton" Content="Spirograph" Padding="6,1" Click="SpirographButton_Click" />
             <Button x:Name="PolarGridButton" Content="Polar grid" Padding="6,1" Margin="12,0,0,0" Click="PolarGridButton_Click" />
+            <Button x:Name="DebugButton" Content="Debug" Padding="6,1" Margin="12,0,0,0" Click="DebugButton_Click" />
         </StackPanel>
 
-        <Border x:Name="DrawControlBorder" Grid.Row="1" Grid.Column="0">
-            <!--<local:SpirographUserControl x:Name="MyPage" />-->
-        </Border>
-        
+        <Border x:Name="DrawControlBorder" Grid.Row="1" Grid.Column="0" />
+
         <WindowsFormsHost Name="WFHost" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="AliceBlue" Margin="0,12,0,0">
-            <wf:PictureBox x:Name="MyPic"/>
+            <wf:PictureBox x:Name="MyPic" />
         </WindowsFormsHost>
 
     </Grid>

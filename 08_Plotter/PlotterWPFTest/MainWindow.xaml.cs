@@ -3,7 +3,9 @@
 //
 // 2021-12-17   PV
 
+using System.Diagnostics;
 using System.Windows;
+using System.Windows.Threading;
 using PlotterLibrary;
 
 namespace PlotterWPFTest;
@@ -19,30 +21,31 @@ public partial class MainWindow: Window
         InitializeComponent();
         p = new Plotter();
         p.Output(MyPic);
-        //MyPage.MyPlotter = p;
-        //Loaded += MainWindow_Loaded;
         SizeChanged += MainWindow_SizeChanged;
     }
 
-    private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e) 
+    private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         => p?.Refresh();
-
-    //private void MainWindow_Loaded(object sender, RoutedEventArgs e)
-    //    => MyPage.PlotChart();
 
     private void SpirographButton_Click(object sender, RoutedEventArgs e)
     {
         var ctl = new SpirographUserControl();
         DrawControlBorder.Child = ctl;
+        WFHost.Dispatcher.Invoke(DispatcherPriority.Render, () => { });     // Force layout recalc and resize WFHost.pic
         ctl.MyPlotter = p;
-        ctl.PlotChart();
     }
 
     private void PolarGridButton_Click(object sender, RoutedEventArgs e)
     {
         var ctl = new PolarGridUserControl();
         DrawControlBorder.Child = ctl;
+        WFHost.Dispatcher.Invoke(DispatcherPriority.Render, () => { });     // Force layout recalc and resize WFHost.pic
         ctl.MyPlotter = p;
-        ctl.PlotChart();
+    }
+
+    // For dev
+    private void DebugButton_Click(object sender, RoutedEventArgs e)
+    {
+        Debug.WriteLine($"WFHost: W={WFHost.ActualWidth} H={WFHost.ActualHeight}");
     }
 }

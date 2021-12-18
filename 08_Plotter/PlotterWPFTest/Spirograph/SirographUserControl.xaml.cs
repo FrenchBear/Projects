@@ -21,6 +21,7 @@ public partial class SpirographUserControl: UserControl
         vm = new SpirographViewModel(this);
         DataContext = vm;
         MyPlotterCommonUserControl.DataContext = vm.Pcvm;
+        vm.PlotChart();
     }
 
     public Plotter MyPlotter

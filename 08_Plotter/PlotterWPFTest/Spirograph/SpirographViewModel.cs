@@ -52,6 +52,8 @@ internal class SpirographViewModel: BaseViewModel
     public override void PlotChart()
     {
         Plotter p = View.MyPlotter;
+        if (p== null)
+            return;
 
         p.Clear();
 

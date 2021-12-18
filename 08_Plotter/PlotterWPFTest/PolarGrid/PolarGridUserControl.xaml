@@ -6,12 +6,12 @@
              xmlns:local="clr-namespace:PlotterWPFTest" 
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance Type=local:PolarGridViewModel}"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="150" d:DesignWidth="600">
 
     <StackPanel Orientation="Vertical">
-        <Label Background="LightSkyBlue" FontWeight="DemiBold">Spirograph</Label>
+        <Label Background="LightSkyBlue" FontWeight="DemiBold">Polar Grid</Label>
 
-        <Grid Background="AliceBlue" Margin="0,6,0,0">
+        <Grid Background="AliceBlue">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
@@ -41,8 +41,10 @@
                 <Slider Grid.Row="1" Grid.Column="2" Width="150" Minimum="2" Maximum="200" Value="{Binding SmallGrid}" VerticalAlignment="Center" Margin="12,6,0,0" />
 
                 <Label Grid.Row="2" Grid.Column="0" Content="K1" Margin="0,6,0,0" />
-                <TextBox Grid.Row="2" Grid.Column="1" Width="60" Text="{Binding K1, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:F2}}" VerticalContentAlignment="Center" Margin="0,6,0,0"/>
-                <Slider Grid.Row="2" Grid.Column="2" Width="150" Minimum="-1" Maximum="2" Value="{Binding K1}" VerticalAlignment="Center" Margin="12,6,0,0" />
+                <TextBox Grid.Row="2" Grid.Column="1" Width="40" Text="{Binding K1, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:F2}}" VerticalContentAlignment="Center" Margin="0,6,0,0"
+                         IsEnabled="{Binding K1Enabled}" />
+                <Slider Grid.Row="2" Grid.Column="2" Width="150" Minimum="{Binding K1Min}" Maximum="{Binding K1Max}" Value="{Binding K1}" VerticalAlignment="Center" Margin="12,6,0,0" 
+                         IsEnabled="{Binding K1Enabled}"/>
 
             </Grid>
 

@@ -12,10 +12,8 @@ namespace PlotterWPFTest;
 /// </summary>
 public partial class PlotterCommonUserControl: UserControl
 {
-    public PlotterCommonUserControl()
-    {
-        InitializeComponent();
-    }
+    public PlotterCommonUserControl() 
+        => InitializeComponent();
 
     private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
     {
