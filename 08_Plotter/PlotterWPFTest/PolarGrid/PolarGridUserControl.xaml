@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:PlotterWPFTest" 
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance Type=local:PolarGridViewModel}"
-             d:DesignHeight="150" d:DesignWidth="600">
+             d:DesignHeight="200" d:DesignWidth="600">
 
     <StackPanel Orientation="Vertical">
         <Label Background="LightSkyBlue" FontWeight="DemiBold">Polar Grid</Label>
@@ -25,6 +25,8 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -40,12 +42,20 @@
                 <TextBox Grid.Row="1" Grid.Column="1" Width="40" Text="{Binding SmallGrid, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="0,6,0,0" />
                 <Slider Grid.Row="1" Grid.Column="2" Width="150" Minimum="2" Maximum="200" Value="{Binding SmallGrid}" VerticalAlignment="Center" Margin="12,6,0,0" />
 
-                <Label Grid.Row="2" Grid.Column="0" Content="K1" Margin="0,6,0,0" />
-                <TextBox Grid.Row="2" Grid.Column="1" Width="40" Text="{Binding K1, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:F2}}" VerticalContentAlignment="Center" Margin="0,6,0,0"
+                <Label Grid.Row="2" Grid.Column="0" Content="Model" Margin="0,6,0,0" />
+                <ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,6,0,0" ItemsSource="{Binding Models}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedModel}" />
+
+                <Label Grid.Row="3" Grid.Column="0" Content="K1" Margin="0,6,0,0" />
+                <TextBox Grid.Row="3" Grid.Column="1" Width="40" Text="{Binding K1, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:F2}}" VerticalContentAlignment="Center" Margin="0,6,0,0"
                          IsEnabled="{Binding K1Enabled}" />
-                <Slider Grid.Row="2" Grid.Column="2" Width="150" Minimum="{Binding K1Min}" Maximum="{Binding K1Max}" Value="{Binding K1}" VerticalAlignment="Center" Margin="12,6,0,0" 
+                <Slider Grid.Row="3" Grid.Column="2" Width="150" Minimum="{Binding K1Min}" Maximum="{Binding K1Max}" Value="{Binding K1}" VerticalAlignment="Center" Margin="12,6,0,0" 
                          IsEnabled="{Binding K1Enabled}"/>
 
+                <Label Grid.Row="4" Grid.Column="0" Content="K2" Margin="0,6,0,0" />
+                <TextBox Grid.Row="4" Grid.Column="1" Width="40" Text="{Binding K2, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:F2}}" VerticalContentAlignment="Center" Margin="0,6,0,0"
+                         IsEnabled="{Binding K2Enabled}" />
+                <Slider Grid.Row="4" Grid.Column="2" Width="150" Minimum="{Binding K2Min}" Maximum="{Binding K2Max}" Value="{Binding K2}" VerticalAlignment="Center" Margin="12,6,0,0" 
+                         IsEnabled="{Binding K2Enabled}"/>
             </Grid>
 
             <local:PlotterCommonUserControl x:Name="MyPlotterCommonUserControl" Grid.Row="0" Grid.Column="1" Margin="6,0,0,0" />

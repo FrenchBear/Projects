@@ -22,13 +22,13 @@ public class PlotterCommonViewModel: BaseViewModel
     public int PenWidth { get => _PenWidth; set => SetProperty(ref _PenWidth, value); }
     private int _PenWidth = 1;
 
-    public List<string> PenColors { get => _PenColors; set => SetProperty(ref _PenColors, value); }
+    public List<string> PenColors => _PenColors;
     internal List<string> _PenColors = new();
 
     public int PenColorIndex { get => _PenColorIndex; set => SetProperty(ref _PenColorIndex, value); }
     private int _PenColorIndex = -1;    // So that when PenColorIndex is set to 0, it actually selects the 1st event bypassing SetProperty optimization
 
-    public List<string> PrintersList { get => _PrintersList; set => _PrintersList = value; }
+    public List<string> PrintersList => _PrintersList;
     internal List<string> _PrintersList = new();
 
     internal void InitPlotter(Plotter p)

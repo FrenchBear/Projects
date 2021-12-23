@@ -5,6 +5,7 @@
 
 using PlotterLibrary;
 using System;
+using System.Collections.Generic;
 
 namespace PlotterWPFTest;
 
@@ -17,10 +18,16 @@ internal class PolarGridViewModel: BaseViewModel
     {
         View = view;
         Pcvm = new(PlotChart);
+
+        Models.Add(new PolarGridModelPowerLinear());
+        SelectedModel = Models[0];
+
+        // ToDo: depends on model selected, but since there's only one model for now...
         SetRange("K1", true, 1.0, 0.1, 5.0);
+        SetRange("K2", true, 0.0, -3.14, 3.14);
     }
 
-    internal void SetRange(string k, bool isEnabled, double v, double vMin, double vMax)
+    internal void SetRange(string k, bool isEnabled, double v = 0, double vMin = 0, double vMax = 1)
     {
         switch (k)
         {
@@ -29,6 +36,13 @@ internal class PolarGridViewModel: BaseViewModel
                 K1Min = vMin;
                 K1Max = vMax;
                 K1 = v;
+                break;
+
+            case "K2":
+                K2Enabled = isEnabled;
+                K2Min = vMin;
+                K2Max = vMax;
+                K2 = v;
                 break;
         }
     }
@@ -42,9 +56,6 @@ internal class PolarGridViewModel: BaseViewModel
     }
     private int _LargeGrid = 10;
 
-    /// <summary>
-    /// Mobile wheel teeth count
-    /// </summary>
     public int SmallGrid
     {
         get => _SmallGrid;
@@ -52,9 +63,12 @@ internal class PolarGridViewModel: BaseViewModel
     }
     private int _SmallGrid = 100;
 
-    /// <summary>
-    /// Position of pen on mobile wheel radius, 0=center, 1=edge
-    /// </summary>
+    public List<PolarGridModelBase> Models => _ModelsList;
+    internal List<PolarGridModelBase> _ModelsList = new();
+
+    private PolarGridModelBase? _SelectedModel;
+    public PolarGridModelBase? SelectedModel { get => _SelectedModel; set => SetProperty(ref _SelectedModel, value); }
+
     public double K1
     {
         get
@@ -76,6 +90,30 @@ internal class PolarGridViewModel: BaseViewModel
     public double K1Max { get => _K1Max; set => SetProperty(ref _K1Max, value); }
     private double _K1Min, _K1Max;
 
+    /// <summary>
+    /// Rotation control
+    /// </summary>
+    public double K2
+    {
+        get
+        {
+            if (_K2 < _K2Min)
+                return _K2Min;
+            if (_K2 > _K2Max)
+                return _K2Max;
+            return _K2;
+        }
+        set => SetProperty(ref _K2, value);
+    }
+    private double _K2 = 1.0;
+
+    public bool K2Enabled { get => _K2Enabled; set => SetProperty(ref _K2Enabled, value); }
+    private bool _K2Enabled = true;
+
+    public double K2Min { get => _K2Min; set => SetProperty(ref _K2Min, value); }
+    public double K2Max { get => _K2Max; set => SetProperty(ref _K2Max, value); }
+    private double _K2Min, _K2Max;
+
     // ================================================================================
 
     public override void PlotChart()
@@ -83,17 +121,12 @@ internal class PolarGridViewModel: BaseViewModel
         Plotter p = View.MyPlotter;
         if (p == null)
             return;
+        if (SelectedModel == null)
+            return;
 
         void CalcAndPlot(double x, double y)
         {
-            double r = Math.Sqrt(x * x + y * y);
-            double a = Math.Atan2(y, x);
-            if (r <= 1)
-            {
-                r = Math.Pow(r, K1);
-                x = r * Math.Cos(a);
-                y = r * Math.Sin(a);
-            }
+            (x, y) = SelectedModel.Calc(x, y, K1, K2);
             p.Plot((float)x, (float)y);
         }
 
@@ -126,4 +159,5 @@ internal class PolarGridViewModel: BaseViewModel
 
         p.Refresh();
     }
+
 }

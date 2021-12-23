@@ -44,8 +44,6 @@ public partial class MainWindow: Window
     }
 
     // For dev
-    private void DebugButton_Click(object sender, RoutedEventArgs e)
-    {
-        Debug.WriteLine($"WFHost: W={WFHost.ActualWidth} H={WFHost.ActualHeight}");
-    }
+    private void DebugButton_Click(object sender, RoutedEventArgs e) 
+        => Debug.WriteLine($"WFHost: W={WFHost.ActualWidth} H={WFHost.ActualHeight}");
 }
