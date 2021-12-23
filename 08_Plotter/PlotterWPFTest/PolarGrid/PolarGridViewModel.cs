@@ -20,6 +20,7 @@ internal class PolarGridViewModel: BaseViewModel
         Pcvm = new(PlotChart);
 
         Models.Add(new PolarGridModelPowerLinear());
+        Models.Add(new PolarGridModel2());
         SelectedModel = Models[0];
 
         // ToDo: depends on model selected, but since there's only one model for now...
