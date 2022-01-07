@@ -1,13 +1,12 @@
-import matplotlib.image as mpimg
-import numpy as np
+from common_fs import *
 
-source1 = r'C:\Scans\THS23\2 Crop Hz\THS23-001.png'
-source2 = r'C:\Scans\THS23\3 Crop Vt\THS23-001.png'
+nf=0
+with open(r'c:\temp\bds.txt', 'w', encoding='utf-8') as fout:
+    for file in get_all_files(r'\\teraz\books\bd'):
+        if not 'Comics' in file and not 'International' in file and not 'Revues' in file and not 'ZipRar' in file:
+            fout.write(file+'\r\n')
+            nf+=1
+            if nf%1000==0:
+                print(nf)
 
-img1 = mpimg.imread(source1)
-img1 = img1[:,:,:3]
-print(img1.shape)
-
-img2 = mpimg.imread(source2)
-print(img2.shape)
-
+print('Done.')

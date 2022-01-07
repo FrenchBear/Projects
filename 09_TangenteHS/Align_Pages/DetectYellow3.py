@@ -1,12 +1,17 @@
-import matplotlib.image as mpimg
-import matplotlib.pyplot as plt
-import numpy as np
+# DetectYellow3
+# Final processing of pages
+#
+# 2022-01-06    PV      Complete version
+
 import math
+import statistics
 import os
-import sys
 from dataclasses import dataclass
 from typing import List, Optional
-
+import numpy as np
+import matplotlib.image as mpimg    # type: ignore
+import cropimage
+from common_fs import *
 
 yellow = np.array([251., 211., 19.])
 (rowmin, rowmax) = (2680, 2800)
@@ -23,7 +28,7 @@ margegmax = 0
 
 @dataclass
 class ScannedPage:
-    file: str
+    filefp: str
     numfile: int
     width: int
     height: int
@@ -44,14 +49,14 @@ def dotdist(p1, p2):
     return np.linalg.norm(p2-p1)
 
 
-def veclength(p):
-    return math.sqrt(p[0]**2+p[1]**2+p[2]**2)
+def veclength(v):
+    return math.sqrt(v[0]**2+v[1]**2+v[2]**2)
 
 
 def process(file: str, numfile: int):
     print(file, ';', numfile, ';', sep='', end='')
 
-    img = mpimg.imread(file)[:,:,:3]
+    img = mpimg.imread(file)[:, :, :3]
     width: int = img.shape[1]
     height: int = img.shape[0]
     print(width, ';', height, ';', sep='', end='')
@@ -73,7 +78,6 @@ def process(file: str, numfile: int):
     colp: Optional[int] = None
     rowp: Optional[int] = None
 
-    #if 4<numfile<168 and numfile!=5 and numfile!=45 and numfile!=133:
     if numfile % 2 == 0:
         r = range(0, areawidth)
     else:
@@ -93,7 +97,6 @@ def process(file: str, numfile: int):
     print(colp, ';', rowp, sep='')
 
     newpage = ScannedPage(file, numfile, width, height, colp, rowp)
-    global Pages
     Pages.append(newpage)
 
     global rowpmax, margebmax
@@ -115,272 +118,263 @@ def process(file: str, numfile: int):
                 margedmax = width-colp
 
 
-def files1(path):
-    for root, subs, files in os.walk(path):
-        for file in files:
-            yield os.path.join(root, file)
+def p(file, numfile, width, height, colp, rowp):
+    newpage = ScannedPage(file, numfile, width, height, colp, rowp)
+    Pages.append(newpage)
+
 
 # Step 1, determine sizes and position of yellow rect
-source=r'D:\Scans\THS76\02Redresse'
-dest=r'D:\Scans\THS76\03X'
-prefix='THS76'
+source = r'D:\Scans\THS76\02Redresse'
+dest = r'D:\Scans\THS76\03Crop'
+prefix = 'THS76'
 
-for pathfile in files1(source):
-    path, file = os.path.split(pathfile)
-    basename, ext = os.path.splitext(file)
-    if ext.lower() == '.jpg':
-        numfile = int(basename[-3:])
-        process(pathfile, numfile)
-print()
-print('rowpmax=', repr(rowpmax))
-print('colppairmax=', repr(colppairmax))
-print('colpimpairmax=', repr(colpimpairmax))
-print('margedmax=', repr(margedmax))
-print()
+process_files = False
+
+if process_files:
+    for filefp in get_all_files(source):
+        path, filename = os.path.split(filefp)
+        basename, ext = os.path.splitext(filename)
+        if ext.lower() == '.jpg':
+            nf = int(basename[-3:])
+            process(filefp, nf)
+    print()
+    print('rowpmax=', repr(rowpmax))
+    print('colppairmax=', repr(colppairmax))
+    print('colpimpairmax=', repr(colpimpairmax))
+    print('margedmax=', repr(margedmax))
+    print()
+else:
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-001.jpg', numfile=1, width=1940, height=2833, colp=None, rowp=None)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-002.jpg', numfile=2, width=1916, height=2818, colp=None, rowp=None)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-003.jpg', numfile=3, width=1965, height=2824, colp=1783, rowp=2764)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-004.jpg', numfile=4, width=1966, height=2836, colp=175, rowp=2774)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-005.jpg', numfile=5, width=1960, height=2821, colp=1787, rowp=2767)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-006.jpg', numfile=6, width=1964, height=2837, colp=170, rowp=2777)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-007.jpg', numfile=7, width=1956, height=2822, colp=1790, rowp=2773)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-008.jpg', numfile=8, width=1961, height=2837, colp=164, rowp=2784)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-009.jpg', numfile=9, width=1961, height=2826, colp=1801, rowp=2765)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-010.jpg', numfile=10, width=1953, height=2833, colp=154, rowp=2775)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-011.jpg', numfile=11, width=1959, height=2823, colp=1801, rowp=2767)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-012.jpg', numfile=12, width=1959, height=2835, colp=157, rowp=2777)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-013.jpg', numfile=13, width=1953, height=2831, colp=1792, rowp=2772)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-014.jpg', numfile=14, width=1973, height=2838, colp=171, rowp=2770)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-015.jpg', numfile=15, width=1953, height=2822, colp=1794, rowp=2757)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-016.jpg', numfile=16, width=1956, height=2818, colp=162, rowp=2755)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-017.jpg', numfile=17, width=1955, height=2824, colp=1794, rowp=2753)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-018.jpg', numfile=18, width=1973, height=2845, colp=169, rowp=2771)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-019.jpg', numfile=19, width=1952, height=2823, colp=1791, rowp=2759)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-020.jpg', numfile=20, width=1952, height=2834, colp=160, rowp=2770)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-021.jpg', numfile=21, width=1955, height=2823, colp=1782, rowp=2765)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-022.jpg', numfile=22, width=1965, height=2845, colp=177, rowp=2783)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-023.jpg', numfile=23, width=1953, height=2823, colp=1779, rowp=2759)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-024.jpg', numfile=24, width=1959, height=2843, colp=174, rowp=2774)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-025.jpg', numfile=25, width=1982, height=2843, colp=1798, rowp=2770)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-026.jpg', numfile=26, width=1961, height=2842, colp=171, rowp=2777)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-027.jpg', numfile=27, width=1952, height=2825, colp=1785, rowp=2753)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-028.jpg', numfile=28, width=1956, height=2840, colp=166, rowp=2767)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-029.jpg', numfile=29, width=1955, height=2833, colp=1787, rowp=2761)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-030.jpg', numfile=30, width=1951, height=2834, colp=161, rowp=2762)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-031.jpg', numfile=31, width=1949, height=2823, colp=1786, rowp=2755)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-032.jpg', numfile=32, width=1954, height=2834, colp=166, rowp=2767)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-033.jpg', numfile=33, width=1951, height=2825, colp=1768, rowp=2767)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-034.jpg', numfile=34, width=1953, height=2834, colp=183, rowp=2778)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-035.jpg', numfile=35, width=1955, height=2827, colp=1770, rowp=2768)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-036.jpg', numfile=36, width=1955, height=2838, colp=181, rowp=2779)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-037.jpg', numfile=37, width=1949, height=2831, colp=1778, rowp=2777)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-038.jpg', numfile=38, width=1946, height=2838, colp=166, rowp=2783)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-039.jpg', numfile=39, width=1949, height=2826, colp=1785, rowp=2774)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-040.jpg', numfile=40, width=1949, height=2834, colp=166, rowp=2781)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-041.jpg', numfile=41, width=1951, height=2824, colp=1787, rowp=2762)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-042.jpg', numfile=42, width=1952, height=2836, colp=164, rowp=2775)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-043.jpg', numfile=43, width=1953, height=2824, colp=1790, rowp=2763)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-044.jpg', numfile=44, width=1949, height=2837, colp=163, rowp=2775)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-045.jpg', numfile=45, width=1949, height=2819, colp=1782, rowp=2759)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-046.jpg', numfile=46, width=1942, height=2833, colp=167, rowp=2773)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-047.jpg', numfile=47, width=1950, height=2818, colp=1783, rowp=2754)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-048.jpg', numfile=48, width=1950, height=2833, colp=165, rowp=2771)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-049.jpg', numfile=49, width=1949, height=2830, colp=1789, rowp=2759)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-050.jpg', numfile=50, width=1948, height=2831, colp=158, rowp=2763)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-051.jpg', numfile=51, width=1951, height=2824, colp=1792, rowp=2756)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-052.jpg', numfile=52, width=1946, height=2835, colp=157, rowp=2767)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-053.jpg', numfile=53, width=1946, height=2820, colp=1777, rowp=2758)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-054.jpg', numfile=54, width=1954, height=2835, colp=174, rowp=2773)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-055.jpg', numfile=55, width=1946, height=2822, colp=1776, rowp=2756)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-056.jpg', numfile=56, width=1953, height=2841, colp=173, rowp=2773)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-057.jpg', numfile=57, width=1947, height=2822, colp=1775, rowp=2763)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-058.jpg', numfile=58, width=1950, height=2839, colp=172, rowp=2781)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-059.jpg', numfile=59, width=1945, height=2825, colp=1781, rowp=2760)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-060.jpg', numfile=60, width=1941, height=2831, colp=162, rowp=2767)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-061.jpg', numfile=61, width=1935, height=2816, colp=1781, rowp=2748)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-062.jpg', numfile=62, width=1937, height=2829, colp=153, rowp=2762)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-063.jpg', numfile=63, width=1939, height=2818, colp=1785, rowp=2751)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-064.jpg', numfile=64, width=1945, height=2835, colp=161, rowp=2765)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-065.jpg', numfile=65, width=1940, height=2817, colp=1769, rowp=2766)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-066.jpg', numfile=66, width=1942, height=2834, colp=167, rowp=2783)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-067.jpg', numfile=67, width=1941, height=2814, colp=1772, rowp=2757)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-068.jpg', numfile=68, width=1937, height=2832, colp=164, rowp=2775)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-069.jpg', numfile=69, width=1943, height=2818, colp=1780, rowp=2761)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-070.jpg', numfile=70, width=1944, height=2834, colp=162, rowp=2773)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-071.jpg', numfile=71, width=1947, height=2824, colp=1785, rowp=2772)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-072.jpg', numfile=72, width=1948, height=2834, colp=160, rowp=2782)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-073.jpg', numfile=73, width=1945, height=2822, colp=1791, rowp=2765)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-074.jpg', numfile=74, width=1946, height=2835, colp=154, rowp=2775)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-075.jpg', numfile=75, width=1951, height=2822, colp=1794, rowp=2770)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-076.jpg', numfile=76, width=1952, height=2836, colp=157, rowp=2782)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-077.jpg', numfile=77, width=1945, height=2824, colp=1788, rowp=2768)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-078.jpg', numfile=78, width=1950, height=2838, colp=158, rowp=2782)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-079.jpg', numfile=79, width=1946, height=2822, colp=1791, rowp=2760)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-080.jpg', numfile=80, width=1946, height=2835, colp=154, rowp=2773)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-081.jpg', numfile=81, width=1947, height=2820, colp=1787, rowp=2751)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-082.jpg', numfile=82, width=1948, height=2837, colp=164, rowp=2763)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-083.jpg', numfile=83, width=1958, height=2829, colp=1792, rowp=2764)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-084.jpg', numfile=84, width=1958, height=2842, colp=168, rowp=2777)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-085.jpg', numfile=85, width=1946, height=2825, colp=1775, rowp=2770)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-086.jpg', numfile=86, width=1951, height=2838, colp=170, rowp=2779)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-087.jpg', numfile=87, width=1948, height=2828, colp=1772, rowp=2764)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-088.jpg', numfile=88, width=1954, height=2845, colp=176, rowp=2779)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-089.jpg', numfile=89, width=1967, height=2841, colp=1783, rowp=2772)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-090.jpg', numfile=90, width=1947, height=2839, colp=169, rowp=2779)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-091.jpg', numfile=91, width=1954, height=2822, colp=1784, rowp=2752)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-092.jpg', numfile=92, width=1953, height=2836, colp=169, rowp=2765)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-093.jpg', numfile=93, width=1952, height=2821, colp=1785, rowp=2751)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-094.jpg', numfile=94, width=1950, height=2831, colp=163, rowp=2759)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-095.jpg', numfile=95, width=1951, height=2819, colp=1780, rowp=2757)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-096.jpg', numfile=96, width=1956, height=2837, colp=171, rowp=2769)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-097.jpg', numfile=97, width=1957, height=2825, colp=1779, rowp=2762)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-098.jpg', numfile=98, width=1950, height=2834, colp=172, rowp=2774)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-099.jpg', numfile=99, width=1948, height=2819, colp=1767, rowp=2742)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-100.jpg', numfile=100, width=1954, height=2836, colp=181, rowp=2758)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-101.jpg', numfile=101, width=1963, height=2832, colp=1799, rowp=2760)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-102.jpg', numfile=102, width=1958, height=2844, colp=158, rowp=2772)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-103.jpg', numfile=103, width=1948, height=2822, colp=1789, rowp=2772)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-104.jpg', numfile=104, width=1960, height=2842, colp=161, rowp=2786)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-105.jpg', numfile=105, width=1952, height=2820, colp=1795, rowp=2750)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-106.jpg', numfile=106, width=1955, height=2836, colp=159, rowp=2765)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-107.jpg', numfile=107, width=1960, height=2822, colp=1799, rowp=2764)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-108.jpg', numfile=108, width=1951, height=2837, colp=155, rowp=2778)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-109.jpg', numfile=109, width=1956, height=2819, colp=1792, rowp=2768)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-110.jpg', numfile=110, width=1947, height=2835, colp=158, rowp=2782)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-111.jpg', numfile=111, width=1947, height=2822, colp=1795, rowp=2752)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-112.jpg', numfile=112, width=1955, height=2839, colp=156, rowp=2767)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-113.jpg', numfile=113, width=1958, height=2823, colp=1792, rowp=2757)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-114.jpg', numfile=114, width=1948, height=2837, colp=160, rowp=2769)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-115.jpg', numfile=115, width=1953, height=2825, colp=1793, rowp=2779)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-116.jpg', numfile=116, width=1953, height=2838, colp=160, rowp=2794)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-117.jpg', numfile=117, width=1951, height=2824, colp=1781, rowp=2766)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-118.jpg', numfile=118, width=1955, height=2839, colp=168, rowp=2777)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-119.jpg', numfile=119, width=1961, height=2828, colp=1787, rowp=2754)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-120.jpg', numfile=120, width=1960, height=2839, colp=170, rowp=2768)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-121.jpg', numfile=121, width=1955, height=2820, colp=1780, rowp=2770)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-122.jpg', numfile=122, width=1952, height=2834, colp=172, rowp=2787)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-123.jpg', numfile=123, width=1951, height=2822, colp=1773, rowp=2761)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-124.jpg', numfile=124, width=1957, height=2837, colp=178, rowp=2774)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-125.jpg', numfile=125, width=1955, height=2822, colp=1795, rowp=2738)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-126.jpg', numfile=126, width=1955, height=2840, colp=155, rowp=2754)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-127.jpg', numfile=127, width=1961, height=2824, colp=1790, rowp=2759)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-128.jpg', numfile=128, width=1954, height=2836, colp=166, rowp=2771)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-129.jpg', numfile=129, width=1951, height=2819, colp=1778, rowp=2763)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-130.jpg', numfile=130, width=1958, height=2841, colp=176, rowp=2780)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-131.jpg', numfile=131, width=1954, height=2821, colp=1771, rowp=2754)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-132.jpg', numfile=132, width=1957, height=2838, colp=181, rowp=2767)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-133.jpg', numfile=133, width=1954, height=2833, colp=1795, rowp=2769)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-134.jpg', numfile=134, width=1955, height=2838, colp=156, rowp=2773)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-135.jpg', numfile=135, width=1964, height=2826, colp=1799, rowp=2771)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-136.jpg', numfile=136, width=1952, height=2834, colp=158, rowp=2781)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-137.jpg', numfile=137, width=1959, height=2819, colp=1800, rowp=2758)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-138.jpg', numfile=138, width=1954, height=2833, colp=157, rowp=2772)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-139.jpg', numfile=139, width=1956, height=2819, colp=1799, rowp=2767)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-140.jpg', numfile=140, width=1952, height=2836, colp=153, rowp=2782)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-141.jpg', numfile=141, width=1961, height=2829, colp=1796, rowp=2775)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-142.jpg', numfile=142, width=1956, height=2840, colp=165, rowp=2789)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-143.jpg', numfile=143, width=1954, height=2822, colp=1796, rowp=2760)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-144.jpg', numfile=144, width=1953, height=2834, colp=156, rowp=2771)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-145.jpg', numfile=145, width=1957, height=2826, colp=1798, rowp=2754)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-146.jpg', numfile=146, width=1956, height=2836, colp=160, rowp=2765)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-147.jpg', numfile=147, width=1953, height=2820, colp=1794, rowp=2771)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-148.jpg', numfile=148, width=1961, height=2842, colp=162, rowp=2786)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-149.jpg', numfile=149, width=1958, height=2821, colp=1783, rowp=2762)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-150.jpg', numfile=150, width=1963, height=2841, colp=176, rowp=2777)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-151.jpg', numfile=151, width=1955, height=2819, colp=1787, rowp=2757)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-152.jpg', numfile=152, width=1952, height=2832, colp=168, rowp=2769)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-153.jpg', numfile=153, width=1956, height=2830, colp=1785, rowp=2775)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-154.jpg', numfile=154, width=1960, height=2825, colp=171, rowp=2768)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-155.jpg', numfile=155, width=1960, height=2823, colp=None, rowp=None)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-156.jpg', numfile=156, width=1964, height=2829, colp=None, rowp=None)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-157.jpg', numfile=157, width=1958, height=2827, colp=None, rowp=None)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-158.jpg', numfile=158, width=1959, height=2830, colp=None, rowp=None)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-159.jpg', numfile=159, width=1964, height=2830, colp=None, rowp=None)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-160.jpg', numfile=160, width=1960, height=2843, colp=None, rowp=None)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-161.jpg', numfile=161, width=1994, height=2821, colp=None, rowp=None)
+    p(file='D:\\Scans\\THS76\\02Redresse\\THS76-162.jpg', numfile=162, width=2020, height=2831, colp=None, rowp=None)
+
+
+# Determinate median value for cropping
+widths = []
+heights = []
+rowps = []
+colps_p = []
+colps_i = []
 for page in Pages:
-    print("Pages.append("+repr(page)+")")
-sys.exit(0)
+    widths.append(page.width)
+    heights.append(page.height)
+    rowps.append(page.rowp)
+    if page.numfile % 2 == 0:
+        colps_p.append(page.colp)
+    else:
+        colps_i.append(page.colp)
 
+width_m = int(statistics.median(widths))
+height_m = int(statistics.median(heights))
+rowp_m = int(statistics.median(x for x in rowps if x))
+colpp_m = int(statistics.median(x for x in colps_p if x))
+colpi_m = int(statistics.median(x for x in colps_i if x))
 
-"""
-# Precomputed in step 1
-rowpmax= 5533
-colppairmax= 379
-colpimpairmax= 3565
-margedmax= 336
-
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-001.png', numfile=1, width=3809, height=5616, colp=None, rowp=None))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-002.png', numfile=2, width=3746, height=5616, colp=None, rowp=None))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-003.png', numfile=3, width=3711, height=5616, colp=None, rowp=None))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-004.png', numfile=4, width=3680, height=5616, colp=None, rowp=None))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-005.png', numfile=5, width=3854, height=5616, colp=None, rowp=None))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-006.png', numfile=6, width=3746, height=5616, colp=218, rowp=5487))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-007.png', numfile=7, width=3854, height=5616, colp=3544, rowp=5504))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-008.png', numfile=8, width=3746, height=5616, colp=200, rowp=5510))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-009.png', numfile=9, width=3854, height=5616, colp=3534, rowp=5512))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-010.png', numfile=10, width=3746, height=5616, colp=200, rowp=5496))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-011.png', numfile=11, width=3854, height=5616, colp=3565, rowp=5516))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-012.png', numfile=12, width=3746, height=5616, colp=200, rowp=5509))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-013.png', numfile=13, width=3711, height=5616, colp=3519, rowp=5518))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-014.png', numfile=14, width=3746, height=5616, colp=200, rowp=5499))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-015.png', numfile=15, width=3854, height=5616, colp=3551, rowp=5508))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-016.png', numfile=16, width=3746, height=5616, colp=212, rowp=5508))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-017.png', numfile=17, width=3727, height=5632, colp=3511, rowp=5515))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-018.png', numfile=18, width=3762, height=5632, colp=250, rowp=5523))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-019.png', numfile=19, width=3727, height=5632, colp=3518, rowp=5521))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-020.png', numfile=20, width=3762, height=5632, colp=218, rowp=5524))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-021.png', numfile=21, width=3727, height=5632, colp=3504, rowp=5516))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-022.png', numfile=22, width=3762, height=5632, colp=252, rowp=5519))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-023.png', numfile=23, width=3727, height=5632, colp=3500, rowp=5523))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-024.png', numfile=24, width=3762, height=5632, colp=225, rowp=5514))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-025.png', numfile=25, width=3727, height=5632, colp=3496, rowp=5515))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-026.png', numfile=26, width=3762, height=5632, colp=242, rowp=5506))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-027.png', numfile=27, width=3727, height=5632, colp=3491, rowp=5523))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-028.png', numfile=28, width=3762, height=5632, colp=257, rowp=5515))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-029.png', numfile=29, width=3727, height=5632, colp=3483, rowp=5521))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-030.png', numfile=30, width=3762, height=5632, colp=277, rowp=5511))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-031.png', numfile=31, width=3727, height=5632, colp=3486, rowp=5523))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-032.png', numfile=32, width=3762, height=5632, colp=252, rowp=5510))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-033.png', numfile=33, width=3727, height=5632, colp=3474, rowp=5520))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-034.png', numfile=34, width=3762, height=5632, colp=290, rowp=5504))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-035.png', numfile=35, width=3727, height=5632, colp=3473, rowp=5519))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-036.png', numfile=36, width=3762, height=5632, colp=267, rowp=5506))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-037.png', numfile=37, width=3727, height=5632, colp=3473, rowp=5518))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-038.png', numfile=38, width=3762, height=5632, colp=288, rowp=5506))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-039.png', numfile=39, width=3727, height=5632, colp=3474, rowp=5521))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-040.png', numfile=40, width=3762, height=5632, colp=276, rowp=5511))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-041.png', numfile=41, width=3727, height=5632, colp=3462, rowp=5519))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-042.png', numfile=42, width=3762, height=5632, colp=294, rowp=5505))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-043.png', numfile=43, width=3727, height=5632, colp=3469, rowp=5524))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-044.png', numfile=44, width=3762, height=5632, colp=281, rowp=5503))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-045.png', numfile=45, width=3727, height=5632, colp=None, rowp=None))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-046.png', numfile=46, width=3762, height=5632, colp=293, rowp=5505))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-047.png', numfile=47, width=3727, height=5632, colp=3461, rowp=5524))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-048.png', numfile=48, width=3762, height=5632, colp=365, rowp=5502))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-049.png', numfile=49, width=3727, height=5632, colp=3449, rowp=5520))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-050.png', numfile=50, width=3762, height=5632, colp=369, rowp=5505))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-051.png', numfile=51, width=3727, height=5632, colp=3455, rowp=5525))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-052.png', numfile=52, width=3762, height=5632, colp=291, rowp=5510))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-053.png', numfile=53, width=3708, height=5632, colp=3451, rowp=5521))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-054.png', numfile=54, width=3762, height=5632, colp=318, rowp=5513))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-055.png', numfile=55, width=3727, height=5632, colp=3450, rowp=5524))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-056.png', numfile=56, width=3806, height=5632, colp=298, rowp=5507))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-057.png', numfile=57, width=3727, height=5632, colp=3450, rowp=5522))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-058.png', numfile=58, width=3786, height=5632, colp=323, rowp=5496))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-059.png', numfile=59, width=3727, height=5632, colp=3447, rowp=5525))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-060.png', numfile=60, width=3762, height=5632, colp=296, rowp=5509))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-061.png', numfile=61, width=3727, height=5632, colp=3446, rowp=5524))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-062.png', numfile=62, width=3762, height=5632, colp=322, rowp=5491))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-063.png', numfile=63, width=3727, height=5632, colp=3446, rowp=5511))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-064.png', numfile=64, width=3762, height=5632, colp=310, rowp=5494))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-065.png', numfile=65, width=3727, height=5632, colp=3437, rowp=5514))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-066.png', numfile=66, width=3762, height=5632, colp=328, rowp=5509))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-067.png', numfile=67, width=3727, height=5632, colp=3436, rowp=5524))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-068.png', numfile=68, width=3762, height=5632, colp=307, rowp=5512))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-069.png', numfile=69, width=3727, height=5632, colp=3426, rowp=5520))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-070.png', numfile=70, width=3762, height=5632, colp=335, rowp=5500))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-071.png', numfile=71, width=3727, height=5632, colp=3437, rowp=5527))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-072.png', numfile=72, width=3762, height=5632, colp=326, rowp=5492))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-073.png', numfile=73, width=3727, height=5632, colp=3433, rowp=5509))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-074.png', numfile=74, width=3762, height=5632, colp=341, rowp=5494))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-075.png', numfile=75, width=3727, height=5632, colp=3428, rowp=5523))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-076.png', numfile=76, width=3762, height=5632, colp=310, rowp=5507))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-077.png', numfile=77, width=3727, height=5632, colp=3427, rowp=5504))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-078.png', numfile=78, width=3762, height=5632, colp=335, rowp=5503))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-079.png', numfile=79, width=3727, height=5632, colp=3425, rowp=5526))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-080.png', numfile=80, width=3762, height=5632, colp=320, rowp=5516))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-081.png', numfile=81, width=3727, height=5632, colp=3422, rowp=5519))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-082.png', numfile=82, width=3762, height=5632, colp=337, rowp=5523))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-083.png', numfile=83, width=3727, height=5632, colp=3422, rowp=5525))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-084.png', numfile=84, width=3762, height=5632, colp=320, rowp=5525))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-085.png', numfile=85, width=3744, height=5632, colp=3433, rowp=5520))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-086.png', numfile=86, width=3797, height=5632, colp=341, rowp=5523))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-087.png', numfile=87, width=3754, height=5632, colp=3435, rowp=5529))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-088.png', numfile=88, width=3769, height=5632, colp=328, rowp=5528))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-089.png', numfile=89, width=3723, height=5632, colp=3416, rowp=None))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-090.png', numfile=90, width=3798, height=5632, colp=354, rowp=5525))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-091.png', numfile=91, width=3755, height=5632, colp=3419, rowp=5522))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-092.png', numfile=92, width=3789, height=5632, colp=299, rowp=5527))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-093.png', numfile=93, width=3729, height=5632, colp=3456, rowp=5507))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-094.png', numfile=94, width=3832, height=5632, colp=379, rowp=5527))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-095.png', numfile=95, width=3727, height=5632, colp=3439, rowp=5526))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-096.png', numfile=96, width=3762, height=5632, colp=306, rowp=5528))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-097.png', numfile=97, width=3727, height=5632, colp=3435, rowp=5517))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-098.png', numfile=98, width=3762, height=5632, colp=320, rowp=5518))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-099.png', numfile=99, width=3727, height=5632, colp=3429, rowp=5531))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-100.png', numfile=100, width=3762, height=5632, colp=311, rowp=5530))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-101.png', numfile=101, width=3727, height=5632, colp=3425, rowp=5518))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-102.png', numfile=102, width=3806, height=5632, colp=376, rowp=5518))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-103.png', numfile=103, width=3727, height=5632, colp=3422, rowp=5530))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-104.png', numfile=104, width=3762, height=5632, colp=314, rowp=5532))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-105.png', numfile=105, width=3727, height=5632, colp=3419, rowp=5525))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-106.png', numfile=106, width=3762, height=5632, colp=327, rowp=5521))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-107.png', numfile=107, width=3727, height=5632, colp=3422, rowp=5524))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-108.png', numfile=108, width=3798, height=5632, colp=311, rowp=5524))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-109.png', numfile=109, width=3727, height=5632, colp=3417, rowp=None))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-110.png', numfile=110, width=3762, height=5632, colp=336, rowp=5518))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-111.png', numfile=111, width=3727, height=5632, colp=3425, rowp=5532))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-112.png', numfile=112, width=3762, height=5632, colp=314, rowp=5532))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-113.png', numfile=113, width=3743, height=5632, colp=3433, rowp=5522))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-114.png', numfile=114, width=3778, height=5632, colp=338, rowp=5524))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-115.png', numfile=115, width=3743, height=5632, colp=3445, rowp=5526))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-116.png', numfile=116, width=3778, height=5632, colp=318, rowp=5524))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-117.png', numfile=117, width=3743, height=5632, colp=3443, rowp=5513))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-118.png', numfile=118, width=3778, height=5632, colp=334, rowp=5515))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-119.png', numfile=119, width=3743, height=5632, colp=3444, rowp=5527))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-120.png', numfile=120, width=3778, height=5632, colp=323, rowp=5523))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-121.png', numfile=121, width=3743, height=5632, colp=3440, rowp=5522))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-122.png', numfile=122, width=3778, height=5632, colp=344, rowp=5518))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-123.png', numfile=123, width=3743, height=5632, colp=3439, rowp=5529))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-124.png', numfile=124, width=3778, height=5632, colp=317, rowp=5523))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-125.png', numfile=125, width=3743, height=5632, colp=3449, rowp=5519))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-126.png', numfile=126, width=3778, height=5632, colp=338, rowp=5520))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-127.png', numfile=127, width=3743, height=5632, colp=3448, rowp=5516))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-128.png', numfile=128, width=3778, height=5632, colp=321, rowp=5508))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-129.png', numfile=129, width=3743, height=5632, colp=3451, rowp=5510))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-130.png', numfile=130, width=3778, height=5632, colp=335, rowp=5501))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-131.png', numfile=131, width=3743, height=5632, colp=3459, rowp=5520))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-132.png', numfile=132, width=3760, height=5632, colp=322, rowp=5516))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-133.png', numfile=133, width=3743, height=5632, colp=None, rowp=None))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-134.png', numfile=134, width=3778, height=5632, colp=322, rowp=5510))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-135.png', numfile=135, width=3743, height=5632, colp=3457, rowp=5532))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-136.png', numfile=136, width=3778, height=5632, colp=305, rowp=5519))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-137.png', numfile=137, width=3743, height=5632, colp=3453, rowp=5517))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-138.png', numfile=138, width=3778, height=5632, colp=329, rowp=5509))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-139.png', numfile=139, width=3743, height=5632, colp=3456, rowp=5527))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-140.png', numfile=140, width=3778, height=5632, colp=302, rowp=5521))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-141.png', numfile=141, width=3743, height=5632, colp=3462, rowp=5516))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-142.png', numfile=142, width=3778, height=5632, colp=331, rowp=5504))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-143.png', numfile=143, width=3743, height=5632, colp=3467, rowp=5527))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-144.png', numfile=144, width=3757, height=5632, colp=309, rowp=5516))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-145.png', numfile=145, width=3743, height=5632, colp=3459, rowp=5519))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-146.png', numfile=146, width=3778, height=5632, colp=313, rowp=5490))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-147.png', numfile=147, width=3743, height=5632, colp=3463, rowp=5513))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-148.png', numfile=148, width=3748, height=5446, colp=310, rowp=5445))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-149.png', numfile=149, width=3743, height=5632, colp=3469, rowp=5509))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-150.png', numfile=150, width=3757, height=5632, colp=328, rowp=5498))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-151.png', numfile=151, width=3743, height=5632, colp=3473, rowp=5514))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-152.png', numfile=152, width=3746, height=5632, colp=296, rowp=5518))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-153.png', numfile=153, width=3743, height=5632, colp=3476, rowp=5524))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-154.png', numfile=154, width=3729, height=5632, colp=295, rowp=5515))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-155.png', numfile=155, width=3743, height=5632, colp=3490, rowp=5523))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-156.png', numfile=156, width=3703, height=5632, colp=258, rowp=5509))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-157.png', numfile=157, width=3743, height=5632, colp=3494, rowp=5504))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-158.png', numfile=158, width=3746, height=5632, colp=297, rowp=5507))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-159.png', numfile=159, width=3743, height=5632, colp=3483, rowp=5516))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-160.png', numfile=160, width=3714, height=5632, colp=276, rowp=5505))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-161.png', numfile=161, width=3743, height=5632, colp=None, rowp=None))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-162.png', numfile=162, width=3778, height=5632, colp=302, rowp=5514))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-163.png', numfile=163, width=3743, height=5632, colp=3491, rowp=5533))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-164.png', numfile=164, width=3778, height=5632, colp=273, rowp=5518))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-165.png', numfile=165, width=3743, height=5632, colp=3500, rowp=5521))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-166.png', numfile=166, width=3748, height=5632, colp=290, rowp=5517))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-167.png', numfile=167, width=3743, height=5632, colp=3506, rowp=5526))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-168.png', numfile=168, width=3778, height=5632, colp=None, rowp=None))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-169.png', numfile=169, width=3743, height=5632, colp=None, rowp=None))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-170.png', numfile=170, width=3778, height=5632, colp=None, rowp=None))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-171.png', numfile=171, width=3743, height=5632, colp=None, rowp=None))
-Pages.append(ScannedPage(file='T:\\Scans\\THS32\\3 BCI\\THS32-172.png', numfile=172, width=3714, height=5632, colp=None, rowp=None))
+print(f'{width_m=}')
+print(f'{height_m=}')
+print(f'{rowp_m=}')
+print(f'{colpp_m=}')
+print(f'{colpi_m=}')
 
 
 # Step 2 process data
-finalwidthimpair = colpimpairmax+margedmax
-margebmax = max(page.height-page.rowp for page in Pages if page.rowp)
-finalheight = rowpmax+margebmax
-margegmax = max(colppairmax-page.colp for page in Pages if page.colp and page.numfile % 2 == 0)
-finalwidthpair = max(page.width+colppairmax-page.colp for page in Pages if page.colp and page.numfile % 2 == 0)
-finalwidth = max(finalwidthpair, finalwidthimpair)
-print("finalwidth:", finalwidth)
-print("finalheight:", finalheight)
-
-# pG = []
-# pD = []
-# colpG = []
-# colpD = []
-# for page in Pages:
-#     if page.numfile % 2 == 1:
-#         pD.append(page.numfile)
-#         colpD.append(page.colp)
-#     else:
-#         pG.append(page.numfile)
-#         colpG.append(page.colp)
-# plt.plot(pD, colpD)
-# plt.show()
-
 for page in Pages:
-    if page.numfile<=200:
-        #print(page)
-        if page.numfile % 2 == 1:
-            if page.colp:
-                addmargeg = colpimpairmax-page.colp
-                addmarged = margedmax-(page.width-page.colp)
-            else:
-                addmargeg = (finalwidth-page.width)//2
-                addmarged = finalwidth-page.width-addmargeg
-            newwidth = page.width+addmargeg+addmarged
-            addmargeg += (finalwidth-newwidth)//2
-            addmarged += (finalwidth-page.width-addmargeg-addmarged)
-            #print('addmargeg', addmargeg, '  addmarged', addmarged, '  newwidth', newwidth)
-        else:
-            if page.colp:
-                addmargeg = colppairmax-page.colp
-                addmarged = finalwidth-page.width-addmargeg
-            else:
-                addmargeg = (finalwidth-page.width)//2
-                addmarged = finalwidth-page.width-addmargeg
-            newwidth = page.width+addmargeg+addmarged
-            addmargeg += (finalwidth-newwidth)//2
-            addmarged += (finalwidth-page.width-addmargeg-addmarged)
-            #print('addmargeg', addmargeg, '  addmarged', addmarged, '  newwidth', newwidth)
+    folder, filename = os.path.split(page.filefp)
+    print(filename)
 
-        if page.rowp:
-            addmargeh = rowpmax-page.rowp
-            addmargeb = margebmax-(page.height-page.rowp)
-        else:
-            addmargeh = (finalheight-page.height)//2
-            addmargeb = finalheight-page.height-addmargeh
-        newheight = page.height+addmargeh+addmargeb
-        #print('addmargeh', addmargeh, '  addmargeb', addmargeb, '  newheight', newheight)
+    if page.numfile%2==0:
+        target = os.path.join(dest, 'p', filename)
+    else:
+        target = os.path.join(dest, 'i', filename)
 
-        print(f'convert "{page.file}" -background white -extent {finalwidth}x{finalheight}-{addmargeg}-{addmargeh} "{dest}\\{prefix}-{page.numfile:0>3}.png"')
-"""
+    # If the target already exist and is more recent than source, no need to do it again
+    if os.path.isfile(target) and os.path.getmtime(target) > os.path.getmtime(page.filefp):
+        continue
+
+    img = mpimg.imread(page.filefp)[:, :, :3]
+    width: int = img.shape[1]
+    height: int = img.shape[0]
+
+    if page.rowp:
+        tins = rowp_m-page.rowp
+    else:
+        tins = (height_m-page.height)//2
+    bins = height_m-page.height-tins
+
+    if page.numfile==5 or page.numfile==9:
+        breakpoint()
+
+    if page.numfile%2==0:
+        if page.colp:
+            lins = colpp_m-page.colp
+        else:
+            lins = (width_m-page.width)//2
+        rins = width_m-page.width-lins
+    else:
+        if page.colp:
+            lins = colpi_m-page.colp
+        else:
+            lins = (width_m-page.width)//2
+        rins = width_m-page.width-lins
+
+    img = cropimage.crop_image(img, tins, bins, lins, rins)
+    mpimg.imsave(target, img, format='jpg', dpi=300)

@@ -3,19 +3,13 @@ import sys
 import numpy as np
 import math
 import matplotlib.image as mpimg
-
+from common_fs import *
 
 # source = r'C:\Scans\THS32\1 Scans\1'
 # dest = r'C:\Scans\THS32\2 Crop HZ\1'
 
 source = r'C:\Scans\THS32\1 Scans\2'
 dest = r'C:\Scans\THS32\2 Crop HZ\2'
-
-
-def files1(path):
-    for root, subs, files in os.walk(path):
-        for file in files:
-            yield os.path.join(source, file)
 
 
 def process(file: str, picout: str, numfile: int):
@@ -37,7 +31,7 @@ def process(file: str, picout: str, numfile: int):
     print('->', picout)
 
 
-for pathfile in files1(source):
+for pathfile in get_all_files(source):
     path, file = os.path.split(pathfile)
     basename, ext = os.path.splitext(file)
     if ext.lower() == '.png':
