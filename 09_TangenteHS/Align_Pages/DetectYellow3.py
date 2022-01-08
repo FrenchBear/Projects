@@ -16,9 +16,9 @@ import matplotlib.image as mpimg    # type: ignore
 import cropimage
 from common_fs import *
 
-(rowmin, rowmax) = (2680, 2800)
+(rowmin, rowmax) = (2680, 2900)
 (colminpair, colmaxpair) = (130, 330)
-(colminimpair, colmaximpair) = (1640, 1820)
+(colminimpair, colmaximpair) = (1640, 1920)
 
 @dataclass
 class ScannedPage:
@@ -51,38 +51,40 @@ def process(file: str, numfile: int, num_backcolor: np.ndarray):
     height: int = img.shape[0]
     print(width, ';', height, ';', sep='', end='')
 
-    if numfile % 2 == 0:
-        (colmin, colmax) = (colminpair, colmaxpair)
-    else:
-        (colmin, colmax) = (colminimpair, colmaximpair)
-
-    area = img[rowmin:rowmax, colmin:colmax, :]
-    areaheight: int = area.shape[0]
-    areawidth: int = area.shape[1]
-
-    area = area-num_backcolor
-    area = area.reshape(areawidth*areaheight, 3)
-    area = np.apply_along_axis(veclength, 1, area)
-    area = area.reshape(areaheight, areawidth)
-
     colp: Optional[int] = None
     rowp: Optional[int] = None
 
-    if numfile % 2 == 0:
-        r = range(0, areawidth)
-    else:
-        r = range(areawidth-1, -1, -1)
-    for col in r:
-        n = (area[:, col] <= 50).sum()
-        if n >= 30:
-            colp = col+colmin
-            break
+    if num_backcolor is not None:
+        if numfile % 2 == 0:
+            (colmin, colmax) = (colminpair, colmaxpair)
+        else:
+            (colmin, colmax) = (colminimpair, colmaximpair)
 
-    for row in range(areaheight-1, 0, -1):
-        n = (area[row, :] <= 50).sum()
-        if n >= 30:
-            rowp = row+rowmin
-            break
+        rm = min(rowmax, height-2)
+        area = img[rowmin:rm, colmin:colmax, :]
+        areaheight: int = area.shape[0]
+        areawidth: int = area.shape[1]
+
+        area = area-num_backcolor
+        area = area.reshape(areawidth*areaheight, 3)
+        area = np.apply_along_axis(veclength, 1, area)
+        area = area.reshape(areaheight, areawidth)
+
+        if numfile % 2 == 0:
+            r = range(0, areawidth)
+        else:
+            r = range(areawidth-1, -1, -1)
+        for col in r:
+            n = (area[:, col] <= 50).sum()
+            if n >= 30:
+                colp = col+colmin
+                break
+
+        for row in range(areaheight-1, 0, -1):
+            n = (area[row, :] <= 50).sum()
+            if n >= 30:
+                rowp = row+rowmin
+                break
 
     print(colp, ';', rowp, sep='')
 
@@ -96,7 +98,7 @@ def p(file, numfile, width, height, colp, rowp):
 
 
 # Step 1, determine sizes and position of yellow rect
-root = 'D:\Scans\THS38'
+root = 'D:\Scans\THS58'
 source = os.path.join(root, '02Redresse')
 dest =os.path.join(root, '03Crop')
 
@@ -117,6 +119,23 @@ for calibration_file in get_files(calibration_root):
     colors_dic[color_name] = color
 
 def get_color(page: int) -> np.ndarray:
+    # 43
+    # if page<3: return None
+    # if 3<=page<=4: return colors_dic['bleuciel']
+
+    #45
+    # if 6<=page<=9 or page==15 or 32<=page<=33 or 36<=page<=37 or page==49 or page==55 or 64<=page<=66 or 82<=page<=87 or 96<=page<=97 or 104<=page<=108 or 114<=page<=116 or 141<=page<=144 or 146<=page<=147: return colors_dic['bordeaux']
+    # if 10<=page<=14 or 56<=page<=59 or page==67 or 78<=page<=80 or 122<=page<=123: return colors_dic['cyan']
+    # if 16<=page<=18 or 50<=page<=51 or 52<=page<=54 or 118<=page<=121: return colors_dic['orange']
+    # if 20<=page<=22 or 74<=page<=77 or page==94: return colors_dic['gris']
+    # if 26<=page<=29: return colors_dic['caca']
+    # if 46<=page<=48: return colors_dic['moisi']
+    # if 60<=page<=63: return colors_dic['vert']
+    # if 92<=page<=93 or 110<=page<=113: return colors_dic['bleugris']
+    # if 102<=page<=103: return  colors_dic['vertbouteille']
+    # if 128<=page<=130: return  colors_dic['grisfonce']
+    # if 138<=page<=140: return  colors_dic['grischaud']
+
     return colors_dic['jaune']
 
 process_files = True
@@ -128,8 +147,10 @@ if process_files:
             nf = int(basename[-3:])
             process(filefp, nf, get_color(nf))
     print()
-    for page in Pages:
-        print(repr(page).replace('ScannedPage', 'p'))
+    with open(os.path.join(root, 'Pages.py'), 'w', encoding='utf-8') as fout:
+        for page in Pages:
+            print(repr(page).replace('ScannedPage', 'p'))
+            fout.write(repr(page).replace('ScannedPage', 'p')+'\n')
     #sys.exit(0)
    
 else:
@@ -273,11 +294,11 @@ for page in Pages:
     else:
         colps_i.append(page.colp)
 
-width_m = int(statistics.median(widths))-40
-height_m = int(statistics.median(heights))-50
-rowp_m = int(statistics.median(x for x in rowps if x))-20
-colpp_m = int(statistics.median(x for x in colps_p if x))-20
-colpi_m = int(statistics.median(x for x in colps_i if x))+20
+width_m = int(statistics.median(widths))
+height_m = int(statistics.median(heights))
+rowp_m = int(statistics.median(x for x in rowps if x))
+colpp_m = int(statistics.median(x for x in colps_p if x))
+colpi_m = int(statistics.median(x for x in colps_i if x))
 
 print(f'{width_m=}')
 print(f'{height_m=}')
