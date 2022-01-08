@@ -4,7 +4,7 @@ import numpy as np
 from scipy.signal import find_peaks
 
 #img = mpimg.imread('YellowRect.png')
-img = mpimg.imread('YellowCalibration.jpg')
+img = mpimg.imread('YellowRect75.jpg')
 print(img)
 
 avg = np.median(img, axis=(0,1))
