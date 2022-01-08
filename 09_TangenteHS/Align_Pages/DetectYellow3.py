@@ -2,7 +2,8 @@
 # Final processing of pages
 #
 # 2022-01-06    PV      Complete version
-# 2022-06-07    PV      Yellow autocalibration
+# 2022-01-07    PV      Yellow autocalibration
+# 2022-01-08    PV      Multiple values for num_backcolor
 
 import math
 import statistics
@@ -15,7 +16,6 @@ import matplotlib.image as mpimg    # type: ignore
 import cropimage
 from common_fs import *
 
-yellow = np.array([251., 211., 19.])            # Just to define variables, actual values ade determined later
 (rowmin, rowmax) = (2680, 2800)
 (colminpair, colmaxpair) = (130, 330)
 (colminimpair, colmaximpair) = (1640, 1820)
@@ -43,7 +43,7 @@ def veclength(v):
     return math.sqrt(v[0]**2+v[1]**2+v[2]**2)
 
 
-def process(file: str, numfile: int):
+def process(file: str, numfile: int, num_backcolor: np.ndarray):
     print(file, ';', numfile, ';', sep='', end='')
 
     img = mpimg.imread(file)[:, :, :3]
@@ -60,7 +60,7 @@ def process(file: str, numfile: int):
     areaheight: int = area.shape[0]
     areawidth: int = area.shape[1]
 
-    area = area-yellow
+    area = area-num_backcolor
     area = area.reshape(areawidth*areaheight, 3)
     area = np.apply_along_axis(veclength, 1, area)
     area = area.reshape(areaheight, areawidth)
@@ -96,9 +96,9 @@ def p(file, numfile, width, height, colp, rowp):
 
 
 # Step 1, determine sizes and position of yellow rect
-tag = 'THS74'
-source = fr'D:\Scans\{tag}\02Redresse'
-dest = fr'D:\Scans\{tag}\03Crop'
+root = 'D:\Scans\THS38'
+source = os.path.join(root, '02Redresse')
+dest =os.path.join(root, '03Crop')
 
 if not os.path.isdir(dest):
     os.mkdir(dest)
@@ -107,18 +107,26 @@ for d in [dest+'\\p', dest+'\\i']:
         os.mkdir(d)
 
 # Calibration
-img = mpimg.imread(os.path.join(source, r'..\YellowRect.jpg'))
-yellow = np.median(img, axis=(0,1))
-print(f'{yellow=}')
-process_files = True
+calibration_root = os.path.join(root, 'Calibration')
+colors_dic: dict[str, np.ndarray] = {}
+for calibration_file in get_files(calibration_root):
+    color_name = basename(calibration_file).casefold()
+    img = mpimg.imread(os.path.join(calibration_root, calibration_file))
+    color = np.median(img, axis=(0,1))
+    print(f'{color_name}={color}')
+    colors_dic[color_name] = color
 
+def get_color(page: int) -> np.ndarray:
+    return colors_dic['jaune']
+
+process_files = True
 if process_files:
     for filefp in get_all_files(source):
         path, filename = os.path.split(filefp)
         basename, ext = os.path.splitext(filename)
         if ext.lower() == '.jpg':
             nf = int(basename[-3:])
-            process(filefp, nf)
+            process(filefp, nf, get_color(nf))
     print()
     for page in Pages:
         print(repr(page).replace('ScannedPage', 'p'))

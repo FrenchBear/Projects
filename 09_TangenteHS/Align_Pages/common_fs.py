@@ -3,6 +3,7 @@
 # 2020-03-05    PV
 # 2021-04-10    PV      Support du filesystem isolé sous common_fs.py
 # 2022-01-06    PV      Version avec commentaires
+# 2022-01-08    PV      basename
 
 import os
 from typing import List, Iterable
@@ -36,5 +37,12 @@ def filepart(fullpath: str) -> str:
     _, file = os.path.split(fullpath)
     return file
 
+def basename(filewithext: str) -> str:
+    '''Retourne le nom de fichier sans extension'''
+    base, _ = os.path.splitext(filewithext)
+    return base
+
+
 if __name__=='__main__':
-    print(filepart(r'c:\temp\f1.txt'))
+    print(filepart(r'c:\temp\f1.txt'))          # f1.txt
+    print(basename('nom_de_fichier.ext'))       # nom_de_fichier
