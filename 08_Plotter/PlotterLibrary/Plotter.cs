@@ -2,6 +2,7 @@
 // Public API of plotter (Plotter class)
 //
 // 2021-12-09   PV
+// 2022-09-18   PV      Visual Studio 17.1 complains about struct DrawingExtent without an explicit constructor...
 
 using System;
 using System.Collections.Generic;
@@ -313,6 +314,8 @@ public struct DrawingExtent
     public float XMax { get; internal set; } = float.MinValue;
     public float YMin { get; internal set; } = float.MaxValue;
     public float YMax { get; internal set; } = float.MinValue;
+
+    public DrawingExtent() { }  // To make compiler happy, starting with version 17.1, without it, Visual Studio detects error CS8983: A 'struct' with field initializers must include an explicitly declared constructor
 
     public void Clear()
     {
