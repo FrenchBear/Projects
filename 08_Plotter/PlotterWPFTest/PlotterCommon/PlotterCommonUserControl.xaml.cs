@@ -7,9 +7,7 @@ using System.Diagnostics;
 using System.Windows.Controls;
 
 namespace PlotterWPFTest;
-/// <summary>
-/// Interaction logic for PlotterCommonUserControl.xaml
-/// </summary>
+
 public partial class PlotterCommonUserControl: UserControl
 {
     public PlotterCommonUserControl() 
@@ -18,6 +16,9 @@ public partial class PlotterCommonUserControl: UserControl
     private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
     {
         if (DataContext is PlotterCommonViewModel pcvm && pcvm.Plotter is not null && !string.IsNullOrEmpty(pcvm.SelectedPrinter))
-            Debug.WriteLine($"Print to <{pcvm.SelectedPrinter}>");
+        {
+            //Debug.WriteLine($"Print to <{pcvm.SelectedPrinter}>");
+            pcvm.Plotter.Print(pcvm.SelectedPrinter);
+        }
     }
 }

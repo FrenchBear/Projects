@@ -46,4 +46,12 @@ public partial class MainWindow: Window
     // For dev
     private void DebugButton_Click(object sender, RoutedEventArgs e) 
         => Debug.WriteLine($"WFHost: W={WFHost.ActualWidth} H={WFHost.ActualHeight}");
+
+    private void PythagorasTreeButton_Click(object sender, RoutedEventArgs e)
+    {
+        var ctl = new PythagorasTreeUserControl();
+        DrawControlBorder.Child = ctl;
+        WFHost.Dispatcher.Invoke(DispatcherPriority.Render, () => { });     // Force layout recalc and resize WFHost.pic
+        ctl.MyPlotter = p;
+    }
 }

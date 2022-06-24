@@ -92,7 +92,6 @@ internal static class Smoothing
 
         // Note the nrOfInterpolatedPoints acts as a kind of tension factor between 0 and 1 because it is normalised
         // to 1/nrOfInterpolatedPoints. It can never be 0
-        double t = 0;
         PointD spoint;
         var spline = new List<PointD>();
         var loopTo = spoints.Count - 4;
@@ -101,7 +100,7 @@ internal static class Smoothing
             var loopTo1 = nrOfInterpolatedPoints - 1;
             for (int intp = 0; intp <= loopTo1; intp++)
             {
-                t = 1 / (double)nrOfInterpolatedPoints * intp;
+                double t = 1 / (double)nrOfInterpolatedPoints * intp;
                 spoint = 0.5 * (2 * spoints[i + 1] + (-1 * spoints[i] + spoints[i + 2]) * t + (2 * spoints[i] - 5 * spoints[i + 1] + 4 * spoints[i + 2] - spoints[i + 3]) * (double)Math.Pow(t, 2) + (-1 * spoints[i] + 3 * spoints[i + 1] - 3 * spoints[i + 2] + spoints[i + 3]) * (double)Math.Pow(t, 3));
                 spline.Add(new PointD(spoint));
             }

@@ -3,10 +3,12 @@
 //
 // 2021-12-09   PV
 // 2022-09-18   PV      Visual Studio 17.1 complains about struct DrawingExtent without an explicit constructor...
+// 2022-06-24   PV      Support for Vector2
 
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Numerics;
 using System.Windows.Forms;
 
 namespace PlotterLibrary;
@@ -14,7 +16,6 @@ namespace PlotterLibrary;
 public partial class Plotter
 {
     private readonly List<PlotterCommand> Commands = new();
-    //private RenderingForm? rf = null;
     public DrawingExtent Extent = new();
     private PictureBox? picOut = null;
 
@@ -118,6 +119,9 @@ public partial class Plotter
         AdjustExtent(p2x, p2y);
     }
 
+    public void DrawLine(Vector2 p1, Vector2 p2)
+    => DrawLine(p1.X, p1.Y, p2.X, p2.Y);
+
     public void DrawBox(float p1x, float p1y, float p2x, float p2y)
     {
         var cmd = new PC_DrawBox { Color = Pen.Color, Width = Pen.Width, P1X = p1x, P1Y = p1y, P2X = p2x, P2Y = p2y };
@@ -125,6 +129,9 @@ public partial class Plotter
         AdjustExtent(p1x, p1y);
         AdjustExtent(p2x, p2y);
     }
+
+    public void DrawBox(Vector2 p1, Vector2 p2)
+        => DrawBox(p1.X, p1.Y, p2.X, p2.Y);
 
     public void DrawAxes(float ox, float oy, float stepx, float stepy)
     {
@@ -135,6 +142,9 @@ public partial class Plotter
         Pen.PenDown = false;
     }
 
+    public void DrawAxes(Vector2 o, float stepx, float stepy)
+        => DrawAxes(o.X, o.Y, stepx, stepy);
+
     public void DrawGrid(float ox, float oy, float stepx, float stepy)
     {
         var cmd = new PC_DrawGrid { Color = Pen.Color, Width = Pen.Width, OX = ox, OY = oy, StepX = stepx, StepY = stepy };
@@ -144,6 +154,9 @@ public partial class Plotter
         Pen.PenDown = false;
     }
 
+    public void DrawGrid(Vector2 o, float stepx, float stepy)
+        => DrawGrid(o.X, o.Y, stepx, stepy);
+
     public void DrawCircle(float cx, float cy, float r)
     {
         var cmd = new PC_DrawCircle { Color = Pen.Color, Width = Pen.Width, CX = cx, CY = cy, R = r };
@@ -151,6 +164,9 @@ public partial class Plotter
         AdjustExtent(cx + r, cy + r);
         AdjustExtent(cx - r, cy - r);
     }
+
+    public void DrawCircle(Vector2 c, float r)
+        => DrawCircle(c.X, c.Y, r);
 
     public void PenUp()
         => Pen.PenDown = false;
@@ -168,6 +184,9 @@ public partial class Plotter
         Pen.PenDown = true;
     }
 
+    public void Plot(Vector2 v)
+        => Plot(v.X, v.Y);
+
     public void Move(float x, float y)
     {
         AdjustExtent(x, y);
@@ -175,6 +194,9 @@ public partial class Plotter
         Pen.Y = y;
         Pen.PenDown = true;
     }
+
+    public void Move(Vector2 v)
+        => Move(v.X, v.Y);
 
     public void WindowTitle(string title)
     {
@@ -186,12 +208,6 @@ public partial class Plotter
 
     public void Refresh()
     {
-        //if (picOut == null)
-        //{
-        //    rf = new RenderingForm(this);
-        //    rf.Show();
-        //    picOut = rf.picOut;
-        //}
         if (picOut != null)
             RefreshPlot();
     }

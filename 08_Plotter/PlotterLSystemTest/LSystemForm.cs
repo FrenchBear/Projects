@@ -53,8 +53,10 @@ public partial class LSystemForm: Form
             new LSystem("Hexa", "Hexagonal fractal (ma propre version)", 6, "α210X", "X=XF-YF--YF+XF++XFXF+YF->1\r\nY=+XF-YFYF--YF-XF++XF+YF<1\r\nF="),
         };
 
-        List<Source> Sources = new();
-        Sources.Add(new Source("(Internal)", Internal));
+        List<Source> Sources = new()
+        {
+            new Source("(Internal)", Internal)
+        };
 
         foreach (string file in Directory.GetFiles("Systems", "*.l"))
             Sources.Add(new Source(Path.GetFileName(file), GetLSystemsFromFile(file)));
@@ -72,7 +74,7 @@ public partial class LSystemForm: Form
 
     }
 
-    private List<LSystem> GetLSystemsFromFile(string file)
+    private static List<LSystem> GetLSystemsFromFile(string file)
     {
         string Comments = "";
         string Name = "";
@@ -583,6 +585,8 @@ struct AngleAndPosition
     public double DirectAngle;              // Angle in radians controlled by / and \
     public double SegmentLength = 1;        // Stroke length
     public int color;                       // 0=Black
+
+    public AngleAndPosition() { Px = 0; Py = 0; Angle = 0; DirectAngle = 0; color = 0; }
 }
 
 class StrokeAndColor
