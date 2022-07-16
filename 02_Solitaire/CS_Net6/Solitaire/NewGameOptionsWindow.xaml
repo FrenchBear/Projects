@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SolWPF"
         mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=local:NewGameOptionsViewModel}"
         Icon="SolWPF.ico"
         Title="New Game Options" Height="150" Width="320" ResizeMode="NoResize">
 

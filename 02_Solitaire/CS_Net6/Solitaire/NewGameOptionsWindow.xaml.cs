@@ -32,4 +32,5 @@ public partial class NewGameOptionsWindow: Window
     //}
 
     private void CancelButton_Click(object sender, RoutedEventArgs e) => DialogResult = false;
+
 }
