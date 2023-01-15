@@ -2,13 +2,13 @@
 
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net6.0-windows</TargetFramework>
+		<TargetFramework>net7.0-windows</TargetFramework>
 		<Nullable>enable</Nullable>
 		<UseWPF>true</UseWPF>
 		<UseWindowsForms>true</UseWindowsForms>
 		<Authors>Pierre Violent</Authors>
 		<Description>Example of WPF window containing a WindowsForms host control itself containing a picture box to use as plotting surface for PlotterLibrary</Description>
-		<Copyright>Copyright ©2021-2022 Pierre Violent</Copyright>
+		<Copyright>Copyright ©2021-2023 Pierre Violent</Copyright>
 		<Version>1.2.0</Version>
 	</PropertyGroup>
 

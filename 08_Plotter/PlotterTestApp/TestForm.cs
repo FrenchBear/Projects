@@ -83,11 +83,8 @@ public partial class TestForm: Form
         }
     }
 
-    private void MainForm_Resize(object sender, EventArgs e)
-    {
-        if (p != null)
-            p.Refresh();
-    }
+    private void MainForm_Resize(object sender, EventArgs e) 
+        => p?.Refresh();
 
     private void PrintButton_Click(object sender, EventArgs e)
     {
