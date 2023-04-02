@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net7.0-windows</TargetFramework>
+		<RootNamespace>IntlNumbersWPFCore</RootNamespace>
+		<UseWPF>true</UseWPF>
+		<ApplicationIcon>ForeignNumbers.ico</ApplicationIcon>
+		<Description>Formatting numbers in Roman, Arabic and Chinese (Net7 C#11)</Description>
+		<Copyright>Copyright ©2019-2023 Pierre Violent</Copyright>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="ForeignNumbers.ico" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="ForeignNumbers.ico" />
+	</ItemGroup>
+
+</Project>
