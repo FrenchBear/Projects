@@ -1,5 +1,6 @@
 ﻿// ForeignsNumber UWP
 // UWP version of simple ForeignNummbers App
+//
 // 2019-04  PV
 
 using System;
@@ -8,7 +9,6 @@ using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-
 
 namespace ForeignNumbersUWP
 {
@@ -23,8 +23,8 @@ namespace ForeignNumbersUWP
         /// </summary>
         public App()
         {
-            this.InitializeComponent();
-            this.Suspending += OnSuspending;
+            InitializeComponent();
+            Suspending += OnSuspending;
         }
 
         /// <summary>
@@ -71,10 +71,8 @@ namespace ForeignNumbersUWP
         /// </summary>
         /// <param name="sender">The Frame which failed navigation</param>
         /// <param name="e">Details about the navigation failure</param>
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
-        {
-            throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
-        }
+        void OnNavigationFailed(object sender, NavigationFailedEventArgs e) 
+            => throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
 
         /// <summary>
         /// Invoked when application execution is being suspended.  Application state is saved
