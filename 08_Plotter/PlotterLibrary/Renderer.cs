@@ -15,7 +15,8 @@ public partial class Plotter
 {
     private void RefreshPlot()
     {
-        if (picOut==null) return;
+        if (picOut == null)
+            return;
         if (picOut.Size.Width <= 1 || picOut.Size.Height <= 1)
             return;  // Too small pic area
         Bitmap bmpOut = new(picOut.Size.Width, picOut.Size.Height, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
@@ -60,7 +61,7 @@ public partial class Plotter
 
         outGraphics.Clear(Color.White);
         outGraphics.SmoothingMode = SmoothingMode.HighQuality;
-        SetUserScale(-15, -15, 15, 15);            // Default user scale 
+        SetUserScale(-15, -15, 15, 15);            // Default user scale
         for (int i = 0; i < Commands.Count; i++)
         {
             var pc = Commands[i];
@@ -87,7 +88,7 @@ public partial class Plotter
 
                 // Optimization, as long as following segments join with current one, then we merge them in a list to do a single DrawLines call
                 // Limited to 1000 points, PDF rendering doesn't like huge lists
-                while (i < Commands.Count - 1 && tp.Count<1000 && Commands[i + 1] is PC_DrawLine pc2 && pc2.P1X == LastX && pc2.P1Y == LastY && pc2.Width == LastWidth && pc2.Color == LastColor)
+                while (i < Commands.Count - 1 && tp.Count < 1000 && Commands[i + 1] is PC_DrawLine pc2 && pc2.P1X == LastX && pc2.P1Y == LastY && pc2.Width == LastWidth && pc2.Color == LastColor)
                 {
                     LastX = pc2.P2X;
                     LastY = pc2.P2Y;
@@ -96,7 +97,7 @@ public partial class Plotter
                     i++;
                 }
 
-                var p = new Pen(LastColor, LastWidth*penWidthFactor);
+                var p = new Pen(LastColor, LastWidth * penWidthFactor);
                 outGraphics.DrawLines(p, tp.ToArray());
             }
             else if (pc is PC_DrawBox box)
@@ -196,7 +197,7 @@ public partial class Plotter
                     }
                 }
             }
-            else if (pc is PC_WindowTitle cmd)
+            else if (pc is PC_WindowTitle _)
             {
                 // Just when rendering is done in a separate window
                 //Text = cmd.WindowTitle;
@@ -258,5 +259,4 @@ public partial class Plotter
         if (ev.Graphics is Graphics g)      // Also avoids null value
             GraphicsDraw(g, ev.PageBounds.Width, ev.PageBounds.Height, 0.6f);
     }
-
 }

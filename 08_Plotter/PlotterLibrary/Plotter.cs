@@ -288,6 +288,7 @@ public class CurrentPenAttributes
                 throw new ArgumentException("Width must be >=0");
         }
     }
+
     private float width;
 
     /// <summary>
@@ -321,7 +322,6 @@ public class CurrentPenAttributes
         FontSize = 12;
         FontStyle = FontStyle.Regular;
     }
-
 }
 
 public struct DrawingExtent
@@ -331,7 +331,8 @@ public struct DrawingExtent
     public float YMin { get; internal set; } = float.MaxValue;
     public float YMax { get; internal set; } = float.MinValue;
 
-    public DrawingExtent() { }  // To make compiler happy, starting with version 17.1, without it, Visual Studio detects error CS8983: A 'struct' with field initializers must include an explicitly declared constructor
+    public DrawingExtent()
+    { }  // To make compiler happy, starting with version 17.1, without it, Visual Studio detects error CS8983: A 'struct' with field initializers must include an explicitly declared constructor
 
     public void Clear()
     {

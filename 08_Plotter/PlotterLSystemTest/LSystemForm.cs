@@ -4,15 +4,15 @@
 // 2021-12-09   PV
 // 2021-12-13   PV      Math using double here to avoid cumulative rounding errors, visible in Triangle fractal (PlotLib remains float)
 //                      Read .l definitions
-using System;
-using System.Windows.Forms;
-using System.Drawing;
-using System.Collections.Generic;
-using System.Drawing.Printing;
 using PlotterLibrary;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Printing;
 using System.Globalization;
 using System.IO;
-using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace LSystemTest;
 
@@ -71,7 +71,6 @@ public partial class LSystemForm: Form
         foreach (var source in Sources)
             SourcesComboBox.Items.Add(source);
         SourcesComboBox.SelectedIndex = 0;
-
     }
 
     private static List<LSystem> GetLSystemsFromFile(string file)
@@ -179,7 +178,7 @@ public partial class LSystemForm: Form
         }
     }
 
-    private void MainForm_Resize(object sender, EventArgs e) 
+    private void MainForm_Resize(object sender, EventArgs e)
         => p?.Refresh();
 
     private void PrintButton_Click(object sender, EventArgs e)
@@ -249,6 +248,7 @@ public partial class LSystemForm: Form
         if (!IgnoreEvents)
             TensionUpDown.Value = (decimal)(TensionTrackBar.Value / 100.0);
     }
+
     private void TensionUpDown_ValueChanged(object sender, EventArgs e)
     {
         IgnoreEvents = true;
@@ -544,9 +544,9 @@ public partial class LSystemForm: Form
             var newList = new List<PointD>();
             foreach (var point in smooth)
             {
-                double a = (point.X-xmin) / (xmax - xmin) * 2 * Math.PI;
-                double r = 2 + 2*(point.Y-ymin)/(ymax - ymin);
-                var tp = new PointD(2+r*Math.Cos(a), 2+r*Math.Sin(a));
+                double a = (point.X - xmin) / (xmax - xmin) * 2 * Math.PI;
+                double r = 2 + 2 * (point.Y - ymin) / (ymax - ymin);
+                var tp = new PointD(2 + r * Math.Cos(a), 2 + r * Math.Sin(a));
                 newList.Add(tp);
             }
             p.DrawPoints(newList);
@@ -574,7 +574,7 @@ public partial class LSystemForm: Form
     }
 }
 
-struct AngleAndPosition
+internal struct AngleAndPosition
 {
     public double Px;                       // Current X
     public double Py;                       // Current Y
@@ -583,16 +583,17 @@ struct AngleAndPosition
     public double SegmentLength = 1;        // Stroke length
     public int color;                       // 0=Black
 
-    public AngleAndPosition() { Px = 0; Py = 0; Angle = 0; DirectAngle = 0; color = 0; }
+    public AngleAndPosition()
+    { Px = 0; Py = 0; Angle = 0; DirectAngle = 0; color = 0; }
 }
 
-class StrokeAndColor
+internal class StrokeAndColor
 {
     public int color;
     public List<PointD> points = new();
 }
 
-static class ExtensionMethods
+internal static class ExtensionMethods
 {
     internal static void DrawPoints(this Plotter p, IEnumerable<PointD> points)
     {

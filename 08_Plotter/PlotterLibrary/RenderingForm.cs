@@ -23,7 +23,6 @@ internal partial class RenderingForm: Form
             PrintersList.Items.Add(printer.ToString());
         if (PrintersList.Items.Count > 0)
             PrintersList.SelectedIndex = 0;
-
     }
 
     private void RenderingForm_Resize(object sender, EventArgs e) => p.Refresh();

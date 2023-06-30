@@ -11,7 +11,7 @@ namespace LSystemTest;
 
 internal static class Smoothing
 {
-    static internal List<PointD> GetCurveSmoothingChaikin(List<PointD> points, double tension, int nrOfIterations)
+    internal static List<PointD> GetCurveSmoothingChaikin(List<PointD> points, double tension, int nrOfIterations)
     {
         if (points.Count < 3)
             return points;
@@ -44,7 +44,7 @@ internal static class Smoothing
         return nl;
     }
 
-    static private List<PointD> GetSmootherChaikin(List<PointD> points, double cuttingDist)
+    private static List<PointD> GetSmootherChaikin(List<PointD> points, double cuttingDist)
     {
         PointD q, r;
         var loopTo = points.Count - 2;
@@ -62,7 +62,7 @@ internal static class Smoothing
         return nl;
     }
 
-    static internal List<PointD> GetSplineInterpolationCatmullRom(List<PointD> points, int nrOfInterpolatedPoints)
+    internal static List<PointD> GetSplineInterpolationCatmullRom(List<PointD> points, int nrOfInterpolatedPoints)
     {
         if (points.Count < 3)
             return points;
