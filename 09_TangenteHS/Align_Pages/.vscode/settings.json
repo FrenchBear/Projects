@@ -16,16 +16,8 @@
         "activityBar.activeBackground": "#ceba15",
         "sash.hoverBorder": "#ceba15",
         "statusBarItem.remoteBackground": "#a09010",
-        "statusBarItem.remoteForeground": "#15202b"
+        "statusBarItem.remoteForeground": "#15202b",
+        "commandCenter.border": "#15202b99"
     },
     "peacock.color": "#a09010",
-    "spellright.language": [
-        "en"
-    ],
-    "spellright.documentTypes": [
-        "markdown",
-        "latex"
-    ],
-    "python.linting.pylintEnabled": true,
-    "python.linting.enabled": false
 }

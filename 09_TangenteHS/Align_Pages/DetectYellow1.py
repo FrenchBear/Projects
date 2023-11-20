@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import numpy as np
-import scipy
 
 img = mpimg.imread('THS76-004.jpg')
 width = img.shape[1]

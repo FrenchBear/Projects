@@ -1,7 +1,5 @@
-import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import numpy as np
-from scipy.signal import find_peaks
 
 #img = mpimg.imread('YellowRect.png')
 img = mpimg.imread('YellowRect75.jpg')

@@ -1,8 +1,7 @@
-import os, sys
+import os
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import numpy as np
-import scipy
 import math
 
 pathfile = r'D:\Scans\THS76\02Redresse\THS76-007.jpg'

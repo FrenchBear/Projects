@@ -1,4 +1,4 @@
-from common_fs import *
+from common_fs import get_all_files
 
 nf=0
 with open(r'c:\temp\bds.txt', 'w', encoding='utf-8') as fout:

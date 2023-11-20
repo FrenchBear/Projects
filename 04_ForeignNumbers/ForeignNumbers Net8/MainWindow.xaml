@@ -1,0 +1,43 @@
+﻿<Window x:Class="IntlNumbersWPFCore.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:IntlNumbersWPFCore"
+        mc:Ignorable="d"
+        Title="ForeignNumbers WPF Core" Height="450" Width="800" 
+        Icon="/ForeignNumbers.ico">
+
+    <Window.Resources>
+        <Style x:Key="{x:Type TextBox}" TargetType="TextBox">
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="FontFamily" Value="Segoe UI" />
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="6">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="158" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Label Grid.Row="0" Grid.Column="0" Content="Western" Margin="3" />
+        <Label Grid.Row="1" Grid.Column="0" Content="Chinese" Margin="3" />
+        <Label Grid.Row="2" Grid.Column="0" Content="Arabic" Margin="3"/>
+        <Label Grid.Row="3" Grid.Column="0" Content="Roman" Margin="3" />
+        <TextBox Grid.Row="0" Grid.Column="1" Name="WesternTextBlock" Padding="5" Margin="3"  TextChanged="WesternTextBlock_TextChanged" />
+        <TextBox Grid.Row="1" Grid.Column="1" Name="ChineseTextBlock" Padding="5" Margin="3" IsReadOnly="True" />
+        <TextBox Grid.Row="2" Grid.Column="1" Name="ArabicTextBlock" Padding="5,2" Margin="3" IsReadOnly="True" FontSize="20" FlowDirection="RightToLeft" />
+        <TextBox Grid.Row="3" Grid.Column="1" Name="RomanTextBlock" Padding="5" Margin="3" IsReadOnly="True" />
+
+        <Button Grid.Column="2" Content="Random" Padding="15,5" Margin="12,3" Click="RandomButton_Click" HorizontalAlignment="Left" />
+    </Grid>
+</Window>

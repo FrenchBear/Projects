@@ -8,13 +8,12 @@
 import math
 import statistics
 import os
-import sys
 from dataclasses import dataclass
 from typing import List, Optional
 import numpy as np
 import matplotlib.image as mpimg    # type: ignore
 import cropimage
-from common_fs import *
+from common_fs import get_all_files, get_files, basename
 
 (rowmin, rowmax) = (2680, 2900)
 (colminpair, colmaxpair) = (130, 330)
@@ -124,7 +123,7 @@ def p(file, numfile, width, height, colp, rowp, colback):
     Pages.append(newpage)
 
 def clean_borders(img: np.ndarray):
-    height = img.shape[0]
+    #height = img.shape[0]
     width = img.shape[1]
 
     def rgb2gray1(rgb):
@@ -243,8 +242,8 @@ def process_root(root:str):
         #     continue
 
         img = mpimg.imread(page.file)[:, :, :3]
-        width: int = img.shape[1]
-        height: int = img.shape[0]
+        #width: int = img.shape[1]
+        #height: int = img.shape[0]
 
         if page.rowp:
             tins = rowp_m-page.rowp

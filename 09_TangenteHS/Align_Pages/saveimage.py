@@ -1,9 +1,5 @@
 import matplotlib.image as mpimg
-import matplotlib.pyplot as plt
-import numpy as np
 import cropimage
-from dataclasses import dataclass
-from typing import List, Optional
 
 file = r'D:\Scans\THS76\02Redresse\THS76-002.jpg'
 newfile = r'D:\Scans\THS76\03Crop\THS76-002.jpg'

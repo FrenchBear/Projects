@@ -1,9 +1,6 @@
 import os
-import sys
-import numpy as np
-import math
 import matplotlib.image as mpimg
-from common_fs import *
+from common_fs import get_all_files
 
 # source = r'C:\Scans\THS32\1 Scans\1'
 # dest = r'C:\Scans\THS32\2 Crop HZ\1'

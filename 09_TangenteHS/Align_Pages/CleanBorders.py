@@ -1,10 +1,5 @@
-import os, sys
-import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import numpy as np
-import scipy
-import math
-from common_fs import *
 
 def clean_borders(pathfile: str, newname: str):
     img = mpimg.imread(pathfile)[:,:,:3]
