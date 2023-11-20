@@ -1,15 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Copyright>(c) Pierre Violent 2019</Copyright>
-    <Description>A minimal test program for Solitaire solver in SolLib dll</Description>
-    <Authors>Pierre Violent</Authors>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<Copyright>Copyright ©Pierre Violent 2019-2023</Copyright>
+		<Description>A minimal test program for Solitaire solver in SolLib dll</Description>
+		<Authors>Pierre Violent</Authors>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\SolLib\SolLib.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\SolLib\SolLib.csproj" />
+	</ItemGroup>
 
 </Project>
