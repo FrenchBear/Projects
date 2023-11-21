@@ -10,6 +10,7 @@
 		<Copyright>Copyright ©Pierre Violent 2019-2023</Copyright>
 		<Description>A simple WPF version of Solitaire classic card game with a solver (Net8 C#12)</Description>
 		<Version>1.2.0</Version>
+		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -10,8 +10,6 @@ using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-#nullable enable
-
 namespace SolWPF;
 
 public class NewGameOptionsViewModel: INotifyPropertyChanged

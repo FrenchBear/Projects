@@ -12,8 +12,6 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
-#nullable enable
-
 namespace SolWPF;
 
 public partial class MainWindow: Window
@@ -24,7 +22,7 @@ public partial class MainWindow: Window
     public MainWindow()
     {
         InitializeComponent();
-        b = new GameDeck();
+        b = new GameDeck(this);
         DataContext = b;
 
         // Add Shift+Ctrl+N for New with New Game Options dialog (can't find how to use SHift+Ctrl in Xaml)
@@ -46,23 +44,23 @@ public partial class MainWindow: Window
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
         // Create data structures
-        b.Bases = new BaseStack[4];
-        b.Bases[0] = new BaseStack(b, "Base0", PlayingCanvas, Base0);
-        b.Bases[1] = new BaseStack(b, "Base1", PlayingCanvas, Base1);
-        b.Bases[2] = new BaseStack(b, "Base2", PlayingCanvas, Base2);
-        b.Bases[3] = new BaseStack(b, "Base3", PlayingCanvas, Base3);
+        //b.Bases = new BaseStack[4];
+        //b.Bases[0] = new BaseStack(b, "Base0", PlayingCanvas, Base0);
+        //b.Bases[1] = new BaseStack(b, "Base1", PlayingCanvas, Base1);
+        //b.Bases[2] = new BaseStack(b, "Base2", PlayingCanvas, Base2);
+        //b.Bases[3] = new BaseStack(b, "Base3", PlayingCanvas, Base3);
 
-        b.Columns = new ColumnStack[7];
-        b.Columns[0] = new ColumnStack(b, "Column0", PlayingCanvas, Column0);
-        b.Columns[1] = new ColumnStack(b, "Column1", PlayingCanvas, Column1);
-        b.Columns[2] = new ColumnStack(b, "Column2", PlayingCanvas, Column2);
-        b.Columns[3] = new ColumnStack(b, "Column3", PlayingCanvas, Column3);
-        b.Columns[4] = new ColumnStack(b, "Column4", PlayingCanvas, Column4);
-        b.Columns[5] = new ColumnStack(b, "Column5", PlayingCanvas, Column5);
-        b.Columns[6] = new ColumnStack(b, "Column6", PlayingCanvas, Column6);
+        //b.Columns = new ColumnStack[7];
+        //b.Columns[0] = new ColumnStack(b, "Column0", PlayingCanvas, Column0);
+        //b.Columns[1] = new ColumnStack(b, "Column1", PlayingCanvas, Column1);
+        //b.Columns[2] = new ColumnStack(b, "Column2", PlayingCanvas, Column2);
+        //b.Columns[3] = new ColumnStack(b, "Column3", PlayingCanvas, Column3);
+        //b.Columns[4] = new ColumnStack(b, "Column4", PlayingCanvas, Column4);
+        //b.Columns[5] = new ColumnStack(b, "Column5", PlayingCanvas, Column5);
+        //b.Columns[6] = new ColumnStack(b, "Column6", PlayingCanvas, Column6);
 
-        b.TalonFD = new TalonFaceDownStack(b, "TalonFD", PlayingCanvas, Talon0);
-        b.TalonFU = new TalonFaceUpStack(b, "TalonFU", PlayingCanvas, Talon1);
+        //b.TalonFD = new TalonFaceDownStack(b, "TalonFD", PlayingCanvas, Talon0);
+        //b.TalonFU = new TalonFaceUpStack(b, "TalonFU", PlayingCanvas, Talon1);
 
         b.InitializeStacksDictionary();
 

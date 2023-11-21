@@ -29,12 +29,30 @@ internal class GameDeck: INotifyPropertyChanged
     private readonly Dictionary<string, GameStack> StacksDictionary;        // Map name -> Stack, name in [Base0..Base3, Column0..Column6, TalonFU, TalonFD]
     private readonly Dictionary<string, PlayingCard> CardsDictionary;       // Map face -> PlayingCard, name in [Colors]×[Values] such as H4 or DQ for 4 of ♥ or Queen of ♦
 
-    public GameDeck()
+    public GameDeck(MainWindow mw)
     {
         UndoStack = new Stack<MovingGroup>();
         StacksDictionary = [];
         CardsDictionary = [];
         SeedRnd = new Random();
+
+        Bases = new BaseStack[4];
+        Bases[0] = new BaseStack(this, "Base0", mw.PlayingCanvas, mw.Base0);
+        Bases[1] = new BaseStack(this, "Base1", mw.PlayingCanvas, mw.Base1);
+        Bases[2] = new BaseStack(this, "Base2", mw.PlayingCanvas, mw.Base2);
+        Bases[3] = new BaseStack(this, "Base3", mw.PlayingCanvas, mw.Base3);
+
+        Columns = new ColumnStack[7];
+        Columns[0] = new ColumnStack(this, "Column0", mw.PlayingCanvas, mw.Column0);
+        Columns[1] = new ColumnStack(this, "Column1", mw.PlayingCanvas, mw.Column1);
+        Columns[2] = new ColumnStack(this, "Column2", mw.PlayingCanvas, mw.Column2);
+        Columns[3] = new ColumnStack(this, "Column3", mw.PlayingCanvas, mw.Column3);
+        Columns[4] = new ColumnStack(this, "Column4", mw.PlayingCanvas, mw.Column4);
+        Columns[5] = new ColumnStack(this, "Column5", mw.PlayingCanvas, mw.Column5);
+        Columns[6] = new ColumnStack(this, "Column6", mw.PlayingCanvas, mw.Column6);
+
+        TalonFD = new TalonFaceDownStack(this, "TalonFD", mw.PlayingCanvas, mw.Talon0);
+        TalonFU = new TalonFaceUpStack(this, "TalonFU", mw.PlayingCanvas, mw.Talon1);
     }
 
     internal void InitializeStacksDictionary()
@@ -47,7 +65,7 @@ internal class GameDeck: INotifyPropertyChanged
         StacksDictionary.Add(TalonFU.Name, TalonFU);
     }
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     private void NotifyPropertyChanged(string name) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
@@ -152,10 +170,10 @@ internal class GameDeck: INotifyPropertyChanged
         return new SolverDeck(SolverBases, SolverColumns, SolverTalonFU, SolverTalonFD);
     }
 
-    public List<MovingGroup> GetNextMoves()
+    public List<MovingGroup>? GetNextMoves()
     {
         SolverDeck sd = GetSolverDeck();
-        List<SolverGroup> lsg = sd.GetMovingGroupsForOneMovmentToBase();
+        List<SolverGroup>? lsg = sd.GetMovingGroupsForOneMovmentToBase();
         if (lsg == null)
             return null;
 
@@ -163,11 +181,11 @@ internal class GameDeck: INotifyPropertyChanged
         var lmg = new List<MovingGroup>();
         foreach (var sg in lsg)
         {
-            Debug.WriteLine(sg.ToString());
-            var from = StacksDictionary[sg.FromStack.Name];
-            var to = StacksDictionary[sg.ToStack.Name];
+            Debug.WriteLine(sg.ToString());     // Ensure that sg.FromStack, sg.ToStack and sg.MovingCards are not null
+            var from = StacksDictionary[sg.FromStack!.Name];
+            var to = StacksDictionary[sg.ToStack!.Name];
             var hitList = new List<PlayingCard>();
-            for (int i = 0; i < sg.MovingCards.Count; i++)
+            for (int i = 0; i < sg.MovingCards!.Count; i++)
                 hitList.Add(CardsDictionary[sg.MovingCards[i].Face]);
             var mg = new MovingGroup(from, hitList, true)
             {
@@ -226,7 +244,7 @@ internal class GameDeck: INotifyPropertyChanged
 #endif
     }
 
-    internal MovingGroup PopUndo()
+    internal MovingGroup? PopUndo()
     {
         if (UndoStack.Count == 0)
             return null;
@@ -255,7 +273,7 @@ internal class GameDeck: INotifyPropertyChanged
     }
 
     // Used to abort a running previous computation if it's not finished
-    private CancellationTokenSource cts;
+    private CancellationTokenSource? cts;
 
     // Do the job in a background task, that can be interrupted if needed
     private void ComputeAndUpdateGameSolvability()
@@ -296,7 +314,7 @@ internal class GameDeck: INotifyPropertyChanged
         }
     }
 
-    private string _GameStatus;
+    private string _GameStatus="";
 
     public string GameStatus
     {
@@ -311,7 +329,7 @@ internal class GameDeck: INotifyPropertyChanged
         }
     }
 
-    private string _SolverStatus;
+    private string _SolverStatus="";
 
     public string SolverStatus
     {

@@ -9,8 +9,6 @@
 
 using System.Windows;
 
-#nullable enable
-
 namespace SolWPF;
 
 public partial class NewGameOptionsWindow: Window

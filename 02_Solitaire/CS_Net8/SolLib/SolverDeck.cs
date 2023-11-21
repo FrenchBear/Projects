@@ -322,9 +322,9 @@ public class SolverDeck
         return false;
     }
 
-    public List<SolverGroup> GetMovingGroupsForOneMovmentToBase() => OneMovementToBase(false);
+    public List<SolverGroup>? GetMovingGroupsForOneMovmentToBase() => OneMovementToBase(false);
 
-    internal List<SolverGroup> OneMovementToBase(bool showTraces = false)
+    internal List<SolverGroup>? OneMovementToBase(bool showTraces = false)
     {
         var Signatures = new HashSet<string>();
         var Movments = new List<SolverGroup>();

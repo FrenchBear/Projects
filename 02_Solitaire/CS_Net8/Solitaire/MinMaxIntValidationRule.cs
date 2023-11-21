@@ -8,8 +8,6 @@
 
 using System.Windows.Controls;
 
-#nullable enable
-
 namespace SolWPF;
 
 // Simple integer min/max validation rule

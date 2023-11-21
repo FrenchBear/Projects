@@ -3,14 +3,12 @@
 //
 // 2012-04-17   PV      First version
 // 2016-09-26   PV	    Use in Solitaire
-// 2020-11-13   PV      Full support for #nullable enable
+// 2020-11-13   PV      Full support for 
 // 2021-11-13   PV      Net6 C#10
 // 2023-11-20   PV      Net8 C#12
 
 using System;
 using System.Windows.Input;
-
-#nullable enable
 
 namespace SolWPF;
 

@@ -12,8 +12,6 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 
-#nullable enable
-
 namespace SolWPF;
 
 [DebuggerDisplay("PlayingCard {Signature()}")]

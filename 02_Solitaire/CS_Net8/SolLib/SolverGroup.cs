@@ -6,18 +6,23 @@
 // 2021-11-13   PV      Net6 C#10
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace SolLib;
 
 public class SolverGroup
 {
-    public SolverStack FromStack;
-    public SolverStack ToStack;
-    public List<SolverCard> MovingCards;
+    public SolverStack? FromStack;
+    public SolverStack? ToStack;
+    public List<SolverCard>? MovingCards;
 
     public override string ToString()
     {
+        Debug.Assert(FromStack != null);
+        Debug.Assert(ToStack != null);
+        Debug.Assert(MovingCards != null);
+
         var sb = new StringBuilder();
         sb.Append($"SolverGroup: {FromStack.Name,-9} => {ToStack.Name,-9} ");
         foreach (var ca in MovingCards)
