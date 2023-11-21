@@ -6,6 +6,7 @@
 		<Copyright>Copyright ©Pierre Violent 2019-2023</Copyright>
 		<Description>A minimal test program for Solitaire solver in SolLib dll</Description>
 		<Authors>Pierre Violent</Authors>
+		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
 	<ItemGroup>
