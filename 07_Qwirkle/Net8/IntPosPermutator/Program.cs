@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace ConsoleApp1;
+namespace TileSidePermutatorNS;
 
 class Program
 {
@@ -19,9 +19,9 @@ class Program
             new("A1"),
             new("B2"),
             new("C3"),
-            //new ("D3"),
-            //new ("E5"),
-            //new ("F6"),
+            //new("D3"),
+            //new("E5"),
+            //new("F6"),
         };
         var sw = Stopwatch.StartNew();
         var (perms, skipTab) = GetLRPerm2(l);

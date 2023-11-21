@@ -7,9 +7,7 @@
 using System;
 using System.Diagnostics;
 
-#nullable enable
-
-namespace ConsoleApp1;
+namespace TileSidePermutatorNS;
 
 /// <summary>
 /// A game tile with a specific color and shape

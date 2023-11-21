@@ -5,6 +5,7 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<Authors>Pierre Violent</Authors>
 		<Description>Sidework for Qwirkle solver, generates all permutations of a hand</Description>
+		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
 </Project>
