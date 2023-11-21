@@ -3,6 +3,9 @@
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
 		<TargetFramework>net8.0</TargetFramework>
+		<Description>More tests for Quirkle support library</Description>
+		<Copyright>Copyright ©2019-2023 Pierre Violent</Copyright>
+		<Authors>Pierre Violent</Authors>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 

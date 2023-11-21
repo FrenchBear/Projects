@@ -17,20 +17,8 @@ namespace QwirkleLib;
 /// </summary>
 public partial class Board
 {
-    //private readonly Dictionary<(int, int), Square> Base.dict = new Dictionary<(int, int), Square>();
-    //private readonly Dictionary<(int, int), Square> Played.dict = new Dictionary<(int, int), Square>();
-
     private readonly BoardLayer Base = new();
     private readonly BoardLayer Played = new();
-
-    //private int RowMinBoard = 0;
-    //private int RowMaxBoard = 0;
-    //private int ColMinBoard = 0;
-    //private int ColMaxBoard = 0;
-    //private int RowMinPlayed = 999;
-    //private int RowMaxPlayed = -999;
-    //private int ColMinPlayed = 999;
-    //private int ColMaxPlayed = -999;
 
     public int RowMin => Math.Min(Base.RowMin, Played.RowMin);
     public int RowMax => Math.Max(Base.RowMax, Played.RowMax);

@@ -1,9 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<Authors>Pierre Violent</Authors>
-		<Copyright>Copyright ©Pierre Violent 2019-2021</Copyright>
+		<Copyright>Copyright ©Pierre Violent 2019-2023</Copyright>
 		<Description>A simplified (no backtracking) Solitaire solver (Net8 C#12)</Description>
 		<Authors>Pierre Violent</Authors>
 		<Version>1.1.0</Version>
