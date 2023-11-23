@@ -3,8 +3,6 @@
 //
 // 2023-11-23   PV
 
-using System.Diagnostics;
-using System.Text;
 using LibQwirkle;
 
 namespace Q2;
@@ -32,25 +30,5 @@ internal class Program
         b.AddMove(new Move(47, 52, t6));
 
         b.Print();
-
-        string s = "   4950515253\r\n" +
-                   "51   · · x   \r\n" +
-                   "50 · D C A · \r\n" +
-                   "49   · · A x \r\n" +
-                   "48     x A x \r\n" +
-                   "47     x A x \r\n" +
-                   "46       x   \r\n";
-        string s2 = b.AsString(false, new Tile(Color.Purple, Shape.Circle, 2));
-        Debug.Assert(s == s2);
-
-        s = "   4950515253\r\n" +
-            "51   · x ·   \r\n" +
-            "50 · D C A · \r\n" +
-            "49   · · A · \r\n" +
-            "48     x A x \r\n" +
-            "47     · A · \r\n" +
-            "46       ·   \r\n";
-        s2 = b.AsString(false, new Tile(Color.Green, Shape.Lozange, 2));
-        Debug.Assert(s == s2);
     }
 }
