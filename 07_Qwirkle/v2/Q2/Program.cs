@@ -30,5 +30,23 @@ internal class Program
         b.AddMove(new Move(47, 52, t6));
 
         b.Print();
+
+        var h1 = new Tile(Color.Blue, Shape.Lozange, 1);
+        var h2 = new Tile(Color.Blue, Shape.Square, 1);
+        var h3 = new Tile(Color.Blue, Shape.Star, 1);
+        var h4 = new Tile(Color.Yellow, Shape.Star, 1);
+        var h5 = new Tile(Color.Purple, Shape.Square, 1);
+        var h6 = new Tile(Color.Green, Shape.Square, 1);
+
+        var hand = new Hand([h1, h2, h3, h4, h5, h6]);
+        Console.WriteLine($"Hand before: {hand.AsString(true)}");
+
+        Play play = b.Play(hand);
+        Console.WriteLine($"Play:        {play.AsString(true)}   Points={play.Points}");
+        Console.WriteLine($"Hand after:  {play.NewHand.AsString(true)}");
+
+        Console.WriteLine();
+        b.AddMoves(play.Moves);
+        b.Print();
     }
 }
