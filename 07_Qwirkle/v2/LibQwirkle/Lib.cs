@@ -56,13 +56,14 @@ public record Play(List<Move> Moves, int Points, Hand NewHand)
     public int Points { get; init; } = Points;
     public Hand NewHand { get; init; } = NewHand;
 
-    public string AsString(bool Color) 
+    public string AsString(bool Color)
         => string.Join(", ", Moves.Select(m => $"({m.Row}, {m.Col}) {m.Tile.AsString(Color)}"));
 }
 
-public class Hand: HashSet<Tile> { 
-    public Hand(IEnumerable<Tile> tiles): base(tiles) { }
-    public Hand(HashSet<Tile> tiles): base(tiles) { }
+public class Hand: HashSet<Tile>
+{
+    public Hand(IEnumerable<Tile> tiles) : base(tiles) { }
+    public Hand(HashSet<Tile> tiles) : base(tiles) { }
 
     public string AsString(bool Color)
         => String.Join(" ", this.Select(m => m.AsString(Color)));
@@ -74,15 +75,18 @@ public class Board
     readonly List<Move> Moves = [];
 
     public Board() { }
-    public Board(Board baseBoard) 
+    public Board(Board baseBoard)
         => BaseBoard = baseBoard;
 
-    public int RowMin { get; private set; } = 100;
-    public int RowMax { get; private set; } = 0;
-    public int ColMin { get; private set; } = 100;
-    public int ColMax { get; private set; } = 0;
+    public int RowMin => BaseBoard == null ? rowMin : Math.Min(rowMin, BaseBoard.RowMin);
+    public int RowMax => BaseBoard == null ? rowMax : Math.Max(rowMax, BaseBoard.RowMax);
+    public int ColMin => BaseBoard == null ? colMin : Math.Min(colMin, BaseBoard.ColMin);
+    public int ColMax => BaseBoard == null ? colMax : Math.Max(colMax, BaseBoard.ColMax);
 
-    public bool IsEmpty => BaseBoard == null && Moves.Count==0;
+    private int rowMin = 100, rowMax = 0;
+    private int colMin = 100, colMax = 0;
+
+    public bool IsEmpty => BaseBoard == null && Moves.Count == 0;
 
     public void AddMove(Move m)
     {
@@ -90,10 +94,10 @@ public class Board
             Debug.Assert(GetCellState(m.Row, m.Col) == CellState.PotentiallyPlayable && IsCompatible(m.Row, m.Col, m.T));
 
         Moves.Add(m);
-        RowMin = Math.Min(RowMin, m.Row);
-        RowMax = Math.Max(RowMax, m.Row);
-        ColMin = Math.Min(ColMin, m.Col);
-        ColMax = Math.Max(ColMax, m.Col);
+        rowMin = Math.Min(rowMin, m.Row);
+        rowMax = Math.Max(rowMax, m.Row);
+        colMin = Math.Min(colMin, m.Col);
+        colMax = Math.Max(colMax, m.Col);
     }
 
     public void AddMoves(List<Move> moves)
@@ -162,8 +166,105 @@ public class Board
 
     public void Print() => Console.WriteLine(this.AsString(true));
 
+    public int CountPoints(List<Move> moves)
+    {
+        // Comptage, use a temp new board with moves actually played
+        var nb = new Board(this);
+        nb.AddMoves(moves);
+        bool isHorizontal = moves.Count == 1 || moves[0].Row == moves[1].Row;
+        int points = 0;
+        int row, col, dp;
+        if (isHorizontal)
+        {
+            // Count tiles in vertical blocks of more than 1 tile for each played tile
+            foreach (var move in moves)
+            {
+                row = move.Row;
+                col = move.Col;
+                // Find the topmost position
+                while (nb.GetCellState(row + 1, col) == CellState.Tiled)
+                    row++;
+                dp = 0;
+                // Explore to bottommost position
+                for (; ; )
+                {
+                    dp++;
+                    row--;
+                    if (nb.GetCellState(row, col) != CellState.Tiled)
+                        break;
+                }
+                // Only vertical bands with more than 1 tile are actually counted
+                if (dp > 1)
+                    points += dp == 6 ? 12 : dp;
+            }
+
+            // Count tiles in horizontal block
+            // Find the leftmost position
+            row = moves[0].Row;
+            col = moves[0].Col;
+            // Start with any placed tile, search for leftmost tile of the block
+            while (nb.GetCellState(row, col - 1) == CellState.Tiled)
+                col--;
+            // Loop on horizontal block of tiles
+            dp = 0;
+            for (; ; )
+            {
+                dp++;
+                col++;
+                if (nb.GetCellState(row, col) != CellState.Tiled)
+                    break;
+            }
+            points += dp == 6 ? 12 : dp;
+        }
+        else
+        {
+            // Count tiles in horizontal blocks of more than 1 tile for each placed tile
+            foreach (var move in moves)
+            {
+                row = move.Row;
+                col = move.Col;
+                // Find the leftmost position
+                while (nb.GetCellState(row, col - 1) == CellState.Tiled)
+                    col--;
+                dp = 0;
+                // Explore to rightmost position
+                for (; ; )
+                {
+                    dp++;
+                    col++;
+                    if (nb.GetCellState(row, col) != CellState.Tiled)
+                        break;
+                }
+                // Only horizontal bands with more than 1 tile are actually counted
+                if (dp > 1)
+                    points += dp == 6 ? 12 : dp;
+            }
+
+            // Count tiles in vertical block
+            // Find the topmost position
+            row = moves[0].Row;
+            col = moves[0].Col;
+            // Start with any placed tile, search for topmost tile of the block
+            while (nb.GetCellState(row + 1, col) == CellState.Tiled)
+                row++;
+            // Loop on vertical block of tiles
+            dp = 0;
+            for (; ; )
+            {
+                dp++;
+                row--;
+                if (nb.GetCellState(row, col) != CellState.Tiled)
+                    break;
+            }
+            points += dp == 6 ? 12 : dp;
+        }
+
+        return points;
+    }
+
     public Play Play(Hand hand)
     {
+        // For now, that's just a simulation
         Tile t1 = hand.First(t => t.Shape == Shape.Lozange && t.Color == Color.Blue);
         Tile t2 = hand.First(t => t.Shape == Shape.Square && t.Color == Color.Blue);
         Tile t3 = hand.First(t => t.Shape == Shape.Star && t.Color == Color.Blue);
@@ -174,9 +275,7 @@ public class Board
             new(49,54,t3),
         };
 
-        var nb = new Board(this);
-
-        return new Play(moves, 0, new Hand(hand.Except([t1, t2, t3])));
+        return new Play(moves, CountPoints(moves), new Hand(hand.Except([t1, t2, t3])));
     }
 }
 
@@ -258,12 +357,18 @@ public static class ConsoleSupport
             });
         sb.Append(t.Shape switch
         {
-            Shape.Circle => "A",
-            Shape.Cross => "B",
-            Shape.Lozange => "C",
-            Shape.Square => "D",
-            Shape.Star => "E",
-            Shape.Clover => "F",
+            //Shape.Circle => "A",
+            //Shape.Cross => "B",
+            //Shape.Lozange => "C",
+            //Shape.Square => "D",
+            //Shape.Star => "E",
+            //Shape.Clover => "F",
+            Shape.Circle => "O",
+            Shape.Cross => "+",
+            Shape.Lozange => "<",
+            Shape.Square => "[",
+            Shape.Star => "*",
+            Shape.Clover => "%",
             _ => "🞌 "
         });
         if (color)

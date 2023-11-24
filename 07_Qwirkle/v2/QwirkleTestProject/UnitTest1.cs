@@ -7,11 +7,11 @@ using System.Diagnostics;
 
 namespace xUnit_QwirkleTestProject;
 
-public class IsCompatible_UnitTests
+public class UnitTests1
 {
     readonly Board b = new();
 
-    public IsCompatible_UnitTests()
+    public UnitTests1()
     {
         var t1 = new Tile(Color.Red, Shape.Square, 1);
         var t2 = new Tile(Color.Red, Shape.Lozange, 1);
@@ -54,5 +54,34 @@ public class IsCompatible_UnitTests
                    "46       ·   \r\n";
         string s2 = b.AsString(false, new Tile(Color.Green, Shape.Lozange, 2));
         Debug.Assert(s == s2);
+    }
+
+    [Fact]
+    public void CountPointsTest1()
+    {
+        List<Move> moves =
+        [
+            new(49,51,new Tile(Color.Blue, Shape.Lozange, 1)),
+            new(49,53,new Tile(Color.Blue, Shape.Square, 1)),
+            new(49,54,new Tile(Color.Blue, Shape.Star, 1)),
+        ];
+        Debug.Assert(b.CountPoints(moves)==6);
+        
+        b.AddMoves(moves);
+        moves =
+        [
+            new(49,55,new Tile(Color.Blue, Shape.Cross, 1)),
+            new(49,56,new Tile(Color.Blue, Shape.Clover, 1)),
+        ];
+        Debug.Assert(b.CountPoints(moves) == 12);
+
+        b.AddMoves(moves);
+        moves =
+        [
+            new(48, 51, new Tile(Color.Green, Shape.Lozange, 1)),
+            new(48, 53, new Tile(Color.Green, Shape.Square, 1)),
+        ];
+        Debug.Assert(b.CountPoints(moves) == 8);
+        b.AddMoves(moves);
     }
 }

@@ -4,6 +4,7 @@
 // 2023-11-23   PV
 
 using LibQwirkle;
+using System.Diagnostics;
 
 namespace Q2;
 
@@ -47,6 +48,25 @@ internal class Program
 
         Console.WriteLine();
         b.AddMoves(play.Moves);
+        b.Print();
+
+        List<Move> moves =
+        [
+            new(49, 55, new Tile(Color.Blue, Shape.Cross, 1)),
+            new(49, 56, new Tile(Color.Blue, Shape.Clover, 1)),
+        ];
+        Debug.Assert(b.CountPoints(moves) == 12);
+        b.AddMoves(moves);
+        b.Print();
+
+        moves =
+        [
+            new(48, 51, new Tile(Color.Green, Shape.Lozange, 1)),
+            new(48, 53, new Tile(Color.Green, Shape.Square, 1)),
+        ];
+        int p = b.CountPoints(moves);
+        Debug.Assert(b.CountPoints(moves) == 8);
+        b.AddMoves(moves);
         b.Print();
     }
 }
