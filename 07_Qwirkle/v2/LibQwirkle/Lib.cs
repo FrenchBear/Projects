@@ -5,7 +5,6 @@
 
 using System.Collections;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace LibQwirkle;
@@ -75,13 +74,6 @@ public class Hand: HashSet<Tile>, IEquatable<Hand>
 
     public string AsString(bool? Color)
         => string.Join(" ", this.Select(m => m.AsString(Color)));
-
-    //public override bool Equals(object? obj)
-    //{
-    //    if (obj == null) return false;
-    //    if (obj is not Hand hand) return false;
-    //    return SetEquals(hand);
-    //}
 
     public bool Equals(Hand? hand) 
         => hand != null && SetEquals(hand);
