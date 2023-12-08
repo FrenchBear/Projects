@@ -1,4 +1,4 @@
-﻿// Q2
+﻿// Q2 -- Simple test program for development (actual tests should be stored in QwirkleTestProject)
 // Qwirkle reboot
 //
 // 2023-11-23   PV
@@ -14,6 +14,35 @@ internal class Program
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
 
+        Test2();
+    }
+
+    static void Test2()
+    {
+        var b = new Board();
+
+        var t1 = new Tile(Color.Red, Shape.Square, 1);
+        var t2 = new Tile(Color.Red, Shape.Lozange, 1);
+        var t3 = new Tile(Color.Red, Shape.Circle, 1);
+
+        b.AddMove(new Move(50, 50, t1));
+        b.AddMove(new Move(50, 51, t2));
+        b.AddMove(new Move(50, 52, t3));
+
+        b.Print();
+
+        var t4 = new Tile(Color.Blue, Shape.Circle, 1);
+        var t5 = new Tile(Color.Green, Shape.Circle, 1);
+        var t6 = new Tile(Color.Orange, Shape.Circle, 1);
+
+        var hand = new Hand([t4, t5, t6]);
+
+        b.Play(hand);
+        Debugger.Break();
+    }
+
+    static void Test1()
+    {
         var b = new Board();
 
         var t1 = new Tile(Color.Red, Shape.Square, 1);
@@ -55,8 +84,10 @@ internal class Program
             new(49, 55, new Tile(Color.Blue, Shape.Cross, 1)),
             new(49, 56, new Tile(Color.Blue, Shape.Clover, 1)),
         ];
-        Debug.Assert(b.CountPoints(moves) == 12);
+        int points = b.CountPoints(moves);
+        Debug.Assert(points == 12);
         b.AddMoves(moves);
+        Console.WriteLine($"{points} points:");
         b.Print();
 
         moves =
@@ -64,9 +95,22 @@ internal class Program
             new(48, 51, new Tile(Color.Green, Shape.Lozange, 1)),
             new(48, 53, new Tile(Color.Green, Shape.Square, 1)),
         ];
-        int p = b.CountPoints(moves);
-        Debug.Assert(b.CountPoints(moves) == 8);
+        points = b.CountPoints(moves);
+        Debug.Assert(points == 8);
         b.AddMoves(moves);
+        Console.WriteLine($"{points} points:");
+        b.Print();
+
+        moves =
+        [
+            new(50, 53, new Tile(Color.Purple, Shape.Star, 1)),
+            new(48, 53, new Tile(Color.Green, Shape.Star, 1)),
+            new(49, 53, new Tile(Color.Green, Shape.Star, 1)),
+        ];
+        points = b.CountPoints(moves);
+        //Debug.Assert(points == 8);
+        b.AddMoves(moves);
+        Console.WriteLine($"{points} points:");
         b.Print();
     }
 }

@@ -33,10 +33,10 @@ public class UnitTests1
     {
         string s = "   4950515253\r\n" +
                    "51   · · x   \r\n" +
-                   "50 · D C A · \r\n" +
-                   "49   · · A x \r\n" +
-                   "48     x A x \r\n" +
-                   "47     x A x \r\n" +
+                   "50 · [ < O · \r\n" +
+                   "49   · · O x \r\n" +
+                   "48     x O x \r\n" +
+                   "47     x O x \r\n" +
                    "46       x   \r\n";
         string s2 = b.AsString(false, new Tile(Color.Purple, Shape.Circle, 2));
         Debug.Assert(s == s2);
@@ -47,10 +47,10 @@ public class UnitTests1
     {
         string s = "   4950515253\r\n" +
                    "51   · x ·   \r\n" +
-                   "50 · D C A · \r\n" +
-                   "49   · · A · \r\n" +
-                   "48     x A x \r\n" +
-                   "47     · A · \r\n" +
+                   "50 · [ < O · \r\n" +
+                   "49   · · O · \r\n" +
+                   "48     x O x \r\n" +
+                   "47     · O · \r\n" +
                    "46       ·   \r\n";
         string s2 = b.AsString(false, new Tile(Color.Green, Shape.Lozange, 2));
         Debug.Assert(s == s2);
@@ -66,20 +66,29 @@ public class UnitTests1
             new(49,54,new Tile(Color.Blue, Shape.Star, 1)),
         ];
         Debug.Assert(b.CountPoints(moves)==6);
-        
         b.AddMoves(moves);
+
         moves =
         [
             new(49,55,new Tile(Color.Blue, Shape.Cross, 1)),
             new(49,56,new Tile(Color.Blue, Shape.Clover, 1)),
         ];
         Debug.Assert(b.CountPoints(moves) == 12);
-
         b.AddMoves(moves);
+
         moves =
         [
             new(48, 51, new Tile(Color.Green, Shape.Lozange, 1)),
             new(48, 53, new Tile(Color.Green, Shape.Square, 1)),
+        ];
+        Debug.Assert(b.CountPoints(moves) == 8);
+        b.AddMoves(moves);
+
+        moves =
+        [
+            new(50, 53, new Tile(Color.Purple, Shape.Star, 1)),
+            new(48, 53, new Tile(Color.Green, Shape.Star, 1)),
+            new(49, 53, new Tile(Color.Green, Shape.Star, 1)),
         ];
         Debug.Assert(b.CountPoints(moves) == 8);
         b.AddMoves(moves);

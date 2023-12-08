@@ -29,6 +29,7 @@ public enum Color
     Purple,
 }
 
+[DebuggerDisplay("Tile {this.AsString(null)}")]
 public record Tile(Color C, Shape S, int Instance)
 {
     public Color Color { get; } = C;
@@ -36,11 +37,15 @@ public record Tile(Color C, Shape S, int Instance)
     public int Instance { get; } = Instance;
 }
 
+[DebuggerDisplay("Move ({Row}, {Col}) {Tile.AsString(false)}")]
 public record Move(int Row, int Col, Tile T)
 {
     public int Row { get; } = Row;
     public int Col { get; } = Col;
     public Tile Tile { get; } = T;
+
+    public string AsString(bool Color)
+        => $"({Row}, {Col}) {Tile.AsString(Color)}";
 }
 
 public enum CellState
@@ -57,7 +62,8 @@ public record Play(List<Move> Moves, int Points, Hand NewHand)
     public Hand NewHand { get; init; } = NewHand;
 
     public string AsString(bool Color)
-        => string.Join(", ", Moves.Select(m => $"({m.Row}, {m.Col}) {m.Tile.AsString(Color)}"));
+        //=> string.Join(", ", Moves.Select(m => $"({m.Row}, {m.Col}) {m.Tile.AsString(Color)}"));
+        => string.Join(", ", Moves.Select(m => m.AsString(Color))) + $" -> {Points} points, hand={NewHand.AsString(Color)}";
 }
 
 public class Hand: HashSet<Tile>
@@ -264,6 +270,7 @@ public class Board
 
     public Play Play(Hand hand)
     {
+        /*
         // For now, that's just a simulation
         Tile t1 = hand.First(t => t.Shape == Shape.Lozange && t.Color == Color.Blue);
         Tile t2 = hand.First(t => t.Shape == Shape.Square && t.Color == Color.Blue);
@@ -276,6 +283,96 @@ public class Board
         };
 
         return new Play(moves, CountPoints(moves), new Hand(hand.Except([t1, t2, t3])));
+        */
+
+        var PossiblePlays = new List<Play>();
+
+        for (int row = RowMax + 1; row >= RowMin - 1; row--)
+        {
+            for (int col = ColMin - 1; col <= ColMax + 1; col++)
+            {
+                var state = GetCellState(row, col);
+                if (state == CellState.PotentiallyPlayable)
+                {
+                    Console.WriteLine($"PotentiallyPlayable {row}, {col}");
+                    foreach (Tile t in hand)
+                        if (IsCompatible(row, col, t))
+                        {
+                            Console.WriteLine("  Compatible: " + t.AsString(true));
+                            var CurrentMoves = new List<Move>();
+                            ExploreMove(this, this, hand, CurrentMoves, PossiblePlays, new Move(row, col, t), true, true);
+                        }
+                }
+
+            }
+        }
+
+        foreach (Play p in PossiblePlays)
+            Console.WriteLine(p.AsString(true));
+
+        Debugger.Break();
+
+        // ToDo: find the best play
+        return PossiblePlays[0];
+    }
+
+    private static void ExploreMove(Board startBoard, Board b, Hand h, List<Move> CurrentMoves, List<Play> PossiblePlays, Move move, bool NS, bool EW)
+    {
+        Console.WriteLine($"\nExploreMove {move.AsString(true)}  NS={NS} EW={EW}");
+
+        var newB = new Board(b);
+        newB.AddMove(move);
+        var newH = new Hand(h.Except([move.Tile]));
+        var newCurrentMoves = new List<Move>(CurrentMoves)
+        {
+            move
+        };
+
+        // Quick and dirty firtering, only keep move if it produces more points
+        // Actually better, should remove all solutions with less points and keep same number of points, so
+        // at the end I can select a random one among the ones that give max points
+        int points = startBoard.CountPoints(newCurrentMoves);
+        if (PossiblePlays.Count==0 || points > PossiblePlays.Max(p => p.Points))
+            PossiblePlays.Add(new Play(newCurrentMoves, points, newH));
+
+        // If there are no remaining tiles in hand, no need to continue
+        if (newH.Count == 0)
+            return;
+
+        if (NS)
+        {
+            TryExplore(startBoard, newB, newH, newCurrentMoves, PossiblePlays, move.Row, move.Col, 1, 0);
+            TryExplore(startBoard, newB, newH, newCurrentMoves, PossiblePlays, move.Row, move.Col, -1, 0);
+        }
+        if (EW)
+        {
+            TryExplore(startBoard, newB, newH, newCurrentMoves, PossiblePlays, move.Row, move.Col, 0, 1);
+            TryExplore(startBoard, newB, newH, newCurrentMoves, PossiblePlays, move.Row, move.Col, 0, -1);
+        }
+    }
+
+    private static void TryExplore(Board startBoard, Board b, Hand h, List<Move> CurrentMoves, List<Play> PossiblePlays, int row, int col, int deltaRow, int deltaCol)
+    {
+        Console.WriteLine($"\nTryExplore ({row}, {col})  deltaRow={deltaRow} deltaCol={deltaCol}");
+
+        for (; ; )
+        {
+            row += deltaRow;
+            col += deltaCol;
+            var state = b.GetCellState(row, col);
+            if (state == CellState.Tiled)
+                continue;
+            if (state == CellState.EmptyIsolated)
+                return;
+            Debug.Assert(state == CellState.PotentiallyPlayable);
+            Console.WriteLine($"PotentiallyPlayable {row}, {col}");
+            foreach (Tile t in h)
+                if (b.IsCompatible(row, col, t))
+                {
+                    Console.WriteLine($"  Compatible: {t.AsString(true)}");
+                    ExploreMove(startBoard, b, h, CurrentMoves, PossiblePlays, new Move(row, col, t), deltaRow != 0, deltaCol != 0);
+                }
+        }
     }
 }
 
@@ -340,11 +437,11 @@ public static class ConsoleSupport
         return sb.ToString();
     }
 
-    public static string AsString(this Tile t, bool color)
+    public static string AsString(this Tile t, bool? color)
     {
         var sb = new StringBuilder();
 
-        if (color)
+        if (color == true)
             sb.Append(t.Color switch
             {
                 Color.Red => ConsoleColorRed,
@@ -357,23 +454,27 @@ public static class ConsoleSupport
             });
         sb.Append(t.Shape switch
         {
-            //Shape.Circle => "A",
-            //Shape.Cross => "B",
-            //Shape.Lozange => "C",
-            //Shape.Square => "D",
-            //Shape.Star => "E",
-            //Shape.Clover => "F",
             Shape.Circle => "O",
             Shape.Cross => "+",
             Shape.Lozange => "<",
             Shape.Square => "[",
             Shape.Star => "*",
             Shape.Clover => "%",
-            _ => "🞌 "
+            _ => "?"
         });
-        if (color)
+        if (color == true)
             sb.Append(ConsoleColorDefault);
-
+        else if (color == null)
+            sb.Append(t.Color switch
+            {
+                Color.Red => 'r',
+                Color.Orange => 'o',
+                Color.Yellow => 'y',
+                Color.Green => 'g',
+                Color.Blue => 'b',
+                Color.Purple => 'm',
+                _ => ConsoleColorDefault
+            });
         return sb.ToString();
     }
 }
