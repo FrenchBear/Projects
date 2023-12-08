@@ -63,27 +63,80 @@ public record Play(HashSet<Move> Moves, int Points, Hand NewHand)
     public Hand NewHand { get; init; } = NewHand;
 
     public string AsString(bool? Color)
-        => string.Join(", ", Moves.Select(m => m.AsString(Color))) + $" -> {Points} points, hand={NewHand.AsString(Color)}";
+        => string.Join(", ", Moves.Select(m => m.AsString(Color))) + $" -> {Points} points  Hand: {NewHand.AsString(Color)}";
 }
 
 [DebuggerDisplay("Hand: {AsString(null)}")]
 public class Hand: HashSet<Tile>, IEquatable<Hand>
 {
+    public Hand() : base() { }
     public Hand(IEnumerable<Tile> tiles) : base(tiles) { }
     public Hand(HashSet<Tile> tiles) : base(tiles) { }
 
     public string AsString(bool? Color)
         => string.Join(" ", this.Select(m => m.AsString(Color)));
 
-    public bool Equals(Hand? hand) 
+    public bool Equals(Hand? hand)
         => hand != null && SetEquals(hand);
 
-    public override bool Equals(object? obj) 
+    public override bool Equals(object? obj)
         => Equals(obj as Hand);
 
-    public override int GetHashCode() 
+    public override int GetHashCode()
         => base.GetHashCode();
 }
+
+// Dock is a shuffled container for 6x6x3 = 108 standard tiles
+public class Dock
+{
+    readonly List<Tile> Tiles = [];
+
+    public Dock()
+    {
+        foreach (Shape s in Enum.GetValues(typeof(Shape)))
+            foreach (Color c in Enum.GetValues(typeof(Color)))
+                for (int i = 1; i <= 3; i++)
+                    Tiles.Add(new(s, c, i));
+
+        ShuffleTiles();
+    }
+
+    private void ShuffleTiles()
+    {
+        var rnd = new Random();
+        for (int i = 0; i < Tiles.Count; i++)
+        {
+            int k = rnd.Next(Tiles.Count);
+            (Tiles[i], Tiles[k]) = (Tiles[k], Tiles[i]);
+        }
+    }
+
+    public bool IsEmpty => Tiles.Count == 0;
+
+    /// <summary>
+    /// Returns a random tile and remove it from the dock.
+    /// </summary>
+    /// <returns>A random tile. An exception is raised if dock is empty</returns>
+    public Tile GetTile()
+    {
+        if (Tiles.Count == 0)
+            throw new InvalidOperationException();
+        var tile = Tiles[0];
+        Tiles.RemoveAt(0);
+        return tile;
+    }
+
+    public void ReturnTiles(Hand hand)
+    {
+        foreach (Tile t in hand)
+        {
+            Debug.Assert(!Tiles.Contains(t));
+            Tiles.Add(t);
+        }
+        ShuffleTiles();
+    }
+}
+
 public class Board: IEnumerable<Move>
 {
     readonly Board? BaseBoard = null;
@@ -101,7 +154,9 @@ public class Board: IEnumerable<Move>
     private int rowMin = 100, rowMax = 0;
     private int colMin = 100, colMax = 0;
 
-    public bool IsEmpty => BaseBoard == null && Moves.Count == 0;
+    public bool IsEmpty => Moves.Count == 0 && (BaseBoard == null || BaseBoard.IsEmpty);
+
+    public int TilesCount => Moves.Count + (BaseBoard == null ? 0 : BaseBoard.TilesCount);
 
     public void AddMove(Move m)
     {
@@ -148,7 +203,12 @@ public class Board: IEnumerable<Move>
 
     public bool IsCompatible(int row, int col, in Tile t)
     {
+        // Special case, on empty board, (50, 50) is compatible with any tile
+        if (IsEmpty)
+            return row == 50 && col == 50;
+
         Debug.Assert(GetTile(row, col) == null);
+
         if (!IsDirectionCompatible(row, col, -1, 0, in t, out bool nn))
             return false;
         if (!IsDirectionCompatible(row, col, 1, 0, in t, out bool sn))
@@ -195,19 +255,19 @@ public class Board: IEnumerable<Move>
 
         int mRow = -1;
         int mCol = -1;
-        foreach(Move m in moves)
+        foreach (Move m in moves)
         {
-            if (mRow==-1)
+            if (mRow == -1)
                 mRow = m.Row;
-            else if (isHorizontal && mRow!=m.Row)
+            else if (isHorizontal && mRow != m.Row)
                 isHorizontal = false;
 
-            if (mCol==-1)
+            if (mCol == -1)
                 mCol = m.Col;
-            else if (isVertical && mCol!=m.Col)
+            else if (isVertical && mCol != m.Col)
                 isVertical = false;
         }
-        if (moves.Count>1)
+        if (moves.Count > 1)
             Debug.Assert(isHorizontal ^ isVertical);
 
         int points = 0;
@@ -304,23 +364,25 @@ public class Board: IEnumerable<Move>
     {
         var PossiblePlays = new List<Play>();
 
-        for (int row = RowMax + 1; row >= RowMin - 1; row--)
-            for (int col = ColMin - 1; col <= ColMax + 1; col++)
-            {
-                var state = GetCellState(row, col);
-                if (state == CellState.PotentiallyPlayable)
+        void ExplorePotentiallyPlayable(int row, int col)
+        {
+            //Console.WriteLine($"PotentiallyPlayable {row}, {col}");
+            foreach (Tile t in hand)
+                if (IsCompatible(row, col, t))
                 {
-                    //Console.WriteLine($"PotentiallyPlayable {row}, {col}");
-                    foreach (Tile t in hand)
-                        if (IsCompatible(row, col, t))
-                        {
-                            //Console.WriteLine("  Compatible: " + t.AsString(true));
-                            var CurrentMoves = new HashSet<Move>();
-                            ExploreMove(this, this, hand, CurrentMoves, PossiblePlays, new Move(row, col, t), true, true);
-                        }
+                    //Console.WriteLine("  Compatible: " + t.AsString(true));
+                    var CurrentMoves = new HashSet<Move>();
+                    ExploreMove(this, this, hand, CurrentMoves, PossiblePlays, new Move(row, col, t), true, true);
                 }
+        }
 
-            }
+        if (IsEmpty)
+            ExplorePotentiallyPlayable(50, 50);
+        else
+            for (int row = RowMax + 1; row >= RowMin - 1; row--)
+                for (int col = ColMin - 1; col <= ColMax + 1; col++)
+                    if (GetCellState(row, col) == CellState.PotentiallyPlayable)
+                        ExplorePotentiallyPlayable(row, col);
 
         // Show all possible plays
         //foreach (Play p in PossiblePlays)

@@ -161,3 +161,89 @@ public class UnitTests_Play
         hand = play.NewHand;
     }
 }
+
+public class UnitTests_Misc
+{
+    [Fact]
+    public void PlayOnEmptyBoard()
+    {
+        var b = new Board();
+
+        var h1 = new Tile(Shape.Circle, Color.Yellow, 1);
+        var h2 = new Tile(Shape.Circle, Color.Green, 1);
+        var h3 = new Tile(Shape.Square, Color.Orange, 1);
+        var h4 = new Tile(Shape.Clover, Color.Blue, 1);
+        var h5 = new Tile(Shape.Clover, Color.Red, 1);
+        var h6 = new Tile(Shape.Circle, Color.Red, 1);
+
+        var hand = new Hand([h1, h2, h3, h4, h5, h6]);
+
+        var play = b.Play(hand);
+        Debug.Assert(play.Moves.All(m => m.Row == 50) || play.Moves.All(m => m.Col == 50));
+        Debug.Assert(play.Moves.All(m => m.Tile.Shape == Shape.Circle));
+        Debug.Assert(play.Points == 3);
+        Debug.Assert(play.NewHand.Equals(new Hand([h3, h4, h5])));
+        b.AddMoves(play.Moves);
+    }
+
+    [Fact]
+    public void TestDock()
+    {
+        var d = new Dock();
+        var check = new HashSet<Tile>();
+
+        while (!d.IsEmpty)
+        {
+            var t = d.GetTile();
+            Debug.Assert(!check.Contains(t));
+            check.Add(t);
+        }
+        Debug.Assert(check.Count == 6 * 6 * 3);
+        foreach (Shape s in Enum.GetValues(typeof(Shape)))
+            foreach (Color c in Enum.GetValues(typeof(Color)))
+                for (int i = 1; i <= 3; i++)
+                    Debug.Assert(check.Contains(new(s, c, i)));
+
+        Assert.Throws<InvalidOperationException>(() => d.GetTile());
+    }
+
+    [Fact]
+    private static void Test_FullPlay()
+    {
+        // Do 20 full plays
+        for (int i = 0; i < 20; i++)
+        {
+            var b = new Board();
+            var d = new Dock();
+
+            var hand = new Hand();
+            for (; ; )
+            {
+                while (!d.IsEmpty && hand.Count < 6)
+                    hand.Add(d.GetTile());
+                if (hand.Count == 0)
+                {
+                    // Normal end, full dock played
+                    Debug.Assert(b.TilesCount == 6 * 6 * 3);
+                    break;
+                }
+
+                var play = b.Play(hand);
+                if (play.Points == 0)
+                {
+                    // If dock is empty, no possibility to return tiles
+                    if (d.IsEmpty)
+                        break;
+
+                    // Returning hand to dock and take 6 random tiles again
+                    d.ReturnTiles(hand);
+                    hand.Clear();
+                    continue;
+                }
+                b.AddMoves(play.Moves);
+                hand = play.NewHand;
+            }
+        }
+    }
+
+}

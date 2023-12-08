@@ -15,7 +15,74 @@ internal class Program
         Console.OutputEncoding = System.Text.Encoding.UTF8;
 
         //Tests_Base();
-        Tests_Play();
+        //Tests_Play();
+        //Tests_EmptyBoard();
+        Test_FullPlay();
+    }
+
+    private static void Test_FullPlay()
+    {
+        var b = new Board();
+        var d = new Dock();
+
+        var hand = new Hand();
+        for (; ; )
+        {
+            while (!d.IsEmpty && hand.Count < 6)
+                hand.Add(d.GetTile());
+            if (hand.Count == 0)
+            {
+                // Normal end, full dock played
+                Debug.Assert(b.TilesCount == 6 * 6 * 3);
+                Console.WriteLine("Normal endgame, all tiles played");
+                break;
+            }
+
+            Console.WriteLine($"Hand: {hand.AsString(true)}");
+            var play = b.Play(hand);
+            if (play.Points == 0)
+            {
+                Console.WriteLine("No solution");
+                // If dock is empty, no possibility to return tiles
+                if (d.IsEmpty)
+                {
+                    Console.WriteLine("Dock is empty, no possible shuffle, endgame");
+                    break;
+                }
+                Console.WriteLine("Returning hand to dock and take 6 random tiles again");
+                d.ReturnTiles(hand);
+                hand.Clear();
+                continue;
+            }
+            Console.WriteLine($"Play: {play.AsString(true)}");
+            b.AddMoves(play.Moves);
+            b.Print();
+            hand = play.NewHand;
+        }
+    }
+
+    private static void Tests_EmptyBoard()
+    {
+        var b = new Board();
+
+        var h1 = new Tile(Shape.Circle, Color.Yellow, 1);
+        var h2 = new Tile(Shape.Circle, Color.Green, 1);
+        var h3 = new Tile(Shape.Square, Color.Orange, 1);
+        var h4 = new Tile(Shape.Clover, Color.Blue, 1);
+        var h5 = new Tile(Shape.Clover, Color.Red, 1);
+        var h6 = new Tile(Shape.Circle, Color.Red, 1);
+
+        var hand = new Hand([h1, h2, h3, h4, h5, h6]);
+
+        Console.WriteLine($"Hand: {hand.AsString(true)}");
+        var play = b.Play(hand);
+        Console.WriteLine($"Play: {play.AsString(true)}");
+        Debug.Assert(play.Moves.All(m => m.Row == 50) || play.Moves.All(m => m.Col == 50));
+        Debug.Assert(play.Moves.All(m => m.Tile.Shape == Shape.Circle));
+        Debug.Assert(play.Points == 3);
+        Debug.Assert(play.NewHand.Equals(new Hand([h3, h4, h5])));
+        b.AddMoves(play.Moves);
+        b.Print();
     }
 
     static void Tests_Play()
@@ -64,7 +131,7 @@ internal class Program
         play = b.Play(hand);
         Console.WriteLine($"Play: {play.AsString(true)}");
         Debug.Assert(play.Moves.Count == 3);
-        Debug.Assert(play.Moves.All(m => m.Row==50));
+        Debug.Assert(play.Moves.All(m => m.Row == 50));
         Debug.Assert(play.Moves.All(m => m.Tile.Color == Color.Red));
         Debug.Assert(play.Points == 12);
         Debug.Assert(play.NewHand.Equals(new Hand([h3, h4, h7])));
