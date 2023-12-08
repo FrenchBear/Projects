@@ -45,7 +45,7 @@ public record Move(int Row, int Col, Tile T)
     public int Col { get; } = Col;
     public Tile Tile { get; } = T;
 
-    public string AsString(bool Color)
+    public string AsString(bool? Color)
         => $"({Row}, {Col}) {Tile.AsString(Color)}";
 }
 
@@ -56,22 +56,24 @@ public enum CellState
     Tiled,
 }
 
-public record Play(List<Move> Moves, int Points, Hand NewHand)
+[DebuggerDisplay("Play: {AsString(null)}")]
+public record Play(HashSet<Move> Moves, int Points, Hand NewHand)
 {
-    public List<Move> Moves { get; init; } = Moves;
+    public HashSet<Move> Moves { get; init; } = Moves;
     public int Points { get; init; } = Points;
     public Hand NewHand { get; init; } = NewHand;
 
-    public string AsString(bool Color)
+    public string AsString(bool? Color)
         => string.Join(", ", Moves.Select(m => m.AsString(Color))) + $" -> {Points} points, hand={NewHand.AsString(Color)}";
 }
 
+[DebuggerDisplay("Hand: {AsString(null)}")]
 public class Hand: HashSet<Tile>, IEquatable<Hand>
 {
     public Hand(IEnumerable<Tile> tiles) : base(tiles) { }
     public Hand(HashSet<Tile> tiles) : base(tiles) { }
 
-    public string AsString(bool Color)
+    public string AsString(bool? Color)
         => string.Join(" ", this.Select(m => m.AsString(Color)));
 
     //public override bool Equals(object? obj)
@@ -82,13 +84,18 @@ public class Hand: HashSet<Tile>, IEquatable<Hand>
     //}
 
     public bool Equals(Hand? hand) 
-        => hand == null ? false : SetEquals(hand);
-};
+        => hand != null && SetEquals(hand);
 
+    public override bool Equals(object? obj) 
+        => Equals(obj as Hand);
+
+    public override int GetHashCode() 
+        => base.GetHashCode();
+}
 public class Board: IEnumerable<Move>
 {
     readonly Board? BaseBoard = null;
-    readonly List<Move> Moves = [];
+    readonly HashSet<Move> Moves = [];
 
     public Board() { }
     public Board(Board baseBoard)
@@ -116,7 +123,7 @@ public class Board: IEnumerable<Move>
         colMax = Math.Max(colMax, m.Col);
     }
 
-    public void AddMoves(List<Move> moves)
+    public void AddMoves(HashSet<Move> moves)
     {
         foreach (var move in moves)
             AddMove(move);
@@ -182,12 +189,35 @@ public class Board: IEnumerable<Move>
 
     public void Print() => Console.WriteLine(this.AsString(true));
 
-    public int CountPoints(List<Move> moves)
+    public int CountPoints(HashSet<Move> moves)
     {
-        // Comptage, use a temp new board with moves actually played
+        if (moves.Count == 0)
+            return 0;
+
+        // Use a temp new board with moves actually played
         var nb = new Board(this);
         nb.AddMoves(moves);
-        bool isHorizontal = moves.Count == 1 || moves[0].Row == moves[1].Row;
+
+        bool isHorizontal = true;
+        bool isVertical = true;
+
+        int mRow = -1;
+        int mCol = -1;
+        foreach(Move m in moves)
+        {
+            if (mRow==-1)
+                mRow = m.Row;
+            else if (isHorizontal && mRow!=m.Row)
+                isHorizontal = false;
+
+            if (mCol==-1)
+                mCol = m.Col;
+            else if (isVertical && mCol!=m.Col)
+                isVertical = false;
+        }
+        if (moves.Count>1)
+            Debug.Assert(isHorizontal ^ isVertical);
+
         int points = 0;
         int row, col, dp;
         if (isHorizontal)
@@ -216,8 +246,8 @@ public class Board: IEnumerable<Move>
 
             // Count tiles in horizontal block
             // Find the leftmost position
-            row = moves[0].Row;
-            col = moves[0].Col;
+            row = mRow;
+            col = mCol;
             // Start with any placed tile, search for leftmost tile of the block
             while (nb.GetCellState(row, col - 1) == CellState.Tiled)
                 col--;
@@ -258,8 +288,8 @@ public class Board: IEnumerable<Move>
 
             // Count tiles in vertical block
             // Find the topmost position
-            row = moves[0].Row;
-            col = moves[0].Col;
+            row = mRow;
+            col = mCol;
             // Start with any placed tile, search for topmost tile of the block
             while (nb.GetCellState(row + 1, col) == CellState.Tiled)
                 row++;
@@ -293,7 +323,7 @@ public class Board: IEnumerable<Move>
                         if (IsCompatible(row, col, t))
                         {
                             //Console.WriteLine("  Compatible: " + t.AsString(true));
-                            var CurrentMoves = new List<Move>();
+                            var CurrentMoves = new HashSet<Move>();
                             ExploreMove(this, this, hand, CurrentMoves, PossiblePlays, new Move(row, col, t), true, true);
                         }
                 }
@@ -313,14 +343,14 @@ public class Board: IEnumerable<Move>
         return PossiblePlays[rnd.Next(PossiblePlays.Count)];
     }
 
-    private static void ExploreMove(Board startBoard, Board b, Hand h, List<Move> CurrentMoves, List<Play> PossiblePlays, Move move, bool NS, bool EW)
+    private static void ExploreMove(Board startBoard, Board b, Hand h, HashSet<Move> CurrentMoves, List<Play> PossiblePlays, Move move, bool NS, bool EW)
     {
         //Console.WriteLine($"\nExploreMove {move.AsString(true)}  NS={NS} EW={EW}");
 
         var newB = new Board(b);
         newB.AddMove(move);
         var newH = new Hand(h.Except([move.Tile]));
-        var newCurrentMoves = new List<Move>(CurrentMoves) { move };
+        var newCurrentMoves = new HashSet<Move>(CurrentMoves) { move };
 
         // Quick and dirty firtering, only keep move if it produces equal or more points than current max(points)
         // if points are actually greater than max, forget all previous possible plays
@@ -347,7 +377,7 @@ public class Board: IEnumerable<Move>
         }
     }
 
-    private static void TryExplore(Board startBoard, Board b, Hand h, List<Move> CurrentMoves, List<Play> PossiblePlays, int row, int col, int deltaRow, int deltaCol)
+    private static void TryExplore(Board startBoard, Board b, Hand h, HashSet<Move> CurrentMoves, List<Play> PossiblePlays, int row, int col, int deltaRow, int deltaCol)
     {
         //Console.WriteLine($"\nTryExplore ({row}, {col})  deltaRow={deltaRow} deltaCol={deltaCol}");
 

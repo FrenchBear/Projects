@@ -47,12 +47,13 @@ internal class Program
 
         Console.WriteLine($"Hand: {hand.AsString(true)}");
         var play = b.Play(hand);
-        Debug.Assert(play.Moves.Equals(new List<Move> { new Move(48, 52, h2), new Move(49, 52, h1) }));
+        Console.WriteLine($"Play: {play.AsString(true)}");
+        Debug.Assert(play.Moves.SetEquals(new HashSet<Move> { new(48, 52, h2), new(49, 52, h1) }));
         Debug.Assert(play.Points == 7);
         Debug.Assert(play.NewHand.Equals(new Hand([h3, h4, h5, h6])));
-        Console.WriteLine($"Play: {play.AsString(true)}");
         b.AddMoves(play.Moves);
         b.Print();
+        hand = play.NewHand;
 
         var h7 = new Tile(Shape.Cross, Color.Yellow, 1);
         var h8 = new Tile(Shape.Cross, Color.Red, 1);
@@ -61,10 +62,15 @@ internal class Program
 
         Console.WriteLine($"Hand: {hand.AsString(true)}");
         play = b.Play(hand);
-        Debug.Assert(play.Points == 12);
         Console.WriteLine($"Play: {play.AsString(true)}");
+        Debug.Assert(play.Moves.Count == 3);
+        Debug.Assert(play.Moves.All(m => m.Row==50));
+        Debug.Assert(play.Moves.All(m => m.Tile.Color == Color.Red));
+        Debug.Assert(play.Points == 12);
+        Debug.Assert(play.NewHand.Equals(new Hand([h3, h4, h7])));
         b.AddMoves(play.Moves);
         b.Print();
+        hand = play.NewHand;
     }
 
     // Same basic tests than in test project, but with visual output
@@ -98,7 +104,7 @@ internal class Program
         //var hand = new Hand([h1, h2, h3, h4, h5, h6]);
         //Console.WriteLine($"Hand before: {hand.AsString(true)}");
 
-        List<Move> moves =
+        HashSet<Move> moves =
         [
             new(49, 51, new Tile(Shape.Lozange, Color.Blue, 1)),
             new(49, 53, new Tile(Shape.Square, Color.Blue, 1)),

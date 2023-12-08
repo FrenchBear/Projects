@@ -58,9 +58,9 @@ public class UnitTests_Base
     }
 
     [Fact]
-    public void CountPointsTest1()
+    public void CountPointsTest()
     {
-        List<Move> moves =
+        HashSet<Move> moves =
         [
             new(49, 51, new Tile(Shape.Lozange, Color.Blue, 1)),
             new(49, 53, new Tile(Shape.Square, Color.Blue, 1)),
@@ -121,5 +121,43 @@ public class UnitTests_Play
         var hand = new Hand([t4, t5, t6]);
         var play = b.Play(hand);
         Debug.Assert(play.Points == 0);
+    }
+
+    [Fact]
+    public void PlayTest()
+    {
+        var t4 = new Tile(Shape.Lozange, Color.Yellow, 1);
+        var t5 = new Tile(Shape.Lozange, Color.Green, 1);
+        b.AddMove(new Move(49, 51, t4));
+        b.AddMove(new Move(48, 51, t5));
+
+        var h1 = new Tile(Shape.Circle, Color.Yellow, 1);
+        var h2 = new Tile(Shape.Circle, Color.Green, 1);
+        var h3 = new Tile(Shape.Square, Color.Orange, 1);
+        var h4 = new Tile(Shape.Clover, Color.Blue, 1);
+        var h5 = new Tile(Shape.Clover, Color.Red, 1);
+        var h6 = new Tile(Shape.Star, Color.Red, 1);
+
+        var hand = new Hand([h1, h2, h3, h4, h5, h6]);
+        var play = b.Play(hand);
+        Debug.Assert(play.Moves.SetEquals(new HashSet<Move> { new(48, 52, h2), new(49, 52, h1) }));
+        Debug.Assert(play.Points == 7);
+        Debug.Assert(play.NewHand.Equals(new Hand([h3, h4, h5, h6])));
+        b.AddMoves(play.Moves);
+        hand = play.NewHand;
+
+        var h7 = new Tile(Shape.Cross, Color.Yellow, 1);
+        var h8 = new Tile(Shape.Cross, Color.Red, 1);
+        hand.Add(h7);
+        hand.Add(h8);
+
+        play = b.Play(hand);
+        Debug.Assert(play.Moves.Count == 3);
+        Debug.Assert(play.Moves.All(m => m.Row == 50));
+        Debug.Assert(play.Moves.All(m => m.Tile.Color == Color.Red));
+        Debug.Assert(play.Points == 12);
+        Debug.Assert(play.NewHand.Equals(new Hand([h3, h4, h7])));
+        b.AddMoves(play.Moves);
+        hand = play.NewHand;
     }
 }
