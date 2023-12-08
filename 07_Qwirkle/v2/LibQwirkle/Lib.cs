@@ -5,6 +5,7 @@
 
 using System.Collections;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace LibQwirkle;
@@ -30,10 +31,10 @@ public enum Color
 }
 
 [DebuggerDisplay("Tile {this.AsString(null)}")]
-public record Tile(Color C, Shape S, int Instance)
+public record Tile(Shape S, Color C, int Instance)
 {
-    public Color Color { get; } = C;
     public Shape Shape { get; } = S;
+    public Color Color { get; } = C;
     public int Instance { get; } = Instance;
 }
 
@@ -65,13 +66,23 @@ public record Play(List<Move> Moves, int Points, Hand NewHand)
         => string.Join(", ", Moves.Select(m => m.AsString(Color))) + $" -> {Points} points, hand={NewHand.AsString(Color)}";
 }
 
-public class Hand: HashSet<Tile>
+public class Hand: HashSet<Tile>, IEquatable<Hand>
 {
     public Hand(IEnumerable<Tile> tiles) : base(tiles) { }
     public Hand(HashSet<Tile> tiles) : base(tiles) { }
 
     public string AsString(bool Color)
         => string.Join(" ", this.Select(m => m.AsString(Color)));
+
+    //public override bool Equals(object? obj)
+    //{
+    //    if (obj == null) return false;
+    //    if (obj is not Hand hand) return false;
+    //    return SetEquals(hand);
+    //}
+
+    public bool Equals(Hand? hand) 
+        => hand == null ? false : SetEquals(hand);
 };
 
 public class Board: IEnumerable<Move>
@@ -370,7 +381,7 @@ public class Board: IEnumerable<Move>
             yield return move;
     }
 
-    IEnumerator IEnumerable.GetEnumerator() 
+    IEnumerator IEnumerable.GetEnumerator()
         => GetEnumerator();
 }
 

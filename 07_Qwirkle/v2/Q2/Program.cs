@@ -22,11 +22,11 @@ internal class Program
     {
         var b = new Board();
 
-        var t1 = new Tile(Color.Red, Shape.Square, 1);
-        var t2 = new Tile(Color.Red, Shape.Lozange, 1);
-        var t3 = new Tile(Color.Red, Shape.Circle, 1);
-        var t4 = new Tile(Color.Yellow, Shape.Lozange, 1);
-        var t5 = new Tile(Color.Green, Shape.Lozange, 1);
+        var t1 = new Tile(Shape.Square, Color.Red, 1);
+        var t2 = new Tile(Shape.Lozange, Color.Red, 1);
+        var t3 = new Tile(Shape.Circle, Color.Red, 1);
+        var t4 = new Tile(Shape.Lozange, Color.Yellow, 1);
+        var t5 = new Tile(Shape.Lozange, Color.Green, 1);
 
         b.AddMove(new Move(50, 50, t1));
         b.AddMove(new Move(50, 51, t2));
@@ -36,25 +36,35 @@ internal class Program
 
         b.Print();
 
-        var h1 = new Tile(Color.Yellow, Shape.Circle, 1);
-        var h2 = new Tile(Color.Green, Shape.Circle, 1);
-        var h3 = new Tile(Color.Orange, Shape.Square, 1);
-        var h4 = new Tile(Color.Blue, Shape.Clover, 1);
-        var h5 = new Tile(Color.Green, Shape.Clover, 1);
-        var h6 = new Tile(Color.Purple, Shape.Star, 1);
+        var h1 = new Tile(Shape.Circle, Color.Yellow, 1);
+        var h2 = new Tile(Shape.Circle, Color.Green, 1);
+        var h3 = new Tile(Shape.Square, Color.Orange, 1);
+        var h4 = new Tile(Shape.Clover, Color.Blue, 1);
+        var h5 = new Tile(Shape.Clover, Color.Red, 1);
+        var h6 = new Tile(Shape.Star, Color.Red, 1);
 
         var hand = new Hand([h1, h2, h3, h4, h5, h6]);
 
         Console.WriteLine($"Hand: {hand.AsString(true)}");
         var play = b.Play(hand);
-        if (play.Points == 0)
-            Console.WriteLine("No solution!!");
-        else
-        {
-            Console.WriteLine($"Play: {play.AsString(true)}");
-            b.AddMoves(play.Moves);
-            b.Print();
-        }
+        Debug.Assert(play.Moves.Equals(new List<Move> { new Move(48, 52, h2), new Move(49, 52, h1) }));
+        Debug.Assert(play.Points == 7);
+        Debug.Assert(play.NewHand.Equals(new Hand([h3, h4, h5, h6])));
+        Console.WriteLine($"Play: {play.AsString(true)}");
+        b.AddMoves(play.Moves);
+        b.Print();
+
+        var h7 = new Tile(Shape.Cross, Color.Yellow, 1);
+        var h8 = new Tile(Shape.Cross, Color.Red, 1);
+        hand.Add(h7);
+        hand.Add(h8);
+
+        Console.WriteLine($"Hand: {hand.AsString(true)}");
+        play = b.Play(hand);
+        Debug.Assert(play.Points == 12);
+        Console.WriteLine($"Play: {play.AsString(true)}");
+        b.AddMoves(play.Moves);
+        b.Print();
     }
 
     // Same basic tests than in test project, but with visual output
@@ -62,12 +72,12 @@ internal class Program
     {
         var b = new Board();
 
-        var t1 = new Tile(Color.Red, Shape.Square, 1);
-        var t2 = new Tile(Color.Red, Shape.Lozange, 1);
-        var t3 = new Tile(Color.Red, Shape.Circle, 1);
-        var t4 = new Tile(Color.Blue, Shape.Circle, 1);
-        var t5 = new Tile(Color.Green, Shape.Circle, 1);
-        var t6 = new Tile(Color.Orange, Shape.Circle, 1);
+        var t1 = new Tile(Shape.Square, Color.Red, 1);
+        var t2 = new Tile(Shape.Lozange, Color.Red, 1);
+        var t3 = new Tile(Shape.Circle, Color.Red, 1);
+        var t4 = new Tile(Shape.Circle, Color.Blue, 1);
+        var t5 = new Tile(Shape.Circle, Color.Green, 1);
+        var t6 = new Tile(Shape.Circle, Color.Orange, 1);
 
         b.AddMove(new Move(50, 50, t1));
         b.AddMove(new Move(50, 51, t2));
@@ -90,9 +100,9 @@ internal class Program
 
         List<Move> moves =
         [
-            new(49, 51, new Tile(Color.Blue, Shape.Lozange, 1)),
-            new(49, 53, new Tile(Color.Blue, Shape.Square, 1)),
-            new(49, 54, new Tile(Color.Blue, Shape.Star, 1)),
+            new(49, 51, new Tile(Shape.Lozange, Color.Blue, 1)),
+            new(49, 53, new Tile(Shape.Square, Color.Blue, 1)),
+            new(49, 54, new Tile(Shape.Star, Color.Blue, 1)),
         ];
         int points = b.CountPoints(moves);
         Debug.Assert(points == 6);
@@ -102,8 +112,8 @@ internal class Program
 
         moves =
         [
-            new(49, 55, new Tile(Color.Blue, Shape.Cross, 1)),
-            new(49, 56, new Tile(Color.Blue, Shape.Clover, 1)),
+            new(49, 55, new Tile(Shape.Cross, Color.Blue, 1)),
+            new(49, 56, new Tile(Shape.Clover, Color.Blue, 1)),
         ];
         points = b.CountPoints(moves);
         Debug.Assert(points == 12);
@@ -113,8 +123,8 @@ internal class Program
 
         moves =
         [
-            new(48, 51, new Tile(Color.Green, Shape.Lozange, 1)),
-            new(48, 53, new Tile(Color.Green, Shape.Square, 1)),
+            new(48, 51, new Tile(Shape.Lozange, Color.Green, 1)),
+            new(48, 53, new Tile(Shape.Square, Color.Green, 1)),
         ];
         points = b.CountPoints(moves);
         Debug.Assert(points == 8);
@@ -124,9 +134,9 @@ internal class Program
 
         moves =
         [
-            new(48, 54, new Tile(Color.Green, Shape.Star, 1)),
-            new(50, 54, new Tile(Color.Yellow, Shape.Star, 1)),
-            new(51, 54, new Tile(Color.Orange, Shape.Star, 1)),
+            new(48, 54, new Tile(Shape.Star, Color.Green, 1)),
+            new(50, 54, new Tile(Shape.Star, Color.Yellow, 1)),
+            new(51, 54, new Tile(Shape.Star, Color.Orange, 1)),
         ];
         points = b.CountPoints(moves);
         Debug.Assert(points == 8);

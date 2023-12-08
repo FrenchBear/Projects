@@ -14,12 +14,12 @@ public class UnitTests_Base
 
     public UnitTests_Base()
     {
-        var t1 = new Tile(Color.Red, Shape.Square, 1);
-        var t2 = new Tile(Color.Red, Shape.Lozange, 1);
-        var t3 = new Tile(Color.Red, Shape.Circle, 1);
-        var t4 = new Tile(Color.Blue, Shape.Circle, 1);
-        var t5 = new Tile(Color.Green, Shape.Circle, 1);
-        var t6 = new Tile(Color.Orange, Shape.Circle, 1);
+        var t1 = new Tile(Shape.Square, Color.Red, 1);
+        var t2 = new Tile(Shape.Lozange, Color.Red, 1);
+        var t3 = new Tile(Shape.Circle, Color.Red, 1);
+        var t4 = new Tile(Shape.Circle, Color.Blue, 1);
+        var t5 = new Tile(Shape.Circle, Color.Green, 1);
+        var t6 = new Tile(Shape.Circle, Color.Orange, 1);
 
         b.AddMove(new Move(50, 50, t1));
         b.AddMove(new Move(50, 51, t2));
@@ -39,7 +39,7 @@ public class UnitTests_Base
                    "48     x O x \r\n" +
                    "47     x O x \r\n" +
                    "46       x   \r\n";
-        string s2 = b.AsString(false, new Tile(Color.Purple, Shape.Circle, 2));
+        string s2 = b.AsString(false, new Tile(Shape.Circle, Color.Purple, 2));
         Debug.Assert(s == s2);
     }
 
@@ -53,7 +53,7 @@ public class UnitTests_Base
                    "48     x O x \r\n" +
                    "47     · O · \r\n" +
                    "46       ·   \r\n";
-        string s2 = b.AsString(false, new Tile(Color.Green, Shape.Lozange, 2));
+        string s2 = b.AsString(false, new Tile(Shape.Lozange, Color.Green, 2));
         Debug.Assert(s == s2);
     }
 
@@ -62,34 +62,34 @@ public class UnitTests_Base
     {
         List<Move> moves =
         [
-            new(49, 51, new Tile(Color.Blue, Shape.Lozange, 1)),
-            new(49, 53, new Tile(Color.Blue, Shape.Square, 1)),
-            new(49, 54, new Tile(Color.Blue, Shape.Star, 1)),
+            new(49, 51, new Tile(Shape.Lozange, Color.Blue, 1)),
+            new(49, 53, new Tile(Shape.Square, Color.Blue, 1)),
+            new(49, 54, new Tile(Shape.Star, Color.Blue, 1)),
         ];
         Debug.Assert(b.CountPoints(moves) == 6);
         b.AddMoves(moves);
 
         moves =
         [
-            new(49, 55, new Tile(Color.Blue, Shape.Cross, 1)),
-            new(49, 56, new Tile(Color.Blue, Shape.Clover, 1)),
+            new(49, 55, new Tile(Shape.Cross, Color.Blue, 1)),
+            new(49, 56, new Tile(Shape.Clover, Color.Blue, 1)),
         ];
         Debug.Assert(b.CountPoints(moves) == 12);
         b.AddMoves(moves);
 
         moves =
         [
-            new(48, 51, new Tile(Color.Green, Shape.Lozange, 1)),
-            new(48, 53, new Tile(Color.Green, Shape.Square, 1)),
+            new(48, 51, new Tile(Shape.Lozange, Color.Green, 1)),
+            new(48, 53, new Tile(Shape.Square, Color.Green, 1)),
         ];
         Debug.Assert(b.CountPoints(moves) == 8);
         b.AddMoves(moves);
 
         moves =
         [
-            new(48, 54, new Tile(Color.Green, Shape.Star, 1)),
-            new(50, 54, new Tile(Color.Yellow, Shape.Star, 1)),
-            new(51, 54, new Tile(Color.Orange, Shape.Star, 1)),
+            new(48, 54, new Tile(Shape.Star, Color.Green, 1)),
+            new(50, 54, new Tile(Shape.Star, Color.Yellow, 1)),
+            new(51, 54, new Tile(Shape.Star, Color.Orange, 1)),
         ];
         Debug.Assert(b.CountPoints(moves) == 8);
         b.AddMoves(moves);
@@ -102,9 +102,9 @@ public class UnitTests_Play
 
     public UnitTests_Play()
     {
-        var t1 = new Tile(Color.Red, Shape.Square, 1);
-        var t2 = new Tile(Color.Red, Shape.Lozange, 1);
-        var t3 = new Tile(Color.Red, Shape.Circle, 1);
+        var t1 = new Tile(Shape.Square, Color.Red, 1);
+        var t2 = new Tile(Shape.Lozange, Color.Red, 1);
+        var t3 = new Tile(Shape.Circle, Color.Red, 1);
 
         b.AddMove(new Move(50, 50, t1));
         b.AddMove(new Move(50, 51, t2));
@@ -114,9 +114,9 @@ public class UnitTests_Play
     [Fact]
     public void NotPlayable()
     {
-        var t4 = new Tile(Color.Blue, Shape.Clover, 1);
-        var t5 = new Tile(Color.Green, Shape.Clover, 1);
-        var t6 = new Tile(Color.Orange, Shape.Clover, 1);
+        var t4 = new Tile(Shape.Clover, Color.Blue, 1);
+        var t5 = new Tile(Shape.Clover, Color.Green, 1);
+        var t6 = new Tile(Shape.Clover, Color.Orange, 1);
 
         var hand = new Hand([t4, t5, t6]);
         var play = b.Play(hand);
