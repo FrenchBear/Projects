@@ -3,8 +3,8 @@
 //
 // 2023-11-23   PV
 
+using System.Collections;
 using System.Diagnostics;
-using System.Reflection.Metadata;
 using System.Text;
 
 namespace LibQwirkle;
@@ -62,7 +62,6 @@ public record Play(List<Move> Moves, int Points, Hand NewHand)
     public Hand NewHand { get; init; } = NewHand;
 
     public string AsString(bool Color)
-        //=> string.Join(", ", Moves.Select(m => $"({m.Row}, {m.Col}) {m.Tile.AsString(Color)}"));
         => string.Join(", ", Moves.Select(m => m.AsString(Color))) + $" -> {Points} points, hand={NewHand.AsString(Color)}";
 }
 
@@ -72,10 +71,10 @@ public class Hand: HashSet<Tile>
     public Hand(HashSet<Tile> tiles) : base(tiles) { }
 
     public string AsString(bool Color)
-        => String.Join(" ", this.Select(m => m.AsString(Color)));
+        => string.Join(" ", this.Select(m => m.AsString(Color)));
 };
 
-public class Board
+public class Board: IEnumerable<Move>
 {
     readonly Board? BaseBoard = null;
     readonly List<Move> Moves = [];
@@ -270,69 +269,55 @@ public class Board
 
     public Play Play(Hand hand)
     {
-        /*
-        // For now, that's just a simulation
-        Tile t1 = hand.First(t => t.Shape == Shape.Lozange && t.Color == Color.Blue);
-        Tile t2 = hand.First(t => t.Shape == Shape.Square && t.Color == Color.Blue);
-        Tile t3 = hand.First(t => t.Shape == Shape.Star && t.Color == Color.Blue);
-        var moves = new List<Move>()
-        {
-            new(49,51,t1),
-            new(49,53,t2),
-            new(49,54,t3),
-        };
-
-        return new Play(moves, CountPoints(moves), new Hand(hand.Except([t1, t2, t3])));
-        */
-
         var PossiblePlays = new List<Play>();
 
         for (int row = RowMax + 1; row >= RowMin - 1; row--)
-        {
             for (int col = ColMin - 1; col <= ColMax + 1; col++)
             {
                 var state = GetCellState(row, col);
                 if (state == CellState.PotentiallyPlayable)
                 {
-                    Console.WriteLine($"PotentiallyPlayable {row}, {col}");
+                    //Console.WriteLine($"PotentiallyPlayable {row}, {col}");
                     foreach (Tile t in hand)
                         if (IsCompatible(row, col, t))
                         {
-                            Console.WriteLine("  Compatible: " + t.AsString(true));
+                            //Console.WriteLine("  Compatible: " + t.AsString(true));
                             var CurrentMoves = new List<Move>();
                             ExploreMove(this, this, hand, CurrentMoves, PossiblePlays, new Move(row, col, t), true, true);
                         }
                 }
 
             }
-        }
 
-        foreach (Play p in PossiblePlays)
-            Console.WriteLine(p.AsString(true));
+        // Show all possible plays
+        //foreach (Play p in PossiblePlays)
+        //    Console.WriteLine(p.AsString(true));
 
-        Debugger.Break();
-
-        // ToDo: find the best play
-        return PossiblePlays[0];
+        // For now, we just implement simple max(points) strategy, just return a random solution from the list
+        // since they all have the same max(points)
+        // In rare cases, this list could be empty
+        var rnd = new Random();
+        if (PossiblePlays.Count == 0)
+            return new Play([], 0, hand);
+        return PossiblePlays[rnd.Next(PossiblePlays.Count)];
     }
 
     private static void ExploreMove(Board startBoard, Board b, Hand h, List<Move> CurrentMoves, List<Play> PossiblePlays, Move move, bool NS, bool EW)
     {
-        Console.WriteLine($"\nExploreMove {move.AsString(true)}  NS={NS} EW={EW}");
+        //Console.WriteLine($"\nExploreMove {move.AsString(true)}  NS={NS} EW={EW}");
 
         var newB = new Board(b);
         newB.AddMove(move);
         var newH = new Hand(h.Except([move.Tile]));
-        var newCurrentMoves = new List<Move>(CurrentMoves)
-        {
-            move
-        };
+        var newCurrentMoves = new List<Move>(CurrentMoves) { move };
 
-        // Quick and dirty firtering, only keep move if it produces more points
-        // Actually better, should remove all solutions with less points and keep same number of points, so
-        // at the end I can select a random one among the ones that give max points
+        // Quick and dirty firtering, only keep move if it produces equal or more points than current max(points)
+        // if points are actually greater than max, forget all previous possible plays
         int points = startBoard.CountPoints(newCurrentMoves);
-        if (PossiblePlays.Count==0 || points > PossiblePlays.Max(p => p.Points))
+        int pMax = PossiblePlays.Count == 0 ? 0 : PossiblePlays.Max(p => p.Points);
+        if (points > pMax)
+            PossiblePlays.Clear();
+        if (points >= pMax)
             PossiblePlays.Add(new Play(newCurrentMoves, points, newH));
 
         // If there are no remaining tiles in hand, no need to continue
@@ -353,7 +338,7 @@ public class Board
 
     private static void TryExplore(Board startBoard, Board b, Hand h, List<Move> CurrentMoves, List<Play> PossiblePlays, int row, int col, int deltaRow, int deltaCol)
     {
-        Console.WriteLine($"\nTryExplore ({row}, {col})  deltaRow={deltaRow} deltaCol={deltaCol}");
+        //Console.WriteLine($"\nTryExplore ({row}, {col})  deltaRow={deltaRow} deltaCol={deltaCol}");
 
         for (; ; )
         {
@@ -365,15 +350,28 @@ public class Board
             if (state == CellState.EmptyIsolated)
                 return;
             Debug.Assert(state == CellState.PotentiallyPlayable);
-            Console.WriteLine($"PotentiallyPlayable {row}, {col}");
+            //Console.WriteLine($"PotentiallyPlayable {row}, {col}");
             foreach (Tile t in h)
                 if (b.IsCompatible(row, col, t))
                 {
-                    Console.WriteLine($"  Compatible: {t.AsString(true)}");
+                    //Console.WriteLine($"  Compatible: {t.AsString(true)}");
                     ExploreMove(startBoard, b, h, CurrentMoves, PossiblePlays, new Move(row, col, t), deltaRow != 0, deltaCol != 0);
                 }
         }
     }
+
+    // Make Board enumerable, returning all moves, could be convenient
+    public IEnumerator<Move> GetEnumerator()
+    {
+        if (BaseBoard != null)
+            foreach (var move in BaseBoard)
+                yield return move;
+        foreach (var move in Moves)
+            yield return move;
+    }
+
+    IEnumerator IEnumerable.GetEnumerator() 
+        => GetEnumerator();
 }
 
 public static class ConsoleSupport
