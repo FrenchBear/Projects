@@ -2,12 +2,28 @@
 // Core library for Qwirkle reboot
 //
 // 2023-11-23   PV
+// 2023-12-08   PV      Bug, generates non-contiguous solutions and not homogeneous!!!
+// 2023-12-09   PV      Fixed, a return was missing in TryExplore at the end ou outer loop
 
 using System.Collections;
 using System.Diagnostics;
 using System.Text;
 
 namespace LibQwirkle;
+
+// ANSI sequences for color on console
+public static class ConsoleSupport
+{
+    public const string ConsoleColorRed = "\x1b[91m";
+    public const string ConsoleColorDarkYellow = "\x1b[33m";
+    public const string ConsoleColorYellow = "\x1b[93m";
+    public const string ConsoleColorGreen = "\x1b[92m";
+    public const string ConsoleColorBlue = "\x1b[94m";
+    public const string ConsoleColorMagenta = "\x1b[95m";
+    public const string ConsoleColorCyan = "\x1b[96m";
+    public const string ConsoleColorDarkGray = "\x1b[90m";
+    public const string ConsoleColorDefault = "\x1b[39m";
+}
 
 public enum Shape
 {
@@ -29,15 +45,56 @@ public enum Color
     Purple,
 }
 
-[DebuggerDisplay("Tile {this.AsString(null)}")]
+[DebuggerDisplay("Tile: {this.AsString(null)}")]
 public record Tile(Shape S, Color C, int Instance)
 {
     public Shape Shape { get; } = S;
     public Color Color { get; } = C;
     public int Instance { get; } = Instance;
+
+    public string AsString(bool? color)
+    {
+        var sb = new StringBuilder();
+
+        if (color == true)
+            sb.Append(Color switch
+            {
+                Color.Red => ConsoleSupport.ConsoleColorRed,
+                Color.Orange => ConsoleSupport.ConsoleColorDarkYellow,
+                Color.Yellow => ConsoleSupport.ConsoleColorYellow,
+                Color.Green => ConsoleSupport.ConsoleColorGreen,
+                Color.Blue => ConsoleSupport.ConsoleColorBlue,
+                Color.Purple => ConsoleSupport.ConsoleColorMagenta,
+                _ => ConsoleSupport.ConsoleColorDefault
+            });
+        sb.Append(Shape switch
+        {
+            Shape.Circle => "O",
+            Shape.Cross => "+",
+            Shape.Lozange => "<",
+            Shape.Square => "[",
+            Shape.Star => "*",
+            Shape.Clover => "%",
+            _ => "?"
+        });
+        if (color == true)
+            sb.Append(ConsoleSupport.ConsoleColorDefault);
+        else if (color == null)
+            sb.Append(Color switch
+            {
+                Color.Red => 'r',
+                Color.Orange => 'o',
+                Color.Yellow => 'y',
+                Color.Green => 'g',
+                Color.Blue => 'b',
+                Color.Purple => 'm',
+                _ => ConsoleSupport.ConsoleColorDefault
+            });
+        return sb.ToString();
+    }
 }
 
-[DebuggerDisplay("Move ({Row}, {Col}) {Tile.AsString(false)}")]
+[DebuggerDisplay("Move: {this.AsString(false)}")]
 public record Move(int Row, int Col, Tile T)
 {
     public int Row { get; } = Row;
@@ -58,20 +115,20 @@ public enum CellState
 [DebuggerDisplay("Play: {AsString(null)}")]
 public record Play(HashSet<Move> Moves, int Points, int Bonus, Hand NewHand)
 {
-    public HashSet<Move> Moves { get; init; } = Moves;
-    public int Points { get; init; } = Points;
-    public int Bonus { get; init; } = Bonus;
-    public Hand NewHand { get; init; } = NewHand;
+    public HashSet<Move> Moves { get; } = Moves;
+    public int Points { get; } = Points;
+    public int Bonus { get; } = Bonus;
+    public Hand NewHand { get; } = NewHand;
 
     public string AsString(bool? Color)
-        => string.Join(", ", Moves.Select(m => m.AsString(Color))) + $" -> {Points} points {Bonus} bonus  Hand: {NewHand.AsString(Color)}";
+        => string.Join(", ", Moves.Select(m => m.AsString(Color))) + $" -> Points: {Points}, Bonus: {Bonus}, Hand: {NewHand.AsString(Color)}";
 }
 
 [DebuggerDisplay("PointsBonus: {AsString()}")]
 public record PointsBonus(int Points, int Bonus)
 {
-    public int Points { get; init; } = Points;
-    public int Bonus { get; init; } = Bonus;
+    public int Points { get; } = Points;
+    public int Bonus { get; } = Bonus;
 
     public string AsString()
         => $"Points {Points}, Bonus {Bonus}";
@@ -97,6 +154,15 @@ public class Hand: HashSet<Tile>, IEquatable<Hand>
         => base.GetHashCode();
 }
 
+public static class RandomGenerator
+{
+    // Can use a seed to make tests reproductible
+    static readonly Random rnd = new();
+
+    public static int Next(int MaxValue)
+        => rnd.Next(MaxValue);
+}
+
 // Dock is a shuffled container for 6x6x3 = 108 standard tiles
 public class Dock
 {
@@ -114,10 +180,9 @@ public class Dock
 
     private void ShuffleTiles()
     {
-        var rnd = new Random();
         for (int i = 0; i < Tiles.Count; i++)
         {
-            int k = rnd.Next(Tiles.Count);
+            int k = RandomGenerator.Next(Tiles.Count);
             (Tiles[i], Tiles[k]) = (Tiles[k], Tiles[i]);
         }
     }
@@ -169,6 +234,64 @@ public class Board: IEnumerable<Move>
 
     public int TilesCount => Moves.Count + (BaseBoard == null ? 0 : BaseBoard.TilesCount);
 
+    public string AsString(bool color, Tile? checkTileCompat = null)
+    {
+        var sb = new StringBuilder();
+
+        sb.Append("Col");
+        for (int col = ColMin - 1; col <= ColMax + 1; col++)
+        {
+            string s = $"{col:D02}";
+            sb.Append(s[0]).Append(' ');
+        }
+        sb.Append("\r\nRow");
+        for (int col = ColMin - 1; col <= ColMax + 1; col++)
+        {
+            string s = $"{col:D02}";
+            sb.Append(s[1]).Append(' ');
+        }
+        sb.AppendLine();
+        for (int row = RowMax + 1; row >= RowMin - 1; row--)
+        {
+            sb.Append($"{row:D02} ");
+            for (int col = ColMin - 1; col <= ColMax + 1; col++)
+            {
+                var state = GetCellState(row, col);
+                switch (state)
+                {
+                    case CellState.EmptyIsolated:
+                        sb.Append("  ");
+                        break;
+
+                    case CellState.PotentiallyPlayable:
+                        if (checkTileCompat != null && IsCompatible(row, col, checkTileCompat))
+                        {
+                            if (color)
+                                sb.Append(ConsoleSupport.ConsoleColorCyan);
+                            sb.Append("x ");
+                        }
+                        else
+                        {
+                            if (color)
+                                sb.Append(ConsoleSupport.ConsoleColorDarkGray);
+                            sb.Append("· ");
+                        }
+                        if (color)
+                            sb.Append(ConsoleSupport.ConsoleColorDefault);
+                        break;
+
+                    case CellState.Tiled:
+                        Tile t = GetTile(row, col) ?? throw new Exception("GetTile shouldn't return null");
+                        sb.Append(t.AsString(color));
+                        sb.Append(' ');
+                        break;
+                }
+            }
+            sb.AppendLine();
+        }
+        return sb.ToString();
+    }
+
     public void AddMove(Move m)
     {
         if (!IsEmpty)
@@ -212,27 +335,40 @@ public class Board: IEnumerable<Move>
         return CellState.PotentiallyPlayable;
     }
 
+    enum ConstraintMode
+    {
+        NotDefined,
+        ColorConstraint,
+        ShapeConstraint,
+    }
+
     public bool IsCompatible(int row, int col, in Tile t)
     {
         // Special case, on empty board, (50, 50) is compatible with any tile
         if (IsEmpty)
             return row == 50 && col == 50;
 
+        // Shouldn't call IsCompatible on a tiled cell
         Debug.Assert(GetTile(row, col) == null);
 
-        if (!IsDirectionCompatible(row, col, -1, 0, in t, out bool nn))
+        // Check row
+        ConstraintMode constraintMode = ConstraintMode.NotDefined;
+        if (!IsDirectionCompatible(row, col, -1, 0, in t, ref constraintMode, out bool nn))
             return false;
-        if (!IsDirectionCompatible(row, col, 1, 0, in t, out bool sn))
+        if (!IsDirectionCompatible(row, col, 1, 0, in t, ref constraintMode, out bool sn))
             return false;
-        if (!IsDirectionCompatible(row, col, 0, 1, in t, out bool en))
+
+        // Check column
+        constraintMode = ConstraintMode.NotDefined;
+        if (!IsDirectionCompatible(row, col, 0, 1, in t, ref constraintMode, out bool en))
             return false;
-        if (!IsDirectionCompatible(row, col, 0, -1, in t, out bool wn))
+        if (!IsDirectionCompatible(row, col, 0, -1, in t, ref constraintMode, out bool wn))
             return false;
         Debug.Assert(nn || sn || en || wn);    // Check that we have at least one neighbor
         return true;
     }
 
-    private bool IsDirectionCompatible(int row, int col, int deltaRow, int deltaCol, in Tile refTile, out bool neighborFound)
+    private bool IsDirectionCompatible(int row, int col, int deltaRow, int deltaCol, in Tile refTile, ref ConstraintMode constraintMode, out bool neighborFound)
     {
         neighborFound = false;
         for (; ; )
@@ -243,14 +379,30 @@ public class Board: IEnumerable<Move>
             if (tmpTile == null)
                 return true;
             neighborFound = true;
-            if (tmpTile.Color != refTile.Color && tmpTile.Shape != refTile.Shape)
+            if (!(tmpTile.Color == refTile.Color ^ tmpTile.Shape == refTile.Shape))
                 return false;
-            if (tmpTile.Color == refTile.Color && tmpTile.Shape == refTile.Shape)
-                return false;
+
+            switch (constraintMode)
+            {
+                case ConstraintMode.NotDefined:
+                    constraintMode = tmpTile.Color == refTile.Color ? ConstraintMode.ColorConstraint : ConstraintMode.ShapeConstraint;
+                    break;
+
+                case ConstraintMode.ColorConstraint:
+
+                    if (tmpTile.Color != refTile.Color)
+                        return false;
+                    break;
+
+                case ConstraintMode.ShapeConstraint:
+                    if (tmpTile.Shape != refTile.Shape)
+                        return false;
+                    break;
+            }
         }
     }
 
-    public void Print() => Console.WriteLine(this.AsString(true));
+    public void Print() => Console.WriteLine(AsString(true));
 
     public PointsBonus CountPoints(HashSet<Move> moves)
     {
@@ -402,19 +554,24 @@ public class Board: IEnumerable<Move>
             for (int row = RowMax + 1; row >= RowMin - 1; row--)
                 for (int col = ColMin - 1; col <= ColMax + 1; col++)
                     if (GetCellState(row, col) == CellState.PotentiallyPlayable)
+                    {
+                        //if (PossiblePlays.Count == 9)
+                        //    Debugger.Break();
                         ExplorePotentiallyPlayable(row, col);
+                    }
 
         // Show all possible plays
-        //foreach (Play p in PossiblePlays)
-        //    Console.WriteLine(p.AsString(true));
+        //for (int i = 0; i < PossiblePlays.Count; i++)
+        //    Console.WriteLine($"{i}: {PossiblePlays[i].AsString(true)}");
 
         // For now, we just implement simple max(points) strategy, just return a random solution from the list
         // since they all have the same max(points)
-        // In rare cases, this list could be empty
-        var rnd = new Random();
+        // In some cases, this list could be empty
         if (PossiblePlays.Count == 0)
             return new Play([], 0, 0, hand);
-        var sol = PossiblePlays[rnd.Next(PossiblePlays.Count)];
+        var randIndex = RandomGenerator.Next(PossiblePlays.Count);
+        var sol = PossiblePlays[randIndex];
+        Console.WriteLine($"Play: ix={randIndex} {sol.AsString(true)}");
         if (sol.Moves.Count > 1)
         {
             var t = sol.Moves.First().Tile;
@@ -439,7 +596,11 @@ public class Board: IEnumerable<Move>
         if (points > pMax)
             PossiblePlays.Clear();
         if (points >= pMax)
-            PossiblePlays.Add(new Play(newCurrentMoves, points, bonus, newH));
+        {
+            var possiblePlay = new Play(newCurrentMoves, points, bonus, newH);
+            //Console.WriteLine($"{PossiblePlays.Count}: {possiblePlay.AsString(true)}");
+            PossiblePlays.Add(possiblePlay);
+        }
 
         // If there are no remaining tiles in hand, no need to continue
         if (newH.Count == 0)
@@ -478,6 +639,9 @@ public class Board: IEnumerable<Move>
                     //Console.WriteLine($"  Compatible: {t.AsString(true)}");
                     ExploreMove(startBoard, b, h, CurrentMoves, PossiblePlays, new Move(row, col, t), deltaRow != 0, deltaCol != 0);
                 }
+            // The outer loop is just here to find the 1st potentially playable square found in the direction.
+            // Once each remaining hand tile has been tested, we're done.
+            return;
         }
     }
 
@@ -494,6 +658,7 @@ public class Board: IEnumerable<Move>
     IEnumerator IEnumerable.GetEnumerator()
         => GetEnumerator();
 
+    // Dev helper
     // Simple neighbor validation, does not check that a bloc contains twice the same shape or same color
     // Only check neighbor on row+1 and on col+1, checking row-1 and col-1 would check twice the same pair
     public void NeighborCheck()
@@ -512,108 +677,5 @@ public class Board: IEnumerable<Move>
                         Debug.Assert(t1.Shape == t2.Shape ^ t1.Color == t2.Color);
                 }
             }
-    }
-}
-
-public static class ConsoleSupport
-{
-    const string ConsoleColorRed = "\x1b[91m";
-    const string ConsoleColorDarkYellow = "\x1b[33m";
-    const string ConsoleColorYellow = "\x1b[93m";
-    const string ConsoleColorGreen = "\x1b[92m";
-    const string ConsoleColorBlue = "\x1b[94m";
-    const string ConsoleColorMagenta = "\x1b[95m";
-    const string ConsoleColorCyan = "\x1b[96m";
-    const string ConsoleColorDarkGray = "\x1b[90m";
-    const string ConsoleColorDefault = "\x1b[39m";
-
-    public static string AsString(this Board b, bool color, Tile? checkTileCompat = null)
-    {
-        var sb = new StringBuilder();
-
-        sb.Append("   ");
-        for (int col = b.ColMin - 1; col <= b.ColMax + 1; col++)
-            sb.Append($"{col:D02}");
-        sb.AppendLine();
-        for (int row = b.RowMax + 1; row >= b.RowMin - 1; row--)
-        {
-            sb.Append($"{row:D02} ");
-            for (int col = b.ColMin - 1; col <= b.ColMax + 1; col++)
-            {
-                var state = b.GetCellState(row, col);
-                switch (state)
-                {
-                    case CellState.EmptyIsolated:
-                        sb.Append("  ");
-                        break;
-
-                    case CellState.PotentiallyPlayable:
-                        if (checkTileCompat != null && b.IsCompatible(row, col, checkTileCompat))
-                        {
-                            if (color)
-                                sb.Append(ConsoleColorCyan);
-                            sb.Append("x ");
-                        }
-                        else
-                        {
-                            if (color)
-                                sb.Append(ConsoleColorDarkGray);
-                            sb.Append("· ");
-                        }
-                        if (color)
-                            sb.Append(ConsoleColorDefault);
-                        break;
-
-                    case CellState.Tiled:
-                        Tile t = b.GetTile(row, col) ?? throw new Exception("GetTile shouldn't return null");
-                        sb.Append(t.AsString(color));
-                        sb.Append(' ');
-                        break;
-                }
-            }
-            sb.AppendLine();
-        }
-        return sb.ToString();
-    }
-
-    public static string AsString(this Tile t, bool? color)
-    {
-        var sb = new StringBuilder();
-
-        if (color == true)
-            sb.Append(t.Color switch
-            {
-                Color.Red => ConsoleColorRed,
-                Color.Orange => ConsoleColorDarkYellow,
-                Color.Yellow => ConsoleColorYellow,
-                Color.Green => ConsoleColorGreen,
-                Color.Blue => ConsoleColorBlue,
-                Color.Purple => ConsoleColorMagenta,
-                _ => ConsoleColorDefault
-            });
-        sb.Append(t.Shape switch
-        {
-            Shape.Circle => "O",
-            Shape.Cross => "+",
-            Shape.Lozange => "<",
-            Shape.Square => "[",
-            Shape.Star => "*",
-            Shape.Clover => "%",
-            _ => "?"
-        });
-        if (color == true)
-            sb.Append(ConsoleColorDefault);
-        else if (color == null)
-            sb.Append(t.Color switch
-            {
-                Color.Red => 'r',
-                Color.Orange => 'o',
-                Color.Yellow => 'y',
-                Color.Green => 'g',
-                Color.Blue => 'b',
-                Color.Purple => 'm',
-                _ => ConsoleColorDefault
-            });
-        return sb.ToString();
     }
 }

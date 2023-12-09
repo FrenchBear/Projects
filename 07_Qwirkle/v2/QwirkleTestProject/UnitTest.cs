@@ -32,7 +32,8 @@ public class UnitTests_Base
     [Fact]
     public void IsCompatibleTest1()
     {
-        string s = "   4950515253\r\n" +
+        string s = "Col4 5 5 5 5 \r\n" +
+                   "Row9 0 1 2 3 \r\n" +
                    "51   · · x   \r\n" +
                    "50 · [ < O · \r\n" +
                    "49   · · O x \r\n" +
@@ -46,7 +47,8 @@ public class UnitTests_Base
     [Fact]
     public void IsCompatibleTest2()
     {
-        string s = "   4950515253\r\n" +
+        string s = "Col4 5 5 5 5 \r\n" +
+                   "Row9 0 1 2 3 \r\n" +
                    "51   · x ·   \r\n" +
                    "50 · [ < O · \r\n" +
                    "49   · · O · \r\n" +
@@ -165,7 +167,7 @@ public class UnitTests_Play
 public class UnitTests_Misc
 {
     [Fact]
-    public void PlayOnEmptyBoard()
+    public void PlayOnEmptyBoardTest()
     {
         var b = new Board();
 
@@ -187,7 +189,7 @@ public class UnitTests_Misc
     }
 
     [Fact]
-    public void TestDock()
+    public void DockTest()
     {
         var d = new Dock();
         var check = new HashSet<Tile>();
@@ -208,10 +210,10 @@ public class UnitTests_Misc
     }
 
     [Fact]
-    private static void Test_FullPlay()
+    private static void FullPlayTest()
     {
-        // Do 20 full plays
-        for (int i = 0; i < 20; i++)
+        // Do 30 full plays, takes about 5.5s on WOTAN
+        for (int i = 0; i < 30; i++)
         {
             var b = new Board();
             var d = new Dock();

@@ -17,10 +17,10 @@ internal class Program
         //Tests_Base();
         //Tests_Play();
         //Tests_EmptyBoard();
-        Test_FullPlay();
+        Tests_FullPlay();
     }
 
-    private static void Test_FullPlay()
+    private static void Tests_FullPlay()
     {
         var b = new Board();
         var d = new Dock();
@@ -68,11 +68,11 @@ internal class Program
             totPoints += play.Points;
             totBonus += play.Bonus;
             minPoints = Math.Min(play.Points, minPoints);
-            maxPoints=Math.Max(play.Points, maxPoints);
+            maxPoints = Math.Max(play.Points, maxPoints);
         }
         b.NeighborCheck();
-        Console.WriteLine($"{nMoves} moves, {totPoints} total points, average {totPoints / (double)nMoves:F1} points/move");
-        Console.WriteLine($"Min points {minPoints}, Max points {maxPoints}, Bonus for 6-block {totBonus}");
+        Console.WriteLine($"Moves: {nMoves}, Total points: {totPoints}, Average: {totPoints / (double)nMoves:F1} points/move");
+        Console.WriteLine($"Min points: {minPoints}, Max points: {maxPoints}, Bonus for 6-block count: {totBonus}");
     }
 
     private static void Tests_EmptyBoard()
