@@ -24,8 +24,13 @@ internal class Program
     {
         var b = new Board();
         var d = new Dock();
-
         var hand = new Hand();
+
+        int nMoves = 0;
+        int totPoints = 0;
+        int totBonus = 0;
+        int minPoints = 20;
+        int maxPoints = 0;
         for (; ; )
         {
             while (!d.IsEmpty && hand.Count < 6)
@@ -58,7 +63,16 @@ internal class Program
             b.AddMoves(play.Moves);
             b.Print();
             hand = play.NewHand;
+
+            nMoves++;
+            totPoints += play.Points;
+            totBonus += play.Bonus;
+            minPoints = Math.Min(play.Points, minPoints);
+            maxPoints=Math.Max(play.Points, maxPoints);
         }
+        b.NeighborCheck();
+        Console.WriteLine($"{nMoves} moves, {totPoints} total points, average {totPoints / (double)nMoves:F1} points/move");
+        Console.WriteLine($"Min points {minPoints}, Max points {maxPoints}, Bonus for 6-block {totBonus}");
     }
 
     private static void Tests_EmptyBoard()
@@ -177,10 +191,10 @@ internal class Program
             new(49, 53, new Tile(Shape.Square, Color.Blue, 1)),
             new(49, 54, new Tile(Shape.Star, Color.Blue, 1)),
         ];
-        int points = b.CountPoints(moves);
-        Debug.Assert(points == 6);
+        var pb = b.CountPoints(moves);
+        Debug.Assert(pb.Points == 6);
         b.AddMoves(moves);
-        Console.WriteLine($"{points} points:");
+        Console.WriteLine(pb.AsString());
         b.Print();
 
         moves =
@@ -188,10 +202,10 @@ internal class Program
             new(49, 55, new Tile(Shape.Cross, Color.Blue, 1)),
             new(49, 56, new Tile(Shape.Clover, Color.Blue, 1)),
         ];
-        points = b.CountPoints(moves);
-        Debug.Assert(points == 12);
+        pb = b.CountPoints(moves);
+        Debug.Assert(pb.Points == 12);
         b.AddMoves(moves);
-        Console.WriteLine($"{points} points:");
+        Console.WriteLine(pb.AsString());
         b.Print();
 
         moves =
@@ -199,10 +213,10 @@ internal class Program
             new(48, 51, new Tile(Shape.Lozange, Color.Green, 1)),
             new(48, 53, new Tile(Shape.Square, Color.Green, 1)),
         ];
-        points = b.CountPoints(moves);
-        Debug.Assert(points == 8);
+        pb = b.CountPoints(moves);
+        Debug.Assert(pb.Points == 8);
         b.AddMoves(moves);
-        Console.WriteLine($"{points} points:");
+        Console.WriteLine(pb.AsString());
         b.Print();
 
         moves =
@@ -211,10 +225,10 @@ internal class Program
             new(50, 54, new Tile(Shape.Star, Color.Yellow, 1)),
             new(51, 54, new Tile(Shape.Star, Color.Orange, 1)),
         ];
-        points = b.CountPoints(moves);
-        Debug.Assert(points == 8);
+        pb = b.CountPoints(moves);
+        Debug.Assert(pb.Points == 8);
         b.AddMoves(moves);
-        Console.WriteLine($"{points} points:");
+        Console.WriteLine(pb.AsString());
         b.Print();
     }
 }

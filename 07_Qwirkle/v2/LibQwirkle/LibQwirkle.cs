@@ -56,14 +56,25 @@ public enum CellState
 }
 
 [DebuggerDisplay("Play: {AsString(null)}")]
-public record Play(HashSet<Move> Moves, int Points, Hand NewHand)
+public record Play(HashSet<Move> Moves, int Points, int Bonus, Hand NewHand)
 {
     public HashSet<Move> Moves { get; init; } = Moves;
     public int Points { get; init; } = Points;
+    public int Bonus { get; init; } = Bonus;
     public Hand NewHand { get; init; } = NewHand;
 
     public string AsString(bool? Color)
-        => string.Join(", ", Moves.Select(m => m.AsString(Color))) + $" -> {Points} points  Hand: {NewHand.AsString(Color)}";
+        => string.Join(", ", Moves.Select(m => m.AsString(Color))) + $" -> {Points} points {Bonus} bonus  Hand: {NewHand.AsString(Color)}";
+}
+
+[DebuggerDisplay("PointsBonus: {AsString()}")]
+public record PointsBonus(int Points, int Bonus)
+{
+    public int Points { get; init; } = Points;
+    public int Bonus { get; init; } = Bonus;
+
+    public string AsString()
+        => $"Points {Points}, Bonus {Bonus}";
 }
 
 [DebuggerDisplay("Hand: {AsString(null)}")]
@@ -241,10 +252,10 @@ public class Board: IEnumerable<Move>
 
     public void Print() => Console.WriteLine(this.AsString(true));
 
-    public int CountPoints(HashSet<Move> moves)
+    public PointsBonus CountPoints(HashSet<Move> moves)
     {
         if (moves.Count == 0)
-            return 0;
+            return new(0, 0);
 
         // Use a temp new board with moves actually played
         var nb = new Board(this);
@@ -252,6 +263,7 @@ public class Board: IEnumerable<Move>
 
         bool isHorizontal = true;
         bool isVertical = true;
+        int bonus = 0;
 
         int mRow = -1;
         int mCol = -1;
@@ -294,6 +306,8 @@ public class Board: IEnumerable<Move>
                 // Only vertical bands with more than 1 tile are actually counted
                 if (dp > 1)
                     points += dp == 6 ? 12 : dp;
+                if (dp == 6)
+                    bonus++;
             }
 
             // Count tiles in horizontal block
@@ -313,6 +327,8 @@ public class Board: IEnumerable<Move>
                     break;
             }
             points += dp == 6 ? 12 : dp;
+            if (dp == 6)
+                bonus++;
         }
         else
         {
@@ -336,6 +352,8 @@ public class Board: IEnumerable<Move>
                 // Only horizontal bands with more than 1 tile are actually counted
                 if (dp > 1)
                     points += dp == 6 ? 12 : dp;
+                if (dp == 6)
+                    bonus++;
             }
 
             // Count tiles in vertical block
@@ -355,9 +373,11 @@ public class Board: IEnumerable<Move>
                     break;
             }
             points += dp == 6 ? 12 : dp;
+            if (dp == 6)
+                bonus++;
         }
 
-        return points;
+        return new(points, bonus);
     }
 
     public Play Play(Hand hand)
@@ -393,8 +413,14 @@ public class Board: IEnumerable<Move>
         // In rare cases, this list could be empty
         var rnd = new Random();
         if (PossiblePlays.Count == 0)
-            return new Play([], 0, hand);
-        return PossiblePlays[rnd.Next(PossiblePlays.Count)];
+            return new Play([], 0, 0, hand);
+        var sol = PossiblePlays[rnd.Next(PossiblePlays.Count)];
+        if (sol.Moves.Count > 1)
+        {
+            var t = sol.Moves.First().Tile;
+            Debug.Assert(sol.Moves.All(m => m.Tile.Color == t.Color) ^ sol.Moves.All(m => m.Tile.Shape == t.Shape));
+        }
+        return sol;
     }
 
     private static void ExploreMove(Board startBoard, Board b, Hand h, HashSet<Move> CurrentMoves, List<Play> PossiblePlays, Move move, bool NS, bool EW)
@@ -408,12 +434,12 @@ public class Board: IEnumerable<Move>
 
         // Quick and dirty firtering, only keep move if it produces equal or more points than current max(points)
         // if points are actually greater than max, forget all previous possible plays
-        int points = startBoard.CountPoints(newCurrentMoves);
+        (int points, int bonus) = startBoard.CountPoints(newCurrentMoves);
         int pMax = PossiblePlays.Count == 0 ? 0 : PossiblePlays.Max(p => p.Points);
         if (points > pMax)
             PossiblePlays.Clear();
         if (points >= pMax)
-            PossiblePlays.Add(new Play(newCurrentMoves, points, newH));
+            PossiblePlays.Add(new Play(newCurrentMoves, points, bonus, newH));
 
         // If there are no remaining tiles in hand, no need to continue
         if (newH.Count == 0)
@@ -467,6 +493,26 @@ public class Board: IEnumerable<Move>
 
     IEnumerator IEnumerable.GetEnumerator()
         => GetEnumerator();
+
+    // Simple neighbor validation, does not check that a bloc contains twice the same shape or same color
+    // Only check neighbor on row+1 and on col+1, checking row-1 and col-1 would check twice the same pair
+    public void NeighborCheck()
+    {
+        for (int row = RowMax; row >= RowMin; row--)
+            for (int col = ColMin; col <= ColMax; col++)
+            {
+                var t1 = GetTile(row, col);
+                if (t1 != null)
+                {
+                    var t2 = GetTile(row + 1, col);
+                    if (t2 != null)
+                        Debug.Assert(t1.Shape == t2.Shape ^ t1.Color == t2.Color);
+                    t2 = GetTile(row, col + 1);
+                    if (t2 != null)
+                        Debug.Assert(t1.Shape == t2.Shape ^ t1.Color == t2.Color);
+                }
+            }
+    }
 }
 
 public static class ConsoleSupport

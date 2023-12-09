@@ -66,7 +66,7 @@ public class UnitTests_Base
             new(49, 53, new Tile(Shape.Square, Color.Blue, 1)),
             new(49, 54, new Tile(Shape.Star, Color.Blue, 1)),
         ];
-        Debug.Assert(b.CountPoints(moves) == 6);
+        Debug.Assert(b.CountPoints(moves).Points == 6);
         b.AddMoves(moves);
 
         moves =
@@ -74,7 +74,7 @@ public class UnitTests_Base
             new(49, 55, new Tile(Shape.Cross, Color.Blue, 1)),
             new(49, 56, new Tile(Shape.Clover, Color.Blue, 1)),
         ];
-        Debug.Assert(b.CountPoints(moves) == 12);
+        Debug.Assert(b.CountPoints(moves).Points == 12);
         b.AddMoves(moves);
 
         moves =
@@ -82,7 +82,7 @@ public class UnitTests_Base
             new(48, 51, new Tile(Shape.Lozange, Color.Green, 1)),
             new(48, 53, new Tile(Shape.Square, Color.Green, 1)),
         ];
-        Debug.Assert(b.CountPoints(moves) == 8);
+        Debug.Assert(b.CountPoints(moves).Points == 8);
         b.AddMoves(moves);
 
         moves =
@@ -91,7 +91,7 @@ public class UnitTests_Base
             new(50, 54, new Tile(Shape.Star, Color.Yellow, 1)),
             new(51, 54, new Tile(Shape.Star, Color.Orange, 1)),
         ];
-        Debug.Assert(b.CountPoints(moves) == 8);
+        Debug.Assert(b.CountPoints(moves).Points == 8);
         b.AddMoves(moves);
     }
 }
