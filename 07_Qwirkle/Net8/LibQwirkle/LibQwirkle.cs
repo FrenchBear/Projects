@@ -19,7 +19,7 @@ public static class ConsoleSupport
     public const string ConsoleColorYellow = "\x1b[93m";
     public const string ConsoleColorGreen = "\x1b[92m";
     public const string ConsoleColorBlue = "\x1b[94m";
-    public const string ConsoleColorMagenta = "\x1b[95m";
+    public const string ConsoleColorPurple = "\x1b[95m";
     public const string ConsoleColorCyan = "\x1b[96m";
     public const string ConsoleColorDarkGray = "\x1b[90m";
     public const string ConsoleColorDefault = "\x1b[39m";
@@ -64,7 +64,7 @@ public record Tile(Shape S, Color C, int Instance)
                 Color.Yellow => ConsoleSupport.ConsoleColorYellow,
                 Color.Green => ConsoleSupport.ConsoleColorGreen,
                 Color.Blue => ConsoleSupport.ConsoleColorBlue,
-                Color.Purple => ConsoleSupport.ConsoleColorMagenta,
+                Color.Purple => ConsoleSupport.ConsoleColorPurple,
                 _ => ConsoleSupport.ConsoleColorDefault
             });
         sb.Append(Shape switch
@@ -75,6 +75,12 @@ public record Tile(Shape S, Color C, int Instance)
             Shape.Square => "[",
             Shape.Star => "*",
             Shape.Clover => "%",
+            //Shape.Circle => "C",
+            //Shape.Cross => "X",
+            //Shape.Lozange => "Z",
+            //Shape.Square => "Q",
+            //Shape.Star => "S",
+            //Shape.Clover => "T",
             _ => "?"
         });
         if (color == true)
@@ -87,7 +93,7 @@ public record Tile(Shape S, Color C, int Instance)
                 Color.Yellow => 'y',
                 Color.Green => 'g',
                 Color.Blue => 'b',
-                Color.Purple => 'm',
+                Color.Purple => 'p',
                 _ => ConsoleSupport.ConsoleColorDefault
             });
         return sb.ToString();
