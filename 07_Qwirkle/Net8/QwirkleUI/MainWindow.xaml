@@ -1,0 +1,148 @@
+﻿<Window x:Class="QwirkleUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:QwirkleUI"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="1000">
+
+    <Window.Resources>
+        <!-- Clover Purple -->
+        <DrawingBrush x:Key="Cp" Stretch="Uniform">
+            <DrawingBrush.Drawing>
+                <DrawingGroup>
+                    <DrawingGroup.Children>
+                        <GeometryDrawing Brush="Black" >
+                            <GeometryDrawing.Geometry>
+                                <RectangleGeometry Rect="0,920,200,200" RadiusX="15" RadiusY="15" />
+                            </GeometryDrawing.Geometry>
+                        </GeometryDrawing>
+                        <GeometryDrawing Brush="#a0a" Geometry="m100 942.52a33.137 33.137 0 0 0-33.137 33.137 33.137 33.137 0 0 0 9.7344 23.434 33.137 33.137 0 0 0-0.0273 0.0293 33.137 33.137 0 0 0-23.434-9.7363 33.137 33.137 0 0 0-33.137 33.137 33.137 33.137 0 0 0 33.137 33.137 33.137 33.137 0 0 0 23.434-9.7344 33.137 33.137 0 0 0 0.0293 0.027 33.137 33.137 0 0 0-9.7363 23.434 33.137 33.137 0 0 0 33.137 33.137 33.137 33.137 0 0 0 33.137-33.137 33.137 33.137 0 0 0-9.7363-23.434 33.137 33.137 0 0 0 0.0293-0.027 33.137 33.137 0 0 0 23.434 9.7344 33.137 33.137 0 0 0 33.137-33.137 33.137 33.137 0 0 0-33.137-33.137 33.137 33.137 0 0 0-23.432 9.7344 33.137 33.137 0 0 0-0.0312-0.0274 33.137 33.137 0 0 0 9.7363-23.434 33.137 33.137 0 0 0-33.137-33.137z">
+                            <GeometryDrawing.Pen>
+                                <Pen Brush="#000000" />
+                            </GeometryDrawing.Pen>
+                        </GeometryDrawing>
+                    </DrawingGroup.Children>
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+
+        <!-- Lozange Yellow -->
+        <DrawingBrush x:Key="Ly">
+            <DrawingBrush.Drawing>
+                <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
+                    <GeometryDrawing Brush="Black" >
+                        <GeometryDrawing.Geometry>
+                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <DrawingGroup Transform="0.7071067811865476,-0.7071067811865475,0.7071067811865475,0.7071067811865476,0.0,0.0">
+                        <GeometryDrawing Brush="#ffffff00">
+                            <GeometryDrawing.Geometry>
+                                <RectangleGeometry Rect="-704.0,740.0,103.0,103.0"/>
+                            </GeometryDrawing.Geometry>
+                        </GeometryDrawing>
+                    </DrawingGroup>
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+
+        <!-- Star Blue -->
+        <DrawingBrush x:Key="Sb">
+            <DrawingBrush.Drawing>
+                <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
+                    <GeometryDrawing Brush="Black" >
+                        <GeometryDrawing.Geometry>
+                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#ff0000ff">
+                        <GeometryDrawing.Geometry>
+                            <PathGeometry Figures="m 100 942.52 l -12.473 49.889 l -44.096 -26.457 l 26.457 44.096 l -49.889 12.473 l 49.889 12.473 l -26.457 44.096 l 44.096 -26.457 l 12.473 49.889 l 12.473 -49.889 l 44.096 26.457 l -26.457 -44.096 l 49.889 -12.473 l -49.889 -12.473 l 26.457 -44.096 l -44.096 26.457 z" FillRule="Nonzero"/>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+
+        <!-- Circle Red -->
+        <DrawingBrush x:Key="Cr">
+            <DrawingBrush.Drawing>
+                <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
+                    <GeometryDrawing Brush="Black" >
+                        <GeometryDrawing.Geometry>
+                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#ffff0000">
+                        <GeometryDrawing.Geometry>
+                            <EllipseGeometry RadiusX="70.0" RadiusY="70.0" Center="100.0,1022.5"/>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+
+        <!-- Square Green -->
+        <DrawingBrush x:Key="Qg">
+            <DrawingBrush.Drawing>
+                <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
+                    <GeometryDrawing Brush="Black" >
+                        <GeometryDrawing.Geometry>
+                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#ff00aa00">
+                        <GeometryDrawing.Geometry>
+                            <RectangleGeometry Rect="35.0,957.52,130.0,130.0"/>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+
+        <!-- Cross Orange -->
+        <DrawingBrush x:Key="Xo">
+            <DrawingBrush.Drawing>
+                <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
+                    <GeometryDrawing Brush="Black" >
+                        <GeometryDrawing.Geometry>
+                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                    <GeometryDrawing Brush="#ffff8800">
+                        <GeometryDrawing.Geometry>
+                            <PathGeometry Figures="m 30.4591 954.473 l 42.8004 70.288 l -42.8004 70.2881 l 71.3339 -42.1728 l 71.334 42.1728 l -42.8004 -70.2881 l 42.8004 -70.288 l -71.334 42.1728 z" FillRule="Nonzero"/>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Rectangle Grid.Row="0" Grid.Column="0" Margin="1" Width="150" Height="150" Fill="{StaticResource Cp}" />
+        <Rectangle Grid.Row="0" Grid.Column="1" Margin="1" Width="150" Height="150" Fill="{StaticResource Ly}" />
+        <Rectangle Grid.Row="0" Grid.Column="2" Margin="1" Width="150" Height="150" Fill="{StaticResource Sb}" />
+        <Rectangle Grid.Row="0" Grid.Column="3" Margin="1" Width="150" Height="150" Fill="{StaticResource Cr}" />
+        <Rectangle Grid.Row="0" Grid.Column="4" Margin="1" Width="150" Height="150" Fill="{StaticResource Qg}" />
+        <Rectangle Grid.Row="0" Grid.Column="5" Margin="1" Width="150" Height="150" Fill="{StaticResource Xo}" />
+
+    </Grid>
+</Window>
