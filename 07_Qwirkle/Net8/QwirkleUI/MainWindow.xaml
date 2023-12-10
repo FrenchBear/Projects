@@ -16,14 +16,16 @@
         <SolidColorBrush x:Key="Green" Color="#ff00aa00" />
         <SolidColorBrush x:Key="Orange" Color="#ffff8800" />
 
+        <GeometryDrawing x:Key="BlackTile" Brush="Black" >
+            <GeometryDrawing.Geometry>
+                <RectangleGeometry Rect="0,922,200,200" RadiusX="25" RadiusY="25" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+
         <DrawingBrush x:Key="CircleRed">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <GeometryDrawing Brush="{StaticResource Red}">
                         <GeometryDrawing.Geometry>
                             <EllipseGeometry RadiusX="70.0" RadiusY="70.0" Center="100.0,1022.5"/>
@@ -36,11 +38,7 @@
         <DrawingBrush x:Key="CircleOrange">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <GeometryDrawing Brush="{StaticResource Orange}">
                         <GeometryDrawing.Geometry>
                             <EllipseGeometry RadiusX="70.0" RadiusY="70.0" Center="100.0,1022.5"/>
@@ -53,11 +51,7 @@
         <DrawingBrush x:Key="CircleYellow">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <GeometryDrawing Brush="{StaticResource Yellow}">
                         <GeometryDrawing.Geometry>
                             <EllipseGeometry RadiusX="70.0" RadiusY="70.0" Center="100.0,1022.5"/>
@@ -70,11 +64,7 @@
         <DrawingBrush x:Key="CircleGreen">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <GeometryDrawing Brush="{StaticResource Green}">
                         <GeometryDrawing.Geometry>
                             <EllipseGeometry RadiusX="70.0" RadiusY="70.0" Center="100.0,1022.5"/>
@@ -87,11 +77,7 @@
         <DrawingBrush x:Key="CircleBlue">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <GeometryDrawing Brush="{StaticResource Blue}">
                         <GeometryDrawing.Geometry>
                             <EllipseGeometry RadiusX="70.0" RadiusY="70.0" Center="100.0,1022.5"/>
@@ -104,11 +90,7 @@
         <DrawingBrush x:Key="CirclePurple">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <GeometryDrawing Brush="{StaticResource Purple}">
                         <GeometryDrawing.Geometry>
                             <EllipseGeometry RadiusX="70.0" RadiusY="70.0" Center="100.0,1022.5"/>
@@ -121,11 +103,7 @@
         <DrawingBrush x:Key="CrossRed">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <GeometryDrawing Brush="{StaticResource Red}">
                         <GeometryDrawing.Geometry>
                             <PathGeometry Figures="m 30.4591 954.473 l 42.8004 70.288 l -42.8004 70.2881 l 71.3339 -42.1728 l 71.334 42.1728 l -42.8004 -70.2881 l 42.8004 -70.288 l -71.334 42.1728 z" FillRule="Nonzero"/>
@@ -138,11 +116,7 @@
         <DrawingBrush x:Key="CrossOrange">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <GeometryDrawing Brush="{StaticResource Orange}">
                         <GeometryDrawing.Geometry>
                             <PathGeometry Figures="m 30.4591 954.473 l 42.8004 70.288 l -42.8004 70.2881 l 71.3339 -42.1728 l 71.334 42.1728 l -42.8004 -70.2881 l 42.8004 -70.288 l -71.334 42.1728 z" FillRule="Nonzero"/>
@@ -155,11 +129,7 @@
         <DrawingBrush x:Key="CrossYellow">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <GeometryDrawing Brush="{StaticResource Yellow}">
                         <GeometryDrawing.Geometry>
                             <PathGeometry Figures="m 30.4591 954.473 l 42.8004 70.288 l -42.8004 70.2881 l 71.3339 -42.1728 l 71.334 42.1728 l -42.8004 -70.2881 l 42.8004 -70.288 l -71.334 42.1728 z" FillRule="Nonzero"/>
@@ -172,11 +142,7 @@
         <DrawingBrush x:Key="CrossGreen">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <GeometryDrawing Brush="{StaticResource Green}">
                         <GeometryDrawing.Geometry>
                             <PathGeometry Figures="m 30.4591 954.473 l 42.8004 70.288 l -42.8004 70.2881 l 71.3339 -42.1728 l 71.334 42.1728 l -42.8004 -70.2881 l 42.8004 -70.288 l -71.334 42.1728 z" FillRule="Nonzero"/>
@@ -189,11 +155,7 @@
         <DrawingBrush x:Key="CrossBlue">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <GeometryDrawing Brush="{StaticResource Blue}">
                         <GeometryDrawing.Geometry>
                             <PathGeometry Figures="m 30.4591 954.473 l 42.8004 70.288 l -42.8004 70.2881 l 71.3339 -42.1728 l 71.334 42.1728 l -42.8004 -70.2881 l 42.8004 -70.288 l -71.334 42.1728 z" FillRule="Nonzero"/>
@@ -206,11 +168,7 @@
         <DrawingBrush x:Key="CrossPurple">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <GeometryDrawing Brush="{StaticResource Purple}">
                         <GeometryDrawing.Geometry>
                             <PathGeometry Figures="m 30.4591 954.473 l 42.8004 70.288 l -42.8004 70.2881 l 71.3339 -42.1728 l 71.334 42.1728 l -42.8004 -70.2881 l 42.8004 -70.288 l -71.334 42.1728 z" FillRule="Nonzero"/>
@@ -223,11 +181,7 @@
         <DrawingBrush x:Key="LozangeRed">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <DrawingGroup Transform="0.7071067811865476,-0.7071067811865475,0.7071067811865475,0.7071067811865476,0.0,0.0">
                         <GeometryDrawing Brush="{StaticResource Red}">
                             <GeometryDrawing.Geometry>
@@ -242,11 +196,7 @@
         <DrawingBrush x:Key="LozangeOrange">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <DrawingGroup Transform="0.7071067811865476,-0.7071067811865475,0.7071067811865475,0.7071067811865476,0.0,0.0">
                         <GeometryDrawing Brush="{StaticResource Orange}">
                             <GeometryDrawing.Geometry>
@@ -261,11 +211,7 @@
         <DrawingBrush x:Key="LozangeYellow">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <DrawingGroup Transform="0.7071067811865476,-0.7071067811865475,0.7071067811865475,0.7071067811865476,0.0,0.0">
                         <GeometryDrawing Brush="{StaticResource Yellow}">
                             <GeometryDrawing.Geometry>
@@ -280,11 +226,7 @@
         <DrawingBrush x:Key="LozangeGreen">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <DrawingGroup Transform="0.7071067811865476,-0.7071067811865475,0.7071067811865475,0.7071067811865476,0.0,0.0">
                         <GeometryDrawing Brush="{StaticResource Green}">
                             <GeometryDrawing.Geometry>
@@ -299,11 +241,7 @@
         <DrawingBrush x:Key="LozangeBlue">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <DrawingGroup Transform="0.7071067811865476,-0.7071067811865475,0.7071067811865475,0.7071067811865476,0.0,0.0">
                         <GeometryDrawing Brush="{StaticResource Blue}">
                             <GeometryDrawing.Geometry>
@@ -318,11 +256,7 @@
         <DrawingBrush x:Key="LozangePurple">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <DrawingGroup Transform="0.7071067811865476,-0.7071067811865475,0.7071067811865475,0.7071067811865476,0.0,0.0">
                         <GeometryDrawing Brush="{StaticResource Purple}">
                             <GeometryDrawing.Geometry>
@@ -337,11 +271,7 @@
         <DrawingBrush x:Key="SquareRed">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <GeometryDrawing Brush="{StaticResource Red}">
                         <GeometryDrawing.Geometry>
                             <RectangleGeometry Rect="35.0,957.52,130.0,130.0"/>
@@ -354,11 +284,7 @@
         <DrawingBrush x:Key="SquareOrange">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <GeometryDrawing Brush="{StaticResource Orange}">
                         <GeometryDrawing.Geometry>
                             <RectangleGeometry Rect="35.0,957.52,130.0,130.0"/>
@@ -371,11 +297,7 @@
         <DrawingBrush x:Key="SquareYellow">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <GeometryDrawing Brush="{StaticResource Yellow}">
                         <GeometryDrawing.Geometry>
                             <RectangleGeometry Rect="35.0,957.52,130.0,130.0"/>
@@ -388,11 +310,7 @@
         <DrawingBrush x:Key="SquareGreen">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <GeometryDrawing Brush="{StaticResource Green}">
                         <GeometryDrawing.Geometry>
                             <RectangleGeometry Rect="35.0,957.52,130.0,130.0"/>
@@ -405,11 +323,7 @@
         <DrawingBrush x:Key="SquareBlue">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <GeometryDrawing Brush="{StaticResource Blue}">
                         <GeometryDrawing.Geometry>
                             <RectangleGeometry Rect="35.0,957.52,130.0,130.0"/>
@@ -422,11 +336,7 @@
         <DrawingBrush x:Key="SquarePurple">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <GeometryDrawing Brush="{StaticResource Purple}">
                         <GeometryDrawing.Geometry>
                             <RectangleGeometry Rect="35.0,957.52,130.0,130.0"/>
@@ -439,11 +349,7 @@
         <DrawingBrush x:Key="StarRed">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <GeometryDrawing Brush="{StaticResource Red}">
                         <GeometryDrawing.Geometry>
                             <PathGeometry Figures="m 100 942.52 l -12.473 49.889 l -44.096 -26.457 l 26.457 44.096 l -49.889 12.473 l 49.889 12.473 l -26.457 44.096 l 44.096 -26.457 l 12.473 49.889 l 12.473 -49.889 l 44.096 26.457 l -26.457 -44.096 l 49.889 -12.473 l -49.889 -12.473 l 26.457 -44.096 l -44.096 26.457 z" FillRule="Nonzero"/>
@@ -456,11 +362,7 @@
         <DrawingBrush x:Key="StarOrange">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <GeometryDrawing Brush="{StaticResource Orange}">
                         <GeometryDrawing.Geometry>
                             <PathGeometry Figures="m 100 942.52 l -12.473 49.889 l -44.096 -26.457 l 26.457 44.096 l -49.889 12.473 l 49.889 12.473 l -26.457 44.096 l 44.096 -26.457 l 12.473 49.889 l 12.473 -49.889 l 44.096 26.457 l -26.457 -44.096 l 49.889 -12.473 l -49.889 -12.473 l 26.457 -44.096 l -44.096 26.457 z" FillRule="Nonzero"/>
@@ -473,11 +375,7 @@
         <DrawingBrush x:Key="StarYellow">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <GeometryDrawing Brush="{StaticResource Yellow}">
                         <GeometryDrawing.Geometry>
                             <PathGeometry Figures="m 100 942.52 l -12.473 49.889 l -44.096 -26.457 l 26.457 44.096 l -49.889 12.473 l 49.889 12.473 l -26.457 44.096 l 44.096 -26.457 l 12.473 49.889 l 12.473 -49.889 l 44.096 26.457 l -26.457 -44.096 l 49.889 -12.473 l -49.889 -12.473 l 26.457 -44.096 l -44.096 26.457 z" FillRule="Nonzero"/>
@@ -490,11 +388,7 @@
         <DrawingBrush x:Key="StarGreen">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <GeometryDrawing Brush="{StaticResource Green}">
                         <GeometryDrawing.Geometry>
                             <PathGeometry Figures="m 100 942.52 l -12.473 49.889 l -44.096 -26.457 l 26.457 44.096 l -49.889 12.473 l 49.889 12.473 l -26.457 44.096 l 44.096 -26.457 l 12.473 49.889 l 12.473 -49.889 l 44.096 26.457 l -26.457 -44.096 l 49.889 -12.473 l -49.889 -12.473 l 26.457 -44.096 l -44.096 26.457 z" FillRule="Nonzero"/>
@@ -507,11 +401,7 @@
         <DrawingBrush x:Key="StarBlue">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <GeometryDrawing Brush="{StaticResource Blue}">
                         <GeometryDrawing.Geometry>
                             <PathGeometry Figures="m 100 942.52 l -12.473 49.889 l -44.096 -26.457 l 26.457 44.096 l -49.889 12.473 l 49.889 12.473 l -26.457 44.096 l 44.096 -26.457 l 12.473 49.889 l 12.473 -49.889 l 44.096 26.457 l -26.457 -44.096 l 49.889 -12.473 l -49.889 -12.473 l 26.457 -44.096 l -44.096 26.457 z" FillRule="Nonzero"/>
@@ -524,11 +414,7 @@
         <DrawingBrush x:Key="StarPurple">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                    <GeometryDrawing Brush="Black" >
-                        <GeometryDrawing.Geometry>
-                            <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                        </GeometryDrawing.Geometry>
-                    </GeometryDrawing>
+                    <StaticResource ResourceKey="BlackTile" />
                     <GeometryDrawing Brush="{StaticResource Purple}">
                         <GeometryDrawing.Geometry>
                             <PathGeometry Figures="m 100 942.52 l -12.473 49.889 l -44.096 -26.457 l 26.457 44.096 l -49.889 12.473 l 49.889 12.473 l -26.457 44.096 l 44.096 -26.457 l 12.473 49.889 l 12.473 -49.889 l 44.096 26.457 l -26.457 -44.096 l 49.889 -12.473 l -49.889 -12.473 l 26.457 -44.096 l -44.096 26.457 z" FillRule="Nonzero"/>
@@ -542,11 +428,7 @@
             <DrawingBrush.Drawing>
                 <DrawingGroup>
                     <DrawingGroup.Children>
-                        <GeometryDrawing Brush="Black" >
-                            <GeometryDrawing.Geometry>
-                                <RectangleGeometry Rect="0,920,200,200" RadiusX="15" RadiusY="15" />
-                            </GeometryDrawing.Geometry>
-                        </GeometryDrawing>
+                        <StaticResource ResourceKey="BlackTile" />
                         <GeometryDrawing Brush="{StaticResource Red}" Geometry="m100 942.52a33.137 33.137 0 0 0-33.137 33.137 33.137 33.137 0 0 0 9.7344 23.434 33.137 33.137 0 0 0-0.0273 0.0293 33.137 33.137 0 0 0-23.434-9.7363 33.137 33.137 0 0 0-33.137 33.137 33.137 33.137 0 0 0 33.137 33.137 33.137 33.137 0 0 0 23.434-9.7344 33.137 33.137 0 0 0 0.0293 0.027 33.137 33.137 0 0 0-9.7363 23.434 33.137 33.137 0 0 0 33.137 33.137 33.137 33.137 0 0 0 33.137-33.137 33.137 33.137 0 0 0-9.7363-23.434 33.137 33.137 0 0 0 0.0293-0.027 33.137 33.137 0 0 0 23.434 9.7344 33.137 33.137 0 0 0 33.137-33.137 33.137 33.137 0 0 0-33.137-33.137 33.137 33.137 0 0 0-23.432 9.7344 33.137 33.137 0 0 0-0.0312-0.0274 33.137 33.137 0 0 0 9.7363-23.434 33.137 33.137 0 0 0-33.137-33.137z">
                             <GeometryDrawing.Pen>
                                 <Pen Brush="#000000" />
@@ -561,11 +443,7 @@
             <DrawingBrush.Drawing>
                 <DrawingGroup>
                     <DrawingGroup.Children>
-                        <GeometryDrawing Brush="Black" >
-                            <GeometryDrawing.Geometry>
-                                <RectangleGeometry Rect="0,920,200,200" RadiusX="15" RadiusY="15" />
-                            </GeometryDrawing.Geometry>
-                        </GeometryDrawing>
+                        <StaticResource ResourceKey="BlackTile" />
                         <GeometryDrawing Brush="{StaticResource Orange}" Geometry="m100 942.52a33.137 33.137 0 0 0-33.137 33.137 33.137 33.137 0 0 0 9.7344 23.434 33.137 33.137 0 0 0-0.0273 0.0293 33.137 33.137 0 0 0-23.434-9.7363 33.137 33.137 0 0 0-33.137 33.137 33.137 33.137 0 0 0 33.137 33.137 33.137 33.137 0 0 0 23.434-9.7344 33.137 33.137 0 0 0 0.0293 0.027 33.137 33.137 0 0 0-9.7363 23.434 33.137 33.137 0 0 0 33.137 33.137 33.137 33.137 0 0 0 33.137-33.137 33.137 33.137 0 0 0-9.7363-23.434 33.137 33.137 0 0 0 0.0293-0.027 33.137 33.137 0 0 0 23.434 9.7344 33.137 33.137 0 0 0 33.137-33.137 33.137 33.137 0 0 0-33.137-33.137 33.137 33.137 0 0 0-23.432 9.7344 33.137 33.137 0 0 0-0.0312-0.0274 33.137 33.137 0 0 0 9.7363-23.434 33.137 33.137 0 0 0-33.137-33.137z">
                             <GeometryDrawing.Pen>
                                 <Pen Brush="#000000" />
@@ -580,11 +458,7 @@
             <DrawingBrush.Drawing>
                 <DrawingGroup>
                     <DrawingGroup.Children>
-                        <GeometryDrawing Brush="Black" >
-                            <GeometryDrawing.Geometry>
-                                <RectangleGeometry Rect="0,920,200,200" RadiusX="15" RadiusY="15" />
-                            </GeometryDrawing.Geometry>
-                        </GeometryDrawing>
+                        <StaticResource ResourceKey="BlackTile" />
                         <GeometryDrawing Brush="{StaticResource Yellow}" Geometry="m100 942.52a33.137 33.137 0 0 0-33.137 33.137 33.137 33.137 0 0 0 9.7344 23.434 33.137 33.137 0 0 0-0.0273 0.0293 33.137 33.137 0 0 0-23.434-9.7363 33.137 33.137 0 0 0-33.137 33.137 33.137 33.137 0 0 0 33.137 33.137 33.137 33.137 0 0 0 23.434-9.7344 33.137 33.137 0 0 0 0.0293 0.027 33.137 33.137 0 0 0-9.7363 23.434 33.137 33.137 0 0 0 33.137 33.137 33.137 33.137 0 0 0 33.137-33.137 33.137 33.137 0 0 0-9.7363-23.434 33.137 33.137 0 0 0 0.0293-0.027 33.137 33.137 0 0 0 23.434 9.7344 33.137 33.137 0 0 0 33.137-33.137 33.137 33.137 0 0 0-33.137-33.137 33.137 33.137 0 0 0-23.432 9.7344 33.137 33.137 0 0 0-0.0312-0.0274 33.137 33.137 0 0 0 9.7363-23.434 33.137 33.137 0 0 0-33.137-33.137z">
                             <GeometryDrawing.Pen>
                                 <Pen Brush="#000000" />
@@ -599,11 +473,7 @@
             <DrawingBrush.Drawing>
                 <DrawingGroup>
                     <DrawingGroup.Children>
-                        <GeometryDrawing Brush="Black" >
-                            <GeometryDrawing.Geometry>
-                                <RectangleGeometry Rect="0,920,200,200" RadiusX="15" RadiusY="15" />
-                            </GeometryDrawing.Geometry>
-                        </GeometryDrawing>
+                        <StaticResource ResourceKey="BlackTile" />
                         <GeometryDrawing Brush="{StaticResource Green}" Geometry="m100 942.52a33.137 33.137 0 0 0-33.137 33.137 33.137 33.137 0 0 0 9.7344 23.434 33.137 33.137 0 0 0-0.0273 0.0293 33.137 33.137 0 0 0-23.434-9.7363 33.137 33.137 0 0 0-33.137 33.137 33.137 33.137 0 0 0 33.137 33.137 33.137 33.137 0 0 0 23.434-9.7344 33.137 33.137 0 0 0 0.0293 0.027 33.137 33.137 0 0 0-9.7363 23.434 33.137 33.137 0 0 0 33.137 33.137 33.137 33.137 0 0 0 33.137-33.137 33.137 33.137 0 0 0-9.7363-23.434 33.137 33.137 0 0 0 0.0293-0.027 33.137 33.137 0 0 0 23.434 9.7344 33.137 33.137 0 0 0 33.137-33.137 33.137 33.137 0 0 0-33.137-33.137 33.137 33.137 0 0 0-23.432 9.7344 33.137 33.137 0 0 0-0.0312-0.0274 33.137 33.137 0 0 0 9.7363-23.434 33.137 33.137 0 0 0-33.137-33.137z">
                             <GeometryDrawing.Pen>
                                 <Pen Brush="#000000" />
@@ -618,11 +488,7 @@
             <DrawingBrush.Drawing>
                 <DrawingGroup>
                     <DrawingGroup.Children>
-                        <GeometryDrawing Brush="Black" >
-                            <GeometryDrawing.Geometry>
-                                <RectangleGeometry Rect="0,920,200,200" RadiusX="15" RadiusY="15" />
-                            </GeometryDrawing.Geometry>
-                        </GeometryDrawing>
+                        <StaticResource ResourceKey="BlackTile" />
                         <GeometryDrawing Brush="{StaticResource Blue}" Geometry="m100 942.52a33.137 33.137 0 0 0-33.137 33.137 33.137 33.137 0 0 0 9.7344 23.434 33.137 33.137 0 0 0-0.0273 0.0293 33.137 33.137 0 0 0-23.434-9.7363 33.137 33.137 0 0 0-33.137 33.137 33.137 33.137 0 0 0 33.137 33.137 33.137 33.137 0 0 0 23.434-9.7344 33.137 33.137 0 0 0 0.0293 0.027 33.137 33.137 0 0 0-9.7363 23.434 33.137 33.137 0 0 0 33.137 33.137 33.137 33.137 0 0 0 33.137-33.137 33.137 33.137 0 0 0-9.7363-23.434 33.137 33.137 0 0 0 0.0293-0.027 33.137 33.137 0 0 0 23.434 9.7344 33.137 33.137 0 0 0 33.137-33.137 33.137 33.137 0 0 0-33.137-33.137 33.137 33.137 0 0 0-23.432 9.7344 33.137 33.137 0 0 0-0.0312-0.0274 33.137 33.137 0 0 0 9.7363-23.434 33.137 33.137 0 0 0-33.137-33.137z">
                             <GeometryDrawing.Pen>
                                 <Pen Brush="#000000" />
@@ -637,11 +503,7 @@
             <DrawingBrush.Drawing>
                 <DrawingGroup>
                     <DrawingGroup.Children>
-                        <GeometryDrawing Brush="Black" >
-                            <GeometryDrawing.Geometry>
-                                <RectangleGeometry Rect="0,920,200,200" RadiusX="15" RadiusY="15" />
-                            </GeometryDrawing.Geometry>
-                        </GeometryDrawing>
+                        <StaticResource ResourceKey="BlackTile" />
                         <GeometryDrawing Brush="{StaticResource Purple}" Geometry="m100 942.52a33.137 33.137 0 0 0-33.137 33.137 33.137 33.137 0 0 0 9.7344 23.434 33.137 33.137 0 0 0-0.0273 0.0293 33.137 33.137 0 0 0-23.434-9.7363 33.137 33.137 0 0 0-33.137 33.137 33.137 33.137 0 0 0 33.137 33.137 33.137 33.137 0 0 0 23.434-9.7344 33.137 33.137 0 0 0 0.0293 0.027 33.137 33.137 0 0 0-9.7363 23.434 33.137 33.137 0 0 0 33.137 33.137 33.137 33.137 0 0 0 33.137-33.137 33.137 33.137 0 0 0-9.7363-23.434 33.137 33.137 0 0 0 0.0293-0.027 33.137 33.137 0 0 0 23.434 9.7344 33.137 33.137 0 0 0 33.137-33.137 33.137 33.137 0 0 0-33.137-33.137 33.137 33.137 0 0 0-23.432 9.7344 33.137 33.137 0 0 0-0.0312-0.0274 33.137 33.137 0 0 0 9.7363-23.434 33.137 33.137 0 0 0-33.137-33.137z">
                             <GeometryDrawing.Pen>
                                 <Pen Brush="#000000" />
@@ -672,42 +534,42 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Rectangle Grid.Row="0" Grid.Column="0" Margin="1" Width="150" Height="150" Fill="{StaticResource CircleRed}" />
-        <Rectangle Grid.Row="0" Grid.Column="1" Margin="1" Width="150" Height="150" Fill="{StaticResource CircleOrange}" />
-        <Rectangle Grid.Row="0" Grid.Column="2" Margin="1" Width="150" Height="150" Fill="{StaticResource CircleYellow}" />
-        <Rectangle Grid.Row="0" Grid.Column="3" Margin="1" Width="150" Height="150" Fill="{StaticResource CircleGreen}" />
-        <Rectangle Grid.Row="0" Grid.Column="4" Margin="1" Width="150" Height="150" Fill="{StaticResource CircleBlue}" />
-        <Rectangle Grid.Row="0" Grid.Column="5" Margin="1" Width="150" Height="150" Fill="{StaticResource CirclePurple}" />
-        <Rectangle Grid.Row="1" Grid.Column="0" Margin="1" Width="150" Height="150" Fill="{StaticResource CrossRed}" />
-        <Rectangle Grid.Row="1" Grid.Column="1" Margin="1" Width="150" Height="150" Fill="{StaticResource CrossOrange}" />
-        <Rectangle Grid.Row="1" Grid.Column="2" Margin="1" Width="150" Height="150" Fill="{StaticResource CrossYellow}" />
-        <Rectangle Grid.Row="1" Grid.Column="3" Margin="1" Width="150" Height="150" Fill="{StaticResource CrossGreen}" />
-        <Rectangle Grid.Row="1" Grid.Column="4" Margin="1" Width="150" Height="150" Fill="{StaticResource CrossBlue}" />
-        <Rectangle Grid.Row="1" Grid.Column="5" Margin="1" Width="150" Height="150" Fill="{StaticResource CrossPurple}" />
-        <Rectangle Grid.Row="2" Grid.Column="0" Margin="1" Width="150" Height="150" Fill="{StaticResource LozangeRed}" />
-        <Rectangle Grid.Row="2" Grid.Column="1" Margin="1" Width="150" Height="150" Fill="{StaticResource LozangeOrange}" />
-        <Rectangle Grid.Row="2" Grid.Column="2" Margin="1" Width="150" Height="150" Fill="{StaticResource LozangeYellow}" />
-        <Rectangle Grid.Row="2" Grid.Column="3" Margin="1" Width="150" Height="150" Fill="{StaticResource LozangeGreen}" />
-        <Rectangle Grid.Row="2" Grid.Column="4" Margin="1" Width="150" Height="150" Fill="{StaticResource LozangeBlue}" />
-        <Rectangle Grid.Row="2" Grid.Column="5" Margin="1" Width="150" Height="150" Fill="{StaticResource LozangePurple}" />
-        <Rectangle Grid.Row="3" Grid.Column="0" Margin="1" Width="150" Height="150" Fill="{StaticResource SquareRed}" />
-        <Rectangle Grid.Row="3" Grid.Column="1" Margin="1" Width="150" Height="150" Fill="{StaticResource SquareOrange}" />
-        <Rectangle Grid.Row="3" Grid.Column="2" Margin="1" Width="150" Height="150" Fill="{StaticResource SquareYellow}" />
-        <Rectangle Grid.Row="3" Grid.Column="3" Margin="1" Width="150" Height="150" Fill="{StaticResource SquareGreen}" />
-        <Rectangle Grid.Row="3" Grid.Column="4" Margin="1" Width="150" Height="150" Fill="{StaticResource SquareBlue}" />
-        <Rectangle Grid.Row="3" Grid.Column="5" Margin="1" Width="150" Height="150" Fill="{StaticResource SquarePurple}" />
-        <Rectangle Grid.Row="4" Grid.Column="0" Margin="1" Width="150" Height="150" Fill="{StaticResource StarRed}" />
-        <Rectangle Grid.Row="4" Grid.Column="1" Margin="1" Width="150" Height="150" Fill="{StaticResource StarOrange}" />
-        <Rectangle Grid.Row="4" Grid.Column="2" Margin="1" Width="150" Height="150" Fill="{StaticResource StarYellow}" />
-        <Rectangle Grid.Row="4" Grid.Column="3" Margin="1" Width="150" Height="150" Fill="{StaticResource StarGreen}" />
-        <Rectangle Grid.Row="4" Grid.Column="4" Margin="1" Width="150" Height="150" Fill="{StaticResource StarBlue}" />
-        <Rectangle Grid.Row="4" Grid.Column="5" Margin="1" Width="150" Height="150" Fill="{StaticResource StarPurple}" />
-        <Rectangle Grid.Row="5" Grid.Column="0" Margin="1" Width="150" Height="150" Fill="{StaticResource CloverRed}" />
-        <Rectangle Grid.Row="5" Grid.Column="1" Margin="1" Width="150" Height="150" Fill="{StaticResource CloverOrange}" />
-        <Rectangle Grid.Row="5" Grid.Column="2" Margin="1" Width="150" Height="150" Fill="{StaticResource CloverYellow}" />
-        <Rectangle Grid.Row="5" Grid.Column="3" Margin="1" Width="150" Height="150" Fill="{StaticResource CloverGreen}" />
-        <Rectangle Grid.Row="5" Grid.Column="4" Margin="1" Width="150" Height="150" Fill="{StaticResource CloverBlue}" />
-        <Rectangle Grid.Row="5" Grid.Column="5" Margin="1" Width="150" Height="150" Fill="{StaticResource CloverPurple}" />
+        <Rectangle Grid.Row="0" Grid.Column="0" Margin="1" Width="100" Height="100" Fill="{StaticResource CircleRed}" />
+        <Rectangle Grid.Row="0" Grid.Column="1" Margin="1" Width="100" Height="100" Fill="{StaticResource CircleOrange}" />
+        <Rectangle Grid.Row="0" Grid.Column="2" Margin="1" Width="100" Height="100" Fill="{StaticResource CircleYellow}" />
+        <Rectangle Grid.Row="0" Grid.Column="3" Margin="1" Width="100" Height="100" Fill="{StaticResource CircleGreen}" />
+        <Rectangle Grid.Row="0" Grid.Column="4" Margin="1" Width="100" Height="100" Fill="{StaticResource CircleBlue}" />
+        <Rectangle Grid.Row="0" Grid.Column="5" Margin="1" Width="100" Height="100" Fill="{StaticResource CirclePurple}" />
+        <Rectangle Grid.Row="1" Grid.Column="0" Margin="1" Width="100" Height="100" Fill="{StaticResource CrossRed}" />
+        <Rectangle Grid.Row="1" Grid.Column="1" Margin="1" Width="100" Height="100" Fill="{StaticResource CrossOrange}" />
+        <Rectangle Grid.Row="1" Grid.Column="2" Margin="1" Width="100" Height="100" Fill="{StaticResource CrossYellow}" />
+        <Rectangle Grid.Row="1" Grid.Column="3" Margin="1" Width="100" Height="100" Fill="{StaticResource CrossGreen}" />
+        <Rectangle Grid.Row="1" Grid.Column="4" Margin="1" Width="100" Height="100" Fill="{StaticResource CrossBlue}" />
+        <Rectangle Grid.Row="1" Grid.Column="5" Margin="1" Width="100" Height="100" Fill="{StaticResource CrossPurple}" />
+        <Rectangle Grid.Row="2" Grid.Column="0" Margin="1" Width="100" Height="100" Fill="{StaticResource LozangeRed}" />
+        <Rectangle Grid.Row="2" Grid.Column="1" Margin="1" Width="100" Height="100" Fill="{StaticResource LozangeOrange}" />
+        <Rectangle Grid.Row="2" Grid.Column="2" Margin="1" Width="100" Height="100" Fill="{StaticResource LozangeYellow}" />
+        <Rectangle Grid.Row="2" Grid.Column="3" Margin="1" Width="100" Height="100" Fill="{StaticResource LozangeGreen}" />
+        <Rectangle Grid.Row="2" Grid.Column="4" Margin="1" Width="100" Height="100" Fill="{StaticResource LozangeBlue}" />
+        <Rectangle Grid.Row="2" Grid.Column="5" Margin="1" Width="100" Height="100" Fill="{StaticResource LozangePurple}" />
+        <Rectangle Grid.Row="3" Grid.Column="0" Margin="1" Width="100" Height="100" Fill="{StaticResource SquareRed}" />
+        <Rectangle Grid.Row="3" Grid.Column="1" Margin="1" Width="100" Height="100" Fill="{StaticResource SquareOrange}" />
+        <Rectangle Grid.Row="3" Grid.Column="2" Margin="1" Width="100" Height="100" Fill="{StaticResource SquareYellow}" />
+        <Rectangle Grid.Row="3" Grid.Column="3" Margin="1" Width="100" Height="100" Fill="{StaticResource SquareGreen}" />
+        <Rectangle Grid.Row="3" Grid.Column="4" Margin="1" Width="100" Height="100" Fill="{StaticResource SquareBlue}" />
+        <Rectangle Grid.Row="3" Grid.Column="5" Margin="1" Width="100" Height="100" Fill="{StaticResource SquarePurple}" />
+        <Rectangle Grid.Row="4" Grid.Column="0" Margin="1" Width="100" Height="100" Fill="{StaticResource StarRed}" />
+        <Rectangle Grid.Row="4" Grid.Column="1" Margin="1" Width="100" Height="100" Fill="{StaticResource StarOrange}" />
+        <Rectangle Grid.Row="4" Grid.Column="2" Margin="1" Width="100" Height="100" Fill="{StaticResource StarYellow}" />
+        <Rectangle Grid.Row="4" Grid.Column="3" Margin="1" Width="100" Height="100" Fill="{StaticResource StarGreen}" />
+        <Rectangle Grid.Row="4" Grid.Column="4" Margin="1" Width="100" Height="100" Fill="{StaticResource StarBlue}" />
+        <Rectangle Grid.Row="4" Grid.Column="5" Margin="1" Width="100" Height="100" Fill="{StaticResource StarPurple}" />
+        <Rectangle Grid.Row="5" Grid.Column="0" Margin="1" Width="100" Height="100" Fill="{StaticResource CloverRed}" />
+        <Rectangle Grid.Row="5" Grid.Column="1" Margin="1" Width="100" Height="100" Fill="{StaticResource CloverOrange}" />
+        <Rectangle Grid.Row="5" Grid.Column="2" Margin="1" Width="100" Height="100" Fill="{StaticResource CloverYellow}" />
+        <Rectangle Grid.Row="5" Grid.Column="3" Margin="1" Width="100" Height="100" Fill="{StaticResource CloverGreen}" />
+        <Rectangle Grid.Row="5" Grid.Column="4" Margin="1" Width="100" Height="100" Fill="{StaticResource CloverBlue}" />
+        <Rectangle Grid.Row="5" Grid.Column="5" Margin="1" Width="100" Height="100" Fill="{StaticResource CloverPurple}" />
 
 
     </Grid>

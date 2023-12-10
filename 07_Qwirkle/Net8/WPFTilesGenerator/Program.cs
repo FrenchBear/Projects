@@ -32,11 +32,7 @@ internal class Program
                     <DrawingBrush.Drawing>
                         <DrawingGroup>
                             <DrawingGroup.Children>
-                                <GeometryDrawing Brush="Black" >
-                                    <GeometryDrawing.Geometry>
-                                        <RectangleGeometry Rect="0,920,200,200" RadiusX="15" RadiusY="15" />
-                                    </GeometryDrawing.Geometry>
-                                </GeometryDrawing>
+                                <StaticResource ResourceKey="BlackTile" />
                                 <GeometryDrawing Brush="{StaticResource $(color)}" Geometry="m100 942.52a33.137 33.137 0 0 0-33.137 33.137 33.137 33.137 0 0 0 9.7344 23.434 33.137 33.137 0 0 0-0.0273 0.0293 33.137 33.137 0 0 0-23.434-9.7363 33.137 33.137 0 0 0-33.137 33.137 33.137 33.137 0 0 0 33.137 33.137 33.137 33.137 0 0 0 23.434-9.7344 33.137 33.137 0 0 0 0.0293 0.027 33.137 33.137 0 0 0-9.7363 23.434 33.137 33.137 0 0 0 33.137 33.137 33.137 33.137 0 0 0 33.137-33.137 33.137 33.137 0 0 0-9.7363-23.434 33.137 33.137 0 0 0 0.0293-0.027 33.137 33.137 0 0 0 23.434 9.7344 33.137 33.137 0 0 0 33.137-33.137 33.137 33.137 0 0 0-33.137-33.137 33.137 33.137 0 0 0-23.432 9.7344 33.137 33.137 0 0 0-0.0312-0.0274 33.137 33.137 0 0 0 9.7363-23.434 33.137 33.137 0 0 0-33.137-33.137z">
                                     <GeometryDrawing.Pen>
                                         <Pen Brush="#000000" />
@@ -52,11 +48,7 @@ internal class Program
                 <DrawingBrush x:Key="$(shape)$(color)">
                     <DrawingBrush.Drawing>
                         <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                            <GeometryDrawing Brush="Black" >
-                                <GeometryDrawing.Geometry>
-                                    <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                                </GeometryDrawing.Geometry>
-                            </GeometryDrawing>
+                            <StaticResource ResourceKey="BlackTile" />
                             <DrawingGroup Transform="0.7071067811865476,-0.7071067811865475,0.7071067811865475,0.7071067811865476,0.0,0.0">
                                 <GeometryDrawing Brush="{StaticResource $(color)}">
                                     <GeometryDrawing.Geometry>
@@ -73,11 +65,7 @@ internal class Program
                 <DrawingBrush x:Key="$(shape)$(color)">
                     <DrawingBrush.Drawing>
                         <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                            <GeometryDrawing Brush="Black" >
-                                <GeometryDrawing.Geometry>
-                                    <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                                </GeometryDrawing.Geometry>
-                            </GeometryDrawing>
+                            <StaticResource ResourceKey="BlackTile" />
                             <GeometryDrawing Brush="{StaticResource $(color)}">
                                 <GeometryDrawing.Geometry>
                                     <PathGeometry Figures="m 100 942.52 l -12.473 49.889 l -44.096 -26.457 l 26.457 44.096 l -49.889 12.473 l 49.889 12.473 l -26.457 44.096 l 44.096 -26.457 l 12.473 49.889 l 12.473 -49.889 l 44.096 26.457 l -26.457 -44.096 l 49.889 -12.473 l -49.889 -12.473 l 26.457 -44.096 l -44.096 26.457 z" FillRule="Nonzero"/>
@@ -92,11 +80,7 @@ internal class Program
                 <DrawingBrush x:Key="$(shape)$(color)">
                     <DrawingBrush.Drawing>
                         <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                            <GeometryDrawing Brush="Black" >
-                                <GeometryDrawing.Geometry>
-                                    <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                                </GeometryDrawing.Geometry>
-                            </GeometryDrawing>
+                            <StaticResource ResourceKey="BlackTile" />
                             <GeometryDrawing Brush="{StaticResource $(color)}">
                                 <GeometryDrawing.Geometry>
                                     <EllipseGeometry RadiusX="70.0" RadiusY="70.0" Center="100.0,1022.5"/>
@@ -111,11 +95,7 @@ internal class Program
                 <DrawingBrush x:Key="$(shape)$(color)">
                     <DrawingBrush.Drawing>
                         <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                            <GeometryDrawing Brush="Black" >
-                                <GeometryDrawing.Geometry>
-                                    <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                                </GeometryDrawing.Geometry>
-                            </GeometryDrawing>
+                            <StaticResource ResourceKey="BlackTile" />
                             <GeometryDrawing Brush="{StaticResource $(color)}">
                                 <GeometryDrawing.Geometry>
                                     <RectangleGeometry Rect="35.0,957.52,130.0,130.0"/>
@@ -130,11 +110,7 @@ internal class Program
                 <DrawingBrush x:Key="$(shape)$(color)">
                     <DrawingBrush.Drawing>
                         <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
-                            <GeometryDrawing Brush="Black" >
-                                <GeometryDrawing.Geometry>
-                                    <RectangleGeometry Rect="0,922,200,200" RadiusX="15" RadiusY="15" />
-                                </GeometryDrawing.Geometry>
-                            </GeometryDrawing>
+                            <StaticResource ResourceKey="BlackTile" />
                             <GeometryDrawing Brush="{StaticResource $(color)}">
                                 <GeometryDrawing.Geometry>
                                     <PathGeometry Figures="m 30.4591 954.473 l 42.8004 70.288 l -42.8004 70.2881 l 71.3339 -42.1728 l 71.334 42.1728 l -42.8004 -70.2881 l 42.8004 -70.288 l -71.334 42.1728 z" FillRule="Nonzero"/>
