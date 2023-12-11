@@ -543,15 +543,7 @@
 
     </UserControl.Resources>
 
-    <!--<Canvas Background="White">-->
-    <!--<Rectangle Canvas.Left="300" Canvas.Top="200" Margin="1" Width="100" Height="100" Fill="{StaticResource BlackTile}" />
-        <Rectangle Canvas.Left="300" Canvas.Top="200" Margin="1" Width="100" Height="100" Fill="{StaticResource CircleRed}" />
-        <Rectangle Canvas.Left="300" Canvas.Top="200" Margin="1" Width="100" Height="100" Stroke="Yellow" StrokeThickness="3" RadiusX="10" RadiusY="10" />
-
-        <Rectangle Canvas.Left="300" Canvas.Top="100" Margin="1" Width="100" Height="100" Fill="{StaticResource GreyTile}" />
-        <Rectangle Canvas.Left="300" Canvas.Top="100" Margin="1" Width="100" Height="100" Fill="{StaticResource CircleRed}" />-->
-
-    <Grid Margin="1">
+    <Grid Margin="-0.5">
         <Rectangle x:Name="TileLayer" Margin="1" Fill="{StaticResource BlackTile}" />
         <Rectangle Name="ShapeColorLayer" Margin="1" Fill="{StaticResource CircleRed}" />
         <Rectangle Name="SelectionLayer" Stroke="Yellow" StrokeThickness="3" RadiusX="10" RadiusY="10" Visibility="Hidden" />

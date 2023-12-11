@@ -34,12 +34,12 @@ public class UnitTests_Base
     {
         string s = "Col4 5 5 5 5 \r\n" +
                    "Row9 0 1 2 3 \r\n" +
-                   "51   · · x   \r\n" +
-                   "50 · [ < O · \r\n" +
-                   "49   · · O x \r\n" +
-                   "48     x O x \r\n" +
+                   "46       x   \r\n" +
                    "47     x O x \r\n" +
-                   "46       x   \r\n";
+                   "48     x O x \r\n" +
+                   "49   · · O x \r\n" +
+                   "50 · [ < O · \r\n" +
+                   "51   · · x   \r\n";
         string s2 = b.AsString(false, new Tile(Shape.Circle, Color.Purple, 2));
         Debug.Assert(s == s2);
     }
@@ -49,13 +49,14 @@ public class UnitTests_Base
     {
         string s = "Col4 5 5 5 5 \r\n" +
                    "Row9 0 1 2 3 \r\n" +
-                   "51   · x ·   \r\n" +
-                   "50 · [ < O · \r\n" +
-                   "49   · · O · \r\n" +
-                   "48     x O x \r\n" +
+                   "46       ·   \r\n" +
                    "47     · O · \r\n" +
-                   "46       ·   \r\n";
-        string s2 = b.AsString(false, new Tile(Shape.Lozange, Color.Green, 2));
+                   "48     x O x \r\n" +
+                   "49   · · O · \r\n" +
+                   "50 · [ < O · \r\n" +
+                   "51   · x ·   \r\n";
+
+         string s2 = b.AsString(false, new Tile(Shape.Lozange, Color.Green, 2));
         Debug.Assert(s == s2);
     }
 

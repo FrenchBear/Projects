@@ -2,7 +2,7 @@
 
 namespace QwirkleUI;
 
-public partial class AllTiles : Window
+public partial class AllTiles: Window
 {
     public AllTiles() => InitializeComponent();
 }

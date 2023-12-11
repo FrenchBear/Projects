@@ -107,6 +107,8 @@ public record Move(int Row, int Col, Tile T)
     public int Col { get; } = Col;
     public Tile Tile { get; } = T;
 
+    // Potentially, can add a round# or player Id that triggered this move
+
     public string AsString(bool? Color)
         => $"({Row}, {Col}) {Tile.AsString(Color)}";
 }
@@ -228,10 +230,10 @@ public class Board: IEnumerable<Move>
     public Board(Board baseBoard)
         => BaseBoard = baseBoard;
 
-    public int RowMin => BaseBoard == null ? rowMin : Math.Min(rowMin, BaseBoard.RowMin);
-    public int RowMax => BaseBoard == null ? rowMax : Math.Max(rowMax, BaseBoard.RowMax);
-    public int ColMin => BaseBoard == null ? colMin : Math.Min(colMin, BaseBoard.ColMin);
-    public int ColMax => BaseBoard == null ? colMax : Math.Max(colMax, BaseBoard.ColMax);
+    public int RowMin => IsEmpty ? 50 : BaseBoard == null ? rowMin : Math.Min(rowMin, BaseBoard.RowMin);
+    public int RowMax => IsEmpty ? 50 : BaseBoard == null ? rowMax : Math.Max(rowMax, BaseBoard.RowMax);
+    public int ColMin => IsEmpty ? 50 : BaseBoard == null ? colMin : Math.Min(colMin, BaseBoard.ColMin);
+    public int ColMax => IsEmpty ? 50 : BaseBoard == null ? colMax : Math.Max(colMax, BaseBoard.ColMax);
 
     private int rowMin = 100, rowMax = 0;
     private int colMin = 100, colMax = 0;
@@ -257,7 +259,7 @@ public class Board: IEnumerable<Move>
             sb.Append(s[1]).Append(' ');
         }
         sb.AppendLine();
-        for (int row = RowMax + 1; row >= RowMin - 1; row--)
+        for (int row = RowMin - 1; row <= RowMax + 1; row++)
         {
             sb.Append($"{row:D02} ");
             for (int col = ColMin - 1; col <= ColMax + 1; col++)
@@ -557,7 +559,7 @@ public class Board: IEnumerable<Move>
         if (IsEmpty)
             ExplorePotentiallyPlayable(50, 50);
         else
-            for (int row = RowMax + 1; row >= RowMin - 1; row--)
+            for (int row = RowMin - 1; row <= RowMax + 1; row++)
                 for (int col = ColMin - 1; col <= ColMax + 1; col++)
                     if (GetCellState(row, col) == CellState.PotentiallyPlayable)
                     {
@@ -669,7 +671,7 @@ public class Board: IEnumerable<Move>
     // Only check neighbor on row+1 and on col+1, checking row-1 and col-1 would check twice the same pair
     public void NeighborCheck()
     {
-        for (int row = RowMax; row >= RowMin; row--)
+        for (int row = RowMin; row <= RowMax; row++)
             for (int col = ColMin; col <= ColMax; col++)
             {
                 var t1 = GetTile(row, col);
