@@ -4,6 +4,7 @@
 // 2023-12-11   PV
 
 using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -39,6 +40,22 @@ public partial class UITile: UserControl
             {
                 _SelectionBorder = value;
                 SelectionLayer.Visibility = value ? Visibility.Visible : Visibility.Hidden;
+            }
+        }
+    }
+
+    private bool _Hatched = false;
+
+    public bool Hatched
+    {
+        get => _Hatched;
+        set
+        {
+            if (_Hatched != value)
+            {
+                Debug.WriteLine($"Hatched: {value}");
+                _Hatched = value;
+                HatchLayer.Visibility = value ? Visibility.Visible : Visibility.Hidden;
             }
         }
     }

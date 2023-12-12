@@ -233,7 +233,7 @@ public partial class MainWindow: Window
             int row = (int)Math.Floor(preciseTop / UnitSize + 0.5);
             int col = (int)Math.Floor(preciseLeft / UnitSize + 0.5);
 
-            Selection.uitile.SelectionBorder = !(viewModel.GetCellState(row, col) != CellState.Tiled || (row == Selection.startRow && col == Selection.startCol));
+            Selection.uitile.Hatched = !(viewModel.GetCellState(row, col) != CellState.Tiled || (row == Selection.startRow && col == Selection.startCol));
         };
     }
 
@@ -313,7 +313,7 @@ public partial class MainWindow: Window
 
             Selection.uitile.SetValue(Canvas.TopProperty, row * UnitSize);
             Selection.uitile.SetValue(Canvas.LeftProperty, col * UnitSize);
-            Selection.uitile.SelectionBorder = false;
+            Selection.uitile.Hatched = false;
 
             //FinalRefreshAfterUpdate();
         }

@@ -16,6 +16,28 @@
         <SolidColorBrush x:Key="Green" Color="#ff00aa00" />
         <SolidColorBrush x:Key="Orange" Color="#ffff8800" />
 
+        <VisualBrush x:Key="MyVisualBrush" TileMode="Tile" Viewport="0,0,75,75" ViewportUnits="Absolute" Viewbox="0,0,75,75" ViewboxUnits="Absolute">
+            <VisualBrush.Visual>
+                <Grid Background="Black">
+                    <Path Data="M 0 75 L 75 0" Stroke="OrangeRed" StrokeThickness="9" />
+                    <Path Data="M 0 0 L 75 75" Stroke="OrangeRed" StrokeThickness="9" />
+                </Grid>
+            </VisualBrush.Visual>
+        </VisualBrush>
+
+        <DrawingBrush x:Key="RedHatchLayer">
+            <DrawingBrush.Drawing>
+                <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
+                    <GeometryDrawing Brush="{StaticResource MyVisualBrush}" >
+                        <GeometryDrawing.Geometry>
+                            <RectangleGeometry Rect="0,922,200,200" RadiusX="25" RadiusY="25" />
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+
+
         <!-- Tiles backgrounds -->
         <DrawingBrush x:Key="BlackTile">
             <DrawingBrush.Drawing>
@@ -545,7 +567,8 @@
 
     <Grid Margin="-0.5">
         <Rectangle x:Name="TileLayer" Margin="1" Fill="{StaticResource BlackTile}" />
-        <Rectangle Name="ShapeColorLayer" Margin="1" Fill="{StaticResource CircleRed}" />
+        <Rectangle x:Name="HatchLayer" Margin="1" Fill="{StaticResource RedHatchLayer}" Visibility="Hidden" />
+        <Rectangle x:Name="ShapeColorLayer" Margin="1" Fill="{StaticResource CircleRed}" />
         <Rectangle Name="SelectionLayer" Stroke="Yellow" StrokeThickness="3" RadiusX="10" RadiusY="10" Visibility="Hidden" />
     </Grid>
 
