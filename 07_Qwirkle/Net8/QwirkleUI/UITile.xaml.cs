@@ -3,9 +3,11 @@
 //
 // 2023-12-11   PV
 
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using static QwirkleUI.App;
 
 namespace QwirkleUI;
 
@@ -54,6 +56,9 @@ public partial class UITile: UserControl
             }
         }
     }
+
+    public int Row => (int)Math.Floor((double)GetValue(Canvas.TopProperty) / UnitSize + 0.5);
+    public int Col => (int)Math.Floor((double)GetValue(Canvas.LeftProperty) / UnitSize + 0.5);
 
     public UITile() => InitializeComponent();
 }

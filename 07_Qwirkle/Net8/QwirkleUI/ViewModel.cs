@@ -149,6 +149,9 @@ internal class ViewModel: INotifyPropertyChanged
             view.AddUITile(new Position(m.Row, m.Col), m.Tile.Shape.ToString() + m.Tile.Color.ToString());
     }
 
+    internal CellState GetCellState(int row, int col) 
+        => model.Board.GetCellState(row, col);
+
     // -------------------------------------------------
     // Commands
 

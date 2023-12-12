@@ -3,6 +3,7 @@
 //
 // 2023-12-10   PV      First version, convert SVG tiles from https://fr.wikipedia.org/wiki/Qwirkle in XAML using Inkscape
 
+using LibQwirkle;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,10 +17,16 @@ using static QwirkleUI.App;
 
 namespace QwirkleUI;
 
+struct Selection
+{
+    public UITile? uitile;
+    public int startRow, startCol;
+}
+
 public partial class MainWindow: Window
 {
     private readonly ViewModel viewModel;
-    private readonly List<UITile> m_Sel = [];                   // Manages current selection
+    private Selection Selection = new();
     private readonly List<UITile> m_UITilesList = [];
 
     public MainWindow()
@@ -73,7 +80,7 @@ public partial class MainWindow: Window
         ClearBackgroundGrid();
         viewModel.StatusText = "Clear.";
         m_UITilesList.Clear();
-        m_Sel.Clear();
+        Selection.uitile = null;
     }
 
     internal void FinalRefreshAfterUpdate()
@@ -173,48 +180,6 @@ public partial class MainWindow: Window
             EndMatrixAnimation();
     }
 
-    // Helper, this was originally in MainGrid_MouseDown handler, but when a right-click occurs,
-    // it is assumed than it will select automatically a non-selected word, so code got promoted to its own function...
-    private void UpdateSelectionAfterClick(MouseButtonEventArgs e)
-    {
-        if (DrawingCanvas.InputHitTest(e.GetPosition(DrawingCanvas)) is UITile tile)
-        {
-            tile.SelectionBorder = true;
-            /*
-            m_Sel.Add(hit);
-            var hitC = hitTextBlock.Parent as WordCanvas;
-            WordAndCanvas hit = m_WordAndCanvasList.FirstOrDefault(wac => ReferenceEquals(wac.WordCanvas, hitC));
-            Debug.Assert(hit != null);
-
-            //Debug.WriteLine("Hit " + hit.WordPosition.ToString());
-
-            // If Ctrl key is NOT pressed, clear previous selection
-            // But if we click again in something already selected, do not clear selection!
-            if (!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl))
-                if (m_Sel.WordAndCanvasList != null && !m_Sel.WordAndCanvasList.Contains(hit))
-                    m_Sel.Clear();
-
-            // Add current word to selection
-            m_Sel.Add(hit);
-
-            // If Shift key is pressed, selection is extended to connected words
-            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
-                //viewModel.Layout.GetConnectedWordPositions(hitWP).ForEach(connected => AddWordPositionToSelection(connected));
-                foreach (WordPosition connected in viewModel.Layout.GetConnectedWordPositions(hit.WordPosition))
-                    m_Sel.Add(m_WordAndCanvasList.FirstOrDefault(wac => wac.WordPosition == connected));
-
-            // Remove and add again elements to move so they're displayed above non-moved elements
-            //foreach (WordCanvas wc in m_Sel.WordPositionList.Select(wp => Map.GetWordCanvasFromWordPosition(wp)))
-            foreach (WordCanvas wc in m_Sel.WordAndCanvasList.Select(wac => wac.WordCanvas))
-            {
-                DrawingCanvas.Children.Remove(wc);
-                DrawingCanvas.Children.Add(wc);
-                wc.SetColor(Brushes.White, Brushes.DarkBlue);
-            }
-            */
-        }
-    }
-
     private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
     {
         EndAnimationsInProgress();
@@ -222,29 +187,13 @@ public partial class MainWindow: Window
         MainGrid.MouseMove -= MainGrid_MouseMoveWhenUp;
         MainGrid.MouseMove += MainGrid_MouseMoveWhenDown;
         previousMousePosition = e.GetPosition(MainGrid);
-        UpdateSelectionAfterClick(e);
 
-        var h = DrawingCanvas.InputHitTest(e.GetPosition(DrawingCanvas)) as DependencyObject;
-        while (h != null)
-        {
-            h = VisualTreeHelper.GetParent(h);
-            if (h != null && (h is UITile || h is Canvas))
-                break;
-        }
+        Selection.uitile = GetHitHile(e);
 
-        // HitTest: Test if a word was clicked on, if true, hitTextBlock is a TextBloxk
-        //if (DrawingCanvas.InputHitTest(e.GetPosition(DrawingCanvas)) is UITile tile)
-        if (h is UITile tile)
-        {
-            tile.SelectionBorder = true;
-            // We're interested in its parent WordCanvas, that contains all the text blocks for the word
+        if (Selection.uitile != null)
             pmm = GetMouseDownMoveAction();
-        }
         else
-        {
             pmm = null;
-            //m_Sel.Clear();
-        }
 
         // Be sure to call GetPosition before Capture, otherwise GetPosition returns 0 after Capture
         // Capture to get MouseUp event raised by grid
@@ -254,53 +203,61 @@ public partial class MainWindow: Window
     // Separate from MainGrid_MouseDown to reduce complexity
     private Action<Point> GetMouseDownMoveAction()
     {
+        Debug.Assert(Selection.uitile != null);
         // Reverse-transform mouse Grid coordinates into DrawingCanvas coordinates
         Matrix m = MainMatrixTransform.Matrix;
         m.Invert();     // To convert from screen transformed coordinates into ideal grid
                         // coordinates starting at (0,0) with a square side of UnitSize
-        var clickOffsetList = new List<Vector>(m_Sel.Count);
-        clickOffsetList.AddRange(m_Sel
-            .Select(wac => new Point((double)wac.GetValue(Canvas.LeftProperty), (double)wac.GetValue(Canvas.TopProperty)))
-            .Select(canvasTopLeft => canvasTopLeft - m.Transform(previousMousePosition)));
+        Vector clickOffset = new();
+        var p = new Point((double)Selection.uitile.GetValue(Canvas.LeftProperty), (double)Selection.uitile.GetValue(Canvas.TopProperty));
+        clickOffset = p - m.Transform(previousMousePosition);
+
+        Selection.startRow = Selection.uitile.Row;
+        Selection.startCol = Selection.uitile.Col;
+
+        // Move as last child of DrawingCanvas so it's drawn on top
+        DrawingCanvas.Children.Remove(Selection.uitile);
+        DrawingCanvas.Children.Add(Selection.uitile);
 
         // When moving, point is current mouse in ideal grid coordinates
         return point =>
         {
-            // Just move selected WordCanvas
-            for (int i = 0; i < m_Sel.Count; i++)
-            {
-                double preciseTop = point.Y + clickOffsetList[i].Y;
-                double preciseLeft = point.X + clickOffsetList[i].X;
+            // Just move selected tile
+            double preciseTop = point.Y + clickOffset.Y;
+            double preciseLeft = point.X + clickOffset.X;
 
-                UITile wc = m_Sel[i];
-                wc.SetValue(Canvas.TopProperty, preciseTop);
-                wc.SetValue(Canvas.LeftProperty, preciseLeft);
+            Selection.uitile.SetValue(Canvas.TopProperty, preciseTop);
+            Selection.uitile.SetValue(Canvas.LeftProperty, preciseLeft);
 
-                // Round position to closest square on the grid
-                int top = (int)Math.Floor(preciseTop / UnitSize + 0.5);
-                int left = (int)Math.Floor(preciseLeft / UnitSize + 0.5);
+            // Round position to closest square on the grid
+            int row = (int)Math.Floor(preciseTop / UnitSize + 0.5);
+            int col = (int)Math.Floor(preciseLeft / UnitSize + 0.5);
 
-                //PlaceWordStatus status = ViewModel.CanPlaceWordAtPositionInLayout(m_FixedLayout, m_Sel.WordAndCanvasList[i].WordPosition, new PositionOrientation(top, left, m_Sel.WordAndCanvasList[i].WordPosition.IsVertical));
-                //RecolorizeWord(m_Sel.WordAndCanvasList[i], status);
-            }
+            Selection.uitile.SelectionBorder = !(viewModel.GetCellState(row, col) != CellState.Tiled || (row == Selection.startRow && col == Selection.startCol));
         };
+    }
+
+    UITile? GetHitHile(MouseButtonEventArgs e)
+    {
+        if (DrawingCanvas.InputHitTest(e.GetPosition(DrawingCanvas)) is not DependencyObject h)
+            return null;
+        for (; ; )
+        {
+            h = VisualTreeHelper.GetParent(h);
+            if (h == null || h is Canvas)
+                return null;
+            if (h is UITile ut)
+                return ut;
+        }
     }
 
     // Relay from Window_MouseDown handler when it's actually a right click
     private void MainGrid_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
     {
-        UpdateSelectionAfterClick(e);
-
-        var h = DrawingCanvas.InputHitTest(e.GetPosition(DrawingCanvas)) as DependencyObject;
-        while (h != null)
-        {
-            h = VisualTreeHelper.GetParent(h);
-            if (h != null && (h is UITile || h is Canvas))
-                break;
-        }
+        Selection.uitile = GetHitHile(e);
 
         ContextMenu? cm;
-        if (h is UITile)
+        if (Selection.uitile != null)
             cm = FindResource("TileCanvasMenu") as ContextMenu;
         else
             cm = FindResource("BackgroundCanvasMenu") as ContextMenu;
@@ -341,26 +298,24 @@ public partial class MainWindow: Window
         if (pmm != null)
         {
             pmm = null;
+            Debug.Assert(Selection.uitile != null);
 
             // End of visual feed-back, align on grid, and update ViewModel
             // Round position to closest square on the grid
-            foreach (UITile wac in m_Sel)
+            int row = (int)Math.Floor((double)Selection.uitile.GetValue(Canvas.TopProperty) / UnitSize + 0.5);
+            int col = (int)Math.Floor((double)Selection.uitile.GetValue(Canvas.LeftProperty) / UnitSize + 0.5);
+
+            if (viewModel.GetCellState(row, col) == CellState.Tiled)
             {
-                int top = (int)Math.Floor((double)wac.GetValue(Canvas.TopProperty) / UnitSize + 0.5);
-                int left = (int)Math.Floor((double)wac.GetValue(Canvas.LeftProperty) / UnitSize + 0.5);
-                //topLeftList.Add(new PositionOrientation(top, left, wac.WordPosition.IsVertical));
+                row = Selection.startRow;
+                col = Selection.startCol;
             }
 
-            /*
-            // Do not accept Illegal placements, adjust to only valid placements
-            AdjustToSuitableLocationInLayout(m_FixedLayout, m_Sel.WordAndCanvasList, topLeftList, true);
+            Selection.uitile.SetValue(Canvas.TopProperty, row * UnitSize);
+            Selection.uitile.SetValue(Canvas.LeftProperty, col * UnitSize);
+            Selection.uitile.SelectionBorder = false;
 
-            // Move to final, rounded position
-            viewModel.UpdateWordPositionLocation(m_Sel.WordAndCanvasList, topLeftList, true);     // Update WordPosition with new location
-            MoveWordAndCanvasList(m_Sel.WordAndCanvasList);     // Visual animation
-
-            FinalRefreshAfterUpdate();
-            */
+            //FinalRefreshAfterUpdate();
         }
     }
 
@@ -450,5 +405,8 @@ public partial class MainWindow: Window
         t.Width = UnitSize;
         t.Height = UnitSize;
         DrawingCanvas.Children.Add(t);
+
+        Debug.Assert(t.Row == position.Row);
+        Debug.Assert(t.Col == position.Column);
     }
 }
