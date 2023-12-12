@@ -24,7 +24,7 @@ public partial class UITile: UserControl
             if (_GrayBackground != value)
             {
                 _GrayBackground = value;
-                TileLayer.Fill = Resources[value ? "GreyTile" : "BlackTile"] as Brush;
+                TileLayer.Fill = Resources[value ? "GrayTile" : "BlackTile"] as Brush;
             }
         }
     }

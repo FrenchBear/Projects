@@ -51,7 +51,7 @@
             </DrawingBrush.Drawing>
         </DrawingBrush>
 
-        <DrawingBrush x:Key="GreyTile">
+        <DrawingBrush x:Key="GrayTile">
             <DrawingBrush.Drawing>
                 <DrawingGroup Transform="1.0,0.0,0.0,1.0,0.0,-922.52">
                     <GeometryDrawing Brush="#707070" >

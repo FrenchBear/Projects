@@ -1,0 +1,50 @@
+﻿<UserControl x:Class="QwirkleUI.Dock"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:QwirkleUI"
+             mc:Ignorable="d" 
+             Height="162" Width="635">
+
+    <Grid Background="AliceBlue">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="60" />
+            <ColumnDefinition Width="60" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" FontSize="24" Margin="6,0,0,0">Player 1</TextBlock>
+        <TextBlock Grid.Row="0" Grid.Column="1" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center">124</TextBlock>
+        <TextBlock Grid.Row="0" Grid.Column="2" FontSize="24" HorizontalAlignment="Center">1er</TextBlock>
+
+        <DockPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="6,0,6,6">
+            <StatusBar DockPanel.Dock="Bottom">
+                <TextBlock>Remarks in status bar</TextBlock>
+            </StatusBar>
+
+            <Grid Name="DockGrid" Background="BlanchedAlmond"
+                  MouseMove="Dock_MouseMoveWhenUp" MouseDown="Dock_MouseDown" MouseUp="Dock_MouseUp" MouseWheel="Dock_MouseWheel"
+                  MouseRightButtonDown="Dock_MouseRightButtonDown">
+                <Canvas Name="DockClippingCanvas" ClipToBounds="False">
+                    <Canvas Name="DockBackgroundGrid" ClipToBounds="False">
+                        <Rectangle Canvas.Left="10" Canvas.Top="10"  Width="75" Height="75"  Stroke="LightGray" StrokeThickness="1" />
+                        <Rectangle Canvas.Left="85" Canvas.Top="10"  Width="75" Height="75"  Stroke="LightGray" StrokeThickness="1" />
+                        <Rectangle Canvas.Left="160" Canvas.Top="10" Width="75" Height="75" Stroke="LightGray" StrokeThickness="1" />
+                        <Rectangle Canvas.Left="235" Canvas.Top="10" Width="75" Height="75" Stroke="LightGray" StrokeThickness="1" />
+                        <Rectangle Canvas.Left="310" Canvas.Top="10" Width="75" Height="75" Stroke="LightGray" StrokeThickness="1" />
+                        <Rectangle Canvas.Left="385" Canvas.Top="10" Width="75" Height="75" Stroke="LightGray" StrokeThickness="1" />
+                        <Rectangle Canvas.Left="460" Canvas.Top="10" Width="75" Height="75" Stroke="LightGray" StrokeThickness="1" />
+                        <Rectangle Canvas.Left="535" Canvas.Top="10" Width="75" Height="75" Stroke="LightGray" StrokeThickness="1" />
+                    </Canvas>
+                    <Canvas Name="DockDrawingCanvas" ClipToBounds="False" />
+                </Canvas>
+            </Grid>
+        </DockPanel>
+
+    </Grid>
+</UserControl>

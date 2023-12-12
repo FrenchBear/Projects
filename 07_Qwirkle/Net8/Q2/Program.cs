@@ -14,10 +14,10 @@ internal class Program
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-        //Tests_Base();
+        Tests_Base();
         //Tests_Play();
         //Tests_EmptyBoard();
-        Tests_FullPlay();
+        //Tests_FullPlay();
     }
 
     private static void Tests_FullPlay()
@@ -175,12 +175,12 @@ internal class Program
 
         b.Print();
 
-        //var h1 = new Tile(Color.Blue, Shape.Lozange, 1);
-        //var h2 = new Tile(Color.Blue, Shape.Square, 1);
-        //var h3 = new Tile(Color.Blue, Shape.Star, 1);
-        //var h4 = new Tile(Color.Yellow, Shape.Star, 1);
-        //var h5 = new Tile(Color.Purple, Shape.Square, 1);
-        //var h6 = new Tile(Color.Green, Shape.Square, 1);
+        //var h1 = new Tile(Shape.Lozange, Color.Blue, 1);
+        //var h2 = new Tile(Shape.Square, Color.Blue, 1);
+        //var h3 = new Tile(Shape.Star, Color.Blue, 1);
+        //var h4 = new Tile(Shape.Star, Color.Yellow, 1);
+        //var h5 = new Tile(Shape.Square, Color.Purple, 1);
+        //var h6 = new Tile(Shape.Square, Color.Green, 1);
 
         //var hand = new Hand([h1, h2, h3, h4, h5, h6]);
         //Console.WriteLine($"Hand before: {hand.AsString(true)}");

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:QwirkleUI"
         mc:Ignorable="d"
-        Title="QwirkleUI" Height="616" Width="600">
+        Title="QwirkleUI" Height="900" Width="1500">
 
     <Window.Resources>
         <!-- Gray out toolbar elements when disabled (why is it not automatic ??) -->
@@ -198,8 +198,12 @@
 
         <DockPanel Grid.Row="1" Margin="6,4,6,6">
             <StatusBar DockPanel.Dock="Bottom">
-                <TextBlock Name="StatusText" Text="{Binding StatusText}" />
+                <TextBlock Name="StatusText" Text="{Binding StatusText, FallbackValue='Main ToolBar'}" />
             </StatusBar>
+
+            <StackPanel Orientation="Vertical" DockPanel.Dock="Right" Width="635">
+                <local:Dock x:Name="Player1" />
+            </StackPanel>
 
             <Grid Name="MainGrid" Background="LavenderBlush"
                   MouseMove="MainGrid_MouseMoveWhenUp" MouseDown="MainGrid_MouseDown" MouseUp="MainGrid_MouseUp" MouseWheel="MainGrid_MouseWheel"
