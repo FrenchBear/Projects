@@ -174,7 +174,7 @@ public partial class TestForm: Form
         const float gridStep = (float)(Math.PI / 15.0);
         const float drawStep = (float)(Math.PI / 60.0);
         const float zscale = 1.5f;
-        float sqr2 = (float)Math.Sqrt(2);
+        float ky = 1.8f;
 
         static float f(float x, float y)
             => (float)(zscale * ((1 - Math.Cos(x)) * (1 - Math.Cos(y))));
@@ -185,7 +185,7 @@ public partial class TestForm: Form
             for (float y = 0; y <= 2 * Math.PI + 0.00001; y += drawStep)
             {
                 var z = f(x, y);
-                p.Plot(x + y / sqr2, y / sqr2 + z);
+                p.Plot(x + y / ky, y / ky + z);
             }
         }
         for (float y = 0; y <= 2 * Math.PI + 0.00001; y += gridStep)
@@ -194,7 +194,7 @@ public partial class TestForm: Form
             for (float x = 0; x <= 2 * Math.PI + 0.00001; x += drawStep)
             {
                 var z = f(x, y);
-                p.Plot(x + y / sqr2, y / sqr2 + z);
+                p.Plot(x + y / ky, y / ky + z);
             }
         }
         p.WindowTitle("Bosse des maths");
