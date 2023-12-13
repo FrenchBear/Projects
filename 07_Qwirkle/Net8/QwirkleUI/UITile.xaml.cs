@@ -53,7 +53,6 @@ public partial class UITile: UserControl
         {
             if (_Hatched != value)
             {
-                Debug.WriteLine($"Hatched: {value}");
                 _Hatched = value;
                 HatchLayer.Visibility = value ? Visibility.Visible : Visibility.Hidden;
             }

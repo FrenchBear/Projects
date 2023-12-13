@@ -38,7 +38,7 @@ public partial class Dock: UserControl
         var h5 = new Tile(LibQwirkle.Shape.Square, LibQwirkle.Color.Purple, 1);
         var h6 = new Tile(LibQwirkle.Shape.Square, LibQwirkle.Color.Green, 1);
 
-        Tile?[] Hand = new Tile?[8];
+        var Hand = new Tile?[8];
         Hand[0] = h1;
         Hand[1] = h2;
         Hand[2] = h3;

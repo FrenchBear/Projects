@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using static QwirkleUI.App;
 
@@ -85,6 +86,9 @@ public partial class MainWindow: Window
 
     internal void FinalRefreshAfterUpdate()
     {
+        // ToDo: Make sure that DrawingCanvas.Children is empty
+        Debug.Assert(DrawingCanvas.Children.Count == 0);
+
         UpdateBackgroundGrid();
         viewModel.DrawAllTiles();
         viewModel.StatusText = "Done.";
@@ -93,9 +97,8 @@ public partial class MainWindow: Window
     // Adjust scale and origin to see the whole puzzle
     internal void RescaleAndCenter(bool isWithAnimation)
     {
-        BoundingRectangle r = viewModel.Bounds;
         // Add some extra margin and always represent a 10x10 grid at minimum
-        r = new BoundingRectangle(Math.Min(45, r.Min.Row - 3), Math.Max(55, r.Max.Row + 4), Math.Min(45, r.Min.Column - 3), Math.Max(55, r.Max.Column + 4));
+        var r = BoundingRectangleWithMargins();
 
         // Reverse-transform corners into WordCanvas coordinates
         var p1Grid = new Point(r.Min.Column * UnitSize, r.Min.Row * UnitSize);
@@ -178,6 +181,8 @@ public partial class MainWindow: Window
     {
         if (IsMatrixAnimationInProgress)
             EndMatrixAnimation();
+        if (IsMoveUITileAnimationInProgress)
+            EndMoveUITileAnimation();
     }
 
     private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
@@ -300,7 +305,7 @@ public partial class MainWindow: Window
             pmm = null;
             Debug.Assert(Selection.uitile != null);
 
-            // End of visual feed-back, align on grid, and update ViewModel
+            // End of visual feed-back, align on grid
             // Round position to closest square on the grid
             int row = (int)Math.Floor((double)Selection.uitile.GetValue(Canvas.TopProperty) / UnitSize + 0.5);
             int col = (int)Math.Floor((double)Selection.uitile.GetValue(Canvas.LeftProperty) / UnitSize + 0.5);
@@ -311,11 +316,89 @@ public partial class MainWindow: Window
                 col = Selection.startCol;
             }
 
-            Selection.uitile.SetValue(Canvas.TopProperty, row * UnitSize);
-            Selection.uitile.SetValue(Canvas.LeftProperty, col * UnitSize);
+            // ToDo: Update tiles being placed in VM (no not update model yet)
+
             Selection.uitile.Hatched = false;
 
+            // With animation
+            MoveSelection(row * UnitSize, col * UnitSize);      
+            
+            // Without animation
+            //Debug.WriteLine($"Without animation, final = Top={row * UnitSize}, Left={col * UnitSize}");
+            //Selection.uitile.SetValue(Canvas.TopProperty, row * UnitSize);
+            //Selection.uitile.SetValue(Canvas.LeftProperty, col * UnitSize);
+
             //FinalRefreshAfterUpdate();
+        }
+    }
+
+    private void MoveSelection(double toTop, double toLeft)
+    {
+        Debug.Assert(Selection.uitile != null);
+
+        // If bounding rectangle is updated, need to redraw background grid
+        if (!BoundingRectangleWithMargins().Equals(CurrentGridBoundingWithMargins))
+            UpdateBackgroundGrid();
+
+        double fromTop = (double)Selection.uitile.GetValue(Canvas.TopProperty);
+        double fromLeft = (double)Selection.uitile.GetValue(Canvas.LeftProperty);
+
+        Debug.WriteLine($"Animation, From Top={fromTop}, Left={fromLeft}  To: Top={toTop}, Left={toLeft}");
+
+        // Compute distance moved on 1st element to choose animation speed (duration)
+        double deltaX = fromLeft - toLeft;
+        double deltaY = fromTop - toTop;
+        double distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+        // If distance is null, for instance after a selection click, we're done
+        if (distance <= 0.0001)
+            return;
+
+        // Group animations in a storyboard to simplify premature ending
+        var sb = new Storyboard();
+        var duration = new Duration(TimeSpan.FromSeconds(distance >= UnitSize ? 0.35 : 0.1));
+        finalMoveUITileAnimationData.Clear();
+
+        var daLeft = new DoubleAnimation
+        {
+            Duration = duration,
+            From = fromLeft,
+            To = toLeft
+        };
+        Storyboard.SetTarget(daLeft, Selection.uitile);
+        Storyboard.SetTargetProperty(daLeft, new PropertyPath("(Canvas.Left)"));
+        sb.Children.Add(daLeft);
+        finalMoveUITileAnimationData.Add(new(Selection.uitile, Canvas.LeftProperty, toLeft));
+
+        var daTop = new DoubleAnimation
+        {
+            Duration = duration,
+            From = fromTop,
+            To = toTop
+        };
+        Storyboard.SetTarget(daTop, Selection.uitile);
+        Storyboard.SetTargetProperty(daTop, new PropertyPath("(Canvas.Top)"));
+        sb.Children.Add(daTop);
+        finalMoveUITileAnimationData.Add(new(Selection.uitile, Canvas.TopProperty, toTop));
+
+        IsMoveUITileAnimationInProgress = true;
+        sb.Completed += Sb_Completed;
+        sb.Begin();
+    }
+
+    private void Sb_Completed(object? sender, EventArgs e) => EndMoveUITileAnimation();
+
+    private bool IsMoveUITileAnimationInProgress;
+    private readonly List<(UITile, DependencyProperty, double)> finalMoveUITileAnimationData = [];
+
+    // Stops animation and set the final value
+    private void EndMoveUITileAnimation()
+    {
+        Debug.WriteLine("EndMoveUITileAnimation");
+        IsMoveUITileAnimationInProgress = false;
+        foreach (var item in finalMoveUITileAnimationData)
+        {
+            item.Item1.BeginAnimation(item.Item2, null);
+            item.Item1.SetValue(item.Item2, item.Item3);
         }
     }
 
@@ -341,30 +424,33 @@ public partial class MainWindow: Window
         UpdateBackgroundGrid();
     }
 
-    // Grid currently drawn
-    private BoundingRectangle? gridBounding;
+    // Grid currently drawn, include margins added to modev/V% bounding that represents board bounding
+    // Expressed in row/col int values despite being part of view...
+    private BoundingRectangle CurrentGridBoundingWithMargins = new(45, 55, 45, 55);
 
     private void ClearBackgroundGrid()
     {
         BackgroundGrid.Children.Clear();
-        gridBounding = new BoundingRectangle(int.MaxValue, int.MaxValue, int.MinValue, int.MinValue);
+        CurrentGridBoundingWithMargins = new(45, 55, 45, 55);
+    }
+
+    // Add some extra margin and always represent a 10x10 grid at minimum
+    private BoundingRectangle BoundingRectangleWithMargins()
+    {
+        var boardBounds = viewModel.Bounds;
+        return new (boardBounds.Min.Row - 5,
+                    boardBounds.Max.Row + 5,
+                    boardBounds.Min.Column - 5,
+                    boardBounds.Max.Column + 5);
     }
 
     private void UpdateBackgroundGrid()
     {
-        var bounds = viewModel.Bounds;
-
-        // Add some extra margin and always represent a 10x10 grid at minimum
-        var r = new BoundingRectangle(
-            Math.Min(45, bounds.Min.Row - 2),
-            Math.Max(55, bounds.Max.Row + 3),
-            Math.Min(45, bounds.Min.Column - 2),
-            Math.Max(55, bounds.Max.Column + 3));
-
-        if (!r.Equals(gridBounding))
+        var r = BoundingRectangleWithMargins();
+        if (!r.Equals(CurrentGridBoundingWithMargins))
         {
             ClearBackgroundGrid();
-            gridBounding = r;
+            CurrentGridBoundingWithMargins = r;
 
             for (int row = r.Min.Row; row <= r.Max.Row; row++)
             {
@@ -408,5 +494,18 @@ public partial class MainWindow: Window
 
         Debug.Assert(t.Row == position.Row);
         Debug.Assert(t.Col == position.Column);
+    }
+
+    internal void AddCircle(Position position)
+    {
+        var e = new Ellipse();
+        e.Width = 2 * UnitSize;
+        e.Height = 2*UnitSize;
+        e.Stroke = Brushes.Black;
+        e.StrokeThickness = 5.0;
+        //e.Fill = Brushes.SkyBlue;
+        e.SetValue(Canvas.TopProperty, (position.Row-0.5) * UnitSize);
+        e.SetValue(Canvas.LeftProperty, (position.Column-0.5) * UnitSize);
+        DrawingCanvas.Children.Add(e);
     }
 }

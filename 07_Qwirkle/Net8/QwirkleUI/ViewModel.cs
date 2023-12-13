@@ -9,6 +9,7 @@ using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Xps;
 
 namespace QwirkleUI;
 
@@ -145,6 +146,8 @@ internal class ViewModel: INotifyPropertyChanged
 
     internal void DrawAllTiles()
     {
+        // ToDo: Should I ensure that DrawinfCanvas is empty here, or is it a view responsibility?
+        view.AddCircle(new Position(50, 50));
         foreach (Move m in model.Board)
             view.AddUITile(new Position(m.Row, m.Col), m.Tile.Shape.ToString() + m.Tile.Color.ToString());
     }
