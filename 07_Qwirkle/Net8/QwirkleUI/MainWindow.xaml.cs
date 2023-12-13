@@ -15,10 +15,11 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using static QwirkleUI.App;
+using static QwirkleUI.ViewHelpers;
 
 namespace QwirkleUI;
 
-struct Selection
+internal struct MainGridSelection
 {
     public UITile? uitile;
     public int startRow, startCol;
@@ -27,7 +28,7 @@ struct Selection
 public partial class MainWindow: Window
 {
     private readonly ViewModel viewModel;
-    private Selection Selection = new();
+    private MainGridSelection Selection = new();
     private readonly List<UITile> m_UITilesList = [];
 
     public MainWindow()
@@ -193,7 +194,7 @@ public partial class MainWindow: Window
         MainGrid.MouseMove += MainGrid_MouseMoveWhenDown;
         previousMousePosition = e.GetPosition(MainGrid);
 
-        Selection.uitile = GetHitHile(e);
+        Selection.uitile = GetHitHile(e, DrawingCanvas);
 
         if (Selection.uitile != null)
             pmm = GetMouseDownMoveAction();
@@ -242,24 +243,10 @@ public partial class MainWindow: Window
         };
     }
 
-    UITile? GetHitHile(MouseButtonEventArgs e)
-    {
-        if (DrawingCanvas.InputHitTest(e.GetPosition(DrawingCanvas)) is not DependencyObject h)
-            return null;
-        for (; ; )
-        {
-            h = VisualTreeHelper.GetParent(h);
-            if (h == null || h is Canvas)
-                return null;
-            if (h is UITile ut)
-                return ut;
-        }
-    }
-
     // Relay from Window_MouseDown handler when it's actually a right click
     private void MainGrid_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
     {
-        Selection.uitile = GetHitHile(e);
+        Selection.uitile = GetHitHile(e, DrawingCanvas);
 
         ContextMenu? cm;
         if (Selection.uitile != null)
@@ -324,7 +311,6 @@ public partial class MainWindow: Window
             MoveSelection(row * UnitSize, col * UnitSize);      
             
             // Without animation
-            //Debug.WriteLine($"Without animation, final = Top={row * UnitSize}, Left={col * UnitSize}");
             //Selection.uitile.SetValue(Canvas.TopProperty, row * UnitSize);
             //Selection.uitile.SetValue(Canvas.LeftProperty, col * UnitSize);
 
@@ -342,8 +328,6 @@ public partial class MainWindow: Window
 
         double fromTop = (double)Selection.uitile.GetValue(Canvas.TopProperty);
         double fromLeft = (double)Selection.uitile.GetValue(Canvas.LeftProperty);
-
-        Debug.WriteLine($"Animation, From Top={fromTop}, Left={fromLeft}  To: Top={toTop}, Left={toLeft}");
 
         // Compute distance moved on 1st element to choose animation speed (duration)
         double deltaX = fromLeft - toLeft;
@@ -393,7 +377,6 @@ public partial class MainWindow: Window
     // Stops animation and set the final value
     private void EndMoveUITileAnimation()
     {
-        Debug.WriteLine("EndMoveUITileAnimation");
         IsMoveUITileAnimationInProgress = false;
         foreach (var item in finalMoveUITileAnimationData)
         {

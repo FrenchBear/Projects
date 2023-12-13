@@ -27,23 +27,20 @@
                 <TextBlock>Remarks in status bar</TextBlock>
             </StatusBar>
 
-            <Grid Name="DockGrid" Background="BlanchedAlmond"
-                  MouseMove="Dock_MouseMoveWhenUp" MouseDown="Dock_MouseDown" MouseUp="Dock_MouseUp" MouseWheel="Dock_MouseWheel"
-                  MouseRightButtonDown="Dock_MouseRightButtonDown">
-                <Canvas Name="DockClippingCanvas" ClipToBounds="False">
-                    <Canvas Name="DockBackgroundGrid" ClipToBounds="False">
-                        <Rectangle Canvas.Left="10" Canvas.Top="10"  Width="75" Height="75"  Stroke="LightGray" StrokeThickness="1" />
-                        <Rectangle Canvas.Left="85" Canvas.Top="10"  Width="75" Height="75"  Stroke="LightGray" StrokeThickness="1" />
-                        <Rectangle Canvas.Left="160" Canvas.Top="10" Width="75" Height="75" Stroke="LightGray" StrokeThickness="1" />
-                        <Rectangle Canvas.Left="235" Canvas.Top="10" Width="75" Height="75" Stroke="LightGray" StrokeThickness="1" />
-                        <Rectangle Canvas.Left="310" Canvas.Top="10" Width="75" Height="75" Stroke="LightGray" StrokeThickness="1" />
-                        <Rectangle Canvas.Left="385" Canvas.Top="10" Width="75" Height="75" Stroke="LightGray" StrokeThickness="1" />
-                        <Rectangle Canvas.Left="460" Canvas.Top="10" Width="75" Height="75" Stroke="LightGray" StrokeThickness="1" />
-                        <Rectangle Canvas.Left="535" Canvas.Top="10" Width="75" Height="75" Stroke="LightGray" StrokeThickness="1" />
-                    </Canvas>
-                    <Canvas Name="DockDrawingCanvas" ClipToBounds="False" />
+            <Canvas Name="DockCanvas" ClipToBounds="False" Background="AntiqueWhite"
+                    MouseMove="DockCanvas_MouseMoveWhenUp" MouseDown="DockCanvas_MouseDown" MouseUp="DockCanvas_MouseUp" MouseWheel="DockCanvas_MouseWheel" MouseRightButtonDown="DockCanvas_MouseRightButtonDown">
+                <Canvas Name="DockBackgroundGrid" ClipToBounds="False">
+                    <Rectangle Canvas.Left="10" Canvas.Top="10"  Width="76" Height="75"  Stroke="LightGray" StrokeThickness="1" />
+                    <Rectangle Canvas.Left="85" Canvas.Top="10"  Width="76" Height="75"  Stroke="LightGray" StrokeThickness="1" />
+                    <Rectangle Canvas.Left="160" Canvas.Top="10" Width="76" Height="75" Stroke="LightGray" StrokeThickness="1" />
+                    <Rectangle Canvas.Left="235" Canvas.Top="10" Width="76" Height="75" Stroke="LightGray" StrokeThickness="1" />
+                    <Rectangle Canvas.Left="310" Canvas.Top="10" Width="76" Height="75" Stroke="LightGray" StrokeThickness="1" />
+                    <Rectangle Canvas.Left="385" Canvas.Top="10" Width="76" Height="75" Stroke="LightGray" StrokeThickness="1" />
+                    <Rectangle Canvas.Left="460" Canvas.Top="10" Width="76" Height="75" Stroke="LightGray" StrokeThickness="1" />
+                    <Rectangle Canvas.Left="535" Canvas.Top="10" Width="76" Height="75" Stroke="LightGray" StrokeThickness="1" />
                 </Canvas>
-            </Grid>
+                <Canvas Name="DockDrawingCanvas" ClipToBounds="False" />
+            </Canvas>
         </DockPanel>
 
     </Grid>
