@@ -102,7 +102,7 @@ public partial class TestForm: Form
     {
         p.Clear();
 
-        p.ScaleP1P2(-10, -10, 10, 10);
+        p.ScaleP1P2(-10.5f, -10.5f, 10.5f, 10.5f);
 
         p.PenWidth(1);
         p.PenColor(Color.LightGray);
@@ -147,7 +147,7 @@ public partial class TestForm: Form
         p.DrawAxes(0, 0, 1, 1);
 
         p.PenColor(Color.Purple);
-        p.PenWidth(3);
+        p.PenWidth(1);
 
         // Variable step
         static float Inc(float f) => Math.Abs(f) switch

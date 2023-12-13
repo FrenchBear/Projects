@@ -3,6 +3,7 @@
 //
 // 2021-12-09   PV
 // 2023-11-20   PV      Net8 C#12
+// 2023-12-13   PV      Use a switch statement with pattern matching instead of a long list of if (command is Type1 v1) ... else if (command is Type2 v2) ...
 
 using System;
 using System.Collections.Generic;
@@ -64,164 +65,174 @@ public partial class Plotter
         outGraphics.SmoothingMode = SmoothingMode.HighQuality;
         SetUserScale(-15, -15, 15, 15);            // Default user scale
         for (int i = 0; i < Commands.Count; i++)
-        {
-            var pc = Commands[i];
-
-            if (pc is PC_ScaleP1P2 scale)
+            switch (Commands[i])
             {
-                SetUserScale(scale.P1X, scale.P1Y, scale.P2X, scale.P2Y);
-            }
-            else if (pc is PC_DrawLine line)
-            {
-                var LastX = line.P2X;
-                var LastY = line.P2Y;
-                var LastWidth = line.Width;
-                var LastColor = line.Color;
+                case PC_ScaleP1P2 scale:
+                    SetUserScale(scale.P1X, scale.P1Y, scale.P2X, scale.P2Y);
+                    break;
 
-                var (rx1, ry1) = UserToRend(line.P1X, line.P1Y);
-                var (rx2, ry2) = UserToRend(LastX, LastY);
-
-                var tp = new List<PointF>
-                {
-                    new(rx1, ry1),
-                    new(rx2, ry2)
-                };
-
-                // Optimization, as long as following segments join with current one, then we merge them in a list to do a single DrawLines call
-                // Limited to 1000 points, PDF rendering doesn't like huge lists
-                while (i < Commands.Count - 1 && tp.Count < 1000 && Commands[i + 1] is PC_DrawLine pc2 && pc2.P1X == LastX && pc2.P1Y == LastY && pc2.Width == LastWidth && pc2.Color == LastColor)
-                {
-                    LastX = pc2.P2X;
-                    LastY = pc2.P2Y;
-                    var (rxn, ryn) = UserToRend(LastX, LastY);
-                    tp.Add(new PointF(rxn, ryn));
-                    i++;
-                }
-
-                var p = new Pen(LastColor, LastWidth * penWidthFactor);
-                outGraphics.DrawLines(p, tp.ToArray());
-            }
-            else if (pc is PC_DrawBox box)
-            {
-                var (rx1, ry1) = UserToRend(box.P1X, box.P1Y);
-                var (rx2, ry2) = UserToRend(box.P2X, box.P2Y);
-                var p = new Pen(box.Color, box.Width * penWidthFactor);
-                outGraphics.DrawRectangle(p, Math.Min(rx1, rx2), Math.Min(ry1, ry2), Math.Abs(rx2 - rx1), Math.Abs(ry2 - ry1));
-            }
-            else if (pc is PC_DrawCircle circle)
-            {
-                var (rcx, rcy) = UserToRend(circle.CX, circle.CY);
-                var rr = circle.R * r;
-                float rx1 = rcx - rr;
-                float ry1 = rcy - rr;
-                var p = new Pen(circle.Color, circle.Width * penWidthFactor);
-                outGraphics.DrawEllipse(p, rx1, ry1, 2 * rr, 2 * rr);
-            }
-            else if (pc is PC_DrawAxes axes)
-            {
-                var (rox, roy) = UserToRend(axes.OX, axes.OY);
-                var rstepx = axes.StepX * r;
-                var rstepy = axes.StepY * r;
-
-                var p = new Pen(axes.Color, axes.Width * penWidthFactor);
-
-                // Plot tick marks first
-                if (rstepx > 0)
-                {
-                    var x = rox + rstepx;
-                    while (x < renderingWidth)
+                case PC_DrawLine line:
                     {
-                        outGraphics.DrawLine(p, x, roy - 5, x, roy + 5);
-                        x += rstepx;
-                    }
-                    x = rox - rstepx;
-                    while (x >= 0)
-                    {
-                        outGraphics.DrawLine(p, x, roy - 5, x, roy + 5);
-                        x -= rstepx;
-                    }
-                }
-                if (rstepy > 0)
-                {
-                    var y = roy + rstepy;
-                    while (y < renderingHeight)
-                    {
-                        outGraphics.DrawLine(p, rox - 5, y, rox + 5, y);
-                        y += rstepy;
-                    }
-                    y = roy - rstepy;
-                    while (y >= 0)
-                    {
-                        outGraphics.DrawLine(p, rox - 5, y, rox + 5, y);
-                        y -= rstepy;
-                    }
-                }
-                outGraphics.DrawLine(p, 0.0f, roy, (float)renderingWidth, roy);
-                outGraphics.DrawLine(p, rox, 0.0f, rox, (float)renderingHeight);
-            }
-            else if (pc is PC_DrawGrid grid)
-            {
-                var (rox, roy) = UserToRend(grid.OX, grid.OY);
-                var rstepx = grid.StepX * r;
-                var rstepy = grid.StepY * r;
+                        var LastX = line.P2X;
+                        var LastY = line.P2Y;
+                        var LastWidth = line.Width;
+                        var LastColor = line.Color;
 
-                var p = new Pen(grid.Color, grid.Width * penWidthFactor);
+                        var (rx1, ry1) = UserToRend(line.P1X, line.P1Y);
+                        var (rx2, ry2) = UserToRend(LastX, LastY);
 
-                if (rstepx > 0)
-                {
-                    var x = rox;
-                    while (x < renderingWidth)
-                    {
-                        outGraphics.DrawLine(p, x, 0, x, renderingHeight);
-                        x += rstepx;
-                    }
-                    x = rox - rstepx;
-                    while (x >= 0)
-                    {
-                        outGraphics.DrawLine(p, x, 0, x, renderingHeight);
-                        x -= rstepx;
-                    }
-                }
-                if (rstepy > 0)
-                {
-                    var y = roy;
-                    while (y < renderingHeight)
-                    {
-                        outGraphics.DrawLine(p, 0, y, renderingWidth, y);
-                        y += rstepy;
-                    }
-                    y = roy - rstepy;
-                    while (y >= 0)
-                    {
-                        outGraphics.DrawLine(p, 0, y, renderingWidth, y);
-                        y -= rstepy;
-                    }
-                }
-            }
-            else if (pc is PC_WindowTitle _)
-            {
-                // Just when rendering is done in a separate window
-                //Text = cmd.WindowTitle;
-            }
-            else if (pc is PC_Text text)
-            {
-                var (px, py) = UserToRend(text.PX, text.PY);
+                        var tp = new List<PointF>
+                        {
+                            new(rx1, ry1),
+                            new(rx2, ry2)
+                        };
 
-                var b = new SolidBrush(text.Color);
-                var f = new Font(text.FontFamily, text.FontSize, text.FontStyle);
-                var mes = outGraphics.MeasureString(text.Text, f);
-                if (text.Hz == 1)
-                    px -= mes.Width;
-                else if (text.Hz == 2)
-                    px -= mes.Width / 2;
-                py -= mes.Height;
-                if (text.Vt == 1)
-                    py += mes.Height;
-                else if (text.Vt == 2)
-                    py += mes.Height / 2;
-                outGraphics.DrawString(text.Text, f, b, px, py);
+                        // Optimization, as long as following segments join with current one, then we merge them in a list to do a single DrawLines call
+                        // Limited to 1000 points, PDF rendering doesn't like huge lists
+                        while (i < Commands.Count - 1 && tp.Count < 1000 && Commands[i + 1] is PC_DrawLine pc2 && pc2.P1X == LastX && pc2.P1Y == LastY && pc2.Width == LastWidth && pc2.Color == LastColor)
+                        {
+                            LastX = pc2.P2X;
+                            LastY = pc2.P2Y;
+                            var (rxn, ryn) = UserToRend(LastX, LastY);
+                            tp.Add(new PointF(rxn, ryn));
+                            i++;
+                        }
+
+                        var p = new Pen(LastColor, LastWidth * penWidthFactor);
+                        outGraphics.DrawLines(p, tp.ToArray());
+                    }
+                    break;
+
+                case PC_DrawBox box:
+                    {
+                        var (rx1, ry1) = UserToRend(box.P1X, box.P1Y);
+                        var (rx2, ry2) = UserToRend(box.P2X, box.P2Y);
+                        var p = new Pen(box.Color, box.Width * penWidthFactor);
+                        outGraphics.DrawRectangle(p, Math.Min(rx1, rx2), Math.Min(ry1, ry2), Math.Abs(rx2 - rx1), Math.Abs(ry2 - ry1));
+                    }
+                    break;
+
+                case PC_DrawCircle circle:
+                    {
+                        var (rcx, rcy) = UserToRend(circle.CX, circle.CY);
+                        var rr = circle.R * r;
+                        float rx1 = rcx - rr;
+                        float ry1 = rcy - rr;
+                        var p = new Pen(circle.Color, circle.Width * penWidthFactor);
+                        outGraphics.DrawEllipse(p, rx1, ry1, 2 * rr, 2 * rr);
+                    }
+                    break;
+
+                case PC_DrawAxes axes:
+                    {
+                        var (rox, roy) = UserToRend(axes.OX, axes.OY);
+                        var rstepx = axes.StepX * r;
+                        var rstepy = axes.StepY * r;
+
+                        var p = new Pen(axes.Color, axes.Width * penWidthFactor);
+
+                        // Plot tick marks first
+                        if (rstepx > 0)
+                        {
+                            var x = rox + rstepx;
+                            while (x < renderingWidth)
+                            {
+                                outGraphics.DrawLine(p, x, roy - 5, x, roy + 5);
+                                x += rstepx;
+                            }
+                            x = rox - rstepx;
+                            while (x >= 0)
+                            {
+                                outGraphics.DrawLine(p, x, roy - 5, x, roy + 5);
+                                x -= rstepx;
+                            }
+                        }
+                        if (rstepy > 0)
+                        {
+                            var y = roy + rstepy;
+                            while (y < renderingHeight)
+                            {
+                                outGraphics.DrawLine(p, rox - 5, y, rox + 5, y);
+                                y += rstepy;
+                            }
+                            y = roy - rstepy;
+                            while (y >= 0)
+                            {
+                                outGraphics.DrawLine(p, rox - 5, y, rox + 5, y);
+                                y -= rstepy;
+                            }
+                        }
+                        outGraphics.DrawLine(p, 0.0f, roy, (float)renderingWidth, roy);
+                        outGraphics.DrawLine(p, rox, 0.0f, rox, (float)renderingHeight);
+                    }
+                    break;
+
+                case PC_DrawGrid grid:
+                    {
+                        var (rox, roy) = UserToRend(grid.OX, grid.OY);
+                        var rstepx = grid.StepX * r;
+                        var rstepy = grid.StepY * r;
+
+                        var p = new Pen(grid.Color, grid.Width * penWidthFactor);
+
+                        if (rstepx > 0)
+                        {
+                            var x = rox;
+                            while (x < renderingWidth)
+                            {
+                                outGraphics.DrawLine(p, x, 0, x, renderingHeight);
+                                x += rstepx;
+                            }
+                            x = rox - rstepx;
+                            while (x >= 0)
+                            {
+                                outGraphics.DrawLine(p, x, 0, x, renderingHeight);
+                                x -= rstepx;
+                            }
+                        }
+                        if (rstepy > 0)
+                        {
+                            var y = roy;
+                            while (y < renderingHeight)
+                            {
+                                outGraphics.DrawLine(p, 0, y, renderingWidth, y);
+                                y += rstepy;
+                            }
+                            y = roy - rstepy;
+                            while (y >= 0)
+                            {
+                                outGraphics.DrawLine(p, 0, y, renderingWidth, y);
+                                y -= rstepy;
+                            }
+                        }
+                    }
+                    break;
+
+                case PC_WindowTitle:
+                    // Just when rendering is done in a separate window
+                    //Text = cmd.WindowTitle;
+                    break;
+
+                case PC_Text text:
+                    {
+                        var (px, py) = UserToRend(text.PX, text.PY);
+
+                        var b = new SolidBrush(text.Color);
+                        var f = new Font(text.FontFamily, text.FontSize, text.FontStyle);
+                        var mes = outGraphics.MeasureString(text.Text, f);
+                        if (text.Hz == 1)
+                            px -= mes.Width;
+                        else if (text.Hz == 2)
+                            px -= mes.Width / 2;
+                        py -= mes.Height;
+                        if (text.Vt == 1)
+                            py += mes.Height;
+                        else if (text.Vt == 2)
+                            py += mes.Height / 2;
+                        outGraphics.DrawString(text.Text, f, b, px, py);
+                    }
+                    break;
             }
-        }
     }
 
     // Printing support
