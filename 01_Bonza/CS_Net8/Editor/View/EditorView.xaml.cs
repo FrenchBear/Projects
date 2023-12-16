@@ -425,8 +425,8 @@ public partial class EditorView: Window
         // When moving, point is current mouse in ideal grid coordinates
         return point =>
         {
-                // Just move selected WordCanvas
-                for (int i = 0; i < m_Sel.WordAndCanvasList.Count; i++)
+            // Just move selected WordCanvas
+            for (int i = 0; i < m_Sel.WordAndCanvasList.Count; i++)
             {
                 double preciseTop = point.Y + clickOffsetList[i].Y;
                 double preciseLeft = point.X + clickOffsetList[i].X;
@@ -435,8 +435,8 @@ public partial class EditorView: Window
                 wc.SetValue(Canvas.TopProperty, preciseTop);
                 wc.SetValue(Canvas.LeftProperty, preciseLeft);
 
-                    // Round position to closest square on the grid
-                    int top = (int)Math.Floor(preciseTop / UnitSize + 0.5);
+                // Round position to closest square on the grid
+                int top = (int)Math.Floor(preciseTop / UnitSize + 0.5);
                 int left = (int)Math.Floor(preciseLeft / UnitSize + 0.5);
 
                 PlaceWordStatus status = EditorViewModel.CanPlaceWordAtPositionInLayout(m_FixedLayout, m_Sel.WordAndCanvasList[i].WordPosition, new PositionOrientation(top, left, m_Sel.WordAndCanvasList[i].WordPosition.IsVertical));

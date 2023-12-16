@@ -105,7 +105,7 @@ public partial class MainWindow: Window
         var p1Grid = new Point(r.Min.Column * UnitSize, r.Min.Row * UnitSize);
         var p2Grid = new Point(r.Max.Column * UnitSize, r.Max.Row * UnitSize);
 
-        rescaleMatrix = MainMatrixTransform.Matrix;
+        rescaleMatrix = TransformationMatrix.Matrix;
 
         // Set rotation to zero
         // Get angle from transformation matrix
@@ -134,13 +134,13 @@ public partial class MainWindow: Window
             // Use an animation for a smooth transformation
             var ma = new MatrixAnimation
             {
-                From = MainMatrixTransform.Matrix,
+                From = TransformationMatrix.Matrix,
                 To = rescaleMatrix,
                 Duration = new Duration(TimeSpan.FromSeconds(0.35))
             };
             ma.Completed += MatrixAnimationCompleted;
             IsMatrixAnimationInProgress = true;
-            MainMatrixTransform.BeginAnimation(MatrixTransform.MatrixProperty, ma);
+            TransformationMatrix.BeginAnimation(MatrixTransform.MatrixProperty, ma);
         }
         else
             EndMatrixAnimation();
@@ -157,10 +157,10 @@ public partial class MainWindow: Window
     private void EndMatrixAnimation()
     {
         IsMatrixAnimationInProgress = false;
-        MainMatrixTransform.BeginAnimation(MatrixTransform.MatrixProperty, null);
+        TransformationMatrix.BeginAnimation(MatrixTransform.MatrixProperty, null);
 
         // Final tasks
-        MainMatrixTransform.Matrix = rescaleMatrix;
+        TransformationMatrix.Matrix = rescaleMatrix;
     }
 
     // --------------------------------------------------------------------
@@ -211,15 +211,17 @@ public partial class MainWindow: Window
     {
         Debug.Assert(Selection.uitile != null);
         // Reverse-transform mouse Grid coordinates into DrawingCanvas coordinates
-        Matrix m = MainMatrixTransform.Matrix;
+        Matrix m = TransformationMatrix.Matrix;
         m.Invert();     // To convert from screen transformed coordinates into ideal grid
                         // coordinates starting at (0,0) with a square side of UnitSize
         Vector clickOffset = new();
-        var p = new Point((double)Selection.uitile.GetValue(Canvas.LeftProperty), (double)Selection.uitile.GetValue(Canvas.TopProperty));
+        double startLeft = (double)Selection.uitile.GetValue(Canvas.LeftProperty);
+        double startTop = (double)Selection.uitile.GetValue(Canvas.TopProperty);
+        var p = new Point(startLeft, startTop);
         clickOffset = p - m.Transform(previousMousePosition);
 
-        Selection.startRow = Selection.uitile.Row;
-        Selection.startCol = Selection.uitile.Col;
+        Selection.startRow = (int)Math.Floor(startTop / UnitSize + 0.5);
+        Selection.startCol = (int)Math.Floor(startLeft / UnitSize + 0.5);
 
         // Move as last child of DrawingCanvas so it's drawn on top
         DrawingCanvas.Children.Remove(Selection.uitile);
@@ -262,7 +264,7 @@ public partial class MainWindow: Window
     private void MainGrid_MouseMoveWhenDown(object sender, MouseEventArgs e)
     {
         var newPosition = e.GetPosition(MainGrid);
-        Matrix m = MainMatrixTransform.Matrix;
+        Matrix m = TransformationMatrix.Matrix;
 
         if (pmm == null)
         {
@@ -270,7 +272,7 @@ public partial class MainWindow: Window
             var delta = newPosition - previousMousePosition;
             previousMousePosition = newPosition;
             m.Translate(delta.X, delta.Y);
-            MainMatrixTransform.Matrix = m;
+            TransformationMatrix.Matrix = m;
             UpdateBackgroundGrid();
         }
         else
@@ -388,7 +390,7 @@ public partial class MainWindow: Window
     private void MainGrid_MouseWheel(object sender, MouseWheelEventArgs e)
     {
         var newPosition = e.GetPosition(MainGrid);
-        var m = MainMatrixTransform.Matrix;
+        var m = TransformationMatrix.Matrix;
 
         // Ctrl+MouseWheel for rotation
         if (Keyboard.IsKeyDown(Key.LeftCtrl))
@@ -402,7 +404,7 @@ public partial class MainWindow: Window
             var scale = 1 - sign / 10.0;
             m.ScaleAt(scale, scale, newPosition.X, newPosition.Y);
         }
-        MainMatrixTransform.Matrix = m;
+        TransformationMatrix.Matrix = m;
 
         UpdateBackgroundGrid();
     }
@@ -475,8 +477,8 @@ public partial class MainWindow: Window
         t.Height = UnitSize;
         DrawingCanvas.Children.Add(t);
 
-        Debug.Assert(t.Row == position.Row);
-        Debug.Assert(t.Col == position.Column);
+        //Debug.Assert(t.Row == position.Row);
+        //Debug.Assert(t.Col == position.Column);
     }
 
     internal void AddCircle(Position position)

@@ -202,7 +202,7 @@
             </StatusBar>
 
             <StackPanel Orientation="Vertical" DockPanel.Dock="Right" Width="635">
-                <local:Dock x:Name="Player1" />
+                <local:Hand x:Name="Player1" Height="238" />
             </StackPanel>
 
             <Grid Name="MainGrid" Background="LavenderBlush"
@@ -213,7 +213,7 @@
                         <Canvas Name="BackgroundGrid" ClipToBounds="False" />
                         <Canvas Name="DrawingCanvas" ClipToBounds="False" />
                         <Canvas.RenderTransform>
-                            <MatrixTransform x:Name="MainMatrixTransform" />
+                            <MatrixTransform x:Name="TransformationMatrix" />
                         </Canvas.RenderTransform>
                     </Canvas>
                 </Canvas>

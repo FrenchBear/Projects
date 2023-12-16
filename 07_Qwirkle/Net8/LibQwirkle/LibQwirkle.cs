@@ -121,24 +121,23 @@ public enum CellState
 }
 
 [DebuggerDisplay("Play: {AsString(null)}")]
-public record Play(HashSet<Move> Moves, int Points, int Bonus, Hand NewHand)
+public record Play(HashSet<Move> Moves, PointsBonus PB, Hand NewHand)
 {
     public HashSet<Move> Moves { get; } = Moves;
-    public int Points { get; } = Points;
-    public int Bonus { get; } = Bonus;
+    public PointsBonus PB { get; } = PB;
     public Hand NewHand { get; } = NewHand;
 
     public string AsString(bool? Color)
-        => string.Join(", ", Moves.Select(m => m.AsString(Color))) + $" -> Points: {Points}, Bonus: {Bonus}, Hand: {NewHand.AsString(Color)}";
+        => string.Join(", ", Moves.Select(m => m.AsString(Color))) + $" -> Points: {PB.Points}, Bonus: {PB.Bonus}, Hand: {NewHand.AsString(Color)}";
 }
 
 [DebuggerDisplay("PointsBonus: {AsString()}")]
-public record PointsBonus(int Points, int Bonus)
+public readonly struct PointsBonus(int Points, int Bonus)
 {
     public int Points { get; } = Points;
     public int Bonus { get; } = Bonus;
 
-    public string AsString()
+    public readonly string AsString()
         => $"Points {Points}, Bonus {Bonus}";
 }
 
@@ -171,12 +170,12 @@ public static class RandomGenerator
         => rnd.Next(MaxValue);
 }
 
-// Dock is a shuffled container for 6x6x3 = 108 standard tiles
-public class Dock
+// Bag is a shuffled container for 6x6x3 = 108 standard tiles
+public class Bag
 {
     readonly List<Tile> Tiles = [];
 
-    public Dock()
+    public Bag()
     {
         foreach (Shape s in Enum.GetValues(typeof(Shape)))
             foreach (Color c in Enum.GetValues(typeof(Color)))
@@ -576,7 +575,7 @@ public class Board: IEnumerable<Move>
         // since they all have the same max(points)
         // In some cases, this list could be empty
         if (PossiblePlays.Count == 0)
-            return new Play([], 0, 0, hand);
+            return new Play([], new PointsBonus(0,0), hand);
         var randIndex = RandomGenerator.Next(PossiblePlays.Count);
         var sol = PossiblePlays[randIndex];
         Console.WriteLine($"Play: ix={randIndex} {sol.AsString(true)}");
@@ -599,13 +598,13 @@ public class Board: IEnumerable<Move>
 
         // Quick and dirty firtering, only keep move if it produces equal or more points than current max(points)
         // if points are actually greater than max, forget all previous possible plays
-        (int points, int bonus) = startBoard.CountPoints(newCurrentMoves);
-        int pMax = PossiblePlays.Count == 0 ? 0 : PossiblePlays.Max(p => p.Points);
-        if (points > pMax)
+        PointsBonus pb = startBoard.CountPoints(newCurrentMoves);
+        int pMax = PossiblePlays.Count == 0 ? 0 : PossiblePlays.Max(p => p.PB.Points);
+        if (pb.Points > pMax)
             PossiblePlays.Clear();
-        if (points >= pMax)
+        if (pb.Points >= pMax)
         {
-            var possiblePlay = new Play(newCurrentMoves, points, bonus, newH);
+            var possiblePlay = new Play(newCurrentMoves, pb, newH);
             //Console.WriteLine($"{PossiblePlays.Count}: {possiblePlay.AsString(true)}");
             PossiblePlays.Add(possiblePlay);
         }

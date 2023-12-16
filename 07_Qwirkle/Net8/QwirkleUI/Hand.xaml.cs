@@ -6,33 +6,33 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 using LibQwirkle;
 using System.Diagnostics;
 using static QwirkleUI.App;
 using static QwirkleUI.ViewHelpers;
+using System.Collections;
 
 namespace QwirkleUI;
 
 // record: reference object like a class, but with comparing and hashing like a struct
-internal record UITileAndSlot(UITile UIT, int Slot);
-
-internal readonly struct DockSelection
+internal record UITilePosition(UITile UIT, int Row, int Col)
 {
-    private readonly List<UITileAndSlot> _items = [];
+    public double StartTop;
+    public double StartLeft;
+    public Vector ClickOffset;
+}
+
+internal readonly struct HandSelection: IReadOnlyCollection<UITilePosition>
+{
+    private readonly List<UITilePosition> _items = [];
 
     // A compiler requirement...
-    public DockSelection() { }
+    public HandSelection() { }
 
     public readonly void Clear()
     {
@@ -41,15 +41,18 @@ internal readonly struct DockSelection
         _items.Clear();
     }
 
-    public readonly IReadOnlyList<UITileAndSlot> Items
-        => _items;
+    public IEnumerator<UITilePosition> GetEnumerator() => _items.GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => _items.GetEnumerator();
 
     public readonly bool IsEmpty => _items.Count > 0;
 
-    internal readonly bool Contains(UITileAndSlot hit)
+    public readonly int Count => _items.Count;
+
+    internal readonly bool Contains(UITilePosition hit)
         => _items.Contains(hit);
 
-    internal readonly void Add(UITileAndSlot hit)
+    internal readonly void Add(UITilePosition hit)
     {
         Debug.Assert(!_items.Contains(hit));
         Debug.Assert(hit.UIT.SelectionBorder == false);
@@ -57,7 +60,7 @@ internal readonly struct DockSelection
         hit.UIT.SelectionBorder = true;
     }
 
-    internal readonly void Remove(UITileAndSlot hit)
+    internal readonly void Remove(UITilePosition hit)
     {
         Debug.Assert(_items.Contains(hit));
         Debug.Assert(hit.UIT.SelectionBorder == true);
@@ -66,13 +69,35 @@ internal readonly struct DockSelection
     }
 }
 
-public partial class Dock: UserControl
+public partial class Hand: UserControl
 {
-    private readonly DockSelection Selection = new();
+    private readonly HandSelection Selection = new();
 
-    public Dock()
+    const int DockRows = 2;
+    const int DockColumns = 8;
+
+    readonly Tile?[,] HandArray = new Tile?[DockRows, DockColumns];
+
+    public Hand()
     {
         InitializeComponent();
+
+        var tm = TransformationMatrix.Matrix;
+        tm.Translate(10.0, 10.0);
+        TransformationMatrix.Matrix = tm;
+
+        for (int r = 0; r < DockRows; r++)
+            for (int c = 0; c < DockColumns; c++)
+            {
+                var rect = new Rectangle();
+                rect.Width = UnitSize;
+                rect.Height = UnitSize;
+                rect.SetValue(Canvas.TopProperty, r * UnitSize);
+                rect.SetValue(Canvas.LeftProperty, c * UnitSize);
+                rect.StrokeThickness = 1.0;
+                rect.Stroke = Brushes.LightGray;
+                DockBackgroundGrid.Children.Add(rect);
+            }
 
         var h1 = new Tile(LibQwirkle.Shape.Lozange, LibQwirkle.Color.Blue, 1);
         var h2 = new Tile(LibQwirkle.Shape.Square, LibQwirkle.Color.Blue, 1);
@@ -81,31 +106,29 @@ public partial class Dock: UserControl
         var h5 = new Tile(LibQwirkle.Shape.Square, LibQwirkle.Color.Purple, 1);
         var h6 = new Tile(LibQwirkle.Shape.Square, LibQwirkle.Color.Green, 1);
 
-        var Hand = new Tile?[8];
-        Hand[0] = h1;
-        Hand[1] = h2;
-        Hand[2] = h3;
-        Hand[3] = h4;
-        Hand[4] = h5;
-        Hand[5] = h6;
-        Hand[6] = null;
-        Hand[7] = null;
+        //Hand = new Tile?[DockRows, DockColumns];
+        HandArray[0, 0] = h1;
+        HandArray[0, 1] = h2;
+        HandArray[0, 2] = h3;
+        HandArray[0, 3] = h4;
+        HandArray[0, 4] = h5;
+        HandArray[0, 5] = h6;
 
-        for (int i = 0; i < 8; i++)
+        for (int c = 0; c < 6; c++)
         {
-            Tile? t = Hand[i];
+            Tile? t = HandArray[0, c];
             if (t != null)
-                AddUITile(t.Shape.ToString() + t.Color.ToString(), i);
+                AddUITile(t.Shape.ToString() + t.Color.ToString(), 0, c);
         }
     }
 
-    internal void AddUITile(string shapeColor, int slot)
+    internal void AddUITile(string shapeColor, int row, int col)
     {
         var t = new UITile();
         t.ShapeColor = shapeColor;
         t.GrayBackground = true;
-        t.SetValue(Canvas.TopProperty, 10.0);
-        t.SetValue(Canvas.LeftProperty, 10.0 + slot * UnitSize);
+        t.SetValue(Canvas.TopProperty, row * UnitSize);
+        t.SetValue(Canvas.LeftProperty, col * UnitSize);
         t.Width = UnitSize;
         t.Height = UnitSize;
         DockDrawingCanvas.Children.Add(t);
@@ -136,8 +159,9 @@ public partial class Dock: UserControl
             return false;
         }
 
-        int slot = (int)Math.Floor(((double)t.GetValue(Canvas.LeftProperty) - 10.0) / UnitSize + 0.5);
-        var hit = new UITileAndSlot(t, slot);
+        int row = (int)Math.Floor((double)t.GetValue(Canvas.TopProperty) / UnitSize + 0.5);
+        int col = (int)Math.Floor((double)t.GetValue(Canvas.LeftProperty) / UnitSize + 0.5);
+        var hit = new UITilePosition(t, row, col);
 
         // If Ctrl key is NOT pressed, clear previous selection
         // But if we click again in something already selected, do not clear selection!
@@ -154,15 +178,15 @@ public partial class Dock: UserControl
         }
         else
             if (!Selection.Contains(hit))
-                Selection.Add(hit);
+            Selection.Add(hit);
 
         // Remove and add again elements to move so they're displayed above non-moved elements
-        foreach (UITileAndSlot item in Selection.Items)
+        foreach (UITilePosition item in Selection)
         {
             DockDrawingCanvas.Children.Remove(item.UIT);
             DockDrawingCanvas.Children.Add(item.UIT);
-            item.UIT.SetValue(Canvas.TopProperty, 10.0);
-            item.UIT.SetValue(Canvas.LeftProperty, 10.0 + item.Slot * UnitSize);
+            item.UIT.SetValue(Canvas.TopProperty, item.Row * UnitSize);
+            item.UIT.SetValue(Canvas.LeftProperty, item.Col * UnitSize);
         }
 
         return true;
@@ -175,7 +199,7 @@ public partial class Dock: UserControl
         DockCanvas.MouseMove -= DockCanvas_MouseMoveWhenUp;
         DockCanvas.MouseMove += DockCanvas_MouseMoveWhenDown;
         previousMousePosition = e.GetPosition(DockCanvas);
-        bool tileHit = UpdateSelectionAfterClick(e);
+        bool tileHit = UpdateSelectionAfterClick(e);            // Ensures that selected tiles are on top of others in the visual tree
 
         if (tileHit)
             pmm = GetMouseDownMoveAction();
@@ -186,9 +210,45 @@ public partial class Dock: UserControl
         // Capture to get MouseUp event raised by grid
         Mouse.Capture(DockCanvas);
     }
+
     private Action<Point>? GetMouseDownMoveAction()
     {
-        return null;
+        Debug.Assert(!Selection.IsEmpty);
+
+        // Reverse-transform mouse Grid coordinates into DrawingCanvas coordinates
+        Matrix m = TransformationMatrix.Matrix;
+        m.Invert();     // To convert from screen transformed coordinates into ideal grid
+                        // coordinates starting at (0,0) with a square side of UnitSize
+        var mp = m.Transform(previousMousePosition);
+        //var clickOffsetList = new List<Vector>(Selection.Count);
+        foreach (UITilePosition item in Selection)
+        {
+            item.StartLeft = (double)item.UIT.GetValue(Canvas.LeftProperty);
+            item.StartTop = (double)item.UIT.GetValue(Canvas.TopProperty);
+            var p = new Point(item.StartLeft, item.StartTop);
+            item.ClickOffset = p - mp;
+        }
+
+        // When moving, point is current mouse in ideal grid coordinates
+        return point =>
+        {
+            // Just move selected tiles
+            foreach (UITilePosition item in Selection)
+            {
+                double preciseTop = point.Y + item.ClickOffset.Y;
+                double preciseLeft = point.X + item.ClickOffset.X;
+
+                item.UIT.SetValue(Canvas.TopProperty, preciseTop);
+                item.UIT.SetValue(Canvas.LeftProperty, preciseLeft);
+
+                // Round position to closest square on the grid
+                int row = (int)Math.Floor(preciseTop / UnitSize + 0.5);
+                int col = (int)Math.Floor(preciseLeft / UnitSize + 0.5);
+
+                // ToDo: Decide of hatched feed-back
+                //item.UIT.Hatched = !(viewModel.GetCellState(row, col) != CellState.Tiled || (row == Selection.startRow && col == Selection.startCol));
+            }
+        };
     }
 
     private void DockCanvas_MouseMoveWhenDown(object sender, MouseEventArgs e)

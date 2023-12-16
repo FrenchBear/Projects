@@ -73,8 +73,8 @@ public partial class UITile: UserControl
         }
     }
 
-    public int Row => (int)Math.Floor((double)GetValue(Canvas.TopProperty) / UnitSize + 0.5);
-    public int Col => (int)Math.Floor((double)GetValue(Canvas.LeftProperty) / UnitSize + 0.5);
+    //public int Row => (int)Math.Floor((double)GetValue(Canvas.TopProperty) / UnitSize + 0.5);
+    //public int Col => (int)Math.Floor((double)GetValue(Canvas.LeftProperty) / UnitSize + 0.5);
 
     public UITile() => InitializeComponent();
 }
