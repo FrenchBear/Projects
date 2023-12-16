@@ -1,5 +1,5 @@
-﻿// Dock UserControl
-// Reprsent a player dock
+﻿// Hand UserControl
+// Reprsent a player Hand
 //
 // 2023-12-12   PV
 
@@ -73,10 +73,10 @@ public partial class Hand: UserControl
 {
     private readonly HandSelection Selection = new();
 
-    const int DockRows = 2;
-    const int DockColumns = 8;
+    const int HandRows = 2;
+    const int HandColumns = 8;
 
-    readonly Tile?[,] HandArray = new Tile?[DockRows, DockColumns];
+    readonly Tile?[,] HandArray = new Tile?[HandRows, HandColumns];
 
     public Hand()
     {
@@ -86,8 +86,8 @@ public partial class Hand: UserControl
         tm.Translate(10.0, 10.0);
         TransformationMatrix.Matrix = tm;
 
-        for (int r = 0; r < DockRows; r++)
-            for (int c = 0; c < DockColumns; c++)
+        for (int r = 0; r < HandRows; r++)
+            for (int c = 0; c < HandColumns; c++)
             {
                 var rect = new Rectangle();
                 rect.Width = UnitSize;
@@ -96,7 +96,7 @@ public partial class Hand: UserControl
                 rect.SetValue(Canvas.LeftProperty, c * UnitSize);
                 rect.StrokeThickness = 1.0;
                 rect.Stroke = Brushes.LightGray;
-                DockBackgroundGrid.Children.Add(rect);
+                HandBackgroundGrid.Children.Add(rect);
             }
 
         var h1 = new Tile(LibQwirkle.Shape.Lozange, LibQwirkle.Color.Blue, 1);
@@ -106,7 +106,7 @@ public partial class Hand: UserControl
         var h5 = new Tile(LibQwirkle.Shape.Square, LibQwirkle.Color.Purple, 1);
         var h6 = new Tile(LibQwirkle.Shape.Square, LibQwirkle.Color.Green, 1);
 
-        //Hand = new Tile?[DockRows, DockColumns];
+        //Hand = new Tile?[HandRows, HandColumns];
         HandArray[0, 0] = h1;
         HandArray[0, 1] = h2;
         HandArray[0, 2] = h3;
@@ -131,7 +131,7 @@ public partial class Hand: UserControl
         t.SetValue(Canvas.LeftProperty, col * UnitSize);
         t.Width = UnitSize;
         t.Height = UnitSize;
-        DockDrawingCanvas.Children.Add(t);
+        HandDrawingCanvas.Children.Add(t);
     }
 
     // --------------------------------------------------------------------
@@ -143,7 +143,7 @@ public partial class Hand: UserControl
     // action, P is current mouse coordinates in non-transformed user space
     private Action<Point>? pmm;
 
-    private void DockCanvas_MouseMoveWhenUp(object sender, MouseEventArgs e)
+    private void HandCanvas_MouseMoveWhenUp(object sender, MouseEventArgs e)
     {
         // %aybe some visual hinting
     }
@@ -151,8 +151,8 @@ public partial class Hand: UserControl
     // Returs false if no UITile has been hit
     private bool UpdateSelectionAfterClick(MouseButtonEventArgs e)
     {
-        // If no dock tile is hit, just clear selection and return
-        UITile? t = GetHitHile(e, DockCanvas);
+        // If no Hand tile is hit, just clear selection and return
+        UITile? t = GetHitHile(e, HandCanvas);
         if (t == null)
         {
             Selection.Clear();
@@ -183,8 +183,8 @@ public partial class Hand: UserControl
         // Remove and add again elements to move so they're displayed above non-moved elements
         foreach (UITilePosition item in Selection)
         {
-            DockDrawingCanvas.Children.Remove(item.UIT);
-            DockDrawingCanvas.Children.Add(item.UIT);
+            HandDrawingCanvas.Children.Remove(item.UIT);
+            HandDrawingCanvas.Children.Add(item.UIT);
             item.UIT.SetValue(Canvas.TopProperty, item.Row * UnitSize);
             item.UIT.SetValue(Canvas.LeftProperty, item.Col * UnitSize);
         }
@@ -192,13 +192,13 @@ public partial class Hand: UserControl
         return true;
     }
 
-    private void DockCanvas_MouseDown(object sender, MouseButtonEventArgs e)
+    private void HandCanvas_MouseDown(object sender, MouseButtonEventArgs e)
     {
         //EndAnimationsInProgress();
 
-        DockCanvas.MouseMove -= DockCanvas_MouseMoveWhenUp;
-        DockCanvas.MouseMove += DockCanvas_MouseMoveWhenDown;
-        previousMousePosition = e.GetPosition(DockCanvas);
+        HandCanvas.MouseMove -= HandCanvas_MouseMoveWhenUp;
+        HandCanvas.MouseMove += HandCanvas_MouseMoveWhenDown;
+        previousMousePosition = e.GetPosition(HandCanvas);
         bool tileHit = UpdateSelectionAfterClick(e);            // Ensures that selected tiles are on top of others in the visual tree
 
         if (tileHit)
@@ -208,7 +208,7 @@ public partial class Hand: UserControl
 
         // Be sure to call GetPosition before Capture, otherwise GetPosition returns 0 after Capture
         // Capture to get MouseUp event raised by grid
-        Mouse.Capture(DockCanvas);
+        Mouse.Capture(HandCanvas);
     }
 
     private Action<Point>? GetMouseDownMoveAction()
@@ -251,24 +251,24 @@ public partial class Hand: UserControl
         };
     }
 
-    private void DockCanvas_MouseMoveWhenDown(object sender, MouseEventArgs e)
+    private void HandCanvas_MouseMoveWhenDown(object sender, MouseEventArgs e)
     {
         //
     }
 
-    private void DockCanvas_MouseUp(object sender, MouseButtonEventArgs e)
+    private void HandCanvas_MouseUp(object sender, MouseButtonEventArgs e)
     {
         Mouse.Capture(null);
-        DockCanvas.MouseMove -= DockCanvas_MouseMoveWhenDown;
-        DockCanvas.MouseMove += DockCanvas_MouseMoveWhenUp;
+        HandCanvas.MouseMove -= HandCanvas_MouseMoveWhenDown;
+        HandCanvas.MouseMove += HandCanvas_MouseMoveWhenUp;
     }
 
-    private void DockCanvas_MouseWheel(object sender, MouseWheelEventArgs e)
+    private void HandCanvas_MouseWheel(object sender, MouseWheelEventArgs e)
     {
         //
     }
 
-    private void DockCanvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+    private void HandCanvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
     {
         //
     }

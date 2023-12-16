@@ -27,11 +27,11 @@
                 <TextBlock>Remarks in status bar</TextBlock>
             </StatusBar>
 
-            <Canvas Name="DockCanvas" ClipToBounds="False" Background="AntiqueWhite"
-                    MouseMove="DockCanvas_MouseMoveWhenUp" MouseDown="DockCanvas_MouseDown" MouseUp="DockCanvas_MouseUp" MouseWheel="DockCanvas_MouseWheel" MouseRightButtonDown="DockCanvas_MouseRightButtonDown">
+            <Canvas Name="HandCanvas" ClipToBounds="False" Background="AntiqueWhite"
+                    MouseMove="HandCanvas_MouseMoveWhenUp" MouseDown="HandCanvas_MouseDown" MouseUp="HandCanvas_MouseUp" MouseWheel="HandCanvas_MouseWheel" MouseRightButtonDown="HandCanvas_MouseRightButtonDown">
                 <Canvas Name="TransformingCanvas" ClipToBounds="False">
-                    <Canvas Name="DockBackgroundGrid" />
-                    <Canvas Name="DockDrawingCanvas" ClipToBounds="False" />
+                    <Canvas Name="HandBackgroundGrid" />
+                    <Canvas Name="HandDrawingCanvas" ClipToBounds="False" />
                     <Canvas.RenderTransform>
                         <MatrixTransform x:Name="TransformationMatrix" />
                     </Canvas.RenderTransform>
