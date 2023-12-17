@@ -1,5 +1,5 @@
-﻿// BonzaEditor - WPF Tool to prepare Bonza-style puzzles
-// ViewModel of main Editor window
+﻿// QwirkleUI
+// ViewModel of Main Window
 //
 // 2017-07-22   PV      First version
 // 2023-11-20   PV      Net8 C#12
@@ -9,16 +9,17 @@ using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Xps;
 
 namespace QwirkleUI;
 
-internal class ViewModel: INotifyPropertyChanged
+internal class MainViewModel: INotifyPropertyChanged
 {
     // Model and View
     private readonly Model model;
-
     private readonly MainWindow view;
+
+    // Helper to initialize HandViewModel, since model is common to all ViewModels
+    public Model GetModel => model;
 
     // Implementation of INotifyPropertyChanged, standard since View is only linked through DataBinding
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -42,7 +43,7 @@ internal class ViewModel: INotifyPropertyChanged
     public ICommand AboutCommand { get; }
 
     // Constructor
-    public ViewModel(MainWindow view)
+    public MainViewModel(MainWindow view)
     {
         // Initialize ViewModel
         this.view = view;
@@ -73,6 +74,7 @@ internal class ViewModel: INotifyPropertyChanged
     // -------------------------------------------------
     // Selection helpers
 
+
     // -------------------------------------------------
     // Bindings
 
@@ -92,6 +94,7 @@ internal class ViewModel: INotifyPropertyChanged
     }
 
     public string Caption => App.AppName;
+
 
     // -------------------------------------------------
     // Undo support
@@ -149,7 +152,9 @@ internal class ViewModel: INotifyPropertyChanged
         // ToDo: Should I ensure that DrawinfCanvas is empty here, or is it a view responsibility?
         view.AddCircle(new Position(50, 50));
         foreach (Move m in model.Board)
-            view.AddUITile(new Position(m.Row, m.Col), m.Tile.Shape.ToString() + m.Tile.Color.ToString());
+            view.AddUITile(new Position(m.Row, m.Col), m.Tile.Shape.ToString() + m.Tile.Color.ToString(), m.Tile.Instance);
+
+        // ToDo: Probably fill a structure maintainig connection between Move/Tile and UITile
     }
 
     internal CellState GetCellState(int row, int col) 

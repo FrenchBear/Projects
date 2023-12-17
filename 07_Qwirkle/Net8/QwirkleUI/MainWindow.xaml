@@ -202,7 +202,7 @@
             </StatusBar>
 
             <StackPanel Orientation="Vertical" DockPanel.Dock="Right" Width="635">
-                <local:Hand x:Name="Player1" Height="238" />
+                <local:HandUserControl x:Name="Player1HandUserControl" Height="238" />
             </StackPanel>
 
             <Grid Name="MainGrid" Background="LavenderBlush"

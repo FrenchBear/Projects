@@ -1,6 +1,6 @@
 ﻿namespace QwirkleUI;
 
-public record Position(int Row, int Column);
+public record Position(int Row, int Col);
 
 public record BoundingRectangle(Position Min, Position Max)
 {

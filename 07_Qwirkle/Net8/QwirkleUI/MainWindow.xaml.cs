@@ -27,28 +27,36 @@ internal struct MainGridSelection
 
 public partial class MainWindow: Window
 {
-    private readonly ViewModel viewModel;
+    private readonly MainViewModel viewModel;
     private MainGridSelection Selection = new();
     private readonly List<UITile> m_UITilesList = [];
+    private readonly HandViewModel[] HandViewModels = [];
 
     public MainWindow()
     {
         InitializeComponent();
-        viewModel = new ViewModel(this);
+        viewModel = new MainViewModel(this);
         DataContext = viewModel;
+
+        // Just 1 player for now
+        HandViewModels = new HandViewModel[1];
+        HandViewModels[0] = new HandViewModel(Player1HandUserControl, viewModel.GetModel, 0);
 
         // Can only reference ActualWidth after Window is loaded
         Loaded += MainWindow_Loaded;
         KeyDown += MainWindow_KeyDown;
-        // ContentRendered += (sender, e) => Environment.Exit(0);       // For performance testing
-
     }
 
     public void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
         viewModel.InitializeBoard();
-        FinalRefreshAfterUpdate();
+        DrawBoard();
         RescaleAndCenter(false);
+
+        foreach (var hvm in HandViewModels)
+            hvm.DrawHand();
+
+        viewModel.StatusText = "Done.";
     }
 
     private void MainWindow_KeyDown(object sender, KeyEventArgs e)
@@ -85,14 +93,13 @@ public partial class MainWindow: Window
         Selection.uitile = null;
     }
 
-    internal void FinalRefreshAfterUpdate()
+    internal void DrawBoard()
     {
         // ToDo: Make sure that DrawingCanvas.Children is empty
         Debug.Assert(DrawingCanvas.Children.Count == 0);
 
         UpdateBackgroundGrid();
         viewModel.DrawAllTiles();
-        viewModel.StatusText = "Done.";
     }
 
     // Adjust scale and origin to see the whole puzzle
@@ -102,8 +109,8 @@ public partial class MainWindow: Window
         var r = BoundingRectangleWithMargins();
 
         // Reverse-transform corners into WordCanvas coordinates
-        var p1Grid = new Point(r.Min.Column * UnitSize, r.Min.Row * UnitSize);
-        var p2Grid = new Point(r.Max.Column * UnitSize, r.Max.Row * UnitSize);
+        var p1Grid = new Point(r.Min.Col * UnitSize, r.Min.Row * UnitSize);
+        var p2Grid = new Point(r.Max.Col * UnitSize, r.Max.Row * UnitSize);
 
         rescaleMatrix = TransformationMatrix.Matrix;
 
@@ -425,8 +432,8 @@ public partial class MainWindow: Window
         var boardBounds = viewModel.Bounds;
         return new (boardBounds.Min.Row - 5,
                     boardBounds.Max.Row + 5,
-                    boardBounds.Min.Column - 5,
-                    boardBounds.Max.Column + 5);
+                    boardBounds.Min.Col - 5,
+                    boardBounds.Max.Col + 5);
     }
 
     private void UpdateBackgroundGrid()
@@ -441,8 +448,8 @@ public partial class MainWindow: Window
             {
                 var l = new Line
                 {
-                    X1 = r.Min.Column * UnitSize,
-                    X2 = r.Max.Column * UnitSize,
+                    X1 = r.Min.Col * UnitSize,
+                    X2 = r.Max.Col * UnitSize,
                     Y1 = row * UnitSize,
                     Y2 = row * UnitSize,
                     Stroke = Brushes.LightGray,
@@ -451,7 +458,7 @@ public partial class MainWindow: Window
                 BackgroundGrid.Children.Add(l);
             }
 
-            for (int column = r.Min.Column; column <= r.Max.Column; column++)
+            for (int column = r.Min.Col; column <= r.Max.Col; column++)
             {
                 var l = new Line
                 {
@@ -467,12 +474,11 @@ public partial class MainWindow: Window
         }
     }
 
-    internal void AddUITile(Position position, string shapeColor)
+    internal void AddUITile(Position position, string shapeColor, int instance)
     {
-        var t = new UITile();
-        t.ShapeColor = shapeColor;
+        var t = new UITile(shapeColor, instance);
         t.SetValue(Canvas.TopProperty, position.Row * UnitSize);
-        t.SetValue(Canvas.LeftProperty, position.Column * UnitSize);
+        t.SetValue(Canvas.LeftProperty, position.Col * UnitSize);
         t.Width = UnitSize;
         t.Height = UnitSize;
         DrawingCanvas.Children.Add(t);
@@ -490,7 +496,7 @@ public partial class MainWindow: Window
         e.StrokeThickness = 5.0;
         //e.Fill = Brushes.SkyBlue;
         e.SetValue(Canvas.TopProperty, (position.Row-0.5) * UnitSize);
-        e.SetValue(Canvas.LeftProperty, (position.Column-0.5) * UnitSize);
+        e.SetValue(Canvas.LeftProperty, (position.Col-0.5) * UnitSize);
         DrawingCanvas.Children.Add(e);
     }
 }

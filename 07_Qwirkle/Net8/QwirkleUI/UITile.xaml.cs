@@ -14,6 +14,13 @@ namespace QwirkleUI;
 
 public partial class UITile: UserControl
 {
+    public UITile(string ShapeColor, int Instance)
+    {
+        InitializeComponent();
+        this.ShapeColor = ShapeColor;
+        this.Instance = Instance;
+    }
+
     private bool _GrayBackground = false;
 
     public bool GrayBackground
@@ -59,22 +66,21 @@ public partial class UITile: UserControl
         }
     }
 
-    private string _ShapeColor = "CircleRed";
+    private string _ShapeColor = "";
     public string ShapeColor
     {
         get => _ShapeColor;
-        set
+        init
         {
-            if (_ShapeColor != value)
-            {
-                _ShapeColor = value;
-                ShapeColorLayer.Fill = Resources[_ShapeColor] as Brush;
-            }
+            _ShapeColor = value;
+            ShapeColorLayer.Fill = Resources[_ShapeColor] as Brush;
         }
     }
 
-    //public int Row => (int)Math.Floor((double)GetValue(Canvas.TopProperty) / UnitSize + 0.5);
-    //public int Col => (int)Math.Floor((double)GetValue(Canvas.LeftProperty) / UnitSize + 0.5);
-
-    public UITile() => InitializeComponent();
+    private int _Instance;
+    public int Instance
+    {
+        get => _Instance;
+        init => _Instance = value;
+    }
 }

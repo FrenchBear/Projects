@@ -7,10 +7,11 @@ using LibQwirkle;
 
 namespace QwirkleUI;
 
-internal class Model(ViewModel viewModel)
+internal class Model(MainViewModel viewModel)
 {
-    private readonly ViewModel viewModel = viewModel;
+    private readonly MainViewModel viewModel = viewModel;
     public Board Board = new();
+    public Hand[] Hands = [new()];      // Just 1 hand for how
 
     internal void NewBoard() => Board = new Board();
 
@@ -32,5 +33,19 @@ internal class Model(ViewModel viewModel)
         Board.AddMove(new Move(49, 52, t4));
         Board.AddMove(new Move(48, 52, t5));
         Board.AddMove(new Move(47, 52, t6));
+
+        var h1 = new Tile(LibQwirkle.Shape.Lozange, LibQwirkle.Color.Blue, 1);
+        var h2 = new Tile(LibQwirkle.Shape.Square, LibQwirkle.Color.Blue, 1);
+        var h3 = new Tile(LibQwirkle.Shape.Star, LibQwirkle.Color.Blue, 1);
+        var h4 = new Tile(LibQwirkle.Shape.Star, LibQwirkle.Color.Yellow, 1);
+        var h5 = new Tile(LibQwirkle.Shape.Square, LibQwirkle.Color.Purple, 1);
+        var h6 = new Tile(LibQwirkle.Shape.Square, LibQwirkle.Color.Green, 1);
+
+        Hands[0].Add(h1);
+        Hands[0].Add(h2);
+        Hands[0].Add(h3);
+        Hands[0].Add(h4);
+        Hands[0].Add(h5);
+        Hands[0].Add(h6);
     }
 }
