@@ -18,7 +18,7 @@ internal class HandViewModel: INotifyPropertyChanged
     // View and Model
     private readonly HandUserControl View;
     private readonly Model Model;
-    private int HandIndex;
+    private readonly int HandIndex;
 
     // Implementation of INotifyPropertyChanged, standard since View is only linked through DataBinding
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -34,6 +34,7 @@ internal class HandViewModel: INotifyPropertyChanged
     }
 
     private void NotifyPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
     internal void DrawHand()
     {
         int c = 0;

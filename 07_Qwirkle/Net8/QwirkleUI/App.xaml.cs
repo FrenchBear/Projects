@@ -14,5 +14,9 @@ public partial class App: Application
     internal const double UnitSize = 75.0;
 
     internal const double MarginSize = 1.0;
+
+    // Player Hand Grid
+    internal const int HandRows = 2;
+    internal const int HandColumns = 8;
 }
 

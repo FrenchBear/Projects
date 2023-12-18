@@ -1,81 +1,100 @@
-﻿// Hand UserControl
-// Reprsent a player Hand
-//
-// 2023-12-12   PV
+﻿// Interaction Manager
+// Base component to handle mouse interactions
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shapes;
-using System.Diagnostics;
 using static QwirkleUI.App;
 using static QwirkleUI.ViewHelpers;
 using LibQwirkle;
+using System.Reflection.Metadata;
 
 namespace QwirkleUI;
 
-public partial class HandUserControl: UserControl
+// Combination of a UITile and a RowCol
+[DebuggerDisplay("UITileRowCol: {UIT} {RC}")]
+internal record UITileRowCol(UITile UIT, RowCol P)
 {
-    private HandViewModel HandViewModel;
-    internal readonly List<UITileRowCol> Hand = [];
-    internal InteractionManager HandIM;
+    internal UITile UIT { get; private set; } = UIT;
+    internal RowCol RC { get; set; } = P;      // set accessor because RC is mutable
 
-    public HandUserControl()
+    // Used when dragging (offset from mouse click down position) or animating (target position)
+    public Vector Offset { get; set; }
+
+    public override string ToString() => $"UITileRowCol: {UIT} {RC}";
+}
+
+internal readonly struct UITilesSelection: IReadOnlyCollection<UITileRowCol>
+{
+    private readonly List<UITileRowCol> _items = [];
+
+    // A compiler requirement...
+    public UITilesSelection() { }
+
+    public readonly void Clear()
     {
-        InitializeComponent();
-
-        HandIM = new HandInteractionManager(Hand);
-
-        var tm = TransformationMatrix.Matrix;
-        tm.Translate(10.0, 10.0);
-        TransformationMatrix.Matrix = tm;
-
-        for (int r = 0; r < HandRows; r++)
-            for (int c = 0; c < HandColumns; c++)
-            {
-                var rect = new Rectangle();
-                rect.Width = UnitSize;
-                rect.Height = UnitSize;
-                rect.SetValue(Canvas.TopProperty, r * UnitSize);
-                rect.SetValue(Canvas.LeftProperty, c * UnitSize);
-                rect.StrokeThickness = 1.0;
-                rect.Stroke = Brushes.LightGray;
-                HandBackgroundGrid.Children.Add(rect);
-            }
+        foreach (var item in _items)
+            item.UIT.SelectionBorder = false;
+        _items.Clear();
     }
 
-    internal void SetViewModel(HandViewModel handViewModel) => HandViewModel = handViewModel;
+    public IEnumerator<UITileRowCol> GetEnumerator() => _items.GetEnumerator();
 
-    internal void AddUITile(string shapeColor, int instance, RowCol p)
+    IEnumerator IEnumerable.GetEnumerator() => _items.GetEnumerator();
+
+    public readonly bool IsEmpty => _items.Count == 0;
+
+    public readonly int Count => _items.Count;
+
+    internal readonly bool ContainsUITile(UITileRowCol uitp)
+        => _items.Any(it => it.UIT == uitp.UIT);
+
+    internal readonly void Add(UITileRowCol hit)
     {
-        var t = new UITile(shapeColor, instance);
-        t.GrayBackground = true;
-        t.SetValue(Canvas.TopProperty, p.Row * UnitSize);
-        t.SetValue(Canvas.LeftProperty, p.Col * UnitSize);
-        t.Width = UnitSize;
-        t.Height = UnitSize;
-        HandDrawingCanvas.Children.Add(t);
-
-        var h = new UITileRowCol(t, p);
-        Hand.Add(h);
+        Debug.Assert(!_items.Contains(hit));
+        Debug.Assert(hit.UIT.SelectionBorder == false);
+        _items.Add(hit);
+        hit.UIT.SelectionBorder = true;
     }
 
-    // --------------------------------------------------------------------
-    // Mouse click and drag management
+    internal readonly void Remove(UITileRowCol hit)
+    {
+        Debug.Assert(_items.Contains(hit));
+        Debug.Assert(hit.UIT.SelectionBorder == true);
+        _items.Remove(hit);
+        hit.UIT.SelectionBorder = false;
+    }
 
-    private void HandCanvas_MouseMoveWhenUp(object sender, MouseEventArgs e)
-        => HandIM.IM_MouseMoveWhenUp(sender, e);
+    internal bool ContainsUITile(UITile uit)
+        => _items.Any(uitm => uitm.UIT == uit);
+}
 
-    /*
+abstract internal class InteractionManager
+{
+    protected readonly UITilesSelection Selection = [];
+    private Point previousMouseRowCol;
+    private Action<Point>? pmm;
+
+    public InteractionManager() { }
+
+    public void IM_MouseMoveWhenUp(object sender, MouseEventArgs e)
+    {
+        // %aybe some visual hinting
+    }
+
     // Returs false if no UITile has been hit
-    private bool UpdateSelectionAfterClick(MouseButtonEventArgs e)
+    private bool UpdateSelectionAfterClick(MouseEventArgs e, Canvas c, Canvas dc)
     {
         // If no Hand tile is hit, just clear selection and return
-        UITile? t = GetHitHile(e, HandCanvas);
+        UITile? t = GetHitHile(e.GetPosition(c), c);
         if (t == null)
         {
             Selection.Clear();
@@ -106,8 +125,8 @@ public partial class HandUserControl: UserControl
         // Remove and add again elements to move so they're displayed above non-moved elements
         foreach (UITileRowCol item in Selection)
         {
-            HandDrawingCanvas.Children.Remove(item.UIT);
-            HandDrawingCanvas.Children.Add(item.UIT);
+            dc.Children.Remove(item.UIT);
+            dc.Children.Add(item.UIT);
             item.UIT.SetValue(Canvas.TopProperty, item.RC.Row * UnitSize);
             item.UIT.SetValue(Canvas.LeftProperty, item.RC.Col * UnitSize);
         }
@@ -122,43 +141,30 @@ public partial class HandUserControl: UserControl
         //if (IsMatrixAnimationInProgress)
         //    EndMatrixAnimation();
     }
-    */
 
-    private void HandCanvas_MouseDown(object sender, MouseButtonEventArgs e)
-    {
-        Debug.WriteLine("HandCanvas_MouseDown");
-
-        HandCanvas.MouseMove -= HandCanvas_MouseMoveWhenUp;
-        HandCanvas.MouseMove += HandCanvas_MouseMoveWhenDown;
-        HandIM.IM_MouseDown(sender, e, HandCanvas, HandDrawingCanvas, TransformationMatrix.Matrix);
-    }
-    /*
+    public void IM_MouseDown(object sender, MouseEventArgs e, Canvas c, Canvas dc, Matrix m)
     {
         EndAnimationsInProgress();
 
-        HandCanvas.MouseMove -= HandCanvas_MouseMoveWhenUp;
-        HandCanvas.MouseMove += HandCanvas_MouseMoveWhenDown;
-        previousMouseRowCol = e.GetPosition(HandCanvas);
-        bool tileHit = UpdateSelectionAfterClick(e);            // Ensures that selected tiles are on top of others in the visual tree
+        previousMouseRowCol = e.GetPosition(c);
+        bool tileHit = UpdateSelectionAfterClick(e, c, dc);            // Ensures that selected tiles are on top of others in the visual tree
 
         if (tileHit)
-            pmm = GetMouseDownMoveAction();
+            pmm = GetMouseDownMoveAction(m);
         else
             pmm = null;
 
         // Be sure to call GetRowCol before Capture, otherwise GetRowCol returns 0 after Capture
         // Capture to get MouseUp event raised by grid
-        Mouse.Capture(HandCanvas);
+        Mouse.Capture(c);
     }
-    */
 
-    /*
-    private Action<Point>? GetMouseDownMoveAction()
+    private Action<Point>? GetMouseDownMoveAction(Matrix m)
     {
         Debug.Assert(!Selection.IsEmpty);
 
         // Reverse-transform mouse Grid coordinates into DrawingCanvas coordinates
-        Matrix m = TransformationMatrix.Matrix;
+        //Matrix m =  TransformationMatrix.Matrix;
         m.Invert();     // To convert from screen transformed coordinates into ideal grid
                         // coordinates starting at (0,0) with a square side of UnitSize
         var mp = m.Transform(previousMouseRowCol);
@@ -194,44 +200,33 @@ public partial class HandUserControl: UserControl
             }
         };
     }
-    */
 
-    private void HandCanvas_MouseMoveWhenDown(object sender, MouseEventArgs e)
-    {
-        Debug.WriteLine("HandCanvas_MouseMoveWhenDown");
-
-        HandIM.IM_MouseMoveWhenDown(sender, e, HandCanvas, TransformationMatrix.Matrix);
-    }
-    /*
+    internal void IM_MouseMoveWhenDown(object sender, MouseEventArgs e, Canvas c, Matrix m)
     {
         if (pmm != null)
         {
-            var newRowCol = e.GetPosition(HandCanvas);
-            Matrix m = TransformationMatrix.Matrix;
+            var newRowCol = e.GetPosition(c);
+            //Matrix m = TransformationMatrix.Matrix;
             m.Invert();     // By construction, all applied transformations are reversible, so m is invertible
             pmm(m.Transform(newRowCol));
         }
 
         // For hand, we don't move grid
     }
-    */
 
-    private void HandCanvas_MouseUp(object sender, MouseButtonEventArgs e)
+    abstract internal void UpdateTargetPosition(UITilesSelection selection);
+
+    internal void IM_MouseUp(object sender, MouseButtonEventArgs e)
     {
-        Debug.WriteLine("HandCanvas_MouseUp");
-
-        HandCanvas.MouseMove -= HandCanvas_MouseMoveWhenDown;
-        HandCanvas.MouseMove += HandCanvas_MouseMoveWhenUp;
-        HandIM.IM_MouseUp(sender, e);
-    }
-
-    /*
-
         Mouse.Capture(null);
+
         if (pmm != null)
         {
             pmm = null;
 
+            UpdateTargetPosition(Selection);
+
+            /*
             // Find a free position
             // Build NewHand without tiles being moved
             var NewHand = new List<UITileRowCol>();
@@ -251,7 +246,7 @@ public partial class HandUserControl: UserControl
                 int zz = 0;
                 for (int r = 0; r < HandRows; r++)
                     for (int c = 0; c < HandColumns; c++)
-                        if (!NewHand.Any(uitp => uitp.RC.Row==r && uitp.RC.Col==c))
+                        if (!NewHand.Any(uitp => uitp.RC.Row == r && uitp.RC.Col == c))
                         {
                             double targetLeft = c * UnitSize;
                             double targetTop = r * UnitSize;
@@ -283,89 +278,22 @@ public partial class HandUserControl: UserControl
                 Debug.Assert(h != null);
                 h.RC = uitp.RC;
             }
-
+            */
         }
     }
-    */
 
-    private void HandCanvas_MouseWheel(object sender, MouseWheelEventArgs e) =>
+    public void IM_MouseWheel(object sender, MouseWheelEventArgs e) =>
         // This is not used for Hand
         Debug.WriteLine("HandCanvas_MouseWheel");
 
-    private void HandCanvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
-        => HandIM.IM_MouseRightButtonDown(sender, e, HandCanvas, HandDrawingCanvas);
-
-/*
-{
-HandIM.EndAnimationsInProgress();
-bool tileHit = HandIM.UpdateSelectionAfterClick(e);
-
-// ToDo, show context menu, maybe different whether there is tile selection or not
-Debug.WriteLine($"HandCanvas_MouseRightButtonDown, tileHit: {tileHit}, Selection.IsEmpty: {Selection.IsEmpty}");
-}
-*/
-
-}
-
-internal class HandInteractionManager: InteractionManager
-{
-    private readonly List<UITileRowCol> Hand;
-
-    public HandInteractionManager(List<UITileRowCol> hand)
-        => Hand = hand;
-
-    internal override void UpdateTargetPosition(UITilesSelection selection)
+    public void IM_MouseRightButtonDown(object sender, MouseButtonEventArgs e, Canvas c, Canvas dc)
     {
-        // Find a free position
-        // Build NewHand without tiles being moved
-        var NewHand = new List<UITileRowCol>();
-        foreach (UITileRowCol uitp in Hand)
-            if (!Selection.ContainsUITile(uitp.UIT))
-                NewHand.Add(uitp);
+        EndAnimationsInProgress();
+        bool tileHit = UpdateSelectionAfterClick(e, c, dc);
 
-        foreach (UITileRowCol uitp in Selection)
-        {
-            double left = (double)uitp.UIT.GetValue(Canvas.LeftProperty);
-            double top = (double)uitp.UIT.GetValue(Canvas.TopProperty);
-
-            //Debug.WriteLine($"pos left={left} top={top}");
-
-            // Build list of distances to empty positions on hand
-            var ld = new List<(RowCol, double)>();
-            int zz = 0;
-            for (int r = 0; r < HandRows; r++)
-                for (int c = 0; c < HandColumns; c++)
-                    if (!NewHand.Any(uitp => uitp.RC.Row == r && uitp.RC.Col == c))
-                    {
-                        double targetLeft = c * UnitSize;
-                        double targetTop = r * UnitSize;
-                        // Actually dist squared, but that's enough to find the minimum
-                        double dist = (targetLeft - left) * (targetLeft - left) + (targetTop - top) * (targetTop - top);
-
-                        //Debug.WriteLine($"ld[{zz++}] tleft={targetLeft} ttop={targetTop}  dist²={dist}");
-
-                        ld.Add((new RowCol(r, c), dist));
-                    }
-            var xxmin = ld.MinBy(tup => tup.Item2);
-            //Debug.WriteLine($"min: {xxmin}");
-
-            var closestRowCol = ld.MinBy(tup => tup.Item2).Item1;
-            uitp.RC = closestRowCol;
-            uitp.Offset = new Vector(closestRowCol.Col * UnitSize, closestRowCol.Row * UnitSize);
-
-            // Now the position is taken, not free for the rest of selection
-            NewHand.Add(uitp);
-        }
-
-        // For now, direct move for testing
-        // ToDo: Replace by animation using storyboard    Actually not sure it's needed for Hand, looks Ok without animation
-        foreach (UITileRowCol uitp in Selection)
-        {
-            uitp.UIT.SetValue(Canvas.TopProperty, uitp.Offset.Y);
-            uitp.UIT.SetValue(Canvas.LeftProperty, uitp.Offset.X);
-            var h = Hand.Find(u => u.UIT == uitp.UIT);
-            Debug.Assert(h != null);
-            h.RC = uitp.RC;
-        }
+        // ToDo, show context menu, maybe different whether there is tile selection or not
+        // Call a virtual method
+        Debug.WriteLine($"IM_MouseRightButtonDown, tileHit: {tileHit}, Selection.IsEmpty: {Selection.IsEmpty}");
     }
+
 }

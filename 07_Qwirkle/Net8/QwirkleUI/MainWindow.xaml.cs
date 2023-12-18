@@ -201,7 +201,7 @@ public partial class MainWindow: Window
         MainGrid.MouseMove += MainGrid_MouseMoveWhenDown;
         previousMouseRowCol = e.GetPosition(MainGrid);
 
-        Selection.uitile = GetHitHile(e, DrawingCanvas);
+        Selection.uitile = GetHitHile(e.GetPosition(DrawingCanvas), DrawingCanvas);
 
         if (Selection.uitile != null)
             pmm = GetMouseDownMoveAction();
@@ -255,7 +255,7 @@ public partial class MainWindow: Window
     // Relay from Window_MouseDown handler when it's actually a right click
     private void MainGrid_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
     {
-        Selection.uitile = GetHitHile(e, DrawingCanvas);
+        Selection.uitile = GetHitHile(e.GetPosition(DrawingCanvas), DrawingCanvas);
 
         ContextMenu? cm;
         if (Selection.uitile != null)

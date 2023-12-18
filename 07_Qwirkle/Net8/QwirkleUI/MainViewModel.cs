@@ -74,7 +74,6 @@ internal class MainViewModel: INotifyPropertyChanged
     // -------------------------------------------------
     // Selection helpers
 
-
     // -------------------------------------------------
     // Bindings
 
@@ -94,7 +93,6 @@ internal class MainViewModel: INotifyPropertyChanged
     }
 
     public string Caption => App.AppName;
-
 
     // -------------------------------------------------
     // Undo support
