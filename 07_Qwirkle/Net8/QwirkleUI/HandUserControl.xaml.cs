@@ -21,21 +21,21 @@ using Accessibility;
 namespace QwirkleUI;
 
 // record: reference object like a class, but with comparing and hashing like a struct
-[DebuggerDisplay("UITilePosition: {UIT} {P}")]
-internal record UITilePosition(UITile UIT, Position P)
+[DebuggerDisplay("UITileRowCol: {UIT} {P}")]
+internal record UITileRowCol(UITile UIT, RowCol P)
 {
     internal UITile UIT { get; private set; } = UIT;
-    internal Position P { get; set; } = P;      // set accessot because P is mutable
+    internal RowCol P { get; set; } = P;      // set accessot because P is mutable
 
     // Used when dragging (offset from mouse click down position) or animating (target position)
     public Vector Offset { get; set; }
 
-    public override string ToString() => $"UITilePosition: UIT={UIT} Position={P}";
+    public override string ToString() => $"UITileRowCol: UIT={UIT} RowCol={P}";
 }
 
-internal readonly struct HandSelection: IReadOnlyCollection<UITilePosition>
+internal readonly struct HandSelection: IReadOnlyCollection<UITileRowCol>
 {
-    private readonly List<UITilePosition> _items = [];
+    private readonly List<UITileRowCol> _items = [];
 
     // A compiler requirement...
     public HandSelection() { }
@@ -47,7 +47,7 @@ internal readonly struct HandSelection: IReadOnlyCollection<UITilePosition>
         _items.Clear();
     }
 
-    public IEnumerator<UITilePosition> GetEnumerator() => _items.GetEnumerator();
+    public IEnumerator<UITileRowCol> GetEnumerator() => _items.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => _items.GetEnumerator();
 
@@ -55,10 +55,10 @@ internal readonly struct HandSelection: IReadOnlyCollection<UITilePosition>
 
     public readonly int Count => _items.Count;
 
-    internal readonly bool ContainsUITile(UITilePosition uitp)
+    internal readonly bool ContainsUITile(UITileRowCol uitp)
         => _items.Any(it => it.UIT == uitp.UIT);
 
-    internal readonly void Add(UITilePosition hit)
+    internal readonly void Add(UITileRowCol hit)
     {
         Debug.Assert(!_items.Contains(hit));
         Debug.Assert(hit.UIT.SelectionBorder == false);
@@ -66,7 +66,7 @@ internal readonly struct HandSelection: IReadOnlyCollection<UITilePosition>
         hit.UIT.SelectionBorder = true;
     }
 
-    internal readonly void Remove(UITilePosition hit)
+    internal readonly void Remove(UITileRowCol hit)
     {
         Debug.Assert(_items.Contains(hit));
         Debug.Assert(hit.UIT.SelectionBorder == true);
@@ -85,7 +85,7 @@ public partial class HandUserControl: UserControl
 
     private HandViewModel HandViewModel;
     private readonly HandSelection Selection = new();
-    internal readonly List<UITilePosition> Hand = new();
+    internal readonly List<UITileRowCol> Hand = new();
 
     public HandUserControl()
     {
@@ -114,7 +114,7 @@ public partial class HandUserControl: UserControl
         HandViewModel = handViewModel;
     }
 
-    internal void AddUITile(string shapeColor, int instance, Position p)
+    internal void AddUITile(string shapeColor, int instance, RowCol p)
     {
         var t = new UITile(shapeColor, instance);
         t.GrayBackground = true;
@@ -124,14 +124,14 @@ public partial class HandUserControl: UserControl
         t.Height = UnitSize;
         HandDrawingCanvas.Children.Add(t);
 
-        var h = new UITilePosition(t, p);
+        var h = new UITileRowCol(t, p);
         Hand.Add(h);
     }
 
     // --------------------------------------------------------------------
     // Mouse click and drag management
 
-    private Point previousMousePosition;
+    private Point previousMouseRowCol;
 
     // null indicates background grid move, or delegate must be executed by MouseMove to perform move
     // action, P is current mouse coordinates in non-transformed user space
@@ -155,7 +155,7 @@ public partial class HandUserControl: UserControl
 
         int row = (int)Math.Floor((double)t.GetValue(Canvas.TopProperty) / UnitSize + 0.5);
         int col = (int)Math.Floor((double)t.GetValue(Canvas.LeftProperty) / UnitSize + 0.5);
-        var hit = new UITilePosition(t, new Position(row, col));
+        var hit = new UITileRowCol(t, new RowCol(row, col));
 
         // If Ctrl key is NOT pressed, clear previous selection
         // But if we click again in something already selected, do not clear selection!
@@ -175,7 +175,7 @@ public partial class HandUserControl: UserControl
             Selection.Add(hit);
 
         // Remove and add again elements to move so they're displayed above non-moved elements
-        foreach (UITilePosition item in Selection)
+        foreach (UITileRowCol item in Selection)
         {
             HandDrawingCanvas.Children.Remove(item.UIT);
             HandDrawingCanvas.Children.Add(item.UIT);
@@ -200,7 +200,7 @@ public partial class HandUserControl: UserControl
 
         HandCanvas.MouseMove -= HandCanvas_MouseMoveWhenUp;
         HandCanvas.MouseMove += HandCanvas_MouseMoveWhenDown;
-        previousMousePosition = e.GetPosition(HandCanvas);
+        previousMouseRowCol = e.GetPosition(HandCanvas);
         bool tileHit = UpdateSelectionAfterClick(e);            // Ensures that selected tiles are on top of others in the visual tree
 
         if (tileHit)
@@ -208,7 +208,7 @@ public partial class HandUserControl: UserControl
         else
             pmm = null;
 
-        // Be sure to call GetPosition before Capture, otherwise GetPosition returns 0 after Capture
+        // Be sure to call GetRowCol before Capture, otherwise GetRowCol returns 0 after Capture
         // Capture to get MouseUp event raised by grid
         Mouse.Capture(HandCanvas);
     }
@@ -221,9 +221,9 @@ public partial class HandUserControl: UserControl
         Matrix m = TransformationMatrix.Matrix;
         m.Invert();     // To convert from screen transformed coordinates into ideal grid
                         // coordinates starting at (0,0) with a square side of UnitSize
-        var mp = m.Transform(previousMousePosition);
+        var mp = m.Transform(previousMouseRowCol);
         //var clickOffsetList = new List<Vector>(Selection.Count);
-        foreach (UITilePosition item in Selection)
+        foreach (UITileRowCol item in Selection)
         {
             double startLeft = (double)item.UIT.GetValue(Canvas.LeftProperty);
             double startTop = (double)item.UIT.GetValue(Canvas.TopProperty);
@@ -235,10 +235,12 @@ public partial class HandUserControl: UserControl
         return point =>
         {
             // Just move selected tiles
-            foreach (UITilePosition item in Selection)
+            foreach (UITileRowCol item in Selection)
             {
                 double preciseTop = point.Y + item.Offset.Y;
                 double preciseLeft = point.X + item.Offset.X;
+
+                Debug.WriteLine($"MouseMoveDown Action: left={preciseLeft:F0} top={preciseTop:F0}");
 
                 item.UIT.SetValue(Canvas.TopProperty, preciseTop);
                 item.UIT.SetValue(Canvas.LeftProperty, preciseLeft);
@@ -257,10 +259,10 @@ public partial class HandUserControl: UserControl
     {
         if (pmm != null)
         {
-            var newPosition = e.GetPosition(HandCanvas);
+            var newRowCol = e.GetPosition(HandCanvas);
             Matrix m = TransformationMatrix.Matrix;
             m.Invert();     // By construction, all applied transformations are reversible, so m is invertible
-            pmm(m.Transform(newPosition));
+            pmm(m.Transform(newRowCol));
         }
 
         // For hand, we don't move grid
@@ -278,12 +280,12 @@ public partial class HandUserControl: UserControl
 
             // Find a free position
             // Build NewHand without tiles being moved
-            var NewHand = new List<UITilePosition>();
-            foreach (UITilePosition uitp in Hand)
+            var NewHand = new List<UITileRowCol>();
+            foreach (UITileRowCol uitp in Hand)
                 if (!Selection.ContainsUITile(uitp.UIT))
                     NewHand.Add(uitp);
 
-            foreach (UITilePosition uitp in Selection)
+            foreach (UITileRowCol uitp in Selection)
             {
                 double left = (double)uitp.UIT.GetValue(Canvas.LeftProperty);
                 double top = (double)uitp.UIT.GetValue(Canvas.TopProperty);
@@ -291,7 +293,7 @@ public partial class HandUserControl: UserControl
                 Debug.WriteLine($"pos left={left} top={top}");
 
                 // Build list of distances to empty positions on hand
-                var ld = new List<(Position, double)>();
+                var ld = new List<(RowCol, double)>();
                 int zz = 0;
                 for (int r = 0; r < HandRows; r++)
                     for (int c = 0; c < HandColumns; c++)
@@ -304,14 +306,14 @@ public partial class HandUserControl: UserControl
 
                             Debug.WriteLine($"ld[{zz++}] tleft={targetLeft} ttop={targetTop}  dist²={dist}");
 
-                            ld.Add((new Position(r, c), dist));
+                            ld.Add((new RowCol(r, c), dist));
                         }
                 var xxmin = ld.MinBy(tup => tup.Item2);
                 Debug.WriteLine($"min: {xxmin}");
 
-                var closestPosition = ld.MinBy(tup => tup.Item2).Item1;
-                uitp.P = closestPosition;
-                uitp.Offset = new Vector(closestPosition.Col * UnitSize, closestPosition.Row * UnitSize);
+                var closestRowCol = ld.MinBy(tup => tup.Item2).Item1;
+                uitp.P = closestRowCol;
+                uitp.Offset = new Vector(closestRowCol.Col * UnitSize, closestRowCol.Row * UnitSize);
 
                 // Now the position is taken, not free for the rest of selection
                 NewHand.Add(uitp);
@@ -319,7 +321,7 @@ public partial class HandUserControl: UserControl
 
             // For now, direct move for testing
             // ToDo: Replace by animation using storyboard    Actually not sure it's needed for Hand, looks Ok without animation
-            foreach (UITilePosition uitp in Selection)
+            foreach (UITileRowCol uitp in Selection)
             {
                 uitp.UIT.SetValue(Canvas.TopProperty, uitp.Offset.Y);
                 uitp.UIT.SetValue(Canvas.LeftProperty, uitp.Offset.X);
@@ -333,7 +335,7 @@ public partial class HandUserControl: UserControl
 
     private void HandCanvas_MouseWheel(object sender, MouseWheelEventArgs e)
     {
-        // ToDo: This is not used for Hand
+        // This is not used for Hand
         Debug.WriteLine("HandCanvas_MouseWheel");
     }
 

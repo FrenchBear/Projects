@@ -15,7 +15,7 @@ internal class Model(MainViewModel viewModel)
 
     internal void NewBoard() => Board = new Board();
 
-    public BoundingRectangle Bounds() => new(new Position(Board.RowMin, Board.ColMin), new Position(Board.RowMax, Board.ColMax));
+    public BoundingRectangle Bounds() => new(new RowCol(Board.RowMin, Board.ColMin), new RowCol(Board.RowMax, Board.ColMax));
 
     // For dev, initialize a simple set of tiles
     internal void InitializeBoard()

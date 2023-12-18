@@ -173,7 +173,7 @@ public partial class MainWindow: Window
     // --------------------------------------------------------------------
     // Mouse click and drag management
 
-    private Point previousMousePosition;
+    private Point previousMouseRowCol;
 
     // null indicates background grid move, or delegate must be executed by MouseMove to perform move
     // action, P is current mouse coordinates in non-transformed user space
@@ -199,7 +199,7 @@ public partial class MainWindow: Window
 
         MainGrid.MouseMove -= MainGrid_MouseMoveWhenUp;
         MainGrid.MouseMove += MainGrid_MouseMoveWhenDown;
-        previousMousePosition = e.GetPosition(MainGrid);
+        previousMouseRowCol = e.GetPosition(MainGrid);
 
         Selection.uitile = GetHitHile(e, DrawingCanvas);
 
@@ -208,7 +208,7 @@ public partial class MainWindow: Window
         else
             pmm = null;
 
-        // Be sure to call GetPosition before Capture, otherwise GetPosition returns 0 after Capture
+        // Be sure to call GetRowCol before Capture, otherwise GetRowCol returns 0 after Capture
         // Capture to get MouseUp event raised by grid
         Mouse.Capture(MainGrid);
     }
@@ -225,7 +225,7 @@ public partial class MainWindow: Window
         double startLeft = (double)Selection.uitile.GetValue(Canvas.LeftProperty);
         double startTop = (double)Selection.uitile.GetValue(Canvas.TopProperty);
         var p = new Point(startLeft, startTop);
-        clickOffset = p - m.Transform(previousMousePosition);
+        clickOffset = p - m.Transform(previousMouseRowCol);
 
         Selection.startRow = (int)Math.Floor(startTop / UnitSize + 0.5);
         Selection.startCol = (int)Math.Floor(startLeft / UnitSize + 0.5);
@@ -270,14 +270,14 @@ public partial class MainWindow: Window
 
     private void MainGrid_MouseMoveWhenDown(object sender, MouseEventArgs e)
     {
-        var newPosition = e.GetPosition(MainGrid);
+        var newRowCol = e.GetPosition(MainGrid);
         Matrix m = TransformationMatrix.Matrix;
 
         if (pmm == null)
         {
             // move drawing surface
-            var delta = newPosition - previousMousePosition;
-            previousMousePosition = newPosition;
+            var delta = newRowCol - previousMouseRowCol;
+            previousMouseRowCol = newRowCol;
             m.Translate(delta.X, delta.Y);
             TransformationMatrix.Matrix = m;
             UpdateBackgroundGrid();
@@ -286,7 +286,7 @@ public partial class MainWindow: Window
         {
             // Move selected word using generated lambda and capture on click down
             m.Invert();     // By construction, all applied transformations are reversible, so m is invertible
-            pmm(m.Transform(newPosition));
+            pmm(m.Transform(newRowCol));
         }
     }
 
@@ -396,20 +396,20 @@ public partial class MainWindow: Window
 
     private void MainGrid_MouseWheel(object sender, MouseWheelEventArgs e)
     {
-        var newPosition = e.GetPosition(MainGrid);
+        var newRowCol = e.GetPosition(MainGrid);
         var m = TransformationMatrix.Matrix;
 
         // Ctrl+MouseWheel for rotation
         if (Keyboard.IsKeyDown(Key.LeftCtrl))
         {
             double angle = e.Delta / 16.0;
-            m.RotateAt(angle, newPosition.X, newPosition.Y);
+            m.RotateAt(angle, newRowCol.X, newRowCol.Y);
         }
         else
         {
             var sign = -Math.Sign(e.Delta);
             var scale = 1 - sign / 10.0;
-            m.ScaleAt(scale, scale, newPosition.X, newPosition.Y);
+            m.ScaleAt(scale, scale, newRowCol.X, newRowCol.Y);
         }
         TransformationMatrix.Matrix = m;
 
@@ -474,7 +474,7 @@ public partial class MainWindow: Window
         }
     }
 
-    internal void AddUITile(Position position, string shapeColor, int instance)
+    internal void AddUITile(RowCol position, string shapeColor, int instance)
     {
         var t = new UITile(shapeColor, instance);
         t.SetValue(Canvas.TopProperty, position.Row * UnitSize);
@@ -487,7 +487,7 @@ public partial class MainWindow: Window
         //Debug.Assert(t.Col == position.Column);
     }
 
-    internal void AddCircle(Position position)
+    internal void AddCircle(RowCol position)
     {
         var e = new Ellipse();
         e.Width = 2 * UnitSize;

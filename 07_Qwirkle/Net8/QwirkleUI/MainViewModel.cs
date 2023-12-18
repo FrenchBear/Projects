@@ -109,7 +109,7 @@ internal class MainViewModel: INotifyPropertyChanged
         //switch (action.Action)
         //{
         //    case UndoStackClass.UndoActions.Move:
-        //        UpdateWordPositionLocation(action.WordAndCanvasList, action.PositionOrientationList, false);   // Coordinates in wordPositionList are updated
+        //        UpdateWordRowColLocation(action.WordAndCanvasList, action.RowColOrientationList, false);   // Coordinates in wordRowColList are updated
         //        view.MoveWordAndCanvasList(action.WordAndCanvasList);
         //        break;
 
@@ -122,7 +122,7 @@ internal class MainViewModel: INotifyPropertyChanged
         //        break;
 
         //    case UndoStackClass.UndoActions.SwapOrientation:
-        //        UpdateWordPositionLocation(action.WordAndCanvasList, action.PositionOrientationList, false);   // Coordinates in wordPositionList are updated
+        //        UpdateWordRowColLocation(action.WordAndCanvasList, action.RowColOrientationList, false);   // Coordinates in wordRowColList are updated
         //        view.SwapOrientation(action.WordAndCanvasList, false);
         //        break;
 
@@ -150,9 +150,9 @@ internal class MainViewModel: INotifyPropertyChanged
     internal void DrawAllTiles()
     {
         // ToDo: Should I ensure that DrawinfCanvas is empty here, or is it a view responsibility?
-        view.AddCircle(new Position(50, 50));
+        view.AddCircle(new RowCol(50, 50));
         foreach (Move m in model.Board)
-            view.AddUITile(new Position(m.Row, m.Col), m.Tile.Shape.ToString() + m.Tile.Color.ToString(), m.Tile.Instance);
+            view.AddUITile(new RowCol(m.Row, m.Col), m.Tile.Shape.ToString() + m.Tile.Color.ToString(), m.Tile.Instance);
 
         // ToDo: Probably fill a structure maintainig connection between Move/Tile and UITile
     }
