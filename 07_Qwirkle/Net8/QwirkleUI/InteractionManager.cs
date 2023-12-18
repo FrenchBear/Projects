@@ -6,16 +6,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using static QwirkleUI.App;
 using static QwirkleUI.ViewHelpers;
-using LibQwirkle;
-using System.Reflection.Metadata;
 
 namespace QwirkleUI;
 
@@ -164,7 +160,6 @@ abstract internal class InteractionManager
         Debug.Assert(!Selection.IsEmpty);
 
         // Reverse-transform mouse Grid coordinates into DrawingCanvas coordinates
-        //Matrix m =  TransformationMatrix.Matrix;
         m.Invert();     // To convert from screen transformed coordinates into ideal grid
                         // coordinates starting at (0,0) with a square side of UnitSize
         var mp = m.Transform(previousMouseRowCol);
@@ -185,8 +180,6 @@ abstract internal class InteractionManager
             {
                 double preciseTop = point.Y + item.Offset.Y;
                 double preciseLeft = point.X + item.Offset.X;
-
-                Debug.WriteLine($"MouseMoveDown Action: left={preciseLeft:F0} top={preciseTop:F0}");
 
                 item.UIT.SetValue(Canvas.TopProperty, preciseTop);
                 item.UIT.SetValue(Canvas.LeftProperty, preciseLeft);
@@ -223,68 +216,13 @@ abstract internal class InteractionManager
         if (pmm != null)
         {
             pmm = null;
-
             UpdateTargetPosition(Selection);
-
-            /*
-            // Find a free position
-            // Build NewHand without tiles being moved
-            var NewHand = new List<UITileRowCol>();
-            foreach (UITileRowCol uitp in Hand)
-                if (!Selection.ContainsUITile(uitp.UIT))
-                    NewHand.Add(uitp);
-
-            foreach (UITileRowCol uitp in Selection)
-            {
-                double left = (double)uitp.UIT.GetValue(Canvas.LeftProperty);
-                double top = (double)uitp.UIT.GetValue(Canvas.TopProperty);
-
-                Debug.WriteLine($"pos left={left} top={top}");
-
-                // Build list of distances to empty positions on hand
-                var ld = new List<(RowCol, double)>();
-                int zz = 0;
-                for (int r = 0; r < HandRows; r++)
-                    for (int c = 0; c < HandColumns; c++)
-                        if (!NewHand.Any(uitp => uitp.RC.Row == r && uitp.RC.Col == c))
-                        {
-                            double targetLeft = c * UnitSize;
-                            double targetTop = r * UnitSize;
-                            // Actually dist squared, but that's enough to find the minimum
-                            double dist = (targetLeft - left) * (targetLeft - left) + (targetTop - top) * (targetTop - top);
-
-                            Debug.WriteLine($"ld[{zz++}] tleft={targetLeft} ttop={targetTop}  dist²={dist}");
-
-                            ld.Add((new RowCol(r, c), dist));
-                        }
-                var xxmin = ld.MinBy(tup => tup.Item2);
-                Debug.WriteLine($"min: {xxmin}");
-
-                var closestRowCol = ld.MinBy(tup => tup.Item2).Item1;
-                uitp.RC = closestRowCol;
-                uitp.Offset = new Vector(closestRowCol.Col * UnitSize, closestRowCol.Row * UnitSize);
-
-                // Now the position is taken, not free for the rest of selection
-                NewHand.Add(uitp);
-            }
-
-            // For now, direct move for testing
-            // ToDo: Replace by animation using storyboard    Actually not sure it's needed for Hand, looks Ok without animation
-            foreach (UITileRowCol uitp in Selection)
-            {
-                uitp.UIT.SetValue(Canvas.TopProperty, uitp.Offset.Y);
-                uitp.UIT.SetValue(Canvas.LeftProperty, uitp.Offset.X);
-                var h = Hand.Find(u => u.UIT == uitp.UIT);
-                Debug.Assert(h != null);
-                h.RC = uitp.RC;
-            }
-            */
         }
     }
 
     public void IM_MouseWheel(object sender, MouseWheelEventArgs e) =>
         // This is not used for Hand
-        Debug.WriteLine("HandCanvas_MouseWheel");
+        Debug.WriteLine("IM_MouseWheel ToDo");
 
     public void IM_MouseRightButtonDown(object sender, MouseButtonEventArgs e, Canvas c, Canvas dc)
     {

@@ -1,15 +1,9 @@
 ﻿// VisuelHelpers
-// Helpers for vews/windows
+// Helpers for views/windows
 //
 // 2023-12-13   PV
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows;
 

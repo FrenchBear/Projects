@@ -3,12 +3,10 @@
 //
 // 2023-12-11   PV
 
-using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using static QwirkleUI.App;
 
 namespace QwirkleUI;
 
