@@ -1,6 +1,12 @@
-﻿namespace QwirkleUI;
+﻿using System.Diagnostics;
 
-public record Position(int Row, int Col);
+namespace QwirkleUI;
+
+[DebuggerDisplay("Position: r={Row} c={Col}")]
+public record Position(int Row, int Col)
+{
+    public override string ToString() => $"Position: r={Row} c={Col}";
+}
 
 public record BoundingRectangle(Position Min, Position Max)
 {

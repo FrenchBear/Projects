@@ -12,6 +12,7 @@ using static QwirkleUI.App;
 
 namespace QwirkleUI;
 
+[DebuggerDisplay("UITile: SC={ShapeColor} I={Instance} GB={GrayBackground} SB={SelectionBorder} Hatched={Hatched}")]
 public partial class UITile: UserControl
 {
     public UITile(string ShapeColor, int Instance)
@@ -83,4 +84,6 @@ public partial class UITile: UserControl
         get => _Instance;
         init => _Instance = value;
     }
+
+    public override string ToString() => $"UITile: SC={ShapeColor} I={Instance} GB={GrayBackground} SB={SelectionBorder} Hatched={Hatched}";
 }

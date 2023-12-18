@@ -16,17 +16,21 @@ using System.Diagnostics;
 using static QwirkleUI.App;
 using static QwirkleUI.ViewHelpers;
 using System.Collections;
+using Accessibility;
 
 namespace QwirkleUI;
 
 // record: reference object like a class, but with comparing and hashing like a struct
+[DebuggerDisplay("UITilePosition: {UIT} {P}")]
 internal record UITilePosition(UITile UIT, Position P)
 {
     internal UITile UIT { get; private set; } = UIT;
-    internal Position P { get; private set; } = P;
+    internal Position P { get; set; } = P;      // set accessot because P is mutable
 
     // Used when dragging (offset from mouse click down position) or animating (target position)
     public Vector Offset { get; set; }
+
+    public override string ToString() => $"UITilePosition: UIT={UIT} Position={P}";
 }
 
 internal readonly struct HandSelection: IReadOnlyCollection<UITilePosition>
@@ -52,7 +56,7 @@ internal readonly struct HandSelection: IReadOnlyCollection<UITilePosition>
     public readonly int Count => _items.Count;
 
     internal readonly bool ContainsUITile(UITilePosition uitp)
-        => _items.Any(it => it.UIT== uitp.UIT);
+        => _items.Any(it => it.UIT == uitp.UIT);
 
     internal readonly void Add(UITilePosition hit)
     {
@@ -69,6 +73,9 @@ internal readonly struct HandSelection: IReadOnlyCollection<UITilePosition>
         _items.Remove(hit);
         hit.UIT.SelectionBorder = false;
     }
+
+    internal bool ContainsUITile(UITile uit)
+        => _items.Any(uitm => uitm.UIT == uit);
 }
 
 public partial class HandUserControl: UserControl
@@ -271,15 +278,56 @@ public partial class HandUserControl: UserControl
 
             // Find a free position
             // Build NewHand without tiles being moved
-            /*
             var NewHand = new List<UITilePosition>();
-            foreach (var h in Hand)
-                if (!HandSelection.Contains(h))
-                {
+            foreach (UITilePosition uitp in Hand)
+                if (!Selection.ContainsUITile(uitp.UIT))
+                    NewHand.Add(uitp);
 
-                }
-            // $$$
-            */
+            foreach (UITilePosition uitp in Selection)
+            {
+                double left = (double)uitp.UIT.GetValue(Canvas.LeftProperty);
+                double top = (double)uitp.UIT.GetValue(Canvas.TopProperty);
+
+                Debug.WriteLine($"pos left={left} top={top}");
+
+                // Build list of distances to empty positions on hand
+                var ld = new List<(Position, double)>();
+                int zz = 0;
+                for (int r = 0; r < HandRows; r++)
+                    for (int c = 0; c < HandColumns; c++)
+                        if (!NewHand.Any(uitp => uitp.P.Row==r && uitp.P.Col==c))
+                        {
+                            double targetLeft = c * UnitSize;
+                            double targetTop = r * UnitSize;
+                            // Actually dist squared, but that's enough to find the minimum
+                            double dist = (targetLeft - left) * (targetLeft - left) + (targetTop - top) * (targetTop - top);
+
+                            Debug.WriteLine($"ld[{zz++}] tleft={targetLeft} ttop={targetTop}  dist²={dist}");
+
+                            ld.Add((new Position(r, c), dist));
+                        }
+                var xxmin = ld.MinBy(tup => tup.Item2);
+                Debug.WriteLine($"min: {xxmin}");
+
+                var closestPosition = ld.MinBy(tup => tup.Item2).Item1;
+                uitp.P = closestPosition;
+                uitp.Offset = new Vector(closestPosition.Col * UnitSize, closestPosition.Row * UnitSize);
+
+                // Now the position is taken, not free for the rest of selection
+                NewHand.Add(uitp);
+            }
+
+            // For now, direct move for testing
+            // ToDo: Replace by animation using storyboard    Actually not sure it's needed for Hand, looks Ok without animation
+            foreach (UITilePosition uitp in Selection)
+            {
+                uitp.UIT.SetValue(Canvas.TopProperty, uitp.Offset.Y);
+                uitp.UIT.SetValue(Canvas.LeftProperty, uitp.Offset.X);
+                var h = Hand.Find(u => u.UIT == uitp.UIT);
+                Debug.Assert(h != null);
+                h.P = uitp.P;
+            }
+
         }
     }
 
