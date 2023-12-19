@@ -7,6 +7,9 @@ using LibQwirkle;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
+using System.Reflection.Metadata;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -26,20 +29,23 @@ internal struct MainGridSelection
 
 public partial class MainWindow: Window
 {
-    private readonly MainViewModel viewModel;
+    private readonly MainViewModel ViewModel;
     private MainGridSelection Selection = new();
     private readonly List<UITile> m_UITilesList = [];
     private readonly HandViewModel[] HandViewModels = [];
+    internal InteractionManager BoardIM;
 
     public MainWindow()
     {
         InitializeComponent();
-        viewModel = new MainViewModel(this);
-        DataContext = viewModel;
+        ViewModel = new MainViewModel(this);
+        DataContext = ViewModel;
 
         // Just 1 player for now
         HandViewModels = new HandViewModel[1];
-        HandViewModels[0] = new HandViewModel(Player1HandUserControl, viewModel.GetModel, 0);
+        HandViewModels[0] = new HandViewModel(Player1HandUserControl, ViewModel.GetModel, 0);
+
+        BoardIM = new BoardInteractionManager(this, ViewModel);
 
         // Can only reference ActualWidth after Window is loaded
         Loaded += MainWindow_Loaded;
@@ -48,57 +54,45 @@ public partial class MainWindow: Window
 
     public void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
-        viewModel.InitializeBoard();
+        ViewModel.InitializeBoard();
         DrawBoard();
         RescaleAndCenter(false);
 
         foreach (var hvm in HandViewModels)
             hvm.DrawHand();
 
-        viewModel.StatusText = "Done.";
+        ViewModel.StatusText = "Done.";
     }
 
     private void MainWindow_KeyDown(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Escape)
         {
-            EndAnimationsInProgress();
-
-            // Move in progress?
-            if (pmm != null)
-            {
-                MainGrid.MouseMove -= MainGrid_MouseMoveWhenDown;
-                MainGrid.MouseMove += MainGrid_MouseMoveWhenUp;
-                pmm = null;
-                Mouse.Capture(null);
-                return;
-            }
+            BoardIM.EndAnimationsInProgress();
+            BoardIM.EndMoveInProgress();
+            MainGrid.MouseMove -= MainGrid_MouseMoveWhenDown;
+            MainGrid.MouseMove += MainGrid_MouseMoveWhenUp;
         }
-        //else if (e.Key == Key.A && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
-        //{
-        //    // Select all
-        //    m_Sel.Add(m_WordAndCanvasList);
-        //}
     }
 
     // Clears the grid
     internal void ClearGrid()
     {
         // Clear previous elements layout
-        DrawingCanvas.Children.Clear();
+        BoardDrawingCanvas.Children.Clear();
         ClearBackgroundGrid();
-        viewModel.StatusText = "Clear.";
+        ViewModel.StatusText = "Clear.";
         m_UITilesList.Clear();
         Selection.uitile = null;
     }
 
     internal void DrawBoard()
     {
-        // ToDo: Make sure that DrawingCanvas.Children is empty
-        Debug.Assert(DrawingCanvas.Children.Count == 0);
+        // ToDo: Make sure that BoardDrawingCanvas.Children is empty
+        Debug.Assert(BoardDrawingCanvas.Children.Count == 0);
 
         UpdateBackgroundGrid();
-        viewModel.DrawAllTiles();
+        ViewModel.DrawAllTiles();
     }
 
     // Adjust scale and origin to see the whole puzzle
@@ -121,8 +115,8 @@ public partial class MainWindow: Window
         // First adjust scale
         Point p1Screen = rescaleMatrix.Transform(p1Grid);
         Point p2Screen = rescaleMatrix.Transform(p2Grid);
-        double rescaleFactorX = ClippingCanvas.ActualWidth / (p2Screen.X - p1Screen.X);
-        double rescaleFactorY = ClippingCanvas.ActualHeight / (p2Screen.Y - p1Screen.Y);
+        double rescaleFactorX = BoardCanvas.ActualWidth / (p2Screen.X - p1Screen.X);
+        double rescaleFactorY = BoardCanvas.ActualHeight / (p2Screen.Y - p1Screen.Y);
         double rescaleFactor = Math.Min(rescaleFactorX, rescaleFactorY);
         rescaleMatrix.Scale(rescaleFactor, rescaleFactor);
 
@@ -130,9 +124,9 @@ public partial class MainWindow: Window
         p1Screen = rescaleMatrix.Transform(p1Grid);
         p2Screen = rescaleMatrix.Transform(p2Grid);
         double offX1 = -p1Screen.X;
-        double offX2 = ClippingCanvas.ActualWidth - p2Screen.X;
+        double offX2 = BoardCanvas.ActualWidth - p2Screen.X;
         double offY1 = -p1Screen.Y;
-        double offY2 = ClippingCanvas.ActualHeight - p2Screen.Y;
+        double offY2 = BoardCanvas.ActualHeight - p2Screen.Y;
         rescaleMatrix.Translate((offX1 + offX2) / 2, (offY1 + offY2) / 2);
 
         if (isWithAnimation)
@@ -152,7 +146,7 @@ public partial class MainWindow: Window
             EndMatrixAnimation();
     }
 
-    private bool IsMatrixAnimationInProgress;
+    internal bool IsMatrixAnimationInProgress;
     private Matrix rescaleMatrix;
 
     // Event handler when MatrixAnimation is completed, need to "free" animated properties otherwise
@@ -160,7 +154,7 @@ public partial class MainWindow: Window
     private void MatrixAnimationCompleted(object? sender, EventArgs e) => EndMatrixAnimation();
 
     // Terminate transformation in a clean way, "freeing" animated properties
-    private void EndMatrixAnimation()
+    internal void EndMatrixAnimation()
     {
         IsMatrixAnimationInProgress = false;
         TransformationMatrix.BeginAnimation(MatrixTransform.MatrixProperty, null);
@@ -172,35 +166,31 @@ public partial class MainWindow: Window
     // --------------------------------------------------------------------
     // Mouse click and drag management
 
-    private Point previousMouseRowCol;
+    //private Point previousMouseRowCol;
 
     // null indicates background grid move, or delegate must be executed by MouseMove to perform move
     // action, P is current mouse coordinates in non-transformed user space
-    private Action<Point>? pmm;
+    //private Action<Point>? pmm;
 
+    // Maybe provide word hovering visual feed-back? Or a tooltip with debug info?
     private void MainGrid_MouseMoveWhenUp(object sender, MouseEventArgs e)
-    {
-        // Maybe provide word hovering visual feed-back? Or a tooltip with debug info?
-    }
+        => BoardIM.IM_MouseMoveWhenUp(sender, e);
 
-    // Terminate immediately animations in progress, set final values
-    internal void EndAnimationsInProgress()
-    {
-        if (IsMatrixAnimationInProgress)
-            EndMatrixAnimation();
-        if (IsMoveUITileAnimationInProgress)
-            EndMoveUITileAnimation();
-    }
 
     private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
     {
+        MainGrid.MouseMove -= MainGrid_MouseMoveWhenUp;
+        MainGrid.MouseMove += MainGrid_MouseMoveWhenDown;
+        BoardIM.IM_MouseDown(sender, e, BoardCanvas, BoardDrawingCanvas, TransformationMatrix.Matrix);
+
+        /*
         EndAnimationsInProgress();
 
         MainGrid.MouseMove -= MainGrid_MouseMoveWhenUp;
         MainGrid.MouseMove += MainGrid_MouseMoveWhenDown;
         previousMouseRowCol = e.GetPosition(MainGrid);
 
-        Selection.uitile = GetHitHile(e.GetPosition(DrawingCanvas), DrawingCanvas);
+        Selection.uitile = GetHitHile(e.GetPosition(BoardDrawingCanvas), BoardDrawingCanvas);
 
         if (Selection.uitile != null)
             pmm = GetMouseDownMoveAction();
@@ -210,13 +200,15 @@ public partial class MainWindow: Window
         // Be sure to call GetRowCol before Capture, otherwise GetRowCol returns 0 after Capture
         // Capture to get MouseUp event raised by grid
         Mouse.Capture(MainGrid);
+        */
     }
 
+    /*
     // Separate from MainGrid_MouseDown to reduce complexity
     private Action<Point> GetMouseDownMoveAction()
     {
         Debug.Assert(Selection.uitile != null);
-        // Reverse-transform mouse Grid coordinates into DrawingCanvas coordinates
+        // Reverse-transform mouse Grid coordinates into BoardDrawingCanvas coordinates
         Matrix m = TransformationMatrix.Matrix;
         m.Invert();     // To convert from screen transformed coordinates into ideal grid
                         // coordinates starting at (0,0) with a square side of UnitSize
@@ -229,9 +221,9 @@ public partial class MainWindow: Window
         Selection.startRow = (int)Math.Floor(startTop / UnitSize + 0.5);
         Selection.startCol = (int)Math.Floor(startLeft / UnitSize + 0.5);
 
-        // Move as last child of DrawingCanvas so it's drawn on top
-        DrawingCanvas.Children.Remove(Selection.uitile);
-        DrawingCanvas.Children.Add(Selection.uitile);
+        // Move as last child of BoardDrawingCanvas so it's drawn on top
+        BoardDrawingCanvas.Children.Remove(Selection.uitile);
+        BoardDrawingCanvas.Children.Add(Selection.uitile);
 
         // When moving, point is current mouse in ideal grid coordinates
         return point =>
@@ -247,27 +239,19 @@ public partial class MainWindow: Window
             int row = (int)Math.Floor(preciseTop / UnitSize + 0.5);
             int col = (int)Math.Floor(preciseLeft / UnitSize + 0.5);
 
-            Selection.uitile.Hatched = !(viewModel.GetCellState(row, col) != CellState.Tiled || (row == Selection.startRow && col == Selection.startCol));
+            Selection.uitile.Hatched = !(ViewModel.GetCellState(row, col) != CellState.Tiled || (row == Selection.startRow && col == Selection.startCol));
         };
     }
+    */
 
     // Relay from Window_MouseDown handler when it's actually a right click
     private void MainGrid_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
-    {
-        Selection.uitile = GetHitHile(e.GetPosition(DrawingCanvas), DrawingCanvas);
-
-        ContextMenu? cm;
-        if (Selection.uitile != null)
-            cm = FindResource("TileCanvasMenu") as ContextMenu;
-        else
-            cm = FindResource("BackgroundCanvasMenu") as ContextMenu;
-        Debug.Assert(cm != null);
-        cm.PlacementTarget = sender as UIElement;
-        cm.IsOpen = true;
-        e.Handled = true;
-    }
+        => BoardIM.IM_MouseRightButtonDown(sender, e, BoardCanvas, BoardDrawingCanvas);
 
     private void MainGrid_MouseMoveWhenDown(object sender, MouseEventArgs e)
+        => BoardIM.IM_MouseMoveWhenDown(sender, e, BoardCanvas, TransformationMatrix.Matrix);
+
+    /*
     {
         var newRowCol = e.GetPosition(MainGrid);
         Matrix m = TransformationMatrix.Matrix;
@@ -288,6 +272,7 @@ public partial class MainWindow: Window
             pmm(m.Transform(newRowCol));
         }
     }
+    */
 
     private void MainGrid_MouseUp(object sender, MouseButtonEventArgs e)
     {
@@ -305,7 +290,7 @@ public partial class MainWindow: Window
             int row = (int)Math.Floor((double)Selection.uitile.GetValue(Canvas.TopProperty) / UnitSize + 0.5);
             int col = (int)Math.Floor((double)Selection.uitile.GetValue(Canvas.LeftProperty) / UnitSize + 0.5);
 
-            if (viewModel.GetCellState(row, col) == CellState.Tiled)
+            if (ViewModel.GetCellState(row, col) == CellState.Tiled)
             {
                 row = Selection.startRow;
                 col = Selection.startCol;
@@ -379,11 +364,11 @@ public partial class MainWindow: Window
 
     private void Sb_Completed(object? sender, EventArgs e) => EndMoveUITileAnimation();
 
-    private bool IsMoveUITileAnimationInProgress;
+    internal bool IsMoveUITileAnimationInProgress;
     private readonly List<(UITile, DependencyProperty, double)> finalMoveUITileAnimationData = [];
 
     // Stops animation and set the final value
-    private void EndMoveUITileAnimation()
+    internal void EndMoveUITileAnimation()
     {
         IsMoveUITileAnimationInProgress = false;
         foreach (var item in finalMoveUITileAnimationData)
@@ -428,7 +413,7 @@ public partial class MainWindow: Window
     // Add some extra margin and always represent a 10x10 grid at minimum
     private BoundingRectangle BoundingRectangleWithMargins()
     {
-        var boardBounds = viewModel.Bounds;
+        var boardBounds = ViewModel.Bounds;
         return new (boardBounds.Min.Row - 5,
                     boardBounds.Max.Row + 5,
                     boardBounds.Min.Col - 5,
@@ -480,7 +465,7 @@ public partial class MainWindow: Window
         t.SetValue(Canvas.LeftProperty, position.Col * UnitSize);
         t.Width = UnitSize;
         t.Height = UnitSize;
-        DrawingCanvas.Children.Add(t);
+        BoardDrawingCanvas.Children.Add(t);
 
         //Debug.Assert(t.Row == position.Row);
         //Debug.Assert(t.Col == position.Column);
@@ -496,6 +481,130 @@ public partial class MainWindow: Window
         //e.Fill = Brushes.SkyBlue;
         e.SetValue(Canvas.TopProperty, (position.Row-0.5) * UnitSize);
         e.SetValue(Canvas.LeftProperty, (position.Col-0.5) * UnitSize);
-        DrawingCanvas.Children.Add(e);
+        BoardDrawingCanvas.Children.Add(e);
     }
+}
+
+internal class BoardInteractionManager: InteractionManager
+{
+    private readonly MainWindow View;
+    private readonly MainViewModel ViewModel;
+
+    public BoardInteractionManager(MainWindow view, MainViewModel viewModel)
+    {
+        View = view;
+        ViewModel = viewModel;
+    }
+
+    // Terminate immediately animations in progress, set final values
+    public override void EndAnimationsInProgress()
+    {
+        if (View.IsMatrixAnimationInProgress)
+            View.EndMatrixAnimation();
+        if (View.IsMoveUITileAnimationInProgress)
+            View.EndMoveUITileAnimation();
+    }
+
+
+    internal override void UpdateTargetPosition(UITilesSelection selection)
+    {
+        /*
+        // Find a free position
+        // Build NewHand without tiles being moved
+        var NewHand = new List<UITileRowCol>();
+        foreach (UITileRowCol uitp in Hand)
+            if (!Selection.ContainsUITile(uitp.UIT))
+                NewHand.Add(uitp);
+
+        foreach (UITileRowCol uitp in Selection)
+        {
+            double left = (double)uitp.UIT.GetValue(Canvas.LeftProperty);
+            double top = (double)uitp.UIT.GetValue(Canvas.TopProperty);
+
+            // Build list of distances to empty positions on hand
+            var ld = new List<(RowCol, double)>();
+            for (int r = 0; r < HandRows; r++)
+                for (int c = 0; c < HandColumns; c++)
+                    if (!NewHand.Any(uitp => uitp.RC.Row == r && uitp.RC.Col == c))
+                    {
+                        double targetLeft = c * UnitSize;
+                        double targetTop = r * UnitSize;
+                        // Actually dist squared, but that's enough to find the minimum
+                        double dist = (targetLeft - left) * (targetLeft - left) + (targetTop - top) * (targetTop - top);
+
+                        ld.Add((new RowCol(r, c), dist));
+                    }
+            var closestRowCol = ld.MinBy(tup => tup.Item2).Item1;
+            uitp.RC = closestRowCol;
+            uitp.Offset = new Vector(closestRowCol.Col * UnitSize, closestRowCol.Row * UnitSize);
+
+            // Now the position is taken, not free for the rest of selection
+            NewHand.Add(uitp);
+        }
+        */
+
+        /*
+        // For now, direct move for testing
+        // ToDo: Replace by animation using storyboard    Actually not sure it's needed for Hand, looks Ok without animation
+        foreach (UITileRowCol uitp in Selection)
+        {
+            uitp.UIT.SetValue(Canvas.TopProperty, uitp.Offset.Y);
+            uitp.UIT.SetValue(Canvas.LeftProperty, uitp.Offset.X);
+            var h = Hand.Find(u => u.UIT == uitp.UIT);
+            Debug.Assert(h != null);
+            h.RC = uitp.RC;
+        }
+        */
+    }
+
+    public override void OnMouseRightButtonDown(object sender, UITilesSelection selection, bool tileHit)
+    {
+        ContextMenu? cm;
+        if (tileHit)
+            cm = View.FindResource("TileCanvasMenu") as ContextMenu;
+        else
+            cm = View.FindResource("BackgroundCanvasMenu") as ContextMenu;
+        Debug.Assert(cm != null);
+        cm.PlacementTarget = sender as UIElement;
+        cm.IsOpen = true;
+    }
+
+    internal override void IM_MouseMoveWhenDown(object sender, MouseEventArgs e, Canvas c, Matrix m)
+    {
+        base.IM_MouseMoveWhenDown (sender, e, c, m);
+
+        if (pmm == null)
+        {
+            // move drawing surface
+            var delta = newRowCol - previousMouseRowCol;
+            previousMouseRowCol = newRowCol;
+            m.Translate(delta.X, delta.Y);
+            TransformationMatrix.Matrix = m;
+            UpdateBackgroundGrid();
+        }
+
+
+/*
+        var newRowCol = e.GetPosition(MainGrid);
+        Matrix m = TransformationMatrix.Matrix;
+
+        if (pmm == null)
+        {
+            // move drawing surface
+            var delta = newRowCol - previousMouseRowCol;
+            previousMouseRowCol = newRowCol;
+            m.Translate(delta.X, delta.Y);
+            TransformationMatrix.Matrix = m;
+            UpdateBackgroundGrid();
+        }
+        else
+        {
+            // Move selected word using generated lambda and capture on click down
+            m.Invert();     // By construction, all applied transformations are reversible, so m is invertible
+            pmm(m.Transform(newRowCol));
+        }
+*/
+
+    }
+
 }

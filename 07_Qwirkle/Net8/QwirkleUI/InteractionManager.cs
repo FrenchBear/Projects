@@ -76,8 +76,8 @@ internal readonly struct UITilesSelection: IReadOnlyCollection<UITileRowCol>
 abstract internal class InteractionManager
 {
     protected readonly UITilesSelection Selection = [];
+    protected Action<Point>? pmm;
     private Point previousMouseRowCol;
-    private Action<Point>? pmm;
 
     public InteractionManager() { }
 
@@ -130,12 +130,19 @@ abstract internal class InteractionManager
         return true;
     }
 
-    internal void EndAnimationsInProgress()
+    public virtual void EndAnimationsInProgress()
     {
-        //if (IsMoveWordAnimationInProgress)
-        //    EndMoveWordAnimation();
-        //if (IsMatrixAnimationInProgress)
-        //    EndMatrixAnimation();
+    }
+
+    internal void EndMoveInProgress()
+    {
+        // Move in progress?
+        if (pmm != null)
+        {
+            pmm = null;
+            Mouse.Capture(null);
+            return;
+        }
     }
 
     public void IM_MouseDown(object sender, MouseEventArgs e, Canvas c, Canvas dc, Matrix m)
@@ -159,7 +166,7 @@ abstract internal class InteractionManager
     {
         Debug.Assert(!Selection.IsEmpty);
 
-        // Reverse-transform mouse Grid coordinates into DrawingCanvas coordinates
+        // Reverse-transform mouse Grid coordinates into BoardDrawingCanvas coordinates
         m.Invert();     // To convert from screen transformed coordinates into ideal grid
                         // coordinates starting at (0,0) with a square side of UnitSize
         var mp = m.Transform(previousMouseRowCol);
@@ -194,7 +201,7 @@ abstract internal class InteractionManager
         };
     }
 
-    internal void IM_MouseMoveWhenDown(object sender, MouseEventArgs e, Canvas c, Matrix m)
+    internal virtual void IM_MouseMoveWhenDown(object sender, MouseEventArgs e, Canvas c, Matrix m)
     {
         if (pmm != null)
         {
@@ -203,8 +210,6 @@ abstract internal class InteractionManager
             m.Invert();     // By construction, all applied transformations are reversible, so m is invertible
             pmm(m.Transform(newRowCol));
         }
-
-        // For hand, we don't move grid
     }
 
     abstract internal void UpdateTargetPosition(UITilesSelection selection);
@@ -229,9 +234,10 @@ abstract internal class InteractionManager
         EndAnimationsInProgress();
         bool tileHit = UpdateSelectionAfterClick(e, c, dc);
 
-        // ToDo, show context menu, maybe different whether there is tile selection or not
-        // Call a virtual method
-        Debug.WriteLine($"IM_MouseRightButtonDown, tileHit: {tileHit}, Selection.IsEmpty: {Selection.IsEmpty}");
+        OnMouseRightButtonDown(sender, Selection, tileHit);
+        e.Handled = true;
     }
 
+    public virtual void OnMouseRightButtonDown(object sender, UITilesSelection selection, bool tileHit)
+    { }
 }

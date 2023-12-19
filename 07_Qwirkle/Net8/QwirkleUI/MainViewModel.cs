@@ -15,11 +15,11 @@ namespace QwirkleUI;
 internal class MainViewModel: INotifyPropertyChanged
 {
     // Model and View
-    private readonly Model model;
-    private readonly MainWindow view;
+    private readonly Model Model;
+    private readonly MainWindow View;
 
     // Helper to initialize HandViewModel, since model is common to all ViewModels
-    public Model GetModel => model;
+    public Model GetModel => Model;
 
     // Implementation of INotifyPropertyChanged, standard since View is only linked through DataBinding
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -46,8 +46,8 @@ internal class MainViewModel: INotifyPropertyChanged
     public MainViewModel(MainWindow view)
     {
         // Initialize ViewModel
-        this.view = view;
-        model = new Model(this);
+        this.View = view;
+        Model = new Model(this);
 
         // Binding commands with behavior
 
@@ -69,7 +69,7 @@ internal class MainViewModel: INotifyPropertyChanged
     // -------------------------------------------------
     // Simple relays to model
 
-    public BoundingRectangle Bounds => model.Bounds();
+    public BoundingRectangle Bounds => Model.Bounds();
 
     // -------------------------------------------------
     // Selection helpers
@@ -143,31 +143,31 @@ internal class MainViewModel: INotifyPropertyChanged
     // -------------------------------------------------
     // View helpers
 
-    internal void InitializeBoard() => model.InitializeBoard();
+    internal void InitializeBoard() => Model.InitializeBoard();
 
     internal void DrawAllTiles()
     {
         // ToDo: Should I ensure that DrawinfCanvas is empty here, or is it a view responsibility?
-        view.AddCircle(new RowCol(50, 50));
-        foreach (Move m in model.Board)
-            view.AddUITile(new RowCol(m.Row, m.Col), m.Tile.Shape.ToString() + m.Tile.Color.ToString(), m.Tile.Instance);
+        View.AddCircle(new RowCol(50, 50));
+        foreach (Move m in Model.Board)
+            View.AddUITile(new RowCol(m.Row, m.Col), m.Tile.Shape.ToString() + m.Tile.Color.ToString(), m.Tile.Instance);
 
         // ToDo: Probably fill a structure maintainig connection between Move/Tile and UITile
     }
 
     internal CellState GetCellState(int row, int col) 
-        => model.Board.GetCellState(row, col);
+        => Model.Board.GetCellState(row, col);
 
     // -------------------------------------------------
     // Commands
 
-    private void RecenterLayoutViewExecute(object obj) => view.RescaleAndCenter(true);        // Use animations
+    private void RecenterLayoutViewExecute(object obj) => View.RescaleAndCenter(true);        // Use animations
 
     private bool UndoCanExecute(object obj) => true;    // UndoStack.CanUndo;
 
     private void UndoExecute(object obj)
     {
-        view.EndAnimationsInProgress();
+        View.BoardIM.EndAnimationsInProgress();
         PerformUndo();
     }
 
@@ -175,14 +175,14 @@ internal class MainViewModel: INotifyPropertyChanged
 
     private void SuggestPlayExecute(object obj)
     {
-        view.EndAnimationsInProgress();
+        View.BoardIM.EndAnimationsInProgress();
         // Delegate work to view since we have no access to Sel here
         MessageBox.Show("SuggestPlayExecute: ToDo");
     }
 
     private void NewGameExecute(object obj)
     {
-        model.NewBoard();
+        Model.NewBoard();
         ClearLayout();
     }
 

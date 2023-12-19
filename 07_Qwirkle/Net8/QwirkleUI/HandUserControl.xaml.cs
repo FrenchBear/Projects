@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Diagnostics;
 using static QwirkleUI.App;
+using System;
 
 namespace QwirkleUI;
 
@@ -45,6 +46,20 @@ public partial class HandUserControl: UserControl
                 rect.Stroke = Brushes.LightGray;
                 HandBackgroundGrid.Children.Add(rect);
             }
+
+        KeyDown += UserControl_KeyDown;
+
+    }
+
+    private void UserControl_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Escape)
+        {
+            HandIM.EndAnimationsInProgress();
+            HandIM.EndMoveInProgress();
+            HandCanvas.MouseMove -= HandCanvas_MouseMoveWhenDown;
+            HandCanvas.MouseMove += HandCanvas_MouseMoveWhenUp;
+        }
     }
 
     internal void SetViewModel(HandViewModel handViewModel) => HandViewModel = handViewModel;

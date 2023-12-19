@@ -208,10 +208,10 @@
             <Grid Name="MainGrid" Background="LavenderBlush"
                   MouseMove="MainGrid_MouseMoveWhenUp" MouseDown="MainGrid_MouseDown" MouseUp="MainGrid_MouseUp" MouseWheel="MainGrid_MouseWheel"
                   MouseRightButtonDown="MainGrid_MouseRightButtonDown">
-                <Canvas Name="ClippingCanvas" ClipToBounds="True">
+                <Canvas Name="BoardCanvas" ClipToBounds="True">
                     <Canvas Name="TransformingCanvas" ClipToBounds="False">
                         <Canvas Name="BackgroundGrid" ClipToBounds="False" />
-                        <Canvas Name="DrawingCanvas" ClipToBounds="False" />
+                        <Canvas Name="BoardDrawingCanvas" ClipToBounds="False" />
                         <Canvas.RenderTransform>
                             <MatrixTransform x:Name="TransformationMatrix" />
                         </Canvas.RenderTransform>

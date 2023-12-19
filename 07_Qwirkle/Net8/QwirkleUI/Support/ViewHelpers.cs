@@ -11,7 +11,7 @@ namespace QwirkleUI;
 
 internal static class ViewHelpers
 {
-    // Return UITile hit by mouse on DrawingCanvas dc, or null if no UITile has been hit
+    // Return UITile hit by mouse on BoardDrawingCanvas dc, or null if no UITile has been hit
     public static UITile? GetHitHile(Point p, Canvas dc)
     {
         if (dc.InputHitTest(p) is not DependencyObject h)
