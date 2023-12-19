@@ -46,7 +46,7 @@ internal class MainViewModel: INotifyPropertyChanged
     public MainViewModel(MainWindow view)
     {
         // Initialize ViewModel
-        this.View = view;
+        View = view;
         Model = new Model(this);
 
         // Binding commands with behavior
@@ -145,17 +145,21 @@ internal class MainViewModel: INotifyPropertyChanged
 
     internal void InitializeBoard() => Model.InitializeBoard();
 
-    internal void DrawAllTiles()
+    internal void DrawBoard()
     {
         // ToDo: Should I ensure that DrawinfCanvas is empty here, or is it a view responsibility?
         View.AddCircle(new RowCol(50, 50));
         foreach (Move m in Model.Board)
-            View.AddUITile(new RowCol(m.Row, m.Col), m.Tile.Shape.ToString() + m.Tile.Color.ToString(), m.Tile.Instance);
-
-        // ToDo: Probably fill a structure maintainig connection between Move/Tile and UITile
+            View.AddUITile(new RowCol(m.Row, m.Col), m.Tile.Shape.ToString() + m.Tile.Color.ToString(), m.Tile.Instance, false);
     }
 
-    internal CellState GetCellState(int row, int col) 
+    internal void DrawCurrentMoves()
+    {
+        foreach (Move m in Model.CurrentMoves)
+            View.CurrentMoves.Add(View.AddUITile(new RowCol(m.Row, m.Col), m.Tile.Shape.ToString() + m.Tile.Color.ToString(), m.Tile.Instance, true));
+    }
+
+    internal CellState GetCellState(int row, int col)
         => Model.Board.GetCellState(row, col);
 
     // -------------------------------------------------

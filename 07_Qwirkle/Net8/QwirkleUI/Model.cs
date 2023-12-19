@@ -4,6 +4,7 @@
 // 2023-12-11   PV      First version
 
 using LibQwirkle;
+using System.Collections.Generic;
 
 namespace QwirkleUI;
 
@@ -11,6 +12,7 @@ internal class Model(MainViewModel viewModel)
 {
     private readonly MainViewModel viewModel = viewModel;
     public Board Board = new();
+    public HashSet<Move> CurrentMoves = [];
     public Hand[] Hands = [new()];      // Just 1 hand for how
 
     internal void NewBoard() => Board = new Board();
@@ -30,9 +32,10 @@ internal class Model(MainViewModel viewModel)
         Board.AddMove(new Move(50, 50, t1));
         Board.AddMove(new Move(50, 51, t2));
         Board.AddMove(new Move(50, 52, t3));
-        Board.AddMove(new Move(49, 52, t4));
-        Board.AddMove(new Move(48, 52, t5));
-        Board.AddMove(new Move(47, 52, t6));
+
+        CurrentMoves.Add(new Move(49, 52, t4));
+        CurrentMoves.Add(new Move(48, 52, t5));
+        CurrentMoves.Add(new Move(47, 52, t6));
 
         var h1 = new Tile(LibQwirkle.Shape.Lozange, LibQwirkle.Color.Blue, 1);
         var h2 = new Tile(LibQwirkle.Shape.Square, LibQwirkle.Color.Blue, 1);

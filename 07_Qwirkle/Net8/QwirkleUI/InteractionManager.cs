@@ -21,6 +21,7 @@ internal record UITileRowCol(UITile UIT, RowCol P)
 {
     internal UITile UIT { get; private set; } = UIT;
     internal RowCol RC { get; set; } = P;      // set accessor because RC is mutable
+    internal RowCol StartRC { get; set; }
 
     // Used when dragging (offset from mouse click down position) or animating (target position)
     public Vector Offset { get; set; }
@@ -77,7 +78,7 @@ abstract internal class InteractionManager
 {
     protected readonly UITilesSelection Selection = [];
     protected Action<Point>? pmm;
-    private Point previousMouseRowCol;
+    protected Point previousMouseRowCol;
 
     public InteractionManager() { }
 
@@ -107,6 +108,10 @@ abstract internal class InteractionManager
             if (!Selection.ContainsUITile(hit))
                 Selection.Clear();
 
+        // Only gray background tiles can be selected
+        if (!hit.UIT.GrayBackground)
+            return false;
+
         // Add current hit to selection
         if ((Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)) && Selection.ContainsUITile(hit))
         {
@@ -125,6 +130,7 @@ abstract internal class InteractionManager
             dc.Children.Add(item.UIT);
             item.UIT.SetValue(Canvas.TopProperty, item.RC.Row * UnitSize);
             item.UIT.SetValue(Canvas.LeftProperty, item.RC.Col * UnitSize);
+            item.StartRC = item.RC;
         }
 
         return true;

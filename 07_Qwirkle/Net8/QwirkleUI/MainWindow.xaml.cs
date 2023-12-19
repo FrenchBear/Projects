@@ -2,14 +2,13 @@
 // WPF interface for Qwirkle project
 //
 // 2023-12-10   PV      First version, convert SVG tiles from https://fr.wikipedia.org/wiki/Qwirkle in XAML using Inkscape
+// 2023-12-19   PV      Refactoring using InteractionManager
 
 using LibQwirkle;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Reflection.Metadata;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -17,7 +16,6 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using static QwirkleUI.App;
-using static QwirkleUI.ViewHelpers;
 
 namespace QwirkleUI;
 
@@ -33,6 +31,7 @@ public partial class MainWindow: Window
     private MainGridSelection Selection = new();
     private readonly List<UITile> m_UITilesList = [];
     private readonly HandViewModel[] HandViewModels = [];
+    internal readonly HashSet<UITileRowCol> CurrentMoves = [];
     internal InteractionManager BoardIM;
 
     public MainWindow()
@@ -45,7 +44,7 @@ public partial class MainWindow: Window
         HandViewModels = new HandViewModel[1];
         HandViewModels[0] = new HandViewModel(Player1HandUserControl, ViewModel.GetModel, 0);
 
-        BoardIM = new BoardInteractionManager(this, ViewModel);
+        BoardIM = new BoardInteractionManager(CurrentMoves, this, ViewModel);
 
         // Can only reference ActualWidth after Window is loaded
         Loaded += MainWindow_Loaded;
@@ -92,7 +91,8 @@ public partial class MainWindow: Window
         Debug.Assert(BoardDrawingCanvas.Children.Count == 0);
 
         UpdateBackgroundGrid();
-        ViewModel.DrawAllTiles();
+        ViewModel.DrawBoard();
+        ViewModel.DrawCurrentMoves();
     }
 
     // Adjust scale and origin to see the whole puzzle
@@ -166,83 +166,16 @@ public partial class MainWindow: Window
     // --------------------------------------------------------------------
     // Mouse click and drag management
 
-    //private Point previousMouseRowCol;
-
-    // null indicates background grid move, or delegate must be executed by MouseMove to perform move
-    // action, P is current mouse coordinates in non-transformed user space
-    //private Action<Point>? pmm;
-
-    // Maybe provide word hovering visual feed-back? Or a tooltip with debug info?
+    // Maybe provide hovering visual feed-back? Or a tooltip with debug info?
     private void MainGrid_MouseMoveWhenUp(object sender, MouseEventArgs e)
         => BoardIM.IM_MouseMoveWhenUp(sender, e);
-
 
     private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
     {
         MainGrid.MouseMove -= MainGrid_MouseMoveWhenUp;
         MainGrid.MouseMove += MainGrid_MouseMoveWhenDown;
         BoardIM.IM_MouseDown(sender, e, BoardCanvas, BoardDrawingCanvas, TransformationMatrix.Matrix);
-
-        /*
-        EndAnimationsInProgress();
-
-        MainGrid.MouseMove -= MainGrid_MouseMoveWhenUp;
-        MainGrid.MouseMove += MainGrid_MouseMoveWhenDown;
-        previousMouseRowCol = e.GetPosition(MainGrid);
-
-        Selection.uitile = GetHitHile(e.GetPosition(BoardDrawingCanvas), BoardDrawingCanvas);
-
-        if (Selection.uitile != null)
-            pmm = GetMouseDownMoveAction();
-        else
-            pmm = null;
-
-        // Be sure to call GetRowCol before Capture, otherwise GetRowCol returns 0 after Capture
-        // Capture to get MouseUp event raised by grid
-        Mouse.Capture(MainGrid);
-        */
     }
-
-    /*
-    // Separate from MainGrid_MouseDown to reduce complexity
-    private Action<Point> GetMouseDownMoveAction()
-    {
-        Debug.Assert(Selection.uitile != null);
-        // Reverse-transform mouse Grid coordinates into BoardDrawingCanvas coordinates
-        Matrix m = TransformationMatrix.Matrix;
-        m.Invert();     // To convert from screen transformed coordinates into ideal grid
-                        // coordinates starting at (0,0) with a square side of UnitSize
-        Vector clickOffset = new();
-        double startLeft = (double)Selection.uitile.GetValue(Canvas.LeftProperty);
-        double startTop = (double)Selection.uitile.GetValue(Canvas.TopProperty);
-        var p = new Point(startLeft, startTop);
-        clickOffset = p - m.Transform(previousMouseRowCol);
-
-        Selection.startRow = (int)Math.Floor(startTop / UnitSize + 0.5);
-        Selection.startCol = (int)Math.Floor(startLeft / UnitSize + 0.5);
-
-        // Move as last child of BoardDrawingCanvas so it's drawn on top
-        BoardDrawingCanvas.Children.Remove(Selection.uitile);
-        BoardDrawingCanvas.Children.Add(Selection.uitile);
-
-        // When moving, point is current mouse in ideal grid coordinates
-        return point =>
-        {
-            // Just move selected tile
-            double preciseTop = point.Y + clickOffset.Y;
-            double preciseLeft = point.X + clickOffset.X;
-
-            Selection.uitile.SetValue(Canvas.TopProperty, preciseTop);
-            Selection.uitile.SetValue(Canvas.LeftProperty, preciseLeft);
-
-            // Round position to closest square on the grid
-            int row = (int)Math.Floor(preciseTop / UnitSize + 0.5);
-            int col = (int)Math.Floor(preciseLeft / UnitSize + 0.5);
-
-            Selection.uitile.Hatched = !(ViewModel.GetCellState(row, col) != CellState.Tiled || (row == Selection.startRow && col == Selection.startCol));
-        };
-    }
-    */
 
     // Relay from Window_MouseDown handler when it's actually a right click
     private void MainGrid_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -251,66 +184,14 @@ public partial class MainWindow: Window
     private void MainGrid_MouseMoveWhenDown(object sender, MouseEventArgs e)
         => BoardIM.IM_MouseMoveWhenDown(sender, e, BoardCanvas, TransformationMatrix.Matrix);
 
-    /*
-    {
-        var newRowCol = e.GetPosition(MainGrid);
-        Matrix m = TransformationMatrix.Matrix;
-
-        if (pmm == null)
-        {
-            // move drawing surface
-            var delta = newRowCol - previousMouseRowCol;
-            previousMouseRowCol = newRowCol;
-            m.Translate(delta.X, delta.Y);
-            TransformationMatrix.Matrix = m;
-            UpdateBackgroundGrid();
-        }
-        else
-        {
-            // Move selected word using generated lambda and capture on click down
-            m.Invert();     // By construction, all applied transformations are reversible, so m is invertible
-            pmm(m.Transform(newRowCol));
-        }
-    }
-    */
-
     private void MainGrid_MouseUp(object sender, MouseButtonEventArgs e)
     {
-        Mouse.Capture(null);
         MainGrid.MouseMove -= MainGrid_MouseMoveWhenDown;
         MainGrid.MouseMove += MainGrid_MouseMoveWhenUp;
-
-        if (pmm != null)
-        {
-            pmm = null;
-            Debug.Assert(Selection.uitile != null);
-
-            // End of visual feed-back, align on grid
-            // Round position to closest square on the grid
-            int row = (int)Math.Floor((double)Selection.uitile.GetValue(Canvas.TopProperty) / UnitSize + 0.5);
-            int col = (int)Math.Floor((double)Selection.uitile.GetValue(Canvas.LeftProperty) / UnitSize + 0.5);
-
-            if (ViewModel.GetCellState(row, col) == CellState.Tiled)
-            {
-                row = Selection.startRow;
-                col = Selection.startCol;
-            }
-
-            // ToDo: Update tiles being placed in VM (no not update model yet)
-
-            Selection.uitile.Hatched = false;
-
-            // With animation
-            MoveSelection(row * UnitSize, col * UnitSize);      
-            
-            // Without animation
-            //Selection.uitile.SetValue(Canvas.TopProperty, row * UnitSize);
-            //Selection.uitile.SetValue(Canvas.LeftProperty, col * UnitSize);
-
-            //FinalRefreshAfterUpdate();
-        }
+        BoardIM.IM_MouseUp(sender, e);
     }
 
+    // ANimated move, not used right now...
     private void MoveSelection(double toTop, double toLeft)
     {
         Debug.Assert(Selection.uitile != null);
@@ -414,13 +295,13 @@ public partial class MainWindow: Window
     private BoundingRectangle BoundingRectangleWithMargins()
     {
         var boardBounds = ViewModel.Bounds;
-        return new (boardBounds.Min.Row - 5,
+        return new(boardBounds.Min.Row - 5,
                     boardBounds.Max.Row + 5,
                     boardBounds.Min.Col - 5,
                     boardBounds.Max.Col + 5);
     }
 
-    private void UpdateBackgroundGrid()
+    internal void UpdateBackgroundGrid()
     {
         var r = BoundingRectangleWithMargins();
         if (!r.Equals(CurrentGridBoundingWithMargins))
@@ -458,40 +339,41 @@ public partial class MainWindow: Window
         }
     }
 
-    internal void AddUITile(RowCol position, string shapeColor, int instance)
+    internal UITileRowCol AddUITile(RowCol position, string shapeColor, int instance, bool gray)
     {
         var t = new UITile(shapeColor, instance);
+        t.GrayBackground = gray;
         t.SetValue(Canvas.TopProperty, position.Row * UnitSize);
         t.SetValue(Canvas.LeftProperty, position.Col * UnitSize);
         t.Width = UnitSize;
         t.Height = UnitSize;
         BoardDrawingCanvas.Children.Add(t);
 
-        //Debug.Assert(t.Row == position.Row);
-        //Debug.Assert(t.Col == position.Column);
+        return new UITileRowCol(t, position);
     }
 
     internal void AddCircle(RowCol position)
     {
         var e = new Ellipse();
         e.Width = 2 * UnitSize;
-        e.Height = 2*UnitSize;
+        e.Height = 2 * UnitSize;
         e.Stroke = Brushes.Black;
         e.StrokeThickness = 5.0;
-        //e.Fill = Brushes.SkyBlue;
-        e.SetValue(Canvas.TopProperty, (position.Row-0.5) * UnitSize);
-        e.SetValue(Canvas.LeftProperty, (position.Col-0.5) * UnitSize);
+        e.SetValue(Canvas.TopProperty, (position.Row - 0.5) * UnitSize);
+        e.SetValue(Canvas.LeftProperty, (position.Col - 0.5) * UnitSize);
         BoardDrawingCanvas.Children.Add(e);
     }
 }
 
 internal class BoardInteractionManager: InteractionManager
 {
+    private readonly HashSet<UITileRowCol> CurrentMoves;
     private readonly MainWindow View;
     private readonly MainViewModel ViewModel;
 
-    public BoardInteractionManager(MainWindow view, MainViewModel viewModel)
+    public BoardInteractionManager(HashSet<UITileRowCol> currentMoves, MainWindow view, MainViewModel viewModel)
     {
+        CurrentMoves = currentMoves;
         View = view;
         ViewModel = viewModel;
     }
@@ -505,56 +387,69 @@ internal class BoardInteractionManager: InteractionManager
             View.EndMoveUITileAnimation();
     }
 
-
     internal override void UpdateTargetPosition(UITilesSelection selection)
     {
-        /*
-        // Find a free position
-        // Build NewHand without tiles being moved
-        var NewHand = new List<UITileRowCol>();
-        foreach (UITileRowCol uitp in Hand)
-            if (!Selection.ContainsUITile(uitp.UIT))
-                NewHand.Add(uitp);
+        Debug.Assert(!Selection.IsEmpty);
 
+        // Find a free position
+        // Build NewCurrentMoves without tiles being moved
+        var NewCurrentMoves = new HashSet<UITileRowCol>();
+        foreach (UITileRowCol uitp in CurrentMoves)
+            if (!Selection.ContainsUITile(uitp.UIT))
+                NewCurrentMoves.Add(uitp);
+
+        // Find out if all prospect target position are Ok
+        bool rollback = false;
         foreach (UITileRowCol uitp in Selection)
         {
             double left = (double)uitp.UIT.GetValue(Canvas.LeftProperty);
             double top = (double)uitp.UIT.GetValue(Canvas.TopProperty);
 
-            // Build list of distances to empty positions on hand
-            var ld = new List<(RowCol, double)>();
-            for (int r = 0; r < HandRows; r++)
-                for (int c = 0; c < HandColumns; c++)
-                    if (!NewHand.Any(uitp => uitp.RC.Row == r && uitp.RC.Col == c))
-                    {
-                        double targetLeft = c * UnitSize;
-                        double targetTop = r * UnitSize;
-                        // Actually dist squared, but that's enough to find the minimum
-                        double dist = (targetLeft - left) * (targetLeft - left) + (targetTop - top) * (targetTop - top);
+            // Candidate position
+            int row = (int)Math.Floor(top / UnitSize + 0.5);
+            int col = (int)Math.Floor(left / UnitSize + 0.5);
 
-                        ld.Add((new RowCol(r, c), dist));
-                    }
-            var closestRowCol = ld.MinBy(tup => tup.Item2).Item1;
-            uitp.RC = closestRowCol;
-            uitp.Offset = new Vector(closestRowCol.Col * UnitSize, closestRowCol.Row * UnitSize);
+            if (ViewModel.GetCellState(row, col) == CellState.Tiled ||
+                NewCurrentMoves.Any(uitp => uitp.RC.Row == row && uitp.RC.Col == col))
+            {
+                rollback = true;
+                break;
+            }
 
-            // Now the position is taken, not free for the rest of selection
-            NewHand.Add(uitp);
+            uitp.RC = new RowCol(row, col);
+            NewCurrentMoves.Add(new UITileRowCol(uitp.UIT, new RowCol(row, col)));
         }
-        */
 
-        /*
+        if (rollback)
+        {
+            foreach (UITileRowCol uitp in Selection)
+            {
+                uitp.Offset = new Vector(uitp.StartRC.Col * UnitSize, uitp.StartRC.Row * UnitSize);
+                uitp.UIT.Hatched = false;
+            }
+        }
+        else
+        {
+            foreach (UITileRowCol uitp in Selection)
+            {
+                uitp.Offset = new Vector(uitp.RC.Col * UnitSize, uitp.RC.Row * UnitSize);
+            }
+        }
+
+        // With animation
+        //MoveSelection(row * UnitSize, col * UnitSize);
+        //FinalRefreshAfterUpdate();
+
         // For now, direct move for testing
-        // ToDo: Replace by animation using storyboard    Actually not sure it's needed for Hand, looks Ok without animation
+        // ToDo: Replace by animation using storyboard
         foreach (UITileRowCol uitp in Selection)
         {
             uitp.UIT.SetValue(Canvas.TopProperty, uitp.Offset.Y);
             uitp.UIT.SetValue(Canvas.LeftProperty, uitp.Offset.X);
-            var h = Hand.Find(u => u.UIT == uitp.UIT);
+            var h = View.CurrentMoves.First(u => u.UIT == uitp.UIT);
             Debug.Assert(h != null);
             h.RC = uitp.RC;
         }
-        */
     }
 
     public override void OnMouseRightButtonDown(object sender, UITilesSelection selection, bool tileHit)
@@ -571,7 +466,8 @@ internal class BoardInteractionManager: InteractionManager
 
     internal override void IM_MouseMoveWhenDown(object sender, MouseEventArgs e, Canvas c, Matrix m)
     {
-        base.IM_MouseMoveWhenDown (sender, e, c, m);
+        var newRowCol = e.GetPosition(c);
+        base.IM_MouseMoveWhenDown(sender, e, c, m);
 
         if (pmm == null)
         {
@@ -579,32 +475,8 @@ internal class BoardInteractionManager: InteractionManager
             var delta = newRowCol - previousMouseRowCol;
             previousMouseRowCol = newRowCol;
             m.Translate(delta.X, delta.Y);
-            TransformationMatrix.Matrix = m;
-            UpdateBackgroundGrid();
+            View.TransformationMatrix.Matrix = m;
+            View.UpdateBackgroundGrid();
         }
-
-
-/*
-        var newRowCol = e.GetPosition(MainGrid);
-        Matrix m = TransformationMatrix.Matrix;
-
-        if (pmm == null)
-        {
-            // move drawing surface
-            var delta = newRowCol - previousMouseRowCol;
-            previousMouseRowCol = newRowCol;
-            m.Translate(delta.X, delta.Y);
-            TransformationMatrix.Matrix = m;
-            UpdateBackgroundGrid();
-        }
-        else
-        {
-            // Move selected word using generated lambda and capture on click down
-            m.Invert();     // By construction, all applied transformations are reversible, so m is invertible
-            pmm(m.Transform(newRowCol));
-        }
-*/
-
     }
-
 }

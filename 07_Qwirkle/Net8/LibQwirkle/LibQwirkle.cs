@@ -575,7 +575,7 @@ public class Board: IEnumerable<Move>
         // since they all have the same max(points)
         // In some cases, this list could be empty
         if (PossiblePlays.Count == 0)
-            return new Play([], new PointsBonus(0,0), hand);
+            return new Play([], new PointsBonus(0, 0), hand);
         var randIndex = RandomGenerator.Next(PossiblePlays.Count);
         var sol = PossiblePlays[randIndex];
         Console.WriteLine($"Play: ix={randIndex} {sol.AsString(true)}");

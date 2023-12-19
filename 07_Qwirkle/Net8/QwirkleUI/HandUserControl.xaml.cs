@@ -4,22 +4,21 @@
 // 2023-12-12   PV
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using System.Diagnostics;
 using static QwirkleUI.App;
-using System;
 
 namespace QwirkleUI;
 
 public partial class HandUserControl: UserControl
 {
     private HandViewModel HandViewModel;
-    internal readonly List<UITileRowCol> Hand = [];
+    internal readonly HashSet<UITileRowCol> Hand = [];
     internal InteractionManager HandIM;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -111,9 +110,9 @@ public partial class HandUserControl: UserControl
 
 internal class HandInteractionManager: InteractionManager
 {
-    private readonly List<UITileRowCol> Hand;
+    private readonly HashSet<UITileRowCol> Hand;
 
-    public HandInteractionManager(List<UITileRowCol> hand)
+    public HandInteractionManager(HashSet<UITileRowCol> hand)
         => Hand = hand;
 
     internal override void UpdateTargetPosition(UITilesSelection selection)
@@ -157,7 +156,7 @@ internal class HandInteractionManager: InteractionManager
         {
             uitp.UIT.SetValue(Canvas.TopProperty, uitp.Offset.Y);
             uitp.UIT.SetValue(Canvas.LeftProperty, uitp.Offset.X);
-            var h = Hand.Find(u => u.UIT == uitp.UIT);
+            var h = Hand.First(u => u.UIT == uitp.UIT);
             Debug.Assert(h != null);
             h.RC = uitp.RC;
         }

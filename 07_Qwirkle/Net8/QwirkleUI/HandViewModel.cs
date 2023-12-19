@@ -3,8 +3,8 @@
 //
 // 2023-12-17   PV      First version
 
-using System.ComponentModel;
 using LibQwirkle;
+using System.ComponentModel;
 
 namespace QwirkleUI;
 
@@ -34,6 +34,6 @@ internal class HandViewModel: INotifyPropertyChanged
     {
         int c = 0;
         foreach (Tile t in Model.Hands[HandIndex])
-            View.AddUITile( t.Shape.ToString() + t.Color.ToString(),  t.Instance, new RowCol( 0, c++));
+            View.AddUITile(t.Shape.ToString() + t.Color.ToString(), t.Instance, new RowCol(0, c++));
     }
 }
