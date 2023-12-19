@@ -19,13 +19,13 @@ internal class HandViewModel: INotifyPropertyChanged
     public event PropertyChangedEventHandler? PropertyChanged;
 
     // Constructor
-    public HandViewModel(HandUserControl view, Model model, int handIndex)
+    public HandViewModel(MainWindow mainWindow, HandUserControl view, Model model, int handIndex)
     {
         Model = model;
         View = view;
         HandIndex = handIndex;
 
-        view.SetViewModel(this);
+        view.SetViewModelAndMainWindow(mainWindow, this);
     }
 
     private void NotifyPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

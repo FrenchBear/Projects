@@ -76,7 +76,7 @@ internal readonly struct UITilesSelection: IReadOnlyCollection<UITileRowCol>
 
 abstract internal class InteractionManager
 {
-    protected readonly UITilesSelection Selection = [];
+    public readonly UITilesSelection Selection = [];
     protected Action<Point>? pmm;
     protected Point previousMouseRowCol;
 
@@ -212,10 +212,20 @@ abstract internal class InteractionManager
         if (pmm != null)
         {
             var newRowCol = e.GetPosition(c);
-            //Matrix m = TransformationMatrix.Matrix;
             m.Invert();     // By construction, all applied transformations are reversible, so m is invertible
-            pmm(m.Transform(newRowCol));
+            var localRowCol = m.Transform(newRowCol);
+            pmm(localRowCol);
+            CheckStartHandOver(localRowCol);
         }
+    }
+
+    internal virtual void CheckStartHandOver(Point localRowCol) { }
+
+    internal virtual void StartHandOver(UITilesSelection selection) 
+    {
+        //Debug.WriteLine("InteractionManager.StartHandOver");
+        Mouse.Capture(null);
+        pmm = null;
     }
 
     abstract internal void UpdateTargetPosition(UITilesSelection selection);

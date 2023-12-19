@@ -42,7 +42,7 @@ public partial class MainWindow: Window
 
         // Just 1 player for now
         HandViewModels = new HandViewModel[1];
-        HandViewModels[0] = new HandViewModel(Player1HandUserControl, ViewModel.GetModel, 0);
+        HandViewModels[0] = new HandViewModel(this, Player1HandUserControl, ViewModel.GetModel, 0);
 
         BoardIM = new BoardInteractionManager(CurrentMoves, this, ViewModel);
 
@@ -362,6 +362,14 @@ public partial class MainWindow: Window
         e.SetValue(Canvas.TopProperty, (position.Row - 0.5) * UnitSize);
         e.SetValue(Canvas.LeftProperty, (position.Col - 0.5) * UnitSize);
         BoardDrawingCanvas.Children.Add(e);
+    }
+
+    internal void AcceptHandOver(InteractionManager im)
+    {
+        Debug.WriteLine("MainWindow.AcceptHandOver");
+        Debug.Assert(im != null && !im.Selection.IsEmpty);
+        Debug.WriteLine($"MainWindow: Accepting HandOver of {im.Selection.Count} tile(s)");
+        // ToDo
     }
 }
 

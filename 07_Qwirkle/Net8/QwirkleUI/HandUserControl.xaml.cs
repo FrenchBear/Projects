@@ -3,6 +3,7 @@
 //
 // 2023-12-12   PV
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -17,6 +18,7 @@ namespace QwirkleUI;
 
 public partial class HandUserControl: UserControl
 {
+    private MainWindow MainWindow;
     private HandViewModel HandViewModel;
     internal readonly HashSet<UITileRowCol> Hand = [];
     internal InteractionManager HandIM;
@@ -27,7 +29,7 @@ public partial class HandUserControl: UserControl
     {
         InitializeComponent();
 
-        HandIM = new HandInteractionManager(Hand);
+        HandIM = new HandInteractionManager(Hand, this);
 
         var tm = TransformationMatrix.Matrix;
         tm.Translate(10.0, 10.0);
@@ -61,7 +63,11 @@ public partial class HandUserControl: UserControl
         }
     }
 
-    internal void SetViewModel(HandViewModel handViewModel) => HandViewModel = handViewModel;
+    internal void SetViewModelAndMainWindow(MainWindow mainWindow, HandViewModel handViewModel)
+    {
+        MainWindow = mainWindow;
+        HandViewModel = handViewModel;
+    }
 
     internal void AddUITile(string shapeColor, int instance, RowCol p)
     {
@@ -80,7 +86,7 @@ public partial class HandUserControl: UserControl
     // --------------------------------------------------------------------
     // Mouse click and drag management
 
-    private void HandCanvas_MouseMoveWhenUp(object sender, MouseEventArgs e)
+    internal void HandCanvas_MouseMoveWhenUp(object sender, MouseEventArgs e)
         => HandIM.IM_MouseMoveWhenUp(sender, e);
 
     private void HandCanvas_MouseDown(object sender, MouseButtonEventArgs e)
@@ -90,7 +96,7 @@ public partial class HandUserControl: UserControl
         HandIM.IM_MouseDown(sender, e, HandCanvas, HandDrawingCanvas, TransformationMatrix.Matrix);
     }
 
-    private void HandCanvas_MouseMoveWhenDown(object sender, MouseEventArgs e)
+    internal void HandCanvas_MouseMoveWhenDown(object sender, MouseEventArgs e)
         => HandIM.IM_MouseMoveWhenDown(sender, e, HandCanvas, TransformationMatrix.Matrix);
 
     private void HandCanvas_MouseUp(object sender, MouseButtonEventArgs e)
@@ -106,14 +112,24 @@ public partial class HandUserControl: UserControl
 
     private void HandCanvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         => HandIM.IM_MouseRightButtonDown(sender, e, HandCanvas, HandDrawingCanvas);
+
+    internal void StartHandOver()
+    {
+        //Debug.WriteLine("HandUserControl.StartHandOver");
+        MainWindow.AcceptHandOver(HandIM);
+    }
 }
 
 internal class HandInteractionManager: InteractionManager
 {
     private readonly HashSet<UITileRowCol> Hand;
+    private readonly HandUserControl View;
 
-    public HandInteractionManager(HashSet<UITileRowCol> hand)
-        => Hand = hand;
+    public HandInteractionManager(HashSet<UITileRowCol> hand, HandUserControl view)
+    {
+        Hand = hand;
+        View = view;
+    }
 
     internal override void UpdateTargetPosition(UITilesSelection selection)
     {
@@ -150,8 +166,8 @@ internal class HandInteractionManager: InteractionManager
             NewHand.Add(uitp);
         }
 
-        // For now, direct move for testing
-        // ToDo: Replace by animation using storyboard    Actually not sure it's needed for Hand, looks Ok without animation
+        // For now, immediate move for testing
+        // ToDo (maybe, not sure): Replace by animation using storyboard
         foreach (UITileRowCol uitp in Selection)
         {
             uitp.UIT.SetValue(Canvas.TopProperty, uitp.Offset.Y);
@@ -160,5 +176,21 @@ internal class HandInteractionManager: InteractionManager
             Debug.Assert(h != null);
             h.RC = uitp.RC;
         }
+    }
+
+    internal override void CheckStartHandOver(Point localRowCol)
+    {
+        if (localRowCol.X < -20)
+            StartHandOver(Selection);
+    }
+
+    internal override void StartHandOver(UITilesSelection selection)
+    {
+        base.StartHandOver(selection);
+        View.HandCanvas.MouseMove -= View.HandCanvas_MouseMoveWhenDown;
+        View.HandCanvas.MouseMove += View.HandCanvas_MouseMoveWhenUp;
+
+        //Debug.WriteLine("HandOver initiated from Hand");
+        View.StartHandOver();
     }
 }
