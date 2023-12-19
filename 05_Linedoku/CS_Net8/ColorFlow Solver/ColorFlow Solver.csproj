@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<RootNamespace>ColorFlowSolver</RootNamespace>
+		<Description>Tool to find solutions of Android Linedoku app ColorFlow game (Net8 C#12)</Description>
+		<Copyright>Copyright ©2017-2023 Pierre Violent</Copyright>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="11×11 Screenshot_2017-10-27-01-20-25.png" />
+	  <None Remove="5×5 All Solutions ColorFlow-2017-11-03-00.02.18.txt" />
+	  <None Remove="5×5 Screenshot_2017-10-26-00-54-09.png" />
+	  <None Remove="7×7 All Solutions ColorFlow-2017-11-03-00.01.18.txt" />
+	  <None Remove="7×7 Screenshot_2017-10-26-00-16-37.png" />
+	  <None Remove="9×9 All Solutions ColorFlow-2017-11-02-23.43.26.txt" />
+	  <None Remove="9×9 Screenshot_2017-11-02-23-35-12.png" />
+	  <None Remove="Grille 11x11.xlsm" />
+	  <None Remove="Optimisation.docx" />
+	</ItemGroup>
+
+</Project>

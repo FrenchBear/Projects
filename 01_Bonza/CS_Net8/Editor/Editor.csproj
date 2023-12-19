@@ -1,0 +1,62 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<PackageId>BonzaEditor</PackageId>
+		<Authors>Pierre Violent</Authors>
+		<Company></Company>
+		<Product>BonzaEditor</Product>
+		<Description>WPF Visual Editor to prepare Bonza-style puzzles (Net8 C#12)</Description>
+		<Copyright>Copyright ©2017-2023 Pierre Violent</Copyright>
+		<Version>1.3.0</Version>
+		<AssemblyName>Bonza.Editor</AssemblyName>
+		<RootNamespace>Bonza.Editor</RootNamespace>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<OutputPath>..\Output</OutputPath>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="Bonza.ico" />
+		<None Remove="CustomDictionary.xml" />
+		<None Remove="Icons\about.ico" />
+		<None Remove="Icons\addwords.ico" />
+		<None Remove="Icons\autoplace.ico" />
+		<None Remove="Icons\close.ico" />
+		<None Remove="Icons\delete.ico" />
+		<None Remove="Icons\new.ico" />
+		<None Remove="Icons\open.ico" />
+		<None Remove="Icons\recenter.ico" />
+		<None Remove="Icons\save.ico" />
+		<None Remove="Icons\swap.ico" />
+		<None Remove="Icons\undo.ico" />
+		<None Remove="Resources\Bonza.png" />
+		<None Remove="View\FindWordView.xaml" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<CodeAnalysisDictionary Include="CustomDictionary.xml" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Generator\Generator.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="Bonza.ico" />
+		<Resource Include="Icons\about.ico" />
+		<Resource Include="Icons\addwords.ico" />
+		<Resource Include="Icons\autoplace.ico" />
+		<Resource Include="Icons\close.ico" />
+		<Resource Include="Icons\delete.ico" />
+		<Resource Include="Icons\new.ico" />
+		<Resource Include="Icons\open.ico" />
+		<Resource Include="Icons\recenter.ico" />
+		<Resource Include="Icons\save.ico" />
+		<Resource Include="Icons\swap.ico" />
+		<Resource Include="Icons\undo.ico" />
+		<Resource Include="Resources\Bonza.png" />
+	</ItemGroup>
+
+</Project>

@@ -289,3 +289,6 @@ __pycache__/
 
 Output/
 /03 UniSearch/UniSearchCore/DirectDrawWrite/DirectDrawWrite.GeneratedMSBuildEditorConfig.editorconfig
+
+# mypy
+.mypy_cache/

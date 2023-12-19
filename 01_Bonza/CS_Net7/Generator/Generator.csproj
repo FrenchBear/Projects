@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<PackageId>BonzaGenerator</PackageId>
+		<Authors>Pierre Violent</Authors>
+		<Product>BonzaGenerator</Product>
+		<Copyright>Copyright ©2017-2023 Pierre Violent</Copyright>
+		<Version>1.2.0</Version>
+		<Description>Generation of Bonza puzzles: placing words, breaking in chunks (Net7 C#11)</Description>
+		<AssemblyName>Bonza.Generator</AssemblyName>
+		<RootNamespace>Bonza.Generator</RootNamespace>
+		<OutputPath>..\Output</OutputPath>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Remove="GlobalSuppressions.cs" />
+	</ItemGroup>
+
+</Project>

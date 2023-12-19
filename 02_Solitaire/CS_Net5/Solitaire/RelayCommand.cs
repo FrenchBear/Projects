@@ -30,6 +30,7 @@ internal class RelayCommand<T>: ICommand
 
     /* From ICommand */
 
+<<<<<<< HEAD:02_Solitaire/CS_Net5/Solitaire/RelayCommand.cs
     public bool CanExecute(object? parameter)
     {
         if (canExecute == null)
@@ -43,6 +44,13 @@ internal class RelayCommand<T>: ICommand
     /* From ICommand */
 
     public void Execute(object? parameter) => execute?.Invoke((T)parameter!);
+=======
+    public bool CanExecute(object parameter) => canExecute == null || canExecute((T)parameter);
+
+    /* From ICommand */
+
+    public void Execute(object parameter) => execute?.Invoke((T)parameter);
+>>>>>>> MASTER:01_Bonza/CS_Net6/Editor/Support/RelayCommand.cs
 
     // The 'black magic' part: according to help, CommandManager.RequerySuggested Event occurs when the
     // CommandManager """detects conditions that might change the ability of a command to execute"""...

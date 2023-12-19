@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<RootNamespace>DetectClosedArea</RootNamespace>
+		<Description>Tool to find solutions of Android Linedoku app (Net8 C#12)</Description>
+		<Copyright>Copyright ©2017-2023 Pierre Violent</Copyright>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>disable</ImplicitUsings>
+	</PropertyGroup>
+
+</Project>

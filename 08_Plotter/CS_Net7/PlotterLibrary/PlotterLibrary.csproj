@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0-windows</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
+		<RootNamespace>PlotterLibrary</RootNamespace>
+		<Description>Simulation of a simple plotter interface with onscreen and printed rendering using GDI</Description>
+		<Version>1.1.0</Version>
+		<Authors>Pierre Violent</Authors>
+		<Copyright>Copyright ©2021-2023 Pierre Violent</Copyright>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Update="RenderingForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+	</ItemGroup>
+
+</Project>

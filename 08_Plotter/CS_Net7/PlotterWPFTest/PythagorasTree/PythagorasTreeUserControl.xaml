@@ -1,0 +1,48 @@
+﻿<UserControl x:Class="PlotterWPFTest.PythagorasTreeUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PlotterWPFTest" 
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance Type=local:PythagorasTreeViewModel}"
+             d:DesignHeight="200" d:DesignWidth="600">
+
+    <StackPanel Orientation="Vertical">
+        <Label Background="LightSkyBlue" FontWeight="DemiBold">Pythagoras Tree</Label>
+
+        <Grid Background="AliceBlue">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Background="AliceBlue" Margin="0,6,0,6" Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" Content="X" Margin="0,6,0,6" />
+                <TextBox Grid.Row="0" Grid.Column="1" Width="40" Text="{Binding X, FallbackValue=0.75, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:F2}}" VerticalContentAlignment="Center" Margin="0,6,0,6" />
+                <Slider Grid.Row="0" Grid.Column="2" Width="150" Minimum="0" Maximum="1" Value="{Binding X, FallbackValue=0.75}" SmallChange="0.01" LargeChange="0.1" VerticalAlignment="Center" Margin="12,6,0,6" />
+
+                <Label Grid.Row="1" Grid.Column="0">Depth</Label>
+                <TextBox Grid.Row="1" Grid.Column="1" Width="40" Text="{Binding Depth, FallbackValue=4, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                <Slider Grid.Row="1" Grid.Column="2" Width="150" Minimum="1" Maximum="20" Value="{Binding Depth, FallbackValue=4}" VerticalAlignment="Center" Margin="12,0,0,0" />
+
+            </Grid>
+
+            <local:PlotterCommonUserControl x:Name="MyPlotterCommonUserControl" Grid.Row="0" Grid.Column="1" Margin="6,0,0,6" />
+
+        </Grid>
+    </StackPanel>
+</UserControl>
