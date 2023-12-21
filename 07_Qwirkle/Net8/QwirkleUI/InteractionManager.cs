@@ -211,11 +211,13 @@ abstract internal class InteractionManager
     {
         if (pmm != null)
         {
-            var newRowCol = e.GetPosition(c);
+            var gridPosition = e.GetPosition(c);
             m.Invert();     // By construction, all applied transformations are reversible, so m is invertible
-            var localRowCol = m.Transform(newRowCol);
-            pmm(localRowCol);
-            CheckStartHandOver(localRowCol);
+            var canvasPosition = m.Transform(gridPosition);
+            pmm(canvasPosition);
+
+            Debug.WriteLine($"IM_MouseMoveWhenDown: ScreenPosition X={gridPosition.X:F0} Y={gridPosition.Y:F0}  CanvasPosition X={canvasPosition.X:F0} Y={canvasPosition.Y:F0}");
+            CheckStartHandOver(canvasPosition);
         }
     }
 

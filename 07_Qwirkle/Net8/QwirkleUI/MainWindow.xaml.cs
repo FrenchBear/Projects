@@ -19,16 +19,16 @@ using static QwirkleUI.App;
 
 namespace QwirkleUI;
 
-internal struct MainGridSelection
-{
-    public UITile? uitile;
-    public int startRow, startCol;
-}
+//internal struct BoardCanvasSelection
+//{
+//    public UITile? uitile;
+//    public int startRow, startCol;
+//}
 
 public partial class MainWindow: Window
 {
     private readonly MainViewModel ViewModel;
-    private MainGridSelection Selection = new();
+    //private BoardCanvasSelection Selection = new();
     private readonly List<UITile> m_UITilesList = [];
     private readonly HandViewModel[] HandViewModels = [];
     internal readonly HashSet<UITileRowCol> CurrentMoves = [];
@@ -69,8 +69,8 @@ public partial class MainWindow: Window
         {
             BoardIM.EndAnimationsInProgress();
             BoardIM.EndMoveInProgress();
-            MainGrid.MouseMove -= MainGrid_MouseMoveWhenDown;
-            MainGrid.MouseMove += MainGrid_MouseMoveWhenUp;
+            BoardCanvas.MouseMove -= BoardCanvas_MouseMoveWhenDown;
+            BoardCanvas.MouseMove += BoardCanvas_MouseMoveWhenUp;
         }
     }
 
@@ -82,7 +82,7 @@ public partial class MainWindow: Window
         ClearBackgroundGrid();
         ViewModel.StatusText = "Clear.";
         m_UITilesList.Clear();
-        Selection.uitile = null;
+        BoardIM.Selection.Clear();
     }
 
     internal void DrawBoard()
@@ -167,31 +167,32 @@ public partial class MainWindow: Window
     // Mouse click and drag management
 
     // Maybe provide hovering visual feed-back? Or a tooltip with debug info?
-    private void MainGrid_MouseMoveWhenUp(object sender, MouseEventArgs e)
+    private void BoardCanvas_MouseMoveWhenUp(object sender, MouseEventArgs e)
         => BoardIM.IM_MouseMoveWhenUp(sender, e);
 
-    private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
+    private void BoardCanvas_MouseDown(object sender, MouseButtonEventArgs e)
     {
-        MainGrid.MouseMove -= MainGrid_MouseMoveWhenUp;
-        MainGrid.MouseMove += MainGrid_MouseMoveWhenDown;
+        BoardCanvas.MouseMove -= BoardCanvas_MouseMoveWhenUp;
+        BoardCanvas.MouseMove += BoardCanvas_MouseMoveWhenDown;
         BoardIM.IM_MouseDown(sender, e, BoardCanvas, BoardDrawingCanvas, TransformationMatrix.Matrix);
     }
 
     // Relay from Window_MouseDown handler when it's actually a right click
-    private void MainGrid_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+    private void BoardCanvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         => BoardIM.IM_MouseRightButtonDown(sender, e, BoardCanvas, BoardDrawingCanvas);
 
-    private void MainGrid_MouseMoveWhenDown(object sender, MouseEventArgs e)
+    private void BoardCanvas_MouseMoveWhenDown(object sender, MouseEventArgs e)
         => BoardIM.IM_MouseMoveWhenDown(sender, e, BoardCanvas, TransformationMatrix.Matrix);
 
-    private void MainGrid_MouseUp(object sender, MouseButtonEventArgs e)
+    private void BoardCanvas_MouseUp(object sender, MouseButtonEventArgs e)
     {
-        MainGrid.MouseMove -= MainGrid_MouseMoveWhenDown;
-        MainGrid.MouseMove += MainGrid_MouseMoveWhenUp;
+        BoardCanvas.MouseMove -= BoardCanvas_MouseMoveWhenDown;
+        BoardCanvas.MouseMove += BoardCanvas_MouseMoveWhenUp;
         BoardIM.IM_MouseUp(sender, e);
     }
 
-    // ANimated move, not used right now...
+    // Animated move, not used right now...
+    /*
     private void MoveSelection(double toTop, double toLeft)
     {
         Debug.Assert(Selection.uitile != null);
@@ -242,6 +243,7 @@ public partial class MainWindow: Window
         sb.Completed += Sb_Completed;
         sb.Begin();
     }
+    */
 
     private void Sb_Completed(object? sender, EventArgs e) => EndMoveUITileAnimation();
 
@@ -259,9 +261,9 @@ public partial class MainWindow: Window
         }
     }
 
-    private void MainGrid_MouseWheel(object sender, MouseWheelEventArgs e)
+    private void BoardCanvas_MouseWheel(object sender, MouseWheelEventArgs e)
     {
-        var newRowCol = e.GetPosition(MainGrid);
+        var newRowCol = e.GetPosition(BoardCanvas);
         var m = TransformationMatrix.Matrix;
 
         // Ctrl+MouseWheel for rotation
@@ -287,7 +289,7 @@ public partial class MainWindow: Window
 
     private void ClearBackgroundGrid()
     {
-        BackgroundGrid.Children.Clear();
+        BoardBackgroundGrid.Children.Clear();
         CurrentGridBoundingWithMargins = new(45, 55, 45, 55);
     }
 
@@ -320,7 +322,7 @@ public partial class MainWindow: Window
                     Stroke = Brushes.LightGray,
                     StrokeThickness = row == 0 ? 3 : 1
                 };
-                BackgroundGrid.Children.Add(l);
+                BoardBackgroundGrid.Children.Add(l);
             }
 
             for (int column = r.Min.Col; column <= r.Max.Col; column++)
@@ -334,7 +336,7 @@ public partial class MainWindow: Window
                     Stroke = Brushes.LightGray,
                     StrokeThickness = column == 0 ? 3 : 1
                 };
-                BackgroundGrid.Children.Add(l);
+                BoardBackgroundGrid.Children.Add(l);
             }
         }
     }
@@ -364,12 +366,17 @@ public partial class MainWindow: Window
         BoardDrawingCanvas.Children.Add(e);
     }
 
-    internal void AcceptHandOver(InteractionManager im)
+    internal void AcceptHandOver(InteractionManager playerIM)
     {
         Debug.WriteLine("MainWindow.AcceptHandOver");
-        Debug.Assert(im != null && !im.Selection.IsEmpty);
-        Debug.WriteLine($"MainWindow: Accepting HandOver of {im.Selection.Count} tile(s)");
-        // ToDo
+        Debug.Assert(playerIM != null && !playerIM.Selection.IsEmpty);
+        Debug.WriteLine($"MainWindow: Accepting HandOver of {playerIM.Selection.Count} tile(s)");
+
+        //BoardIM.Selection.Clear();
+        //foreach (var pt in playerIM.Selection)
+        //{
+
+        //}
     }
 }
 

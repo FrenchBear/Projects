@@ -48,7 +48,7 @@
             </MenuItem>
             <MenuItem Command="{Binding SuggestPlayCommand}" Header="_Place automatiquement le mot">
                 <MenuItem.Icon>
-                    <Image Source="/Icons/SuggestPlay.ico" />
+                    <Image Source="/Icons/autoplace.ico" />
                 </MenuItem.Icon>
             </MenuItem>
         </ContextMenu>
@@ -64,160 +64,156 @@
         </ContextMenu>
     </Window.Resources>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
-        <DockPanel>
-            <Menu DockPanel.Dock="Top" Padding="3">
-                <MenuItem Name="FileMenu" Header="_Fichier">
-                    <MenuItem Command="{Binding NewGameCommand}" InputGestureText="Ctrl+N" Header="_Nouveau layout">
-                        <MenuItem.Icon>
-                            <Image Source="/Icons/new.ico" Stretch="None" />
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <MenuItem Command="{Binding LoadCommand}" InputGestureText="Ctrl+O" Header="_Ouvrir une liste de mots...">
-                        <MenuItem.Icon>
-                            <Image Source="/Icons/open.ico" Stretch="None" />
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <Separator />
-                    <MenuItem Command="{Binding AddWordsCommand}" InputGestureText="+" Header="_Ajouter des mots au layout...">
-                        <MenuItem.Icon>
-                            <Image Source="/Icons/addwords.ico" Stretch="None" />
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <MenuItem Command="{Binding RegenerateLayoutCommand}" InputGestureText="F5" Header="_Regénérer le layout" />
-                    <Separator />
-                    <MenuItem Command="{Binding SaveCommand}" InputGestureText="Ctrl+S" Header="_Enregistrer le layout...">
-                        <MenuItem.Icon>
-                            <Image Source="/Icons/save.ico" Stretch="None" />
-                        </MenuItem.Icon>
-                    </MenuItem>
-
-                    <Separator />
-
-                    <MenuItem Name="CloseCommand" Command="{Binding QuitCommand}" InputGestureText="Alt+F4" Header="_Quitter">
-                        <MenuItem.Icon>
-                            <Image Source="/Icons/close.ico" />
-                        </MenuItem.Icon>
-                    </MenuItem>
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" Padding="3">
+            <MenuItem Name="FileMenu" Header="_Fichier">
+                <MenuItem Command="{Binding NewGameCommand}" InputGestureText="Ctrl+N" Header="_Nouveau layout">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/new.ico" Stretch="None" />
+                    </MenuItem.Icon>
                 </MenuItem>
-
-                <MenuItem Name="EditMenu" Header="_Edition">
-                    <MenuItem Command="{Binding UndoCommand}" Header="_Annuler" InputGestureText="Ctrl+Z">
-                        <MenuItem.Icon>
-                            <Image Source="/Icons/undo.ico" />
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <MenuItem Command="{Binding DeleteCommand}" Header="_Supprimer le mot" InputGestureText="Suppr">
-                        <MenuItem.Icon>
-                            <Image Source="/Icons/delete.ico" />
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <Separator />
-                    <MenuItem Command="{Binding SwapOrientationCommand}" Header="_Bascule l'orientation du mot" InputGestureText="Ctrl+B">
-                        <MenuItem.Icon>
-                            <Image Source="/Icons/swap.ico" />
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <MenuItem Command="{Binding SuggestPlayCommand}" Header="_Place automatiquement le mot">
-                        <MenuItem.Icon>
-                            <Image Source="/Icons/SuggestPlay.ico" />
-                        </MenuItem.Icon>
-                    </MenuItem>
-                    <Separator />
-                    <MenuItem Command="{Binding FindWordCommand}" Header="_Recherche un mot" InputGestureText="Ctrl+F">
-                        <MenuItem.Icon>
-                            <Image Source="/Icons/find.ico" />
-                        </MenuItem.Icon>
-                    </MenuItem>
+                <MenuItem Command="{Binding LoadCommand}" InputGestureText="Ctrl+O" Header="_Ouvrir une liste de mots...">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/open.ico" Stretch="None" />
+                    </MenuItem.Icon>
                 </MenuItem>
-
-                <MenuItem Name="ViewMenu" Header="_View">
-                    <MenuItem Command="{Binding RecenterLayoutViewCommand}" Header="_Recentrer la vue du layout" InputGestureText="Ctrl+R">
-                        <MenuItem.Icon>
-                            <Image Source="/Icons/recenter.ico" />
-                        </MenuItem.Icon>
-                    </MenuItem>
+                <Separator />
+                <MenuItem Command="{Binding AddWordsCommand}" InputGestureText="+" Header="_Ajouter des mots au layout...">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/addwords.ico" Stretch="None" />
+                    </MenuItem.Icon>
                 </MenuItem>
-
-
-                <MenuItem Name="HelpMenu" Header="_?">
-                    <MenuItem Name="AboutCommand" Command="{Binding AboutCommand}" Header="À _propos de Bonza...">
-                        <MenuItem.Icon>
-                            <Image Source="/Icons/about.ico" />
-                        </MenuItem.Icon>
-                    </MenuItem>
+                <MenuItem Command="{Binding RegenerateLayoutCommand}" InputGestureText="F5" Header="_Regénérer le layout" />
+                <Separator />
+                <MenuItem Command="{Binding SaveCommand}" InputGestureText="Ctrl+S" Header="_Enregistrer le layout...">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/save.ico" Stretch="None" />
+                    </MenuItem.Icon>
                 </MenuItem>
-            </Menu>
-
-            <ToolBar DockPanel.Dock="Top" Margin="0,-1,0.333,1" ToolBarTray.IsLocked="True">
-                <Button Command="{Binding NewGameCommand}" ToolTip="Crée un nouveau layout vierge [Ctrl+N]">
-                    <Image Source="/Icons/new.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
-                </Button>
-                <Button Command="{Binding LoadCommand}" ToolTip="Crée une nouvelle grille et génère un layout à partir d'une liste de mots [Ctrl+O]">
-                    <Image Source="/Icons/open.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
-                </Button>
-                <Button Command="{Binding SaveCommand}" ToolTip="Enregistre le layout dans un fichier [Ctrl+S]">
-                    <Image Source="/Icons/save.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
-                </Button>
 
                 <Separator />
 
-                <Button Command="{Binding AddWordsCommand}" ToolTip="Ajouter des mots au layout [+]">
-                    <Image Source="/Icons/addwords.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
-                </Button>
+                <MenuItem Name="CloseCommand" Command="{Binding QuitCommand}" InputGestureText="Alt+F4" Header="_Quitter">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/close.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
 
+            <MenuItem Name="EditMenu" Header="_Edition">
+                <MenuItem Command="{Binding UndoCommand}" Header="_Annuler" InputGestureText="Ctrl+Z">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/undo.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="{Binding DeleteCommand}" Header="_Supprimer le mot" InputGestureText="Suppr">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/delete.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <Separator />
-
-                <Button Command="{Binding UndoCommand}" ToolTip="Annule la dernière modification [Ctrl+Z]">
-                    <Image Source="/Icons/undo.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
-                </Button>
-                <Button Command="{Binding DeleteCommand}" ToolTip="Supprime le mot [Suppr]">
-                    <Image Source="/Icons/delete.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
-                </Button>
-                <Button Command="{Binding SwapOrientationCommand}" ToolTip="Change l'orientation du mot [Ctrl+B]">
-                    <Image Source="/Icons/swap.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
-                </Button>
-                <Button Command="{Binding SuggestPlayCommand}" ToolTip="Place automatiquement le mot">
-                    <Image Source="/Icons/SuggestPlay.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
-                </Button>
-
+                <MenuItem Command="{Binding SwapOrientationCommand}" Header="_Bascule l'orientation du mot" InputGestureText="Ctrl+B">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/swap.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="{Binding SuggestPlayCommand}" Header="_Place automatiquement le mot">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/autoplace.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <Separator />
+                <MenuItem Command="{Binding FindWordCommand}" Header="_Recherche un mot" InputGestureText="Ctrl+F">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/find.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
 
-                <Button Command="{Binding RecenterLayoutViewCommand}" ToolTip="Recentre la vue des mots [Ctrl+R]">
-                    <Image Source="/Icons/recenter.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
-                </Button>
+            <MenuItem Name="ViewMenu" Header="_View">
+                <MenuItem Command="{Binding RecenterLayoutViewCommand}" Header="_Recentrer la vue du layout" InputGestureText="Ctrl+R">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/recenter.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
 
-                <Separator />
-            </ToolBar>
-        </DockPanel>
 
-        <DockPanel Grid.Row="1" Margin="6,4,6,6">
-            <StatusBar DockPanel.Dock="Bottom">
-                <TextBlock Name="StatusText" Text="{Binding StatusText, FallbackValue='Main ToolBar'}" />
-            </StatusBar>
+            <MenuItem Name="HelpMenu" Header="_?">
+                <MenuItem Name="AboutCommand" Command="{Binding AboutCommand}" Header="À _propos de Bonza...">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/about.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
 
-            <StackPanel Orientation="Vertical" DockPanel.Dock="Right" Width="635">
+        <ToolBar DockPanel.Dock="Top" Margin="0,-1,0.333,1" ToolBarTray.IsLocked="True">
+            <Button Command="{Binding NewGameCommand}" ToolTip="Crée un nouveau layout vierge [Ctrl+N]">
+                <Image Source="/Icons/new.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
+            </Button>
+            <Button Command="{Binding LoadCommand}" ToolTip="Crée une nouvelle grille et génère un layout à partir d'une liste de mots [Ctrl+O]">
+                <Image Source="/Icons/open.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
+            </Button>
+            <Button Command="{Binding SaveCommand}" ToolTip="Enregistre le layout dans un fichier [Ctrl+S]">
+                <Image Source="/Icons/save.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
+            </Button>
+
+            <Separator />
+
+            <Button Command="{Binding AddWordsCommand}" ToolTip="Ajouter des mots au layout [+]">
+                <Image Source="/Icons/addwords.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
+            </Button>
+
+            <Separator />
+
+            <Button Command="{Binding UndoCommand}" ToolTip="Annule la dernière modification [Ctrl+Z]">
+                <Image Source="/Icons/undo.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
+            </Button>
+            <Button Command="{Binding DeleteCommand}" ToolTip="Supprime le mot [Suppr]">
+                <Image Source="/Icons/delete.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
+            </Button>
+            <Button Command="{Binding SwapOrientationCommand}" ToolTip="Change l'orientation du mot [Ctrl+B]">
+                <Image Source="/Icons/swap.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
+            </Button>
+            <Button Command="{Binding SuggestPlayCommand}" ToolTip="Place automatiquement le mot">
+                <Image Source="/Icons/autoplace.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
+            </Button>
+
+            <Separator />
+
+            <Button Command="{Binding RecenterLayoutViewCommand}" ToolTip="Recentre la vue des mots [Ctrl+R]">
+                <Image Source="/Icons/recenter.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
+            </Button>
+
+            <Separator />
+        </ToolBar>
+
+        <StatusBar DockPanel.Dock="Bottom">
+            <TextBlock Name="StatusText" Text="{Binding StatusText, FallbackValue='Main ToolBar'}" />
+        </StatusBar>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="635" />
+            </Grid.ColumnDefinitions>
+
+            <Canvas Name="BoardCanvas" ClipToBounds="True" Background="LavenderBlush"
+                        MouseMove="BoardCanvas_MouseMoveWhenUp" MouseDown="BoardCanvas_MouseDown" MouseUp="BoardCanvas_MouseUp" MouseWheel="BoardCanvas_MouseWheel" MouseRightButtonDown="BoardCanvas_MouseRightButtonDown">
+                <Canvas Name="BoardTransformingCanvas" ClipToBounds="False">
+                    <Canvas Name="BoardBackgroundGrid" ClipToBounds="False" />
+                    <Canvas Name="BoardDrawingCanvas" ClipToBounds="False" />
+                    <Canvas.RenderTransform>
+                        <MatrixTransform x:Name="TransformationMatrix" />
+                    </Canvas.RenderTransform>
+                </Canvas>
+            </Canvas>
+
+            <StackPanel Orientation="Vertical" Grid.Column="1">
                 <local:HandUserControl x:Name="Player1HandUserControl" Height="238" />
             </StackPanel>
 
-            <Grid Name="MainGrid" Background="LavenderBlush"
-                  MouseMove="MainGrid_MouseMoveWhenUp" MouseDown="MainGrid_MouseDown" MouseUp="MainGrid_MouseUp" MouseWheel="MainGrid_MouseWheel"
-                  MouseRightButtonDown="MainGrid_MouseRightButtonDown">
-                <Canvas Name="BoardCanvas" ClipToBounds="True">
-                    <Canvas Name="TransformingCanvas" ClipToBounds="False">
-                        <Canvas Name="BackgroundGrid" ClipToBounds="False" />
-                        <Canvas Name="BoardDrawingCanvas" ClipToBounds="False" />
-                        <Canvas.RenderTransform>
-                            <MatrixTransform x:Name="TransformationMatrix" />
-                        </Canvas.RenderTransform>
-                    </Canvas>
-                </Canvas>
-            </Grid>
-        </DockPanel>
-    </Grid>
+        </Grid>
+    </DockPanel>
 </Window>

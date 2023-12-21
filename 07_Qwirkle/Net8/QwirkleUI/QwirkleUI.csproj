@@ -14,6 +14,7 @@
 		<None Remove="Icons\autoplace.ico" />
 		<None Remove="Icons\close.ico" />
 		<None Remove="Icons\delete.ico" />
+		<None Remove="Icons\find.ico" />
 		<None Remove="Icons\new.ico" />
 		<None Remove="Icons\open.ico" />
 		<None Remove="Icons\recenter.ico" />
@@ -32,6 +33,7 @@
 		<Resource Include="Icons\autoplace.ico" />
 		<Resource Include="Icons\close.ico" />
 		<Resource Include="Icons\delete.ico" />
+		<Resource Include="Icons\find.ico" />
 		<Resource Include="Icons\new.ico" />
 		<Resource Include="Icons\open.ico" />
 		<Resource Include="Icons\recenter.ico" />

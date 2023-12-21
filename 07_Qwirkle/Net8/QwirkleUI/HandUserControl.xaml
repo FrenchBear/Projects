@@ -29,7 +29,7 @@
 
             <Canvas Name="HandCanvas" ClipToBounds="False" Background="AntiqueWhite"
                     MouseMove="HandCanvas_MouseMoveWhenUp" MouseDown="HandCanvas_MouseDown" MouseUp="HandCanvas_MouseUp" MouseWheel="HandCanvas_MouseWheel" MouseRightButtonDown="HandCanvas_MouseRightButtonDown">
-                <Canvas Name="TransformingCanvas" ClipToBounds="False" >
+                <Canvas Name="HandTransformingCanvas" ClipToBounds="False" >
                     <Canvas Name="HandBackgroundGrid" />
                     <Canvas Name="HandDrawingCanvas" ClipToBounds="False" />
                     <Canvas.RenderTransform>
