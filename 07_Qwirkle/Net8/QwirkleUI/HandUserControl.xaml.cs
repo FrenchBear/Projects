@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using static QwirkleUI.App;
+using static QwirkleUI.Helpers;
 
 namespace QwirkleUI;
 
@@ -54,10 +55,12 @@ public partial class HandUserControl: UserControl
 
     private void UserControl_KeyDown(object sender, KeyEventArgs e)
     {
+        TraceCall();
+
         if (e.Key == Key.Escape)
         {
             HandIM.EndAnimationsInProgress();
-            HandIM.EndMoveInProgress();
+            HandIM.IMEndMoveInProgress();
             HandCanvas.MouseMove -= HandCanvas_MouseMoveWhenDown;
             HandCanvas.MouseMove += HandCanvas_MouseMoveWhenUp;
         }
@@ -65,12 +68,16 @@ public partial class HandUserControl: UserControl
 
     internal void SetViewModelAndMainWindow(MainWindow mainWindow, HandViewModel handViewModel)
     {
+        TraceCall();
+
         MainWindow = mainWindow;
         HandViewModel = handViewModel;
     }
 
-    internal void AddUITile(string shapeColor, int instance, RowCol p)
+    internal void HandAddUITile(string shapeColor, int instance, RowCol p)
     {
+        TraceCall();
+
         var t = new UITile(shapeColor, instance);
         t.GrayBackground = true;
         t.SetValue(Canvas.TopProperty, p.Row * UnitSize);
@@ -87,36 +94,62 @@ public partial class HandUserControl: UserControl
     // Mouse click and drag management
 
     internal void HandCanvas_MouseMoveWhenUp(object sender, MouseEventArgs e)
-        => HandIM.IM_MouseMoveWhenUp(sender, e);
+    {
+        if (HandOverInProgress)
+            return;
+        TraceCall();
+
+        HandIM.IM_MouseMoveWhenUp(sender, e);
+    }
 
     private void HandCanvas_MouseDown(object sender, MouseButtonEventArgs e)
     {
+        TraceCall();
+
         HandCanvas.MouseMove -= HandCanvas_MouseMoveWhenUp;
         HandCanvas.MouseMove += HandCanvas_MouseMoveWhenDown;
         HandIM.IM_MouseDown(sender, e, HandCanvas, HandDrawingCanvas, TransformationMatrix.Matrix);
     }
 
     internal void HandCanvas_MouseMoveWhenDown(object sender, MouseEventArgs e)
-        => HandIM.IM_MouseMoveWhenDown(sender, e, HandCanvas, TransformationMatrix.Matrix);
+    {
+        if (HandOverInProgress)
+            return;
+        TraceCall();
+
+        HandIM.IM_MouseMoveWhenDown(sender, e, HandCanvas, TransformationMatrix.Matrix);
+    }
 
     private void HandCanvas_MouseUp(object sender, MouseButtonEventArgs e)
     {
+        TraceCall();
+
         HandCanvas.MouseMove -= HandCanvas_MouseMoveWhenDown;
         HandCanvas.MouseMove += HandCanvas_MouseMoveWhenUp;
         HandIM.IM_MouseUp(sender, e);
     }
 
     // Actually not used for Hand
-    private void HandCanvas_MouseWheel(object sender, MouseWheelEventArgs e) =>
+    private void HandCanvas_MouseWheel(object sender, MouseWheelEventArgs e)
+    {
+        TraceCall();
+
         HandIM.IM_MouseWheel(sender, e);
+    }
 
     private void HandCanvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
-        => HandIM.IM_MouseRightButtonDown(sender, e, HandCanvas, HandDrawingCanvas);
-
-    internal void StartHandOver()
     {
+        TraceCall();
+
+        HandIM.IM_MouseRightButtonDown(sender, e, HandCanvas, HandDrawingCanvas);
+    }
+
+    internal void HandStartHandOver()
+    {
+        TraceCall();
+
         //Debug.WriteLine("HandUserControl.StartHandOver");
-        MainWindow.AcceptHandOver(HandIM);
+        MainWindow.MainWindowAcceptHandOver(HandIM);
     }
 }
 
@@ -133,6 +166,8 @@ internal class HandInteractionManager: InteractionManager
 
     internal override void UpdateTargetPosition(UITilesSelection selection)
     {
+        TraceCall("over Hand.");
+
         // Find a free position
         // Build NewHand without tiles being moved
         var NewHand = new List<UITileRowCol>();
@@ -180,17 +215,24 @@ internal class HandInteractionManager: InteractionManager
 
     internal override void CheckStartHandOver(Point localRowCol)
     {
+        TraceCall("over Hand.");
+
         if (localRowCol.X < -20)
+        {
+            HandOverInProgress = true;
             StartHandOver(Selection);
+        }
     }
 
     internal override void StartHandOver(UITilesSelection selection)
     {
+        TraceCall("over Hand.");
+
         base.StartHandOver(selection);
         View.HandCanvas.MouseMove -= View.HandCanvas_MouseMoveWhenDown;
         View.HandCanvas.MouseMove += View.HandCanvas_MouseMoveWhenUp;
 
         //Debug.WriteLine("HandOver initiated from Hand");
-        View.StartHandOver();
+        View.HandStartHandOver();
     }
 }

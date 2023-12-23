@@ -11,7 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using static QwirkleUI.App;
-using static QwirkleUI.ViewHelpers;
+using static QwirkleUI.Helpers;
 
 namespace QwirkleUI;
 
@@ -84,13 +84,17 @@ abstract internal class InteractionManager
 
     public void IM_MouseMoveWhenUp(object sender, MouseEventArgs e)
     {
-        // %aybe some visual hinting
+        TraceCall();
+
+        // Maybe some visual hinting
     }
 
     // Returs false if no UITile has been hit
     private bool UpdateSelectionAfterClick(MouseEventArgs e, Canvas c, Canvas dc)
     {
         // If no Hand tile is hit, just clear selection and return
+        TraceCall();
+
         UITile? t = GetHitHile(e.GetPosition(c), c);
         if (t == null)
         {
@@ -140,8 +144,10 @@ abstract internal class InteractionManager
     {
     }
 
-    internal void EndMoveInProgress()
+    internal void IMEndMoveInProgress()
     {
+        TraceCall();
+
         // Move in progress?
         if (pmm != null)
         {
@@ -153,6 +159,8 @@ abstract internal class InteractionManager
 
     public void IM_MouseDown(object sender, MouseEventArgs e, Canvas c, Canvas dc, Matrix m)
     {
+        TraceCall();
+
         EndAnimationsInProgress();
 
         previousMouseRowCol = e.GetPosition(c);
@@ -168,8 +176,19 @@ abstract internal class InteractionManager
         Mouse.Capture(c);
     }
 
+    public void IM_HandOver_MouseDown(Canvas c, Canvas dc, Matrix m)
+    {
+        TraceCall();
+
+        EndAnimationsInProgress();
+        pmm = GetMouseDownMoveAction(m);
+        Mouse.Capture(c);
+    }
+
     private Action<Point>? GetMouseDownMoveAction(Matrix m)
     {
+        TraceCall();
+
         Debug.Assert(!Selection.IsEmpty);
 
         // Reverse-transform mouse Grid coordinates into BoardDrawingCanvas coordinates
@@ -188,11 +207,13 @@ abstract internal class InteractionManager
         // When moving, point is current mouse in ideal grid coordinates
         return point =>
         {
+            Debug.WriteLine($"Enter: pmm({point.X:F0}, {point.Y:F0})");
             // Just move selected tiles
             foreach (UITileRowCol item in Selection)
             {
                 double preciseTop = point.Y + item.Offset.Y;
                 double preciseLeft = point.X + item.Offset.X;
+                Debug.WriteLine($"Precise: left={preciseLeft:F0} top={preciseTop:F0}");
 
                 item.UIT.SetValue(Canvas.TopProperty, preciseTop);
                 item.UIT.SetValue(Canvas.LeftProperty, preciseLeft);
@@ -204,36 +225,48 @@ abstract internal class InteractionManager
                 // ToDo: Decide of hatched feed-back
                 //item.UIT.Hatched = !(viewModel.GetCellState(row, col) != CellState.Tiled || (row == Selection.startRow && col == Selection.startCol));
             }
+            Debug.WriteLine($"Exit: pmm({point.X:F0}, {point.Y:F0})");
         };
     }
 
     internal virtual void IM_MouseMoveWhenDown(object sender, MouseEventArgs e, Canvas c, Matrix m)
     {
+        TraceCall("virt IM.");
+
         if (pmm != null)
         {
-            var gridPosition = e.GetPosition(c);
+            var canvasPosition = e.GetPosition(c);
             m.Invert();     // By construction, all applied transformations are reversible, so m is invertible
-            var canvasPosition = m.Transform(gridPosition);
-            pmm(canvasPosition);
+            var drawingCanvasPosition = m.Transform(canvasPosition);
+            pmm(drawingCanvasPosition);
 
-            Debug.WriteLine($"IM_MouseMoveWhenDown: ScreenPosition X={gridPosition.X:F0} Y={gridPosition.Y:F0}  CanvasPosition X={canvasPosition.X:F0} Y={canvasPosition.Y:F0}");
-            CheckStartHandOver(canvasPosition);
+            Debug.WriteLine($"IM_MouseMoveWhenDown: ScreenPosition X={canvasPosition.X:F0} Y={canvasPosition.Y:F0}  CanvasPosition X={drawingCanvasPosition.X:F0} Y={drawingCanvasPosition.Y:F0}");
+            CheckStartHandOver(drawingCanvasPosition);
         }
     }
 
-    internal virtual void CheckStartHandOver(Point localRowCol) { }
-
-    internal virtual void StartHandOver(UITilesSelection selection) 
+    internal virtual void CheckStartHandOver(Point localRowCol)
     {
-        //Debug.WriteLine("InteractionManager.StartHandOver");
+        TraceCall("virt IM.");
+    }
+
+    internal virtual void StartHandOver(UITilesSelection selection)
+    {
+        TraceCall("virt IM.");
+
         Mouse.Capture(null);
         pmm = null;
     }
 
-    abstract internal void UpdateTargetPosition(UITilesSelection selection);
+    internal virtual void UpdateTargetPosition(UITilesSelection selection)
+    {
+        TraceCall("virt IM.");
+    }
 
     internal void IM_MouseUp(object sender, MouseButtonEventArgs e)
     {
+        TraceCall();
+
         Mouse.Capture(null);
 
         if (pmm != null)
@@ -249,6 +282,8 @@ abstract internal class InteractionManager
 
     public void IM_MouseRightButtonDown(object sender, MouseButtonEventArgs e, Canvas c, Canvas dc)
     {
+        TraceCall();
+
         EndAnimationsInProgress();
         bool tileHit = UpdateSelectionAfterClick(e, c, dc);
 
@@ -257,5 +292,7 @@ abstract internal class InteractionManager
     }
 
     public virtual void OnMouseRightButtonDown(object sender, UITilesSelection selection, bool tileHit)
-    { }
+    {
+        TraceCall("virt IM.");
+    }
 }

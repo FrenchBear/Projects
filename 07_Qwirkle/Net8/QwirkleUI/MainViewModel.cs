@@ -145,18 +145,19 @@ internal class MainViewModel: INotifyPropertyChanged
 
     internal void InitializeBoard() => Model.InitializeBoard();
 
+    // Draw board placed tiles with a dark background
     internal void DrawBoard()
     {
-        // ToDo: Should I ensure that DrawinfCanvas is empty here, or is it a view responsibility?
         View.AddCircle(new RowCol(50, 50));
         foreach (Move m in Model.Board)
-            View.AddUITile(new RowCol(m.Row, m.Col), m.Tile.Shape.ToString() + m.Tile.Color.ToString(), m.Tile.Instance, false);
+            View.BoardAddUITile(new RowCol(m.Row, m.Col), m.Tile.Shape.ToString() + m.Tile.Color.ToString(), m.Tile.Instance, false);
     }
 
+    // For dev, draw test tiles with gray background
     internal void DrawCurrentMoves()
     {
         foreach (Move m in Model.CurrentMoves)
-            View.CurrentMoves.Add(View.AddUITile(new RowCol(m.Row, m.Col), m.Tile.Shape.ToString() + m.Tile.Color.ToString(), m.Tile.Instance, true));
+            View.CurrentMoves.Add(View.BoardAddUITile(new RowCol(m.Row, m.Col), m.Tile.Shape.ToString() + m.Tile.Color.ToString(), m.Tile.Instance, true));
     }
 
     internal CellState GetCellState(int row, int col)
