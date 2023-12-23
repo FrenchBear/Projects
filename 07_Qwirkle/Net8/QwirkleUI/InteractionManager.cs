@@ -57,9 +57,9 @@ internal readonly struct UITilesSelection: IReadOnlyCollection<UITileRowCol>
     internal readonly void Add(UITileRowCol hit)
     {
         Debug.Assert(!_items.Contains(hit));
-        Debug.Assert(hit.UIT.SelectionBorder == false);
+        Debug.Assert(hit.UIT.SelectionBorder == false);     // Why?
         _items.Add(hit);
-        hit.UIT.SelectionBorder = true;
+        hit.UIT.SelectionBorder = true;                     // And then we add a selection border??
     }
 
     internal readonly void Remove(UITileRowCol hit)
@@ -78,7 +78,7 @@ abstract internal class InteractionManager
 {
     public readonly UITilesSelection Selection = [];
     protected Action<Point>? pmm;
-    protected Point previousMouseRowCol;
+    protected Point previousMousePosition;
 
     public InteractionManager() { }
 
@@ -163,11 +163,11 @@ abstract internal class InteractionManager
 
         EndAnimationsInProgress();
 
-        previousMouseRowCol = e.GetPosition(c);
+        previousMousePosition = e.GetPosition(c);
         bool tileHit = UpdateSelectionAfterClick(e, c, dc);            // Ensures that selected tiles are on top of others in the visual tree
 
         if (tileHit)
-            pmm = GetMouseDownMoveAction(m);
+            pmm = GetMouseDownMoveAction(m, false);
         else
             pmm = null;
 
@@ -181,86 +181,80 @@ abstract internal class InteractionManager
         TraceCall();
 
         EndAnimationsInProgress();
-        pmm = GetMouseDownMoveAction(m);
+        previousMousePosition = Mouse.GetPosition(c);
+        pmm = GetMouseDownMoveAction(m, true);
         Mouse.Capture(c);
     }
 
-    private Action<Point>? GetMouseDownMoveAction(Matrix m)
+    private Action<Point>? GetMouseDownMoveAction(Matrix m, bool skipOffsetCalculation)
     {
         TraceCall();
 
         Debug.Assert(!Selection.IsEmpty);
 
-        // Reverse-transform mouse Grid coordinates into BoardDrawingCanvas coordinates
-        m.Invert();     // To convert from screen transformed coordinates into ideal grid
-                        // coordinates starting at (0,0) with a square side of UnitSize
-        var mp = m.Transform(previousMouseRowCol);
-        //var clickOffsetList = new List<Vector>(Selection.Count);
-        foreach (UITileRowCol item in Selection)
+        if (!skipOffsetCalculation)
         {
-            double startLeft = (double)item.UIT.GetValue(Canvas.LeftProperty);
-            double startTop = (double)item.UIT.GetValue(Canvas.TopProperty);
-            var p = new Point(startLeft, startTop);
-            item.Offset = p - mp;
+            // Reverse-transform mouse Grid coordinates into BoardDrawingCanvas coordinates
+            m.Invert();     // To convert from screen transformed coordinates into ideal grid
+                            // coordinates starting at (0,0) with a square side of UnitSize
+            var mp = m.Transform(previousMousePosition);
+            foreach (UITileRowCol item in Selection)
+            {
+                double startLeft = (double)item.UIT.GetValue(Canvas.LeftProperty);
+                double startTop = (double)item.UIT.GetValue(Canvas.TopProperty);
+                var p = new Point(startLeft, startTop);
+                item.Offset = p - mp;
+            }
         }
 
         // When moving, point is current mouse in ideal grid coordinates
         return point =>
         {
-            Debug.WriteLine($"Enter: pmm({point.X:F0}, {point.Y:F0})");
+            Debug.WriteLine($"Enter: pmm Y={point.Y:F0} X={point.X:F0}");
             // Just move selected tiles
             foreach (UITileRowCol item in Selection)
             {
                 double preciseTop = point.Y + item.Offset.Y;
                 double preciseLeft = point.X + item.Offset.X;
-                Debug.WriteLine($"Precise: left={preciseLeft:F0} top={preciseTop:F0}");
+                Debug.WriteLine($"item.offset: Y={item.Offset.Y:F0} X={item.Offset.X:F0}");
+
+                // Round position to closest square on the grid
+                // Originally to decide if tile should be hatched or not, but logic is different between Board and Hand
+                int row = (int)Math.Floor(preciseTop / UnitSize + 0.5);
+                int col = (int)Math.Floor(preciseLeft / UnitSize + 0.5);
+
+                Debug.WriteLine($"Precise: top={preciseTop:F0} left={preciseLeft:F0}    RowCol: row={row} col={col}");
 
                 item.UIT.SetValue(Canvas.TopProperty, preciseTop);
                 item.UIT.SetValue(Canvas.LeftProperty, preciseLeft);
 
-                // Round position to closest square on the grid
-                int row = (int)Math.Floor(preciseTop / UnitSize + 0.5);
-                int col = (int)Math.Floor(preciseLeft / UnitSize + 0.5);
-
                 // ToDo: Decide of hatched feed-back
+                // Possible: an abstract function overriden in Board/Hand ImplementationManager classes
                 //item.UIT.Hatched = !(viewModel.GetCellState(row, col) != CellState.Tiled || (row == Selection.startRow && col == Selection.startCol));
             }
-            Debug.WriteLine($"Exit: pmm({point.X:F0}, {point.Y:F0})");
         };
     }
 
-    internal virtual void IM_MouseMoveWhenDown(object sender, MouseEventArgs e, Canvas c, Matrix m)
+    internal virtual Point IM_MouseMoveWhenDown(object sender, MouseEventArgs e, Canvas c, Matrix m)
     {
         TraceCall("virt IM.");
 
-        if (pmm != null)
-        {
-            var canvasPosition = e.GetPosition(c);
-            m.Invert();     // By construction, all applied transformations are reversible, so m is invertible
-            var drawingCanvasPosition = m.Transform(canvasPosition);
-            pmm(drawingCanvasPosition);
+        var canvasPosition = e.GetPosition(c);
+        m.Invert();     // By construction, all applied transformations are reversible, so m is invertible
+        var drawingCanvasPosition = m.Transform(canvasPosition);
+        Debug.WriteLine($"IM_MouseMoveWhenDown: CanvasPosition Y={canvasPosition.Y:F0} X={canvasPosition.X:F0}  DrawingCanvasPosition Y={drawingCanvasPosition.Y:F0} X={drawingCanvasPosition.X:F0}");
 
-            Debug.WriteLine($"IM_MouseMoveWhenDown: ScreenPosition X={canvasPosition.X:F0} Y={canvasPosition.Y:F0}  CanvasPosition X={drawingCanvasPosition.X:F0} Y={drawingCanvasPosition.Y:F0}");
-            CheckStartHandOver(drawingCanvasPosition);
-        }
+        pmm?.Invoke(drawingCanvasPosition);
+
+        return drawingCanvasPosition;
     }
 
-    internal virtual void CheckStartHandOver(Point localRowCol)
+    internal void StartHandOverEndCaptureAndPmm()
     {
-        TraceCall("virt IM.");
-    }
-
-    internal virtual void StartHandOver(UITilesSelection selection)
-    {
-        TraceCall("virt IM.");
+        TraceCall();
 
         Mouse.Capture(null);
         pmm = null;
-    }
-
-    internal virtual void UpdateTargetPosition(UITilesSelection selection)
-    {
-        TraceCall("virt IM.");
     }
 
     internal void IM_MouseUp(object sender, MouseButtonEventArgs e)
@@ -274,6 +268,11 @@ abstract internal class InteractionManager
             pmm = null;
             UpdateTargetPosition(Selection);
         }
+    }
+
+    internal virtual void UpdateTargetPosition(UITilesSelection selection)
+    {
+        TraceCall("virt IM.");
     }
 
     public void IM_MouseWheel(object sender, MouseWheelEventArgs e) =>

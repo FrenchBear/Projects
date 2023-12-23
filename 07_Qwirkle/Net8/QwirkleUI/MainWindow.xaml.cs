@@ -74,6 +74,7 @@ public partial class MainWindow: Window
 
         if (e.Key == Key.Escape)
         {
+            BoardIM.IMEndMoveInProgress();
             BoardIM.EndAnimationsInProgress();
             BoardIM.IMEndMoveInProgress();
             BoardCanvas.MouseMove -= BoardCanvas_MouseMoveWhenDown;
@@ -180,6 +181,8 @@ public partial class MainWindow: Window
     // Maybe provide hovering visual feed-back? Or a tooltip with debug info?
     private void BoardCanvas_MouseMoveWhenUp(object sender, MouseEventArgs e)
     {
+        if (HandOverInProgress)
+            return;
         TraceCall();
 
         BoardIM.IM_MouseMoveWhenUp(sender, e);
@@ -204,6 +207,8 @@ public partial class MainWindow: Window
 
     private void BoardCanvas_MouseMoveWhenDown(object sender, MouseEventArgs e)
     {
+        if (HandOverInProgress)
+            return;
         TraceCall();
 
         BoardIM.IM_MouseMoveWhenDown(sender, e, BoardCanvas, TransformationMatrix.Matrix);
@@ -211,8 +216,10 @@ public partial class MainWindow: Window
 
     private void BoardCanvas_MouseUp(object sender, MouseButtonEventArgs e)
     {
+        // An event MouseUp is raised during handover, don't know why
+        if (HandOverInProgress)
+            return;
         TraceCall();
-        Debugger.Break();
 
         BoardCanvas.MouseMove -= BoardCanvas_MouseMoveWhenDown;
         BoardCanvas.MouseMove += BoardCanvas_MouseMoveWhenUp;
@@ -413,15 +420,23 @@ public partial class MainWindow: Window
         TraceCall();
 
         Debug.Assert(playerIM != null && !playerIM.Selection.IsEmpty);
-        Debug.WriteLine($"MainWindow: Accepting HandOver of {playerIM.Selection.Count} tile(s)");
+        Debug.WriteLine($"MainWindowAcceptHandOver: Accepting HandOver of {playerIM.Selection.Count} tile(s)");
 
         // Get mouse position in BoardCanvas
-        //Point mouseInBoardCanvas = Mouse.GetPosition(BoardCanvas);
+        Point canvasPosition = Mouse.GetPosition(BoardCanvas);
+        var m = TransformationMatrix.Matrix;
+        m.Invert();     // By construction, all applied transformations are reversible, so m is invertible
+        var drawingCanvasPosition = m.Transform(canvasPosition);
+        Debug.WriteLine($"MainWindowAcceptHandOver: CanvasPosition Y={canvasPosition.Y:F0} X={canvasPosition.X:F0}  DrawingCanvasPosition Y={drawingCanvasPosition.Y:F0} X={drawingCanvasPosition.X:F0}");
+
         BoardIM.Selection.Clear();
         foreach (var pt in playerIM.Selection)
         {
-            //Point p = 
-            var dupTile = BoardAddUITile(new RowCol(0, 0), pt.UIT.ShapeColor, pt.UIT.Instance, true);
+            int row = (int)Math.Floor(drawingCanvasPosition.Y / UnitSize + 0.5);
+            int col = (int)Math.Floor(drawingCanvasPosition.X / UnitSize + 0.5);
+            Debug.WriteLine($"MainWindowAcceptHandOver: row={row} col={col}   Offset Y={pt.Offset.Y:F0} X={pt.Offset.X:F0}");
+
+            var dupTile = BoardAddUITile(new RowCol(row, col), pt.UIT.ShapeColor, pt.UIT.Instance, true);
             dupTile.Offset = pt.Offset;
             BoardIM.Selection.Add(dupTile);
         }
@@ -429,6 +444,9 @@ public partial class MainWindow: Window
         BoardIM.IM_HandOver_MouseDown(BoardCanvas, BoardDrawingCanvas, TransformationMatrix.Matrix);
         BoardCanvas.MouseMove -= BoardCanvas_MouseMoveWhenUp;
         BoardCanvas.MouseMove += BoardCanvas_MouseMoveWhenDown;
+
+        // Restart MouseMove events processing
+        HandOverInProgress = false;
     }
 }
 
@@ -537,21 +555,23 @@ internal class BoardInteractionManager: InteractionManager
         cm.IsOpen = true;
     }
 
-    internal override void IM_MouseMoveWhenDown(object sender, MouseEventArgs e, Canvas c, Matrix m)
+    internal override Point IM_MouseMoveWhenDown(object sender, MouseEventArgs e, Canvas c, Matrix m)
     {
         TraceCall("over Board.");
 
-        var newRowCol = e.GetPosition(c);
-        base.IM_MouseMoveWhenDown(sender, e, c, m);
+        var canvasMousePosition = e.GetPosition(c);
+        var drawingCanvasMousePosition = base.IM_MouseMoveWhenDown(sender, e, c, m);
 
         if (pmm == null)
         {
             // move drawing surface
-            var delta = newRowCol - previousMouseRowCol;
-            previousMouseRowCol = newRowCol;
+            var delta = canvasMousePosition - previousMousePosition;
+            previousMousePosition = canvasMousePosition;
             m.Translate(delta.X, delta.Y);
             View.TransformationMatrix.Matrix = m;
             View.UpdateBackgroundGrid();
         }
+
+        return drawingCanvasMousePosition;
     }
 }

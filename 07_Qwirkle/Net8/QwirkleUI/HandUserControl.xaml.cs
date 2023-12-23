@@ -117,7 +117,18 @@ public partial class HandUserControl: UserControl
             return;
         TraceCall();
 
-        HandIM.IM_MouseMoveWhenDown(sender, e, HandCanvas, TransformationMatrix.Matrix);
+        Point? handCanvasMousePosition = HandIM.IM_MouseMoveWhenDown(sender, e, HandCanvas, TransformationMatrix.Matrix);
+
+        // If mouse is more than 20 points left HandCanvas, it's time for a handover to MainWindow
+        if (handCanvasMousePosition != null && handCanvasMousePosition.Value.X<-20)
+        {
+            HandOverInProgress = true;  // Ignore MouseMove events to avoid nasty reentrency issues
+            HandIM.StartHandOverEndCaptureAndPmm();
+            HandCanvas.MouseMove -= HandCanvas_MouseMoveWhenDown;
+            HandCanvas.MouseMove += HandCanvas_MouseMoveWhenUp;
+
+            MainWindow.MainWindowAcceptHandOver(HandIM);
+        }
     }
 
     private void HandCanvas_MouseUp(object sender, MouseButtonEventArgs e)
@@ -142,14 +153,6 @@ public partial class HandUserControl: UserControl
         TraceCall();
 
         HandIM.IM_MouseRightButtonDown(sender, e, HandCanvas, HandDrawingCanvas);
-    }
-
-    internal void HandStartHandOver()
-    {
-        TraceCall();
-
-        //Debug.WriteLine("HandUserControl.StartHandOver");
-        MainWindow.MainWindowAcceptHandOver(HandIM);
     }
 }
 
@@ -211,28 +214,5 @@ internal class HandInteractionManager: InteractionManager
             Debug.Assert(h != null);
             h.RC = uitp.RC;
         }
-    }
-
-    internal override void CheckStartHandOver(Point localRowCol)
-    {
-        TraceCall("over Hand.");
-
-        if (localRowCol.X < -20)
-        {
-            HandOverInProgress = true;
-            StartHandOver(Selection);
-        }
-    }
-
-    internal override void StartHandOver(UITilesSelection selection)
-    {
-        TraceCall("over Hand.");
-
-        base.StartHandOver(selection);
-        View.HandCanvas.MouseMove -= View.HandCanvas_MouseMoveWhenDown;
-        View.HandCanvas.MouseMove += View.HandCanvas_MouseMoveWhenUp;
-
-        //Debug.WriteLine("HandOver initiated from Hand");
-        View.HandStartHandOver();
     }
 }
