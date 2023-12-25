@@ -95,7 +95,7 @@ public partial class HandUserControl: UserControl
 
     internal void HandCanvas_MouseMoveWhenUp(object sender, MouseEventArgs e)
     {
-        if (HandOverInProgress)
+        if (HandOverState==HandOverStateEnum.InTransition)
             return;
         TraceCall();
 
@@ -113,7 +113,7 @@ public partial class HandUserControl: UserControl
 
     internal void HandCanvas_MouseMoveWhenDown(object sender, MouseEventArgs e)
     {
-        if (HandOverInProgress)
+        if (HandOverState == HandOverStateEnum.InTransition)
             return;
         TraceCall();
 
@@ -122,7 +122,7 @@ public partial class HandUserControl: UserControl
         // If mouse is more than 20 points left HandCanvas, it's time for a handover to MainWindow
         if (handCanvasMousePosition != null && handCanvasMousePosition.Value.X<-20)
         {
-            HandOverInProgress = true;  // Ignore MouseMove events to avoid nasty reentrency issues
+            HandOverState = HandOverStateEnum.InTransition;  // Ignore MouseMove events to avoid nasty reentrency issues
             HandIM.StartHandOverEndCaptureAndPmm();
             HandCanvas.MouseMove -= HandCanvas_MouseMoveWhenDown;
             HandCanvas.MouseMove += HandCanvas_MouseMoveWhenUp;

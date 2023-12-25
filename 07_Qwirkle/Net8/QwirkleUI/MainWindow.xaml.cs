@@ -29,7 +29,6 @@ namespace QwirkleUI;
 public partial class MainWindow: Window
 {
     private readonly MainViewModel ViewModel;
-    //private BoardCanvasSelection Selection = new();
     private readonly List<UITile> m_UITilesList = [];
     private readonly HandViewModel[] HandViewModels = [];
     internal readonly HashSet<UITileRowCol> CurrentMoves = [];
@@ -181,7 +180,7 @@ public partial class MainWindow: Window
     // Maybe provide hovering visual feed-back? Or a tooltip with debug info?
     private void BoardCanvas_MouseMoveWhenUp(object sender, MouseEventArgs e)
     {
-        if (HandOverInProgress)
+        if (HandOverState == HandOverStateEnum.InTransition)
             return;
         TraceCall();
 
@@ -207,7 +206,7 @@ public partial class MainWindow: Window
 
     private void BoardCanvas_MouseMoveWhenDown(object sender, MouseEventArgs e)
     {
-        if (HandOverInProgress)
+        if (HandOverState == HandOverStateEnum.InTransition)
             return;
         TraceCall();
 
@@ -217,7 +216,7 @@ public partial class MainWindow: Window
     private void BoardCanvas_MouseUp(object sender, MouseButtonEventArgs e)
     {
         // An event MouseUp is raised during handover, don't know why
-        if (HandOverInProgress)
+        if (HandOverState == HandOverStateEnum.InTransition)
             return;
         TraceCall();
 
@@ -446,7 +445,7 @@ public partial class MainWindow: Window
         BoardCanvas.MouseMove += BoardCanvas_MouseMoveWhenDown;
 
         // Restart MouseMove events processing
-        HandOverInProgress = false;
+        HandOverState = HandOverStateEnum.Active;
     }
 }
 
@@ -523,6 +522,17 @@ internal class BoardInteractionManager: InteractionManager
             {
                 uitp.Offset = new Vector(uitp.RC.Col * UnitSize, uitp.RC.Row * UnitSize);
             }
+        }
+
+        // ToDo: This should be probably done earlier, on IM_MouseUp
+        // If a handover is in progress, we need to add selection to board CurrentMoves
+        // so the tiles keep a gray background and remain moveable
+        // Must also do hand cleanup (temporary until move is validated, since move can be cancelled before trying again)
+        if (HandOverState==HandOverStateEnum.Active)
+        {
+            foreach (UITileRowCol uitp in Selection)
+                View.CurrentMoves.Add(uitp);
+            HandOverState = HandOverStateEnum.Inactive;
         }
 
         // With animation

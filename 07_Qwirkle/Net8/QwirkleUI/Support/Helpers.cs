@@ -14,7 +14,14 @@ namespace QwirkleUI;
 
 internal static class Helpers
 {
-    public static bool HandOverInProgress;
+    public static HandOverStateEnum HandOverState = HandOverStateEnum.Inactive;
+
+    public enum HandOverStateEnum
+    {
+        Inactive,           // Default state
+        InTransition,       // When transferring tiles from hand to board, mouseevents ignored
+        Active,             // After transferring hand tiles to board, still moving (mouse up will revert to inactive)
+    }
 
     // Return UITile hit by mouse on BoardDrawingCanvas dc, or null if no UITile has been hit
     public static UITile? GetHitHile(Point p, Canvas dc)
