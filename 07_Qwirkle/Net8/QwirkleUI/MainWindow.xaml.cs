@@ -491,37 +491,41 @@ internal class BoardInteractionManager: InteractionManager
         int deltaCol = 0;
         if (!OkPosition(0, 0))
         {
-            // If not, look in successive squares of side delta around drop position until this offset brings a valid drop location
+            // Then explore in concentric squares around drop position
             for (int delta = 1; ; delta++)
             {
-                for (int dc = -delta; dc <= delta; dc++)
+                // First we search for N, S, W and E squares
+                if (OkPosition(-delta, 0))
+                    goto ValidDropPointFound;
+                if (OkPosition(+delta, 0))
+                    goto ValidDropPointFound;
+                if (OkPosition(0, -delta))
+                    goto ValidDropPointFound;
+                if (OkPosition(0, +delta))
+                    goto ValidDropPointFound;
+
+                // Then expand to square corners
+                for (int offset = 1; offset <= delta; offset++)
                 {
-                    if (OkPosition(-delta, dc))
+                    if (OkPosition(-delta, -offset))
+                        goto ValidDropPointFound;
+                    if (OkPosition(-delta, +offset))
+                        goto ValidDropPointFound;
+                    if (OkPosition(+delta, -offset))
+                        goto ValidDropPointFound;
+                    if (OkPosition(+delta, +offset))
+                        goto ValidDropPointFound;
+                    // Avoid doing corners twice
+                    if (offset < delta)
                     {
-                        deltaRow = -delta;
-                        deltaCol = dc;
-                        goto ValidDropPointFound;      // Double break;
-                    }
-                    if (OkPosition(delta, dc))
-                    {
-                        deltaRow = delta;
-                        deltaCol = dc;
-                        goto ValidDropPointFound;      // Double break;
-                    }
-                }
-                for (int dr = -delta + 1; dr < delta; dr++)
-                {
-                    if (OkPosition(dr, -delta))
-                    {
-                        deltaRow = dr;
-                        deltaCol = -delta;
-                        goto ValidDropPointFound;      // Double break;
-                    }
-                    if (OkPosition(dr, delta))
-                    {
-                        deltaRow = dr;
-                        deltaCol = delta;
-                        goto ValidDropPointFound;      // Double break;
+                        if (OkPosition(-offset, -delta))
+                            goto ValidDropPointFound;
+                        if (OkPosition(+offset, -delta))
+                            goto ValidDropPointFound;
+                        if (OkPosition(-offset, +delta))
+                            goto ValidDropPointFound;
+                        if (OkPosition(+offset, +delta))
+                            goto ValidDropPointFound;
                     }
                 }
             }
@@ -549,6 +553,8 @@ internal class BoardInteractionManager: InteractionManager
                 //uitp.RC = new RowCol(row, col);
                 NewCurrentMoves2.Add(new UITileRowCol(uitp.UIT, new RowCol(row, col)));
             }
+            deltaRow = dr;
+            deltaCol = dc;
             return true;
         }
 
