@@ -486,49 +486,92 @@ internal class BoardInteractionManager: InteractionManager
             if (!Selection.ContainsUITile(uitp.UIT))
                 NewCurrentMoves.Add(uitp);
 
-        // Find out if all prospect target position are Ok
-        bool rollback = false;
+        // Search first if drop point is Ok, using a shift offset of (0,0)
+        int deltaRow = 0;
+        int deltaCol = 0;
+        if (!OkPosition(0, 0))
+        {
+            // If not, look in successive squares of side delta around drop position until this offset brings a valid drop location
+            for (int delta = 1; ; delta++)
+            {
+                for (int dc = -delta; dc <= delta; dc++)
+                {
+                    if (OkPosition(-delta, dc))
+                    {
+                        deltaRow = -delta;
+                        deltaCol = dc;
+                        goto ValidDropPointFound;      // Double break;
+                    }
+                    if (OkPosition(delta, dc))
+                    {
+                        deltaRow = delta;
+                        deltaCol = dc;
+                        goto ValidDropPointFound;      // Double break;
+                    }
+                }
+                for (int dr = -delta + 1; dr < delta; dr++)
+                {
+                    if (OkPosition(dr, -delta))
+                    {
+                        deltaRow = dr;
+                        deltaCol = -delta;
+                        goto ValidDropPointFound;      // Double break;
+                    }
+                    if (OkPosition(dr, delta))
+                    {
+                        deltaRow = dr;
+                        deltaCol = delta;
+                        goto ValidDropPointFound;      // Double break;
+                    }
+                }
+            }
+        }
+
+    ValidDropPointFound:
+        // Helper, find out if all prospect target position are Ok once shifted of (dr, dc)
+        bool OkPosition(int dr, int dc)
+        {
+            var NewCurrentMoves2 = new HashSet<UITileRowCol>(NewCurrentMoves);
+
+            foreach (UITileRowCol uitp in Selection)
+            {
+                double left = (double)uitp.UIT.GetValue(Canvas.LeftProperty);
+                double top = (double)uitp.UIT.GetValue(Canvas.TopProperty);
+
+                // Candidate position shifted of (dr, dc)
+                int row = (int)Math.Floor(top / UnitSize + 0.5) + dr;
+                int col = (int)Math.Floor(left / UnitSize + 0.5) + dc;
+
+                if (ViewModel.GetCellState(row, col) == CellState.Tiled ||
+                    NewCurrentMoves2.Any(uitp => uitp.RC.Row == row && uitp.RC.Col == col))
+                    return false;
+
+                //uitp.RC = new RowCol(row, col);
+                NewCurrentMoves2.Add(new UITileRowCol(uitp.UIT, new RowCol(row, col)));
+            }
+            return true;
+        }
+
+        // Appliying shifd (deltaRow, deltaCol)
+        // Offset vector contains target position on DrawingCanvas
         foreach (UITileRowCol uitp in Selection)
         {
             double left = (double)uitp.UIT.GetValue(Canvas.LeftProperty);
             double top = (double)uitp.UIT.GetValue(Canvas.TopProperty);
 
-            // Candidate position
-            int row = (int)Math.Floor(top / UnitSize + 0.5);
-            int col = (int)Math.Floor(left / UnitSize + 0.5);
-
-            if (ViewModel.GetCellState(row, col) == CellState.Tiled ||
-                NewCurrentMoves.Any(uitp => uitp.RC.Row == row && uitp.RC.Col == col))
-            {
-                rollback = true;
-                break;
-            }
+            // Shifted position
+            int row = (int)Math.Floor(top / UnitSize + 0.5) + deltaRow;
+            int col = (int)Math.Floor(left / UnitSize + 0.5) + deltaCol;
 
             uitp.RC = new RowCol(row, col);
-            NewCurrentMoves.Add(new UITileRowCol(uitp.UIT, new RowCol(row, col)));
-        }
-
-        if (rollback)
-        {
-            foreach (UITileRowCol uitp in Selection)
-            {
-                uitp.Offset = new Vector(uitp.StartRC.Col * UnitSize, uitp.StartRC.Row * UnitSize);
-                uitp.UIT.Hatched = false;
-            }
-        }
-        else
-        {
-            foreach (UITileRowCol uitp in Selection)
-            {
-                uitp.Offset = new Vector(uitp.RC.Col * UnitSize, uitp.RC.Row * UnitSize);
-            }
+            uitp.Offset = new Vector(col * UnitSize, row * UnitSize);
         }
 
         // ToDo: This should be probably done earlier, on IM_MouseUp
         // If a handover is in progress, we need to add selection to board CurrentMoves
         // so the tiles keep a gray background and remain moveable
         // Must also do hand cleanup (temporary until move is validated, since move can be cancelled before trying again)
-        if (HandOverState==HandOverStateEnum.Active)
+        if (HandOverState == HandOverStateEnum.Active)
         {
             foreach (UITileRowCol uitp in Selection)
                 View.CurrentMoves.Add(uitp);
