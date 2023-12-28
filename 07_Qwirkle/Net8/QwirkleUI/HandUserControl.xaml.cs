@@ -22,7 +22,6 @@ public partial class HandUserControl: UserControl
 {
     private MainWindow MainWindow;
     private HandViewModel HandViewModel;
-    internal readonly HashSet<UITileRowCol> Hand = [];
     internal HandInteractionManager HandIM;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -30,8 +29,6 @@ public partial class HandUserControl: UserControl
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     {
         InitializeComponent();
-
-        HandIM = new HandInteractionManager(Hand, this);
 
         var tm = TransformationMatrix.Matrix;
         tm.Translate(10.0, 10.0);
@@ -73,6 +70,7 @@ public partial class HandUserControl: UserControl
 
         MainWindow = mainWindow;
         HandViewModel = handViewModel;
+        HandIM = new HandInteractionManager(HandViewModel.UIHand, this);
     }
 
     internal void HandAddUITile(Tile ti, RowCol p)
@@ -88,7 +86,7 @@ public partial class HandUserControl: UserControl
         HandDrawingCanvas.Children.Add(t);
 
         var h = new UITileRowCol(t, p);
-        Hand.Add(h);
+        HandViewModel.UIHand.Add(h);
     }
 
     // --------------------------------------------------------------------
@@ -98,9 +96,9 @@ public partial class HandUserControl: UserControl
     {
         if (HandOverState==HandOverStateEnum.InTransition)
             return;
-        TraceCall();
+        //TraceCall();
 
-        HandIM.IM_MouseMoveWhenUp(sender, e);
+        //HandIM.IM_MouseMoveWhenUp(sender, e);
     }
 
     private void HandCanvas_MouseDown(object sender, MouseButtonEventArgs e)

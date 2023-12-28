@@ -6,8 +6,10 @@
 
 using LibQwirkle;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
@@ -18,6 +20,12 @@ internal class MainViewModel: INotifyPropertyChanged
     // Model and View
     private readonly Model Model;
     private readonly MainWindow View;
+    private readonly HandViewModel[] HandViewModels = [];
+
+    public int PlayerIndex = 0;
+
+    public Player CurrentPlayer => Model.Players[PlayerIndex];
+    public HandViewModel CurrentHandViewModel => HandViewModels[PlayerIndex];
 
     // Helper to initialize HandViewModel, since model is common to all ViewModels
     public Model GetModel => Model;
@@ -50,6 +58,10 @@ internal class MainViewModel: INotifyPropertyChanged
         // Initialize ViewModel
         View = view;
         Model = new Model(this);
+
+        // Just 1 player for now
+        HandViewModels = new HandViewModel[1];
+        HandViewModels[0] = new HandViewModel(view, view.Player1HandUserControl, Model, 0);
 
         // Binding commands with behavior
 
@@ -141,10 +153,33 @@ internal class MainViewModel: INotifyPropertyChanged
         if (View.BoardIM.Selection.IsEmpty)
             return;
 
-        foreach (var item in View.BoardIM.Selection)
+        Debug.WriteLine($"PerformDelete Start: Hand.Count={CurrentPlayer.Hand.Count} CurrentHandViewModel.UIHand.Count={CurrentHandViewModel.UIHand.Count}");
+        Debug.WriteLine($"PerformDelete Start: MainWindowCurrentMoves.Count={View.MainWindowCurrentMoves.Count} Model.CurrentMoves.Count={Model.CurrentMoves.Count}");
+
+        foreach (var uitrc in new List<UITileRowCol>(View.BoardIM.Selection))
         {
-            View.Han
+            // Add to Player Hand
+            Debug.Assert(!CurrentPlayer.Hand.Contains(uitrc.UIT.Tile));
+            CurrentPlayer.Hand.Add(uitrc.UIT.Tile);
+            HandViewModels[PlayerIndex].AddAndDrawTile(uitrc.UIT.Tile);
+
+            // Remove from Board
+            var todel = View.MainWindowCurrentMoves.FirstOrDefault(item => item.UIT == uitrc.UIT);
+            Debug.Assert(todel!=null);
+            View.MainWindowCurrentMoves.Remove(todel);
+            View.BoardRemoveUITile(uitrc.UIT);
         }
+
+        Debug.WriteLine($"PerformDelete End: Hand.Count={CurrentPlayer.Hand.Count} CurrentHandViewModel.UIHand.Count={CurrentHandViewModel.UIHand.Count}");
+        Debug.WriteLine($"PerformDelete End: MainWindowCurrentMoves.Count={View.MainWindowCurrentMoves.Count} Model.CurrentMoves.Count={Model.CurrentMoves.Count}");
+    }
+
+    // Remove from Model and HandViewModel
+    internal void RemoveTileFromHand(UITile uit)
+    {
+        Debug.Assert(CurrentPlayer.Hand.Contains(uit.Tile));
+        CurrentPlayer.Hand.Remove(uit.Tile);
+        CurrentHandViewModel.RemoveUITile(uit);
     }
 
     // -------------------------------------------------
@@ -173,6 +208,12 @@ internal class MainViewModel: INotifyPropertyChanged
     {
         foreach (Move m in Model.CurrentMoves)
             View.MainWindowCurrentMoves.Add(View.BoardAddUITile(new RowCol(m.Row, m.Col), m.Tile, true));
+    }
+
+    internal void DrawHands()
+    {
+        foreach (var hvm in HandViewModels)
+            hvm.DrawHand();
     }
 
     internal void AddCurrentMove(Move m)

@@ -4,7 +4,11 @@
 // 2023-12-17   PV      First version
 
 using LibQwirkle;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
+using static QwirkleUI.App;
 
 namespace QwirkleUI;
 
@@ -14,6 +18,7 @@ internal class HandViewModel: INotifyPropertyChanged
     private readonly HandUserControl View;
     private readonly Model Model;
     private readonly int PlayerIndex;
+    internal readonly HashSet<UITileRowCol> UIHand = [];
 
     // Implementation of INotifyPropertyChanged, standard since View is only linked through DataBinding
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -32,8 +37,28 @@ internal class HandViewModel: INotifyPropertyChanged
 
     internal void DrawHand()
     {
-        int c = 0;
         foreach (Tile t in Model.Players[PlayerIndex].Hand)
-            View.HandAddUITile(t, new RowCol(0, c++));
+            AddAndDrawTile(t);
+    }
+
+    internal void AddAndDrawTile(Tile tile)
+    {
+        // Find a free cell in hand
+        int row, col = 0;
+        for (row = 0; row < HandRows; row++)
+            for (col = 0; col < HandColumns; col++)
+                if (!UIHand.Any(uitrc => uitrc.RC.Row == row && uitrc.RC.Col == col))
+                    goto ExitDoubleLoop;
+
+        // Guaranteed to find one
+    ExitDoubleLoop:
+        View.HandAddUITile(tile, new RowCol(row, col));
+    }
+
+    internal void RemoveUITile(UITile uit)
+    {
+        var todel = UIHand.FirstOrDefault(item => item.UIT == uit);
+        Debug.Assert(todel != null);
+        UIHand.Remove(todel);
     }
 }

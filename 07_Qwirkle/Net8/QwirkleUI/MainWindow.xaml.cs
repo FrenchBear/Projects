@@ -30,7 +30,6 @@ public partial class MainWindow: Window
 {
     private readonly MainViewModel ViewModel;
     private readonly List<UITile> m_UITilesList = [];
-    private readonly HandViewModel[] HandViewModels = [];
     internal readonly HashSet<UITileRowCol> MainWindowCurrentMoves = [];
     internal BoardInteractionManager BoardIM;
 
@@ -41,10 +40,6 @@ public partial class MainWindow: Window
         InitializeComponent();
         ViewModel = new MainViewModel(this);
         DataContext = ViewModel;
-
-        // Just 1 player for now
-        HandViewModels = new HandViewModel[1];
-        HandViewModels[0] = new HandViewModel(this, Player1HandUserControl, ViewModel.GetModel, 0);
 
         BoardIM = new BoardInteractionManager(MainWindowCurrentMoves, this, ViewModel);
 
@@ -60,9 +55,7 @@ public partial class MainWindow: Window
         ViewModel.InitializeBoard();
         DrawBoard();
         RescaleAndCenter(false);
-
-        foreach (var hvm in HandViewModels)
-            hvm.DrawHand();
+        ViewModel.DrawHands();
 
         ViewModel.StatusText = "Done.";
     }
@@ -406,6 +399,12 @@ public partial class MainWindow: Window
         return new UITileRowCol(t, position);
     }
 
+    internal void BoardRemoveUITile(UITile uit)
+    {
+        Debug.Assert(BoardDrawingCanvas.Children.Contains(uit));
+        BoardDrawingCanvas.Children.Remove(uit);
+    }
+
     internal void AddCircle(RowCol position)
     {
         TraceCall();
@@ -446,6 +445,7 @@ public partial class MainWindow: Window
             BoardIM.Selection.Add(dupTile);
 
             playerIM.RemoveTileFromView(pt.UIT);
+            ViewModel.RemoveTileFromHand(pt.UIT);
         }
 
         playerIM.Selection.Clear();
@@ -635,9 +635,9 @@ internal class BoardInteractionManager: InteractionManager
 
         ContextMenu? cm;
         if (tileHit)
-            cm = View.FindResource("TileCanvasMenu") as ContextMenu;
+            cm = View.FindResource("MoveTileMenu") as ContextMenu;
         else
-            cm = View.FindResource("BackgroundCanvasMenu") as ContextMenu;
+            cm = View.FindResource("BoardTileAndBackgroundMenu") as ContextMenu;
         Debug.Assert(cm != null);
         cm.PlacementTarget = sender as UIElement;
         cm.IsOpen = true;

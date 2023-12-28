@@ -12,7 +12,7 @@ using System.Windows.Media;
 
 namespace QwirkleUI;
 
-[DebuggerDisplay("UITile: SC={ShapeColor} I={Instance} GB={GrayBackground} SB={SelectionBorder} Hatched={Hatched}")]
+[DebuggerDisplay("UITile: Tile={Tile} GB={GrayBackground} SB={SelectionBorder} Hatched={Hatched}")]
 public partial class UITile: UserControl
 {
     public UITile(Tile t)
