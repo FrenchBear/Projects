@@ -17,7 +17,7 @@ internal class Model(MainViewModel viewModel)
     private readonly MainViewModel viewModel = viewModel;
     public Board Board = new();
     public HashSet<Move> CurrentMoves = [];
-    public Hand[] Hands = [new()];      // Just 1 hand for now
+    public Player[] Players = [new()];          // Just 1 player now
 
     internal void NewBoard() => Board = new Board();
 
@@ -40,7 +40,7 @@ internal class Model(MainViewModel viewModel)
             colMax = Math.Max(colMax, CurrentMoves.Max(m => m.Col));
         }
 
-        Debug.WriteLine($"Blobal bounds: ({rowMin}, {colMin})-({rowMax}, {colMax})");
+        Debug.WriteLine($"Global bounds: ({rowMin}, {colMin})-({rowMax}, {colMax})");
 
         return new(new RowCol(rowMin, colMin), new RowCol(rowMax, colMax));
     }
@@ -70,11 +70,11 @@ internal class Model(MainViewModel viewModel)
         var h5 = new Tile(LibQwirkle.Shape.Square, LibQwirkle.Color.Purple, 1);
         var h6 = new Tile(LibQwirkle.Shape.Square, LibQwirkle.Color.Green, 1);
 
-        Hands[0].Add(h1);
-        Hands[0].Add(h2);
-        Hands[0].Add(h3);
-        Hands[0].Add(h4);
-        Hands[0].Add(h5);
-        Hands[0].Add(h6);
+        Players[0].Hand.Add(h1);
+        Players[0].Hand.Add(h2);
+        Players[0].Hand.Add(h3);
+        Players[0].Hand.Add(h4);
+        Players[0].Hand.Add(h5);
+        Players[0].Hand.Add(h6);
     }
 }

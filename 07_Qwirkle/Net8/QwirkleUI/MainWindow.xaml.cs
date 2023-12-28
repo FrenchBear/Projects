@@ -140,6 +140,8 @@ public partial class MainWindow: Window
         double offY2 = BoardCanvas.ActualHeight - p2Screen.Y;
         rescaleMatrix.Translate((offX1 + offX2) / 2, (offY1 + offY2) / 2);
 
+        UpdateBackgroundGrid();
+
         if (isWithAnimation)
         {
             // Use an animation for a smooth transformation
@@ -182,7 +184,7 @@ public partial class MainWindow: Window
     {
         if (HandOverState == HandOverStateEnum.InTransition)
             return;
-        TraceCall();
+        //TraceCall();
 
         BoardIM.IM_MouseMoveWhenUp(sender, e);
     }
@@ -333,16 +335,16 @@ public partial class MainWindow: Window
         CurrentGridBoundingWithMargins = new(45, 55, 45, 55);
     }
 
-    // Add some extra margin and always represent a 10x10 grid at minimum
+    // Add some extra margin and always represent a 8x8 grid at minimum
     private BoundingRectangle BoundingRectangleWithMargins()
     {
         TraceCall();
 
         var boardBounds = ViewModel.Bounds;
-        return new(boardBounds.Min.Row - 5,
-                    boardBounds.Max.Row + 5,
-                    boardBounds.Min.Col - 5,
-                    boardBounds.Max.Col + 5);
+        return new(boardBounds.Min.Row - 4,
+                    boardBounds.Max.Row + 4,
+                    boardBounds.Min.Col - 4,
+                    boardBounds.Max.Col + 4);
     }
 
     internal void UpdateBackgroundGrid()
@@ -350,8 +352,10 @@ public partial class MainWindow: Window
         TraceCall();
 
         var r = BoundingRectangleWithMargins();
+        Debug.WriteLine($"UpdateBackgroundGrid: r={r}");
         if (!r.Equals(CurrentGridBoundingWithMargins))
         {
+            Debug.WriteLine("Redraw grid");
             ClearBackgroundGrid();
             CurrentGridBoundingWithMargins = r;
 
@@ -383,6 +387,8 @@ public partial class MainWindow: Window
                 BoardBackgroundGrid.Children.Add(l);
             }
         }
+        else
+            Debug.WriteLine("Grid unchanged");
     }
 
     internal UITileRowCol BoardAddUITile(RowCol position, Tile ti, bool gray)
@@ -577,10 +583,7 @@ internal class BoardInteractionManager: InteractionManager
             uitp.Offset = new Vector(col * UnitSize, row * UnitSize);
         }
 
-        // ToDo: This should be probably done earlier, on IM_MouseUp
-        // If a handover is in progress, we need to add selection to board CurrentMoves
-        // so the tiles keep a gray background and remain moveable
-        // Must also do hand cleanup (temporary until move is validated, since move can be cancelled before trying again)
+        // Update CurrentMoves, both in View and in Model
         if (HandOverState == HandOverStateEnum.Active)
         {
             foreach (UITileRowCol uitp in Selection)
@@ -589,6 +592,25 @@ internal class BoardInteractionManager: InteractionManager
                 ViewModel.AddCurrentMove(new Move(uitp.RC.Row, uitp.RC.Col, uitp.UIT.Tile));
             }
             HandOverState = HandOverStateEnum.Inactive;
+        }
+        else
+        {
+            foreach (UITileRowCol uitp in Selection)
+            {
+                // ToDo: Move this to ViewModel once it works
+                bool found = false;
+                foreach (Move m in ViewModel.GetModel.CurrentMoves)
+                {
+                    if (m.T == uitp.UIT.Tile)
+                    {
+                        ViewModel.RemoveCurrentMove(m);
+                        found = true;
+                        break;
+                    }
+                }
+                Debug.Assert(found);
+                ViewModel.AddCurrentMove(new Move(uitp.RC.Row, uitp.RC.Col, uitp.UIT.Tile));
+            }
         }
 
         // With animation

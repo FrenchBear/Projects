@@ -41,11 +41,6 @@
                     <Image Source="/Icons/delete.ico" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Header="_Bascule l'orientation du mot" InputGestureText="Ctrl+B">
-                <MenuItem.Icon>
-                    <Image Source="/Icons/swap.ico" />
-                </MenuItem.Icon>
-            </MenuItem>
             <MenuItem Command="{Binding SuggestPlayCommand}" Header="_Place automatiquement le mot">
                 <MenuItem.Icon>
                     <Image Source="/Icons/autoplace.ico" />
@@ -75,8 +70,6 @@
         <KeyBinding Key="F5" Command="{Binding RegenerateLayoutCommand}" />
         <KeyBinding Key="Delete" Command="{Binding DeleteCommand}" />
         <KeyBinding Key="Z" Modifiers="Ctrl" Command="{Binding UndoCommand}" />
-        <KeyBinding Key="B" Modifiers="Ctrl" Command="{Binding SwapOrientationCommand}" />
-        <KeyBinding Key="F" Modifiers="Ctrl" Command="{Binding FindWordCommand}" />
         <KeyBinding Key="R" Modifiers="Ctrl" Command="{Binding RescaleAndCenterCommand}" />
     </Window.InputBindings>
 
@@ -123,24 +116,13 @@
                         <Image Source="/Icons/undo.ico" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Command="{Binding DeleteCommand}" Header="_Supprimer le mot" InputGestureText="Suppr">
+                <MenuItem Command="{Binding DeleteCommand}" Header="_Renvoie la tuile dans la main du joueur" InputGestureText="Suppr">
                     <MenuItem.Icon>
                         <Image Source="/Icons/delete.ico" />
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator />
-                <MenuItem Command="{Binding SwapOrientationCommand}" Header="_Bascule l'orientation du mot" InputGestureText="Ctrl+B">
-                    <MenuItem.Icon>
-                        <Image Source="/Icons/swap.ico" />
-                    </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem Command="{Binding SuggestPlayCommand}" Header="_Place automatiquement le mot">
-                    <MenuItem.Icon>
-                        <Image Source="/Icons/autoplace.ico" />
-                    </MenuItem.Icon>
-                </MenuItem>
-                <Separator />
-                <MenuItem Command="{Binding FindWordCommand}" Header="_Recherche un mot" InputGestureText="Ctrl+F">
+                <MenuItem Command="{Binding RescaleAndCenterCommand}" Header="_Recentrer la vue du layout" InputGestureText="Ctrl+R">
                     <MenuItem.Icon>
                         <Image Source="/Icons/find.ico" />
                     </MenuItem.Icon>
@@ -187,11 +169,8 @@
             <Button Command="{Binding UndoCommand}" ToolTip="Annule la dernière modification [Ctrl+Z]">
                 <Image Source="/Icons/undo.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
             </Button>
-            <Button Command="{Binding DeleteCommand}" ToolTip="Supprime le mot [Suppr]">
+            <Button Command="{Binding DeleteCommand}" ToolTip="Renvoie la tuile dans la main du joueur [Suppr]">
                 <Image Source="/Icons/delete.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
-            </Button>
-            <Button Command="{Binding SwapOrientationCommand}" ToolTip="Change l'orientation du mot [Ctrl+B]">
-                <Image Source="/Icons/swap.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
             </Button>
             <Button Command="{Binding SuggestPlayCommand}" ToolTip="Place automatiquement le mot">
                 <Image Source="/Icons/autoplace.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />

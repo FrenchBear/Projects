@@ -7,6 +7,7 @@
 using LibQwirkle;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 
@@ -34,6 +35,7 @@ internal class MainViewModel: INotifyPropertyChanged
 
     // Edit
     public ICommand UndoCommand { get; }
+    public ICommand DeleteCommand { get; }
     public ICommand SuggestPlayCommand { get; }
 
     // View
@@ -57,6 +59,7 @@ internal class MainViewModel: INotifyPropertyChanged
 
         // Edit
         UndoCommand = new RelayCommand<object>(UndoExecute, UndoCanExecute);
+        DeleteCommand = new RelayCommand<object>(DeleteExecute, DeleteCanExecute);
         SuggestPlayCommand = new RelayCommand<object>(SuggestPlayExecute, SuggestPlayCanExecute);
 
         // View
@@ -132,6 +135,18 @@ internal class MainViewModel: INotifyPropertyChanged
         //view.FinalRefreshAfterUpdate();
     }
 
+    // Delete command moves selection back to player hand
+    internal void PerformDelete()
+    {
+        if (View.BoardIM.Selection.IsEmpty)
+            return;
+
+        foreach (var item in View.BoardIM.Selection)
+        {
+            View.Han
+        }
+    }
+
     // -------------------------------------------------
     // Model helpers
 
@@ -160,8 +175,14 @@ internal class MainViewModel: INotifyPropertyChanged
             View.MainWindowCurrentMoves.Add(View.BoardAddUITile(new RowCol(m.Row, m.Col), m.Tile, true));
     }
 
-    internal void AddCurrentMove(Move m) 
+    internal void AddCurrentMove(Move m)
         => Model.CurrentMoves.Add(m);
+
+    internal void RemoveCurrentMove(Move m)
+    {
+        Debug.Assert(Model.CurrentMoves.Contains(m));
+        Model.CurrentMoves.Remove(m);
+    }
 
     internal CellState GetCellState(int row, int col)
         => Model.Board.GetCellState(row, col);
@@ -170,7 +191,8 @@ internal class MainViewModel: INotifyPropertyChanged
     // Commands
 
     // Since the command is in the view, MainWindow.xaml should directly reference command in the view, no need for this ViewModel intermediate...
-    private void RescaleAndCenterExecute(object obj) => View.RescaleAndCenter(true);        // Use animations
+    private void RescaleAndCenterExecute(object obj)
+        => View.RescaleAndCenter(true);        // Use animations
 
     private bool UndoCanExecute(object obj) => true;    // UndoStack.CanUndo;
 
@@ -178,6 +200,14 @@ internal class MainViewModel: INotifyPropertyChanged
     {
         View.BoardIM.EndAnimationsInProgress();
         PerformUndo();
+    }
+
+    private bool DeleteCanExecute(object obj) => true;    // DeleteStack.CanDelete;
+
+    private void DeleteExecute(object obj)
+    {
+        View.BoardIM.EndAnimationsInProgress();
+        PerformDelete();
     }
 
     private bool SuggestPlayCanExecute(object obj) => true;

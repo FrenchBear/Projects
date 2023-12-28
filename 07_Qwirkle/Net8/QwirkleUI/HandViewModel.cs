@@ -13,17 +13,17 @@ internal class HandViewModel: INotifyPropertyChanged
     // View and Model
     private readonly HandUserControl View;
     private readonly Model Model;
-    private readonly int HandIndex;
+    private readonly int PlayerIndex;
 
     // Implementation of INotifyPropertyChanged, standard since View is only linked through DataBinding
     public event PropertyChangedEventHandler? PropertyChanged;
 
     // Constructor
-    public HandViewModel(MainWindow mainWindow, HandUserControl view, Model model, int handIndex)
+    public HandViewModel(MainWindow mainWindow, HandUserControl view, Model model, int playerIndex)
     {
         Model = model;
         View = view;
-        HandIndex = handIndex;
+        PlayerIndex = playerIndex;
 
         view.SetViewModelAndMainWindow(mainWindow, this);
     }
@@ -33,7 +33,7 @@ internal class HandViewModel: INotifyPropertyChanged
     internal void DrawHand()
     {
         int c = 0;
-        foreach (Tile t in Model.Hands[HandIndex])
+        foreach (Tile t in Model.Players[PlayerIndex].Hand)
             View.HandAddUITile(t, new RowCol(0, c++));
     }
 }

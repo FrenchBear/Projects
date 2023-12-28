@@ -84,7 +84,7 @@ abstract internal class InteractionManager
 
     public void IM_MouseMoveWhenUp(object sender, MouseEventArgs e)
     {
-        TraceCall();
+        //TraceCall();
 
         // Maybe some visual hinting
     }
