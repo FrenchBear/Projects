@@ -150,14 +150,14 @@ internal class MainViewModel: INotifyPropertyChanged
     {
         View.AddCircle(new RowCol(50, 50));
         foreach (Move m in Model.Board)
-            View.BoardAddUITile(new RowCol(m.Row, m.Col), m.Tile.Shape.ToString() + m.Tile.Color.ToString(), m.Tile.Instance, false);
+            View.BoardAddUITile(new RowCol(m.Row, m.Col), m.Tile, false);
     }
 
     // For dev, draw test tiles with gray background
     internal void DrawCurrentMoves()
     {
         foreach (Move m in Model.CurrentMoves)
-            View.MainWindowCurrentMoves.Add(View.BoardAddUITile(new RowCol(m.Row, m.Col), m.Tile.Shape.ToString() + m.Tile.Color.ToString(), m.Tile.Instance, true));
+            View.MainWindowCurrentMoves.Add(View.BoardAddUITile(new RowCol(m.Row, m.Col), m.Tile, true));
     }
 
     internal void AddCurrentMove(Move m) 

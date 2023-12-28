@@ -2,7 +2,9 @@
 // Visual representation of a Qwirkle tile
 //
 // 2023-12-11   PV
+// 2023-12-28   PV      Integrate Tile
 
+using LibQwirkle;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,12 +15,14 @@ namespace QwirkleUI;
 [DebuggerDisplay("UITile: SC={ShapeColor} I={Instance} GB={GrayBackground} SB={SelectionBorder} Hatched={Hatched}")]
 public partial class UITile: UserControl
 {
-    public UITile(string ShapeColor, int Instance)
+    public UITile(Tile t)
     {
         InitializeComponent();
-        this.ShapeColor = ShapeColor;
-        this.Instance = Instance;
+        Tile = t;
+        ShapeColorLayer.Fill = Resources[t.ShapeColor] as Brush;
     }
+
+    public Tile Tile { get; init; }
 
     private bool _GrayBackground = false;
 
@@ -65,23 +69,5 @@ public partial class UITile: UserControl
         }
     }
 
-    private string _ShapeColor = "";
-    public string ShapeColor
-    {
-        get => _ShapeColor;
-        init
-        {
-            _ShapeColor = value;
-            ShapeColorLayer.Fill = Resources[_ShapeColor] as Brush;
-        }
-    }
-
-    private int _Instance;
-    public int Instance
-    {
-        get => _Instance;
-        init => _Instance = value;
-    }
-
-    public override string ToString() => $"UITile: SC={ShapeColor} I={Instance} GB={GrayBackground} SB={SelectionBorder} Hatched={Hatched}";
+    public override string ToString() => $"UITile: SC={Tile.ShapeColor} I={Tile.Instance} GB={GrayBackground} SB={SelectionBorder} Hatched={Hatched}";
 }

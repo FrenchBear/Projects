@@ -34,6 +34,6 @@ internal class HandViewModel: INotifyPropertyChanged
     {
         int c = 0;
         foreach (Tile t in Model.Hands[HandIndex])
-            View.HandAddUITile(t.Shape.ToString() + t.Color.ToString(), t.Instance, new RowCol(0, c++));
+            View.HandAddUITile(t, new RowCol(0, c++));
     }
 }

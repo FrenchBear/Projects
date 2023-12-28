@@ -3,6 +3,7 @@
 //
 // 2023-12-12   PV
 
+using LibQwirkle;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -74,11 +75,11 @@ public partial class HandUserControl: UserControl
         HandViewModel = handViewModel;
     }
 
-    internal void HandAddUITile(string shapeColor, int instance, RowCol p)
+    internal void HandAddUITile(Tile ti, RowCol p)
     {
         TraceCall();
 
-        var t = new UITile(shapeColor, instance);
+        var t = new UITile(ti);
         t.GrayBackground = true;
         t.SetValue(Canvas.TopProperty, p.Row * UnitSize);
         t.SetValue(Canvas.LeftProperty, p.Col * UnitSize);

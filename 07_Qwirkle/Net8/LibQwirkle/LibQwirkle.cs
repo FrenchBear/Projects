@@ -52,6 +52,9 @@ public record Tile(Shape S, Color C, int Instance)
     public Color Color { get; } = C;
     public int Instance { get; } = Instance;
 
+    public string ShapeColor
+        => Shape.ToString() + Color.ToString();
+
     public string AsString(bool? color)
     {
         var sb = new StringBuilder();

@@ -385,11 +385,11 @@ public partial class MainWindow: Window
         }
     }
 
-    internal UITileRowCol BoardAddUITile(RowCol position, string shapeColor, int instance, bool gray)
+    internal UITileRowCol BoardAddUITile(RowCol position, Tile ti, bool gray)
     {
         TraceCall();
 
-        var t = new UITile(shapeColor, instance);
+        var t = new UITile(ti);
         t.GrayBackground = gray;
         t.SetValue(Canvas.TopProperty, position.Row * UnitSize);
         t.SetValue(Canvas.LeftProperty, position.Col * UnitSize);
@@ -435,7 +435,7 @@ public partial class MainWindow: Window
             int col = (int)Math.Floor(drawingCanvasPosition.X / UnitSize + 0.5);
             Debug.WriteLine($"MainWindowAcceptHandOver: row={row} col={col}   Offset Y={pt.Offset.Y:F0} X={pt.Offset.X:F0}");
 
-            var dupTile = BoardAddUITile(new RowCol(row, col), pt.UIT.ShapeColor, pt.UIT.Instance, true);
+            var dupTile = BoardAddUITile(new RowCol(row, col), pt.UIT.Tile, true);
             dupTile.Offset = pt.Offset;
             BoardIM.Selection.Add(dupTile);
 
@@ -586,7 +586,7 @@ internal class BoardInteractionManager: InteractionManager
             foreach (UITileRowCol uitp in Selection)
             {
                 View.MainWindowCurrentMoves.Add(uitp);
-                //ViewModel.AddCurrentMove(new Move(uitp.RC.Row, uitp.RC.Col, uitp.UIT));
+                ViewModel.AddCurrentMove(new Move(uitp.RC.Row, uitp.RC.Col, uitp.UIT.Tile));
             }
             HandOverState = HandOverStateEnum.Inactive;
         }
