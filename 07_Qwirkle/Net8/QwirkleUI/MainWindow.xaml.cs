@@ -32,7 +32,7 @@ public partial class MainWindow: Window
     private readonly List<UITile> m_UITilesList = [];
     private readonly HandViewModel[] HandViewModels = [];
     internal readonly HashSet<UITileRowCol> CurrentMoves = [];
-    internal InteractionManager BoardIM;
+    internal BoardInteractionManager BoardIM;
 
     public MainWindow()
     {
@@ -414,7 +414,7 @@ public partial class MainWindow: Window
         BoardDrawingCanvas.Children.Add(e);
     }
 
-    internal void MainWindowAcceptHandOver(InteractionManager playerIM)
+    internal void MainWindowAcceptHandOver(HandInteractionManager playerIM)
     {
         TraceCall();
 
@@ -438,7 +438,11 @@ public partial class MainWindow: Window
             var dupTile = BoardAddUITile(new RowCol(row, col), pt.UIT.ShapeColor, pt.UIT.Instance, true);
             dupTile.Offset = pt.Offset;
             BoardIM.Selection.Add(dupTile);
+
+            playerIM.RemoveTileFromView(pt.UIT);
         }
+
+        playerIM.Selection.Clear();
 
         BoardIM.IM_HandOver_MouseDown(BoardCanvas, BoardDrawingCanvas, TransformationMatrix.Matrix);
         BoardCanvas.MouseMove -= BoardCanvas_MouseMoveWhenUp;

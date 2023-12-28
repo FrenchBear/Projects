@@ -22,7 +22,7 @@ public partial class HandUserControl: UserControl
     private MainWindow MainWindow;
     private HandViewModel HandViewModel;
     internal readonly HashSet<UITileRowCol> Hand = [];
-    internal InteractionManager HandIM;
+    internal HandInteractionManager HandIM;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     public HandUserControl()
@@ -165,6 +165,12 @@ internal class HandInteractionManager: InteractionManager
     {
         Hand = hand;
         View = view;
+    }
+
+    public void RemoveTileFromView(UITile tile)
+    {
+        Debug.Assert(View.HandDrawingCanvas.Children.Contains(tile));
+        View.HandDrawingCanvas.Children.Remove(tile);
     }
 
     internal override void UpdateTargetPosition(UITilesSelection selection)
