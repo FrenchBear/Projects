@@ -92,7 +92,7 @@ abstract internal class InteractionManager
     // Returs false if no UITile has been hit
     private bool UpdateSelectionAfterClick(MouseEventArgs e, Canvas c, Canvas dc)
     {
-        // If no Hand tile is hit, just clear selection and return
+        // If no Hand UITile is hit, just clear selection and return
         TraceCall();
 
         UITile? t = GetHitHile(e.GetPosition(c), c);
@@ -219,7 +219,7 @@ abstract internal class InteractionManager
                 Debug.WriteLine($"item.offset: Y={item.Offset.Y:F0} X={item.Offset.X:F0}");
 
                 // Round position to closest square on the grid
-                // Originally to decide if tile should be hatched or not, but logic is different between Board and Hand
+                // Originally to decide if UITile should be hatched or not, but logic is different between Board and Hand
                 int row = (int)Math.Floor(preciseTop / UnitSize + 0.5);
                 int col = (int)Math.Floor(preciseLeft / UnitSize + 0.5);
 

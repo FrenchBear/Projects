@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:QwirkleUI"
+        xmlns:local="clr-namespace:QwirkleUI" d:DataContext="{d:DesignInstance Type=local:MainViewModel}"
         mc:Ignorable="d"
         Title="QwirkleUI" Height="900" Width="1500">
 
@@ -56,13 +56,30 @@
 
         <!-- ReSharper disable once Xaml.RedundantResource -->
         <ContextMenu x:Key="BackgroundCanvasMenu">
-            <MenuItem Command="{Binding RecenterLayoutViewCommand}" Header="_Recentrer la vue du layout" InputGestureText="Ctrl+R">
+            <MenuItem Command="{Binding RescaleAndCenterCommand}" Header="_Recentrer la vue du layout" InputGestureText="Ctrl+R">
                 <MenuItem.Icon>
                     <Image Source="/Icons/recenter.ico" />
                 </MenuItem.Icon>
             </MenuItem>
         </ContextMenu>
     </Window.Resources>
+
+    <Window.InputBindings>
+        <KeyBinding Key="N" Modifiers="Control" Command="{Binding NewLayoutCommand}" />
+        <KeyBinding Key="O" Modifiers="Control" Command="{Binding LoadCommand}" />
+        <KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveCommand}" />
+        <KeyBinding Key="OEMPlus" Modifiers="Shift" Command="{Binding AddWordsCommand}" />
+        <!-- French Keyboard, Shift is required!! -->
+        <KeyBinding Key="Add" Command="{Binding AddWordsCommand}" />
+        <!--  Numeric keyboard Plus -->
+        <KeyBinding Key="F5" Command="{Binding RegenerateLayoutCommand}" />
+        <KeyBinding Key="Delete" Command="{Binding DeleteCommand}" />
+        <KeyBinding Key="Z" Modifiers="Ctrl" Command="{Binding UndoCommand}" />
+        <KeyBinding Key="B" Modifiers="Ctrl" Command="{Binding SwapOrientationCommand}" />
+        <KeyBinding Key="F" Modifiers="Ctrl" Command="{Binding FindWordCommand}" />
+        <KeyBinding Key="R" Modifiers="Ctrl" Command="{Binding RescaleAndCenterCommand}" />
+    </Window.InputBindings>
+
 
     <DockPanel>
         <Menu DockPanel.Dock="Top" Padding="3">
@@ -131,7 +148,7 @@
             </MenuItem>
 
             <MenuItem Name="ViewMenu" Header="_View">
-                <MenuItem Command="{Binding RecenterLayoutViewCommand}" Header="_Recentrer la vue du layout" InputGestureText="Ctrl+R">
+                <MenuItem Command="{Binding RescaleAndCenterCommand}" Header="_Recentrer la vue du layout" InputGestureText="Ctrl+R">
                     <MenuItem.Icon>
                         <Image Source="/Icons/recenter.ico" />
                     </MenuItem.Icon>
@@ -182,7 +199,7 @@
 
             <Separator />
 
-            <Button Command="{Binding RecenterLayoutViewCommand}" ToolTip="Recentre la vue des mots [Ctrl+R]">
+            <Button Command="{Binding RescaleAndCenterCommand}" ToolTip="Recentre le jeu [Ctrl+R]">
                 <Image Source="/Icons/recenter.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
             </Button>
 

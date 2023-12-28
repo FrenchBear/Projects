@@ -37,7 +37,7 @@ internal class MainViewModel: INotifyPropertyChanged
     public ICommand SuggestPlayCommand { get; }
 
     // View
-    public ICommand RecenterLayoutViewCommand { get; }
+    public ICommand RescaleAndCenterCommand { get; }
 
     // About
     public ICommand AboutCommand { get; }
@@ -60,7 +60,7 @@ internal class MainViewModel: INotifyPropertyChanged
         SuggestPlayCommand = new RelayCommand<object>(SuggestPlayExecute, SuggestPlayCanExecute);
 
         // View
-        RecenterLayoutViewCommand = new RelayCommand<object>(RecenterLayoutViewExecute);
+        RescaleAndCenterCommand = new RelayCommand<object>(RescaleAndCenterExecute);
 
         // Help
         AboutCommand = new RelayCommand<object>(AboutExecute);
@@ -157,8 +157,11 @@ internal class MainViewModel: INotifyPropertyChanged
     internal void DrawCurrentMoves()
     {
         foreach (Move m in Model.CurrentMoves)
-            View.CurrentMoves.Add(View.BoardAddUITile(new RowCol(m.Row, m.Col), m.Tile.Shape.ToString() + m.Tile.Color.ToString(), m.Tile.Instance, true));
+            View.MainWindowCurrentMoves.Add(View.BoardAddUITile(new RowCol(m.Row, m.Col), m.Tile.Shape.ToString() + m.Tile.Color.ToString(), m.Tile.Instance, true));
     }
+
+    internal void AddCurrentMove(Move m) 
+        => Model.CurrentMoves.Add(m);
 
     internal CellState GetCellState(int row, int col)
         => Model.Board.GetCellState(row, col);
@@ -166,7 +169,8 @@ internal class MainViewModel: INotifyPropertyChanged
     // -------------------------------------------------
     // Commands
 
-    private void RecenterLayoutViewExecute(object obj) => View.RescaleAndCenter(true);        // Use animations
+    // Since the command is in the view, MainWindow.xaml should directly reference command in the view, no need for this ViewModel intermediate...
+    private void RescaleAndCenterExecute(object obj) => View.RescaleAndCenter(true);        // Use animations
 
     private bool UndoCanExecute(object obj) => true;    // UndoStack.CanUndo;
 

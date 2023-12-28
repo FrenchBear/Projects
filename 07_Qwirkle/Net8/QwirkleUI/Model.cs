@@ -4,7 +4,11 @@
 // 2023-12-11   PV      First version
 
 using LibQwirkle;
+using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
+using System.Linq;
 
 namespace QwirkleUI;
 
@@ -13,11 +17,33 @@ internal class Model(MainViewModel viewModel)
     private readonly MainViewModel viewModel = viewModel;
     public Board Board = new();
     public HashSet<Move> CurrentMoves = [];
-    public Hand[] Hands = [new()];      // Just 1 hand for how
+    public Hand[] Hands = [new()];      // Just 1 hand for now
 
     internal void NewBoard() => Board = new Board();
 
-    public BoundingRectangle Bounds() => new(new RowCol(Board.RowMin, Board.ColMin), new RowCol(Board.RowMax, Board.ColMax));
+    // Return bounds for Board+CurrentMoves
+    public BoundingRectangle Bounds()
+    {
+        int rowMin = Board.RowMin;
+        int colMin = Board.ColMin;
+        int rowMax = Board.RowMax;
+        int colMax = Board.ColMax;
+
+        Debug.WriteLine($"Board bounds: ({rowMin}, {colMin})-({rowMax}, {colMax})");
+
+        if (CurrentMoves.Count > 0)
+        {
+            Debug.WriteLine($"CurrentMoves bounds: ({CurrentMoves.Min(m => m.Row)}, {CurrentMoves.Min(m => m.Col)})-({CurrentMoves.Max(m => m.Row)}, {CurrentMoves.Max(m => m.Col)})");
+            rowMin = Math.Min(rowMin, CurrentMoves.Min(m => m.Row));
+            colMin = Math.Min(colMin, CurrentMoves.Min(m => m.Col));
+            rowMax = Math.Max(rowMax, CurrentMoves.Max(m => m.Row));
+            colMax = Math.Max(colMax, CurrentMoves.Max(m => m.Col));
+        }
+
+        Debug.WriteLine($"Blobal bounds: ({rowMin}, {colMin})-({rowMax}, {colMax})");
+
+        return new(new RowCol(rowMin, colMin), new RowCol(rowMax, colMax));
+    }
 
     // For dev, initialize a simple set of tiles
     internal void InitializeBoard()

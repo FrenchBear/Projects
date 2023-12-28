@@ -31,7 +31,7 @@ public partial class MainWindow: Window
     private readonly MainViewModel ViewModel;
     private readonly List<UITile> m_UITilesList = [];
     private readonly HandViewModel[] HandViewModels = [];
-    internal readonly HashSet<UITileRowCol> CurrentMoves = [];
+    internal readonly HashSet<UITileRowCol> MainWindowCurrentMoves = [];
     internal BoardInteractionManager BoardIM;
 
     public MainWindow()
@@ -46,7 +46,7 @@ public partial class MainWindow: Window
         HandViewModels = new HandViewModel[1];
         HandViewModels[0] = new HandViewModel(this, Player1HandUserControl, ViewModel.GetModel, 0);
 
-        BoardIM = new BoardInteractionManager(CurrentMoves, this, ViewModel);
+        BoardIM = new BoardInteractionManager(MainWindowCurrentMoves, this, ViewModel);
 
         // Can only reference ActualWidth after Window is loaded
         Loaded += MainWindow_Loaded;
@@ -584,7 +584,10 @@ internal class BoardInteractionManager: InteractionManager
         if (HandOverState == HandOverStateEnum.Active)
         {
             foreach (UITileRowCol uitp in Selection)
-                View.CurrentMoves.Add(uitp);
+            {
+                View.MainWindowCurrentMoves.Add(uitp);
+                //ViewModel.AddCurrentMove(new Move(uitp.RC.Row, uitp.RC.Col, uitp.UIT));
+            }
             HandOverState = HandOverStateEnum.Inactive;
         }
 
@@ -598,7 +601,7 @@ internal class BoardInteractionManager: InteractionManager
         {
             uitp.UIT.SetValue(Canvas.TopProperty, uitp.Offset.Y);
             uitp.UIT.SetValue(Canvas.LeftProperty, uitp.Offset.X);
-            var h = View.CurrentMoves.First(u => u.UIT == uitp.UIT);
+            var h = View.MainWindowCurrentMoves.First(u => u.UIT == uitp.UIT);
             Debug.Assert(h != null);
             h.RC = uitp.RC;
         }
