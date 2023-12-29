@@ -327,7 +327,7 @@ public partial class MainWindow: Window
     {
         TraceCall();
 
-        var boardBounds = ViewModel.Bounds;
+        var boardBounds = ViewModel.Bounds();
         return new(boardBounds.Min.Row - 4,
                     boardBounds.Max.Row + 4,
                     boardBounds.Min.Col - 4,
@@ -576,7 +576,7 @@ internal class BoardInteractionManager(HashSet<UITileRowCol> currentMoves, MainW
             foreach (UITileRowCol uitp in Selection)
             {
                 ViewModel.MainWindowCurrentMoves.Add(uitp);
-                ViewModel.AddCurrentMove(new TileRowCol(uitp.UIT.Tile, uitp.RC));
+                ViewModel.AddCurrentMove(new UITileRowCol(uitp.UIT, uitp.RC));
             }
             HandOverState = HandOverStateEnum.Inactive;
         }

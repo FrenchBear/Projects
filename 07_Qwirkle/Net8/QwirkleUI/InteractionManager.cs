@@ -22,7 +22,9 @@ internal class UITileRowCol(UITile UIT, RowCol RC): IEquatable<UITileRowCol>
 {
     internal UITile UIT { get; private set; } = UIT;
     internal RowCol RC { get; set; } = RC;      // set accessor because RC is mutable
-    internal RowCol StartRC { get; set; }
+
+    public int Row => RC.Row; 
+    public int Col => RC.Col;
 
     // Used when dragging (offset from mouse click down position) or animating (target position)
     public Vector Offset { get; set; }
@@ -48,7 +50,6 @@ internal class UITileRowCol(UITile UIT, RowCol RC): IEquatable<UITileRowCol>
 
     public bool Equals(UITileRowCol? other) 
         => EqualsTile(other);
-
 
     public override int GetHashCode()
         => UIT.Tile.GetHashCode();
@@ -169,7 +170,6 @@ abstract internal class InteractionManager
             dc.Children.Add(item.UIT);
             item.UIT.SetValue(Canvas.TopProperty, item.RC.Row * UnitSize);
             item.UIT.SetValue(Canvas.LeftProperty, item.RC.Col * UnitSize);
-            item.StartRC = item.RC;
         }
 
         return true;

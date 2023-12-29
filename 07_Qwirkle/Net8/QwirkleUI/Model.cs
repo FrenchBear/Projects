@@ -14,36 +14,36 @@ namespace QwirkleUI;
 
 internal class Model(MainViewModel viewModel)
 {
-    private readonly MainViewModel viewModel = viewModel;
+    private readonly MainViewModel viewModel = viewModel;               // Useful?
     public Board Board = new();
-    public HashSet<TileRowCol> CurrentMoves = [];
+    //public HashSet<TileRowCol> CurrentMoves = [];
     public Player[] Players = [new()];          // Just 1 player now
 
     internal void NewBoard() => Board = new Board();
 
-    // Return bounds for Board+CurrentMoves
-    public BoundingRectangle Bounds()
-    {
-        int rowMin = Board.RowMin;
-        int colMin = Board.ColMin;
-        int rowMax = Board.RowMax;
-        int colMax = Board.ColMax;
+    //// Return bounds for Board+CurrentMoves
+    //public BoundingRectangle Bounds()
+    //{
+    //    int rowMin = Board.RowMin;
+    //    int colMin = Board.ColMin;
+    //    int rowMax = Board.RowMax;
+    //    int colMax = Board.ColMax;
 
-        Debug.WriteLine($"Board bounds: ({rowMin}, {colMin})-({rowMax}, {colMax})");
+    //    Debug.WriteLine($"Board bounds: ({rowMin}, {colMin})-({rowMax}, {colMax})");
 
-        if (CurrentMoves.Count > 0)
-        {
-            Debug.WriteLine($"CurrentMoves bounds: ({CurrentMoves.Min(m => m.Row)}, {CurrentMoves.Min(m => m.Col)})-({CurrentMoves.Max(m => m.Row)}, {CurrentMoves.Max(m => m.Col)})");
-            rowMin = Math.Min(rowMin, CurrentMoves.Min(m => m.Row));
-            colMin = Math.Min(colMin, CurrentMoves.Min(m => m.Col));
-            rowMax = Math.Max(rowMax, CurrentMoves.Max(m => m.Row));
-            colMax = Math.Max(colMax, CurrentMoves.Max(m => m.Col));
-        }
+    //    if (CurrentMoves.Count > 0)
+    //    {
+    //        Debug.WriteLine($"CurrentMoves bounds: ({CurrentMoves.Min(m => m.Row)}, {CurrentMoves.Min(m => m.Col)})-({CurrentMoves.Max(m => m.Row)}, {CurrentMoves.Max(m => m.Col)})");
+    //        rowMin = Math.Min(rowMin, CurrentMoves.Min(m => m.Row));
+    //        colMin = Math.Min(colMin, CurrentMoves.Min(m => m.Col));
+    //        rowMax = Math.Max(rowMax, CurrentMoves.Max(m => m.Row));
+    //        colMax = Math.Max(colMax, CurrentMoves.Max(m => m.Col));
+    //    }
 
-        Debug.WriteLine($"Global bounds: ({rowMin}, {colMin})-({rowMax}, {colMax})");
+    //    Debug.WriteLine($"Global bounds: ({rowMin}, {colMin})-({rowMax}, {colMax})");
 
-        return new(new RowCol(rowMin, colMin), new RowCol(rowMax, colMax));
-    }
+    //    return new(new RowCol(rowMin, colMin), new RowCol(rowMax, colMax));
+    //}
 
     // For dev, initialize a simple set of tiles
     internal void InitializeBoard()

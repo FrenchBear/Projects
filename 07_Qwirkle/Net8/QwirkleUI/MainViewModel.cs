@@ -85,7 +85,29 @@ internal class MainViewModel: INotifyPropertyChanged
     // -------------------------------------------------
     // Simple relays to model
 
-    public BoundingRectangle Bounds => Model.Bounds();
+    public BoundingRectangle Bounds()
+    {
+        int rowMin = Model.Board.RowMin;
+        int colMin = Model.Board.ColMin;
+        int rowMax = Model.Board.RowMax;
+        int colMax = Model.Board.ColMax;
+
+        Debug.WriteLine($"Board bounds: ({rowMin}, {colMin})-({rowMax}, {colMax})");
+
+        if (MainWindowCurrentMoves.Count > 0)
+        {
+            Debug.WriteLine($"MainWindowCurrentMoves bounds: ({MainWindowCurrentMoves.Min(m => m.Row)}, {MainWindowCurrentMoves.Min(m => m.Col)})-({MainWindowCurrentMoves.Max(m => m.Row)}, {MainWindowCurrentMoves.Max(m => m.Col)})");
+            rowMin = Math.Min(rowMin, MainWindowCurrentMoves.Min(m => m.Row));
+            colMin = Math.Min(colMin, MainWindowCurrentMoves.Min(m => m.Col));
+            rowMax = Math.Max(rowMax, MainWindowCurrentMoves.Max(m => m.Row));
+            colMax = Math.Max(colMax, MainWindowCurrentMoves.Max(m => m.Col));
+        }
+
+        Debug.WriteLine($"Global bounds: ({rowMin}, {colMin})-({rowMax}, {colMax})");
+
+        return new(new RowCol(rowMin, colMin), new RowCol(rowMax, colMax));
+
+    }
 
     // -------------------------------------------------
     // Selection helpers
@@ -154,17 +176,8 @@ internal class MainViewModel: INotifyPropertyChanged
         if (View.BoardIM.Selection.IsEmpty)
             return;
 
-        //var cmp = EqualityComparer<UITileRowCol>.Default;
-
         Debug.WriteLine($"PerformDelete Start: Hand.Count={CurrentPlayer.Hand.Count} CurrentHandViewModel.UIHand.Count={CurrentHandViewModel.UIHand.Count}");
-        Debug.WriteLine($"PerformDelete Start: MainWindowCurrentMoves.Count={MainWindowCurrentMoves.Count} Model.CurrentMoves.Count={Model.CurrentMoves.Count}");
-        UITileRowCol item1 = null;
-        foreach (var item in MainWindowCurrentMoves)
-        {
-            Debug.WriteLine($"Contains: {MainWindowCurrentMoves.Contains(item)}");
-            item1 = item;
-            //Debug.WriteLine($"Hash1: {item.GetHashCode():X08}  {cmp.GetHashCode(item)}");
-        }
+        Debug.WriteLine($"PerformDelete Start: MainWindowCurrentMoves.Count={MainWindowCurrentMoves.Count}");
 
         foreach (var uitrc in new List<UITileRowCol>(View.BoardIM.Selection))
         {
@@ -175,31 +188,14 @@ internal class MainViewModel: INotifyPropertyChanged
 
             // Remove from Board
             var todel = MainWindowCurrentMoves.FirstOrDefault(item => item.UIT == uitrc.UIT);
-            Debug.Assert(todel!=null);
-            bool ok = MainWindowCurrentMoves.Contains(todel);
-            Debug.WriteLine($"MainWindowCurrentMoves.Contains(todel): {ok}");
-            //Debug.WriteLine($"Hash2: {todel.GetHashCode():X08}  {cmp.GetHashCode(todel):X08}");
-            //Debug.WriteLine($"Equals: {cmp.Equals(item1, todel)}");
-            
-            if (!ok) Debugger.Break();
-            MainWindowCurrentMoves.Remove(todel);              // $$$ Does not work
-// todel==x1
-// true
-// MainWindowCurrentMoves.Contains(todel)
-// false
-             
+            Debug.Assert(todel != null);
+            MainWindowCurrentMoves.Remove(todel);              
             View.BoardRemoveUITile(uitrc.UIT);
-
-            // Remove from model current moves
-            var todel2 = Model.CurrentMoves.FirstOrDefault(item => item.Tile == uitrc.UIT.Tile);
-            Debug.Assert(todel2 != null);
-            Model.CurrentMoves.Remove(todel2);
         }
 
         Debug.WriteLine($"PerformDelete End: Hand.Count={CurrentPlayer.Hand.Count} CurrentHandViewModel.UIHand.Count={CurrentHandViewModel.UIHand.Count}");
-        Debug.WriteLine($"PerformDelete End: MainWindowCurrentMoves.Count={MainWindowCurrentMoves.Count} Model.CurrentMoves.Count={Model.CurrentMoves.Count}");
+        Debug.WriteLine($"PerformDelete End: MainWindowCurrentMoves.Count={MainWindowCurrentMoves.Count}");
         Debug.Assert(CurrentPlayer.Hand.Count == CurrentHandViewModel.UIHand.Count);
-        Debug.Assert(MainWindowCurrentMoves.Count == Model.CurrentMoves.Count);
         Debug.Assert(CurrentPlayer.Hand.Count + MainWindowCurrentMoves.Count == 6);
     }
 
@@ -235,8 +231,8 @@ internal class MainViewModel: INotifyPropertyChanged
     // For dev, draw test tiles with gray background
     internal void DrawCurrentMoves()
     {
-        foreach (TileRowCol m in Model.CurrentMoves)
-            MainWindowCurrentMoves.Add(View.BoardAddUITile(new RowCol(m.Row, m.Col), m.Tile, true));
+        foreach (UITileRowCol m in MainWindowCurrentMoves)
+            MainWindowCurrentMoves.Add(View.BoardAddUITile(m.RC, m.UIT.Tile, true));
     }
 
     internal void DrawHands()
@@ -245,18 +241,17 @@ internal class MainViewModel: INotifyPropertyChanged
             hvm.DrawHand();
     }
 
-    internal void AddCurrentMove(TileRowCol m)
-        => Model.CurrentMoves.Add(m);
+    internal void AddCurrentMove(UITileRowCol uitrc)
+        => MainWindowCurrentMoves.Add(uitrc);
 
     internal void UpdateCurrentMoves(UITilesSelection selection)
     {
         foreach (UITileRowCol uitp in selection)
         {
-            // ToDo: TileRowCol this to ViewModel once it works
             bool found = false;
-            foreach (TileRowCol m in Model.CurrentMoves)
+            foreach (UITileRowCol m in MainWindowCurrentMoves)
             {
-                if (m.T == uitp.UIT.Tile)
+                if (m.UIT.Tile == uitp.UIT.Tile)
                 {
                     RemoveCurrentMove(m);
                     found = true;
@@ -264,14 +259,14 @@ internal class MainViewModel: INotifyPropertyChanged
                 }
             }
             Debug.Assert(found);
-            AddCurrentMove(new TileRowCol(uitp.UIT.Tile, uitp.RC));
+            AddCurrentMove(new UITileRowCol(uitp.UIT, uitp.RC));
         }
     }
 
-    internal void RemoveCurrentMove(TileRowCol m)
+    internal void RemoveCurrentMove(UITileRowCol m)
     {
-        Debug.Assert(Model.CurrentMoves.Contains(m));
-        Model.CurrentMoves.Remove(m);
+        Debug.Assert(MainWindowCurrentMoves.Contains(m));
+        MainWindowCurrentMoves.Remove(m);
     }
 
     internal CellState GetCellState(int row, int col)
