@@ -83,7 +83,7 @@ internal class MainViewModel: INotifyPropertyChanged
     }
 
     // -------------------------------------------------
-    // Simple relays to model
+    // Relays to model
 
     public BoundingRectangle Bounds()
     {
@@ -107,6 +107,27 @@ internal class MainViewModel: INotifyPropertyChanged
 
         return new(new RowCol(rowMin, colMin), new RowCol(rowMax, colMax));
 
+    }
+
+    internal void EvaluateCurrentMoves()
+    {
+        if (CurrentMoves.Count == 0)
+        {
+            CurrentHandViewModel.StatusMessage = "";
+            return;
+        }
+
+        bool status;
+        string msg;
+        HashSet<TileRowCol> moves = new HashSet<TileRowCol>(CurrentMoves.Select(uitrc => new TileRowCol(uitrc.UIT.Tile, uitrc.RC)));
+        (status, msg) = Model.EvaluateMoves(new HashSet<TileRowCol>( moves));
+        if (status)
+        {
+            PointsBonus pb = Model.CountPoints(moves);
+            CurrentHandViewModel.StatusMessage = $"OK: {pb.Points} points";
+        }
+        else
+            CurrentHandViewModel.StatusMessage = $"Problem: {msg}";
     }
 
     // -------------------------------------------------
@@ -185,7 +206,7 @@ internal class MainViewModel: INotifyPropertyChanged
             // Remove from CurrentMoves and DrawingCanvas
             var todel = CurrentMoves.FirstOrDefault(item => item.UIT == uitrc.UIT);
             Debug.Assert(todel != null);
-            CurrentMoves.Remove(todel);              
+            CurrentMoves.Remove(todel);
             View.BoardDrawingCanvasRemoveUITile(uitrc.UIT);
         }
 

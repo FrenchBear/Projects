@@ -250,3 +250,92 @@ public class UnitTests_Misc
     }
 
 }
+
+public class UnitTests_Evaluate
+{
+    readonly Board board = new();
+
+    public UnitTests_Evaluate()
+    {
+        var t1 = new Tile(Shape.Square, Color.Red, 1);
+        var t2 = new Tile(Shape.Lozange, Color.Red, 1);
+        var t3 = new Tile(Shape.Circle, Color.Red, 1);
+        var t4 = new Tile(Shape.Circle, Color.Blue, 1);
+        var t5 = new Tile(Shape.Circle, Color.Green, 1);
+        var t6 = new Tile(Shape.Circle, Color.Orange, 1);
+
+        board.AddMove(new TileRowCol(t1, 50, 50));
+        board.AddMove(new TileRowCol(t2, 50, 51));
+        board.AddMove(new TileRowCol(t3, 50, 52));
+        board.AddMove(new TileRowCol(t4, 49, 52));
+        board.AddMove(new TileRowCol(t5, 48, 52));
+        board.AddMove(new TileRowCol(t6, 47, 52));
+    }
+
+    [Fact]
+    public void NotInSameRowOrSameColumn()
+    {
+        HashSet<TileRowCol> moves = [
+            new(new Tile(Shape.Circle, Color.Green, 1), 48, 51),
+            new(new Tile(Shape.Square, Color.Green, 1), 47, 53),
+        ];
+        bool status;
+        string msg;
+        (status, msg) = board.EvaluateMoves(moves);
+        Debug.Assert(status == false);
+        Debug.Assert(msg== "Les tuiles jouées doivent être situées sur une même ligne ou une même colonne");
+    }
+
+    [Fact]
+    public void NotSameShapeOrSameColor()
+    {
+        HashSet<TileRowCol> moves = [
+            new(new Tile(Shape.Circle, Color.Green, 1), 48, 51),
+            new(new Tile(Shape.Square, Color.Orange, 1), 48, 53),
+        ];
+        bool status;
+        string msg;
+        (status, msg) = board.EvaluateMoves(moves);
+        Debug.Assert(status == false);
+        Debug.Assert(msg == "2 couleurs et 2 formes différentes, les tuiles jouées doivent être de la même couleur ou de la même forme");
+    }
+
+    [Fact]
+    public void NotOnPlayableCell()
+    {
+        HashSet<TileRowCol> moves = [
+            new(new Tile(Shape.Circle, Color.Green, 1), 48, 50),
+        ];
+        bool status;
+        string msg;
+        (status, msg) = board.EvaluateMoves(moves);
+        Debug.Assert(status == false);
+        Debug.Assert(msg == "La tuile Circle Green #1 en position (48, 50) n'est pas posée sur une cellule jouable");
+    }
+
+    [Fact]
+    public void NotCompatibleTile()
+    {
+        HashSet<TileRowCol> moves = [
+            new(new Tile(Shape.Star, Color.Blue, 1), 49, 51),
+        ];
+        bool status;
+        string msg;
+        (status, msg) = board.EvaluateMoves(moves);
+        Debug.Assert(status == false);
+        Debug.Assert(msg == "La tuile Star Blue #1 en position (49, 51) n'est pas compatible avec les tuiles qui l'entourent");
+    }
+
+    [Fact]
+    public void EvaluateOk()
+    {
+        HashSet<TileRowCol> moves = [
+            new(new Tile(Shape.Lozange, Color.Blue, 1), 49, 51),
+        ];
+        bool status;
+        string msg;
+        (status, msg) = board.EvaluateMoves(moves);
+        Debug.Assert(status == true);
+        Debug.Assert(msg == "");
+    }
+}

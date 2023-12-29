@@ -285,7 +285,7 @@ public class Board: IEnumerable<TileRowCol>
                         break;
 
                     case CellState.PotentiallyPlayable:
-                        if (checkTileCompat != null && IsCompatible(row, col, checkTileCompat))
+                        if (checkTileCompat != null && IsCompatible(checkTileCompat, row, col))
                         {
                             if (color)
                                 sb.Append(ConsoleSupport.ConsoleColorCyan);
@@ -313,22 +313,22 @@ public class Board: IEnumerable<TileRowCol>
         return sb.ToString();
     }
 
-    public void AddMove(TileRowCol m)
+    public void AddMove(TileRowCol trc)
     {
         if (!IsEmpty)
-            Debug.Assert(GetCellState(m.Row, m.Col) == CellState.PotentiallyPlayable && IsCompatible(m.Row, m.Col, m.T));
+            Debug.Assert(GetCellState(trc.Row, trc.Col) == CellState.PotentiallyPlayable && IsCompatible(trc.T, trc.Row, trc.Col));
 
-        Moves.Add(m);
-        rowMin = Math.Min(rowMin, m.Row);
-        rowMax = Math.Max(rowMax, m.Row);
-        colMin = Math.Min(colMin, m.Col);
-        colMax = Math.Max(colMax, m.Col);
+        Moves.Add(trc);
+        rowMin = Math.Min(rowMin, trc.Row);
+        rowMax = Math.Max(rowMax, trc.Row);
+        colMin = Math.Min(colMin, trc.Col);
+        colMax = Math.Max(colMax, trc.Col);
     }
 
     public void AddMoves(HashSet<TileRowCol> moves)
     {
-        foreach (var move in moves)
-            AddMove(move);
+        foreach (var trc in moves)
+            AddMove(trc);
     }
 
     public Tile? GetTile(int row, int col)
@@ -340,6 +340,9 @@ public class Board: IEnumerable<TileRowCol>
             return null;
         return BaseBoard.GetTile(row, col);
     }
+
+    public CellState GetCellState(RowCol rc)
+        => GetCellState(rc.Row, rc.Col);
 
     public CellState GetCellState(int row, int col)
     {
@@ -363,7 +366,10 @@ public class Board: IEnumerable<TileRowCol>
         ShapeConstraint,
     }
 
-    public bool IsCompatible(int row, int col, in Tile t)
+    public bool IsCompatible(TileRowCol trc)
+        => IsCompatible(trc.Tile, trc.RC.Row, trc.RC.Col);
+
+    public bool IsCompatible(in Tile t, int row, int col)
     {
         // Special case, on empty board, (50, 50) is compatible with any tile
         if (IsEmpty)
@@ -424,6 +430,55 @@ public class Board: IEnumerable<TileRowCol>
     }
 
     public void Print() => Console.WriteLine(AsString(true));
+
+    public (bool, string) EvaluateMoves(HashSet<TileRowCol> moves)
+    {
+        // Just a safeguard, this should not be called with an empty HashSet
+        if (moves.Count == 0)
+            return (false, "No move to evaluate");
+
+        // Check that all tiles have same color or same shape
+        int numColors = moves.Select(trc => trc.T.Color).Distinct().Count();
+        int numShapes = moves.Select(trc => trc.T.Color).Distinct().Count();
+        if (numColors > 1 && numShapes > 1)
+            return (false, $"{numColors} couleurs et {numShapes} formes différentes, les tuiles jouées doivent être de la même couleur ou de la même forme");
+
+        // Check that all tiles have the same row or same column
+        int numRows = moves.Select(trc => trc.Row).Distinct().Count();
+        int numCols = moves.Select(trc => trc.Col).Distinct().Count();
+        if (numRows > 1 && numCols > 1)
+            return (false, "Les tuiles jouées doivent être situées sur une même ligne ou une même colonne");
+
+        // Check that all tiles are in a playable cell
+        // Since moves hes no order, we must add individual tiles to board for tiles in a playable position
+        var nb = new Board(this);
+        while (moves.Count>0)
+        {
+            TileRowCol? playable = null;
+            foreach (var trc in moves)
+            {
+                var cellState = nb.GetCellState(trc.RC);
+                Debug.Assert(cellState != CellState.Tiled);
+                if (cellState == CellState.PotentiallyPlayable)
+                {
+                    if (!nb.IsCompatible(trc))
+                        return (false, $"La tuile {trc.Tile.Shape} {trc.Tile.Color} #{trc.Tile.Instance} en position ({trc.Row}, {trc.Col}) n'est pas compatible avec les tuiles qui l'entourent");
+                    playable = trc;
+                    break;
+                }
+            }
+            if (playable == null)
+            {
+                var trc=moves.First();
+                return (false, $"La tuile {trc.Tile.Shape} {trc.Tile.Color} #{trc.Tile.Instance} en position ({trc.Row}, {trc.Col}) n'est pas posée sur une cellule jouable");
+            }
+            nb.AddMove(playable);
+            moves.Remove(playable);
+        }
+
+        // All cells are on playable position, compatible with surroundings, it's Ok!
+        return (true, "");
+    }
 
     public PointsBonus CountPoints(HashSet<TileRowCol> moves)
     {
@@ -561,7 +616,7 @@ public class Board: IEnumerable<TileRowCol>
         {
             //Console.WriteLine($"PotentiallyPlayable {row}, {col}");
             foreach (Tile t in hand)
-                if (IsCompatible(row, col, t))
+                if (IsCompatible(t, row, col))
                 {
                     //Console.WriteLine("  Compatible: " + t.AsString(true));
                     var CurrentMoves = new HashSet<TileRowCol>();
@@ -655,7 +710,7 @@ public class Board: IEnumerable<TileRowCol>
             Debug.Assert(state == CellState.PotentiallyPlayable);
             //Console.WriteLine($"PotentiallyPlayable {row}, {col}");
             foreach (Tile t in h)
-                if (b.IsCompatible(row, col, t))
+                if (b.IsCompatible(t, row, col))
                 {
                     //Console.WriteLine($"  Compatible: {t.AsString(true)}");
                     ExploreMove(startBoard, b, h, CurrentMoves, PossiblePlays, new TileRowCol(t, row, col), deltaRow != 0, deltaCol != 0);

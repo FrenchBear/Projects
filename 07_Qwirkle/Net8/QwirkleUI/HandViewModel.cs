@@ -31,9 +31,72 @@ internal class HandViewModel: INotifyPropertyChanged
         PlayerIndex = playerIndex;
 
         view.SetViewModelAndMainWindow(mainWindow, this);
+
+        PlayerName = $"Joueur {PlayerIndex}";
     }
 
     private void NotifyPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+    // -------------------------------------------------
+    // Bindings
+
+    private string _PlayerName = "";
+    public string PlayerName
+    {
+        get { return _PlayerName; }
+        set
+        {
+            if (_PlayerName != value)
+            {
+                _PlayerName = value;
+                NotifyPropertyChanged(nameof(PlayerName));
+            }
+        }
+    }
+
+    private string _Score = "0";
+    public string Score
+    {
+        get => _Score;
+        set
+        {
+            if (_Score != value)
+            {
+                _Score = value;
+                NotifyPropertyChanged(nameof(Score));
+            }
+        }
+    }
+
+    private string _Rank = "-";
+    public string Rank
+    {
+        get => _Rank;
+        set
+        {
+            if (_Rank != value)
+            {
+                _Rank = value;
+                NotifyPropertyChanged(nameof(Rank));
+            }
+        }
+    }
+
+    private string _StatusMessage = "";
+    public string StatusMessage
+    {
+        get => _StatusMessage;
+        set
+        {
+            if (_StatusMessage != value)
+            {
+                _StatusMessage = value;
+                NotifyPropertyChanged(nameof(StatusMessage));
+            }
+        }
+    }
+
+    // -------------------------------------------------
 
     internal void DrawHand()
     {
@@ -50,8 +113,8 @@ internal class HandViewModel: INotifyPropertyChanged
                 if (!UIHand.Any(uitrc => uitrc.RC.Row == row && uitrc.RC.Col == col))
                     goto ExitDoubleLoop;
 
-        // Guaranteed to find one
-    ExitDoubleLoop:
+                // Guaranteed to find one
+                ExitDoubleLoop:
         View.HandAddUITile(tile, new RowCol(row, col));
     }
 

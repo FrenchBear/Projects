@@ -68,6 +68,7 @@ public partial class HandUserControl: UserControl
     {
         TraceCall();
 
+        DataContext = handViewModel;
         MainWindow = mainWindow;
         HandViewModel = handViewModel;
         HandIM = new HandInteractionManager(HandViewModel.UIHand, this);

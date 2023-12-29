@@ -14,10 +14,71 @@ internal class Program
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-        Tests_Base();
+        //Tests_Base();
         //Tests_Play();
         //Tests_EmptyBoard();
         //Tests_FullPlay();
+        Tests_Evaluate();
+    }
+
+    private static void Tests_Evaluate()
+    {
+        var board = new Board();
+
+        var t1 = new Tile(Shape.Square, Color.Red, 1);
+        var t2 = new Tile(Shape.Lozange, Color.Red, 1);
+        var t3 = new Tile(Shape.Circle, Color.Red, 1);
+        var t4 = new Tile(Shape.Circle, Color.Blue, 1);
+        var t5 = new Tile(Shape.Circle, Color.Green, 1);
+        var t6 = new Tile(Shape.Circle, Color.Orange, 1);
+
+        board.AddMove(new TileRowCol(t1, 50, 50));
+        board.AddMove(new TileRowCol(t2, 50, 51));
+        board.AddMove(new TileRowCol(t3, 50, 52));
+        board.AddMove(new TileRowCol(t4, 49, 52));
+        board.AddMove(new TileRowCol(t5, 48, 52));
+        board.AddMove(new TileRowCol(t6, 47, 52));
+
+        board.Print();
+
+        // Not is same row or in same column
+        HashSet<TileRowCol> moves = [
+            new(new Tile(Shape.Circle, Color.Green, 1), 48, 51),
+            new(new Tile(Shape.Square, Color.Green, 1), 47, 53),
+        ];
+        bool status;
+        string msg;
+        (status, msg) = board.EvaluateMoves(moves);
+        Console.WriteLine($"1: {status}: {msg}");
+
+        // Not same shape or same color
+        moves = [
+            new(new Tile(Shape.Circle, Color.Green, 1), 48, 51),
+            new(new Tile(Shape.Square, Color.Orange, 1), 48, 53),
+        ];
+        (status, msg) = board.EvaluateMoves(moves);
+        Console.WriteLine($"2: {status}: {msg}");
+
+        // Tile placed in isolated position
+        moves = [
+            new(new Tile(Shape.Circle, Color.Green, 1), 48, 50),
+        ];
+        (status, msg) = board.EvaluateMoves(moves);
+        Console.WriteLine($"3: {status}: {msg}");
+
+        // Tile not compatible
+        moves = [
+            new(new Tile(Shape.Star, Color.Blue, 1), 49, 51),
+        ];
+        (status, msg) = board.EvaluateMoves(moves);
+        Console.WriteLine($"4: {status}: {msg}");
+
+        // Tile Ok
+        moves = [
+            new(new Tile(Shape.Lozange, Color.Blue, 1), 49, 51),
+        ];
+        (status, msg) = board.EvaluateMoves(moves);
+        Console.WriteLine($"5: {status}: {msg}");
     }
 
     private static void Tests_FullPlay()
@@ -129,7 +190,7 @@ internal class Program
         Console.WriteLine($"Hand: {hand.AsString(true)}");
         var play = board.Play(hand);
         Console.WriteLine($"Play: {play.AsString(true)}");
-        Debug.Assert(play.Moves.SetEquals(new HashSet<TileRowCol> { new(h2, new( 48, 52)), new(h1, new( 49, 52)) }));
+        Debug.Assert(play.Moves.SetEquals(new HashSet<TileRowCol> { new(h2, new(48, 52)), new(h1, new(49, 52)) }));
         Debug.Assert(play.PB.Points == 7);
         Debug.Assert(play.NewHand.Equals(new Hand([h3, h4, h5, h6])));
         board.AddMoves(play.Moves);
@@ -175,21 +236,11 @@ internal class Program
 
         board.Print();
 
-        //var h1 = new Tile(Shape.Lozange, Color.Blue, 1);
-        //var h2 = new Tile(Shape.Square, Color.Blue, 1);
-        //var h3 = new Tile(Shape.Star, Color.Blue, 1);
-        //var h4 = new Tile(Shape.Star, Color.Yellow, 1);
-        //var h5 = new Tile(Shape.Square, Color.Purple, 1);
-        //var h6 = new Tile(Shape.Square, Color.Green, 1);
-
-        //var hand = new Hand([h1, h2, h3, h4, h5, h6]);
-        //Console.WriteLine($"Hand before: {hand.AsString(true)}");
-
         HashSet<TileRowCol> moves =
         [
             new(new Tile(Shape.Lozange, Color.Blue, 1), new(49, 51)),
-            new(new Tile(Shape.Square, Color.Blue, 1),  new(49, 53)),
-            new(new Tile(Shape.Star, Color.Blue, 1),    new(49, 54)),
+            new(new Tile(Shape.Square, Color.Blue, 1), new(49, 53)),
+            new(new Tile(Shape.Star, Color.Blue, 1), new(49, 54)),
         ];
         var pb = board.CountPoints(moves);
         Debug.Assert(pb.Points == 6);
@@ -199,7 +250,7 @@ internal class Program
 
         moves =
         [
-            new(new Tile(Shape.Cross, Color.Blue, 1),  new(49, 55)),
+            new(new Tile(Shape.Cross, Color.Blue, 1), new(49, 55)),
             new(new Tile(Shape.Clover, Color.Blue, 1), new(49, 56)),
         ];
         pb = board.CountPoints(moves);
@@ -210,8 +261,8 @@ internal class Program
 
         moves =
         [
-            new(new Tile(Shape.Lozange, Color.Green, 1), new( 48, 51)),
-            new(new Tile(Shape.Square, Color.Green, 1),  new( 48, 53)),
+            new(new Tile(Shape.Lozange, Color.Green, 1), new(48, 51)),
+            new(new Tile(Shape.Square, Color.Green, 1), new(48, 53)),
         ];
         pb = board.CountPoints(moves);
         Debug.Assert(pb.Points == 8);
@@ -221,7 +272,7 @@ internal class Program
 
         moves =
         [
-            new(new Tile(Shape.Star, Color.Green, 1),  new(48, 54)),
+            new(new Tile(Shape.Star, Color.Green, 1), new(48, 54)),
             new(new Tile(Shape.Star, Color.Yellow, 1), new(50, 54)),
             new(new Tile(Shape.Star, Color.Orange, 1), new(51, 54)),
         ];

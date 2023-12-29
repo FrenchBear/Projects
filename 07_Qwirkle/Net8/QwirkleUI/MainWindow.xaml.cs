@@ -211,7 +211,7 @@ public partial class MainWindow: Window
         BoardCanvas.MouseMove += BoardCanvas_MouseMoveWhenUp;
         BoardIM.IM_MouseUp(sender, e);
 
-        //RescaleAndCenter(true);
+        ViewModel.EvaluateCurrentMoves();
     }
 
     // Animated move, not used right now...
@@ -404,12 +404,12 @@ public partial class MainWindow: Window
         TraceCall();
 
         var e = new Ellipse();
-        e.Width = 2 * UnitSize;
-        e.Height = 2 * UnitSize;
-        e.Stroke = Brushes.Black;
+        e.Width = 1.8 * UnitSize;
+        e.Height = 1.8 * UnitSize;
+        e.Stroke = Brushes.LightGray;
         e.StrokeThickness = 5.0;
-        e.SetValue(Canvas.TopProperty, (position.Row - 0.5) * UnitSize);
-        e.SetValue(Canvas.LeftProperty, (position.Col - 0.5) * UnitSize);
+        e.SetValue(Canvas.TopProperty, (position.Row - 0.4) * UnitSize);
+        e.SetValue(Canvas.LeftProperty, (position.Col - 0.4) * UnitSize);
         BoardDrawingCanvas.Children.Add(e);
     }
 

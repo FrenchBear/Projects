@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:QwirkleUI"
+             xmlns:local="clr-namespace:QwirkleUI" d:DataContext="{d:DesignInstance Type=local:HandViewModel}"
              mc:Ignorable="d" 
              Height="162" Width="635">
 
@@ -18,13 +18,13 @@
             <ColumnDefinition Width="60" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0" FontSize="24" Margin="6,0,0,0">Player 1</TextBlock>
-        <TextBlock Grid.Row="0" Grid.Column="1" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center">124</TextBlock>
-        <TextBlock Grid.Row="0" Grid.Column="2" FontSize="24" HorizontalAlignment="Center">1er</TextBlock>
+        <TextBlock Grid.Row="0" Grid.Column="0" FontSize="24" Margin="6,0,0,0" Text="{Binding PlayerName, FallbackValue='Player 1'}"/>
+        <TextBlock Grid.Row="0" Grid.Column="1" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Text="{Binding Score, FallbackValue=0}" />
+        <TextBlock Grid.Row="0" Grid.Column="2" FontSize="24" HorizontalAlignment="Center" Text="{Binding Rank, FallbackValue=1er}" />
 
         <DockPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="6,0,6,6">
             <StatusBar DockPanel.Dock="Bottom">
-                <TextBlock>Remarks in status bar</TextBlock>
+                <TextBlock Text="{Binding StatusMessage}" />
             </StatusBar>
 
             <Canvas Name="HandCanvas" ClipToBounds="False" Background="AntiqueWhite"
