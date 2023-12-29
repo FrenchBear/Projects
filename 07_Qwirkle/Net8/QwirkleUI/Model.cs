@@ -16,7 +16,7 @@ internal class Model(MainViewModel viewModel)
 {
     private readonly MainViewModel viewModel = viewModel;
     public Board Board = new();
-    public HashSet<Move> CurrentMoves = [];
+    public HashSet<TileRowCol> CurrentMoves = [];
     public Player[] Players = [new()];          // Just 1 player now
 
     internal void NewBoard() => Board = new Board();
@@ -55,13 +55,13 @@ internal class Model(MainViewModel viewModel)
         var t5 = new Tile(Shape.Circle, Color.Green, 1);
         var t6 = new Tile(Shape.Circle, Color.Orange, 1);
 
-        Board.AddMove(new Move(50, 50, t1));
-        Board.AddMove(new Move(50, 51, t2));
-        Board.AddMove(new Move(50, 52, t3));
+        Board.AddMove(new TileRowCol(t1, 50, 50));
+        Board.AddMove(new TileRowCol(t2, 50, 51));
+        Board.AddMove(new TileRowCol(t3, 50, 52));
 
-        Board.AddMove(new Move(49, 52, t4));
-        Board.AddMove(new Move(48, 52, t5));
-        Board.AddMove(new Move(47, 52, t6));
+        Board.AddMove(new TileRowCol(t4, 49, 52));
+        Board.AddMove(new TileRowCol(t5, 48, 52));
+        Board.AddMove(new TileRowCol(t6, 47, 52));
 
         var h1 = new Tile(LibQwirkle.Shape.Lozange, LibQwirkle.Color.Blue, 1);
         var h2 = new Tile(LibQwirkle.Shape.Square, LibQwirkle.Color.Blue, 1);

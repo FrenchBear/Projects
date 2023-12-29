@@ -122,7 +122,7 @@ internal class MainViewModel: INotifyPropertyChanged
 
         //switch (action.Action)
         //{
-        //    case UndoStackClass.UndoActions.Move:
+        //    case UndoStackClass.UndoActions.TileRowCol:
         //        UpdateWordRowColLocation(action.WordAndCanvasList, action.RowColOrientationList, false);   // Coordinates in wordRowColList are updated
         //        view.MoveWordAndCanvasList(action.WordAndCanvasList);
         //        break;
@@ -228,14 +228,14 @@ internal class MainViewModel: INotifyPropertyChanged
     internal void DrawBoard()
     {
         View.AddCircle(new RowCol(50, 50));
-        foreach (Move m in Model.Board)
+        foreach (TileRowCol m in Model.Board)
             View.BoardAddUITile(new RowCol(m.Row, m.Col), m.Tile, false);
     }
 
     // For dev, draw test tiles with gray background
     internal void DrawCurrentMoves()
     {
-        foreach (Move m in Model.CurrentMoves)
+        foreach (TileRowCol m in Model.CurrentMoves)
             MainWindowCurrentMoves.Add(View.BoardAddUITile(new RowCol(m.Row, m.Col), m.Tile, true));
     }
 
@@ -245,16 +245,16 @@ internal class MainViewModel: INotifyPropertyChanged
             hvm.DrawHand();
     }
 
-    internal void AddCurrentMove(Move m)
+    internal void AddCurrentMove(TileRowCol m)
         => Model.CurrentMoves.Add(m);
 
     internal void UpdateCurrentMoves(UITilesSelection selection)
     {
         foreach (UITileRowCol uitp in selection)
         {
-            // ToDo: Move this to ViewModel once it works
+            // ToDo: TileRowCol this to ViewModel once it works
             bool found = false;
-            foreach (Move m in Model.CurrentMoves)
+            foreach (TileRowCol m in Model.CurrentMoves)
             {
                 if (m.T == uitp.UIT.Tile)
                 {
@@ -264,11 +264,11 @@ internal class MainViewModel: INotifyPropertyChanged
                 }
             }
             Debug.Assert(found);
-            AddCurrentMove(new Move(uitp.RC.Row, uitp.RC.Col, uitp.UIT.Tile));
+            AddCurrentMove(new TileRowCol(uitp.UIT.Tile, uitp.RC));
         }
     }
 
-    internal void RemoveCurrentMove(Move m)
+    internal void RemoveCurrentMove(TileRowCol m)
     {
         Debug.Assert(Model.CurrentMoves.Contains(m));
         Model.CurrentMoves.Remove(m);

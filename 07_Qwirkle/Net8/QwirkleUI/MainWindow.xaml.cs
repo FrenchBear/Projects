@@ -576,7 +576,7 @@ internal class BoardInteractionManager(HashSet<UITileRowCol> currentMoves, MainW
             foreach (UITileRowCol uitp in Selection)
             {
                 ViewModel.MainWindowCurrentMoves.Add(uitp);
-                ViewModel.AddCurrentMove(new Move(uitp.RC.Row, uitp.RC.Col, uitp.UIT.Tile));
+                ViewModel.AddCurrentMove(new TileRowCol(uitp.UIT.Tile, uitp.RC));
             }
             HandOverState = HandOverStateEnum.Inactive;
         }

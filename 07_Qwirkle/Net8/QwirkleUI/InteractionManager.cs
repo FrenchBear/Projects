@@ -183,7 +183,7 @@ abstract internal class InteractionManager
     {
         TraceCall();
 
-        // Move in progress?
+        // TileRowCol in progress?
         if (pmm != null)
         {
             pmm = null;
