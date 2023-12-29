@@ -24,7 +24,6 @@ namespace QwirkleUI;
 public partial class MainWindow: Window
 {
     private readonly MainViewModel ViewModel;
-    internal readonly HashSet<UITileRowCol> MainWindowCurrentMoves = [];
     internal BoardInteractionManager BoardIM;
 
     public MainWindow()
@@ -35,7 +34,7 @@ public partial class MainWindow: Window
         ViewModel = new MainViewModel(this);
         DataContext = ViewModel;
 
-        BoardIM = new BoardInteractionManager(MainWindowCurrentMoves, this, ViewModel);
+        BoardIM = new BoardInteractionManager(ViewModel.MainWindowCurrentMoves, this, ViewModel);
 
         // Can only reference ActualWidth after Window is loaded
         Loaded += MainWindow_Loaded;
@@ -212,7 +211,7 @@ public partial class MainWindow: Window
         BoardCanvas.MouseMove += BoardCanvas_MouseMoveWhenUp;
         BoardIM.IM_MouseUp(sender, e);
 
-        RescaleAndCenter(true);
+        //RescaleAndCenter(true);
     }
 
     // Animated move, not used right now...
@@ -576,7 +575,7 @@ internal class BoardInteractionManager(HashSet<UITileRowCol> currentMoves, MainW
         {
             foreach (UITileRowCol uitp in Selection)
             {
-                View.MainWindowCurrentMoves.Add(uitp);
+                ViewModel.MainWindowCurrentMoves.Add(uitp);
                 ViewModel.AddCurrentMove(new Move(uitp.RC.Row, uitp.RC.Col, uitp.UIT.Tile));
             }
             HandOverState = HandOverStateEnum.Inactive;
@@ -596,10 +595,12 @@ internal class BoardInteractionManager(HashSet<UITileRowCol> currentMoves, MainW
         {
             uitp.UIT.SetValue(Canvas.TopProperty, uitp.Offset.Y);
             uitp.UIT.SetValue(Canvas.LeftProperty, uitp.Offset.X);
-            var h = View.MainWindowCurrentMoves.First(u => u.UIT == uitp.UIT);
+            var h = ViewModel.MainWindowCurrentMoves.First(u => u.UIT == uitp.UIT);
             Debug.Assert(h != null);
             h.RC = uitp.RC;
         }
+
+        View.RescaleAndCenter(true);
     }
 
     public override void OnMouseRightButtonDown(object sender, UITilesSelection selection, bool tileHit)

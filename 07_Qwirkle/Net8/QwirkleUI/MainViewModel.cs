@@ -21,6 +21,7 @@ internal class MainViewModel: INotifyPropertyChanged
     private readonly Model Model;
     private readonly MainWindow View;
     private readonly HandViewModel[] HandViewModels = [];
+    internal readonly HashSet<UITileRowCol> MainWindowCurrentMoves = [];
 
     public int PlayerIndex = 0;
 
@@ -156,11 +157,11 @@ internal class MainViewModel: INotifyPropertyChanged
         //var cmp = EqualityComparer<UITileRowCol>.Default;
 
         Debug.WriteLine($"PerformDelete Start: Hand.Count={CurrentPlayer.Hand.Count} CurrentHandViewModel.UIHand.Count={CurrentHandViewModel.UIHand.Count}");
-        Debug.WriteLine($"PerformDelete Start: MainWindowCurrentMoves.Count={View.MainWindowCurrentMoves.Count} Model.CurrentMoves.Count={Model.CurrentMoves.Count}");
+        Debug.WriteLine($"PerformDelete Start: MainWindowCurrentMoves.Count={MainWindowCurrentMoves.Count} Model.CurrentMoves.Count={Model.CurrentMoves.Count}");
         UITileRowCol item1 = null;
-        foreach (var item in View.MainWindowCurrentMoves)
+        foreach (var item in MainWindowCurrentMoves)
         {
-            Debug.WriteLine($"Contains: {View.MainWindowCurrentMoves.Contains(item)}");
+            Debug.WriteLine($"Contains: {MainWindowCurrentMoves.Contains(item)}");
             item1 = item;
             //Debug.WriteLine($"Hash1: {item.GetHashCode():X08}  {cmp.GetHashCode(item)}");
         }
@@ -173,18 +174,18 @@ internal class MainViewModel: INotifyPropertyChanged
             HandViewModels[PlayerIndex].AddAndDrawTile(uitrc.UIT.Tile);
 
             // Remove from Board
-            var todel = View.MainWindowCurrentMoves.FirstOrDefault(item => item.UIT == uitrc.UIT);
+            var todel = MainWindowCurrentMoves.FirstOrDefault(item => item.UIT == uitrc.UIT);
             Debug.Assert(todel!=null);
-            bool ok = View.MainWindowCurrentMoves.Contains(todel);
-            Debug.WriteLine($"View.MainWindowCurrentMoves.Contains(todel): {ok}");
+            bool ok = MainWindowCurrentMoves.Contains(todel);
+            Debug.WriteLine($"MainWindowCurrentMoves.Contains(todel): {ok}");
             //Debug.WriteLine($"Hash2: {todel.GetHashCode():X08}  {cmp.GetHashCode(todel):X08}");
             //Debug.WriteLine($"Equals: {cmp.Equals(item1, todel)}");
             
             if (!ok) Debugger.Break();
-            View.MainWindowCurrentMoves.Remove(todel);              // $$$ Does not work
+            MainWindowCurrentMoves.Remove(todel);              // $$$ Does not work
 // todel==x1
 // true
-// View.MainWindowCurrentMoves.Contains(todel)
+// MainWindowCurrentMoves.Contains(todel)
 // false
              
             View.BoardRemoveUITile(uitrc.UIT);
@@ -196,10 +197,10 @@ internal class MainViewModel: INotifyPropertyChanged
         }
 
         Debug.WriteLine($"PerformDelete End: Hand.Count={CurrentPlayer.Hand.Count} CurrentHandViewModel.UIHand.Count={CurrentHandViewModel.UIHand.Count}");
-        Debug.WriteLine($"PerformDelete End: MainWindowCurrentMoves.Count={View.MainWindowCurrentMoves.Count} Model.CurrentMoves.Count={Model.CurrentMoves.Count}");
+        Debug.WriteLine($"PerformDelete End: MainWindowCurrentMoves.Count={MainWindowCurrentMoves.Count} Model.CurrentMoves.Count={Model.CurrentMoves.Count}");
         Debug.Assert(CurrentPlayer.Hand.Count == CurrentHandViewModel.UIHand.Count);
-        Debug.Assert(View.MainWindowCurrentMoves.Count == Model.CurrentMoves.Count);
-        Debug.Assert(CurrentPlayer.Hand.Count + View.MainWindowCurrentMoves.Count == 6);
+        Debug.Assert(MainWindowCurrentMoves.Count == Model.CurrentMoves.Count);
+        Debug.Assert(CurrentPlayer.Hand.Count + MainWindowCurrentMoves.Count == 6);
     }
 
     // Remove from Model and HandViewModel
@@ -235,7 +236,7 @@ internal class MainViewModel: INotifyPropertyChanged
     internal void DrawCurrentMoves()
     {
         foreach (Move m in Model.CurrentMoves)
-            View.MainWindowCurrentMoves.Add(View.BoardAddUITile(new RowCol(m.Row, m.Col), m.Tile, true));
+            MainWindowCurrentMoves.Add(View.BoardAddUITile(new RowCol(m.Row, m.Col), m.Tile, true));
     }
 
     internal void DrawHands()
