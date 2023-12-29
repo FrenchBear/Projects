@@ -59,9 +59,9 @@ internal class Model(MainViewModel viewModel)
         Board.AddMove(new Move(50, 51, t2));
         Board.AddMove(new Move(50, 52, t3));
 
-        CurrentMoves.Add(new Move(49, 52, t4));
-        CurrentMoves.Add(new Move(48, 52, t5));
-        CurrentMoves.Add(new Move(47, 52, t6));
+        Board.AddMove(new Move(49, 52, t4));
+        Board.AddMove(new Move(48, 52, t5));
+        Board.AddMove(new Move(47, 52, t6));
 
         var h1 = new Tile(LibQwirkle.Shape.Lozange, LibQwirkle.Color.Blue, 1);
         var h2 = new Tile(LibQwirkle.Shape.Square, LibQwirkle.Color.Blue, 1);

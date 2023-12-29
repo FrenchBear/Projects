@@ -153,8 +153,17 @@ internal class MainViewModel: INotifyPropertyChanged
         if (View.BoardIM.Selection.IsEmpty)
             return;
 
+        //var cmp = EqualityComparer<UITileRowCol>.Default;
+
         Debug.WriteLine($"PerformDelete Start: Hand.Count={CurrentPlayer.Hand.Count} CurrentHandViewModel.UIHand.Count={CurrentHandViewModel.UIHand.Count}");
         Debug.WriteLine($"PerformDelete Start: MainWindowCurrentMoves.Count={View.MainWindowCurrentMoves.Count} Model.CurrentMoves.Count={Model.CurrentMoves.Count}");
+        UITileRowCol item1 = null;
+        foreach (var item in View.MainWindowCurrentMoves)
+        {
+            Debug.WriteLine($"Contains: {View.MainWindowCurrentMoves.Contains(item)}");
+            item1 = item;
+            //Debug.WriteLine($"Hash1: {item.GetHashCode():X08}  {cmp.GetHashCode(item)}");
+        }
 
         foreach (var uitrc in new List<UITileRowCol>(View.BoardIM.Selection))
         {
@@ -166,12 +175,31 @@ internal class MainViewModel: INotifyPropertyChanged
             // Remove from Board
             var todel = View.MainWindowCurrentMoves.FirstOrDefault(item => item.UIT == uitrc.UIT);
             Debug.Assert(todel!=null);
-            View.MainWindowCurrentMoves.Remove(todel);
+            bool ok = View.MainWindowCurrentMoves.Contains(todel);
+            Debug.WriteLine($"View.MainWindowCurrentMoves.Contains(todel): {ok}");
+            //Debug.WriteLine($"Hash2: {todel.GetHashCode():X08}  {cmp.GetHashCode(todel):X08}");
+            //Debug.WriteLine($"Equals: {cmp.Equals(item1, todel)}");
+            
+            if (!ok) Debugger.Break();
+            View.MainWindowCurrentMoves.Remove(todel);              // $$$ Does not work
+// todel==x1
+// true
+// View.MainWindowCurrentMoves.Contains(todel)
+// false
+             
             View.BoardRemoveUITile(uitrc.UIT);
+
+            // Remove from model current moves
+            var todel2 = Model.CurrentMoves.FirstOrDefault(item => item.Tile == uitrc.UIT.Tile);
+            Debug.Assert(todel2 != null);
+            Model.CurrentMoves.Remove(todel2);
         }
 
         Debug.WriteLine($"PerformDelete End: Hand.Count={CurrentPlayer.Hand.Count} CurrentHandViewModel.UIHand.Count={CurrentHandViewModel.UIHand.Count}");
         Debug.WriteLine($"PerformDelete End: MainWindowCurrentMoves.Count={View.MainWindowCurrentMoves.Count} Model.CurrentMoves.Count={Model.CurrentMoves.Count}");
+        Debug.Assert(CurrentPlayer.Hand.Count == CurrentHandViewModel.UIHand.Count);
+        Debug.Assert(View.MainWindowCurrentMoves.Count == Model.CurrentMoves.Count);
+        Debug.Assert(CurrentPlayer.Hand.Count + View.MainWindowCurrentMoves.Count == 6);
     }
 
     // Remove from Model and HandViewModel
@@ -218,6 +246,26 @@ internal class MainViewModel: INotifyPropertyChanged
 
     internal void AddCurrentMove(Move m)
         => Model.CurrentMoves.Add(m);
+
+    internal void UpdateCurrentMoves(UITilesSelection selection)
+    {
+        foreach (UITileRowCol uitp in selection)
+        {
+            // ToDo: Move this to ViewModel once it works
+            bool found = false;
+            foreach (Move m in Model.CurrentMoves)
+            {
+                if (m.T == uitp.UIT.Tile)
+                {
+                    RemoveCurrentMove(m);
+                    found = true;
+                    break;
+                }
+            }
+            Debug.Assert(found);
+            AddCurrentMove(new Move(uitp.RC.Row, uitp.RC.Col, uitp.UIT.Tile));
+        }
+    }
 
     internal void RemoveCurrentMove(Move m)
     {

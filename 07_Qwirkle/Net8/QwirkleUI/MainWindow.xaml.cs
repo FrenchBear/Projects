@@ -8,6 +8,7 @@ using LibQwirkle;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,16 +21,9 @@ using static QwirkleUI.Helpers;
 
 namespace QwirkleUI;
 
-//internal struct BoardCanvasSelection
-//{
-//    public UITile? uitile;
-//    public int startRow, startCol;
-//}
-
 public partial class MainWindow: Window
 {
     private readonly MainViewModel ViewModel;
-    private readonly List<UITile> m_UITilesList = [];
     internal readonly HashSet<UITileRowCol> MainWindowCurrentMoves = [];
     internal BoardInteractionManager BoardIM;
 
@@ -83,7 +77,6 @@ public partial class MainWindow: Window
         BoardDrawingCanvas.Children.Clear();
         ClearBackgroundGrid();
         ViewModel.StatusText = "Clear.";
-        m_UITilesList.Clear();
         BoardIM.Selection.Clear();
     }
 
@@ -218,6 +211,8 @@ public partial class MainWindow: Window
         BoardCanvas.MouseMove -= BoardCanvas_MouseMoveWhenDown;
         BoardCanvas.MouseMove += BoardCanvas_MouseMoveWhenUp;
         BoardIM.IM_MouseUp(sender, e);
+
+        RescaleAndCenter(true);
     }
 
     // Animated move, not used right now...
@@ -459,18 +454,11 @@ public partial class MainWindow: Window
     }
 }
 
-internal class BoardInteractionManager: InteractionManager
+internal class BoardInteractionManager(HashSet<UITileRowCol> currentMoves, MainWindow view, MainViewModel viewModel): InteractionManager
 {
-    private readonly HashSet<UITileRowCol> CurrentMoves;
-    private readonly MainWindow View;
-    private readonly MainViewModel ViewModel;
-
-    public BoardInteractionManager(HashSet<UITileRowCol> currentMoves, MainWindow view, MainViewModel viewModel)
-    {
-        CurrentMoves = currentMoves;
-        View = view;
-        ViewModel = viewModel;
-    }
+    private readonly HashSet<UITileRowCol> CurrentMoves = currentMoves;
+    private readonly MainWindow View = view;
+    private readonly MainViewModel ViewModel = viewModel;
 
     // Terminate immediately animations in progress, set final values
     public override void EndAnimationsInProgress()
@@ -483,7 +471,7 @@ internal class BoardInteractionManager: InteractionManager
             View.EndMoveUITileAnimation();
     }
 
-    internal override void UpdateTargetPosition(UITilesSelection selection)
+    internal override void UpdateTargetPosition()
     {
         TraceCall("over Board.");
 
@@ -595,22 +583,7 @@ internal class BoardInteractionManager: InteractionManager
         }
         else
         {
-            foreach (UITileRowCol uitp in Selection)
-            {
-                // ToDo: Move this to ViewModel once it works
-                bool found = false;
-                foreach (Move m in ViewModel.GetModel.CurrentMoves)
-                {
-                    if (m.T == uitp.UIT.Tile)
-                    {
-                        ViewModel.RemoveCurrentMove(m);
-                        found = true;
-                        break;
-                    }
-                }
-                Debug.Assert(found);
-                ViewModel.AddCurrentMove(new Move(uitp.RC.Row, uitp.RC.Col, uitp.UIT.Tile));
-            }
+            ViewModel.UpdateCurrentMoves(Selection);
         }
 
         // With animation
@@ -652,12 +625,16 @@ internal class BoardInteractionManager: InteractionManager
 
         if (pmm == null)
         {
+            Debug.WriteLine($"PreviousMousePosition: {previousMousePosition}");
             // move drawing surface
-            var delta = canvasMousePosition - previousMousePosition;
-            previousMousePosition = canvasMousePosition;
-            m.Translate(delta.X, delta.Y);
-            View.TransformationMatrix.Matrix = m;
-            View.UpdateBackgroundGrid();
+            if ((canvasMousePosition - mouseDownStartPosition).Length >= SmallMouseMoveLengthThreshold)
+            {
+                var delta = canvasMousePosition - previousMousePosition;
+                previousMousePosition = canvasMousePosition;
+                m.Translate(delta.X, delta.Y);
+                View.TransformationMatrix.Matrix = m;
+                View.UpdateBackgroundGrid();
+            }
         }
 
         return drawingCanvasMousePosition;

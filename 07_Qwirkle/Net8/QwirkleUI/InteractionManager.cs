@@ -1,6 +1,7 @@
 ﻿// Interaction Manager
 // Base component to handle mouse interactions
 
+using LibQwirkle;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,16 +18,50 @@ namespace QwirkleUI;
 
 // Combination of a UITile and a RowCol
 [DebuggerDisplay("UITileRowCol: {UIT} {RC}")]
-internal record UITileRowCol(UITile UIT, RowCol P)
+internal class UITileRowCol(UITile UIT, RowCol RC): IEquatable<UITileRowCol>
 {
     internal UITile UIT { get; private set; } = UIT;
-    internal RowCol RC { get; set; } = P;      // set accessor because RC is mutable
+    internal RowCol RC { get; set; } = RC;      // set accessor because RC is mutable
     internal RowCol StartRC { get; set; }
 
     // Used when dragging (offset from mouse click down position) or animating (target position)
     public Vector Offset { get; set; }
 
     public override string ToString() => $"UITileRowCol: {UIT} {RC}";
+
+    // Equality is only based on Tile information        
+    public bool EqualsTile(UITileRowCol? other)
+    {
+        if (other is null)
+            return false;
+        return UIT.Tile == other.UIT.Tile;
+    }
+
+    public override bool Equals(object? other)
+    {
+        if (ReferenceEquals(this, other))
+            return true;
+        if (ReferenceEquals(other, null))
+            return false;
+        return EqualsTile(other as UITileRowCol);
+    }
+
+    public bool Equals(UITileRowCol? other) 
+        => EqualsTile(other);
+
+
+    public override int GetHashCode()
+        => UIT.Tile.GetHashCode();
+
+    public static bool operator ==(UITileRowCol? left, UITileRowCol? right)
+    {
+        if (left is null || right is null)
+            return false;
+        return left.EqualsTile(right);
+    }
+
+    public static bool operator !=(UITileRowCol? left, UITileRowCol? right)
+        => !(left == right);
 }
 
 internal readonly struct UITilesSelection: IReadOnlyCollection<UITileRowCol>
@@ -51,9 +86,6 @@ internal readonly struct UITilesSelection: IReadOnlyCollection<UITileRowCol>
 
     public readonly int Count => _items.Count;
 
-    internal readonly bool ContainsUITile(UITileRowCol uitp)
-        => _items.Any(it => it.UIT == uitp.UIT);
-
     internal readonly void Add(UITileRowCol hit)
     {
         Debug.Assert(!_items.Contains(hit));
@@ -62,12 +94,14 @@ internal readonly struct UITilesSelection: IReadOnlyCollection<UITileRowCol>
         hit.UIT.SelectionBorder = true;                     // And then we add a selection border??
     }
 
-    internal readonly void Remove(UITileRowCol hit)
+    internal readonly void RemoveUITile(UITile uit)
     {
-        Debug.Assert(_items.Contains(hit));
-        Debug.Assert(hit.UIT.SelectionBorder == true);
-        _items.Remove(hit);
-        hit.UIT.SelectionBorder = false;
+        Debug.Assert(ContainsUITile(uit));
+        Debug.Assert(uit.SelectionBorder == true);
+        var todel = _items.First(it => it.UIT == uit);
+        Debug.Assert(todel!=null);
+        _items.Remove(todel);
+        uit.SelectionBorder = false;
     }
 
     internal bool ContainsUITile(UITile uit)
@@ -79,6 +113,7 @@ abstract internal class InteractionManager
     public readonly UITilesSelection Selection = [];
     protected Action<Point>? pmm;
     protected Point previousMousePosition;
+    protected Point mouseDownStartPosition;
 
     public InteractionManager() { }
 
@@ -109,7 +144,7 @@ abstract internal class InteractionManager
         // If Ctrl key is NOT pressed, clear previous selection
         // But if we click again in something already selected, do not clear selection!
         if (!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.RightCtrl))
-            if (!Selection.ContainsUITile(hit))
+            if (!Selection.ContainsUITile(hit.UIT))
                 Selection.Clear();
 
         // Only gray background tiles can be selected
@@ -117,14 +152,14 @@ abstract internal class InteractionManager
             return false;
 
         // Add current hit to selection
-        if ((Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)) && Selection.ContainsUITile(hit))
+        if ((Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)) && Selection.ContainsUITile(hit.UIT))
         {
-            Selection.Remove(hit);
+            Selection.RemoveUITile(hit.UIT);
             if (Selection.IsEmpty)
                 return false;
         }
         else
-            if (!Selection.ContainsUITile(hit))
+            if (!Selection.ContainsUITile(hit.UIT))
             Selection.Add(hit);
 
         // Remove and add again elements to move so they're displayed above non-moved elements
@@ -164,6 +199,7 @@ abstract internal class InteractionManager
         EndAnimationsInProgress();
 
         previousMousePosition = e.GetPosition(c);
+        mouseDownStartPosition = previousMousePosition;
         bool tileHit = UpdateSelectionAfterClick(e, c, dc);            // Ensures that selected tiles are on top of others in the visual tree
 
         if (tileHit)
@@ -240,11 +276,15 @@ abstract internal class InteractionManager
         TraceCall("virt IM.");
 
         var canvasPosition = e.GetPosition(c);
+        bool smallMouseMove = (mouseDownStartPosition - canvasPosition).Length < SmallMouseMoveLengthThreshold;
+
         m.Invert();     // By construction, all applied transformations are reversible, so m is invertible
         var drawingCanvasPosition = m.Transform(canvasPosition);
         Debug.WriteLine($"IM_MouseMoveWhenDown: CanvasPosition Y={canvasPosition.Y:F0} X={canvasPosition.X:F0}  DrawingCanvasPosition Y={drawingCanvasPosition.Y:F0} X={drawingCanvasPosition.X:F0}");
 
-        pmm?.Invoke(drawingCanvasPosition);
+        // Ignore small mouse moves
+        if (!smallMouseMove)
+            pmm?.Invoke(drawingCanvasPosition);
 
         return drawingCanvasPosition;
     }
@@ -266,13 +306,13 @@ abstract internal class InteractionManager
         if (pmm != null)
         {
             pmm = null;
-            UpdateTargetPosition(Selection);
+            UpdateTargetPosition();
         }
     }
 
-    internal virtual void UpdateTargetPosition(UITilesSelection selection)
+    internal virtual void UpdateTargetPosition()
     {
-        TraceCall("virt IM.");
+        //TraceCall("virt IM.");
     }
 
     public void IM_MouseWheel(object sender, MouseWheelEventArgs e) =>
@@ -292,6 +332,6 @@ abstract internal class InteractionManager
 
     public virtual void OnMouseRightButtonDown(object sender, UITilesSelection selection, bool tileHit)
     {
-        TraceCall("virt IM.");
+        //TraceCall("virt IM.");
     }
 }

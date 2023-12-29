@@ -155,16 +155,10 @@ public partial class HandUserControl: UserControl
     }
 }
 
-internal class HandInteractionManager: InteractionManager
+internal class HandInteractionManager(HashSet<UITileRowCol> hand, HandUserControl view): InteractionManager
 {
-    private readonly HashSet<UITileRowCol> Hand;
-    private readonly HandUserControl View;
-
-    public HandInteractionManager(HashSet<UITileRowCol> hand, HandUserControl view)
-    {
-        Hand = hand;
-        View = view;
-    }
+    private readonly HashSet<UITileRowCol> Hand = hand;
+    private readonly HandUserControl View = view;
 
     public void RemoveTileFromView(UITile tile)
     {
@@ -172,7 +166,7 @@ internal class HandInteractionManager: InteractionManager
         View.HandDrawingCanvas.Children.Remove(tile);
     }
 
-    internal override void UpdateTargetPosition(UITilesSelection selection)
+    internal override void UpdateTargetPosition()
     {
         TraceCall("over Hand.");
 

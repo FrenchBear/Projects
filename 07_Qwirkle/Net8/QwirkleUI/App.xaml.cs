@@ -18,5 +18,7 @@ public partial class App: Application
     // Player Hand Grid
     internal const int HandRows = 2;
     internal const int HandColumns = 8;
+
+    internal const double SmallMouseMoveLengthThreshold = 10.0;
 }
 

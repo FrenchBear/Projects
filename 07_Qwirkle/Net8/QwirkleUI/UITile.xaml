@@ -16,7 +16,7 @@
         <SolidColorBrush x:Key="Green" Color="#ff00aa00" />
         <SolidColorBrush x:Key="Orange" Color="#ffff8800" />
         
-        <SolidColorBrush x:Key="GrayTileBrush" Color="#604050" />
+        <SolidColorBrush x:Key="GrayTileBrush" Color="#B0B0B0" />
 
         <VisualBrush x:Key="MyVisualBrush" TileMode="Tile" Viewport="0,0,75,75" ViewportUnits="Absolute" Viewbox="0,0,75,75" ViewboxUnits="Absolute">
             <VisualBrush.Visual>
