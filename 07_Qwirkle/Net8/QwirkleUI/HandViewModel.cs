@@ -37,7 +37,7 @@ internal class HandViewModel: INotifyPropertyChanged
 
     internal void DrawHand()
     {
-        foreach (Tile t in Model.Players[PlayerIndex].Hand)
+        foreach (Tile t in Model.Players[PlayerIndex].HandZZ)
             AddAndDrawTile(t);
     }
 

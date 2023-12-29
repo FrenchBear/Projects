@@ -21,31 +21,7 @@ internal class Model(MainViewModel viewModel)
 
     internal void NewBoard() => Board = new Board();
 
-    //// Return bounds for Board+CurrentMoves
-    //public BoundingRectangle Bounds()
-    //{
-    //    int rowMin = Board.RowMin;
-    //    int colMin = Board.ColMin;
-    //    int rowMax = Board.RowMax;
-    //    int colMax = Board.ColMax;
-
-    //    Debug.WriteLine($"Board bounds: ({rowMin}, {colMin})-({rowMax}, {colMax})");
-
-    //    if (CurrentMoves.Count > 0)
-    //    {
-    //        Debug.WriteLine($"CurrentMoves bounds: ({CurrentMoves.Min(m => m.Row)}, {CurrentMoves.Min(m => m.Col)})-({CurrentMoves.Max(m => m.Row)}, {CurrentMoves.Max(m => m.Col)})");
-    //        rowMin = Math.Min(rowMin, CurrentMoves.Min(m => m.Row));
-    //        colMin = Math.Min(colMin, CurrentMoves.Min(m => m.Col));
-    //        rowMax = Math.Max(rowMax, CurrentMoves.Max(m => m.Row));
-    //        colMax = Math.Max(colMax, CurrentMoves.Max(m => m.Col));
-    //    }
-
-    //    Debug.WriteLine($"Global bounds: ({rowMin}, {colMin})-({rowMax}, {colMax})");
-
-    //    return new(new RowCol(rowMin, colMin), new RowCol(rowMax, colMax));
-    //}
-
-    // For dev, initialize a simple set of tiles
+    // For dev, initialize Board with few tiles
     internal void InitializeBoard()
     {
         var t1 = new Tile(Shape.Square, Color.Red, 1);
@@ -70,11 +46,11 @@ internal class Model(MainViewModel viewModel)
         var h5 = new Tile(LibQwirkle.Shape.Square, LibQwirkle.Color.Purple, 1);
         var h6 = new Tile(LibQwirkle.Shape.Square, LibQwirkle.Color.Green, 1);
 
-        Players[0].Hand.Add(h1);
-        Players[0].Hand.Add(h2);
-        Players[0].Hand.Add(h3);
-        Players[0].Hand.Add(h4);
-        Players[0].Hand.Add(h5);
-        Players[0].Hand.Add(h6);
+        Players[0].HandZZ.Add(h1);
+        Players[0].HandZZ.Add(h2);
+        Players[0].HandZZ.Add(h3);
+        Players[0].HandZZ.Add(h4);
+        Players[0].HandZZ.Add(h5);
+        Players[0].HandZZ.Add(h6);
     }
 }

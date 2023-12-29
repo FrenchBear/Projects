@@ -43,7 +43,7 @@ internal class UITileRowCol(UITile UIT, RowCol RC): IEquatable<UITileRowCol>
     {
         if (ReferenceEquals(this, other))
             return true;
-        if (ReferenceEquals(other, null))
+        if (other is null)
             return false;
         return EqualsTile(other as UITileRowCol);
     }

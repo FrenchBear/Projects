@@ -34,7 +34,7 @@ public partial class MainWindow: Window
         ViewModel = new MainViewModel(this);
         DataContext = ViewModel;
 
-        BoardIM = new BoardInteractionManager(ViewModel.MainWindowCurrentMoves, this, ViewModel);
+        BoardIM = new BoardInteractionManager(ViewModel.CurrentMoves, this, ViewModel);
 
         // Can only reference ActualWidth after Window is loaded
         Loaded += MainWindow_Loaded;
@@ -378,7 +378,7 @@ public partial class MainWindow: Window
             Debug.WriteLine("Grid unchanged");
     }
 
-    internal UITileRowCol BoardAddUITile(RowCol position, Tile ti, bool gray)
+    internal UITileRowCol BoardDrawingCanvasAddUITile(RowCol position, Tile ti, bool gray)
     {
         TraceCall();
 
@@ -393,7 +393,7 @@ public partial class MainWindow: Window
         return new UITileRowCol(t, position);
     }
 
-    internal void BoardRemoveUITile(UITile uit)
+    internal void BoardDrawingCanvasRemoveUITile(UITile uit)
     {
         Debug.Assert(BoardDrawingCanvas.Children.Contains(uit));
         BoardDrawingCanvas.Children.Remove(uit);
@@ -434,12 +434,12 @@ public partial class MainWindow: Window
             int col = (int)Math.Floor(drawingCanvasPosition.X / UnitSize + 0.5);
             Debug.WriteLine($"MainWindowAcceptHandOver: row={row} col={col}   Offset Y={pt.Offset.Y:F0} X={pt.Offset.X:F0}");
 
-            var dupTile = BoardAddUITile(new RowCol(row, col), pt.UIT.Tile, true);
+            var dupTile = BoardDrawingCanvasAddUITile(new RowCol(row, col), pt.UIT.Tile, true);
             dupTile.Offset = pt.Offset;
             BoardIM.Selection.Add(dupTile);
 
             playerIM.RemoveTileFromView(pt.UIT);
-            ViewModel.RemoveTileFromHand(pt.UIT);
+            ViewModel.RemoveUITileFromHand(pt.UIT);
         }
 
         playerIM.Selection.Clear();
@@ -575,7 +575,7 @@ internal class BoardInteractionManager(HashSet<UITileRowCol> currentMoves, MainW
         {
             foreach (UITileRowCol uitp in Selection)
             {
-                ViewModel.MainWindowCurrentMoves.Add(uitp);
+                ViewModel.CurrentMoves.Add(uitp);
                 ViewModel.AddCurrentMove(new UITileRowCol(uitp.UIT, uitp.RC));
             }
             HandOverState = HandOverStateEnum.Inactive;
@@ -595,7 +595,7 @@ internal class BoardInteractionManager(HashSet<UITileRowCol> currentMoves, MainW
         {
             uitp.UIT.SetValue(Canvas.TopProperty, uitp.Offset.Y);
             uitp.UIT.SetValue(Canvas.LeftProperty, uitp.Offset.X);
-            var h = ViewModel.MainWindowCurrentMoves.First(u => u.UIT == uitp.UIT);
+            var h = ViewModel.CurrentMoves.First(u => u.UIT == uitp.UIT);
             Debug.Assert(h != null);
             h.RC = uitp.RC;
         }

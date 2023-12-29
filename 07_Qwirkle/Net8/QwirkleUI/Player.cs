@@ -12,5 +12,5 @@ internal class Player
     public int Score { get; set; }
     public int Index { get; init; }
     public bool IsComputer { get; set; }
-    public Hand Hand { get; init; } = [];
+    public Hand HandZZ { get; init; } = [];
 }
