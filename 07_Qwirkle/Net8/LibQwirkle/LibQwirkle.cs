@@ -135,7 +135,7 @@ public enum CellState
 }
 
 [DebuggerDisplay("Play: {AsString(null)}")]
-public record Play(HashSet<TileRowCol> Moves, PointsBonus PB, Hand NewHand)
+public record PlaySuggestion(HashSet<TileRowCol> Moves, PointsBonus PB, Hand NewHand)
 {
     public HashSet<TileRowCol> Moves { get; } = Moves;
     public PointsBonus PB { get; } = PB;
@@ -553,9 +553,9 @@ public class Board: IEnumerable<TileRowCol>
         return new(points, bonus);
     }
 
-    public Play Play(Hand hand)
+    public PlaySuggestion Play(Hand hand)
     {
-        var PossiblePlays = new List<Play>();
+        var PossiblePlays = new List<PlaySuggestion>();
 
         void ExplorePotentiallyPlayable(int row, int col)
         {
@@ -589,7 +589,7 @@ public class Board: IEnumerable<TileRowCol>
         // since they all have the same max(points)
         // In some cases, this list could be empty
         if (PossiblePlays.Count == 0)
-            return new Play([], new PointsBonus(0, 0), hand);
+            return new PlaySuggestion([], new PointsBonus(0, 0), hand);
         var randIndex = RandomGenerator.Next(PossiblePlays.Count);
         var sol = PossiblePlays[randIndex];
         Console.WriteLine($"Play: ix={randIndex} {sol.AsString(true)}");
@@ -601,7 +601,7 @@ public class Board: IEnumerable<TileRowCol>
         return sol;
     }
 
-    private static void ExploreMove(Board startBoard, Board b, Hand h, HashSet<TileRowCol> CurrentMoves, List<Play> PossiblePlays, TileRowCol move, bool NS, bool EW)
+    private static void ExploreMove(Board startBoard, Board b, Hand h, HashSet<TileRowCol> CurrentMoves, List<PlaySuggestion> PossiblePlays, TileRowCol move, bool NS, bool EW)
     {
         //Console.WriteLine($"\nExploreMove {move.AsString(true)}  NS={NS} EW={EW}");
 
@@ -618,7 +618,7 @@ public class Board: IEnumerable<TileRowCol>
             PossiblePlays.Clear();
         if (pb.Points >= pMax)
         {
-            var possiblePlay = new Play(newCurrentMoves, pb, newH);
+            var possiblePlay = new PlaySuggestion(newCurrentMoves, pb, newH);
             //Console.WriteLine($"{PossiblePlays.Count}: {possiblePlay.AsString(true)}");
             PossiblePlays.Add(possiblePlay);
         }
@@ -639,7 +639,7 @@ public class Board: IEnumerable<TileRowCol>
         }
     }
 
-    private static void TryExplore(Board startBoard, Board b, Hand h, HashSet<TileRowCol> CurrentMoves, List<Play> PossiblePlays, int row, int col, int deltaRow, int deltaCol)
+    private static void TryExplore(Board startBoard, Board b, Hand h, HashSet<TileRowCol> CurrentMoves, List<PlaySuggestion> PossiblePlays, int row, int col, int deltaRow, int deltaCol)
     {
         //Console.WriteLine($"\nTryExplore ({row}, {col})  deltaRow={deltaRow} deltaCol={deltaCol}");
 
