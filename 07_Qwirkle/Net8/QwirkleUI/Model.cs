@@ -44,7 +44,7 @@ internal class Model(MainViewModel viewModel)
         var h3 = new Tile(LibQwirkle.Shape.Star, LibQwirkle.Color.Blue, 1);
         var h4 = new Tile(LibQwirkle.Shape.Star, LibQwirkle.Color.Yellow, 1);
         var h5 = new Tile(LibQwirkle.Shape.Square, LibQwirkle.Color.Red, 1);
-        var h6 = new Tile(LibQwirkle.Shape.Square, LibQwirkle.Color.Green, 1);
+        var h6 = new Tile(LibQwirkle.Shape.Lozange, LibQwirkle.Color.Green, 1);
 
         Players[0].HandZZ.Add(h1);
         Players[0].HandZZ.Add(h2);

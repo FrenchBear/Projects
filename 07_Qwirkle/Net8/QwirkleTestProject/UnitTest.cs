@@ -97,6 +97,18 @@ public class UnitTests_Base
         Debug.Assert(board.CountPoints(moves).Points == 8);
         board.AddMoves(moves);
     }
+
+    [Fact]
+    public void TwoPointsTest()
+    {
+        HashSet<TileRowCol> moves = [
+            new(new Tile(Shape.Square, Color.Red, 2), 51, 51),
+        ];
+
+        // Should be 2 points, but evaluates to 3 points...
+        PointsBonus pb = board.CountPoints(moves);
+        Debug.Assert(pb.Points == 2);
+    }
 }
 
 public class UnitTests_Play

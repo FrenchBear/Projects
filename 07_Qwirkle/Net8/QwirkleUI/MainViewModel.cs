@@ -195,8 +195,8 @@ internal class MainViewModel: INotifyPropertyChanged
         if (View.BoardIM.Selection.IsEmpty)
             return;
 
-        Debug.WriteLine($"PerformDelete Start: CurrentHandViewModel.UIHand.Count={CurrentHandViewModel.UIHand.Count}");
-        Debug.WriteLine($"PerformDelete Start: MainWindowCurrentMoves.Count={CurrentMoves.Count}");
+        //Debug.WriteLine($"PerformDelete Start: CurrentHandViewModel.UIHand.Count={CurrentHandViewModel.UIHand.Count}");
+        //Debug.WriteLine($"PerformDelete Start: MainWindowCurrentMoves.Count={CurrentMoves.Count}");
 
         foreach (var uitrc in new List<UITileRowCol>(View.BoardIM.Selection))
         {
@@ -210,10 +210,11 @@ internal class MainViewModel: INotifyPropertyChanged
             View.BoardDrawingCanvasRemoveUITile(uitrc.UIT);
         }
 
-        Debug.WriteLine($"PerformDelete End: CurrentHandViewModel.UIHand.Count={CurrentHandViewModel.UIHand.Count}");
-        Debug.WriteLine($"PerformDelete End: MainWindowCurrentMoves.Count={CurrentMoves.Count}");
-        //Debug.Assert(CurrentPlayer.Hand.Count == CurrentHandViewModel.UIHand.Count);
-        //Debug.Assert(CurrentPlayer.Hand.Count + CurrentMoves.Count == 6);
+        //Debug.WriteLine($"PerformDelete End: CurrentHandViewModel.UIHand.Count={CurrentHandViewModel.UIHand.Count}");
+        //Debug.WriteLine($"PerformDelete End: MainWindowCurrentMoves.Count={CurrentMoves.Count}");
+
+        EvaluateCurrentMoves();
+
     }
 
     // Remove from Model and HandViewModel

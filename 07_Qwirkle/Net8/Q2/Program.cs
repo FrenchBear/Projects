@@ -18,7 +18,30 @@ internal class Program
         //Tests_Play();
         //Tests_EmptyBoard();
         //Tests_FullPlay();
-        Tests_Evaluate();
+        //Tests_Evaluate();
+        Tests_CountPoints();
+
+    }
+
+    private static void Tests_CountPoints()
+    {
+        var board = new Board();
+
+        var t1 = new Tile(Shape.Square, Color.Red, 1);
+        var t2 = new Tile(Shape.Lozange, Color.Red, 1);
+        var t3 = new Tile(Shape.Circle, Color.Red, 1);
+
+        board.AddMove(new TileRowCol(t1, 50, 50));
+        board.AddMove(new TileRowCol(t2, 50, 51));
+        board.AddMove(new TileRowCol(t3, 50, 52));
+
+        HashSet<TileRowCol> moves = [
+            new(new Tile(Shape.Square, Color.Red, 2), 51, 51),
+        ];
+
+        // Should be 2 points, but evaluates to 3 points...
+        PointsBonus pb = board.CountPoints(moves);
+        Console.WriteLine(pb.AsString());
     }
 
     private static void Tests_Evaluate()

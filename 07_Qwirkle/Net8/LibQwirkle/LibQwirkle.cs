@@ -439,7 +439,7 @@ public class Board: IEnumerable<TileRowCol>
 
         // Check that all tiles have same color or same shape
         int numColors = moves.Select(trc => trc.T.Color).Distinct().Count();
-        int numShapes = moves.Select(trc => trc.T.Color).Distinct().Count();
+        int numShapes = moves.Select(trc => trc.T.Shape).Distinct().Count();
         if (numColors > 1 && numShapes > 1)
             return (false, $"{numColors} couleurs et {numShapes} formes différentes, les tuiles jouées doivent être de la même couleur ou de la même forme");
 
@@ -519,11 +519,11 @@ public class Board: IEnumerable<TileRowCol>
             {
                 row = move.Row;
                 col = move.Col;
-                // Find the topmost position
+                // Find the bottommost position
                 while (nb.GetCellState(row + 1, col) == CellState.Tiled)
                     row++;
                 dp = 0;
-                // Explore to bottommost position
+                // Explore to topmost position
                 for (; ; )
                 {
                     dp++;
@@ -554,9 +554,13 @@ public class Board: IEnumerable<TileRowCol>
                 if (nb.GetCellState(row, col) != CellState.Tiled)
                     break;
             }
-            points += dp == 6 ? 12 : dp;
-            if (dp == 6)
-                bonus++;
+            // Cont only if we have at least two horizontal blocks
+            if (dp > 1)
+            {
+                points += dp == 6 ? 12 : dp;
+                if (dp == 6)
+                    bonus++;
+            }
         }
         else
         {
@@ -600,9 +604,13 @@ public class Board: IEnumerable<TileRowCol>
                 if (nb.GetCellState(row, col) != CellState.Tiled)
                     break;
             }
-            points += dp == 6 ? 12 : dp;
-            if (dp == 6)
-                bonus++;
+            // Cont only if we have at least two vertical blocks
+            if (dp > 1)
+            {
+                points += dp == 6 ? 12 : dp;
+                if (dp == 6)
+                    bonus++;
+            }
         }
 
         return new(points, bonus);
