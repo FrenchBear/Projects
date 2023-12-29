@@ -99,11 +99,12 @@ public record Tile(Shape S, Color C, int Instance)
                 Color.Purple => 'p',
                 _ => ConsoleSupport.ConsoleColorDefault
             });
+        sb.Append((char)('0' + Instance));
         return sb.ToString();
     }
 }
 
-[DebuggerDisplay("RowCol: r={Row} c={Col}")]
+[DebuggerDisplay("RowCol: ({Row}, {Col})")]
 public readonly record struct RowCol(int Row, int Col)
 {
     public override string ToString() => $"RowCol: r={Row} c={Col}";
@@ -112,14 +113,14 @@ public readonly record struct RowCol(int Row, int Col)
 [DebuggerDisplay("Move: {this.AsString(false)}")]
 public record PlacedTile(Tile T, int Row, int Col)
 {
+    public Tile Tile { get; } = T;
     public int Row { get; } = Row;
     public int Col { get; } = Col;
-    public Tile Tile { get; } = T;
 
     // Potentially, can add a round# or player Id that triggered this move
 
     public string AsString(bool? Color)
-        => $"({Row}, {Col}) {Tile.AsString(Color)}";
+        => $"({Row}, {Col}): {Tile.AsString(Color)}";
 }
 
 public enum CellState
