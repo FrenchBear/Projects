@@ -21,12 +21,12 @@ public class UnitTests_Base
         var t5 = new Tile(Shape.Circle, Color.Green, 1);
         var t6 = new Tile(Shape.Circle, Color.Orange, 1);
 
-        board.AddMove(new Move(50, 50, t1));
-        board.AddMove(new Move(50, 51, t2));
-        board.AddMove(new Move(50, 52, t3));
-        board.AddMove(new Move(49, 52, t4));
-        board.AddMove(new Move(48, 52, t5));
-        board.AddMove(new Move(47, 52, t6));
+        board.AddMove(new PlacedTile(t1, 50, 50));
+        board.AddMove(new PlacedTile(t2, 50, 51));
+        board.AddMove(new PlacedTile(t3, 50, 52));
+        board.AddMove(new PlacedTile(t4, 49, 52));
+        board.AddMove(new PlacedTile(t5, 48, 52));
+        board.AddMove(new PlacedTile(t6, 47, 52));
     }
 
     [Fact]
@@ -63,36 +63,36 @@ public class UnitTests_Base
     [Fact]
     public void CountPointsTest()
     {
-        HashSet<Move> moves =
+        HashSet<PlacedTile> moves =
         [
-            new(49, 51, new Tile(Shape.Lozange, Color.Blue, 1)),
-            new(49, 53, new Tile(Shape.Square, Color.Blue, 1)),
-            new(49, 54, new Tile(Shape.Star, Color.Blue, 1)),
+            new(new Tile(Shape.Lozange, Color.Blue, 1), 49, 51),
+            new(new Tile(Shape.Square, Color.Blue, 1), 49, 53),
+            new(new Tile(Shape.Star, Color.Blue, 1), 49, 54),
         ];
         Debug.Assert(board.CountPoints(moves).Points == 6);
         board.AddMoves(moves);
 
         moves =
         [
-            new(49, 55, new Tile(Shape.Cross, Color.Blue, 1)),
-            new(49, 56, new Tile(Shape.Clover, Color.Blue, 1)),
+            new(new Tile(Shape.Cross, Color.Blue, 1), 49, 55),
+            new(new Tile(Shape.Clover, Color.Blue, 1), 49, 56),
         ];
         Debug.Assert(board.CountPoints(moves).Points == 12);
         board.AddMoves(moves);
 
         moves =
         [
-            new(48, 51, new Tile(Shape.Lozange, Color.Green, 1)),
-            new(48, 53, new Tile(Shape.Square, Color.Green, 1)),
+            new(new Tile(Shape.Lozange, Color.Green, 1), 48, 51),
+            new(new Tile(Shape.Square, Color.Green, 1), 48, 53),
         ];
         Debug.Assert(board.CountPoints(moves).Points == 8);
         board.AddMoves(moves);
 
         moves =
         [
-            new(48, 54, new Tile(Shape.Star, Color.Green, 1)),
-            new(50, 54, new Tile(Shape.Star, Color.Yellow, 1)),
-            new(51, 54, new Tile(Shape.Star, Color.Orange, 1)),
+            new(new Tile(Shape.Star, Color.Green, 1), 48, 54),
+            new(new Tile(Shape.Star, Color.Yellow, 1), 50, 54),
+            new(new Tile(Shape.Star, Color.Orange, 1), 51, 54),
         ];
         Debug.Assert(board.CountPoints(moves).Points == 8);
         board.AddMoves(moves);
@@ -109,9 +109,9 @@ public class UnitTests_Play
         var t2 = new Tile(Shape.Lozange, Color.Red, 1);
         var t3 = new Tile(Shape.Circle, Color.Red, 1);
 
-        board.AddMove(new Move(50, 50, t1));
-        board.AddMove(new Move(50, 51, t2));
-        board.AddMove(new Move(50, 52, t3));
+        board.AddMove(new PlacedTile(t1, 50, 50));
+        board.AddMove(new PlacedTile(t2, 50, 51));
+        board.AddMove(new PlacedTile(t3, 50, 52));
     }
 
     [Fact]
@@ -131,8 +131,8 @@ public class UnitTests_Play
     {
         var t4 = new Tile(Shape.Lozange, Color.Yellow, 1);
         var t5 = new Tile(Shape.Lozange, Color.Green, 1);
-        board.AddMove(new Move(49, 51, t4));
-        board.AddMove(new Move(48, 51, t5));
+        board.AddMove(new PlacedTile(t4, 49, 51));
+        board.AddMove(new PlacedTile(t5, 48, 51));
 
         var h1 = new Tile(Shape.Circle, Color.Yellow, 1);
         var h2 = new Tile(Shape.Circle, Color.Green, 1);
@@ -143,7 +143,7 @@ public class UnitTests_Play
 
         var hand = new Hand([h1, h2, h3, h4, h5, h6]);
         var play = board.Play(hand);
-        Debug.Assert(play.Moves.SetEquals(new HashSet<Move> { new(48, 52, h2), new(49, 52, h1) }));
+        Debug.Assert(play.Moves.SetEquals(new HashSet<PlacedTile> { new(h2, 48, 52), new(h1, 49, 52) }));
         Debug.Assert(play.PB.Points == 7);
         Debug.Assert(play.NewHand.Equals(new Hand([h3, h4, h5, h6])));
         board.AddMoves(play.Moves);

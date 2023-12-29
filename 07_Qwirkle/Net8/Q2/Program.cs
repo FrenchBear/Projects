@@ -109,11 +109,11 @@ internal class Program
         var t4 = new Tile(Shape.Lozange, Color.Yellow, 1);
         var t5 = new Tile(Shape.Lozange, Color.Green, 1);
 
-        board.AddMove(new Move(50, 50, t1));
-        board.AddMove(new Move(50, 51, t2));
-        board.AddMove(new Move(50, 52, t3));
-        board.AddMove(new Move(49, 51, t4));
-        board.AddMove(new Move(48, 51, t5));
+        board.AddMove(new PlacedTile(t1, 50, 50));
+        board.AddMove(new PlacedTile(t2, 50, 51));
+        board.AddMove(new PlacedTile(t3, 50, 52));
+        board.AddMove(new PlacedTile(t4, 49, 51));
+        board.AddMove(new PlacedTile(t5, 48, 51));
 
         board.Print();
 
@@ -129,7 +129,7 @@ internal class Program
         Console.WriteLine($"Hand: {hand.AsString(true)}");
         var play = board.Play(hand);
         Console.WriteLine($"Play: {play.AsString(true)}");
-        Debug.Assert(play.Moves.SetEquals(new HashSet<Move> { new(48, 52, h2), new(49, 52, h1) }));
+        Debug.Assert(play.Moves.SetEquals(new HashSet<PlacedTile> { new(h2, 48, 52), new(h1, 49, 52) }));
         Debug.Assert(play.PB.Points == 7);
         Debug.Assert(play.NewHand.Equals(new Hand([h3, h4, h5, h6])));
         board.AddMoves(play.Moves);
@@ -166,12 +166,12 @@ internal class Program
         var t5 = new Tile(Shape.Circle, Color.Green, 1);
         var t6 = new Tile(Shape.Circle, Color.Orange, 1);
 
-        board.AddMove(new Move(50, 50, t1));
-        board.AddMove(new Move(50, 51, t2));
-        board.AddMove(new Move(50, 52, t3));
-        board.AddMove(new Move(49, 52, t4));
-        board.AddMove(new Move(48, 52, t5));
-        board.AddMove(new Move(47, 52, t6));
+        board.AddMove(new PlacedTile(t1, 50, 50));
+        board.AddMove(new PlacedTile(t2, 50, 51));
+        board.AddMove(new PlacedTile(t3, 50, 52));
+        board.AddMove(new PlacedTile(t4, 49, 52));
+        board.AddMove(new PlacedTile(t5, 48, 52));
+        board.AddMove(new PlacedTile(t6, 47, 52));
 
         board.Print();
 
@@ -185,11 +185,11 @@ internal class Program
         //var hand = new Hand([h1, h2, h3, h4, h5, h6]);
         //Console.WriteLine($"Hand before: {hand.AsString(true)}");
 
-        HashSet<Move> moves =
+        HashSet<PlacedTile> moves =
         [
-            new(49, 51, new Tile(Shape.Lozange, Color.Blue, 1)),
-            new(49, 53, new Tile(Shape.Square, Color.Blue, 1)),
-            new(49, 54, new Tile(Shape.Star, Color.Blue, 1)),
+            new(new Tile(Shape.Lozange, Color.Blue, 1), 49, 51),
+            new(new Tile(Shape.Square, Color.Blue, 1), 49, 53),
+            new(new Tile(Shape.Star, Color.Blue, 1), 49, 54),
         ];
         var pb = board.CountPoints(moves);
         Debug.Assert(pb.Points == 6);
@@ -199,8 +199,8 @@ internal class Program
 
         moves =
         [
-            new(49, 55, new Tile(Shape.Cross, Color.Blue, 1)),
-            new(49, 56, new Tile(Shape.Clover, Color.Blue, 1)),
+            new(new Tile(Shape.Cross, Color.Blue, 1), 49, 55),
+            new(new Tile(Shape.Clover, Color.Blue, 1), 49, 56),
         ];
         pb = board.CountPoints(moves);
         Debug.Assert(pb.Points == 12);
@@ -210,8 +210,8 @@ internal class Program
 
         moves =
         [
-            new(48, 51, new Tile(Shape.Lozange, Color.Green, 1)),
-            new(48, 53, new Tile(Shape.Square, Color.Green, 1)),
+            new(new Tile(Shape.Lozange, Color.Green, 1), 48, 51),
+            new(new Tile(Shape.Square, Color.Green, 1), 48, 53),
         ];
         pb = board.CountPoints(moves);
         Debug.Assert(pb.Points == 8);
@@ -221,9 +221,9 @@ internal class Program
 
         moves =
         [
-            new(48, 54, new Tile(Shape.Star, Color.Green, 1)),
-            new(50, 54, new Tile(Shape.Star, Color.Yellow, 1)),
-            new(51, 54, new Tile(Shape.Star, Color.Orange, 1)),
+            new(new Tile(Shape.Star, Color.Green, 1), 48, 54),
+            new(new Tile(Shape.Star, Color.Yellow, 1), 50, 54),
+            new(new Tile(Shape.Star, Color.Orange, 1), 51, 54),
         ];
         pb = board.CountPoints(moves);
         Debug.Assert(pb.Points == 8);

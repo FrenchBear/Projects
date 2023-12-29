@@ -103,8 +103,14 @@ public record Tile(Shape S, Color C, int Instance)
     }
 }
 
+[DebuggerDisplay("RowCol: r={Row} c={Col}")]
+public readonly record struct RowCol(int Row, int Col)
+{
+    public override string ToString() => $"RowCol: r={Row} c={Col}";
+}
+
 [DebuggerDisplay("Move: {this.AsString(false)}")]
-public record Move(int Row, int Col, Tile T)
+public record PlacedTile(Tile T, int Row, int Col)
 {
     public int Row { get; } = Row;
     public int Col { get; } = Col;
@@ -124,9 +130,9 @@ public enum CellState
 }
 
 [DebuggerDisplay("Play: {AsString(null)}")]
-public record Play(HashSet<Move> Moves, PointsBonus PB, Hand NewHand)
+public record Play(HashSet<PlacedTile> Moves, PointsBonus PB, Hand NewHand)
 {
-    public HashSet<Move> Moves { get; } = Moves;
+    public HashSet<PlacedTile> Moves { get; } = Moves;
     public PointsBonus PB { get; } = PB;
     public Hand NewHand { get; } = NewHand;
 
@@ -223,10 +229,10 @@ public class Bag
     }
 }
 
-public class Board: IEnumerable<Move>
+public class Board: IEnumerable<PlacedTile>
 {
     readonly Board? BaseBoard = null;
-    readonly HashSet<Move> Moves = [];
+    readonly HashSet<PlacedTile> Moves = [];
 
     public Board() { }
     public Board(Board baseBoard)
@@ -302,7 +308,7 @@ public class Board: IEnumerable<Move>
         return sb.ToString();
     }
 
-    public void AddMove(Move m)
+    public void AddMove(PlacedTile m)
     {
         if (!IsEmpty)
             Debug.Assert(GetCellState(m.Row, m.Col) == CellState.PotentiallyPlayable && IsCompatible(m.Row, m.Col, m.T));
@@ -314,7 +320,7 @@ public class Board: IEnumerable<Move>
         colMax = Math.Max(colMax, m.Col);
     }
 
-    public void AddMoves(HashSet<Move> moves)
+    public void AddMoves(HashSet<PlacedTile> moves)
     {
         foreach (var move in moves)
             AddMove(move);
@@ -414,7 +420,7 @@ public class Board: IEnumerable<Move>
 
     public void Print() => Console.WriteLine(AsString(true));
 
-    public PointsBonus CountPoints(HashSet<Move> moves)
+    public PointsBonus CountPoints(HashSet<PlacedTile> moves)
     {
         if (moves.Count == 0)
             return new(0, 0);
@@ -429,7 +435,7 @@ public class Board: IEnumerable<Move>
 
         int mRow = -1;
         int mCol = -1;
-        foreach (Move m in moves)
+        foreach (PlacedTile m in moves)
         {
             if (mRow == -1)
                 mRow = m.Row;
@@ -553,8 +559,8 @@ public class Board: IEnumerable<Move>
                 if (IsCompatible(row, col, t))
                 {
                     //Console.WriteLine("  Compatible: " + t.AsString(true));
-                    var CurrentMoves = new HashSet<Move>();
-                    ExploreMove(this, this, hand, CurrentMoves, PossiblePlays, new Move(row, col, t), true, true);
+                    var CurrentMoves = new HashSet<PlacedTile>();
+                    ExploreMove(this, this, hand, CurrentMoves, PossiblePlays, new PlacedTile(t, row, col), true, true);
                 }
         }
 
@@ -590,14 +596,14 @@ public class Board: IEnumerable<Move>
         return sol;
     }
 
-    private static void ExploreMove(Board startBoard, Board b, Hand h, HashSet<Move> CurrentMoves, List<Play> PossiblePlays, Move move, bool NS, bool EW)
+    private static void ExploreMove(Board startBoard, Board b, Hand h, HashSet<PlacedTile> CurrentMoves, List<Play> PossiblePlays, PlacedTile move, bool NS, bool EW)
     {
         //Console.WriteLine($"\nExploreMove {move.AsString(true)}  NS={NS} EW={EW}");
 
         var newB = new Board(b);
         newB.AddMove(move);
         var newH = new Hand(h.Except([move.Tile]));
-        var newCurrentMoves = new HashSet<Move>(CurrentMoves) { move };
+        var newCurrentMoves = new HashSet<PlacedTile>(CurrentMoves) { move };
 
         // Quick and dirty firtering, only keep move if it produces equal or more points than current max(points)
         // if points are actually greater than max, forget all previous possible plays
@@ -628,7 +634,7 @@ public class Board: IEnumerable<Move>
         }
     }
 
-    private static void TryExplore(Board startBoard, Board b, Hand h, HashSet<Move> CurrentMoves, List<Play> PossiblePlays, int row, int col, int deltaRow, int deltaCol)
+    private static void TryExplore(Board startBoard, Board b, Hand h, HashSet<PlacedTile> CurrentMoves, List<Play> PossiblePlays, int row, int col, int deltaRow, int deltaCol)
     {
         //Console.WriteLine($"\nTryExplore ({row}, {col})  deltaRow={deltaRow} deltaCol={deltaCol}");
 
@@ -647,7 +653,7 @@ public class Board: IEnumerable<Move>
                 if (b.IsCompatible(row, col, t))
                 {
                     //Console.WriteLine($"  Compatible: {t.AsString(true)}");
-                    ExploreMove(startBoard, b, h, CurrentMoves, PossiblePlays, new Move(row, col, t), deltaRow != 0, deltaCol != 0);
+                    ExploreMove(startBoard, b, h, CurrentMoves, PossiblePlays, new PlacedTile(t, row, col), deltaRow != 0, deltaCol != 0);
                 }
             // The outer loop is just here to find the 1st potentially playable square found in the direction.
             // Once each remaining hand tile has been tested, we're done.
@@ -656,7 +662,7 @@ public class Board: IEnumerable<Move>
     }
 
     // Make Board enumerable, returning all moves, could be convenient
-    public IEnumerator<Move> GetEnumerator()
+    public IEnumerator<PlacedTile> GetEnumerator()
     {
         if (BaseBoard != null)
             foreach (var move in BaseBoard)

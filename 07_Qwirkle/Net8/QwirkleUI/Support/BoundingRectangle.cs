@@ -1,12 +1,13 @@
-﻿using System.Diagnostics;
+﻿using LibQwirkle;
+using System.Diagnostics;
 
 namespace QwirkleUI;
 
-[DebuggerDisplay("RowCol: r={Row} c={Col}")]
-public readonly record struct RowCol(int Row, int Col)
-{
-    public override string ToString() => $"RowCol: r={Row} c={Col}";
-}
+//[DebuggerDisplay("RowCol: r={Row} c={Col}")]
+//public readonly record struct RowCol(int Row, int Col)
+//{
+//    public override string ToString() => $"RowCol: r={Row} c={Col}";
+//}
 
 public record BoundingRectangle(RowCol Min, RowCol Max)
 {
