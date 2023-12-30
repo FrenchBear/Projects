@@ -327,6 +327,10 @@ public class Board: IEnumerable<TileRowCol>
 
     public void AddMoves(HashSet<TileRowCol> moves)
     {
+        //$$$$ Beware, moves is not sorted, so we may add a tile bofore another required to make this tile playable
+        //$$$$ Needs a more sophisticated approach to add tiles to playable cells first
+        $$$
+
         foreach (var trc in moves)
             AddMove(trc);
     }

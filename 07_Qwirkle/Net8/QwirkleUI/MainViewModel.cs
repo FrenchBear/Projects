@@ -331,7 +331,7 @@ internal class MainViewModel: INotifyPropertyChanged
 
     // Since the command is in the view, MainWindow.xaml should directly reference command in the view, no need for this ViewModel intermediate...
     private void RescaleAndCenterExecute(object obj)
-        => View.RescaleAndCenter(true);        // Use animations
+        => View.RescaleAndCenter(true, true);        // Use animations
 
     // -----------------------------------
 

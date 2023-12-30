@@ -43,7 +43,7 @@
         <KeyBinding Key="Esc" Command="{Binding DeleteAllCommand}" />
         <KeyBinding Key="Z" Modifiers="Ctrl" Command="{Binding UndoCommand}" />
         <KeyBinding Key="R" Modifiers="Ctrl" Command="{Binding RescaleAndCenterCommand}" />
-        <KeyBinding Key="R" Modifiers="Ctrl" Command="{Binding NewGameCommand}" />
+        <KeyBinding Key="N" Modifiers="Ctrl" Command="{Binding NewGameCommand}" />
         <KeyBinding Key="E" Modifiers="Ctrl" Command="{Binding ExchangeTilesCommand}" />
     </Window.InputBindings>
 

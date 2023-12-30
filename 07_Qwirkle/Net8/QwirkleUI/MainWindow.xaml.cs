@@ -47,7 +47,7 @@ public partial class MainWindow: Window
 
         ViewModel.InitializeBoard();
         DrawBoard();
-        RescaleAndCenter(false);
+        RescaleAndCenter(false, true);
         ViewModel.DrawHands();
 
         ViewModel.StatusMessage = "Done.";
@@ -90,12 +90,22 @@ public partial class MainWindow: Window
     }
 
     // Adjust scale and origin to see the whole puzzle
-    internal void RescaleAndCenter(bool isWithAnimation)
+    internal void RescaleAndCenter(bool isWithAnimation, bool forceRescale = false)
     {
         TraceCall();
 
-        // Add some extra margin and always represent a 10x10 grid at minimum
+        // As long as we've 2 row/col of emty cells abound board, no need to rescale unless it's a foced request (Ctrl+R)
+        var bb = ViewModel.Bounds();
+        if ((!forceRescale)
+            && bb.Min.Row - 2 >= CurrentGridBoundingWithMargins.Min.Row
+            && bb.Min.Col - 2 >= CurrentGridBoundingWithMargins.Min.Col
+            && bb.Max.Row + 2 < CurrentGridBoundingWithMargins.Max.Row
+            && bb.Max.Col + 2 < CurrentGridBoundingWithMargins.Max.Col)
+            return;
+
+        UpdateBackgroundGrid();
         var r = BoundingRectangleWithMargins();
+        CurrentGridBoundingWithMargins = r;
 
         // Reverse-transform corners into WordCanvas coordinates
         var p1Grid = new Point(r.Min.Col * UnitSize, r.Min.Row * UnitSize);
@@ -312,7 +322,7 @@ public partial class MainWindow: Window
 
     // Grid currently drawn, include margins added to modev/V% bounding that represents board bounding
     // Expressed in row/col int values despite being part of view...
-    private BoundingRectangle CurrentGridBoundingWithMargins = new(45, 55, 45, 55);
+    private BoundingRectangle CurrentGridBoundingWithMargins = new(46, 54, 46, 54);
 
     private void ClearBackgroundGrid()
     {
@@ -328,9 +338,9 @@ public partial class MainWindow: Window
         TraceCall();
 
         var boardBounds = ViewModel.Bounds();
-        return new(boardBounds.Min.Row - 4,
+        return new(boardBounds.Min.Row - 3,
                     boardBounds.Max.Row + 4,
-                    boardBounds.Min.Col - 4,
+                    boardBounds.Min.Col - 3,
                     boardBounds.Max.Col + 4);
     }
 
