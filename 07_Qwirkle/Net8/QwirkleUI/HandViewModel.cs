@@ -40,10 +40,11 @@ internal class HandViewModel: INotifyPropertyChanged
     // -------------------------------------------------
     // Bindings
 
+    // ToDo: retrieve info from Model
     private string _PlayerName = "";
     public string PlayerName
     {
-        get { return _PlayerName; }
+        get => _PlayerName;
         set
         {
             if (_PlayerName != value)

@@ -16,10 +16,13 @@ internal class Model(MainViewModel viewModel)
 {
     private readonly MainViewModel viewModel = viewModel;               // Useful?
     public Board Board = new();
-    //public HashSet<TileRowCol> CurrentMoves = [];
+    public Bag Bag = new();
     public Player[] Players = [new()];          // Just 1 player now
 
-    internal void NewBoard() => Board = new Board();
+    internal void NewBoard() {
+        Board = new Board();
+        Bag = new Bag();
+    }
 
     // For dev, initialize Board with few tiles
     internal void InitializeBoard()
@@ -58,4 +61,6 @@ internal class Model(MainViewModel viewModel)
         => Board.EvaluateMoves(moves);
     internal PointsBonus CountPoints(HashSet<TileRowCol> moves) 
         => Board.CountPoints(moves);
+
+    public bool IsBagEmpty => Bag.IsEmpty;
 }

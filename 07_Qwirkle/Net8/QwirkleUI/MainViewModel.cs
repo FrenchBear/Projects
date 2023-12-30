@@ -15,16 +15,26 @@ using System.Windows.Input;
 
 namespace QwirkleUI;
 
+enum MoveStatus
+{
+    Empty,
+    Invalid,
+    Valid,
+}
+
 internal class MainViewModel: INotifyPropertyChanged
 {
     // Model and View
     private readonly Model Model;
     private readonly MainWindow View;
+
+    // Game state
     private readonly HandViewModel[] HandViewModels = [];
     internal readonly HashSet<UITileRowCol> CurrentMoves = [];
-
+    internal MoveStatus CurrentMovesStatus = MoveStatus.Empty;
     public int PlayerIndex = 0;
 
+    // Helpers
     public Player CurrentPlayer => Model.Players[PlayerIndex];
     public HandViewModel CurrentHandViewModel => HandViewModels[PlayerIndex];
 
@@ -43,9 +53,12 @@ internal class MainViewModel: INotifyPropertyChanged
     public ICommand QuitCommand { get; }
 
     // Edit
+    public ICommand ValidateCommand { get; }
     public ICommand UndoCommand { get; }
     public ICommand DeleteCommand { get; }
+    public ICommand DeleteAllCommand { get; }
     public ICommand SuggestPlayCommand { get; }
+    public ICommand ExchangeTilesCommand { get; }
 
     // View
     public ICommand RescaleAndCenterCommand { get; }
@@ -71,9 +84,12 @@ internal class MainViewModel: INotifyPropertyChanged
         QuitCommand = new RelayCommand<object>(QuitExecute);
 
         // Edit
+        ValidateCommand = new RelayCommand<object>(ValidateExecute, ValidateCanExecute);
         UndoCommand = new RelayCommand<object>(UndoExecute, UndoCanExecute);
         DeleteCommand = new RelayCommand<object>(DeleteExecute, DeleteCanExecute);
+        DeleteAllCommand = new RelayCommand<object>(DeleteAllExecute, DeleteAllCanExecute);
         SuggestPlayCommand = new RelayCommand<object>(SuggestPlayExecute, SuggestPlayCanExecute);
+        ExchangeTilesCommand = new RelayCommand<object>(ExchangeTilesExecute, ExchangeTilesCanExecute);
 
         // View
         RescaleAndCenterCommand = new RelayCommand<object>(RescaleAndCenterExecute);
@@ -113,43 +129,50 @@ internal class MainViewModel: INotifyPropertyChanged
     {
         if (CurrentMoves.Count == 0)
         {
-            CurrentHandViewModel.StatusMessage = "";
+            StatusMessage = "";
+            CurrentMovesStatus = MoveStatus.Empty;
             return;
         }
 
         bool status;
         string msg;
-        HashSet<TileRowCol> moves = new HashSet<TileRowCol>(CurrentMoves.Select(uitrc => new TileRowCol(uitrc.UIT.Tile, uitrc.RC)));
-        (status, msg) = Model.EvaluateMoves(new HashSet<TileRowCol>( moves));
+        var moves = new HashSet<TileRowCol>(CurrentMoves.Select(uitrc => new TileRowCol(uitrc.UIT.Tile, uitrc.RC)));
+        (status, msg) = Model.EvaluateMoves(new HashSet<TileRowCol>(moves));
         if (status)
         {
             PointsBonus pb = Model.CountPoints(moves);
-            CurrentHandViewModel.StatusMessage = $"OK: {pb.Points} points";
+            StatusMessage = $"OK: {pb.Points} points";
+            CurrentMovesStatus = MoveStatus.Valid;
+
         }
         else
-            CurrentHandViewModel.StatusMessage = $"Problem: {msg}";
+        {
+            StatusMessage = $"Problème: {msg}.";
+            CurrentMovesStatus = MoveStatus.Invalid;
+        }
     }
 
     // -------------------------------------------------
     // Bindings
 
-    private string m_StatusText = "";
+    private string m_StatusMessage = "";
 
-    public string StatusText
+    public string StatusMessage
     {
-        get => m_StatusText;
+        get => m_StatusMessage;
         set
         {
-            if (m_StatusText != value)
+            if (m_StatusMessage != value)
             {
-                m_StatusText = value;
-                NotifyPropertyChanged(nameof(StatusText));
+                m_StatusMessage = value;
+                NotifyPropertyChanged(nameof(StatusMessage));
             }
         }
     }
 
     public string Caption => App.AppName;
 
+    
     // -------------------------------------------------
     // Undo support
 
@@ -158,6 +181,8 @@ internal class MainViewModel: INotifyPropertyChanged
 
     internal void PerformUndo()
     {
+        View.BoardIM.EndAnimationsInProgress();
+
         //UndoStackClass.UndoAction action = UndoStack.Pop();
 
         //switch (action.Action)
@@ -188,17 +213,26 @@ internal class MainViewModel: INotifyPropertyChanged
         //view.FinalRefreshAfterUpdate();
     }
 
-    // Delete command moves selection back to player hand
-    // CurrentPlayer.Hand is not updated untit current moves are validated
-    internal void PerformDelete()
+    // Validate command
+    void PerformValidate()
     {
         if (View.BoardIM.Selection.IsEmpty)
             return;
 
-        //Debug.WriteLine($"PerformDelete Start: CurrentHandViewModel.UIHand.Count={CurrentHandViewModel.UIHand.Count}");
-        //Debug.WriteLine($"PerformDelete Start: MainWindowCurrentMoves.Count={CurrentMoves.Count}");
+        View.BoardIM.EndAnimationsInProgress();
+        MessageBox.Show("PerformValidate: ToDo");
+    }
 
-        foreach (var uitrc in new List<UITileRowCol>(View.BoardIM.Selection))
+    // Delete command moves selection back to player hand
+    // CurrentPlayer.Hand is not updated untit current moves are validated
+    internal void PerformDelete(bool allCurrentMoves)
+    {
+        if (View.BoardIM.Selection.IsEmpty)
+            return;
+
+        View.BoardIM.EndAnimationsInProgress();
+
+        foreach (var uitrc in new List<UITileRowCol>(allCurrentMoves ? CurrentMoves : View.BoardIM.Selection))
         {
             // Add to Player Hand
             HandViewModels[PlayerIndex].AddAndDrawTile(uitrc.UIT.Tile);
@@ -210,11 +244,15 @@ internal class MainViewModel: INotifyPropertyChanged
             View.BoardDrawingCanvasRemoveUITile(uitrc.UIT);
         }
 
-        //Debug.WriteLine($"PerformDelete End: CurrentHandViewModel.UIHand.Count={CurrentHandViewModel.UIHand.Count}");
-        //Debug.WriteLine($"PerformDelete End: MainWindowCurrentMoves.Count={CurrentMoves.Count}");
-
         EvaluateCurrentMoves();
+    }
 
+    // Suggest a tiles placement
+    internal void PerformSuggestPlay()
+    {
+        View.BoardIM.EndAnimationsInProgress();
+
+        MessageBox.Show("PerformSuggestPlay: ToDo");
     }
 
     // Remove from Model and HandViewModel
@@ -295,30 +333,48 @@ internal class MainViewModel: INotifyPropertyChanged
     private void RescaleAndCenterExecute(object obj)
         => View.RescaleAndCenter(true);        // Use animations
 
-    private bool UndoCanExecute(object obj) => true;    // UndoStack.CanUndo;
+    // -----------------------------------
 
-    private void UndoExecute(object obj)
-    {
-        View.BoardIM.EndAnimationsInProgress();
-        PerformUndo();
-    }
+    private bool ValidateCanExecute(object obj) => CurrentMovesStatus == MoveStatus.Valid;
 
-    private bool DeleteCanExecute(object obj) => true;    // DeleteStack.CanDelete;
+    private void ValidateExecute(object obj) => PerformValidate();
 
-    private void DeleteExecute(object obj)
-    {
-        View.BoardIM.EndAnimationsInProgress();
-        PerformDelete();
-    }
+    // -----------------------------------
+
+    private bool UndoCanExecute(object obj) => false;    // UndoStack.CanUndo;
+
+    private void UndoExecute(object obj) => PerformUndo();
+
+    // -----------------------------------
+
+    private bool DeleteCanExecute(object obj) => !View.BoardIM.Selection.IsEmpty;
+
+    private void DeleteExecute(object obj) => PerformDelete(false);
+
+    // -----------------------------------
+
+    private bool DeleteAllCanExecute(object obj) => CurrentMoves.Count>0;
+
+    private void DeleteAllExecute(object obj) => PerformDelete(true);
+
+    // -----------------------------------
 
     private bool SuggestPlayCanExecute(object obj) => true;
 
-    private void SuggestPlayExecute(object obj)
+    private void SuggestPlayExecute(object obj) => PerformSuggestPlay();
+
+    // -----------------------------------
+
+    private bool ExchangeTilesCanExecute(object obj) => !Model.IsBagEmpty;
+
+    private void ExchangeTilesExecute(object obj)
     {
         View.BoardIM.EndAnimationsInProgress();
         // Delegate work to view since we have no access to Sel here
         MessageBox.Show("SuggestPlayExecute: ToDo");
     }
+
+    // -----------------------------------
 
     private void NewGameExecute(object obj)
     {

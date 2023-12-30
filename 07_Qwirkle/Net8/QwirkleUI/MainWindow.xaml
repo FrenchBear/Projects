@@ -8,38 +8,19 @@
         Title="QwirkleUI" Height="900" Width="1500">
 
     <Window.Resources>
-        <!-- Gray out toolbar elements when disabled (why is it not automatic ??) -->
-        <Style TargetType="{x:Type Image}" x:Key="ToolbarImageStyle">
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}, AncestorLevel=1}, Path=IsEnabled}" Value="False">
-                    <Setter Property="Opacity" Value="0.35"></Setter>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-
-        <!--<Style TargetType="{x:Type TextBlock}" x:Key="ToolbarTextBlockStyle">
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}, AncestorLevel=1}, Path=IsEnabled}" Value="False">
-                    <Setter Property="Opacity" Value="0.35"></Setter>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-
-        <Style TargetType="{x:Type Button}" x:Key="ToolbarButtonStyle">
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled}" Value="False">
-                    <Setter Property="Opacity" Value="0.35"></Setter>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>-->
-
         <ContextMenu x:Key="MoveTileMenu">
             <MenuItem Command="{Binding DeleteCommand}" Header="_Renvoie la tuile dans la main du joueur" InputGestureText="Suppr">
                 <MenuItem.Icon>
                     <Image Source="/Icons/delete.ico" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Command="{Binding SuggestPlayCommand}" Header="_Place automatiquement le mot">
+            <MenuItem Command="{Binding DeleteAllCommand}" Header="Renvoie _toutes les tuiles en cours de placement dans la main du joueur" InputGestureText="Echap">
+                <MenuItem.Icon>
+                    <Image Source="/Icons/delete.ico" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator />
+            <MenuItem Command="{Binding SuggestPlayCommand}" Header="_Propose un placement de tuiles" InputGestureText="F1">
                 <MenuItem.Icon>
                     <Image Source="/Icons/autoplace.ico" />
                 </MenuItem.Icon>
@@ -47,7 +28,6 @@
         </ContextMenu>
 
 
-        <!-- ReSharper disable once Xaml.RedundantResource -->
         <ContextMenu x:Key="BoardTileAndBackgroundMenu">
             <MenuItem Command="{Binding RescaleAndCenterCommand}" Header="_Recentrer la vue du layout" InputGestureText="Ctrl+R">
                 <MenuItem.Icon>
@@ -58,19 +38,14 @@
     </Window.Resources>
 
     <Window.InputBindings>
-        <KeyBinding Key="N" Modifiers="Control" Command="{Binding NewLayoutCommand}" />
-        <KeyBinding Key="O" Modifiers="Control" Command="{Binding LoadCommand}" />
-        <KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveCommand}" />
-        <KeyBinding Key="OEMPlus" Modifiers="Shift" Command="{Binding AddWordsCommand}" />
-        <!-- French Keyboard, Shift is required!! -->
-        <KeyBinding Key="Add" Command="{Binding AddWordsCommand}" />
-        <!--  Numeric keyboard Plus -->
-        <KeyBinding Key="F5" Command="{Binding RegenerateLayoutCommand}" />
+        <KeyBinding Key="F1" Command="{Binding SuggestPlayCommand}" />
         <KeyBinding Key="Delete" Command="{Binding DeleteCommand}" />
+        <KeyBinding Key="Esc" Command="{Binding DeleteAllCommand}" />
         <KeyBinding Key="Z" Modifiers="Ctrl" Command="{Binding UndoCommand}" />
         <KeyBinding Key="R" Modifiers="Ctrl" Command="{Binding RescaleAndCenterCommand}" />
+        <KeyBinding Key="R" Modifiers="Ctrl" Command="{Binding NewGameCommand}" />
+        <KeyBinding Key="E" Modifiers="Ctrl" Command="{Binding ExchangeTilesCommand}" />
     </Window.InputBindings>
-
 
     <DockPanel>
         <Menu DockPanel.Dock="Top" Padding="3">
@@ -78,24 +53,6 @@
                 <MenuItem Command="{Binding NewGameCommand}" InputGestureText="Ctrl+N" Header="_Nouveau layout">
                     <MenuItem.Icon>
                         <Image Source="/Icons/new.ico" Stretch="None" />
-                    </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem Command="{Binding LoadCommand}" InputGestureText="Ctrl+O" Header="_Ouvrir une liste de mots...">
-                    <MenuItem.Icon>
-                        <Image Source="/Icons/open.ico" Stretch="None" />
-                    </MenuItem.Icon>
-                </MenuItem>
-                <Separator />
-                <MenuItem Command="{Binding AddWordsCommand}" InputGestureText="+" Header="_Ajouter des mots au layout...">
-                    <MenuItem.Icon>
-                        <Image Source="/Icons/addwords.ico" Stretch="None" />
-                    </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem Command="{Binding RegenerateLayoutCommand}" InputGestureText="F5" Header="_Regénérer le layout" />
-                <Separator />
-                <MenuItem Command="{Binding SaveCommand}" InputGestureText="Ctrl+S" Header="_Enregistrer le layout...">
-                    <MenuItem.Icon>
-                        <Image Source="/Icons/save.ico" Stretch="None" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -119,8 +76,24 @@
                         <Image Source="/Icons/delete.ico" />
                     </MenuItem.Icon>
                 </MenuItem>
+                <MenuItem Command="{Binding DeleteAllCommand}" Header="Renvoie _toutes les tuiles en cours de placement dans la main du joueur" InputGestureText="Echap">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/delete.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <Separator />
-                <MenuItem Command="{Binding RescaleAndCenterCommand}" Header="_Recentrer la vue du layout" InputGestureText="Ctrl+R">
+                <MenuItem Command="{Binding SuggestPlayCommand}" Header="_Propose un placement de tuiles" InputGestureText="F1">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/delete.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="{Binding ExchangeTilesCommand}" Header="_Échanger toutes les tuiles" InputGestureText="Ctrl+E">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/delete.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator />
+                <MenuItem Command="{Binding RescaleAndCenterCommand}" Header="Recentrer la _vue du layout" InputGestureText="Ctrl+R">
                     <MenuItem.Icon>
                         <Image Source="/Icons/find.ico" />
                     </MenuItem.Icon>
@@ -145,46 +118,17 @@
             </MenuItem>
         </Menu>
 
-        <ToolBar DockPanel.Dock="Top" Margin="0,-1,0.333,1" ToolBarTray.IsLocked="True">
-            <Button Command="{Binding NewGameCommand}" ToolTip="Crée un nouveau layout vierge [Ctrl+N]">
-                <Image Source="/Icons/new.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
-            </Button>
-            <Button Command="{Binding LoadCommand}" ToolTip="Crée une nouvelle grille et génère un layout à partir d'une liste de mots [Ctrl+O]">
-                <Image Source="/Icons/open.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
-            </Button>
-            <Button Command="{Binding SaveCommand}" ToolTip="Enregistre le layout dans un fichier [Ctrl+S]">
-                <Image Source="/Icons/save.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
-            </Button>
-
-            <Separator />
-
-            <Button Command="{Binding AddWordsCommand}" ToolTip="Ajouter des mots au layout [+]">
-                <Image Source="/Icons/addwords.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
-            </Button>
-
-            <Separator />
-
-            <Button Command="{Binding UndoCommand}" ToolTip="Annule la dernière modification [Ctrl+Z]">
-                <Image Source="/Icons/undo.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
-            </Button>
-            <Button Command="{Binding DeleteCommand}" ToolTip="Renvoie la tuile dans la main du joueur [Suppr]">
-                <Image Source="/Icons/delete.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
-            </Button>
-            <Button Command="{Binding SuggestPlayCommand}" ToolTip="Place automatiquement le mot">
-                <Image Source="/Icons/autoplace.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
-            </Button>
-
-            <Separator />
-
-            <Button Command="{Binding RescaleAndCenterCommand}" ToolTip="Recentre le jeu [Ctrl+R]">
-                <Image Source="/Icons/recenter.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
-            </Button>
-
-            <Separator />
-        </ToolBar>
-
-        <StatusBar DockPanel.Dock="Bottom">
-            <TextBlock Name="StatusText" Text="{Binding StatusText, FallbackValue='Main ToolBar'}" />
+        <StatusBar DockPanel.Dock="Bottom" FontSize="24" Margin="4">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Name="StatusText"  Text="{Binding StatusMessage, FallbackValue='Main ToolBar'}" Margin="6,0,0,4"/>
+                <StackPanel Orientation="Horizontal">
+                    <Button Command="{Binding ValidateCommand}" Margin="0,0,6,0" Padding="8,2" ToolTip="Valide le placement des tuiles [Entrée]">Valider</Button>
+                    <Button Command="{Binding DeleteAllCommand}" Margin="6,0" Padding="8,2" ToolTip="Renvoie toutes les tuiles en cours de placement dans la main du joueur[Echap]">Annuler</Button>
+                    <Button Command="{Binding SuggestPlayCommand}" Margin="6,0" Padding="8,2" ToolTip="Propose un placement de tuiles [F1]">Proposition</Button>
+                    <Button Command="{Binding ExchangeTilesCommand}" Margin="6,0" Padding="8,2" ToolTip="Échanger toutes les tuiles [Ctrl+E]">Échanger</Button>
+                    <Button Command="{Binding RescaleAndCenterCommand}" Margin="6,0" Padding="8,2" ToolTip="Recentre le jeu [Ctrl+R]">Recentrer</Button>
+                </StackPanel>
+            </StackPanel>
         </StatusBar>
 
         <Grid>

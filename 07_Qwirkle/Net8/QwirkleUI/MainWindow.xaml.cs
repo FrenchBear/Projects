@@ -50,7 +50,7 @@ public partial class MainWindow: Window
         RescaleAndCenter(false);
         ViewModel.DrawHands();
 
-        ViewModel.StatusText = "Done.";
+        ViewModel.StatusMessage = "Done.";
     }
 
     private void MainWindow_KeyDown(object sender, KeyEventArgs e)
@@ -75,7 +75,7 @@ public partial class MainWindow: Window
         // Clear previous elements layout
         BoardDrawingCanvas.Children.Clear();
         ClearBackgroundGrid();
-        ViewModel.StatusText = "Clear.";
+        ViewModel.StatusMessage = "Clear.";
         BoardIM.Selection.Clear();
     }
 
