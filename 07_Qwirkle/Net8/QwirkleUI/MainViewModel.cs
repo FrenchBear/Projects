@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using static QwirkleUI.App;
 
 namespace QwirkleUI;
 
@@ -127,13 +128,24 @@ internal class MainViewModel: INotifyPropertyChanged
 
     internal void EvaluateCurrentMoves()
     {
-        // If there is no move, profind hint about possible best play
+        // If there is no move, provide hint about possible best play
         if (CurrentMoves.Count == 0)
         {
             CurrentMovesStatus = MoveStatus.Empty;
 
+            // ToDo: Implement endgame detection
+            // Only for dev, until endgame is handled
+            if (CurrentPlayer.Hand.Count == 0)
+            {
+                StatusMessage = "Info: La main est vide, pas de jeu possible.";
+                return;
+            }
+
             var ps = Model.Board.Play(CurrentPlayer.Hand);
-            StatusMessage = $"Info: Il existe un pacement à {ps.PB.Points} points";
+            if (ps.PB.Points == 0)
+                StatusMessage = "Info: Aucune tuile jouable, échangez les tuiles.";
+            else
+                StatusMessage = $"Info: Il existe un placement à {ps.PB.Points} points.";
             return;
         }
 
@@ -175,7 +187,6 @@ internal class MainViewModel: INotifyPropertyChanged
 
     public string Caption => App.AppName;
 
-    
     // -------------------------------------------------
     // Undo support
 
@@ -219,7 +230,7 @@ internal class MainViewModel: INotifyPropertyChanged
     // Validate command
     void PerformValidate()
     {
-        if (CurrentMoves.Count==0)
+        if (CurrentMoves.Count == 0)
             return;
 
         View.BoardIM.EndAnimationsInProgress();
@@ -228,28 +239,42 @@ internal class MainViewModel: INotifyPropertyChanged
         foreach (var move in CurrentMoves)
         {
             move.UIT.SelectionBorder = false;
-            move.UIT.GrayBackground= false;
+            move.UIT.GrayBackground = false;
+            Debug.Assert(CurrentPlayer.Hand.Contains(move.Tile));
+            CurrentPlayer.Hand.Remove(move.Tile);
         }
         CurrentMoves.Clear();
         CurrentMovesStatus = MoveStatus.Empty;
         StatusMessage = string.Empty;
 
         // Refill player hand
-        while (!Model.Bag.IsEmpty && CurrentHandViewModel.UIHand.Count<6)
+        while (!Model.Bag.IsEmpty && CurrentHandViewModel.UIHand.Count < 6)
         {
             var t = Model.Bag.GetTile();
             CurrentHandViewModel.AddAndDrawTile(t);
+            CurrentPlayer.Hand.Add(t);
         }
 
-        // ToDo: switch to next player
+        EvaluateCurrentMoves();
+
+        // ToDo: Switch to next player
     }
 
     // Delete command moves selection back to player hand
     // CurrentPlayer.Hand is not updated untit current moves are validated
+    // Note that EvaluateCurrentMoves is not called here since this is used as a subprogram for Suggestion
     internal void PerformDelete(bool allCurrentMoves)
     {
-        if (View.BoardIM.Selection.IsEmpty)
-            return;
+        if (allCurrentMoves)
+        {
+            if (CurrentMoves.Count == 0)
+                return;
+        }
+        else
+        {
+            if (View.BoardIM.Selection.IsEmpty)
+                return;
+        }
 
         View.BoardIM.EndAnimationsInProgress();
 
@@ -264,23 +289,47 @@ internal class MainViewModel: INotifyPropertyChanged
             CurrentMoves.Remove(todel);
             View.BoardDrawingCanvasRemoveUITile(uitrc.UIT);
         }
-
-        EvaluateCurrentMoves();
     }
 
     // Suggest a tiles placement
     internal void PerformSuggestPlay()
     {
-        View.BoardIM.EndAnimationsInProgress();
+        // First, move all tiles back to hand
+        View.BoardIM.Selection.Clear();
+        PerformDelete(true);
 
-        MessageBox.Show("PerformSuggestPlay: ToDo");
+        // ToDo: Review this, actually as soon as one hand is empty after validation, last turn mode begins.
+        // Once last player has played, it's endgame, so in theory we shouldn't meet this case
+        if (CurrentPlayer.Hand.Count==0)
+        {
+            MessageBox.Show("Désolé, la main est vide!", AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            return;
+        }
+
+        var ps = Model.Board.Play(CurrentPlayer.Hand);
+        if (ps.PB.Points==0)
+        {
+            MessageBox.Show("Désolé, aucune tuile ne peut être jouée. Échangez les tuiles!", AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            return;
+        }
+
+        // Delete from hand, add to Board
+        foreach (var trc in ps.Moves)
+        {
+            // Delete from Hand
+            CurrentHandViewModel.RemoveUITileFromTile(trc.Tile);
+            // Add to Board
+            var uitile = View.BoardDrawingCanvasAddUITile(trc.Tile, trc.RC, true);
+            CurrentMoves.Add(uitile);
+        }
+
+        EvaluateCurrentMoves();
+        View.RescaleAndCenter(true);
     }
 
     // Remove from Model and HandViewModel
-    internal void RemoveUITileFromHand(UITile uit) =>
-        //Debug.Assert(CurrentPlayer.Hand.Contains(Tile));
-        //CurrentPlayer.Hand.Remove(Tile);
-        CurrentHandViewModel.RemoveUITile(uit);
+    internal void RemoveUITileFromHand(UITile uit)
+        => CurrentHandViewModel.RemoveUITile(uit);
 
     // -------------------------------------------------
     // Model helpers
@@ -300,14 +349,14 @@ internal class MainViewModel: INotifyPropertyChanged
     {
         View.AddCircle(new RowCol(50, 50));
         foreach (TileRowCol m in Model.Board)
-            View.BoardDrawingCanvasAddUITile(new RowCol(m.Row, m.Col), m.Tile, false);
+            View.BoardDrawingCanvasAddUITile(m.Tile, new RowCol(m.Row, m.Col), false);
     }
 
     // For dev, draw test tiles with gray background
     internal void DrawCurrentMoves()
     {
         foreach (UITileRowCol m in CurrentMoves)
-            CurrentMoves.Add(View.BoardDrawingCanvasAddUITile(m.RC, m.Tile, true));
+            CurrentMoves.Add(View.BoardDrawingCanvasAddUITile(m.Tile, m.RC, true));
     }
 
     internal void DrawHands()
@@ -334,7 +383,7 @@ internal class MainViewModel: INotifyPropertyChanged
                 }
             }
             Debug.Assert(found);
-            AddCurrentMove(new UITileRowCol(uitp.UIT, uitp.RC));
+            CurrentMoves.Add(new UITileRowCol(uitp.UIT, uitp.RC));
         }
     }
 
@@ -370,13 +419,21 @@ internal class MainViewModel: INotifyPropertyChanged
 
     private bool DeleteCanExecute(object obj) => !View.BoardIM.Selection.IsEmpty;
 
-    private void DeleteExecute(object obj) => PerformDelete(false);
+    private void DeleteExecute(object obj)
+    {
+        PerformDelete(false);
+        EvaluateCurrentMoves();
+    }
 
     // -----------------------------------
 
-    private bool DeleteAllCanExecute(object obj) => CurrentMoves.Count>0;
+    private bool DeleteAllCanExecute(object obj) => CurrentMoves.Count > 0;
 
-    private void DeleteAllExecute(object obj) => PerformDelete(true);
+    private void DeleteAllExecute(object obj)
+    {
+        PerformDelete(true);
+        EvaluateCurrentMoves();
+    }
 
     // -----------------------------------
 
@@ -392,7 +449,7 @@ internal class MainViewModel: INotifyPropertyChanged
     {
         View.BoardIM.EndAnimationsInProgress();
         // Delegate work to view since we have no access to Sel here
-        MessageBox.Show("SuggestPlayExecute: ToDo");
+        MessageBox.Show("ExchangeTilesExecute: ToDo");
     }
 
     // -----------------------------------

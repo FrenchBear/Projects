@@ -55,7 +55,7 @@ public record Tile(Shape S, Color C, int Instance)
     public string ShapeColor
         => Shape.ToString() + Color.ToString();
 
-    public string AsString(bool? color, bool includeInstance=false)
+    public string AsString(bool? color, bool includeInstance = false)
     {
         var sb = new StringBuilder();
 
@@ -114,7 +114,7 @@ public readonly record struct RowCol(int Row, int Col)
 [DebuggerDisplay("TileRowCol: {this.AsString(null, true)}")]
 public record TileRowCol(Tile T, RowCol RC)
 {
-    public TileRowCol(Tile t, int row, int col): this(t, new RowCol(row, col)) { }
+    public TileRowCol(Tile t, int row, int col) : this(t, new RowCol(row, col)) { }
     public Tile Tile { get; } = T;
     public RowCol RC { get; } = RC;
 
@@ -178,7 +178,7 @@ public class Hand: HashSet<Tile>, IEquatable<Hand>
 public static class RandomGenerator
 {
     // Can use a seed to make tests reproductible
-    static readonly Random rnd = new();
+    static readonly Random rnd = new(1);
 
     public static int Next(int MaxValue)
         => rnd.Next(MaxValue);
@@ -318,7 +318,7 @@ public class Board: IEnumerable<TileRowCol>
         if (!IsEmpty)
             Debug.Assert(GetCellState(trc.Row, trc.Col) == CellState.PotentiallyPlayable && IsCompatible(trc.T, trc.Row, trc.Col));
         else
-            Debug.Assert(trc.Row==50 && trc.Col==50);
+            Debug.Assert(trc.Row == 50 && trc.Col == 50);
 
         Moves.Add(trc);
         rowMin = Math.Min(rowMin, trc.Row);
@@ -345,6 +345,86 @@ public class Board: IEnumerable<TileRowCol>
             }
             Debug.Assert(todel != null);
             tmp.Remove(todel);
+        }
+
+        BoardGlobalCheck();
+    }
+
+    private void BoardGlobalCheck()
+    {
+        // Check horizontal bands
+        var colors = new HashSet<Color>();
+        var shapes = new HashSet<Shape>();
+        bool colorMode = false;
+        int blockSizeCount;
+        Tile? refTile = null;
+
+        void CheckTile(Tile? t)
+        {
+            if (t == null)
+            {
+                blockSizeCount = 0;
+                return;
+            }
+
+            //Debug.WriteLine($"{blockSizeCount}: {t}");
+
+            blockSizeCount++;
+            if (blockSizeCount == 1)
+            {
+                colors.Clear();
+                shapes.Clear();
+                refTile = t;
+                return;
+            }
+            Debug.Assert(refTile != null);
+            if (blockSizeCount == 2)
+            {
+                if (t.Color == refTile.Color && t.Shape != refTile.Shape)
+                {
+                    colorMode = true;
+                    shapes.Add(t.Shape);
+                    shapes.Add(refTile.Shape);
+                }
+                else if (t.Shape == refTile.Shape && t.Color != refTile.Color)
+                {
+                    colorMode = false;
+                    colors.Add(t.Color);
+                    colors.Add(refTile.Color);
+                }
+                else
+                    Debug.Assert(false);
+                return;
+            }
+            Debug.Assert(blockSizeCount <= 6);
+            if (colorMode)
+            {
+                Debug.Assert(t.Color == refTile.Color);
+                Debug.Assert(!shapes.Contains(t.Shape));
+                shapes.Add(t.Shape);
+            }
+            else
+            {
+                Debug.Assert(t.Shape == refTile.Shape);
+                Debug.Assert(!colors.Contains(t.Color));
+                colors.Add(t.Color);
+            }
+        }
+
+        // Check horizontal blocks
+        for (int row = RowMin; row <= RowMax; row++)
+        {
+            blockSizeCount = 0;
+            for (int col = ColMin; col <= ColMax; col++)
+                CheckTile(GetTile(row, col));
+        }
+
+        // Check vertical blocks
+        for (int col = ColMin; col <= ColMax; col++)
+        {
+            blockSizeCount = 0;
+            for (int row = RowMin; row <= RowMax; row++)
+                CheckTile(GetTile(row, col));
         }
     }
 
@@ -455,7 +535,7 @@ public class Board: IEnumerable<TileRowCol>
             return (false, "No move to evaluate");
 
         // If the board is empty, cell (50, 50) must be covered
-        if (IsEmpty && !moves.Any(trc => trc.Row==50 && trc.Col==50))
+        if (IsEmpty && !moves.Any(trc => trc.Row == 50 && trc.Col == 50))
             return (false, "La cellule (50, 50) doit être couverte par le premier placement");
 
         // Check that all tiles have same color or same shape
@@ -473,7 +553,7 @@ public class Board: IEnumerable<TileRowCol>
         // Check that all tiles are in a playable cell
         // Since moves hes no order, we must add individual tiles to board for tiles in a playable position
         var nb = new Board(this);
-        while (moves.Count>0)
+        while (moves.Count > 0)
         {
             TileRowCol? playable = null;
             foreach (var trc in moves)
@@ -490,7 +570,7 @@ public class Board: IEnumerable<TileRowCol>
             }
             if (playable == null)
             {
-                var trc=moves.First();
+                var trc = moves.First();
                 return (false, $"La tuile {trc.Tile.Shape} {trc.Tile.Color} #{trc.Tile.Instance} en position ({trc.Row}, {trc.Col}) n'est pas posée sur une cellule jouable");
             }
             nb.AddMove(playable);
@@ -674,6 +754,7 @@ public class Board: IEnumerable<TileRowCol>
         // In some cases, this list could be empty
         if (PossiblePlays.Count == 0)
             return new PlaySuggestion([], new PointsBonus(0, 0), hand);
+
         var randIndex = RandomGenerator.Next(PossiblePlays.Count);
         var sol = PossiblePlays[randIndex];
         Console.WriteLine($"Play: ix={randIndex} {sol.AsString(true)}");

@@ -389,7 +389,7 @@ public partial class MainWindow: Window
             Debug.WriteLine("Grid unchanged");
     }
 
-    internal UITileRowCol BoardDrawingCanvasAddUITile(RowCol position, Tile ti, bool gray)
+    internal UITileRowCol BoardDrawingCanvasAddUITile(Tile ti, RowCol position, bool gray)
     {
         TraceCall();
 
@@ -445,11 +445,9 @@ public partial class MainWindow: Window
             int col = (int)Math.Floor(drawingCanvasPosition.X / UnitSize + 0.5);
             Debug.WriteLine($"MainWindowAcceptHandOver: row={row} col={col}   Offset Y={pt.Offset.Y:F0} X={pt.Offset.X:F0}");
 
-            var dupTile = BoardDrawingCanvasAddUITile(new RowCol(row, col), pt.Tile, true);
+            var dupTile = BoardDrawingCanvasAddUITile(pt.Tile, new RowCol(row, col), true);
             dupTile.Offset = pt.Offset;
             BoardIM.Selection.Add(dupTile);
-
-            playerIM.RemoveTileFromView(pt.UIT);
             ViewModel.RemoveUITileFromHand(pt.UIT);
         }
 
@@ -581,14 +579,11 @@ internal class BoardInteractionManager(HashSet<UITileRowCol> currentMoves, MainW
             uitp.Offset = new Vector(col * UnitSize, row * UnitSize);
         }
 
-        // Update CurrentMoves, both in View and in Model
+        // In case of handover ending, update CurrentMoves
         if (HandOverState == HandOverStateEnum.Active)
         {
             foreach (UITileRowCol uitp in Selection)
-            {
                 ViewModel.CurrentMoves.Add(uitp);
-                ViewModel.AddCurrentMove(new UITileRowCol(uitp.UIT, uitp.RC));
-            }
             HandOverState = HandOverStateEnum.Inactive;
         }
         else

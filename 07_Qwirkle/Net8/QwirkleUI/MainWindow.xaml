@@ -41,6 +41,7 @@
         <KeyBinding Key="F1" Command="{Binding SuggestPlayCommand}" />
         <KeyBinding Key="Delete" Command="{Binding DeleteCommand}" />
         <KeyBinding Key="Esc" Command="{Binding DeleteAllCommand}" />
+        <KeyBinding Key="Enter" Command="{Binding ValidateCommand}" />
         <KeyBinding Key="Z" Modifiers="Ctrl" Command="{Binding UndoCommand}" />
         <KeyBinding Key="R" Modifiers="Ctrl" Command="{Binding RescaleAndCenterCommand}" />
         <KeyBinding Key="N" Modifiers="Ctrl" Command="{Binding NewGameCommand}" />

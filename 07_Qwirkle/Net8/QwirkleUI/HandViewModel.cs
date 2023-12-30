@@ -123,6 +123,11 @@ internal class HandViewModel: INotifyPropertyChanged
     {
         var todel = UIHand.FirstOrDefault(item => item.UIT == uit);
         Debug.Assert(todel != null);
+        Debug.Assert(UIHand.Contains(todel));
         UIHand.Remove(todel);
+        View.RemoveUITileFromHandView(uit);
     }
+
+    internal void RemoveUITileFromTile(Tile t)
+        => RemoveUITile(UIHand.First(item => item.UIT.Tile == t).UIT);
 }

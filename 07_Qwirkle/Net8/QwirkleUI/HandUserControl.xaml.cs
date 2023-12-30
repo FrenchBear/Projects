@@ -90,6 +90,12 @@ public partial class HandUserControl: UserControl
         HandViewModel.UIHand.Add(h);
     }
 
+    public void RemoveUITileFromHandView(UITile tile)
+    {
+        Debug.Assert(HandDrawingCanvas.Children.Contains(tile));
+        HandDrawingCanvas.Children.Remove(tile);
+    }
+
     // --------------------------------------------------------------------
     // Mouse click and drag management
 
@@ -160,12 +166,6 @@ internal class HandInteractionManager(HashSet<UITileRowCol> hand, HandUserContro
 {
     private readonly HashSet<UITileRowCol> Hand = hand;
     private readonly HandUserControl View = view;
-
-    public void RemoveTileFromView(UITile tile)
-    {
-        Debug.Assert(View.HandDrawingCanvas.Children.Contains(tile));
-        View.HandDrawingCanvas.Children.Remove(tile);
-    }
 
     internal override void UpdateTargetPosition()
     {

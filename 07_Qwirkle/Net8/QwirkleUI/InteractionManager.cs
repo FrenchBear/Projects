@@ -312,10 +312,7 @@ abstract internal class InteractionManager
         }
     }
 
-    internal virtual void UpdateTargetPosition()
-    {
-        //TraceCall("virt IM.");
-    }
+    internal abstract void UpdateTargetPosition();
 
     public void IM_MouseWheel(object sender, MouseWheelEventArgs e) =>
         // This is not used for Hand
