@@ -54,7 +54,7 @@ internal class UITileRowCol(UITile UIT, RowCol RC): IEquatable<UITileRowCol>
         => EqualsTile(other);
 
     public override int GetHashCode()
-        => UIT.Tile.GetHashCode();
+        => Tile.GetHashCode();
 
     public static bool operator ==(UITileRowCol? left, UITileRowCol? right)
     {

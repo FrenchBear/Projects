@@ -111,7 +111,7 @@ public readonly record struct RowCol(int Row, int Col)
     public override string ToString() => $"RowCol: r={Row} c={Col}";
 }
 
-[DebuggerDisplay("TileRowCol: {this.AsString(false)}")]
+[DebuggerDisplay("TileRowCol: {this.AsString(null, true)}")]
 public record TileRowCol(Tile T, RowCol RC)
 {
     public TileRowCol(Tile t, int row, int col): this(t, new RowCol(row, col)) { }
@@ -123,8 +123,8 @@ public record TileRowCol(Tile T, RowCol RC)
 
     // Potentially, can add a round# or player Id that triggered this move
 
-    public string AsString(bool? Color)
-        => $"TileRowCol: ({RC.Row}, {RC.Col}) {Tile.AsString(Color)}";
+    public string AsString(bool? color, bool includeInstance = false)
+        => $"TileRowCol: ({RC.Row}, {RC.Col}) {Tile.AsString(color, includeInstance)}";
 }
 
 public enum CellState
@@ -335,8 +335,8 @@ public class Board: IEnumerable<TileRowCol>
             TileRowCol? todel = null;
             foreach (var trc in tmp)
             {
-                if (IsEmpty && trc.Row == 50 && trc.Col == 50
-                    || GetCellState(trc.Row, trc.Col) == CellState.PotentiallyPlayable && IsCompatible(trc.T, trc.Row, trc.Col))
+                if ((IsEmpty && trc.Row == 50 && trc.Col == 50)
+                    || (GetCellState(trc.Row, trc.Col) == CellState.PotentiallyPlayable && IsCompatible(trc.T, trc.Row, trc.Col)))
                 {
                     AddMove(trc);
                     todel = trc;

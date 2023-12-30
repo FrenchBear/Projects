@@ -38,7 +38,6 @@ internal class MainViewModel: INotifyPropertyChanged
     public Player CurrentPlayer => Model.Players[PlayerIndex];
     public HandViewModel CurrentHandViewModel => HandViewModels[PlayerIndex];
 
-
     // Helper to initialize HandViewModel, since model is common to all ViewModels
     public Model GetModel => Model;
 
@@ -128,16 +127,19 @@ internal class MainViewModel: INotifyPropertyChanged
 
     internal void EvaluateCurrentMoves()
     {
+        // If there is no move, profind hint about possible best play
         if (CurrentMoves.Count == 0)
         {
-            StatusMessage = "";
             CurrentMovesStatus = MoveStatus.Empty;
+
+            var ps = Model.Board.Play(CurrentPlayer.Hand);
+            StatusMessage = $"Info: Il existe un pacement à {ps.PB.Points} points";
             return;
         }
 
         bool status;
         string msg;
-        var moves = new HashSet<TileRowCol>(CurrentMoves.Select(uitrc => new TileRowCol(uitrc.UIT.Tile, uitrc.RC)));
+        var moves = new HashSet<TileRowCol>(CurrentMoves.Select(uitrc => new TileRowCol(uitrc.Tile, uitrc.RC)));
         (status, msg) = Model.EvaluateMoves(new HashSet<TileRowCol>(moves));
         if (status)
         {
@@ -217,7 +219,7 @@ internal class MainViewModel: INotifyPropertyChanged
     // Validate command
     void PerformValidate()
     {
-        if (View.BoardIM.Selection.IsEmpty)
+        if (CurrentMoves.Count==0)
             return;
 
         View.BoardIM.EndAnimationsInProgress();
@@ -229,8 +231,17 @@ internal class MainViewModel: INotifyPropertyChanged
             move.UIT.GrayBackground= false;
         }
         CurrentMoves.Clear();
+        CurrentMovesStatus = MoveStatus.Empty;
+        StatusMessage = string.Empty;
 
-        // ToDo: refill player hand
+        // Refill player hand
+        while (!Model.Bag.IsEmpty && CurrentHandViewModel.UIHand.Count<6)
+        {
+            var t = Model.Bag.GetTile();
+            CurrentHandViewModel.AddAndDrawTile(t);
+        }
+
+        // ToDo: switch to next player
     }
 
     // Delete command moves selection back to player hand
@@ -245,7 +256,7 @@ internal class MainViewModel: INotifyPropertyChanged
         foreach (var uitrc in new List<UITileRowCol>(allCurrentMoves ? CurrentMoves : View.BoardIM.Selection))
         {
             // Add to Player Hand
-            HandViewModels[PlayerIndex].AddAndDrawTile(uitrc.UIT.Tile);
+            HandViewModels[PlayerIndex].AddAndDrawTile(uitrc.Tile);
 
             // Remove from CurrentMoves and DrawingCanvas
             var todel = CurrentMoves.FirstOrDefault(item => item.UIT == uitrc.UIT);
@@ -267,8 +278,8 @@ internal class MainViewModel: INotifyPropertyChanged
 
     // Remove from Model and HandViewModel
     internal void RemoveUITileFromHand(UITile uit) =>
-        //Debug.Assert(CurrentPlayer.Hand.Contains(uit.Tile));
-        //CurrentPlayer.Hand.Remove(uit.Tile);
+        //Debug.Assert(CurrentPlayer.Hand.Contains(Tile));
+        //CurrentPlayer.Hand.Remove(Tile);
         CurrentHandViewModel.RemoveUITile(uit);
 
     // -------------------------------------------------
@@ -296,7 +307,7 @@ internal class MainViewModel: INotifyPropertyChanged
     internal void DrawCurrentMoves()
     {
         foreach (UITileRowCol m in CurrentMoves)
-            CurrentMoves.Add(View.BoardDrawingCanvasAddUITile(m.RC, m.UIT.Tile, true));
+            CurrentMoves.Add(View.BoardDrawingCanvasAddUITile(m.RC, m.Tile, true));
     }
 
     internal void DrawHands()
@@ -315,7 +326,7 @@ internal class MainViewModel: INotifyPropertyChanged
             bool found = false;
             foreach (UITileRowCol m in CurrentMoves)
             {
-                if (m.UIT.Tile == uitp.UIT.Tile)
+                if (m.Tile == uitp.Tile)
                 {
                     RemoveCurrentMove(m);
                     found = true;

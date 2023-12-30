@@ -49,12 +49,12 @@ internal class Model(MainViewModel viewModel)
         var h5 = new Tile(LibQwirkle.Shape.Square, LibQwirkle.Color.Red, 1);
         var h6 = new Tile(LibQwirkle.Shape.Lozange, LibQwirkle.Color.Green, 1);
 
-        Players[0].HandZZ.Add(h1);
-        Players[0].HandZZ.Add(h2);
-        Players[0].HandZZ.Add(h3);
-        Players[0].HandZZ.Add(h4);
-        Players[0].HandZZ.Add(h5);
-        Players[0].HandZZ.Add(h6);
+        Players[0].Hand.Add(h1);
+        Players[0].Hand.Add(h2);
+        Players[0].Hand.Add(h3);
+        Players[0].Hand.Add(h4);
+        Players[0].Hand.Add(h5);
+        Players[0].Hand.Add(h6);
     }
 
     internal (bool, string) EvaluateMoves(HashSet<TileRowCol> moves)

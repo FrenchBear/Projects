@@ -50,7 +50,8 @@ public partial class MainWindow: Window
         RescaleAndCenter(false, true);
         ViewModel.DrawHands();
 
-        ViewModel.StatusMessage = "Done.";
+        //ViewModel.StatusMessage = "Done.";
+        ViewModel.EvaluateCurrentMoves();
     }
 
     private void MainWindow_KeyDown(object sender, KeyEventArgs e)
@@ -444,7 +445,7 @@ public partial class MainWindow: Window
             int col = (int)Math.Floor(drawingCanvasPosition.X / UnitSize + 0.5);
             Debug.WriteLine($"MainWindowAcceptHandOver: row={row} col={col}   Offset Y={pt.Offset.Y:F0} X={pt.Offset.X:F0}");
 
-            var dupTile = BoardDrawingCanvasAddUITile(new RowCol(row, col), pt.UIT.Tile, true);
+            var dupTile = BoardDrawingCanvasAddUITile(new RowCol(row, col), pt.Tile, true);
             dupTile.Offset = pt.Offset;
             BoardIM.Selection.Add(dupTile);
 
