@@ -317,6 +317,8 @@ public class Board: IEnumerable<TileRowCol>
     {
         if (!IsEmpty)
             Debug.Assert(GetCellState(trc.Row, trc.Col) == CellState.PotentiallyPlayable && IsCompatible(trc.T, trc.Row, trc.Col));
+        else
+            Debug.Assert(trc.Row==50 && trc.Col==50);
 
         Moves.Add(trc);
         rowMin = Math.Min(rowMin, trc.Row);
@@ -327,12 +329,23 @@ public class Board: IEnumerable<TileRowCol>
 
     public void AddMoves(HashSet<TileRowCol> moves)
     {
-        //$$$$ Beware, moves is not sorted, so we may add a tile bofore another required to make this tile playable
-        //$$$$ Needs a more sophisticated approach to add tiles to playable cells first
-        $$$
-
-        foreach (var trc in moves)
-            AddMove(trc);
+        var tmp = new HashSet<TileRowCol>(moves);
+        while (tmp.Count > 0)
+        {
+            TileRowCol? todel = null;
+            foreach (var trc in tmp)
+            {
+                if (IsEmpty && trc.Row == 50 && trc.Col == 50
+                    || GetCellState(trc.Row, trc.Col) == CellState.PotentiallyPlayable && IsCompatible(trc.T, trc.Row, trc.Col))
+                {
+                    AddMove(trc);
+                    todel = trc;
+                    break;
+                }
+            }
+            Debug.Assert(todel != null);
+            tmp.Remove(todel);
+        }
     }
 
     public Tile? GetTile(int row, int col)
@@ -440,6 +453,10 @@ public class Board: IEnumerable<TileRowCol>
         // Just a safeguard, this should not be called with an empty HashSet
         if (moves.Count == 0)
             return (false, "No move to evaluate");
+
+        // If the board is empty, cell (50, 50) must be covered
+        if (IsEmpty && !moves.Any(trc => trc.Row==50 && trc.Col==50))
+            return (false, "La cellule (50, 50) doit être couverte par le premier placement");
 
         // Check that all tiles have same color or same shape
         int numColors = moves.Select(trc => trc.T.Color).Distinct().Count();

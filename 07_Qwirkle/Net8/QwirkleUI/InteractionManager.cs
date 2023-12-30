@@ -23,8 +23,10 @@ internal class UITileRowCol(UITile UIT, RowCol RC): IEquatable<UITileRowCol>
     internal UITile UIT { get; private set; } = UIT;
     internal RowCol RC { get; set; } = RC;      // set accessor because RC is mutable
 
+    // Helpers
     public int Row => RC.Row; 
     public int Col => RC.Col;
+    public Tile Tile => UIT.Tile;
 
     // Used when dragging (offset from mouse click down position) or animating (target position)
     public Vector Offset { get; set; }
@@ -36,7 +38,7 @@ internal class UITileRowCol(UITile UIT, RowCol RC): IEquatable<UITileRowCol>
     {
         if (other is null)
             return false;
-        return UIT.Tile == other.UIT.Tile;
+        return Tile == other.Tile;
     }
 
     public override bool Equals(object? other)

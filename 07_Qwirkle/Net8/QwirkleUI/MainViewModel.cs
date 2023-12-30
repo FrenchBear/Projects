@@ -38,6 +38,7 @@ internal class MainViewModel: INotifyPropertyChanged
     public Player CurrentPlayer => Model.Players[PlayerIndex];
     public HandViewModel CurrentHandViewModel => HandViewModels[PlayerIndex];
 
+
     // Helper to initialize HandViewModel, since model is common to all ViewModels
     public Model GetModel => Model;
 
@@ -220,7 +221,16 @@ internal class MainViewModel: INotifyPropertyChanged
             return;
 
         View.BoardIM.EndAnimationsInProgress();
-        MessageBox.Show("PerformValidate: ToDo");
+
+        Model.Board.AddMoves(new HashSet<TileRowCol>(CurrentMoves.Select(uitrc => new TileRowCol(uitrc.Tile, uitrc.RC))));
+        foreach (var move in CurrentMoves)
+        {
+            move.UIT.SelectionBorder = false;
+            move.UIT.GrayBackground= false;
+        }
+        CurrentMoves.Clear();
+
+        // ToDo: refill player hand
     }
 
     // Delete command moves selection back to player hand
