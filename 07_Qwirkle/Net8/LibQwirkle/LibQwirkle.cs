@@ -528,8 +528,11 @@ public class Board: IEnumerable<TileRowCol>
 
     public void Print() => Console.WriteLine(AsString(true));
 
-    public (bool, string) EvaluateMoves(HashSet<TileRowCol> moves)
+    public (bool, string) EvaluateMoves(HashSet<TileRowCol> movesArg)
     {
+        // Build a local copy, since during evaluation process we alter the content of HashSet
+        var moves = new HashSet<TileRowCol>(movesArg);
+
         // Just a safeguard, this should not be called with an empty HashSet
         if (moves.Count == 0)
             return (false, "No move to evaluate");
@@ -551,16 +554,19 @@ public class Board: IEnumerable<TileRowCol>
             return (false, "Les tuiles jouées doivent être situées sur une même ligne ou une même colonne");
 
         // Check that all tiles are in a playable cell
-        // Since moves hes no order, we must add individual tiles to board for tiles in a playable position
+        // Since moves have no order, we must add individual tiles to board for tiles in a playable position
         var nb = new Board(this);
         while (moves.Count > 0)
         {
             TileRowCol? playable = null;
             foreach (var trc in moves)
             {
-                var cellState = nb.GetCellState(trc.RC);
-                Debug.Assert(cellState != CellState.Tiled);
-                if (cellState == CellState.PotentiallyPlayable)
+                bool IsPlayable;
+                if (nb.IsEmpty && trc.Row == 50 && trc.Col == 50)
+                    IsPlayable = true;
+                else
+                    IsPlayable = nb.GetCellState(trc.RC) == CellState.PotentiallyPlayable;
+                if (IsPlayable)
                 {
                     if (!nb.IsCompatible(trc))
                         return (false, $"La tuile {trc.Tile.Shape} {trc.Tile.Color} #{trc.Tile.Instance} en position ({trc.Row}, {trc.Col}) n'est pas compatible avec les tuiles qui l'entourent");

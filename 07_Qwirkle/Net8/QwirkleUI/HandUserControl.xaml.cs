@@ -74,7 +74,7 @@ public partial class HandUserControl: UserControl
         HandIM = new HandInteractionManager(HandViewModel.UIHand, this);
     }
 
-    internal void HandAddUITile(Tile ti, RowCol p)
+    internal void AddUITile(Tile ti, RowCol p)
     {
         TraceCall();
 
@@ -90,11 +90,14 @@ public partial class HandUserControl: UserControl
         HandViewModel.UIHand.Add(h);
     }
 
-    public void RemoveUITileFromHandView(UITile tile)
+    public void RemoveUITile(UITile tile)
     {
         Debug.Assert(HandDrawingCanvas.Children.Contains(tile));
         HandDrawingCanvas.Children.Remove(tile);
     }
+
+    public void RemoveAllUITiles() 
+        => HandDrawingCanvas.Children.Clear();
 
     // --------------------------------------------------------------------
     // Mouse click and drag management

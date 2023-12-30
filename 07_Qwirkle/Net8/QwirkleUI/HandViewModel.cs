@@ -116,7 +116,7 @@ internal class HandViewModel: INotifyPropertyChanged
 
                 // Guaranteed to find one
                 ExitDoubleLoop:
-        View.HandAddUITile(tile, new RowCol(row, col));
+        View.AddUITile(tile, new RowCol(row, col));
     }
 
     internal void RemoveUITile(UITile uit)
@@ -125,9 +125,15 @@ internal class HandViewModel: INotifyPropertyChanged
         Debug.Assert(todel != null);
         Debug.Assert(UIHand.Contains(todel));
         UIHand.Remove(todel);
-        View.RemoveUITileFromHandView(uit);
+        View.RemoveUITile(uit);
     }
 
     internal void RemoveUITileFromTile(Tile t)
         => RemoveUITile(UIHand.First(item => item.UIT.Tile == t).UIT);
+
+    internal void RemoveAllUITiles()
+    {
+        UIHand.Clear();
+        View.RemoveAllUITiles();
+    }
 }

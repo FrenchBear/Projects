@@ -22,6 +22,14 @@ internal class Model(MainViewModel viewModel)
     internal void NewBoard() {
         Board = new Board();
         Bag = new Bag();
+
+        foreach (var p in Players)
+        {
+            p.Score = 0;
+            p.Hand.Clear();
+            for (var i = 0; i < 6; i++)
+                p.Hand.Add(Bag.GetTile());
+        }
     }
 
     // For dev, initialize Board with few tiles
@@ -55,6 +63,9 @@ internal class Model(MainViewModel viewModel)
         Players[0].Hand.Add(h4);
         Players[0].Hand.Add(h5);
         Players[0].Hand.Add(h6);
+
+        Players[0].Name = "Dev Tests Player";
+        Players[0].Score = 7;
     }
 
     internal (bool, string) EvaluateMoves(HashSet<TileRowCol> moves)

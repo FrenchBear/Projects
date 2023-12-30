@@ -51,6 +51,7 @@ internal class MainViewModel: INotifyPropertyChanged
 
     // Menus
     public ICommand NewGameCommand { get; }
+    public ICommand AutoPlayCommand { get; }
     public ICommand QuitCommand { get; }
 
     // Edit
@@ -82,6 +83,7 @@ internal class MainViewModel: INotifyPropertyChanged
 
         // File
         NewGameCommand = new RelayCommand<object>(NewGameExecute);
+        AutoPlayCommand = new RelayCommand<object>(AutoPlayExecute);
         QuitCommand = new RelayCommand<object>(QuitExecute);
 
         // Edit
@@ -334,20 +336,29 @@ internal class MainViewModel: INotifyPropertyChanged
     // -------------------------------------------------
     // Model helpers
 
-    internal void ClearLayout()
+    internal void PerformNewGame()
     {
+        Model.NewBoard();
+        View.BoardDrawingCanvasRemoveAllUITiles();
+        CurrentMoves.Clear();
+        for (int i=0; i<Model.Players.Length; i++)
+            HandViewModels[i].RemoveAllUITiles();
+        DrawHands();
         //UndoStack.Clear();
+
+        EvaluateCurrentMoves();
     }
 
     // -------------------------------------------------
     // View helpers
 
+    // ToDo: who's calling?
     internal void InitializeBoard() => Model.InitializeBoard();
 
     // Draw board placed tiles with a dark background
+    // ToDo: Only for dev I think
     internal void DrawBoard()
     {
-        View.AddCircle(new RowCol(50, 50));
         foreach (TileRowCol m in Model.Board)
             View.BoardDrawingCanvasAddUITile(m.Tile, new RowCol(m.Row, m.Col), false);
     }
@@ -456,9 +467,13 @@ internal class MainViewModel: INotifyPropertyChanged
 
     private void NewGameExecute(object obj)
     {
-        Model.NewBoard();
-        ClearLayout();
+        PerformNewGame();
     }
+    private void AutoPlayExecute(object obj)
+    {
+        // ToDo
+    }
+
 
     private void QuitExecute(object obj) => Environment.Exit(0);
 

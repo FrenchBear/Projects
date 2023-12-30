@@ -45,7 +45,7 @@ public partial class MainWindow: Window
     {
         TraceCall();
 
-        ViewModel.InitializeBoard();
+        ViewModel.InitializeBoard(); 
         DrawBoard();
         RescaleAndCenter(false, true);
         ViewModel.DrawHands();
@@ -384,6 +384,17 @@ public partial class MainWindow: Window
                 };
                 BoardBackgroundGrid.Children.Add(l);
             }
+
+            // Add circle
+            var e = new Ellipse();
+            e.Width = 1.8 * UnitSize;
+            e.Height = 1.8 * UnitSize;
+            e.Stroke = Brushes.LightGray;
+            e.StrokeThickness = 5.0;
+            e.SetValue(Canvas.TopProperty, (50 - 0.4) * UnitSize);
+            e.SetValue(Canvas.LeftProperty, (50 - 0.4) * UnitSize);
+
+            BoardBackgroundGrid.Children.Add(e);
         }
         else
             Debug.WriteLine("Grid unchanged");
@@ -410,19 +421,8 @@ public partial class MainWindow: Window
         BoardDrawingCanvas.Children.Remove(uit);
     }
 
-    internal void AddCircle(RowCol position)
-    {
-        TraceCall();
-
-        var e = new Ellipse();
-        e.Width = 1.8 * UnitSize;
-        e.Height = 1.8 * UnitSize;
-        e.Stroke = Brushes.LightGray;
-        e.StrokeThickness = 5.0;
-        e.SetValue(Canvas.TopProperty, (position.Row - 0.4) * UnitSize);
-        e.SetValue(Canvas.LeftProperty, (position.Col - 0.4) * UnitSize);
-        BoardDrawingCanvas.Children.Add(e);
-    }
+    internal void BoardDrawingCanvasRemoveAllUITiles() 
+        => BoardDrawingCanvas.Children.Clear();
 
     internal void MainWindowAcceptHandOver(HandInteractionManager playerIM)
     {
