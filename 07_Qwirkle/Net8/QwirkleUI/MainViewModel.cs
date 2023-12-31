@@ -151,11 +151,11 @@ internal class MainViewModel: INotifyPropertyChanged
 
             if (PlaySuggestion == null)
             {
-                Debug.WriteLine("PlaySuggestion calculated");
                 PlaySuggestion = Model.Board.Play(CurrentPlayer.Hand);
+                Debug.WriteLine($"PlaySuggestion calculated: {PlaySuggestion.AsString(null)}");
             }
             else
-                Debug.WriteLine("PlaySuggestion already defined");
+                Debug.WriteLine($"PlaySuggestion already defined: {PlaySuggestion.AsString(null)}");
             if (PlaySuggestion.PB.Points == 0)
                 StatusMessage = "Info: Aucune tuile jouable, échangez les tuiles.";
             else
@@ -249,9 +249,9 @@ internal class MainViewModel: INotifyPropertyChanged
             var t = Model.Bag.GetTile();
             CurrentHandViewModel.AddAndDrawTile(t);
             CurrentPlayer.Hand.Add(t);
-
-            PlaySuggestion = null;
         }
+        // Refilling player hand invalidates current PlaySuggestion
+        PlaySuggestion = null;
     }
 
     // Validate command
@@ -359,8 +359,6 @@ internal class MainViewModel: INotifyPropertyChanged
         }
 
         Debug.Assert(PlaySuggestion != null);
-        // $$$ Commenting next line causes a problem, while it should not...
-        //PlaySuggestion = Model.Board.Play(CurrentPlayer.Hand);
         if (PlaySuggestion.PB.Points == 0)
         {
             if (interactive)
