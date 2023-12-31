@@ -7,6 +7,7 @@
 
 using System.Collections;
 using System.Diagnostics;
+using System.Net.Security;
 using System.Text;
 
 namespace LibQwirkle;
@@ -264,7 +265,7 @@ public class Board: IEnumerable<TileRowCol>
 
     public int TilesCount => Moves.Count + (BaseBoard == null ? 0 : BaseBoard.TilesCount);
 
-    public string AsString(bool color, Tile? checkTileCompat = null)
+    public string AsString(bool color, Tile? checkTileCompat = null, bool includeColor = false)
     {
         var sb = new StringBuilder();
 
@@ -273,12 +274,16 @@ public class Board: IEnumerable<TileRowCol>
         {
             string s = $"{col:D02}";
             sb.Append(s[0]).Append(' ');
+            if (includeColor)
+                sb.Append(' ');
         }
         sb.Append("\r\nRow");
         for (int col = ColMin - 1; col <= ColMax + 1; col++)
         {
             string s = $"{col:D02}";
             sb.Append(s[1]).Append(' ');
+            if (includeColor)
+                sb.Append(' ');
         }
         sb.AppendLine();
         for (int row = RowMin - 1; row <= RowMax + 1; row++)
@@ -291,6 +296,8 @@ public class Board: IEnumerable<TileRowCol>
                 {
                     case CellState.EmptyIsolated:
                         sb.Append("  ");
+                        if (includeColor)
+                            sb.Append(' ');
                         break;
 
                     case CellState.PotentiallyPlayable:
@@ -306,13 +313,15 @@ public class Board: IEnumerable<TileRowCol>
                                 sb.Append(ConsoleSupport.ConsoleColorDarkGray);
                             sb.Append("· ");
                         }
+                        if (includeColor)
+                            sb.Append(' ');
                         if (color)
                             sb.Append(ConsoleSupport.ConsoleColorDefault);
                         break;
 
                     case CellState.Tiled:
                         Tile t = GetTile(row, col) ?? throw new Exception("GetTile shouldn't return null");
-                        sb.Append(t.AsString(color));
+                        sb.Append(t.AsString(includeColor ? null : color));
                         sb.Append(' ');
                         break;
                 }
@@ -322,12 +331,16 @@ public class Board: IEnumerable<TileRowCol>
         return sb.ToString();
     }
 
-    public void AddMove(TileRowCol trc)
+    // skipTests is only for dev/debug
+    public void AddMove(TileRowCol trc, bool skipTests = false)
     {
-        if (!IsEmpty)
-            Debug.Assert(GetCellState(trc.Row, trc.Col) == CellState.PotentiallyPlayable && IsCompatible(trc.T, trc.Row, trc.Col));
-        else
-            Debug.Assert(trc.Row == 50 && trc.Col == 50);
+        if (!skipTests)
+        {
+            if (!IsEmpty)
+                Debug.Assert(GetCellState(trc.Row, trc.Col) == CellState.PotentiallyPlayable && IsCompatible(trc.T, trc.Row, trc.Col));
+            else
+                Debug.Assert(trc.Row == 50 && trc.Col == 50);
+        }
 
         Moves.Add(trc);
         rowMin = Math.Min(rowMin, trc.Row);
@@ -336,6 +349,8 @@ public class Board: IEnumerable<TileRowCol>
         colMax = Math.Max(colMax, trc.Col);
     }
 
+    // Since there is no order in a HashSet, we must also determine in which order individual tiles must be added
+    // because AddMove immediately validates placement of a tile
     public void AddMoves(HashSet<TileRowCol> moves, bool WithTrace = false)
     {
         var tmp = new HashSet<TileRowCol>(moves);
@@ -365,7 +380,7 @@ public class Board: IEnumerable<TileRowCol>
                 foreach (var trc in moves)
                     sw.WriteLine("  " + trc.AsString(null, true));
                 sw.WriteLine();
-                sw.WriteLine(AsString(false));
+                sw.WriteLine(AsString(false, null, true));
             }
 
         BoardGlobalCheck();
@@ -373,6 +388,8 @@ public class Board: IEnumerable<TileRowCol>
 
     private void BoardGlobalCheck()
     {
+        //return;
+
         // Check horizontal bands
         var colors = new HashSet<Color>();
         var shapes = new HashSet<Shape>();
@@ -497,24 +514,35 @@ public class Board: IEnumerable<TileRowCol>
 
         // Check row
         ConstraintMode constraintMode = ConstraintMode.NotDefined;
-        if (!IsDirectionCompatible(row, col, -1, 0, in t, ref constraintMode, out bool nn))
+        HashSet<Color> constraintColors = [];
+        HashSet<Shape> constraintShapes = [];
+        if (!IsDirectionCompatible(row, col, -1, 0, in t, ref constraintMode, out bool nn, constraintShapes, constraintColors))
             return false;
-        if (!IsDirectionCompatible(row, col, 1, 0, in t, ref constraintMode, out bool sn))
+        if (!IsDirectionCompatible(row, col, 1, 0, in t, ref constraintMode, out bool sn, constraintShapes, constraintColors))
             return false;
 
         // Check column
+        constraintColors.Clear();
+        constraintShapes.Clear();
         constraintMode = ConstraintMode.NotDefined;
-        if (!IsDirectionCompatible(row, col, 0, 1, in t, ref constraintMode, out bool en))
+        if (!IsDirectionCompatible(row, col, 0, 1, in t, ref constraintMode, out bool en, constraintShapes, constraintColors))
             return false;
-        if (!IsDirectionCompatible(row, col, 0, -1, in t, ref constraintMode, out bool wn))
+        if (!IsDirectionCompatible(row, col, 0, -1, in t, ref constraintMode, out bool wn, constraintShapes, constraintColors))
             return false;
         Debug.Assert(nn || sn || en || wn);    // Check that we have at least one neighbor
         return true;
     }
 
-    private bool IsDirectionCompatible(int row, int col, int deltaRow, int deltaCol, in Tile refTile, ref ConstraintMode constraintMode, out bool neighborFound)
+    private bool IsDirectionCompatible(int row, int col, int deltaRow, int deltaCol, in Tile refTile, ref ConstraintMode constraintMode, out bool neighborFound, HashSet<Shape> constraintShapes, HashSet<Color> constraintColors)
     {
         neighborFound = false;
+
+        if (constraintShapes.Count == 0)
+        {
+            constraintShapes.Add(refTile.Shape);
+            constraintColors.Add(refTile.Color);
+        }
+
         for (; ; )
         {
             row += deltaRow;
@@ -533,7 +561,6 @@ public class Board: IEnumerable<TileRowCol>
                     break;
 
                 case ConstraintMode.ColorConstraint:
-
                     if (tmpTile.Color != refTile.Color)
                         return false;
                     break;
@@ -542,6 +569,19 @@ public class Board: IEnumerable<TileRowCol>
                     if (tmpTile.Shape != refTile.Shape)
                         return false;
                     break;
+            }
+
+            if (constraintMode == ConstraintMode.ColorConstraint)
+            {
+                if (constraintShapes.Contains(tmpTile.Shape))
+                    return false;
+                constraintShapes.Add(tmpTile.Shape);
+            }
+            else  // Shape constraint
+            {
+                if (constraintColors.Contains(tmpTile.Color))
+                    return false;
+                constraintColors.Add(tmpTile.Color);
             }
         }
     }

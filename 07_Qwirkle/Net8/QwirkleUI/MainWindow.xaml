@@ -39,6 +39,7 @@
 
     <Window.InputBindings>
         <KeyBinding Key="F1" Command="{Binding SuggestPlayCommand}" />
+        <KeyBinding Key="F2" Command="{Binding AutoPlayCommand}" />
         <KeyBinding Key="Delete" Command="{Binding DeleteCommand}" />
         <KeyBinding Key="Esc" Command="{Binding DeleteAllCommand}" />
         <KeyBinding Key="Enter" Command="{Binding ValidateCommand}" />

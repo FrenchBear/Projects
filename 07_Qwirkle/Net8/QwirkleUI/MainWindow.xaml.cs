@@ -16,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using static QwirkleUI.App;
 using static QwirkleUI.Helpers;
 
@@ -460,6 +461,9 @@ public partial class MainWindow: Window
         // Restart MouseMove events processing
         HandOverState = HandOverStateEnum.Active;
     }
+
+    internal void Refresh() 
+        => Dispatcher.Invoke(new Action(() => { }), DispatcherPriority.ContextIdle, null);
 }
 
 internal class BoardInteractionManager(HashSet<UITileRowCol> currentMoves, MainWindow view, MainViewModel viewModel): InteractionManager

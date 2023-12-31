@@ -19,8 +19,28 @@ internal class Program
         //Tests_EmptyBoard();
         //Tests_FullPlay();
         //Tests_Evaluate();
-        Tests_CountPoints();
+        //Tests_CountPoints();
+        Tests_Fill_Hole();
 
+    }
+
+    private static void Tests_Fill_Hole()
+    {
+        var board = new Board();
+
+        var t1 = new Tile(Shape.Circle, Color.Orange, 1);
+        var t2 = new Tile(Shape.Star, Color.Orange, 1);
+        var t3 = new Tile(Shape.Star, Color.Orange, 2);
+        var t4 = new Tile(Shape.Circle, Color.Orange, 2);
+
+        board.AddMove(new TileRowCol(t1, 50, 50));
+        board.AddMove(new TileRowCol(t2, 50, 51));
+        board.AddMove(new TileRowCol(t3, 50, 53), true);        // Skip tests bacause of a hole
+        board.AddMove(new TileRowCol(t4, 50, 54));
+
+        var t5 = new Tile(Shape.Square, Color.Orange, 1);
+        var b = board.IsCompatible(t5, 50, 52);
+        Console.WriteLine($"IsCompatible: {b}");
     }
 
     private static void Tests_CountPoints()

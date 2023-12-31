@@ -33,6 +33,7 @@ internal class MainViewModel: INotifyPropertyChanged
     private readonly HandViewModel[] HandViewModels = [];
     internal readonly HashSet<UITileRowCol> CurrentMoves = [];
     internal MoveStatus CurrentMovesStatus = MoveStatus.Empty;
+    private PlaySuggestion? PlaySuggestion;     // Suggestion with maximum possible scire with current hand
 
     // Helpers
     public Player CurrentPlayer => Model.CurrentPlayer;
@@ -103,7 +104,7 @@ internal class MainViewModel: INotifyPropertyChanged
     // -------------------------------------------------
     // Relays to model
 
-    internal void NewBoard(bool withTestInit) 
+    internal void NewBoard(bool withTestInit)
         => Model.NewBoard(withTestInit);
 
     public BoundingRectangle Bounds()
@@ -145,14 +146,16 @@ internal class MainViewModel: INotifyPropertyChanged
                 return;
             }
 
-            var ps = Model.Board.Play(CurrentPlayer.Hand);
-            if (ps.PB.Points == 0)
+            if (PlaySuggestion == null)
+                PlaySuggestion = Model.Board.Play(CurrentPlayer.Hand);
+            if (PlaySuggestion.PB.Points == 0)
                 StatusMessage = "Info: Aucune tuile jouable, échangez les tuiles.";
             else
-                StatusMessage = $"Info: Il existe un placement à {ps.PB.Points} points.";
+                StatusMessage = $"Info: Il existe un placement à {PlaySuggestion.PB.Points} points.";
             return;
         }
 
+        //ps = null;
         bool status;
         string msg;
         var moves = new HashSet<TileRowCol>(CurrentMoves.Select(uitrc => new TileRowCol(uitrc.Tile, uitrc.RC)));
@@ -162,7 +165,6 @@ internal class MainViewModel: INotifyPropertyChanged
             PointsBonus pb = Model.CountPoints(moves);
             StatusMessage = $"OK: {pb.Points} points";
             CurrentMovesStatus = MoveStatus.Valid;
-
         }
         else
         {
@@ -189,7 +191,7 @@ internal class MainViewModel: INotifyPropertyChanged
         }
     }
 
-    public string Caption => App.AppName;
+    public string Caption => AppName;
 
     // -------------------------------------------------
     // Undo support
@@ -231,6 +233,19 @@ internal class MainViewModel: INotifyPropertyChanged
         //view.FinalRefreshAfterUpdate();
     }
 
+    void RefillPlayerHand()
+    {
+        while (!Model.Bag.IsEmpty && CurrentHandViewModel.UIHand.Count < 6)
+        {
+            var t = Model.Bag.GetTile();
+            CurrentHandViewModel.AddAndDrawTile(t);
+            CurrentPlayer.Hand.Add(t);
+
+            // By definition, modifying hand invalidates current play suggestion
+            PlaySuggestion = null;
+        }
+    }
+
     // Validate command
     void PerformValidate()
     {
@@ -259,13 +274,7 @@ internal class MainViewModel: INotifyPropertyChanged
         CurrentMovesStatus = MoveStatus.Empty;
         StatusMessage = string.Empty;
 
-        // Refill player hand
-        while (!Model.Bag.IsEmpty && CurrentHandViewModel.UIHand.Count < 6)
-        {
-            var t = Model.Bag.GetTile();
-            CurrentHandViewModel.AddAndDrawTile(t);
-            CurrentPlayer.Hand.Add(t);
-        }
+        RefillPlayerHand();
 
         EvaluateCurrentMoves();
 
@@ -303,8 +312,22 @@ internal class MainViewModel: INotifyPropertyChanged
         }
     }
 
+    internal void PerformExchangeTiles()
+    {
+        if (Model.Bag.IsEmpty || CurrentPlayer.Hand.Count == 0)
+            return;
+
+        Model.Bag.ReturnTiles(CurrentPlayer.Hand);
+        CurrentPlayer.Hand.Clear();
+        CurrentHandViewModel.RemoveAllUITiles();
+        RefillPlayerHand();
+
+        EvaluateCurrentMoves();
+    }
+
     // Suggest a tiles placement
-    internal void PerformSuggestPlay()
+    // Returns true if a valid suggestion has been made, false otherwise
+    internal int PerformSuggestPlay(bool interactive = true)
     {
         // First, move all tiles back to hand
         View.BoardIM.Selection.Clear();
@@ -312,21 +335,25 @@ internal class MainViewModel: INotifyPropertyChanged
 
         // ToDo: Review this, actually as soon as one hand is empty after validation, last turn mode begins.
         // Once last player has played, it's endgame, so in theory we shouldn't meet this case
-        if (CurrentPlayer.Hand.Count==0)
+        if (CurrentPlayer.Hand.Count == 0)
         {
-            MessageBox.Show("Désolé, la main est vide!", AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
-            return;
+            if (interactive)
+                MessageBox.Show("Désolé, la main est vide!", AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            return 1;
         }
 
-        var ps = Model.Board.Play(CurrentPlayer.Hand);
-        if (ps.PB.Points==0)
+        //if (ps==null)
+        //    ps = Model.Board.Play(CurrentPlayer.Hand);
+        Debug.Assert(PlaySuggestion != null);
+        if (PlaySuggestion.PB.Points == 0)
         {
-            MessageBox.Show("Désolé, aucune tuile ne peut être jouée. Échangez les tuiles!", AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
-            return;
+            if (interactive)
+                MessageBox.Show("Désolé, aucune tuile ne peut être jouée. Échangez les tuiles!", AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            return 2;
         }
 
         // Delete from hand, add to Board
-        foreach (var trc in ps.Moves)
+        foreach (var trc in PlaySuggestion.Moves)
         {
             // Delete from Hand
             CurrentHandViewModel.RemoveUITileFromTile(trc.Tile);
@@ -337,6 +364,30 @@ internal class MainViewModel: INotifyPropertyChanged
 
         EvaluateCurrentMoves();
         View.RescaleAndCenter(true);
+        return 0;
+    }
+
+    private void PerformAutoPlay()
+    {
+        for (; ; )
+        {
+            for (; ; )
+            {
+                int res = PerformSuggestPlay(false);
+                if (res == 2)
+                {
+                    PerformExchangeTiles();
+                    continue;
+                }
+                if (res == 1)
+                    break;
+                PerformValidate();
+                View.Refresh();
+            }
+
+            PerformNewGame();
+            View.RescaleAndCenter(false, true);
+        }
     }
 
     // Remove from Model and HandViewModel
@@ -351,7 +402,7 @@ internal class MainViewModel: INotifyPropertyChanged
         Model.NewBoard(false);
         View.BoardDrawingCanvasRemoveAllUITiles();
         CurrentMoves.Clear();
-        for (int i=0; i<Model.Players.Length; i++)
+        for (int i = 0; i < Model.Players.Length; i++)
             HandViewModels[i].RemoveAllUITiles();
         DrawHands();
         //UndoStack.Clear();
@@ -458,7 +509,7 @@ internal class MainViewModel: INotifyPropertyChanged
 
     // -----------------------------------
 
-    private bool SuggestPlayCanExecute(object obj) => true;
+    private bool SuggestPlayCanExecute(object obj) => Model.Players.Length != 0 && CurrentPlayer.Hand.Count > 0;
 
     private void SuggestPlayExecute(object obj) => PerformSuggestPlay();
 
@@ -466,21 +517,13 @@ internal class MainViewModel: INotifyPropertyChanged
 
     private bool ExchangeTilesCanExecute(object obj) => !Model.IsBagEmpty;
 
-    private void ExchangeTilesExecute(object obj)
-    {
-        View.BoardIM.EndAnimationsInProgress();
-        // Delegate work to view since we have no access to Sel here
-        MessageBox.Show("ExchangeTilesExecute: ToDo");
-    }
+    private void ExchangeTilesExecute(object obj) => PerformExchangeTiles();
 
     // -----------------------------------
 
     private void NewGameExecute(object obj) => PerformNewGame();
 
-    private void AutoPlayExecute(object obj)
-    {
-        // ToDo
-    }
+    private void AutoPlayExecute(object obj) => PerformAutoPlay();
 
     private void QuitExecute(object obj) => Environment.Exit(0);
 
