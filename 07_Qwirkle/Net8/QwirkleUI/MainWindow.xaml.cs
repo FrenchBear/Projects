@@ -45,7 +45,7 @@ public partial class MainWindow: Window
     {
         TraceCall();
 
-        ViewModel.InitializeBoard(); 
+        ViewModel.NewBoard(true);
         DrawBoard();
         RescaleAndCenter(false, true);
         ViewModel.DrawHands();

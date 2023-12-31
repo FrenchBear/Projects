@@ -33,11 +33,10 @@ internal class MainViewModel: INotifyPropertyChanged
     private readonly HandViewModel[] HandViewModels = [];
     internal readonly HashSet<UITileRowCol> CurrentMoves = [];
     internal MoveStatus CurrentMovesStatus = MoveStatus.Empty;
-    public int PlayerIndex = 0;
 
     // Helpers
-    public Player CurrentPlayer => Model.Players[PlayerIndex];
-    public HandViewModel CurrentHandViewModel => HandViewModels[PlayerIndex];
+    public Player CurrentPlayer => Model.CurrentPlayer;
+    public HandViewModel CurrentHandViewModel => HandViewModels[Model.PlayerIndex];
 
     // Helper to initialize HandViewModel, since model is common to all ViewModels
     public Model GetModel => Model;
@@ -103,6 +102,9 @@ internal class MainViewModel: INotifyPropertyChanged
 
     // -------------------------------------------------
     // Relays to model
+
+    internal void NewBoard(bool withTestInit) 
+        => Model.NewBoard(withTestInit);
 
     public BoundingRectangle Bounds()
     {
@@ -237,7 +239,15 @@ internal class MainViewModel: INotifyPropertyChanged
 
         View.BoardIM.EndAnimationsInProgress();
 
-        Model.Board.AddMoves(new HashSet<TileRowCol>(CurrentMoves.Select(uitrc => new TileRowCol(uitrc.Tile, uitrc.RC))));
+        var moves = new HashSet<TileRowCol>(CurrentMoves.Select(uitrc => new TileRowCol(uitrc.Tile, uitrc.RC)));
+        var pb = Model.Board.CountPoints(moves);
+        Debug.Assert(pb.Points > 0);
+        CurrentPlayer.Score += pb.Points;
+        CurrentHandViewModel.Score = CurrentPlayer.Score.ToString();
+        Model.UpdateRanks();
+        CurrentHandViewModel.Rank = CurrentPlayer.Rank;
+
+        Model.Board.AddMoves(moves, true);
         foreach (var move in CurrentMoves)
         {
             move.UIT.SelectionBorder = false;
@@ -283,7 +293,7 @@ internal class MainViewModel: INotifyPropertyChanged
         foreach (var uitrc in new List<UITileRowCol>(allCurrentMoves ? CurrentMoves : View.BoardIM.Selection))
         {
             // Add to Player Hand
-            HandViewModels[PlayerIndex].AddAndDrawTile(uitrc.Tile);
+            CurrentHandViewModel.AddAndDrawTile(uitrc.Tile);
 
             // Remove from CurrentMoves and DrawingCanvas
             var todel = CurrentMoves.FirstOrDefault(item => item.UIT == uitrc.UIT);
@@ -338,7 +348,7 @@ internal class MainViewModel: INotifyPropertyChanged
 
     internal void PerformNewGame()
     {
-        Model.NewBoard();
+        Model.NewBoard(false);
         View.BoardDrawingCanvasRemoveAllUITiles();
         CurrentMoves.Clear();
         for (int i=0; i<Model.Players.Length; i++)
@@ -353,7 +363,7 @@ internal class MainViewModel: INotifyPropertyChanged
     // View helpers
 
     // ToDo: who's calling?
-    internal void InitializeBoard() => Model.InitializeBoard();
+    //internal void InitializeBoard() => Model.InitializeBoard();
 
     // Draw board placed tiles with a dark background
     // ToDo: Only for dev I think
@@ -465,15 +475,12 @@ internal class MainViewModel: INotifyPropertyChanged
 
     // -----------------------------------
 
-    private void NewGameExecute(object obj)
-    {
-        PerformNewGame();
-    }
+    private void NewGameExecute(object obj) => PerformNewGame();
+
     private void AutoPlayExecute(object obj)
     {
         // ToDo
     }
-
 
     private void QuitExecute(object obj) => Environment.Exit(0);
 

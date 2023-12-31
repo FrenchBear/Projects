@@ -232,6 +232,13 @@ public class Bag
         }
         ShuffleTiles();
     }
+
+    // For dev test initialization
+    public void RemoveTile(Tile t)
+    {
+        Debug.Assert(Tiles.Contains(t));
+        Tiles.Remove(t);
+    }
 }
 
 public class Board: IEnumerable<TileRowCol>
@@ -247,6 +254,8 @@ public class Board: IEnumerable<TileRowCol>
     public int RowMax => IsEmpty ? 50 : BaseBoard == null ? rowMax : Math.Max(rowMax, BaseBoard.RowMax);
     public int ColMin => IsEmpty ? 50 : BaseBoard == null ? colMin : Math.Min(colMin, BaseBoard.ColMin);
     public int ColMax => IsEmpty ? 50 : BaseBoard == null ? colMax : Math.Max(colMax, BaseBoard.ColMax);
+
+    public int MovesCount => BaseBoard == null ? Moves.Count : Moves.Count + BaseBoard.MovesCount;
 
     private int rowMin = 100, rowMax = 0;
     private int colMin = 100, colMax = 0;
@@ -327,9 +336,11 @@ public class Board: IEnumerable<TileRowCol>
         colMax = Math.Max(colMax, trc.Col);
     }
 
-    public void AddMoves(HashSet<TileRowCol> moves)
+    public void AddMoves(HashSet<TileRowCol> moves, bool WithTrace = false)
     {
         var tmp = new HashSet<TileRowCol>(moves);
+        var mc = MovesCount;
+
         while (tmp.Count > 0)
         {
             TileRowCol? todel = null;
@@ -346,6 +357,16 @@ public class Board: IEnumerable<TileRowCol>
             Debug.Assert(todel != null);
             tmp.Remove(todel);
         }
+
+        if (WithTrace)
+            using (var sw = new StreamWriter(@"c:\temp\qui.txt", true))
+            {
+                sw.WriteLine($"\nMoves: {mc} Add {moves.Count}");
+                foreach (var trc in moves)
+                    sw.WriteLine("  " + trc.AsString(null, true));
+                sw.WriteLine();
+                sw.WriteLine(AsString(false));
+            }
 
         BoardGlobalCheck();
     }
@@ -366,8 +387,6 @@ public class Board: IEnumerable<TileRowCol>
                 blockSizeCount = 0;
                 return;
             }
-
-            //Debug.WriteLine($"{blockSizeCount}: {t}");
 
             blockSizeCount++;
             if (blockSizeCount == 1)
@@ -400,6 +419,7 @@ public class Board: IEnumerable<TileRowCol>
             if (colorMode)
             {
                 Debug.Assert(t.Color == refTile.Color);
+
                 Debug.Assert(!shapes.Contains(t.Shape));
                 shapes.Add(t.Shape);
             }

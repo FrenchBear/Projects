@@ -69,7 +69,7 @@ internal class HandViewModel: INotifyPropertyChanged
         }
     }
 
-    private string _Rank = "-";
+    private string _Rank = "";
     public string Rank
     {
         get => _Rank;
@@ -101,8 +101,10 @@ internal class HandViewModel: INotifyPropertyChanged
 
     internal void DrawHand()
     {
-        foreach (Tile t in Model.Players[PlayerIndex].Hand)
+        foreach (Tile t in Model.CurrentPlayer.Hand)
             AddAndDrawTile(t);
+        PlayerName = Model.CurrentPlayer.Name;
+        Score=Model.CurrentPlayer.Score.ToString();
     }
 
     internal void AddAndDrawTile(Tile tile)
@@ -136,4 +138,5 @@ internal class HandViewModel: INotifyPropertyChanged
         UIHand.Clear();
         View.RemoveAllUITiles();
     }
+
 }
