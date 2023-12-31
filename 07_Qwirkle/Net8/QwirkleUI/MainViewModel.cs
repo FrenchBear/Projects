@@ -13,6 +13,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using static QwirkleUI.App;
+using static QwirkleUI.Helpers;
 
 namespace QwirkleUI;
 
@@ -133,6 +134,8 @@ internal class MainViewModel: INotifyPropertyChanged
 
     internal void EvaluateCurrentMoves()
     {
+        TraceCall();
+
         // If there is no move, provide hint about possible best play
         if (CurrentMoves.Count == 0)
         {
@@ -147,7 +150,12 @@ internal class MainViewModel: INotifyPropertyChanged
             }
 
             if (PlaySuggestion == null)
+            {
+                Debug.WriteLine("PlaySuggestion calculated");
                 PlaySuggestion = Model.Board.Play(CurrentPlayer.Hand);
+            }
+            else
+                Debug.WriteLine("PlaySuggestion already defined");
             if (PlaySuggestion.PB.Points == 0)
                 StatusMessage = "Info: Aucune tuile jouable, échangez les tuiles.";
             else
@@ -155,7 +163,6 @@ internal class MainViewModel: INotifyPropertyChanged
             return;
         }
 
-        //ps = null;
         bool status;
         string msg;
         var moves = new HashSet<TileRowCol>(CurrentMoves.Select(uitrc => new TileRowCol(uitrc.Tile, uitrc.RC)));
@@ -235,13 +242,14 @@ internal class MainViewModel: INotifyPropertyChanged
 
     void RefillPlayerHand()
     {
+        TraceCall();
+
         while (!Model.Bag.IsEmpty && CurrentHandViewModel.UIHand.Count < 6)
         {
             var t = Model.Bag.GetTile();
             CurrentHandViewModel.AddAndDrawTile(t);
             CurrentPlayer.Hand.Add(t);
 
-            // By definition, modifying hand invalidates current play suggestion
             PlaySuggestion = null;
         }
     }
@@ -249,6 +257,8 @@ internal class MainViewModel: INotifyPropertyChanged
     // Validate command
     void PerformValidate()
     {
+        TraceCall();
+
         if (CurrentMoves.Count == 0)
             return;
 
@@ -286,6 +296,8 @@ internal class MainViewModel: INotifyPropertyChanged
     // Note that EvaluateCurrentMoves is not called here since this is used as a subprogram for Suggestion
     internal void PerformDelete(bool allCurrentMoves)
     {
+        TraceCall();
+
         if (allCurrentMoves)
         {
             if (CurrentMoves.Count == 0)
@@ -314,6 +326,8 @@ internal class MainViewModel: INotifyPropertyChanged
 
     internal void PerformExchangeTiles()
     {
+        TraceCall();
+
         if (Model.Bag.IsEmpty || CurrentPlayer.Hand.Count == 0)
             return;
 
@@ -329,6 +343,8 @@ internal class MainViewModel: INotifyPropertyChanged
     // Returns true if a valid suggestion has been made, false otherwise
     internal int PerformSuggestPlay(bool interactive = true)
     {
+        TraceCall();
+
         // First, move all tiles back to hand
         View.BoardIM.Selection.Clear();
         PerformDelete(true);
@@ -342,9 +358,9 @@ internal class MainViewModel: INotifyPropertyChanged
             return 1;
         }
 
-        //if (ps==null)
-        //    ps = Model.Board.Play(CurrentPlayer.Hand);
         Debug.Assert(PlaySuggestion != null);
+        // $$$ Commenting next line causes a problem, while it should not...
+        //PlaySuggestion = Model.Board.Play(CurrentPlayer.Hand);
         if (PlaySuggestion.PB.Points == 0)
         {
             if (interactive)
@@ -399,6 +415,8 @@ internal class MainViewModel: INotifyPropertyChanged
 
     internal void PerformNewGame()
     {
+        TraceCall();
+
         Model.NewBoard(false);
         View.BoardDrawingCanvasRemoveAllUITiles();
         CurrentMoves.Clear();
