@@ -399,8 +399,9 @@ internal class MainViewModel: INotifyPropertyChanged
                 View.Refresh();
             }
 
+            return;
+
             PerformNewGame();
-            View.RescaleAndCenter(false, true);
         }
     }
 
@@ -422,7 +423,8 @@ internal class MainViewModel: INotifyPropertyChanged
             HandViewModels[i].RemoveAllUITiles();
         DrawHands();
         //UndoStack.Clear();
-
+        View.RescaleAndCenter(true, true);
+        PlaySuggestion = null;
         EvaluateCurrentMoves();
     }
 
@@ -527,7 +529,11 @@ internal class MainViewModel: INotifyPropertyChanged
 
     private bool SuggestPlayCanExecute(object obj) => Model.Players.Length != 0 && CurrentPlayer.Hand.Count > 0;
 
-    private void SuggestPlayExecute(object obj) => PerformSuggestPlay();
+    private void SuggestPlayExecute(object obj)
+    {
+        PlaySuggestion = Model.Board.Play(CurrentPlayer.Hand);      // Generate a new suggestion each time wi click on button or hit f1, ignoring PlaySuggestion already computed
+        PerformSuggestPlay();
+    }
 
     // -----------------------------------
 

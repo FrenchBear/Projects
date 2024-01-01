@@ -383,7 +383,7 @@ public class Board: IEnumerable<TileRowCol>
                 sw.WriteLine(AsString(false, null, true));
             }
 
-        BoardGlobalCheck();
+        //BoardGlobalCheck();
     }
 
     private void BoardGlobalCheck()
