@@ -248,20 +248,20 @@ abstract internal class InteractionManager
         // When moving, point is current mouse in ideal grid coordinates
         return point =>
         {
-            Debug.WriteLine($"Enter: pmm Y={point.Y:F0} X={point.X:F0}");
+            //Debug.WriteLine($"Enter: pmm Y={point.Y:F0} X={point.X:F0}");
             // Just move selected tiles
             foreach (UITileRowCol item in Selection)
             {
                 double preciseTop = point.Y + item.Offset.Y;
                 double preciseLeft = point.X + item.Offset.X;
-                Debug.WriteLine($"item.offset: Y={item.Offset.Y:F0} X={item.Offset.X:F0}");
+                //Debug.WriteLine($"item.offset: Y={item.Offset.Y:F0} X={item.Offset.X:F0}");
 
                 // Round position to closest square on the grid
                 // Originally to decide if UITile should be hatched or not, but logic is different between Board and Hand
                 int row = (int)Math.Floor(preciseTop / UnitSize + 0.5);
                 int col = (int)Math.Floor(preciseLeft / UnitSize + 0.5);
 
-                Debug.WriteLine($"Precise: top={preciseTop:F0} left={preciseLeft:F0}    RowCol: row={row} col={col}");
+                //Debug.WriteLine($"Precise: top={preciseTop:F0} left={preciseLeft:F0}    RowCol: row={row} col={col}");
 
                 item.UIT.SetValue(Canvas.TopProperty, preciseTop);
                 item.UIT.SetValue(Canvas.LeftProperty, preciseLeft);
@@ -282,7 +282,7 @@ abstract internal class InteractionManager
 
         m.Invert();     // By construction, all applied transformations are reversible, so m is invertible
         var drawingCanvasPosition = m.Transform(canvasPosition);
-        Debug.WriteLine($"IM_MouseMoveWhenDown: CanvasPosition Y={canvasPosition.Y:F0} X={canvasPosition.X:F0}  DrawingCanvasPosition Y={drawingCanvasPosition.Y:F0} X={drawingCanvasPosition.X:F0}");
+        //Debug.WriteLine($"IM_MouseMoveWhenDown: CanvasPosition Y={canvasPosition.Y:F0} X={canvasPosition.X:F0}  DrawingCanvasPosition Y={drawingCanvasPosition.Y:F0} X={drawingCanvasPosition.X:F0}");
 
         // Ignore small mouse moves
         if (!smallMouseMove)
@@ -314,9 +314,9 @@ abstract internal class InteractionManager
 
     internal abstract void UpdateTargetPosition();
 
-    public void IM_MouseWheel(object sender, MouseWheelEventArgs e) =>
+    public void IM_MouseWheel(object sender, MouseWheelEventArgs e) { }
         // This is not used for Hand
-        Debug.WriteLine("IM_MouseWheel ToDo");
+        //Debug.WriteLine("IM_MouseWheel ToDo");
 
     public void IM_MouseRightButtonDown(object sender, MouseButtonEventArgs e, Canvas c, Canvas dc)
     {

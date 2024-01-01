@@ -40,7 +40,7 @@ internal static class Helpers
 
     public static void TraceCall(string prefix = "", [CallerMemberName] string callerName = "")
     {
-        string l2 = new StackFrame(2, true).GetMethod()?.Name ?? "";
-        Debug.WriteLine($"Enter: {prefix}{callerName}     from {l2}");
+        //string l2 = new StackFrame(2, true).GetMethod()?.Name ?? "";
+        //Debug.WriteLine($"Enter: {prefix}{callerName}     from {l2}");
     }
 }

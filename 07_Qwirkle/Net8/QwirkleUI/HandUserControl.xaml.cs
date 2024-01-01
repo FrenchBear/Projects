@@ -64,7 +64,7 @@ public partial class HandUserControl: UserControl
         }
     }
 
-    internal void SetViewModelAndMainWindow(MainWindow mainWindow, HandViewModel handViewModel)
+    internal void SetMainWindowAndViewModel(MainWindow mainWindow, HandViewModel handViewModel)
     {
         TraceCall();
 

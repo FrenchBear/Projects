@@ -76,9 +76,25 @@ internal class MainViewModel: INotifyPropertyChanged
         View = view;
         Model = new Model(this);
 
-        // Just 1 player for now
-        HandViewModels = new HandViewModel[1];
+        Debug.Assert(Model.PlayersCount >= 1 && Model.PlayersCount <= 4);
+
+        HandViewModels = new HandViewModel[Model.PlayersCount];
         HandViewModels[0] = new HandViewModel(view, view.Player1HandUserControl, Model, 0);
+
+        if (Model.PlayersCount > 1)
+            HandViewModels[1] = new HandViewModel(view, view.Player2HandUserControl, Model, 1);
+        else
+            view.Player2HandUserControl.Visibility = Visibility.Collapsed;
+
+        if (Model.PlayersCount > 2)
+            HandViewModels[2] = new HandViewModel(view, view.Player3HandUserControl, Model, 2);
+        else
+            view.Player3HandUserControl.Visibility = Visibility.Collapsed;
+
+        if (Model.PlayersCount > 3)
+            HandViewModels[3] = new HandViewModel(view, view.Player4HandUserControl, Model, 3);
+        else
+            view.Player4HandUserControl.Visibility = Visibility.Collapsed;
 
         // Binding commands with behavior
 
@@ -115,18 +131,18 @@ internal class MainViewModel: INotifyPropertyChanged
         int rowMax = Model.Board.RowMax;
         int colMax = Model.Board.ColMax;
 
-        Debug.WriteLine($"Board bounds: ({rowMin}, {colMin})-({rowMax}, {colMax})");
+        //Debug.WriteLine($"Board bounds: ({rowMin}, {colMin})-({rowMax}, {colMax})");
 
         if (CurrentMoves.Count > 0)
         {
-            Debug.WriteLine($"MainWindowCurrentMoves bounds: ({CurrentMoves.Min(m => m.Row)}, {CurrentMoves.Min(m => m.Col)})-({CurrentMoves.Max(m => m.Row)}, {CurrentMoves.Max(m => m.Col)})");
+            //Debug.WriteLine($"MainWindowCurrentMoves bounds: ({CurrentMoves.Min(m => m.Row)}, {CurrentMoves.Min(m => m.Col)})-({CurrentMoves.Max(m => m.Row)}, {CurrentMoves.Max(m => m.Col)})");
             rowMin = Math.Min(rowMin, CurrentMoves.Min(m => m.Row));
             colMin = Math.Min(colMin, CurrentMoves.Min(m => m.Col));
             rowMax = Math.Max(rowMax, CurrentMoves.Max(m => m.Row));
             colMax = Math.Max(colMax, CurrentMoves.Max(m => m.Col));
         }
 
-        Debug.WriteLine($"Global bounds: ({rowMin}, {colMin})-({rowMax}, {colMax})");
+        //Debug.WriteLine($"Global bounds: ({rowMin}, {colMin})-({rowMax}, {colMax})");
 
         return new(new RowCol(rowMin, colMin), new RowCol(rowMax, colMax));
 
@@ -152,10 +168,10 @@ internal class MainViewModel: INotifyPropertyChanged
             if (PlaySuggestion == null)
             {
                 PlaySuggestion = Model.Board.Play(CurrentPlayer.Hand);
-                Debug.WriteLine($"PlaySuggestion calculated: {PlaySuggestion.AsString(null)}");
+                //Debug.WriteLine($"PlaySuggestion calculated: {PlaySuggestion.AsString(null)}");
             }
-            else
-                Debug.WriteLine($"PlaySuggestion already defined: {PlaySuggestion.AsString(null)}");
+            //else
+            //    //Debug.WriteLine($"PlaySuggestion already defined: {PlaySuggestion.AsString(null)}");
             if (PlaySuggestion.PB.Points == 0)
                 StatusMessage = "Info: Aucune tuile jouable, échangez les tuiles.";
             else
@@ -198,8 +214,6 @@ internal class MainViewModel: INotifyPropertyChanged
         }
     }
 
-    public string Caption => AppName;
-
     // -------------------------------------------------
     // Undo support
 
@@ -208,7 +222,7 @@ internal class MainViewModel: INotifyPropertyChanged
 
     internal void PerformUndo()
     {
-        View.BoardIM.EndAnimationsInProgress();
+        //View.BoardIM.EndAnimationsInProgress();
 
         //UndoStackClass.UndoAction action = UndoStack.Pop();
 
@@ -255,12 +269,12 @@ internal class MainViewModel: INotifyPropertyChanged
     }
 
     // Validate command
-    void PerformValidate()
+    bool PerformValidate()
     {
         TraceCall();
 
         if (CurrentMoves.Count == 0)
-            return;
+            return false;
 
         View.BoardIM.EndAnimationsInProgress();
 
@@ -270,7 +284,8 @@ internal class MainViewModel: INotifyPropertyChanged
         CurrentPlayer.Score += pb.Points;
         CurrentHandViewModel.Score = CurrentPlayer.Score.ToString();
         Model.UpdateRanks();
-        CurrentHandViewModel.Rank = CurrentPlayer.Rank;
+        for (int p = 0; p < Model.PlayersCount; p++)
+            HandViewModels[p].Rank = Model.Players[p].Rank;
 
         Model.Board.AddMoves(moves, true);
         foreach (var move in CurrentMoves)
@@ -286,9 +301,31 @@ internal class MainViewModel: INotifyPropertyChanged
 
         RefillPlayerHand();
 
-        EvaluateCurrentMoves();
+        if (!NextPlayer())
+        {
+            StatusMessage = "Info: Le jeu est terminé.";
+            return false;
+        }
 
-        // ToDo: Switch to next player
+        EvaluateCurrentMoves();
+        return true;
+    }
+
+    // Returns false once game has ended (at least one player has an empty hand) and current player is last player
+    bool NextPlayer()
+    {
+        bool endGame = Model.Players.Any(pl => pl.Hand.Count == 0);
+        if (endGame && Model.PlayerIndex == Model.PlayersCount - 1)
+            return false;
+
+        if (Model.PlayersCount > 1)
+        {
+            var oldIndex = Model.PlayerIndex;
+            Model.PlayerIndex = (Model.PlayerIndex + 1) % Model.PlayersCount;
+            HandViewModels[oldIndex].UpdateTitleBrush();
+            HandViewModels[Model.PlayerIndex].UpdateTitleBrush();
+        }
+        return true;
     }
 
     // Delete command moves selection back to player hand
@@ -395,12 +432,12 @@ internal class MainViewModel: INotifyPropertyChanged
                 }
                 if (res == 1)
                     break;
-                PerformValidate();
+                if (!PerformValidate())
+                    break;
                 View.Refresh();
             }
 
-            return;
-
+            //return;
             PerformNewGame();
         }
     }
@@ -451,8 +488,8 @@ internal class MainViewModel: INotifyPropertyChanged
 
     internal void DrawHands()
     {
-        foreach (var hvm in HandViewModels)
-            hvm.DrawHand();
+        for (int p = 0; p < Model.PlayersCount; p++)
+            HandViewModels[p].DrawHand();
     }
 
     internal void AddCurrentMove(UITileRowCol uitrc)

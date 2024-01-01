@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:QwirkleUI" d:DataContext="{d:DesignInstance Type=local:MainViewModel}"
         mc:Ignorable="d"
-        Title="QwirkleUI" Height="900" Width="1500">
+        Title="QwirkleUI" Height="995" Width="1500">
 
     <Window.Resources>
         <ContextMenu x:Key="MoveTileMenu">
@@ -29,7 +29,7 @@
 
 
         <ContextMenu x:Key="BoardTileAndBackgroundMenu">
-            <MenuItem Command="{Binding RescaleAndCenterCommand}" Header="_Recentrer la vue du layout" InputGestureText="Ctrl+R">
+            <MenuItem Command="{Binding RescaleAndCenterCommand}" Header="_Recentrer la vue du jeu" InputGestureText="Ctrl+R">
                 <MenuItem.Icon>
                     <Image Source="/Icons/recenter.ico" />
                 </MenuItem.Icon>
@@ -94,16 +94,10 @@
                         <Image Source="/Icons/delete.ico" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <Separator />
-                <MenuItem Command="{Binding RescaleAndCenterCommand}" Header="Recentrer la _vue du layout" InputGestureText="Ctrl+R">
-                    <MenuItem.Icon>
-                        <Image Source="/Icons/find.ico" />
-                    </MenuItem.Icon>
-                </MenuItem>
             </MenuItem>
 
-            <MenuItem Name="ViewMenu" Header="_View">
-                <MenuItem Command="{Binding RescaleAndCenterCommand}" Header="_Recentrer la vue du layout" InputGestureText="Ctrl+R">
+            <MenuItem Name="ViewMenu" Header="_Vue">
+                <MenuItem Command="{Binding RescaleAndCenterCommand}" Header="_Recentrer la vue du jeu" InputGestureText="Ctrl+R">
                     <MenuItem.Icon>
                         <Image Source="/Icons/recenter.ico" />
                     </MenuItem.Icon>
@@ -128,7 +122,7 @@
                     <Button Command="{Binding DeleteAllCommand}" Margin="6,0" Padding="8,2" ToolTip="Renvoie toutes les tuiles en cours de placement dans la main du joueur[Echap]">Annuler</Button>
                     <Button Command="{Binding SuggestPlayCommand}" Margin="6,0" Padding="8,2" ToolTip="Propose un placement de tuiles [F1]">Proposition</Button>
                     <Button Command="{Binding ExchangeTilesCommand}" Margin="6,0" Padding="8,2" ToolTip="Échanger toutes les tuiles [Ctrl+E]">Échanger</Button>
-                    <Button Command="{Binding RescaleAndCenterCommand}" Margin="6,0" Padding="8,2" ToolTip="Recentre le jeu [Ctrl+R]">Recentrer</Button>
+                    <Button Command="{Binding RescaleAndCenterCommand}" Margin="6,0" Padding="8,2" ToolTip="Recentrer la vue du jeu [Ctrl+R]">Recentrer</Button>
                 </StackPanel>
             </StackPanel>
         </StatusBar>
@@ -151,7 +145,10 @@
             </Canvas>
 
             <StackPanel Orientation="Vertical" Grid.Column="1">
-                <local:HandUserControl x:Name="Player1HandUserControl" Height="238" />
+                <local:HandUserControl x:Name="Player1HandUserControl" Height="218" />
+                <local:HandUserControl x:Name="Player2HandUserControl" Height="218" />
+                <local:HandUserControl x:Name="Player3HandUserControl" Height="218" />
+                <local:HandUserControl x:Name="Player4HandUserControl" Height="218" />
             </StackPanel>
 
         </Grid>

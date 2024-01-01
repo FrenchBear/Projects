@@ -37,7 +37,6 @@ public partial class MainWindow: Window
 
         BoardIM = new BoardInteractionManager(ViewModel.CurrentMoves, this, ViewModel);
 
-        // Can only reference ActualWidth after Window is loaded
         Loaded += MainWindow_Loaded;
         KeyDown += MainWindow_KeyDown;
     }
@@ -351,10 +350,10 @@ public partial class MainWindow: Window
         TraceCall();
 
         var r = BoundingRectangleWithMargins();
-        Debug.WriteLine($"UpdateBackgroundGrid: r={r}");
+        //Debug.WriteLine($"UpdateBackgroundGrid: r={r}");
         if (!r.Equals(CurrentGridBoundingWithMargins))
         {
-            Debug.WriteLine("Redraw grid");
+            //Debug.WriteLine("Redraw grid");
             ClearBackgroundGrid();
             CurrentGridBoundingWithMargins = r;
 
@@ -397,8 +396,8 @@ public partial class MainWindow: Window
 
             BoardBackgroundGrid.Children.Add(e);
         }
-        else
-            Debug.WriteLine("Grid unchanged");
+        //else
+        //    //Debug.WriteLine("Grid unchanged");
     }
 
     internal UITileRowCol BoardDrawingCanvasAddUITile(Tile ti, RowCol position, bool gray)
@@ -430,21 +429,21 @@ public partial class MainWindow: Window
         TraceCall();
 
         Debug.Assert(playerIM != null && !playerIM.Selection.IsEmpty);
-        Debug.WriteLine($"MainWindowAcceptHandOver: Accepting HandOver of {playerIM.Selection.Count} tile(s)");
+        //Debug.WriteLine($"MainWindowAcceptHandOver: Accepting HandOver of {playerIM.Selection.Count} tile(s)");
 
         // Get mouse position in BoardCanvas
         Point canvasPosition = Mouse.GetPosition(BoardCanvas);
         var m = TransformationMatrix.Matrix;
         m.Invert();     // By construction, all applied transformations are reversible, so m is invertible
         var drawingCanvasPosition = m.Transform(canvasPosition);
-        Debug.WriteLine($"MainWindowAcceptHandOver: CanvasPosition Y={canvasPosition.Y:F0} X={canvasPosition.X:F0}  DrawingCanvasPosition Y={drawingCanvasPosition.Y:F0} X={drawingCanvasPosition.X:F0}");
+        //Debug.WriteLine($"MainWindowAcceptHandOver: CanvasPosition Y={canvasPosition.Y:F0} X={canvasPosition.X:F0}  DrawingCanvasPosition Y={drawingCanvasPosition.Y:F0} X={drawingCanvasPosition.X:F0}");
 
         BoardIM.Selection.Clear();
         foreach (var pt in playerIM.Selection)
         {
             int row = (int)Math.Floor(drawingCanvasPosition.Y / UnitSize + 0.5);
             int col = (int)Math.Floor(drawingCanvasPosition.X / UnitSize + 0.5);
-            Debug.WriteLine($"MainWindowAcceptHandOver: row={row} col={col}   Offset Y={pt.Offset.Y:F0} X={pt.Offset.X:F0}");
+            //Debug.WriteLine($"MainWindowAcceptHandOver: row={row} col={col}   Offset Y={pt.Offset.Y:F0} X={pt.Offset.X:F0}");
 
             var dupTile = BoardDrawingCanvasAddUITile(pt.Tile, new RowCol(row, col), true);
             dupTile.Offset = pt.Offset;
@@ -636,7 +635,7 @@ internal class BoardInteractionManager(HashSet<UITileRowCol> currentMoves, MainW
 
         if (pmm == null)
         {
-            Debug.WriteLine($"PreviousMousePosition: {previousMousePosition}");
+            //Debug.WriteLine($"PreviousMousePosition: {previousMousePosition}");
             // move drawing surface
             if ((canvasMousePosition - mouseDownStartPosition).Length >= SmallMouseMoveLengthThreshold)
             {

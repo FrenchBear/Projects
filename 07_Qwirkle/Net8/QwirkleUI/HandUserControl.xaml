@@ -18,26 +18,21 @@
             <ColumnDefinition Width="60" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0" FontSize="24" Margin="6,0,0,0" Text="{Binding PlayerName, FallbackValue='Player 1'}"/>
+        <Rectangle Grid.ColumnSpan="3" Fill="{Binding TitleBrush, FallbackValue=LightCoral}" Margin="6,0"/>
+        <TextBlock Grid.Row="0" Grid.Column="0" FontSize="24" Margin="10,0,0,0" Text="{Binding PlayerName, FallbackValue='Player Name'}"/>
         <TextBlock Grid.Row="0" Grid.Column="1" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Text="{Binding Score, FallbackValue=0}" />
-        <TextBlock Grid.Row="0" Grid.Column="2" FontSize="24" HorizontalAlignment="Center" Text="{Binding Rank, FallbackValue=1er}" />
+        <TextBlock Grid.Row="0" Grid.Column="2" FontSize="24" HorizontalAlignment="Center" Text="{Binding Rank, FallbackValue=-}" />
 
-        <DockPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="6,0,6,6">
-            <StatusBar DockPanel.Dock="Bottom">
-                <TextBlock Text="{Binding StatusMessage}" />
-            </StatusBar>
-
-            <Canvas Name="HandCanvas" ClipToBounds="False" Background="AntiqueWhite"
+        <Canvas Name="HandCanvas" ClipToBounds="False" Background="AntiqueWhite" Grid.Row="1" Grid.ColumnSpan="3" Margin="6,0,6,6"
                     MouseMove="HandCanvas_MouseMoveWhenUp" MouseDown="HandCanvas_MouseDown" MouseUp="HandCanvas_MouseUp" MouseWheel="HandCanvas_MouseWheel" MouseRightButtonDown="HandCanvas_MouseRightButtonDown">
-                <Canvas Name="HandTransformingCanvas" ClipToBounds="False" >
-                    <Canvas Name="HandBackgroundGrid" />
-                    <Canvas Name="HandDrawingCanvas" ClipToBounds="False" />
-                    <Canvas.RenderTransform>
-                        <MatrixTransform x:Name="TransformationMatrix" />
-                    </Canvas.RenderTransform>
-                </Canvas>
+            <Canvas Name="HandTransformingCanvas" ClipToBounds="False" >
+                <Canvas Name="HandBackgroundGrid" />
+                <Canvas Name="HandDrawingCanvas" ClipToBounds="False" />
+                <Canvas.RenderTransform>
+                    <MatrixTransform x:Name="TransformationMatrix" />
+                </Canvas.RenderTransform>
             </Canvas>
-        </DockPanel>
+        </Canvas>
 
     </Grid>
 </UserControl>

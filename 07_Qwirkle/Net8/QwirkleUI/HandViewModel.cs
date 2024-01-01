@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows.Media;
 using static QwirkleUI.App;
 
 namespace QwirkleUI;
@@ -30,10 +31,12 @@ internal class HandViewModel: INotifyPropertyChanged
         View = view;
         PlayerIndex = playerIndex;
 
-        view.SetViewModelAndMainWindow(mainWindow, this);
+        view.SetMainWindowAndViewModel(mainWindow, this);
 
-        PlayerName = $"Joueur {PlayerIndex}";
+        PlayerName = $"Joueur #{PlayerIndex+1}";
     }
+
+    private Player ThisPlayer => Model.Players[PlayerIndex];
 
     private void NotifyPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
@@ -83,28 +86,17 @@ internal class HandViewModel: INotifyPropertyChanged
         }
     }
 
-    private string _StatusMessage = "";
-    public string StatusMessage
-    {
-        get => _StatusMessage;
-        set
-        {
-            if (_StatusMessage != value)
-            {
-                _StatusMessage = value;
-                NotifyPropertyChanged(nameof(StatusMessage));
-            }
-        }
-    }
+    public Brush TitleBrush => Model.PlayerIndex == PlayerIndex ? Brushes.LightCoral : Brushes.Transparent;
+    internal void UpdateTitleBrush() => NotifyPropertyChanged(nameof(TitleBrush));
 
     // -------------------------------------------------
 
     internal void DrawHand()
     {
-        foreach (Tile t in Model.CurrentPlayer.Hand)
+        foreach (Tile t in ThisPlayer.Hand)
             AddAndDrawTile(t);
-        PlayerName = Model.CurrentPlayer.Name;
-        Score=Model.CurrentPlayer.Score.ToString();
+        PlayerName = ThisPlayer.Name;
+        Score = ThisPlayer.Score.ToString();
     }
 
     internal void AddAndDrawTile(Tile tile)
@@ -138,5 +130,4 @@ internal class HandViewModel: INotifyPropertyChanged
         UIHand.Clear();
         View.RemoveAllUITiles();
     }
-
 }
