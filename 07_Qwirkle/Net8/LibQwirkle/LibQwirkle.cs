@@ -157,30 +157,30 @@ public readonly struct PointsBonus(int Points, int Bonus)
 }
 
 [DebuggerDisplay("Hand: {AsString(null)}")]
-public class Hand: HashSet<Tile>, IEquatable<Hand>
+public class Hand: HashSet<Tile>    //, IEquatable<Hand>
 {
     public Hand() : base() { }
     public Hand(IEnumerable<Tile> tiles) : base(tiles) { }
     public Hand(HashSet<Tile> tiles) : base(tiles) { }
 
+    // Shadow inherited Add to implement integrity safeguard
     public new void Add(Tile t)
     {
-        if (Count == 6)
-            Debugger.Break();
+        Debug.Assert(Count < 6);
         base.Add(t);
     }
 
     public string AsString(bool? Color)
         => string.Join(" ", this.Select(m => m.AsString(Color)));
 
-    public bool Equals(Hand? hand)
-        => hand != null && SetEquals(hand);
+    //public bool Equals(Hand? hand)
+    //    => hand != null && SetEquals(hand);
 
-    public override bool Equals(object? obj)
-        => Equals(obj as Hand);
+    //public override bool Equals(object? obj)
+    //    => Equals(obj as Hand);
 
-    public override int GetHashCode()
-        => base.GetHashCode();
+    //public override int GetHashCode()
+    //    => base.GetHashCode();
 }
 
 public static class RandomGenerator
