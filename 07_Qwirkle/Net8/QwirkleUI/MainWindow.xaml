@@ -67,6 +67,19 @@
 
                 <Separator />
 
+                <MenuItem Command="{Binding AutoPlayCommand}" InputGestureText="F5" Header="Joue _automatiquement jusqu'à la fin de partie">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/new.ico" Stretch="None" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="{Binding AutoPlayForeverCommand}" InputGestureText="Shift+F5" Header="Joue automatiquement en _boucle">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/new.ico" Stretch="None" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <Separator />
+
                 <MenuItem Name="CloseCommand" Command="{Binding QuitCommand}" InputGestureText="Alt+F4" Header="_Quitter">
                     <MenuItem.Icon>
                         <Image Source="/Icons/close.ico" />

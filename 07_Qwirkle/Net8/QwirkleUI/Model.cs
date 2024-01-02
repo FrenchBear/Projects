@@ -97,9 +97,9 @@ internal class Model(MainViewModel viewModel)
         */
     }
 
-    internal (bool, string) EvaluateMoves(HashSet<TileRowCol> moves)
+    internal (bool, string) EvaluateMoves(Moves moves)
         => Board.EvaluateMoves(moves);
-    internal PointsBonus CountPoints(HashSet<TileRowCol> moves)
+    internal PointsBonus CountPoints(Moves moves)
         => Board.CountPoints(moves);
     internal void UpdateRanks()
     {

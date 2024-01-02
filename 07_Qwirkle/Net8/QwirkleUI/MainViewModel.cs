@@ -152,8 +152,8 @@ internal class MainViewModel: INotifyPropertyChanged
 
         bool status;
         string msg;
-        var moves = new HashSet<TileRowCol>(CurrentMoves.Select(uitrc => new TileRowCol(uitrc.Tile, uitrc.RC)));
-        (status, msg) = Model.EvaluateMoves(new HashSet<TileRowCol>(moves));
+        var moves = new Moves(CurrentMoves.Select(uitrc => new TileRowCol(uitrc.Tile, uitrc.RC)));
+        (status, msg) = Model.EvaluateMoves(new Moves(moves));
         if (status)
         {
             PointsBonus pb = Model.CountPoints(moves);
@@ -241,38 +241,50 @@ internal class MainViewModel: INotifyPropertyChanged
 
         View.BoardIM.EndAnimationsInProgress();
 
-        var moves = new HashSet<TileRowCol>(CurrentMoves.Select(uitrc => new TileRowCol(uitrc.Tile, uitrc.RC)));
-
-        // Count points and update display
-        var pb = Model.Board.CountPoints(moves);
-        Debug.Assert(pb.Points > 0);
-        CurrentPlayer.Score += pb.Points;
-        CurrentHandViewModel.Score = CurrentPlayer.Score.ToString();
-        Model.UpdateRanks();
-        for (int p = 0; p < Model.PlayersCount; p++)
-            HandViewModels[p].Rank = Model.Players[p].Rank;
-
-        Model.Board.AddMoves(moves, true);
-        foreach (var move in CurrentMoves)
+        for (; ; )
         {
-            move.UIT.SelectionBorder = false;
-            move.UIT.GrayBackground = false;
-            Debug.Assert(CurrentPlayer.Hand.Contains(move.Tile));
-            CurrentPlayer.Hand.Remove(move.Tile);
+            var moves = new Moves(CurrentMoves.Select(uitrc => new TileRowCol(uitrc.Tile, uitrc.RC)));
+
+            // Count points and update display
+            var pb = Model.Board.CountPoints(moves);
+            Debug.Assert(pb.Points > 0);
+            CurrentPlayer.Score += pb.Points;
+            CurrentHandViewModel.Score = CurrentPlayer.Score.ToString();
+            Model.UpdateRanks();
+            for (int p = 0; p < Model.PlayersCount; p++)
+                HandViewModels[p].Rank = Model.Players[p].Rank;
+
+            Model.Board.AddMoves(moves, true);
+            foreach (var move in CurrentMoves)
+            {
+                move.UIT.SelectionBorder = false;
+                move.UIT.GrayBackground = false;
+                Debug.Assert(CurrentPlayer.Hand.Contains(move.Tile));
+                CurrentPlayer.Hand.Remove(move.Tile);
+            }
+            CurrentMoves.Clear();
+            CurrentMovesStatus = MoveStatus.Empty;
+            StatusMessage = string.Empty;
+
+            RefillPlayerHand();
+
+            if (!NextPlayer())
+            {
+                StatusMessage = "Info: Le jeu est terminé.";
+                return false;
+            }
+
+            EvaluateCurrentMoves();
+
+            if (!CurrentPlayer.IsComputer)
+                break;
+
+            int res = PerformSuggestPlay(false);
+
+            if (res != 0)
+                break;
         }
-        CurrentMoves.Clear();
-        CurrentMovesStatus = MoveStatus.Empty;
-        StatusMessage = string.Empty;
 
-        RefillPlayerHand();
-
-        if (!NextPlayer())
-        {
-            StatusMessage = "Info: Le jeu est terminé.";
-            return false;
-        }
-
-        EvaluateCurrentMoves();
         return true;
     }
 

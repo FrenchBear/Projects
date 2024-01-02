@@ -128,6 +128,21 @@ public record TileRowCol(Tile T, RowCol RC)
         => $"TileRowCol: ({RC.Row}, {RC.Col}) {Tile.AsString(color, includeInstance)}";
 }
 
+public class Moves: HashSet<TileRowCol>
+{
+    public Moves() : base() { }
+
+    public Moves(HashSet<TileRowCol> set) : base(set) { }
+
+    public Moves(IEnumerable<TileRowCol> col) : base(col) { }
+
+    public new void Add(TileRowCol trc)
+    {
+        Debug.Assert(!Contains(trc));
+        base.Add(trc);
+    }
+}
+
 public enum CellState
 {
     EmptyIsolated,
@@ -136,9 +151,9 @@ public enum CellState
 }
 
 [DebuggerDisplay("Play: {AsString(null)}")]
-public record PlaySuggestion(HashSet<TileRowCol> Moves, PointsBonus PB, Hand NewHand)
+public record PlaySuggestion(Moves Moves, PointsBonus PB, Hand NewHand)
 {
-    public HashSet<TileRowCol> Moves { get; } = Moves;
+    public Moves Moves { get; } = Moves;
     public PointsBonus PB { get; } = PB;
     public Hand NewHand { get; } = NewHand;
 
@@ -252,7 +267,7 @@ public class Bag
 public class Board: IEnumerable<TileRowCol>
 {
     readonly Board? BaseBoard = null;
-    readonly HashSet<TileRowCol> Moves = [];
+    readonly Moves Moves = [];
 
     public Board() { }
     public Board(Board baseBoard)
@@ -358,9 +373,9 @@ public class Board: IEnumerable<TileRowCol>
 
     // Since there is no order in a HashSet, we must also determine in which order individual tiles must be added
     // because AddMove immediately validates placement of a tile
-    public void AddMoves(HashSet<TileRowCol> moves, bool WithTrace = false)
+    public void AddMoves(Moves moves, bool WithTrace = false)
     {
-        var tmp = new HashSet<TileRowCol>(moves);
+        var tmp = new Moves(moves);
         var mc = MovesCount;
 
         while (tmp.Count > 0)
@@ -596,10 +611,10 @@ public class Board: IEnumerable<TileRowCol>
 
     public void Print() => Console.WriteLine(AsString(true));
 
-    public (bool, string) EvaluateMoves(HashSet<TileRowCol> movesArg)
+    public (bool, string) EvaluateMoves(Moves movesArg)
     {
         // Build a local copy, since during evaluation process we alter the content of HashSet
-        var moves = new HashSet<TileRowCol>(movesArg);
+        var moves = new Moves(movesArg);
 
         // Just a safeguard, this should not be called with an empty HashSet
         if (moves.Count == 0)
@@ -655,7 +670,7 @@ public class Board: IEnumerable<TileRowCol>
         return (true, "");
     }
 
-    public PointsBonus CountPoints(HashSet<TileRowCol> moves)
+    public PointsBonus CountPoints(Moves moves)
     {
         if (moves.Count == 0)
             return new(0, 0);
@@ -802,7 +817,7 @@ public class Board: IEnumerable<TileRowCol>
                 if (IsCompatible(t, row, col))
                 {
                     //Console.WriteLine("  Compatible: " + t.AsString(true));
-                    var CurrentMoves = new HashSet<TileRowCol>();
+                    var CurrentMoves = new Moves();
                     ExploreMove(this, this, hand, CurrentMoves, PossiblePlays, new TileRowCol(t, row, col), true, true);
                 }
         }
@@ -840,14 +855,14 @@ public class Board: IEnumerable<TileRowCol>
         return sol;
     }
 
-    private static void ExploreMove(Board startBoard, Board b, Hand h, HashSet<TileRowCol> CurrentMoves, List<PlaySuggestion> PossiblePlays, TileRowCol move, bool NS, bool EW)
+    private static void ExploreMove(Board startBoard, Board b, Hand h, Moves CurrentMoves, List<PlaySuggestion> PossiblePlays, TileRowCol move, bool NS, bool EW)
     {
         //Console.WriteLine($"\nExploreMove {move.AsString(true)}  NS={NS} EW={EW}");
 
         var newB = new Board(b);
         newB.AddMove(move);
         var newH = new Hand(h.Except([move.Tile]));
-        var newCurrentMoves = new HashSet<TileRowCol>(CurrentMoves) { move };
+        var newCurrentMoves = new Moves(CurrentMoves) { move };
 
         // Quick and dirty firtering, only keep move if it produces equal or more points than current max(points)
         // if points are actually greater than max, forget all previous possible plays
@@ -878,7 +893,7 @@ public class Board: IEnumerable<TileRowCol>
         }
     }
 
-    private static void TryExplore(Board startBoard, Board b, Hand h, HashSet<TileRowCol> CurrentMoves, List<PlaySuggestion> PossiblePlays, int row, int col, int deltaRow, int deltaCol)
+    private static void TryExplore(Board startBoard, Board b, Hand h, Moves CurrentMoves, List<PlaySuggestion> PossiblePlays, int row, int col, int deltaRow, int deltaCol)
     {
         //Console.WriteLine($"\nTryExplore ({row}, {col})  deltaRow={deltaRow} deltaCol={deltaCol}");
 
