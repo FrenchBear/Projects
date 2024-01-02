@@ -122,7 +122,7 @@ abstract internal class InteractionManager
 
     public void IM_MouseMoveWhenUp(object sender, MouseEventArgs e)
     {
-        //TraceCall();
+        //
 
         // Maybe some visual hinting
     }
@@ -131,7 +131,6 @@ abstract internal class InteractionManager
     private bool UpdateSelectionAfterClick(MouseEventArgs e, Canvas c, Canvas dc)
     {
         // If no Hand UITile is hit, just clear selection and return
-        TraceCall();
 
         UITile? t = GetHitHile(e.GetPosition(c), c);
         if (t == null)
@@ -183,8 +182,6 @@ abstract internal class InteractionManager
 
     internal void IMEndMoveInProgress()
     {
-        TraceCall();
-
         // TileRowCol in progress?
         if (pmm != null)
         {
@@ -196,8 +193,6 @@ abstract internal class InteractionManager
 
     public void IM_MouseDown(object sender, MouseEventArgs e, Canvas c, Canvas dc, Matrix m)
     {
-        TraceCall();
-
         EndAnimationsInProgress();
 
         previousMousePosition = e.GetPosition(c);
@@ -216,8 +211,6 @@ abstract internal class InteractionManager
 
     public void IM_HandOver_MouseDown(Canvas c, Canvas dc, Matrix m)
     {
-        TraceCall();
-
         EndAnimationsInProgress();
         previousMousePosition = Mouse.GetPosition(c);
         pmm = GetMouseDownMoveAction(m, true);
@@ -226,8 +219,6 @@ abstract internal class InteractionManager
 
     private Action<Point>? GetMouseDownMoveAction(Matrix m, bool skipOffsetCalculation)
     {
-        TraceCall();
-
         Debug.Assert(!Selection.IsEmpty);
 
         if (!skipOffsetCalculation)
@@ -248,20 +239,16 @@ abstract internal class InteractionManager
         // When moving, point is current mouse in ideal grid coordinates
         return point =>
         {
-            //Debug.WriteLine($"Enter: pmm Y={point.Y:F0} X={point.X:F0}");
             // Just move selected tiles
             foreach (UITileRowCol item in Selection)
             {
                 double preciseTop = point.Y + item.Offset.Y;
                 double preciseLeft = point.X + item.Offset.X;
-                //Debug.WriteLine($"item.offset: Y={item.Offset.Y:F0} X={item.Offset.X:F0}");
 
                 // Round position to closest square on the grid
                 // Originally to decide if UITile should be hatched or not, but logic is different between Board and Hand
                 int row = (int)Math.Floor(preciseTop / UnitSize + 0.5);
                 int col = (int)Math.Floor(preciseLeft / UnitSize + 0.5);
-
-                //Debug.WriteLine($"Precise: top={preciseTop:F0} left={preciseLeft:F0}    RowCol: row={row} col={col}");
 
                 item.UIT.SetValue(Canvas.TopProperty, preciseTop);
                 item.UIT.SetValue(Canvas.LeftProperty, preciseLeft);
@@ -275,14 +262,11 @@ abstract internal class InteractionManager
 
     internal virtual Point IM_MouseMoveWhenDown(object sender, MouseEventArgs e, Canvas c, Matrix m)
     {
-        TraceCall("virt IM.");
-
         var canvasPosition = e.GetPosition(c);
         bool smallMouseMove = (mouseDownStartPosition - canvasPosition).Length < SmallMouseMoveLengthThreshold;
 
         m.Invert();     // By construction, all applied transformations are reversible, so m is invertible
         var drawingCanvasPosition = m.Transform(canvasPosition);
-        //Debug.WriteLine($"IM_MouseMoveWhenDown: CanvasPosition Y={canvasPosition.Y:F0} X={canvasPosition.X:F0}  DrawingCanvasPosition Y={drawingCanvasPosition.Y:F0} X={drawingCanvasPosition.X:F0}");
 
         // Ignore small mouse moves
         if (!smallMouseMove)
@@ -293,16 +277,12 @@ abstract internal class InteractionManager
 
     internal void StartHandOverEndCaptureAndPmm()
     {
-        TraceCall();
-
         Mouse.Capture(null);
         pmm = null;
     }
 
     internal void IM_MouseUp(object sender, MouseButtonEventArgs e)
     {
-        TraceCall();
-
         Mouse.Capture(null);
 
         if (pmm != null)
@@ -315,13 +295,8 @@ abstract internal class InteractionManager
     internal abstract void UpdateTargetPosition();
 
     public void IM_MouseWheel(object sender, MouseWheelEventArgs e) { }
-        // This is not used for Hand
-        //Debug.WriteLine("IM_MouseWheel ToDo");
-
     public void IM_MouseRightButtonDown(object sender, MouseButtonEventArgs e, Canvas c, Canvas dc)
     {
-        TraceCall();
-
         EndAnimationsInProgress();
         bool tileHit = UpdateSelectionAfterClick(e, c, dc);
 
@@ -329,8 +304,5 @@ abstract internal class InteractionManager
         e.Handled = true;
     }
 
-    public virtual void OnMouseRightButtonDown(object sender, UITilesSelection selection, bool tileHit)
-    {
-        //TraceCall("virt IM.");
-    }
+    public virtual void OnMouseRightButtonDown(object sender, UITilesSelection selection, bool tileHit) { }
 }

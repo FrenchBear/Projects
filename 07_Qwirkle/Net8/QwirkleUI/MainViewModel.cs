@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
 using System.Windows;
 using System.Windows.Input;
 using static QwirkleUI.App;
@@ -31,7 +32,7 @@ internal class MainViewModel: INotifyPropertyChanged
     private readonly MainWindow View;
 
     // Game state
-    private readonly HandViewModel[] HandViewModels = [];
+    private HandViewModel[] HandViewModels = [];
     internal readonly HashSet<UITileRowCol> CurrentMoves = [];
     internal MoveStatus CurrentMovesStatus = MoveStatus.Empty;
     private PlaySuggestion? PlaySuggestion;     // Suggestion with maximum possible scire with current hand
@@ -52,7 +53,9 @@ internal class MainViewModel: INotifyPropertyChanged
 
     // Menus
     public ICommand NewGameCommand { get; }
+    public ICommand NewPlayersCommand { get; }
     public ICommand AutoPlayCommand { get; }
+    public ICommand AutoPlayForeverCommand { get; }
     public ICommand QuitCommand { get; }
 
     // Edit
@@ -76,31 +79,13 @@ internal class MainViewModel: INotifyPropertyChanged
         View = view;
         Model = new Model(this);
 
-        Debug.Assert(Model.PlayersCount >= 1 && Model.PlayersCount <= 4);
-
-        HandViewModels = new HandViewModel[Model.PlayersCount];
-        HandViewModels[0] = new HandViewModel(view, view.Player1HandUserControl, Model, 0);
-
-        if (Model.PlayersCount > 1)
-            HandViewModels[1] = new HandViewModel(view, view.Player2HandUserControl, Model, 1);
-        else
-            view.Player2HandUserControl.Visibility = Visibility.Collapsed;
-
-        if (Model.PlayersCount > 2)
-            HandViewModels[2] = new HandViewModel(view, view.Player3HandUserControl, Model, 2);
-        else
-            view.Player3HandUserControl.Visibility = Visibility.Collapsed;
-
-        if (Model.PlayersCount > 3)
-            HandViewModels[3] = new HandViewModel(view, view.Player4HandUserControl, Model, 3);
-        else
-            view.Player4HandUserControl.Visibility = Visibility.Collapsed;
-
         // Binding commands with behavior
 
         // File
         NewGameCommand = new RelayCommand<object>(NewGameExecute);
+        NewPlayersCommand = new RelayCommand<object>(NewPlayersExecute);
         AutoPlayCommand = new RelayCommand<object>(AutoPlayExecute);
+        AutoPlayForeverCommand = new RelayCommand<object>(AutoPlayForeverExecute);
         QuitCommand = new RelayCommand<object>(QuitExecute);
 
         // Edit
@@ -131,34 +116,24 @@ internal class MainViewModel: INotifyPropertyChanged
         int rowMax = Model.Board.RowMax;
         int colMax = Model.Board.ColMax;
 
-        //Debug.WriteLine($"Board bounds: ({rowMin}, {colMin})-({rowMax}, {colMax})");
-
         if (CurrentMoves.Count > 0)
         {
-            //Debug.WriteLine($"MainWindowCurrentMoves bounds: ({CurrentMoves.Min(m => m.Row)}, {CurrentMoves.Min(m => m.Col)})-({CurrentMoves.Max(m => m.Row)}, {CurrentMoves.Max(m => m.Col)})");
             rowMin = Math.Min(rowMin, CurrentMoves.Min(m => m.Row));
             colMin = Math.Min(colMin, CurrentMoves.Min(m => m.Col));
             rowMax = Math.Max(rowMax, CurrentMoves.Max(m => m.Row));
             colMax = Math.Max(colMax, CurrentMoves.Max(m => m.Col));
         }
 
-        //Debug.WriteLine($"Global bounds: ({rowMin}, {colMin})-({rowMax}, {colMax})");
-
         return new(new RowCol(rowMin, colMin), new RowCol(rowMax, colMax));
-
     }
 
     internal void EvaluateCurrentMoves()
     {
-        TraceCall();
-
         // If there is no move, provide hint about possible best play
         if (CurrentMoves.Count == 0)
         {
             CurrentMovesStatus = MoveStatus.Empty;
 
-            // ToDo: Implement endgame detection
-            // Only for dev, until endgame is handled
             if (CurrentPlayer.Hand.Count == 0)
             {
                 StatusMessage = "Info: La main est vide, pas de jeu possible.";
@@ -166,12 +141,8 @@ internal class MainViewModel: INotifyPropertyChanged
             }
 
             if (PlaySuggestion == null)
-            {
                 PlaySuggestion = Model.Board.Play(CurrentPlayer.Hand);
-                //Debug.WriteLine($"PlaySuggestion calculated: {PlaySuggestion.AsString(null)}");
-            }
-            //else
-            //    //Debug.WriteLine($"PlaySuggestion already defined: {PlaySuggestion.AsString(null)}");
+
             if (PlaySuggestion.PB.Points == 0)
                 StatusMessage = "Info: Aucune tuile jouable, échangez les tuiles.";
             else
@@ -256,14 +227,8 @@ internal class MainViewModel: INotifyPropertyChanged
 
     void RefillPlayerHand()
     {
-        TraceCall();
+        CurrentHandViewModel.RefillAndDrawHand();
 
-        while (!Model.Bag.IsEmpty && CurrentHandViewModel.UIHand.Count < 6)
-        {
-            var t = Model.Bag.GetTile();
-            CurrentHandViewModel.AddAndDrawTile(t);
-            CurrentPlayer.Hand.Add(t);
-        }
         // Refilling player hand invalidates current PlaySuggestion
         PlaySuggestion = null;
     }
@@ -271,14 +236,14 @@ internal class MainViewModel: INotifyPropertyChanged
     // Validate command
     bool PerformValidate()
     {
-        TraceCall();
-
         if (CurrentMoves.Count == 0)
             return false;
 
         View.BoardIM.EndAnimationsInProgress();
 
         var moves = new HashSet<TileRowCol>(CurrentMoves.Select(uitrc => new TileRowCol(uitrc.Tile, uitrc.RC)));
+
+        // Count points and update display
         var pb = Model.Board.CountPoints(moves);
         Debug.Assert(pb.Points > 0);
         CurrentPlayer.Score += pb.Points;
@@ -333,8 +298,6 @@ internal class MainViewModel: INotifyPropertyChanged
     // Note that EvaluateCurrentMoves is not called here since this is used as a subprogram for Suggestion
     internal void PerformDelete(bool allCurrentMoves)
     {
-        TraceCall();
-
         if (allCurrentMoves)
         {
             if (CurrentMoves.Count == 0)
@@ -363,25 +326,27 @@ internal class MainViewModel: INotifyPropertyChanged
 
     internal void PerformExchangeTiles()
     {
-        TraceCall();
-
         if (Model.Bag.IsEmpty || CurrentPlayer.Hand.Count == 0)
             return;
 
-        Model.Bag.ReturnTiles(CurrentPlayer.Hand);
-        CurrentPlayer.Hand.Clear();
-        CurrentHandViewModel.RemoveAllUITiles();
-        RefillPlayerHand();
+        // Repeat exchange until we get something playable
+        for (; ; )
+        {
+            Model.Bag.ReturnTiles(CurrentPlayer.Hand);
+            CurrentPlayer.Hand.Clear();
+            CurrentHandViewModel.RemoveAllUITiles();
+            RefillPlayerHand();
+            EvaluateCurrentMoves();
 
-        EvaluateCurrentMoves();
+            if (PlaySuggestion!.PB.Points > 0)
+                return;
+        }
     }
 
     // Suggest a tiles placement
     // Returns true if a valid suggestion has been made, false otherwise
     internal int PerformSuggestPlay(bool interactive = true)
     {
-        TraceCall();
-
         // First, move all tiles back to hand
         View.BoardIM.Selection.Clear();
         PerformDelete(true);
@@ -418,7 +383,7 @@ internal class MainViewModel: INotifyPropertyChanged
         return 0;
     }
 
-    private void PerformAutoPlay()
+    private void PerformAutoPlay(bool autoRestartNewGame)
     {
         for (; ; )
         {
@@ -437,7 +402,8 @@ internal class MainViewModel: INotifyPropertyChanged
                 View.Refresh();
             }
 
-            //return;
+            if (!autoRestartNewGame)
+                return;
             PerformNewGame();
         }
     }
@@ -447,22 +413,70 @@ internal class MainViewModel: INotifyPropertyChanged
         => CurrentHandViewModel.RemoveUITile(uit);
 
     // -------------------------------------------------
-    // Model helpers
 
+    // Keep existing players
     internal void PerformNewGame()
     {
-        TraceCall();
-
         Model.NewBoard(false);
         View.BoardDrawingCanvasRemoveAllUITiles();
         CurrentMoves.Clear();
         for (int i = 0; i < Model.Players.Length; i++)
+        {
             HandViewModels[i].RemoveAllUITiles();
-        DrawHands();
+            Model.Players[i].Hand.Clear();
+            HandViewModels[i].RefillAndDrawHand();
+        }
+
         //UndoStack.Clear();
         View.RescaleAndCenter(true, true);
         PlaySuggestion = null;
         EvaluateCurrentMoves();
+    }
+
+    // Update players, then PerformNewGame()
+    internal void PerformNewPlayers()
+    {
+        var ng = new NewGameWindow(Model);
+        var res = ng.ShowDialog() ?? false;
+        if (!res)
+        {
+            Application.Current.Shutdown(0);
+            return;
+        }
+
+        //MessageBox.Show($"Dialog: {res}  Players count: {Model.PlayersCount}");
+
+        Debug.Assert(Model.PlayersCount >= 1 && Model.PlayersCount <= 4);
+
+        HandViewModels = new HandViewModel[Model.PlayersCount];
+        View.Player1HandUserControl.Visibility = Visibility.Visible;
+        HandViewModels[0] = new HandViewModel(View, View.Player1HandUserControl, Model, 0);
+
+        if (Model.PlayersCount > 1)
+        {
+            View.Player2HandUserControl.Visibility = Visibility.Visible;
+            HandViewModels[1] = new HandViewModel(View, View.Player2HandUserControl, Model, 1);
+        }
+        else
+            View.Player2HandUserControl.Visibility = Visibility.Collapsed;
+
+        if (Model.PlayersCount > 2)
+        {
+            View.Player3HandUserControl.Visibility = Visibility.Visible;
+            HandViewModels[2] = new HandViewModel(View, View.Player3HandUserControl, Model, 2);
+        }
+        else
+            View.Player3HandUserControl.Visibility = Visibility.Collapsed;
+
+        if (Model.PlayersCount > 3)
+        {
+            View.Player4HandUserControl.Visibility = Visibility.Visible;
+            HandViewModels[3] = new HandViewModel(View, View.Player4HandUserControl, Model, 3);
+        }
+        else
+            View.Player4HandUserControl.Visibility = Visibility.Collapsed;
+
+        PerformNewGame();
     }
 
     // -------------------------------------------------
@@ -580,9 +594,23 @@ internal class MainViewModel: INotifyPropertyChanged
 
     // -----------------------------------
 
-    private void NewGameExecute(object obj) => PerformNewGame();
+    private static bool IsShiftPressed
+        => System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftShift) ||
+           System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightShift);
 
-    private void AutoPlayExecute(object obj) => PerformAutoPlay();
+    private void NewGameExecute(object obj)
+    {
+        if (IsShiftPressed)
+            PerformNewPlayers();
+        else
+            PerformNewGame();
+    }
+
+    private void NewPlayersExecute(object obj) => PerformNewPlayers();
+
+    private void AutoPlayExecute(object obj) => PerformAutoPlay(false);
+
+    private void AutoPlayForeverExecute(object obj) => PerformAutoPlay(true);
 
     private void QuitExecute(object obj) => Environment.Exit(0);
 
@@ -591,5 +619,4 @@ internal class MainViewModel: INotifyPropertyChanged
         //var aw = new View.AboutWindow();
         //aw.ShowDialog();
     }
-
 }

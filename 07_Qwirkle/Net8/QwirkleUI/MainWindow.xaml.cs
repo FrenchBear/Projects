@@ -29,8 +29,6 @@ public partial class MainWindow: Window
 
     public MainWindow()
     {
-        TraceCall();
-
         InitializeComponent();
         ViewModel = new MainViewModel(this);
         DataContext = ViewModel;
@@ -43,21 +41,13 @@ public partial class MainWindow: Window
 
     public void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
-        TraceCall();
+        Refresh();
 
-        ViewModel.NewBoard(true);
-        DrawBoard();
-        RescaleAndCenter(false, true);
-        ViewModel.DrawHands();
-
-        //ViewModel.StatusMessage = "Done.";
-        ViewModel.EvaluateCurrentMoves();
+        ViewModel.PerformNewPlayers();
     }
 
     private void MainWindow_KeyDown(object sender, KeyEventArgs e)
     {
-        TraceCall();
-
         if (e.Key == Key.Escape)
         {
             BoardIM.IMEndMoveInProgress();
@@ -71,8 +61,6 @@ public partial class MainWindow: Window
     // Clears the grid
     internal void ClearGrid()
     {
-        TraceCall();
-
         // Clear previous elements layout
         BoardDrawingCanvas.Children.Clear();
         ClearBackgroundGrid();
@@ -82,8 +70,6 @@ public partial class MainWindow: Window
 
     internal void DrawBoard()
     {
-        TraceCall();
-
         Debug.Assert(BoardDrawingCanvas.Children.Count == 0);
         UpdateBackgroundGrid();
         ViewModel.DrawBoard();
@@ -93,8 +79,6 @@ public partial class MainWindow: Window
     // Adjust scale and origin to see the whole puzzle
     internal void RescaleAndCenter(bool isWithAnimation, bool forceRescale = false)
     {
-        TraceCall();
-
         // As long as we've 2 row/col of emty cells abound board, no need to rescale unless it's a foced request (Ctrl+R)
         var bb = ViewModel.Bounds();
         if ((!forceRescale)
@@ -180,43 +164,35 @@ public partial class MainWindow: Window
     {
         if (HandOverState == HandOverStateEnum.InTransition)
             return;
-        //TraceCall();
+        //
 
         BoardIM.IM_MouseMoveWhenUp(sender, e);
     }
 
     private void BoardCanvas_MouseDown(object sender, MouseButtonEventArgs e)
     {
-        TraceCall();
-
         BoardCanvas.MouseMove -= BoardCanvas_MouseMoveWhenUp;
         BoardCanvas.MouseMove += BoardCanvas_MouseMoveWhenDown;
         BoardIM.IM_MouseDown(sender, e, BoardCanvas, BoardDrawingCanvas, TransformationMatrix.Matrix);
     }
 
     // Relay from Window_MouseDown handler when it's actually a right click
-    private void BoardCanvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
-    {
-        TraceCall();
-
-        BoardIM.IM_MouseRightButtonDown(sender, e, BoardCanvas, BoardDrawingCanvas);
-    }
+    private void BoardCanvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e) 
+        => BoardIM.IM_MouseRightButtonDown(sender, e, BoardCanvas, BoardDrawingCanvas);
 
     private void BoardCanvas_MouseMoveWhenDown(object sender, MouseEventArgs e)
     {
         if (HandOverState == HandOverStateEnum.InTransition)
             return;
-        TraceCall();
 
         BoardIM.IM_MouseMoveWhenDown(sender, e, BoardCanvas, TransformationMatrix.Matrix);
     }
 
     private void BoardCanvas_MouseUp(object sender, MouseButtonEventArgs e)
     {
-        // An event MouseUp is raised during handover, don't know why
-        if (HandOverState == HandOverStateEnum.InTransition)
-            return;
-        TraceCall();
+        //// An event MouseUp is raised during handover, don't know why
+        //if (HandOverState == HandOverStateEnum.InTransition)
+        //    return;
 
         BoardCanvas.MouseMove -= BoardCanvas_MouseMoveWhenDown;
         BoardCanvas.MouseMove += BoardCanvas_MouseMoveWhenUp;
@@ -287,8 +263,6 @@ public partial class MainWindow: Window
     // Stops animation and set the final value
     internal void EndMoveUITileAnimation()
     {
-        TraceCall();
-
         IsMoveUITileAnimationInProgress = false;
         foreach (var item in finalMoveUITileAnimationData)
         {
@@ -299,8 +273,6 @@ public partial class MainWindow: Window
 
     private void BoardCanvas_MouseWheel(object sender, MouseWheelEventArgs e)
     {
-        TraceCall();
-
         var newRowCol = e.GetPosition(BoardCanvas);
         var m = TransformationMatrix.Matrix;
 
@@ -327,8 +299,6 @@ public partial class MainWindow: Window
 
     private void ClearBackgroundGrid()
     {
-        TraceCall();
-
         BoardBackgroundGrid.Children.Clear();
         CurrentGridBoundingWithMargins = new(45, 55, 45, 55);
     }
@@ -336,8 +306,6 @@ public partial class MainWindow: Window
     // Add some extra margin and always represent a 8x8 grid at minimum
     private BoundingRectangle BoundingRectangleWithMargins()
     {
-        TraceCall();
-
         var boardBounds = ViewModel.Bounds();
         return new(boardBounds.Min.Row - 3,
                     boardBounds.Max.Row + 4,
@@ -347,13 +315,10 @@ public partial class MainWindow: Window
 
     internal void UpdateBackgroundGrid()
     {
-        TraceCall();
-
         var r = BoundingRectangleWithMargins();
-        //Debug.WriteLine($"UpdateBackgroundGrid: r={r}");
+
         if (!r.Equals(CurrentGridBoundingWithMargins))
         {
-            //Debug.WriteLine("Redraw grid");
             ClearBackgroundGrid();
             CurrentGridBoundingWithMargins = r;
 
@@ -396,14 +361,10 @@ public partial class MainWindow: Window
 
             BoardBackgroundGrid.Children.Add(e);
         }
-        //else
-        //    //Debug.WriteLine("Grid unchanged");
     }
 
     internal UITileRowCol BoardDrawingCanvasAddUITile(Tile ti, RowCol position, bool gray)
     {
-        TraceCall();
-
         var t = new UITile(ti);
         t.GrayBackground = gray;
         t.SetValue(Canvas.TopProperty, position.Row * UnitSize);
@@ -426,24 +387,19 @@ public partial class MainWindow: Window
 
     internal void MainWindowAcceptHandOver(HandInteractionManager playerIM)
     {
-        TraceCall();
-
         Debug.Assert(playerIM != null && !playerIM.Selection.IsEmpty);
-        //Debug.WriteLine($"MainWindowAcceptHandOver: Accepting HandOver of {playerIM.Selection.Count} tile(s)");
 
         // Get mouse position in BoardCanvas
         Point canvasPosition = Mouse.GetPosition(BoardCanvas);
         var m = TransformationMatrix.Matrix;
         m.Invert();     // By construction, all applied transformations are reversible, so m is invertible
         var drawingCanvasPosition = m.Transform(canvasPosition);
-        //Debug.WriteLine($"MainWindowAcceptHandOver: CanvasPosition Y={canvasPosition.Y:F0} X={canvasPosition.X:F0}  DrawingCanvasPosition Y={drawingCanvasPosition.Y:F0} X={drawingCanvasPosition.X:F0}");
 
         BoardIM.Selection.Clear();
         foreach (var pt in playerIM.Selection)
         {
             int row = (int)Math.Floor(drawingCanvasPosition.Y / UnitSize + 0.5);
             int col = (int)Math.Floor(drawingCanvasPosition.X / UnitSize + 0.5);
-            //Debug.WriteLine($"MainWindowAcceptHandOver: row={row} col={col}   Offset Y={pt.Offset.Y:F0} X={pt.Offset.X:F0}");
 
             var dupTile = BoardDrawingCanvasAddUITile(pt.Tile, new RowCol(row, col), true);
             dupTile.Offset = pt.Offset;
@@ -474,8 +430,6 @@ internal class BoardInteractionManager(HashSet<UITileRowCol> currentMoves, MainW
     // Terminate immediately animations in progress, set final values
     public override void EndAnimationsInProgress()
     {
-        TraceCall("over Board.");
-
         if (View.IsMatrixAnimationInProgress)
             View.EndMatrixAnimation();
         if (View.IsMoveUITileAnimationInProgress)
@@ -484,8 +438,6 @@ internal class BoardInteractionManager(HashSet<UITileRowCol> currentMoves, MainW
 
     internal override void UpdateTargetPosition()
     {
-        TraceCall("over Board.");
-
         Debug.Assert(!Selection.IsEmpty);
 
         // Find a free position
@@ -614,8 +566,6 @@ internal class BoardInteractionManager(HashSet<UITileRowCol> currentMoves, MainW
 
     public override void OnMouseRightButtonDown(object sender, UITilesSelection selection, bool tileHit)
     {
-        TraceCall("over Board.");
-
         ContextMenu? cm;
         if (tileHit)
             cm = View.FindResource("MoveTileMenu") as ContextMenu;
@@ -628,15 +578,12 @@ internal class BoardInteractionManager(HashSet<UITileRowCol> currentMoves, MainW
 
     internal override Point IM_MouseMoveWhenDown(object sender, MouseEventArgs e, Canvas c, Matrix m)
     {
-        TraceCall("over Board.");
-
         var canvasMousePosition = e.GetPosition(c);
         var drawingCanvasMousePosition = base.IM_MouseMoveWhenDown(sender, e, c, m);
 
         if (pmm == null)
         {
-            //Debug.WriteLine($"PreviousMousePosition: {previousMousePosition}");
-            // move drawing surface
+            // Move drawing surface
             if ((canvasMousePosition - mouseDownStartPosition).Length >= SmallMouseMoveLengthThreshold)
             {
                 var delta = canvasMousePosition - previousMousePosition;

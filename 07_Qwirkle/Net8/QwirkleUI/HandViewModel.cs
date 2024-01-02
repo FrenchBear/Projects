@@ -130,4 +130,14 @@ internal class HandViewModel: INotifyPropertyChanged
         UIHand.Clear();
         View.RemoveAllUITiles();
     }
+
+    internal void RefillAndDrawHand()
+    {
+        while (!Model.Bag.IsEmpty && UIHand.Count < 6)
+        {
+            var t = Model.Bag.GetTile();
+            AddAndDrawTile(t);
+            ThisPlayer.Hand.Add(t);
+        }
+    }
 }

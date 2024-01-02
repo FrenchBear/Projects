@@ -39,20 +39,27 @@
 
     <Window.InputBindings>
         <KeyBinding Key="F1" Command="{Binding SuggestPlayCommand}" />
-        <KeyBinding Key="F2" Command="{Binding AutoPlayCommand}" />
+        <KeyBinding Key="F5" Command="{Binding AutoPlayCommand}" />
+        <KeyBinding Key="F5" Modifiers="Shift" Command="{Binding AutoPlayForeverCommand}" />
         <KeyBinding Key="Delete" Command="{Binding DeleteCommand}" />
         <KeyBinding Key="Esc" Command="{Binding DeleteAllCommand}" />
-        <KeyBinding Key="Enter" Command="{Binding ValidateCommand}" />
+        <KeyBinding Key="F2" Command="{Binding ValidateCommand}" />
         <KeyBinding Key="Z" Modifiers="Ctrl" Command="{Binding UndoCommand}" />
         <KeyBinding Key="R" Modifiers="Ctrl" Command="{Binding RescaleAndCenterCommand}" />
         <KeyBinding Key="N" Modifiers="Ctrl" Command="{Binding NewGameCommand}" />
+        <KeyBinding Key="N" Modifiers="Ctrl+Shift" Command="{Binding NewPlayersCommand}" />
         <KeyBinding Key="E" Modifiers="Ctrl" Command="{Binding ExchangeTilesCommand}" />
     </Window.InputBindings>
 
     <DockPanel>
         <Menu DockPanel.Dock="Top" Padding="3">
             <MenuItem Name="FileMenu" Header="_Fichier">
-                <MenuItem Command="{Binding NewGameCommand}" InputGestureText="Ctrl+N" Header="_Nouveau layout">
+                <MenuItem Command="{Binding NewGameCommand}" InputGestureText="Ctrl+N" Header="_Nouveau jeu avec les mêmes joueurs">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/new.ico" Stretch="None" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="{Binding NewPlayersCommand}" InputGestureText="Shift+Ctrl+N" Header="Nouveau_x joueurs">
                     <MenuItem.Icon>
                         <Image Source="/Icons/new.ico" Stretch="None" />
                     </MenuItem.Icon>
@@ -118,7 +125,7 @@
             <StackPanel Orientation="Vertical">
                 <TextBlock Name="StatusText"  Text="{Binding StatusMessage, FallbackValue='Main ToolBar'}" Margin="6,0,0,4"/>
                 <StackPanel Orientation="Horizontal">
-                    <Button Command="{Binding ValidateCommand}" Margin="0,0,6,0" Padding="8,2" ToolTip="Valide le placement des tuiles [Entrée]">Valider</Button>
+                    <Button Command="{Binding ValidateCommand}" Margin="0,0,6,0" Padding="8,2" ToolTip="Valide le placement des tuiles [F2]">Valider</Button>
                     <Button Command="{Binding DeleteAllCommand}" Margin="6,0" Padding="8,2" ToolTip="Renvoie toutes les tuiles en cours de placement dans la main du joueur[Echap]">Annuler</Button>
                     <Button Command="{Binding SuggestPlayCommand}" Margin="6,0" Padding="8,2" ToolTip="Propose un placement de tuiles [F1]">Proposition</Button>
                     <Button Command="{Binding ExchangeTilesCommand}" Margin="6,0" Padding="8,2" ToolTip="Échanger toutes les tuiles [Ctrl+E]">Échanger</Button>
@@ -145,10 +152,10 @@
             </Canvas>
 
             <StackPanel Orientation="Vertical" Grid.Column="1">
-                <local:HandUserControl x:Name="Player1HandUserControl" Height="218" />
-                <local:HandUserControl x:Name="Player2HandUserControl" Height="218" />
-                <local:HandUserControl x:Name="Player3HandUserControl" Height="218" />
-                <local:HandUserControl x:Name="Player4HandUserControl" Height="218" />
+                <local:HandUserControl x:Name="Player1HandUserControl" Height="218" Visibility="Collapsed" />
+                <local:HandUserControl x:Name="Player2HandUserControl" Height="218" Visibility="Collapsed" />
+                <local:HandUserControl x:Name="Player3HandUserControl" Height="218" Visibility="Collapsed" />
+                <local:HandUserControl x:Name="Player4HandUserControl" Height="218" Visibility="Collapsed" />
             </StackPanel>
 
         </Grid>

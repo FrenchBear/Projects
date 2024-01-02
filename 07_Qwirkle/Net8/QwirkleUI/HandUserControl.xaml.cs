@@ -53,8 +53,6 @@ public partial class HandUserControl: UserControl
 
     private void UserControl_KeyDown(object sender, KeyEventArgs e)
     {
-        TraceCall();
-
         if (e.Key == Key.Escape)
         {
             HandIM.EndAnimationsInProgress();
@@ -66,8 +64,6 @@ public partial class HandUserControl: UserControl
 
     internal void SetMainWindowAndViewModel(MainWindow mainWindow, HandViewModel handViewModel)
     {
-        TraceCall();
-
         DataContext = handViewModel;
         MainWindow = mainWindow;
         HandViewModel = handViewModel;
@@ -76,8 +72,6 @@ public partial class HandUserControl: UserControl
 
     internal void AddUITile(Tile ti, RowCol p)
     {
-        TraceCall();
-
         var t = new UITile(ti);
         t.GrayBackground = true;
         t.SetValue(Canvas.TopProperty, p.Row * UnitSize);
@@ -106,15 +100,13 @@ public partial class HandUserControl: UserControl
     {
         if (HandOverState==HandOverStateEnum.InTransition)
             return;
-        //TraceCall();
+        //
 
         //HandIM.IM_MouseMoveWhenUp(sender, e);
     }
 
     private void HandCanvas_MouseDown(object sender, MouseButtonEventArgs e)
     {
-        TraceCall();
-
         HandCanvas.MouseMove -= HandCanvas_MouseMoveWhenUp;
         HandCanvas.MouseMove += HandCanvas_MouseMoveWhenDown;
         HandIM.IM_MouseDown(sender, e, HandCanvas, HandDrawingCanvas, TransformationMatrix.Matrix);
@@ -124,7 +116,6 @@ public partial class HandUserControl: UserControl
     {
         if (HandOverState == HandOverStateEnum.InTransition)
             return;
-        TraceCall();
 
         Point? handCanvasMousePosition = HandIM.IM_MouseMoveWhenDown(sender, e, HandCanvas, TransformationMatrix.Matrix);
 
@@ -142,27 +133,17 @@ public partial class HandUserControl: UserControl
 
     private void HandCanvas_MouseUp(object sender, MouseButtonEventArgs e)
     {
-        TraceCall();
-
         HandCanvas.MouseMove -= HandCanvas_MouseMoveWhenDown;
         HandCanvas.MouseMove += HandCanvas_MouseMoveWhenUp;
         HandIM.IM_MouseUp(sender, e);
     }
 
     // Actually not used for Hand
-    private void HandCanvas_MouseWheel(object sender, MouseWheelEventArgs e)
-    {
-        TraceCall();
+    private void HandCanvas_MouseWheel(object sender, MouseWheelEventArgs e) 
+        => HandIM.IM_MouseWheel(sender, e);
 
-        HandIM.IM_MouseWheel(sender, e);
-    }
-
-    private void HandCanvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
-    {
-        TraceCall();
-
-        HandIM.IM_MouseRightButtonDown(sender, e, HandCanvas, HandDrawingCanvas);
-    }
+    private void HandCanvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e) 
+        => HandIM.IM_MouseRightButtonDown(sender, e, HandCanvas, HandDrawingCanvas);
 }
 
 internal class HandInteractionManager(HashSet<UITileRowCol> hand, HandUserControl view): InteractionManager
@@ -172,8 +153,6 @@ internal class HandInteractionManager(HashSet<UITileRowCol> hand, HandUserContro
 
     internal override void UpdateTargetPosition()
     {
-        TraceCall("over Hand.");
-
         // Find a free position
         // Build NewHand without tiles being moved
         var NewHand = new List<UITileRowCol>();

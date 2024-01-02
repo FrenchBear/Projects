@@ -163,6 +163,13 @@ public class Hand: HashSet<Tile>, IEquatable<Hand>
     public Hand(IEnumerable<Tile> tiles) : base(tiles) { }
     public Hand(HashSet<Tile> tiles) : base(tiles) { }
 
+    public new void Add(Tile t)
+    {
+        if (Count == 6)
+            Debugger.Break();
+        base.Add(t);
+    }
+
     public string AsString(bool? Color)
         => string.Join(" ", this.Select(m => m.AsString(Color)));
 

@@ -20,16 +20,23 @@ internal class Model(MainViewModel viewModel)
     public Player[] Players = [];
 
     public int PlayerIndex = 0;
-    public int PlayersCount = 2;
+    public int PlayersCount = 1;
 
     public Player CurrentPlayer => Players[PlayerIndex];
+
+    internal void NewPlayers()
+    {
+        Players = new Player[PlayersCount];
+        for (int p = 0; p < PlayersCount; p++)
+            Players[p] = new Player { Index = p };
+    }
 
     internal void NewBoard(bool withTestInit)
     {
         Board = new Board();
         Bag = new Bag();
-        Players = new Player[PlayersCount];
 
+        /*
         for (int p = 0; p < PlayersCount; p++)
         {
             Players[p] = new Player { Index = p };
@@ -87,6 +94,7 @@ internal class Model(MainViewModel viewModel)
             if (p >= 1 || !withTestInit)
                 for (var i = 0; i < 6; i++)
                     Players[p].Hand.Add(Bag.GetTile());
+        */
     }
 
     internal (bool, string) EvaluateMoves(HashSet<TileRowCol> moves)
