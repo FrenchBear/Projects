@@ -211,6 +211,8 @@ internal class MainViewModel: INotifyPropertyChanged
                 if (!initialized)
                 {
                     PerformNewGame(actionBag.Tiles);
+                    for (int p = 0; p < Model.PlayersCount; p++)
+                        HandViewModels[p].Score = "0";
                     initialized = true;
                 }
                 else
@@ -222,10 +224,15 @@ internal class MainViewModel: INotifyPropertyChanged
             }
             else if (action is HistoryActionMoves actionMoves)
             {
-                PlaySuggestion = new PlaySuggestion(new Moves(actionMoves.Moves), new PointsBonus(99, 99), []);
+                PlaySuggestion = new PlaySuggestion(new Moves(actionMoves.Moves), new PointsBonus(actionMoves.Points, 99), []);
                 PerformSuggestPlay(false);
                 if (na == 0)    // Don't validate last move
+                {
+                    Model.UpdateRanks();
+                    for (int p = 0; p < Model.PlayersCount; p++)
+                        HandViewModels[p].Rank = Model.Players[p].Rank;
                     break;
+                }
                 PerformValidate(true);
             }
             else
@@ -274,7 +281,7 @@ internal class MainViewModel: INotifyPropertyChanged
                 CurrentPlayer.Hand.Remove(move.Tile);
             }
             if (!rebuildHistory)
-                HistoryActions.AddLast(new HistoryActionMoves(moves));
+                HistoryActions.AddLast(new HistoryActionMoves(moves, pb.Points));
             CurrentMoves.Clear();
             CurrentMovesStatus = MoveStatus.Empty;
             StatusMessage = string.Empty;
@@ -461,6 +468,7 @@ internal class MainViewModel: INotifyPropertyChanged
         {
             HandViewModels[i].RemoveAllUITiles();
             Model.Players[i].Hand.Clear();
+            Model.Players[i].Score = 0;
             HandViewModels[i].RefillAndDrawHand();
         }
 

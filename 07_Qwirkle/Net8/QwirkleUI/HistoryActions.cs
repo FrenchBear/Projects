@@ -22,7 +22,8 @@ internal class HistoryActionBag(List<Tile> tiles): HistoryAction
     public readonly List<Tile> Tiles = tiles;
 }
 
-internal class HistoryActionMoves(Moves moves): HistoryAction
+internal class HistoryActionMoves(Moves moves, int points): HistoryAction
 {
     public readonly Moves Moves = new(moves);
+    public readonly int Points = points;
 }
