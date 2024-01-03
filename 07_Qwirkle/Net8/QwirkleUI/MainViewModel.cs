@@ -34,6 +34,7 @@ internal class MainViewModel: INotifyPropertyChanged
     internal readonly HashSet<UITileRowCol> CurrentMoves = [];
     internal MoveStatus CurrentMovesStatus = MoveStatus.Empty;
     private PlaySuggestion? PlaySuggestion;     // Suggestion with maximum possible scire with current hand
+    internal HistoryActions HistoryActions = [];
 
     // Helpers
     public Player CurrentPlayer => Model.CurrentPlayer;
@@ -104,8 +105,8 @@ internal class MainViewModel: INotifyPropertyChanged
     // -------------------------------------------------
     // Relays to model
 
-    internal void NewBoard(bool withTestInit)
-        => Model.NewBoard(withTestInit);
+    internal void NewBoard()
+        => Model.NewBoard();
 
     public BoundingRectangle Bounds()
     {
@@ -186,9 +187,6 @@ internal class MainViewModel: INotifyPropertyChanged
     // -------------------------------------------------
     // Undo support
 
-    // Should implement singleton pattern
-    //public UndoStackClass UndoStack = new();
-
     internal void PerformUndo()
     {
         View.BoardIM.EndAnimationsInProgress();
@@ -199,34 +197,43 @@ internal class MainViewModel: INotifyPropertyChanged
             return;
         }
 
-        //UndoStackClass.UndoAction action = UndoStack.Pop();
+        // Remove last action
+        int na = HistoryActions.Count;
+        Debug.Assert(na > 1);
 
-        //switch (action.Action)
-        //{
-        //    case UndoStackClass.UndoActions.TileRowCol:
-        //        UpdateWordRowColLocation(action.WordAndCanvasList, action.RowColOrientationList, false);   // Coordinates in wordRowColList are updated
-        //        view.MoveWordAndCanvasList(action.WordAndCanvasList);
-        //        break;
+        // Replay history
+        bool initialized = false;
+        foreach (var action in HistoryActions)
+        {
+            na--;
+            if (action is HistoryActionBag actionBag)
+            {
+                if (!initialized)
+                {
+                    PerformNewGame(actionBag.Tiles);
+                    initialized = true;
+                }
+                else
+                {
+                    if (na == 0)    // Don't perform last exchange
+                        break;
+                    Model.Bag.SetTiles(actionBag.Tiles);
+                }
+            }
+            else if (action is HistoryActionMoves actionMoves)
+            {
+                PlaySuggestion = new PlaySuggestion(new Moves(actionMoves.Moves), new PointsBonus(99, 99), []);
+                PerformSuggestPlay(false);
+                if (na == 0)    // Don't validate last move
+                    break;
+                PerformValidate(true);
+            }
+            else
+                Debug.Assert(false);
+        }
 
-        //    case UndoStackClass.UndoActions.Delete:
-        //        view.AddWordAndCanvasList(action.WordAndCanvasList, false);
-        //        break;
-
-        //    case UndoStackClass.UndoActions.Add:
-        //        view.DeleteWordAndCanvasList(action.WordAndCanvasList, false);
-        //        break;
-
-        //    case UndoStackClass.UndoActions.SwapOrientation:
-        //        UpdateWordRowColLocation(action.WordAndCanvasList, action.RowColOrientationList, false);   // Coordinates in wordRowColList are updated
-        //        view.SwapOrientation(action.WordAndCanvasList, false);
-        //        break;
-
-        //    default:
-        //        Debug.Assert(false, "Unknown/Unsupported Undo Action");
-        //        break;
-        //}
-
-        //view.FinalRefreshAfterUpdate();
+        // Remove last action from history
+        HistoryActions.RemoveLast();
     }
 
     void RefillPlayerHand()
@@ -238,7 +245,7 @@ internal class MainViewModel: INotifyPropertyChanged
     }
 
     // Validate command
-    bool PerformValidate()
+    bool PerformValidate(bool rebuildHistory = false)
     {
         if (CurrentMoves.Count == 0)
             return false;
@@ -266,6 +273,8 @@ internal class MainViewModel: INotifyPropertyChanged
                 Debug.Assert(CurrentPlayer.Hand.Contains(move.Tile));
                 CurrentPlayer.Hand.Remove(move.Tile);
             }
+            if (!rebuildHistory)
+                HistoryActions.AddLast(new HistoryActionMoves(moves));
             CurrentMoves.Clear();
             CurrentMovesStatus = MoveStatus.Empty;
             StatusMessage = string.Empty;
@@ -349,13 +358,17 @@ internal class MainViewModel: INotifyPropertyChanged
         for (; ; )
         {
             Model.Bag.ReturnTiles(CurrentPlayer.Hand);
+            var newBagTiles = new List<Tile>(Model.Bag.Tiles);      // Keep a copy before refilling player hand
             CurrentPlayer.Hand.Clear();
             CurrentHandViewModel.RemoveAllUITiles();
             RefillPlayerHand();
             EvaluateCurrentMoves();
 
             if (PlaySuggestion!.PB.Points > 0)
+            {
+                HistoryActions.AddLast(new HistoryActionBag(newBagTiles));
                 return;
+            }
         }
     }
 
@@ -431,11 +444,19 @@ internal class MainViewModel: INotifyPropertyChanged
     // -------------------------------------------------
 
     // Keep existing players
-    internal void PerformNewGame()
+    internal void PerformNewGame(List<Tile>? initialBagTiles = null)
     {
-        Model.NewBoard(false);
+        Model.NewBoard(initialBagTiles);
         View.BoardDrawingCanvasRemoveAllUITiles();
         CurrentMoves.Clear();
+
+        if (initialBagTiles == null)    // Don't clear or update history while replaying it
+        {
+            HistoryActions.Clear();
+            Debug.Assert(Model.Bag.Tiles.Count == 3 * 6 * 6);
+            HistoryActions.AddLast(new HistoryActionBag(new List<Tile>(Model.Bag.Tiles)));
+        }
+
         for (int i = 0; i < Model.Players.Length; i++)
         {
             HandViewModels[i].RemoveAllUITiles();
@@ -443,7 +464,6 @@ internal class MainViewModel: INotifyPropertyChanged
             HandViewModels[i].RefillAndDrawHand();
         }
 
-        //UndoStack.Clear();
         View.RescaleAndCenter(true, true);
         PlaySuggestion = null;
         EvaluateCurrentMoves();
@@ -560,7 +580,7 @@ internal class MainViewModel: INotifyPropertyChanged
 
     // -----------------------------------
 
-    private bool UndoCanExecute(object obj) => false;    // UndoStack.CanUndo;
+    private bool UndoCanExecute(object obj) => HistoryActions.Count > 1 || CurrentMoves.Count > 0;    // Since initial bag is recorded as first action, don't consider it's enough to undo
 
     private void UndoExecute(object obj) => PerformUndo();
 

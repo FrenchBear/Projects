@@ -4,8 +4,10 @@
 // 2023-12-11   PV      First version
 
 using LibQwirkle;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Windows.Documents;
 
 namespace QwirkleUI;
 
@@ -28,70 +30,10 @@ internal class Model(MainViewModel viewModel)
             Players[p] = new Player { Index = p };
     }
 
-    internal void NewBoard(bool withTestInit)
+    internal void NewBoard(List<Tile>? initialBagTiles = null)
     {
         Board = new Board();
-        Bag = new Bag();
-
-        /*
-        for (int p = 0; p < PlayersCount; p++)
-        {
-            Players[p] = new Player { Index = p };
-            Players[p].Name = $"Joueur #{p + 1}";
-        }
-
-        if (withTestInit)
-        {
-            var t1 = new Tile(Shape.Square, Color.Red, 1);
-            var t2 = new Tile(Shape.Lozange, Color.Red, 1);
-            var t3 = new Tile(Shape.Circle, Color.Red, 1);
-            var t4 = new Tile(Shape.Circle, Color.Blue, 1);
-            var t5 = new Tile(Shape.Circle, Color.Green, 1);
-            var t6 = new Tile(Shape.Circle, Color.Orange, 1);
-
-            Board.AddMove(new TileRowCol(t1, 50, 50));
-            Board.AddMove(new TileRowCol(t2, 50, 51));
-            Board.AddMove(new TileRowCol(t3, 50, 52));
-            Board.AddMove(new TileRowCol(t4, 49, 52));
-            Board.AddMove(new TileRowCol(t5, 48, 52));
-            Board.AddMove(new TileRowCol(t6, 47, 52));
-
-            var h1 = new Tile(Shape.Lozange, Color.Blue, 1);
-            var h2 = new Tile(Shape.Square, Color.Blue, 1);
-            var h3 = new Tile(Shape.Star, Color.Blue, 1);
-            var h4 = new Tile(Shape.Star, Color.Yellow, 1);
-            var h5 = new Tile(Shape.Square, Color.Red, 2);
-            var h6 = new Tile(Shape.Lozange, Color.Green, 1);
-
-            Players[0].Hand.Add(h1);
-            Players[0].Hand.Add(h2);
-            Players[0].Hand.Add(h3);
-            Players[0].Hand.Add(h4);
-            Players[0].Hand.Add(h5);
-            Players[0].Hand.Add(h6);
-
-            Bag.RemoveTile(t1);
-            Bag.RemoveTile(t2);
-            Bag.RemoveTile(t3);
-            Bag.RemoveTile(t4);
-            Bag.RemoveTile(t5);
-            Bag.RemoveTile(t6);
-
-            Bag.RemoveTile(h1);
-            Bag.RemoveTile(h2);
-            Bag.RemoveTile(h3);
-            Bag.RemoveTile(h4);
-            Bag.RemoveTile(h5);
-            Bag.RemoveTile(h6);
-
-            //Players[0].Score = 7;
-        }
-
-        for (int p = 0; p < PlayersCount; p++)
-            if (p >= 1 || !withTestInit)
-                for (var i = 0; i < 6; i++)
-                    Players[p].Hand.Add(Bag.GetTile());
-        */
+        Bag = new Bag(initialBagTiles);
     }
 
     internal (bool, string) EvaluateMoves(Moves moves)

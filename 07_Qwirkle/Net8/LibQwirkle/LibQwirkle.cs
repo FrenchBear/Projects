@@ -209,16 +209,26 @@ public static class RandomGenerator
 // Bag is a shuffled container for 6x6x3 = 108 standard tiles
 public class Bag
 {
-    readonly List<Tile> Tiles = [];
+    public readonly List<Tile> Tiles = [];
 
-    public Bag()
+    public Bag(List<Tile>? initialBagTiles = null)
     {
-        foreach (Shape s in Enum.GetValues(typeof(Shape)))
-            foreach (Color c in Enum.GetValues(typeof(Color)))
-                for (int i = 1; i <= 3; i++)
-                    Tiles.Add(new(s, c, i));
+        if (initialBagTiles == null)
+        {
+            foreach (Shape s in Enum.GetValues(typeof(Shape)))
+                foreach (Color c in Enum.GetValues(typeof(Color)))
+                    for (int i = 1; i <= 3; i++)
+                        Tiles.Add(new(s, c, i));
+            ShuffleTiles();
+        }
+        else
+            SetTiles(initialBagTiles);
+    }
 
-        ShuffleTiles();
+    public void SetTiles(List<Tile> tiles)
+    {
+        Tiles.Clear();
+        Tiles.AddRange(tiles);
     }
 
     private void ShuffleTiles()
