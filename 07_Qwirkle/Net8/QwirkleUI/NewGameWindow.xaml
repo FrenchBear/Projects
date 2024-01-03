@@ -32,27 +32,28 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
+        <TextBlock Grid.ColumnSpan="4" Margin="0,0,0,12" TextWrapping="Wrap">Sélectionner le nombre de joueurs de 1 à 4, entrer le nom des joueurs, et choisir s'il s'agit d'un joueur humain ou de l'ordinateur.</TextBlock>
+
+        <RadioButton Name="Option1Player" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" IsChecked="{Binding Path=PlayersCount, Converter={StaticResource ParamToBooleanConverter}, ConverterParameter=1}">1</RadioButton>
+        <TextBox Name="Player1Name" Grid.Row="1" Grid.Column="1" Width="110" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding Player1Name, UpdateSourceTrigger=PropertyChanged}"/>
+        <CheckBox Name="Player1Computer" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" IsChecked="{Binding Player1IsComputer}">Ordinateur</CheckBox>
+
+        <RadioButton Name="Option2Players" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" IsChecked="{Binding Path=PlayersCount, Converter={StaticResource ParamToBooleanConverter}, ConverterParameter=2}">2</RadioButton>
+        <TextBox Name="Player2Name" Grid.Row="2" Grid.Column="1" Width="110" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding Player2Name, UpdateSourceTrigger=PropertyChanged}"/>
+        <CheckBox Name="Player2Computer" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" IsChecked="{Binding Player2IsComputer}">Ordinateur</CheckBox>
+
+        <RadioButton Name="Option3Players" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" IsChecked="{Binding Path=PlayersCount, Converter={StaticResource ParamToBooleanConverter}, ConverterParameter=3}">3</RadioButton>
+        <TextBox Name="Player3Name" Grid.Row="3" Grid.Column="1" Width="110" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding Player3Name, UpdateSourceTrigger=PropertyChanged}"/>
+        <CheckBox Name="Player3Computer" Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" IsChecked="{Binding Player3IsComputer}">Ordinateur</CheckBox>
+
+        <RadioButton Name="Option4Players" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" IsChecked="{Binding Path=PlayersCount, Converter={StaticResource ParamToBooleanConverter}, ConverterParameter=4}">4</RadioButton>
+        <TextBox Name="Player4Name" Grid.Row="4" Grid.Column="1" Width="110" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding Player4Name, UpdateSourceTrigger=PropertyChanged}"/>
+        <CheckBox Name="Player4Computer" Grid.Row="4" Grid.Column="2" VerticalAlignment="Center" IsChecked="{Binding Player4IsComputer}">Ordinateur</CheckBox>
+
         <StackPanel Grid.Row="0" Grid.Column="4" Orientation="Vertical" Margin="6,0,0,0">
             <Button Name="OKButton" Padding="8,1" Margin="0,0,0,6" Click="OKButton_Click" IsDefault="True">OK</Button>
             <Button Name="CancelButton" Padding="8,1" Click="CancelButton_Click" IsCancel="True">Annuler</Button>
         </StackPanel>
-
-        <TextBlock Grid.ColumnSpan="4" Margin="0,0,0,12" TextWrapping="Wrap">Sélectionner le nombre de joueurs de 1 à 4, entrer le nom des joueurs, et choisir s'il s'agit d'un joueur humain ou de l'ordinateur.</TextBlock>
-
-        <RadioButton Name="Option1Player" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" IsChecked="{Binding Path=PlayersCount, Converter={StaticResource ParamToBooleanConverter}, ConverterParameter=1}">1</RadioButton>
-        <RadioButton Name="Option2Players" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" IsChecked="{Binding Path=PlayersCount, Converter={StaticResource ParamToBooleanConverter}, ConverterParameter=2}">2</RadioButton>
-        <RadioButton Name="Option3Players" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" IsChecked="{Binding Path=PlayersCount, Converter={StaticResource ParamToBooleanConverter}, ConverterParameter=3}">3</RadioButton>
-        <RadioButton Name="Option4Players" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" IsChecked="{Binding Path=PlayersCount, Converter={StaticResource ParamToBooleanConverter}, ConverterParameter=4}">4</RadioButton>
-
-        <TextBox Name="Player1Name" Grid.Row="1" Grid.Column="1" Width="110" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding Player1Name, UpdateSourceTrigger=PropertyChanged}"/>
-        <TextBox Name="Player2Name" Grid.Row="2" Grid.Column="1" Width="110" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding Player2Name, UpdateSourceTrigger=PropertyChanged}"/>
-        <TextBox Name="Player3Name" Grid.Row="3" Grid.Column="1" Width="110" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding Player3Name, UpdateSourceTrigger=PropertyChanged}"/>
-        <TextBox Name="Player4Name" Grid.Row="4" Grid.Column="1" Width="110" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding Player4Name, UpdateSourceTrigger=PropertyChanged}"/>
-
-        <CheckBox Name="Player1Computer" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" IsChecked="{Binding Player1IsComputer}">Ordinateur</CheckBox>
-        <CheckBox Name="Player2Computer" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" IsChecked="{Binding Player2IsComputer}">Ordinateur</CheckBox>
-        <CheckBox Name="Player3Computer" Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" IsChecked="{Binding Player3IsComputer}">Ordinateur</CheckBox>
-        <CheckBox Name="Player4Computer" Grid.Row="4" Grid.Column="2" VerticalAlignment="Center" IsChecked="{Binding Player4IsComputer}">Ordinateur</CheckBox>
 
     </Grid>
 </Window>

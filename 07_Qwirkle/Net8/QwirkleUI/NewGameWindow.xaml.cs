@@ -17,6 +17,15 @@ public partial class NewGameWindow: Window
 
         ViewModel = new(model);
         DataContext = ViewModel;
+
+        Loaded += (s, e) =>
+        {
+            Player1Name.Focus();
+            Player1Name.SelectAll();
+            Player2Name.SelectAll();
+            Player3Name.SelectAll();
+            Player4Name.SelectAll();
+        };
     }
 
     private void OKButton_Click(object sender, RoutedEventArgs e)

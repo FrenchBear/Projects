@@ -42,6 +42,7 @@ public partial class MainWindow: Window
         Refresh();
 
         ViewModel.PerformNewPlayers();
+        BackgroundImage.Visibility = Visibility.Collapsed;
     }
 
     private void MainWindow_KeyDown(object sender, KeyEventArgs e)

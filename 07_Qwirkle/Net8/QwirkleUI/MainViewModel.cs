@@ -192,7 +192,12 @@ internal class MainViewModel: INotifyPropertyChanged
     internal void PerformUndo()
     {
         View.BoardIM.EndAnimationsInProgress();
-        MessageBox.Show("ToDo: Undo");
+
+        if (CurrentMoves.Count > 0)
+        {
+            PerformDelete(true);
+            return;
+        }
 
         //UndoStackClass.UndoAction action = UndoStack.Pop();
 
@@ -448,6 +453,7 @@ internal class MainViewModel: INotifyPropertyChanged
     internal void PerformNewPlayers()
     {
         var ng = new NewGameWindow(Model);
+        ng.Owner = View;
         var res = ng.ShowDialog() ?? false;
         if (!res)
         {

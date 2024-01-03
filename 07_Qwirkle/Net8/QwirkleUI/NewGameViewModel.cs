@@ -91,6 +91,8 @@ internal class NewGameViewModel: INotifyPropertyChanged
             {
                 _Player2Name = value;
                 NotifyPropertyChanged(nameof(Player2Name));
+                if (PlayersCount < 2)
+                    PlayersCount = 2;
             }
         }
     }
@@ -105,6 +107,8 @@ internal class NewGameViewModel: INotifyPropertyChanged
             {
                 _Player3Name = value;
                 NotifyPropertyChanged(nameof(Player3Name));
+                if (PlayersCount < 3)
+                    PlayersCount = 3;
             }
         }
     }
@@ -119,6 +123,8 @@ internal class NewGameViewModel: INotifyPropertyChanged
             {
                 _Player4Name = value;
                 NotifyPropertyChanged(nameof(Player4Name));
+                if (PlayersCount < 4)
+                    PlayersCount = 4;
             }
         }
     }

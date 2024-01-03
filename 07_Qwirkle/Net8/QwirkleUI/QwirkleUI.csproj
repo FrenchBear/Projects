@@ -28,6 +28,7 @@
 		<None Remove="Qwirkle.ico" />
 		<None Remove="Qwirkle.png" />
 		<None Remove="Resources\QwirkleAbout.png" />
+		<None Remove="Resources\QwirkleBackground.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -49,6 +50,7 @@
 		<Resource Include="Icons\undo.ico" />
 		<Resource Include="Qwirkle.ico" />
 		<Resource Include="Resources\QwirkleAbout.png" />
+		<Resource Include="Resources\QwirkleBackground.png" />
 	</ItemGroup>
 
 </Project>

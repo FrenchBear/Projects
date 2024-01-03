@@ -171,6 +171,8 @@
                 <local:HandUserControl x:Name="Player4HandUserControl" Height="218" Visibility="Collapsed" />
             </StackPanel>
 
+            <Image Name="BackgroundImage" Source="/Resources/QwirkleBackground.png" Grid.ColumnSpan="2" Stretch="UniformToFill" />
+
         </Grid>
     </DockPanel>
 </Window>
