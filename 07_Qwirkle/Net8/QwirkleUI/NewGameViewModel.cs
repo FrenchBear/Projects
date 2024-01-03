@@ -76,7 +76,6 @@ internal class NewGameViewModel: INotifyPropertyChanged
             {
                 _Player1Name = value;
                 NotifyPropertyChanged(nameof(Player1Name));
-                Debug.WriteLine("P1 name: " + _Player1Name);
             }
         }
     }

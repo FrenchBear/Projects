@@ -120,14 +120,11 @@ abstract internal class InteractionManager
 
     public InteractionManager() { }
 
-    public void IM_MouseMoveWhenUp(object sender, MouseEventArgs e)
-    {
-        //
+    public void IM_MouseMoveWhenUp(object sender, MouseEventArgs e) { } // Maybe some visual hinting?
 
-        // Maybe some visual hinting
-    }
-
-    // Returs false if no UITile has been hit
+    /// <summary>
+    /// Returs false if no UITile has been hit
+    /// </summary>
     private bool UpdateSelectionAfterClick(MouseEventArgs e, Canvas c, Canvas dc)
     {
         // If no Hand UITile is hit, just clear selection and return

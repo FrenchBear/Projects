@@ -20,7 +20,9 @@ internal static class Helpers
         Active,             // After transferring hand tiles to board, still moving (mouse up will revert to inactive)
     }
 
-    // Return UITile hit by mouse on BoardDrawingCanvas dc, or null if no UITile has been hit
+    /// <summary>
+    /// Return UITile hit by mouse on BoardDrawingCanvas dc, or null if no UITile has been hit
+    /// </summary>
     public static UITile? GetHitHile(Point p, Canvas dc)
     {
         if (dc.InputHitTest(p) is not DependencyObject h)
