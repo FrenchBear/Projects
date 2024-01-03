@@ -4,7 +4,6 @@
 // 2023-12-12   PV
 
 using LibQwirkle;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -67,7 +66,7 @@ public partial class HandUserControl: UserControl
         DataContext = handViewModel;
         MainWindow = mainWindow;
         HandViewModel = handViewModel;
-        HandIM = new HandInteractionManager(HandViewModel.UIHand, this);
+        HandIM = new HandInteractionManager(HandViewModel.UIHand /*, this*/);
     }
 
     internal void AddUITile(Tile ti, RowCol p)
@@ -146,10 +145,10 @@ public partial class HandUserControl: UserControl
         => HandIM.IM_MouseRightButtonDown(sender, e, HandCanvas, HandDrawingCanvas);
 }
 
-internal class HandInteractionManager(HashSet<UITileRowCol> hand, HandUserControl view): InteractionManager
+internal class HandInteractionManager(HashSet<UITileRowCol> hand /*, HandUserControl view*/ ): InteractionManager
 {
     private readonly HashSet<UITileRowCol> Hand = hand;
-    private readonly HandUserControl View = view;
+    //private readonly HandUserControl View = view;
 
     internal override void UpdateTargetPosition()
     {

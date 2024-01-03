@@ -6,14 +6,17 @@
         xmlns:local="clr-namespace:QwirkleUI" d:DataContext="{d:DesignInstance Type=local:NewGameViewModel}"
         mc:Ignorable="d"
         Topmost="True"
-        WindowStartupLocation="CenterOwner"
-        Title="Qwirkle - Nouveau jeu" Height="210" Width="400">
+        WindowStartupLocation="CenterOwner" Icon="/Qwirkle.ico"
+        Title="Qwirkle - Nouveau jeu" Height="315" Width="600">
 
     <Window.Resources>
         <local:ParamToBooleanConverter x:Key="ParamToBooleanConverter" />
     </Window.Resources>
 
     <Grid Margin="6">
+        <Grid.LayoutTransform>
+            <ScaleTransform ScaleX="1.5" ScaleY="1.5" />
+        </Grid.LayoutTransform>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="20" />
@@ -41,10 +44,10 @@
         <RadioButton Name="Option3Players" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" IsChecked="{Binding Path=PlayersCount, Converter={StaticResource ParamToBooleanConverter}, ConverterParameter=3}">3</RadioButton>
         <RadioButton Name="Option4Players" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" IsChecked="{Binding Path=PlayersCount, Converter={StaticResource ParamToBooleanConverter}, ConverterParameter=4}">4</RadioButton>
 
-        <TextBox Name="Player1Name" Grid.Row="1" Grid.Column="1" Width="110" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding Player1Name}"/>
-        <TextBox Name="Player2Name" Grid.Row="2" Grid.Column="1" Width="110" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding Player2Name}"/>
-        <TextBox Name="Player3Name" Grid.Row="3" Grid.Column="1" Width="110" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding Player3Name}"/>
-        <TextBox Name="Player4Name" Grid.Row="4" Grid.Column="1" Width="110" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding Player4Name}"/>
+        <TextBox Name="Player1Name" Grid.Row="1" Grid.Column="1" Width="110" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding Player1Name, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Name="Player2Name" Grid.Row="2" Grid.Column="1" Width="110" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding Player2Name, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Name="Player3Name" Grid.Row="3" Grid.Column="1" Width="110" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding Player3Name, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Name="Player4Name" Grid.Row="4" Grid.Column="1" Width="110" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding Player4Name, UpdateSourceTrigger=PropertyChanged}"/>
 
         <CheckBox Name="Player1Computer" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" IsChecked="{Binding Player1IsComputer}">Ordinateur</CheckBox>
         <CheckBox Name="Player2Computer" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" IsChecked="{Binding Player2IsComputer}">Ordinateur</CheckBox>

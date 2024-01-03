@@ -4,8 +4,12 @@
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net8.0-windows</TargetFramework>
 		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
+		<ImplicitUsings>disable</ImplicitUsings>
 		<UseWPF>true</UseWPF>
+		<Authors>Pierre Violent</Authors>
+		<Copyright>Copyright ©2023-2024 Pierre Violent</Copyright>
+		<Description>Qwirkle interactive game (Net8 C#12)</Description>
+		<Version>1.0.0</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -21,6 +25,9 @@
 		<None Remove="Icons\save.ico" />
 		<None Remove="Icons\swap.ico" />
 		<None Remove="Icons\undo.ico" />
+		<None Remove="Qwirkle.ico" />
+		<None Remove="Qwirkle.png" />
+		<None Remove="Resources\QwirkleAbout.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -40,6 +47,8 @@
 		<Resource Include="Icons\save.ico" />
 		<Resource Include="Icons\swap.ico" />
 		<Resource Include="Icons\undo.ico" />
+		<Resource Include="Qwirkle.ico" />
+		<Resource Include="Resources\QwirkleAbout.png" />
 	</ItemGroup>
 
 </Project>

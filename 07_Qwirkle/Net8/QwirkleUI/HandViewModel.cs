@@ -32,8 +32,7 @@ internal class HandViewModel: INotifyPropertyChanged
         PlayerIndex = playerIndex;
 
         view.SetMainWindowAndViewModel(mainWindow, this);
-
-        PlayerName = $"Joueur #{PlayerIndex+1}";
+        PlayerName = ThisPlayer.Name;
     }
 
     private Player ThisPlayer => Model.Players[PlayerIndex];
@@ -91,13 +90,11 @@ internal class HandViewModel: INotifyPropertyChanged
 
     // -------------------------------------------------
 
-    internal void DrawHand()
-    {
-        foreach (Tile t in ThisPlayer.Hand)
-            AddAndDrawTile(t);
-        PlayerName = ThisPlayer.Name;
-        Score = ThisPlayer.Score.ToString();
-    }
+    //internal void InitPlayerNameAndScore()
+    //{
+    //    PlayerName = ThisPlayer.Name;
+    //    Score = ThisPlayer.Score.ToString();
+    //}
 
     internal void AddAndDrawTile(Tile tile)
     {

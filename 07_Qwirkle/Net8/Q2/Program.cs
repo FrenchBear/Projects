@@ -4,7 +4,9 @@
 // 2023-11-23   PV
 
 using LibQwirkle;
+using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Q2;
 
@@ -55,7 +57,7 @@ internal class Program
         board.AddMove(new TileRowCol(t2, 50, 51));
         board.AddMove(new TileRowCol(t3, 50, 52));
 
-        HashSet<TileRowCol> moves = [
+        Moves moves = [
             new(new Tile(Shape.Square, Color.Red, 2), 51, 51),
         ];
 
@@ -85,7 +87,7 @@ internal class Program
         board.Print();
 
         // Not is same row or in same column
-        HashSet<TileRowCol> moves = [
+        Moves moves = [
             new(new Tile(Shape.Circle, Color.Green, 1), 48, 51),
             new(new Tile(Shape.Square, Color.Green, 1), 47, 53),
         ];
@@ -233,7 +235,7 @@ internal class Program
         Console.WriteLine($"Hand: {hand.AsString(true)}");
         var play = board.Play(hand);
         Console.WriteLine($"Play: {play.AsString(true)}");
-        Debug.Assert(play.Moves.SetEquals(new HashSet<TileRowCol> { new(h2, new(48, 52)), new(h1, new(49, 52)) }));
+        Debug.Assert(play.Moves.SetEquals(new Moves { new(h2, new(48, 52)), new(h1, new(49, 52)) }));
         Debug.Assert(play.PB.Points == 7);
         Debug.Assert(play.NewHand.Equals(new Hand([h3, h4, h5, h6])));
         board.AddMoves(play.Moves);
@@ -279,7 +281,7 @@ internal class Program
 
         board.Print();
 
-        HashSet<TileRowCol> moves =
+        Moves moves =
         [
             new(new Tile(Shape.Lozange, Color.Blue, 1), new(49, 51)),
             new(new Tile(Shape.Square, Color.Blue, 1), new(49, 53)),

@@ -5,7 +5,6 @@
 // 2023-12-28   PV      Integrate Tile
 
 using LibQwirkle;
-using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;

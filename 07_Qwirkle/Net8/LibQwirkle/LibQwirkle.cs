@@ -7,7 +7,6 @@
 
 using System.Collections;
 using System.Diagnostics;
-using System.Net.Security;
 using System.Text;
 
 namespace LibQwirkle;
@@ -132,7 +131,7 @@ public class Moves: HashSet<TileRowCol>
 {
     public Moves() : base() { }
 
-    public Moves(HashSet<TileRowCol> set) : base(set) { }
+    public Moves(Moves set) : base(set) { }
 
     public Moves(IEnumerable<TileRowCol> col) : base(col) { }
 
@@ -201,7 +200,7 @@ public class Hand: HashSet<Tile>    //, IEquatable<Hand>
 public static class RandomGenerator
 {
     // Can use a seed to make tests reproductible
-    static readonly Random rnd = new(1);
+    static readonly Random rnd = new(2);
 
     public static int Next(int MaxValue)
         => rnd.Next(MaxValue);

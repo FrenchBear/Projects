@@ -10,11 +10,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Numerics;
 using System.Windows;
 using System.Windows.Input;
 using static QwirkleUI.App;
-using static QwirkleUI.Helpers;
 
 namespace QwirkleUI;
 
@@ -193,7 +191,8 @@ internal class MainViewModel: INotifyPropertyChanged
 
     internal void PerformUndo()
     {
-        //View.BoardIM.EndAnimationsInProgress();
+        View.BoardIM.EndAnimationsInProgress();
+        MessageBox.Show("ToDo: Undo");
 
         //UndoStackClass.UndoAction action = UndoStack.Pop();
 
@@ -512,15 +511,6 @@ internal class MainViewModel: INotifyPropertyChanged
             CurrentMoves.Add(View.BoardDrawingCanvasAddUITile(m.Tile, m.RC, true));
     }
 
-    internal void DrawHands()
-    {
-        for (int p = 0; p < Model.PlayersCount; p++)
-            HandViewModels[p].DrawHand();
-    }
-
-    internal void AddCurrentMove(UITileRowCol uitrc)
-        => CurrentMoves.Add(uitrc);
-
     internal void UpdateCurrentMoves(UITilesSelection selection)
     {
         foreach (UITileRowCol uitp in selection)
@@ -626,9 +616,5 @@ internal class MainViewModel: INotifyPropertyChanged
 
     private void QuitExecute(object obj) => Environment.Exit(0);
 
-    private void AboutExecute(object obj)
-    {
-        //var aw = new View.AboutWindow();
-        //aw.ShowDialog();
-    }
+    private void AboutExecute(object obj) => new AboutWindow().ShowDialog();
 }

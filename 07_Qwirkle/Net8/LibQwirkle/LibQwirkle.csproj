@@ -6,8 +6,13 @@
 		<Nullable>enable</Nullable>
 		<Description>Qwirkle reboot, Core library</Description>
 		<Authors>Pierre Violent</Authors>
-		<Copyright>Copyright ©Pierre Violent 2023</Copyright>
+		<Copyright>Copyright ©Pierre Violent 2023-2024</Copyright>
 		<Version>1.0.0</Version>
+		<ApplicationIcon>Qwirkle.ico</ApplicationIcon>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="Qwirkle.ico" />
+	</ItemGroup>
 
 </Project>

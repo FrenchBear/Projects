@@ -3,13 +3,8 @@
 //
 // 2024-01-02   PV
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QwirkleUI;
 internal class NewGameViewModel: INotifyPropertyChanged
@@ -81,6 +76,7 @@ internal class NewGameViewModel: INotifyPropertyChanged
             {
                 _Player1Name = value;
                 NotifyPropertyChanged(nameof(Player1Name));
+                Debug.WriteLine("P1 name: " + _Player1Name);
             }
         }
     }

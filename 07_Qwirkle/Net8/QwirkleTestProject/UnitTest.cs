@@ -4,7 +4,10 @@
 // 2023-12-08   PV      UnitTests_Play
 
 using LibQwirkle;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace xUnit_QwirkleTestProject;
 
@@ -56,14 +59,14 @@ public class UnitTests_Base
                    "50 · [ < O · \r\n" +
                    "51   · x ·   \r\n";
 
-         string s2 = board.AsString(false, new Tile(Shape.Lozange, Color.Green, 2));
+        string s2 = board.AsString(false, new Tile(Shape.Lozange, Color.Green, 2));
         Debug.Assert(s == s2);
     }
 
     [Fact]
     public void CountPointsTest()
     {
-        HashSet<TileRowCol> moves =
+        Moves moves =
         [
             new(new Tile(Shape.Lozange, Color.Blue, 1), 49, 51),
             new(new Tile(Shape.Square, Color.Blue, 1), 49, 53),
@@ -101,7 +104,7 @@ public class UnitTests_Base
     [Fact]
     public void TwoPointsTest()
     {
-        HashSet<TileRowCol> moves = [
+        Moves moves = [
             new(new Tile(Shape.Square, Color.Red, 2), 51, 51),
         ];
 
@@ -155,7 +158,7 @@ public class UnitTests_Play
 
         var hand = new Hand([h1, h2, h3, h4, h5, h6]);
         var play = board.Play(hand);
-        Debug.Assert(play.Moves.SetEquals(new HashSet<TileRowCol> { new(h2, 48, 52), new(h1, 49, 52) }));
+        Debug.Assert(play.Moves.SetEquals(new Moves { new(h2, 48, 52), new(h1, 49, 52) }));
         Debug.Assert(play.PB.Points == 7);
         Debug.Assert(play.NewHand.Equals(new Hand([h3, h4, h5, h6])));
         board.AddMoves(play.Moves);
@@ -287,7 +290,7 @@ public class UnitTests_Evaluate
     [Fact]
     public void NotInSameRowOrSameColumn()
     {
-        HashSet<TileRowCol> moves = [
+        Moves moves = [
             new(new Tile(Shape.Circle, Color.Green, 1), 48, 51),
             new(new Tile(Shape.Square, Color.Green, 1), 47, 53),
         ];
@@ -295,13 +298,13 @@ public class UnitTests_Evaluate
         string msg;
         (status, msg) = board.EvaluateMoves(moves);
         Debug.Assert(status == false);
-        Debug.Assert(msg== "Les tuiles jouées doivent être situées sur une même ligne ou une même colonne");
+        Debug.Assert(msg == "Les tuiles jouées doivent être situées sur une même ligne ou une même colonne");
     }
 
     [Fact]
     public void NotSameShapeOrSameColor()
     {
-        HashSet<TileRowCol> moves = [
+        Moves moves = [
             new(new Tile(Shape.Circle, Color.Green, 1), 48, 51),
             new(new Tile(Shape.Square, Color.Orange, 1), 48, 53),
         ];
@@ -315,7 +318,7 @@ public class UnitTests_Evaluate
     [Fact]
     public void NotOnPlayableCell()
     {
-        HashSet<TileRowCol> moves = [
+        Moves moves = [
             new(new Tile(Shape.Circle, Color.Green, 1), 48, 50),
         ];
         bool status;
@@ -328,7 +331,7 @@ public class UnitTests_Evaluate
     [Fact]
     public void NotCompatibleTile()
     {
-        HashSet<TileRowCol> moves = [
+        Moves moves = [
             new(new Tile(Shape.Star, Color.Blue, 1), 49, 51),
         ];
         bool status;
@@ -341,7 +344,7 @@ public class UnitTests_Evaluate
     [Fact]
     public void EvaluateOk()
     {
-        HashSet<TileRowCol> moves = [
+        Moves moves = [
             new(new Tile(Shape.Lozange, Color.Blue, 1), 49, 51),
         ];
         bool status;

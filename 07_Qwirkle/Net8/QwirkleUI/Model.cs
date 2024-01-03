@@ -4,10 +4,7 @@
 // 2023-12-11   PV      First version
 
 using LibQwirkle;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.Linq;
 
 namespace QwirkleUI;
@@ -114,18 +111,18 @@ internal class Model(MainViewModel viewModel)
         int r = 1;
         int s = l.First().Score;
         int n = 0;
-        foreach (var ixsc in l)
+        foreach (var (index, score) in l)
         {
-            if (ixsc.Score == s)
+            if (score == s)
             {
-                Players[ixsc.Index].Rank = r == 1 ? "1er" : $"{r}è";
+                Players[index].Rank = r == 1 ? "1er" : $"{r}è";
                 n++;
                 continue;
             }
-            s = ixsc.Score;
+            s = score;
             r += n;
             n = 1;
-            Players[ixsc.Index].Rank = $"{r}è";
+            Players[index].Rank = $"{r}è";
         }
     }
 
