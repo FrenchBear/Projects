@@ -134,18 +134,56 @@
             </MenuItem>
         </Menu>
 
-        <StatusBar DockPanel.Dock="Bottom" FontSize="24" Margin="4">
-            <StackPanel Orientation="Vertical">
-                <TextBlock Name="StatusText"  Text="{Binding StatusMessage, FallbackValue='Main ToolBar'}" Margin="6,0,0,4"/>
-                <StackPanel Orientation="Horizontal">
-                    <Button Command="{Binding ValidateCommand}" Margin="0,0,6,0" Padding="8,2" ToolTip="Valide le placement des tuiles [F2]">Valider</Button>
-                    <Button Command="{Binding DeleteAllCommand}" Margin="6,0" Padding="8,2" ToolTip="Renvoie toutes les tuiles en cours de placement dans la main du joueur[Echap]">Annuler</Button>
-                    <Button Command="{Binding SuggestPlayCommand}" Margin="6,0" Padding="8,2" ToolTip="Propose un placement de tuiles [F1]">Proposition</Button>
-                    <Button Command="{Binding ExchangeTilesCommand}" Margin="6,0" Padding="8,2" ToolTip="Échanger toutes les tuiles [Ctrl+E]">Échanger</Button>
-                    <Button Command="{Binding RescaleAndCenterCommand}" Margin="6,0" Padding="8,2" ToolTip="Recentrer la vue du jeu [Ctrl+R]">Recentrer</Button>
-                </StackPanel>
-            </StackPanel>
+        <StatusBar DockPanel.Dock="Bottom" FontSize="24">
+            <Button Command="{Binding ValidateCommand}" Margin="0,0,6,0" Padding="8,2" ToolTip="Valide le placement des tuiles [F2]">Valider</Button>
+            <Button Command="{Binding DeleteAllCommand}" Margin="6,0" Padding="8,2" ToolTip="Renvoie toutes les tuiles en cours de placement dans la main du joueur[Echap]">Annuler</Button>
+            <Button Command="{Binding SuggestPlayCommand}" Margin="6,0" Padding="8,2" ToolTip="Propose un placement de tuiles [F1]">Proposition</Button>
+            <Button Command="{Binding ExchangeTilesCommand}" Margin="6,0" Padding="8,2" ToolTip="Échanger toutes les tuiles [Ctrl+E]">Échanger</Button>
+            <Button Command="{Binding RescaleAndCenterCommand}" Margin="6,0" Padding="8,2" ToolTip="Recentrer la vue du jeu [Ctrl+R]">Recentrer</Button>
         </StatusBar>
+
+        <StatusBar DockPanel.Dock="Bottom" FontSize="24" Margin="4,4,4,0">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+            <StatusBarItem>
+                <TextBlock Grid.Column="0" Name="StatusText" Text="{Binding StatusMessage, FallbackValue='Main ToolBar'}" Margin="6,0,0,4" HorizontalAlignment="Stretch" />
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="1">
+                <TextBlock Grid.Column="1" Name="RoundNumberText" Text="{Binding RoundNumber, FallbackValue='Round #1'}" Margin="6,0,0,4" HorizontalAlignment="Right" />
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="2">
+                <TextBlock Grid.Column="2" Name="RemainingTilesText" Text="{Binding RemainingTiles, FallbackValue='# remaining tiles'}" Margin="6,0,0,4" HorizontalAlignment="Right" />
+            </StatusBarItem>
+        </StatusBar>
+
+        <!--<StatusBar DockPanel.Dock="Bottom" FontSize="24" Margin="4,4,4,0">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid Background="Bisque">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>>
+            </StatusBar.ItemsPanel>
+            <TextBlock Grid.Column="0" Name="StatusText" Text="{Binding StatusMessage, FallbackValue='Main ToolBar'}" Margin="6,0,0,4" HorizontalAlignment="Stretch" />
+            <TextBlock Grid.Column="1" Name="RoundNumberText" Text="{Binding RoundNumber, FallbackValue='1'}" Margin="6,0,0,4" HorizontalAlignment="Right" />
+
+        </StatusBar>-->
+
 
         <Grid>
             <Grid.ColumnDefinitions>

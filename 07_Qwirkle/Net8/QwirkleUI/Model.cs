@@ -11,15 +11,17 @@ using System.Windows.Documents;
 
 namespace QwirkleUI;
 
-internal class Model(MainViewModel viewModel)
+internal class Model(/*MainViewModel viewModel*/)
 {
-    private readonly MainViewModel viewModel = viewModel;               // Useful?
+    //private readonly MainViewModel viewModel = viewModel;               // Useful?
     public Board Board = new();
     public Bag Bag = new();
     public Player[] Players = [];
 
     public int PlayerIndex = 0;
     public int PlayersCount = 1;
+
+    public int RoundNumber = 1;
 
     public Player CurrentPlayer => Players[PlayerIndex];
 
@@ -30,10 +32,16 @@ internal class Model(MainViewModel viewModel)
             Players[p] = new Player { Index = p };
     }
 
+    /// <summary>
+    /// Initialize model data for a new game, except players information that is preserved
+    /// </summary>
+    /// <param name="initialBagTiles">If null, then a random bag is generated, otherwise the bag is initialized with provided list of tiles</param>
     internal void NewBoard(List<Tile>? initialBagTiles = null)
     {
         Board = new Board();
         Bag = new Bag(initialBagTiles);
+        PlayerIndex = 0;
+        RoundNumber = 1;
     }
 
     internal (bool, string) EvaluateMoves(Moves moves)

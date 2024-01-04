@@ -76,7 +76,7 @@ internal class MainViewModel: INotifyPropertyChanged
     {
         // Initialize ViewModel
         View = view;
-        Model = new Model(this);
+        Model = new Model(/*this*/);
 
         // Binding commands with behavior
 
@@ -105,8 +105,8 @@ internal class MainViewModel: INotifyPropertyChanged
     // -------------------------------------------------
     // Relays to model
 
-    internal void NewBoard()
-        => Model.NewBoard();
+    //internal void NewBoard()
+    //    => Model.NewBoard();
 
     public BoundingRectangle Bounds()
     {
@@ -156,7 +156,7 @@ internal class MainViewModel: INotifyPropertyChanged
         if (status)
         {
             PointsBonus pb = Model.CountPoints(moves);
-            StatusMessage = $"OK: {pb.Points} points";
+            StatusMessage = $"Placement valide à {pb.Points} points";
             CurrentMovesStatus = MoveStatus.Valid;
         }
         else
@@ -169,17 +169,45 @@ internal class MainViewModel: INotifyPropertyChanged
     // -------------------------------------------------
     // Bindings
 
-    private string m_StatusMessage = "";
+    private string _StatusMessage = "";
 
     public string StatusMessage
     {
-        get => m_StatusMessage;
+        get => _StatusMessage;
         set
         {
-            if (m_StatusMessage != value)
+            if (_StatusMessage != value)
             {
-                m_StatusMessage = value;
+                _StatusMessage = value;
                 NotifyPropertyChanged(nameof(StatusMessage));
+            }
+        }
+    }
+
+    private string _RoundNumber = "";
+    public string RoundNumber
+    {
+        get => _RoundNumber;
+        set
+        {
+            if (_RoundNumber != value)
+            {
+                _RoundNumber = value;
+                NotifyPropertyChanged(nameof(RoundNumber));
+            }
+        }
+    }
+
+    private string _RemainingTiles = "";
+    public string RemainingTiles
+    {
+        get => _RemainingTiles;
+        set
+        {
+            if (_RemainingTiles != value)
+            {
+                _RemainingTiles = value;
+                NotifyPropertyChanged(nameof(RemainingTiles));
             }
         }
     }
@@ -231,6 +259,7 @@ internal class MainViewModel: INotifyPropertyChanged
                     Model.UpdateRanks();
                     for (int p = 0; p < Model.PlayersCount; p++)
                         HandViewModels[p].Rank = Model.Players[p].Rank;
+                    UpdateRemainingTiles();
                     break;
                 }
                 PerformValidate(true);
@@ -243,9 +272,21 @@ internal class MainViewModel: INotifyPropertyChanged
         HistoryActions.RemoveLast();
     }
 
+    private void UpdateRemainingTiles()
+    {
+        int r = Model.Bag.Tiles.Count;
+        if (r == 0)
+            RemainingTiles = "Toutes les tuiles ont été jouées";
+        else if (r == 1)
+            RemainingTiles = "Une tuile restante";
+        else
+            RemainingTiles = $"{r} tuiles restantes";
+    }
+
     void RefillPlayerHand()
     {
         CurrentHandViewModel.RefillAndDrawHand();
+        UpdateRemainingTiles();
 
         // Refilling player hand invalidates current PlaySuggestion
         PlaySuggestion = null;
@@ -322,6 +363,15 @@ internal class MainViewModel: INotifyPropertyChanged
             HandViewModels[oldIndex].UpdateTitleBrush();
             HandViewModels[Model.PlayerIndex].UpdateTitleBrush();
         }
+
+        if (Model.PlayerIndex == 0)
+            Model.RoundNumber++;
+
+        if (endGame)
+            RoundNumber = $"Tour #{Model.RoundNumber} (dernier tour)";
+        else
+            RoundNumber = $"Tour #{Model.RoundNumber}";
+
         return true;
     }
 
@@ -456,6 +506,7 @@ internal class MainViewModel: INotifyPropertyChanged
         Model.NewBoard(initialBagTiles);
         View.BoardDrawingCanvasRemoveAllUITiles();
         CurrentMoves.Clear();
+        RoundNumber = "Tour #1";
 
         if (initialBagTiles == null)    // Don't clear or update history while replaying it
         {
@@ -471,6 +522,8 @@ internal class MainViewModel: INotifyPropertyChanged
             Model.Players[i].Score = 0;
             HandViewModels[i].RefillAndDrawHand();
         }
+
+        UpdateRemainingTiles();
 
         View.RescaleAndCenter(true, true);
         PlaySuggestion = null;
