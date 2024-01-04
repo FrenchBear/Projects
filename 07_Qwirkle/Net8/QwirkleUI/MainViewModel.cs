@@ -60,8 +60,8 @@ internal class MainViewModel: INotifyPropertyChanged
     // Edit
     public ICommand ValidateCommand { get; }
     public ICommand UndoCommand { get; }
-    public ICommand DeleteCommand { get; }
-    public ICommand DeleteAllCommand { get; }
+    public ICommand ReturnSelectedTilesCommand { get; }
+    public ICommand ReturnAllTilesCommand { get; }
     public ICommand SuggestPlayCommand { get; }
     public ICommand ExchangeTilesCommand { get; }
 
@@ -90,8 +90,8 @@ internal class MainViewModel: INotifyPropertyChanged
         // Edit
         ValidateCommand = new RelayCommand<object>(ValidateExecute, ValidateCanExecute);
         UndoCommand = new RelayCommand<object>(UndoExecute, UndoCanExecute);
-        DeleteCommand = new RelayCommand<object>(DeleteExecute, DeleteCanExecute);
-        DeleteAllCommand = new RelayCommand<object>(DeleteAllExecute, DeleteAllCanExecute);
+        ReturnSelectedTilesCommand = new RelayCommand<object>(ReturnSelectedTilesExecute, ReturnSelectedTilesCanExecute);
+        ReturnAllTilesCommand = new RelayCommand<object>(ReturnAllTilesExecute, ReturnAllTilesCanExecute);
         SuggestPlayCommand = new RelayCommand<object>(SuggestPlayExecute, SuggestPlayCanExecute);
         ExchangeTilesCommand = new RelayCommand<object>(ExchangeTilesExecute, ExchangeTilesCanExecute);
 
@@ -647,9 +647,9 @@ internal class MainViewModel: INotifyPropertyChanged
 
     // -----------------------------------
 
-    private bool DeleteCanExecute(object obj) => !View.BoardIM.Selection.IsEmpty;
+    private bool ReturnSelectedTilesCanExecute(object obj) => !View.BoardIM.Selection.IsEmpty;
 
-    private void DeleteExecute(object obj)
+    private void ReturnSelectedTilesExecute(object obj)
     {
         PerformDelete(false);
         EvaluateCurrentMoves();
@@ -657,9 +657,9 @@ internal class MainViewModel: INotifyPropertyChanged
 
     // -----------------------------------
 
-    private bool DeleteAllCanExecute(object obj) => CurrentMoves.Count > 0;
+    private bool ReturnAllTilesCanExecute(object obj) => CurrentMoves.Count > 0;
 
-    private void DeleteAllExecute(object obj)
+    private void ReturnAllTilesExecute(object obj)
     {
         PerformDelete(true);
         EvaluateCurrentMoves();
