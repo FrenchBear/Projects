@@ -49,6 +49,7 @@
         <KeyBinding Key="N" Modifiers="Ctrl" Command="{Binding NewGameCommand}" />
         <KeyBinding Key="N" Modifiers="Ctrl+Shift" Command="{Binding NewPlayersCommand}" />
         <KeyBinding Key="E" Modifiers="Ctrl" Command="{Binding ExchangeTilesCommand}" />
+        <KeyBinding Key="I" Modifiers="Ctrl" Command="{Binding SettingsCommand}" />
     </Window.InputBindings>
 
     <DockPanel>
@@ -97,7 +98,7 @@
                         <Image Source="/Icons/undo.ico" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Command="{Binding ReturnSelectedTilesCommand}" Header="_Renvoie les tuiles sélectionnbées dans la main du joueur" InputGestureText="Suppr">
+                <MenuItem Command="{Binding ReturnSelectedTilesCommand}" Header="_Renvoie les tuiles sélectionnées dans la main du joueur" InputGestureText="Suppr">
                     <MenuItem.Icon>
                         <Image Source="/Icons/returnselectedtiles.ico" />
                     </MenuItem.Icon>
@@ -118,6 +119,16 @@
                         <Image Source="/Icons/exchange.ico" />
                     </MenuItem.Icon>
                 </MenuItem>
+
+                <Separator />
+
+                <MenuItem Command="{Binding SettingsCommand}" Header="_Options du jeu" InputGestureText="Ctrl+I">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/settings.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+
             </MenuItem>
 
             <MenuItem Name="ViewMenu" Header="_Vue">

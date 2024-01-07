@@ -34,7 +34,8 @@ internal class MainViewModel: INotifyPropertyChanged
     internal readonly HashSet<UITileRowCol> CurrentMoves = [];
     internal MoveStatus CurrentMovesStatus = MoveStatus.Empty;
     private PlaySuggestion? PlaySuggestion;     // Suggestion with maximum possible scire with current hand
-    internal HistoryActions HistoryActions = [];
+    internal readonly HistoryActions HistoryActions = new();
+    internal readonly GameSettings GameSettings = new();
 
     // Helpers
     public Player CurrentPlayer => Model.CurrentPlayer;
@@ -64,6 +65,7 @@ internal class MainViewModel: INotifyPropertyChanged
     public ICommand ReturnAllTilesCommand { get; }
     public ICommand SuggestPlayCommand { get; }
     public ICommand ExchangeTilesCommand { get; }
+    public ICommand SettingsCommand { get; }
 
     // View
     public ICommand RescaleAndCenterCommand { get; }
@@ -77,6 +79,14 @@ internal class MainViewModel: INotifyPropertyChanged
         // Initialize ViewModel
         View = view;
         Model = new Model(/*this*/);
+
+        // Read settings
+        GameSettings.BestPlayHint = Properties.Settings.Default["BestPlayHint"] switch
+        {
+            "ShowBestPlay" => HintOptionsEnum.ShowBestPlay,
+            "ShowExcellent" => HintOptionsEnum.ShowExcellent,
+            _ => HintOptionsEnum.ShowNothing,
+        };
 
         // Binding commands with behavior
 
@@ -94,6 +104,7 @@ internal class MainViewModel: INotifyPropertyChanged
         ReturnAllTilesCommand = new RelayCommand<object>(ReturnAllTilesExecute, ReturnAllTilesCanExecute);
         SuggestPlayCommand = new RelayCommand<object>(SuggestPlayExecute, SuggestPlayCanExecute);
         ExchangeTilesCommand = new RelayCommand<object>(ExchangeTilesExecute, ExchangeTilesCanExecute);
+        SettingsCommand = new RelayCommand<object>(SettingsExecute);
 
         // View
         RescaleAndCenterCommand = new RelayCommand<object>(RescaleAndCenterExecute);
@@ -142,10 +153,23 @@ internal class MainViewModel: INotifyPropertyChanged
             if (PlaySuggestion == null)
                 PlaySuggestion = Model.Board.Play(CurrentPlayer.Hand);
 
+            if (GameSettings.BestPlayHint == HintOptionsEnum.ShowNothing)
+            {
+                StatusMessage = "Déplacez des tuiles de la main sur le jeu, ou échangez les tuiles.";
+                return;
+            }
+
             if (PlaySuggestion.PB.Points == 0)
+            {
                 StatusMessage = "Info: Aucune tuile jouable, échangez les tuiles.";
+            }
             else
-                StatusMessage = $"Info: Il existe un placement à {PlaySuggestion.PB.Points} points.";
+            {
+                if (GameSettings.BestPlayHint == HintOptionsEnum.ShowExcellent)
+                    StatusMessage = "Déplacez des tuiles de la main sur le jeu.";
+                else
+                    StatusMessage = $"Info: Il existe un placement à {PlaySuggestion.PB.Points} points.";
+            }
             return;
         }
 
@@ -156,7 +180,11 @@ internal class MainViewModel: INotifyPropertyChanged
         if (status)
         {
             PointsBonus pb = Model.CountPoints(moves);
-            StatusMessage = $"Placement valide à {pb.Points} points";
+            StatusMessage = pb.Points>1 ? $"Placement valide à {pb.Points} points" : $"Placement valide à {pb.Points} point";
+            if (PlaySuggestion != null && pb.Points == PlaySuggestion.PB.Points)
+                StatusMessage += ", excellent!";
+            else
+                StatusMessage += ".";
             CurrentMovesStatus = MoveStatus.Valid;
         }
         else
@@ -248,6 +276,9 @@ internal class MainViewModel: INotifyPropertyChanged
                     if (na == 0)    // Don't perform last exchange
                         break;
                     Model.Bag.SetTiles(actionBag.Tiles);
+                    CurrentPlayer.Hand.Clear();
+                    CurrentHandViewModel.RemoveAllUITiles();
+                    RefillPlayerHand();
                 }
             }
             else if (action is HistoryActionMoves actionMoves)
@@ -404,6 +435,8 @@ internal class MainViewModel: INotifyPropertyChanged
             CurrentMoves.Remove(todel);
             View.BoardDrawingCanvasRemoveUITile(uitrc.UIT);
         }
+
+        EvaluateCurrentMoves();
     }
 
     internal void PerformExchangeTiles()
@@ -680,6 +713,14 @@ internal class MainViewModel: INotifyPropertyChanged
     private bool ExchangeTilesCanExecute(object obj) => !Model.IsBagEmpty;
 
     private void ExchangeTilesExecute(object obj) => PerformExchangeTiles();
+
+    // -----------------------------------
+
+    private void SettingsExecute(object obj)
+    {
+        new SettingsWindow(GameSettings).ShowDialog();
+        EvaluateCurrentMoves();     // Refresh message in status bar
+    }
 
     // -----------------------------------
 

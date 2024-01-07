@@ -32,6 +32,7 @@
 		<None Remove="Icons\returnalltiles.ico" />
 		<None Remove="Icons\returnselectedtiles.ico" />
 		<None Remove="Icons\save.ico" />
+		<None Remove="Icons\settings.ico" />
 		<None Remove="Icons\suggest.ico" />
 		<None Remove="Icons\swap.ico" />
 		<None Remove="Icons\undo.ico" />
@@ -60,11 +61,27 @@
 		<Resource Include="Icons\new.ico" />
 		<Resource Include="Icons\players.ico" />
 		<Resource Include="Icons\recenter.ico" />
+		<Resource Include="Icons\settings.ico" />
 		<Resource Include="Icons\suggest.ico" />
 		<Resource Include="Icons\undo.ico" />
 		<Resource Include="Qwirkle.ico" />
 		<Resource Include="Resources\QwirkleAbout.png" />
 		<Resource Include="Resources\QwirkleBackground.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Properties\Settings.Designer.cs">
+	    <DesignTimeSharedInput>True</DesignTimeSharedInput>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Settings.settings</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Properties\Settings.settings">
+	    <Generator>SettingsSingleFileGenerator</Generator>
+	    <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+	  </None>
 	</ItemGroup>
 
 </Project>

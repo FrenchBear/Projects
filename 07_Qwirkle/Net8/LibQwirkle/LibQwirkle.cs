@@ -7,6 +7,7 @@
 
 using System.Collections;
 using System.Diagnostics;
+using System.Drawing;
 using System.Text;
 
 namespace LibQwirkle;
@@ -140,6 +141,9 @@ public class Moves: HashSet<TileRowCol>
         Debug.Assert(!Contains(trc));
         base.Add(trc);
     }
+
+    public override string ToString()
+        => "Moves: [" + string.Join("; ", this.Select(trc => $"({trc.RC.Row}, {trc.RC.Col}) {trc.Tile.AsString(null, true)}")) + "]";
 }
 
 public enum CellState
@@ -683,6 +687,11 @@ public class Board: IEnumerable<TileRowCol>
     {
         if (moves.Count == 0)
             return new(0, 0);
+
+        // Special case, if a single tile is the ony option for first movement, report 1 point since the evaluation
+        // algorithm returns 0 point in this case
+        if (IsEmpty && moves.Count == 1 && moves.First().Row == 50 && moves.First().Col == 50)
+            return new(1, 0);
 
         // Use a temp new board with moves actually played
         var nb = new Board(this);

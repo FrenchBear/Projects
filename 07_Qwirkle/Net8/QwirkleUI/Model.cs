@@ -46,8 +46,10 @@ internal class Model(/*MainViewModel viewModel*/)
 
     internal (bool, string) EvaluateMoves(Moves moves)
         => Board.EvaluateMoves(moves);
+
     internal PointsBonus CountPoints(Moves moves)
         => Board.CountPoints(moves);
+
     internal void UpdateRanks()
     {
         // No ranking for single player
