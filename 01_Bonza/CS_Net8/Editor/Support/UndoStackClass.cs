@@ -15,7 +15,7 @@ namespace Bonza.Editor.Support;
 
 // Undo support
 // Encapsulated support in a specific class for easier debugging (and also because it's a good practice...)
-internal class UndoStackClass
+internal sealed class UndoStackClass
 {
     internal enum UndoActions
     {
@@ -25,7 +25,7 @@ internal class UndoStackClass
         SwapOrientation,
     }
 
-    internal class UndoAction
+    internal sealed class UndoAction
     {
         internal readonly UndoActions Action;
 

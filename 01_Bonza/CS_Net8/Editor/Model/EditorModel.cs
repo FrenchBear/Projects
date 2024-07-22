@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Bonza.Editor.Model;
 
-internal class EditorModel
+internal sealed class EditorModel
 {
     private readonly EditorViewModel viewModel;
     private Grille grille;

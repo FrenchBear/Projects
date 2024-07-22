@@ -15,7 +15,7 @@ using System.Windows.Controls;
 
 namespace SolWPF;
 
-internal class MovingGroup
+internal sealed class MovingGroup
 {
     public readonly GameStack FromStack;
     public GameStack? ToStack;
@@ -57,11 +57,9 @@ internal class MovingGroup
 
     internal Point GetTopLeft()
     {
-        Point P;
-        if (MovingCards != null)
-            P = new Point((double)MovingCards[0].GetValue(Canvas.LeftProperty), (double)MovingCards[0].GetValue(Canvas.TopProperty));
-        else
-            P = new Point(0, 0);
+        Point P = MovingCards != null
+            ? new Point((double)MovingCards[0].GetValue(Canvas.LeftProperty), (double)MovingCards[0].GetValue(Canvas.TopProperty))
+            : new Point(0, 0);
         return P;
     }
 

@@ -7,10 +7,9 @@
 // 2023-03-16   PV      Net7 C#11
 // 2023-11-20   PV      Net8 C#12
 
-#pragma warning disable IDE0060 // Remove unused parameter
+//#pragma warning disable IDE0060 // Remove unused parameter
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Windows;

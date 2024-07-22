@@ -10,7 +10,9 @@ using System.Linq;
 
 namespace Q2;
 
-internal class Program
+#pragma warning disable IDE0051 // Remove unused private members
+
+internal sealed class Program
 {
     static void Main()
     {
@@ -235,7 +237,7 @@ internal class Program
         Console.WriteLine($"Hand: {hand.AsString(true)}");
         var play = board.Play(hand);
         Console.WriteLine($"Play: {play.AsString(true)}");
-        Debug.Assert(play.Moves.SetEquals(new Moves { new(h2, new(48, 52)), new(h1, new(49, 52)) }));
+        Debug.Assert(play.Moves.SetEquals([new(h2, new(48, 52)), new(h1, new(49, 52))]));
         Debug.Assert(play.PB.Points == 7);
         Debug.Assert(play.NewHand.Equals(new Hand([h3, h4, h5, h6])));
         board.AddMoves(play.Moves);

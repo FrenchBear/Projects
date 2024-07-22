@@ -8,7 +8,7 @@
 		<Description>Test application for Plotter library</Description>
 		<Version>1.1.0</Version>
 		<Authors>Pierre Violent</Authors>
-		<Copyright>Copyright ©2021-2023 Pierre Violent</Copyright>
+		<Copyright>Copyright ©2021-2024 Pierre Violent</Copyright>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 

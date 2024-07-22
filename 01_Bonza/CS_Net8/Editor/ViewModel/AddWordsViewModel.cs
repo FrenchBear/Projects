@@ -12,7 +12,7 @@ using Bonza.Editor.Support;
 
 namespace Bonza.Editor.ViewModel;
 
-internal class AddWordsViewModel: INotifyPropertyChanged
+internal sealed class AddWordsViewModel: INotifyPropertyChanged
 {
     // Access to View and model (EditorModel, not AddWordsModel that doesn't exist)
     private readonly View.AddWordsView view;

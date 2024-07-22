@@ -7,7 +7,7 @@ using static System.Console;
 
 namespace DetectClosedArea;
 
-class TestBoard
+sealed class TestBoard
 {
     private readonly int Side;
     private readonly int[,] PointLine;
@@ -94,10 +94,14 @@ class TestBoard
             {
                 WriteLine($"[{r}, {c}] -> {area}");
                 AreaId[r, c] = area;
-                if (r > 0 && AreaId[r - 1, c] == -1 && PointLine[r-1, c] != line) paintStack.Push((r - 1, c));
-                if (c > 0 && AreaId[r, c - 1] == -1 && PointLine[r, c-1] != line) paintStack.Push((r, c - 1));
-                if (r < Side - 1 && AreaId[r + 1, c] == -1 && PointLine[r+1, c] != line) paintStack.Push((r + 1, c));
-                if (c < Side - 1 && AreaId[r, c + 1] == -1 && PointLine[r, c + 1] != line) paintStack.Push((r, c + 1));
+                if (r > 0 && AreaId[r - 1, c] == -1 && PointLine[r - 1, c] != line)
+                    paintStack.Push((r - 1, c));
+                if (c > 0 && AreaId[r, c - 1] == -1 && PointLine[r, c - 1] != line)
+                    paintStack.Push((r, c - 1));
+                if (r < Side - 1 && AreaId[r + 1, c] == -1 && PointLine[r + 1, c] != line)
+                    paintStack.Push((r + 1, c));
+                if (c < Side - 1 && AreaId[r, c + 1] == -1 && PointLine[r, c + 1] != line)
+                    paintStack.Push((r, c + 1));
             }
         }
     }

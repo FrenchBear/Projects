@@ -14,7 +14,7 @@ using System.Windows.Media;
 
 namespace SolWPF;
 
-public partial class MainWindow: Window
+public partial class MainWindow: Window, IDisposable
 {
     public static readonly double cardWidth = 100, cardHeight = 140;
     private readonly GameDeck b;
@@ -103,6 +103,7 @@ public partial class MainWindow: Window
     private bool isMovingMode;
     private DateTime lastMouseUpDateTime = DateTime.MinValue;
     private MovingGroup? movingGroup;       // Current interactive moving group of cards
+    private bool disposedValue;
 
     private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
     {
@@ -129,7 +130,7 @@ public partial class MainWindow: Window
                 {
                     movingGroup.SetTopLeft(P + v);
                     movingGroup.ToStack = null;                     // Reset in case mouse is moving away from a potential drop target
-                        foreach (var gsTarget in b.AllStacks())
+                    foreach (var gsTarget in b.AllStacks())
                         if (gsTarget != movingGroup.FromStack)
                         {
                             if (gsTarget.ToHitTest(P, movingGroup))
@@ -395,5 +396,22 @@ public partial class MainWindow: Window
             m.ScaleAt(scale, scale, newPosition.X, newPosition.Y);
         }
         mainMatrixTransform.Matrix = m;
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposedValue)
+        {
+            if (disposing)
+                b.Dispose();
+            disposedValue = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }

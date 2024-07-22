@@ -18,7 +18,7 @@ using System.Windows.Threading;
 
 namespace SolWPF;
 
-internal class GameDeck: INotifyPropertyChanged
+internal sealed class GameDeck: INotifyPropertyChanged, IDisposable
 {
     public BaseStack[] Bases;
     public ColumnStack[] Columns;
@@ -244,14 +244,7 @@ internal class GameDeck: INotifyPropertyChanged
 #endif
     }
 
-    internal MovingGroup? PopUndo()
-    {
-        if (UndoStack.Count == 0)
-            return null;
-        return UndoStack.Pop();
-        // Cannot update game status here, before executing the undo, contrary to
-        // PushUndo, called after the move has been performed
-    }
+    internal MovingGroup? PopUndo() => UndoStack.Count == 0 ? null : UndoStack.Pop();// Cannot update game status here, before executing the undo, contrary to// PushUndo, called after the move has been performed
 
     internal void UpdateGameStatus()
     {
@@ -260,14 +253,7 @@ internal class GameDeck: INotifyPropertyChanged
 #endif
         MoveCount = UndoStack.Count;
 
-        if (MoveCount == 0)
-            GameStatus = "Not started";
-        else if (IsGameFinished())
-            GameStatus = "Game finished!";
-        else if (IsGameSolvable())
-            GameStatus = "Game solvable!";
-        else
-            GameStatus = "In progress";
+        GameStatus = MoveCount == 0 ? "Not started" : IsGameFinished() ? "Game finished!" : IsGameSolvable() ? "Game solvable!" : "In progress";
 
         ComputeAndUpdateGameSolvability();
     }
@@ -314,7 +300,7 @@ internal class GameDeck: INotifyPropertyChanged
         }
     }
 
-    private string _GameStatus="";
+    private string _GameStatus = "";
 
     public string GameStatus
     {
@@ -329,7 +315,7 @@ internal class GameDeck: INotifyPropertyChanged
         }
     }
 
-    private string _SolverStatus="";
+    private string _SolverStatus = "";
 
     public string SolverStatus
     {
@@ -345,6 +331,7 @@ internal class GameDeck: INotifyPropertyChanged
     }
 
     private int _GameSerial;
+    private bool disposedValue;
 
     public int GameSerial
     {
@@ -379,6 +366,22 @@ internal class GameDeck: INotifyPropertyChanged
         foreach (PlayingCard c in st.PlayingCards)
             Debug.Write(c.Signature() + " ");
         Debug.WriteLine("");
+    }
+
+    private void Dispose(bool disposing)
+    {
+        if (!disposedValue)
+        {
+            if (disposing)
+                cts?.Dispose();
+            disposedValue = true;
+        }
+    }
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 
 #endif

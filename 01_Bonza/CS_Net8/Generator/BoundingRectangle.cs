@@ -27,13 +27,7 @@ public readonly struct BoundingRectangle: IEquatable<BoundingRectangle>
 
     public override int GetHashCode() => Min.GetHashCode() ^ Max.GetHashCode();
 
-    public override bool Equals(object obj)
-    {
-        if (obj is not BoundingRectangle)
-            return false;
-
-        return Equals((BoundingRectangle)obj);
-    }
+    public override bool Equals(object obj) => obj is BoundingRectangle rectangle && Equals(rectangle);
 
     public bool Equals(BoundingRectangle other) => Min == other.Min && Max == other.Max;
 

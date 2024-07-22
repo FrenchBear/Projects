@@ -8,7 +8,7 @@ using System.Windows.Media;
 
 namespace Bonza.Editor.Support;
 
-internal class WordAndCanvas
+internal sealed class WordAndCanvas
 {
     internal WordPosition WordPosition { get; }
 

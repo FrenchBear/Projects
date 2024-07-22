@@ -277,7 +277,7 @@ public partial class LSystemForm: Form
         var ls = new LSystem(ls0.Name, CommentTextBox.Text, int.Parse(AngleTextBox.Text), AxiomTextBox.Text, RulesTextBox.Text);
 
         Dictionary<char, string> rules = [];
-        foreach (string s in ls.Rules.Split((char[])[ '\r', '\n' ], StringSplitOptions.RemoveEmptyEntries))
+        foreach (string s in ls.Rules.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries))
         {
             char c = s.ToUpperInvariant().Split('=')[0][0];
             string r = s.ToUpperInvariant().Split('=')[1];
@@ -301,8 +301,10 @@ public partial class LSystemForm: Form
 
         void StartNewStroke(double pX, double pY)
         {
-            var sac = new StrokeAndColor();
-            sac.color = ap.color;
+            var sac = new StrokeAndColor
+            {
+                color = ap.color
+            };
             points = sac.points;
             points.Add(new PointD(pX, pY));
             pointsLists.Add(sac);
@@ -330,7 +332,7 @@ public partial class LSystemForm: Form
 
             if (escapeChar != '\0')
             {
-                if (c is >= '0' and <= '9' || c == '.')
+                if (c is (>= '0' and <= '9') or '.')
                 {
                     argumentNum += c;
                     continue;
@@ -353,7 +355,7 @@ public partial class LSystemForm: Form
                         break;
 
                     case '@':
-                        if (c == 'I' || c == 'Q')
+                        if (c is 'I' or 'Q')
                         {
                             escapeOptions += c;
                             continue;
@@ -420,7 +422,7 @@ public partial class LSystemForm: Form
                     if (ls.Angle % 2 == 0)
                         ap.Angle += Math.PI;
                     else
-                        ap.Angle += generalOrientation * (int)(ls.Angle / 2) * angleIncrement;
+                        ap.Angle += generalOrientation * (ls.Angle / 2) * angleIncrement;
                     break;
 
                 case '!':
@@ -587,7 +589,7 @@ internal struct AngleAndPosition
     { Px = 0; Py = 0; Angle = 0; DirectAngle = 0; color = 0; }
 }
 
-internal class StrokeAndColor
+internal sealed class StrokeAndColor
 {
     public int color;
     public List<PointD> points = [];

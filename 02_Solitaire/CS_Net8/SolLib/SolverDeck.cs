@@ -156,7 +156,7 @@ public class SolverDeck
     private SolverGroup MoveToBase(int c_from)
     {
         var mg = new SolverGroup();
-        Debug.Assert(c_from >= 0 && c_from <= 7);
+        Debug.Assert(c_from is >= 0 and <= 7);
         if (c_from == 7)
         {
             // Move from talon
@@ -224,7 +224,7 @@ public class SolverDeck
     // Only A can move to an empty base, otherwise card must be base top+1
     private bool CanMoveToBase(int col)
     {
-        Debug.Assert(col >= 0 && col <= 7);
+        Debug.Assert(col is >= 0 and <= 7);
         SolverCard ca;
         if (col == 7)
         {
@@ -247,8 +247,8 @@ public class SolverDeck
 
     private SolverGroup MoveColumnToColumn(int c_from, int c_to, int n)
     {
-        Debug.Assert(c_from >= 0 && c_from <= 7);
-        Debug.Assert(c_to >= 0 && c_to < 7);
+        Debug.Assert(c_from is >= 0 and <= 7);
+        Debug.Assert(c_to is >= 0 and < 7);
         Debug.Assert(c_from != c_to);
         Debug.Assert(c_from == 7 || n >= 1);
         Debug.Assert(c_from < 7 || n == 1);
@@ -300,19 +300,15 @@ public class SolverDeck
 
     private bool CanMoveColumnToColumn(int c_from, int c_to, int n)
     {
-        Debug.Assert(c_from >= 0 && c_from <= 7);
-        Debug.Assert(c_to >= 0 && c_to < 7);
+        Debug.Assert(c_from is >= 0 and <= 7);
+        Debug.Assert(c_to is >= 0 and < 7);
         Debug.Assert(c_from != c_to);
         Debug.Assert(c_from == 7 || n >= 1);
         Debug.Assert(c_from < 7 || n == 1);
         Debug.Assert(c_from == 7 || Columns[c_from].PlayingCards.Count >= n);
         Debug.Assert(c_from == 7 || Columns[c_from].PlayingCards[n - 1].IsFaceUp);
 
-        SolverCard ca;
-        if (c_from == 7)
-            ca = TalonFU.PlayingCards[0];
-        else
-            ca = Columns[c_from].PlayingCards[n - 1];
+        SolverCard ca = c_from == 7 ? TalonFU.PlayingCards[0] : Columns[c_from].PlayingCards[n - 1];
 
         if (Columns[c_to].PlayingCards.Count == 0 && ca.Value == 13 && (c_from == 7 || Columns[c_from].PlayingCards.Count != n))
             return true;  // Can move a King to an empty column, but only if it's not a whole column starting with a King (useless move)

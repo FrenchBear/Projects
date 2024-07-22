@@ -10,7 +10,7 @@ namespace ColorFlowSolver;
 // Unpainted = No area identified yet
 // Border = Cell of line color
 // Interior = Cell of any other color than line color
-enum PaintStatus : byte
+enum PaintStatus: byte
 {
     Unpainted, Interior, Border
 }

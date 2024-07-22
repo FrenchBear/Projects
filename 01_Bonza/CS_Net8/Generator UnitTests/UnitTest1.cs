@@ -5,7 +5,6 @@
 
 using System;
 using System.Linq;
-using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Bonza.Generator.UnitTests;
@@ -91,12 +90,12 @@ public class UnitTest1
     public void TestCoverage()
     {
         g.AddWordsFromFile(@"..\..\Lists\Prénoms.txt");
-        WordPosition Pierre = g.Layout.WordPositionList.First(wp => string.Compare(wp.OriginalWord, "Pierre", StringComparison.OrdinalIgnoreCase) == 0);
+        WordPosition Pierre = g.Layout.WordPositionList.First(wp => string.Equals(wp.OriginalWord, "Pierre", StringComparison.OrdinalIgnoreCase));
         g.Layout.RemoveWordPosition(Pierre);
         g.Layout.AddWordPosition(Pierre);
         g.PlaceWordsAgain();
         int n = g.Layout.WordsNotConnectedCount();
-        WordPosition w1 = g.Layout.WordPositionList.First(wp => string.Compare(wp.OriginalWord, "Barthélémy", StringComparison.OrdinalIgnoreCase) == 0);
+        WordPosition w1 = g.Layout.WordPositionList.First(wp => string.Equals(wp.OriginalWord, "Barthélémy", StringComparison.OrdinalIgnoreCase));
         var l = g.Layout.GetConnectedWordPositions(w1);
         g.Print(@"C:\temp\Prénoms.Layout.txt");
         g.Layout.SaveLayoutAsCode(@"C:\temp\Prénoms.Layout.cs");

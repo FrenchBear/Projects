@@ -35,7 +35,8 @@ internal partial class Program
                     {
                         //LogWriteLine($"New area [{row}, {column}], line={line}");
                         // Let's flow the paint until we hit borders!
-                        if (!ColorizeArea(row, column, line)) return false;
+                        if (!ColorizeArea(row, column, line))
+                            return false;
                     }
 
         return true;
@@ -64,7 +65,7 @@ internal partial class Program
             byte δ = Δ(r, c);
 
             // Check that we can't spread paint over a border
-            Debug.Assert(Grid[δ].Paint == PaintStatus.Unpainted || Grid[δ].Paint == PaintStatus.Interior);
+            Debug.Assert(Grid[δ].Paint is PaintStatus.Unpainted or PaintStatus.Interior);
 
             // If Grid[Δ(r, c] == area, it's already been explored, no need to do it again
             if (Grid[δ].Paint == PaintStatus.Unpainted)
@@ -87,15 +88,19 @@ internal partial class Program
                 touchEndOfCurrentLine = touchEndOfCurrentLine || (r < Sidem1 && EndOfLine(rp1, c) == line);
                 touchEndOfCurrentLine = touchEndOfCurrentLine || (c < Sidem1 && EndOfLine(r, cp1) == line);
 
-                if (r > 0 && Grid[Δ(rm1, c)].Paint == PaintStatus.Unpainted && Grid[Δ(rm1, c)].Line > line) { rowStack[z] = rm1; columnStack[z++] = c; }
-                if (c > 0 && Grid[Δ(r, cm1)].Paint == PaintStatus.Unpainted && Grid[Δ(r, cm1)].Line > line) { rowStack[z] = r; columnStack[z++] = cm1; }
-                if (r < Sidem1 && Grid[Δ(rp1, c)].Paint == PaintStatus.Unpainted && Grid[Δ(rp1, c)].Line > line) { rowStack[z] = rp1; columnStack[z++] = c; }
-                if (c < Sidem1 && Grid[Δ(r, cp1)].Paint == PaintStatus.Unpainted && Grid[Δ(r, cp1)].Line > line) { rowStack[z] = r; columnStack[z++] = cp1; }
+                if (r > 0 && Grid[Δ(rm1, c)].Paint == PaintStatus.Unpainted && Grid[Δ(rm1, c)].Line > line)
+                { rowStack[z] = rm1; columnStack[z++] = c; }
+                if (c > 0 && Grid[Δ(r, cm1)].Paint == PaintStatus.Unpainted && Grid[Δ(r, cm1)].Line > line)
+                { rowStack[z] = r; columnStack[z++] = cm1; }
+                if (r < Sidem1 && Grid[Δ(rp1, c)].Paint == PaintStatus.Unpainted && Grid[Δ(rp1, c)].Line > line)
+                { rowStack[z] = rp1; columnStack[z++] = c; }
+                if (c < Sidem1 && Grid[Δ(r, cp1)].Paint == PaintStatus.Unpainted && Grid[Δ(r, cp1)].Line > line)
+                { rowStack[z] = r; columnStack[z++] = cp1; }
             }
         }
 
         //LogWriteLine($" End area: flagsStartEnd={flagsStartEnd}, containsStartOrEnd={containsStartOrEnd}, touchEndOfCurrentLine={touchEndOfCurrentLine}");
-        bool ret= flagsStartEnd == 0 && containsStartOrEnd;
+        bool ret = flagsStartEnd == 0 && containsStartOrEnd;
         if (!ret)
             ret = IsUnconnected(Lines[line].endRow, Lines[line].endColumn);
         return ret;

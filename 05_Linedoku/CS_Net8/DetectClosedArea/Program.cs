@@ -1,10 +1,8 @@
 ﻿// 2023-11-20   PV      Net8 C#12
 
-using System;
-
 namespace DetectClosedArea;
 
-class Program
+sealed class Program
 {
     static void Main()
     {

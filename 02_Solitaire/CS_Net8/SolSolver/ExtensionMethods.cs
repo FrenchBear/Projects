@@ -15,7 +15,8 @@ internal static class ExtensionMethods
     // Takes a List<T> instead of an IList<T> to simplify the case with 1 element...
     public static List<T> Shuffle<T>(this List<T> list, int seed)
     {
-        if (/*list == null ||*/ list.Count < 2) return list;
+        if (/*list == null ||*/ list.Count < 2)
+            return list;
 
         var Rnd = new Random(seed);
 

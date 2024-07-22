@@ -38,12 +38,7 @@ public readonly struct PositionOrientation: IEquatable<PositionOrientation>
     public override int GetHashCode() => StartRow ^ StartColumn;
 
     public override bool Equals(object obj)
-    {
-        if (obj is not PositionOrientation)
-            return false;
-
-        return Equals((PositionOrientation)obj);
-    }
+        => obj is PositionOrientation orientation && Equals(orientation);
 
     public bool Equals(PositionOrientation other) => StartRow == other.StartRow && StartColumn == other.StartColumn && IsVertical == other.IsVertical;
 

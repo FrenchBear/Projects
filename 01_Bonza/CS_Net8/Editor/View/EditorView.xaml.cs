@@ -223,7 +223,7 @@ public partial class EditorView: Window
     {
         if (m_Sel.WordAndCanvasList.Count != 1)
         {
-            MessageBox.Show("Sorry, AutoPlace currently only works for a single word.", App.AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            MessageBox.Show("Sorry, AutoPlace currently only works for a single word.", AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
             return;
         }
         Debug.Assert(m_Sel.WordAndCanvasList != null && m_Sel.WordAndCanvasList.Count == 1);
@@ -450,11 +450,9 @@ public partial class EditorView: Window
     {
         UpdateSelectionAfterClick(e);
 
-        ContextMenu cm;
-        if (DrawingCanvas.InputHitTest(e.GetPosition(DrawingCanvas)) is TextBlock)
-            cm = FindResource("WordCanvasMenu") as ContextMenu;
-        else
-            cm = FindResource("BackgroundCanvasMenu") as ContextMenu;
+        ContextMenu cm = DrawingCanvas.InputHitTest(e.GetPosition(DrawingCanvas)) is TextBlock
+            ? FindResource("WordCanvasMenu") as ContextMenu
+            : FindResource("BackgroundCanvasMenu") as ContextMenu;
         Debug.Assert(cm != null);
         cm.PlacementTarget = sender as UIElement;
         cm.IsOpen = true;

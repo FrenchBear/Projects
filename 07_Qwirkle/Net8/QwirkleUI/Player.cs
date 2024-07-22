@@ -1,7 +1,7 @@
 ﻿using LibQwirkle;
 
 namespace QwirkleUI;
-internal class Player
+internal sealed class Player
 {
     public string Name { get; set; } = "";
     public int Score { get; set; }

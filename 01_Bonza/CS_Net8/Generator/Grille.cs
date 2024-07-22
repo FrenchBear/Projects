@@ -276,12 +276,10 @@ public partial class Grille
                 }
             }
 
-        if (possibleWordPositionsBelowThreshold.Count > 0)
-            return possibleWordPositionsBelowThreshold;
-        return possibleWordPositions;
+        return possibleWordPositionsBelowThreshold.Count > 0 ? possibleWordPositionsBelowThreshold : possibleWordPositions;
     }
 
-    ///// <summary>Internal class to sort possible WordPositions placement by surface to select the best.</summary>
+    ///// <summary>internal sealed class to sort possible WordPositions placement by surface to select the best.</summary>
     ///// <remarks>Not immutable because WordPosition is not immutable...  Though it shouldn't be modifiable???</remarks>
     //private class WordPositionSurface
     //{

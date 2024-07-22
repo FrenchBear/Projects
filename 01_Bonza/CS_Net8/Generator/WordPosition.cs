@@ -13,18 +13,16 @@ public class WordPosition(string word, string originalWord, PositionOrientation 
 {
     public string Word { get; } = word;
     public string OriginalWord { get; } = originalWord;
-
-    private PositionOrientation m_PositionOrientation = positionOrientation;
-    public PositionOrientation PositionOrientation => m_PositionOrientation;
+    public PositionOrientation PositionOrientation { get; private set; } = positionOrientation;
 
     // Extra accessors for 'old' code
-    public int StartRow => m_PositionOrientation.StartRow;
+    public int StartRow => PositionOrientation.StartRow;
 
-    public int StartColumn => m_PositionOrientation.StartColumn;
-    public bool IsVertical => m_PositionOrientation.IsVertical;
+    public int StartColumn => PositionOrientation.StartColumn;
+    public bool IsVertical => PositionOrientation.IsVertical;
 
     public override string ToString() => "'" + Word + "' " + (IsVertical ? "V" : "H") + $"({StartRow}, {StartColumn})";
 
     // Not immutable because of this
-    public void SetNewPositionOrientation(PositionOrientation positionOrientation) => m_PositionOrientation = positionOrientation;
+    public void SetNewPositionOrientation(PositionOrientation positionOrientation) => PositionOrientation = positionOrientation;
 }

@@ -24,7 +24,7 @@ public partial class UITile: UserControl
 
     public Tile Tile { get; init; }
 
-    private bool _GrayBackground = false;
+    private bool _GrayBackground;
 
     public bool GrayBackground
     {
@@ -39,7 +39,7 @@ public partial class UITile: UserControl
         }
     }
 
-    private bool _SelectionBorder = false;
+    private bool _SelectionBorder;
 
     public bool SelectionBorder
     {
@@ -54,7 +54,7 @@ public partial class UITile: UserControl
         }
     }
 
-    private bool _Hatched = false;
+    private bool _Hatched;
 
     public bool Hatched
     {

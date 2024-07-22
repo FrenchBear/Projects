@@ -54,9 +54,9 @@ public static class ExtensionMethods
     public static T TakeRandom<T>(this IList<T> list)
     {
         ArgumentNullException.ThrowIfNull(list);
-        if (list.Count == 0)
-            throw new ArgumentException("Can't select a random element from a list of zero element");
-        return list[Rnd.Next(list.Count)];
+        return list.Count == 0
+            ? throw new ArgumentException("Can't select a random element from a list of zero element")
+            : list[Rnd.Next(list.Count)];
     }
 
     // Execute an action on every element of an enumeration

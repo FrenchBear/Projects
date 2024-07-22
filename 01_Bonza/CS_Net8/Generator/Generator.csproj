@@ -5,7 +5,7 @@
 		<PackageId>BonzaGenerator</PackageId>
 		<Authors>Pierre Violent</Authors>
 		<Product>BonzaGenerator</Product>
-		<Copyright>Copyright ©2017-2023 Pierre Violent</Copyright>
+		<Copyright>Copyright ©2017-2024 Pierre Violent</Copyright>
 		<Version>1.3.0</Version>
 		<Description>Generation of Bonza puzzles: placing words, breaking in chunks (Net8 C#12)</Description>
 		<AssemblyName>Bonza.Generator</AssemblyName>

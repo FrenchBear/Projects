@@ -7,7 +7,6 @@
 // 2019-06-04   PV
 // 2023-12-20   PV      Net8 C#12
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -16,11 +15,13 @@ using SolLib;
 
 namespace SolSolver;
 
-internal class Program
+#pragma warning disable IDE0051 // Remove unused private members
+
+internal sealed class Program
 {
     private static void Main()
     {
-        Console.OutputEncoding = new UTF8Encoding();
+        OutputEncoding = new UTF8Encoding();
         TestSolver();
         //SolverStats(100);
     }

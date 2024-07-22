@@ -7,7 +7,7 @@
 		<UseWPF>true</UseWPF>
 		<ApplicationIcon>ForeignNumbers.ico</ApplicationIcon>
 		<Description>Formatting numbers in Roman, Arabic and Chinese (Net8 C#12)</Description>
-		<Copyright>Copyright ©2019-2023 Pierre Violent</Copyright>
+		<Copyright>Copyright ©2019-2024 Pierre Violent</Copyright>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 

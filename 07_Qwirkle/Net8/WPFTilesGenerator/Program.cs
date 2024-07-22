@@ -2,7 +2,7 @@
 
 namespace WPFTilesGenerator;
 
-internal class Program
+internal sealed class Program
 {
     public enum Shape
     {

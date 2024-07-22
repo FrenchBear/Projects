@@ -40,14 +40,8 @@ public partial class Plotter
             float rx, ry;
 
             // Pass 0 is continuing, caclulate scale factor
-            if (Math.Abs(p2x - p1x) < 1e-8)
-                rx = 100000;
-            else
-                rx = (float)(renderingWidth / (1.01 * (p2x - p1x)));
-            if (Math.Abs(p2y - p1y) < 1e-8)
-                ry = 100000;
-            else
-                ry = (float)(renderingHeight / (1.01 * (p2y - p1y)));
+            rx = Math.Abs(p2x - p1x) < 1e-8 ? 100000 : (float)(renderingWidth / (1.01 * (p2x - p1x)));
+            ry = Math.Abs(p2y - p1y) < 1e-8 ? 100000 : (float)(renderingHeight / (1.01 * (p2y - p1y)));
             r = Math.Min(Math.Abs(rx), Math.Abs(ry));
 
             x0 = p1x + (p2x - p1x - renderingWidth / r) / 2;

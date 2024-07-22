@@ -56,7 +56,7 @@ public static class GeneratorTestsApp
     public static TimeSpan TestPerformances()
     {
         var sw = Stopwatch.StartNew();
-        var g = new Bonza.Generator.Grille(123);
+        var g = new Grille(123);
         g.AddWordsFromFile(@"..\..\Lists\Countries.txt");
         sw.Stop();
         WriteLine("Time: " + sw.Elapsed);

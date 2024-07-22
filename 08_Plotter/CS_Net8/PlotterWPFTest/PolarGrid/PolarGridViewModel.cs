@@ -4,12 +4,11 @@
 // 2021-12-17    PV
 
 using PlotterLibrary;
-using System;
 using System.Collections.Generic;
 
 namespace PlotterWPFTest;
 
-internal class PolarGridViewModel: BaseViewModel
+internal sealed class PolarGridViewModel: BaseViewModel
 {
     private readonly PolarGridUserControl View;
     public readonly PlotterCommonViewModel Pcvm;
@@ -72,14 +71,7 @@ internal class PolarGridViewModel: BaseViewModel
 
     public double K1
     {
-        get
-        {
-            if (_K1 < _K1Min)
-                return _K1Min;
-            if (_K1 > _K1Max)
-                return _K1Max;
-            return _K1;
-        }
+        get => _K1 < _K1Min ? _K1Min : _K1 > _K1Max ? _K1Max : _K1;
         set => SetProperty(ref _K1, value);
     }
     private double _K1 = 1.0;
@@ -96,14 +88,7 @@ internal class PolarGridViewModel: BaseViewModel
     /// </summary>
     public double K2
     {
-        get
-        {
-            if (_K2 < _K2Min)
-                return _K2Min;
-            if (_K2 > _K2Max)
-                return _K2Max;
-            return _K2;
-        }
+        get => _K2 < _K2Min ? _K2Min : _K2 > _K2Max ? _K2Max : _K2;
         set => SetProperty(ref _K2, value);
     }
     private double _K2 = 1.0;

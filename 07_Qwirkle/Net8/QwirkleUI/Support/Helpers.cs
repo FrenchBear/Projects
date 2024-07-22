@@ -30,7 +30,7 @@ internal static class Helpers
         for (; ; )
         {
             h = VisualTreeHelper.GetParent(h);
-            if (h == null || h is Canvas)       // UITile doesn't contain a Canvas in its visual tree, so if we hit a canvas, there's no UITile here
+            if (h is null or Canvas)       // UITile doesn't contain a Canvas in its visual tree, so if we hit a canvas, there's no UITile here
                 return null;
             if (h is UITile ut)
                 return ut;

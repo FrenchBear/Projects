@@ -24,7 +24,7 @@ internal abstract class PlotterCommandWidthAndColor: PlotterCommand
     public Color Color { get; init; }
 }
 
-internal class PC_ScaleP1P2: PlotterCommand
+internal sealed class PC_ScaleP1P2: PlotterCommand
 {
     public float P1X { get; init; }
     public float P1Y { get; init; }
@@ -32,7 +32,7 @@ internal class PC_ScaleP1P2: PlotterCommand
     public float P2Y { get; init; }
 }
 
-internal class PC_DrawLine: PlotterCommandWidthAndColor
+internal sealed class PC_DrawLine: PlotterCommandWidthAndColor
 {
     public float P1X { get; init; }
     public float P1Y { get; init; }
@@ -40,7 +40,7 @@ internal class PC_DrawLine: PlotterCommandWidthAndColor
     public float P2Y { get; init; }
 }
 
-internal class PC_DrawBox: PlotterCommandWidthAndColor
+internal sealed class PC_DrawBox: PlotterCommandWidthAndColor
 {
     public float P1X { get; init; }
     public float P1Y { get; init; }
@@ -48,14 +48,14 @@ internal class PC_DrawBox: PlotterCommandWidthAndColor
     public float P2Y { get; init; }
 }
 
-internal class PC_DrawCircle: PlotterCommandWidthAndColor
+internal sealed class PC_DrawCircle: PlotterCommandWidthAndColor
 {
     public float CX { get; init; }
     public float CY { get; init; }
     public float R { get; init; }
 }
 
-internal class PC_DrawAxes: PlotterCommandWidthAndColor
+internal sealed class PC_DrawAxes: PlotterCommandWidthAndColor
 {
     public float OX { get; init; }
     public float OY { get; init; }
@@ -63,7 +63,7 @@ internal class PC_DrawAxes: PlotterCommandWidthAndColor
     public float StepY { get; init; }
 }
 
-internal class PC_DrawGrid: PlotterCommandWidthAndColor
+internal sealed class PC_DrawGrid: PlotterCommandWidthAndColor
 {
     public float OX { get; init; }
     public float OY { get; init; }
@@ -71,12 +71,12 @@ internal class PC_DrawGrid: PlotterCommandWidthAndColor
     public float StepY { get; init; }
 }
 
-internal class PC_WindowTitle: PlotterCommand
+internal sealed class PC_WindowTitle: PlotterCommand
 {
     public string WindowTitle { get; init; } = "";
 }
 
-internal class PC_Text: PlotterCommand
+internal sealed class PC_Text: PlotterCommand
 {
     public float PX { get; init; }
     public float PY { get; init; }

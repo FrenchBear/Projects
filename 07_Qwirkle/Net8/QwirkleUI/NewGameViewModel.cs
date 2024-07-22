@@ -4,14 +4,13 @@
 // 2024-01-02   PV
 
 using System.ComponentModel;
-using System.Diagnostics;
 
 namespace QwirkleUI;
-internal class NewGameViewModel: INotifyPropertyChanged
+internal sealed class NewGameViewModel: INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    protected void NotifyPropertyChanged(string propertyName)
+    public void NotifyPropertyChanged(string propertyName)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     private readonly Model Model;
 

@@ -12,7 +12,7 @@ using System.Windows.Input;
 
 namespace SolWPF;
 
-internal class RelayCommand<T>(Action<T> execute, Predicate<T>? canExecute): ICommand
+internal sealed class RelayCommand<T>(Action<T> execute, Predicate<T>? canExecute): ICommand
 {
     private readonly Predicate<T>? canExecute = canExecute;
     private readonly Action<T> execute = execute;
@@ -24,14 +24,7 @@ internal class RelayCommand<T>(Action<T> execute, Predicate<T>? canExecute): ICo
     /* From ICommand */
 
     public bool CanExecute(object? parameter)
-    {
-        if (canExecute == null)
-            return true;
-        if (parameter == null)
-            return canExecute(default!);
-        else
-            return canExecute((T)parameter);
-    }
+        => canExecute == null || (parameter == null ? canExecute(default!) : canExecute((T)parameter));
 
     /* From ICommand */
 

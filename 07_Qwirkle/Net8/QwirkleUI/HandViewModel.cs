@@ -13,7 +13,7 @@ using static QwirkleUI.App;
 
 namespace QwirkleUI;
 
-internal class HandViewModel: INotifyPropertyChanged
+internal sealed class HandViewModel: INotifyPropertyChanged
 {
     // View and Model
     private readonly HandUserControl View;

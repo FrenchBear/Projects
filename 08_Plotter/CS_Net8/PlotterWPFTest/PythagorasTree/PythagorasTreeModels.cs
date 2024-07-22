@@ -19,7 +19,7 @@ public static class PythagorasTreeModel
     public static Vector2 GetPTNewPoint(Vector2 A, Vector2 B, float x)
     {
         var p = A + (B - A) * x;
-        var P = p + RotateVector2(Vector2.Multiply(B-A, (float)Math.Sqrt(x * (1 - x))), (float)Math.PI / 2);
+        var P = p + RotateVector2(Vector2.Multiply(B - A, (float)Math.Sqrt(x * (1 - x))), (float)Math.PI / 2);
         return P;
     }
 

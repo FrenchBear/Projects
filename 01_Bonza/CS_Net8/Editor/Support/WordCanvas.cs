@@ -5,7 +5,6 @@
 // 2021-11-13   PV      Net6 C#10
 
 using Bonza.Generator;
-using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -13,7 +12,7 @@ using static Bonza.Editor.App;
 
 namespace Bonza.Editor.Support;
 
-internal class WordCanvas: Canvas
+internal sealed class WordCanvas: Canvas
 {
     private readonly FontFamily arial = new("Arial");
     private readonly WordPosition wp;

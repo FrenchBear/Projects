@@ -3,14 +3,13 @@
 //
 // 2021-12-17   PV
 
-using System.Diagnostics;
 using System.Windows.Controls;
 
 namespace PlotterWPFTest;
 
 public partial class PlotterCommonUserControl: UserControl
 {
-    public PlotterCommonUserControl() 
+    public PlotterCommonUserControl()
         => InitializeComponent();
 
     private void Button_Click(object sender, System.Windows.RoutedEventArgs e)

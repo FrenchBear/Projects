@@ -23,10 +23,8 @@ enum MoveStatus
     Valid,
 }
 
-internal class MainViewModel: INotifyPropertyChanged
+internal sealed class MainViewModel: INotifyPropertyChanged
 {
-    // Model and View
-    private readonly Model Model;
     private readonly MainWindow View;
 
     // Game state
@@ -38,11 +36,11 @@ internal class MainViewModel: INotifyPropertyChanged
     internal readonly GameSettings GameSettings = new();
 
     // Helpers
-    public Player CurrentPlayer => Model.CurrentPlayer;
-    public HandViewModel CurrentHandViewModel => HandViewModels[Model.PlayerIndex];
+    public Player CurrentPlayer => GetModel.CurrentPlayer;
+    public HandViewModel CurrentHandViewModel => HandViewModels[GetModel.PlayerIndex];
 
     // Helper to initialize HandViewModel, since model is common to all ViewModels
-    public Model GetModel => Model;
+    public Model GetModel { get; }
 
     // Implementation of INotifyPropertyChanged, standard since View is only linked through DataBinding
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -78,7 +76,7 @@ internal class MainViewModel: INotifyPropertyChanged
     {
         // Initialize ViewModel
         View = view;
-        Model = new Model(/*this*/);
+        GetModel = new Model(/*this*/);
 
         // Read settings
         GameSettings.BestPlayHint = Properties.Settings.Default["BestPlayHint"] switch
@@ -121,10 +119,10 @@ internal class MainViewModel: INotifyPropertyChanged
 
     public BoundingRectangle Bounds()
     {
-        int rowMin = Model.Board.RowMin;
-        int colMin = Model.Board.ColMin;
-        int rowMax = Model.Board.RowMax;
-        int colMax = Model.Board.ColMax;
+        int rowMin = GetModel.Board.RowMin;
+        int colMin = GetModel.Board.ColMin;
+        int rowMax = GetModel.Board.RowMax;
+        int colMax = GetModel.Board.ColMax;
 
         if (CurrentMoves.Count > 0)
         {
@@ -151,7 +149,7 @@ internal class MainViewModel: INotifyPropertyChanged
             }
 
             if (PlaySuggestion == null)
-                PlaySuggestion = Model.Board.Play(CurrentPlayer.Hand);
+                PlaySuggestion = GetModel.Board.Play(CurrentPlayer.Hand);
 
             if (GameSettings.BestPlayHint == HintOptionsEnum.ShowNothing)
             {
@@ -159,28 +157,22 @@ internal class MainViewModel: INotifyPropertyChanged
                 return;
             }
 
-            if (PlaySuggestion.PB.Points == 0)
-            {
-                StatusMessage = "Info: Aucune tuile jouable, échangez les tuiles.";
-            }
-            else
-            {
-                if (GameSettings.BestPlayHint == HintOptionsEnum.ShowExcellent)
-                    StatusMessage = "Déplacez des tuiles de la main sur le jeu.";
-                else
-                    StatusMessage = $"Info: Il existe un placement à {PlaySuggestion.PB.Points} points.";
-            }
+            StatusMessage = PlaySuggestion.PB.Points == 0
+                ? "Info: Aucune tuile jouable, échangez les tuiles."
+                : GameSettings.BestPlayHint == HintOptionsEnum.ShowExcellent
+                    ? "Déplacez des tuiles de la main sur le jeu."
+                    : $"Info: Il existe un placement à {PlaySuggestion.PB.Points} points.";
             return;
         }
 
         bool status;
         string msg;
         var moves = new Moves(CurrentMoves.Select(uitrc => new TileRowCol(uitrc.Tile, uitrc.RC)));
-        (status, msg) = Model.EvaluateMoves(new Moves(moves));
+        (status, msg) = GetModel.EvaluateMoves(new Moves(moves));
         if (status)
         {
-            PointsBonus pb = Model.CountPoints(moves);
-            StatusMessage = pb.Points>1 ? $"Placement valide à {pb.Points} points" : $"Placement valide à {pb.Points} point";
+            PointsBonus pb = GetModel.CountPoints(moves);
+            StatusMessage = pb.Points > 1 ? $"Placement valide à {pb.Points} points" : $"Placement valide à {pb.Points} point";
             if (PlaySuggestion != null && pb.Points == PlaySuggestion.PB.Points)
                 StatusMessage += ", excellent!";
             else
@@ -267,7 +259,7 @@ internal class MainViewModel: INotifyPropertyChanged
                 if (!initialized)
                 {
                     PerformNewGame(actionBag.Tiles);
-                    for (int p = 0; p < Model.PlayersCount; p++)
+                    for (int p = 0; p < GetModel.PlayersCount; p++)
                         HandViewModels[p].Score = "0";
                     initialized = true;
                 }
@@ -275,7 +267,7 @@ internal class MainViewModel: INotifyPropertyChanged
                 {
                     if (na == 0)    // Don't perform last exchange
                         break;
-                    Model.Bag.SetTiles(actionBag.Tiles);
+                    GetModel.Bag.SetTiles(actionBag.Tiles);
                     CurrentPlayer.Hand.Clear();
                     CurrentHandViewModel.RemoveAllUITiles();
                     RefillPlayerHand();
@@ -287,9 +279,9 @@ internal class MainViewModel: INotifyPropertyChanged
                 PerformSuggestPlay(false);
                 if (na == 0)    // Don't validate last move
                 {
-                    Model.UpdateRanks();
-                    for (int p = 0; p < Model.PlayersCount; p++)
-                        HandViewModels[p].Rank = Model.Players[p].Rank;
+                    GetModel.UpdateRanks();
+                    for (int p = 0; p < GetModel.PlayersCount; p++)
+                        HandViewModels[p].Rank = GetModel.Players[p].Rank;
                     UpdateRemainingTiles();
                     break;
                 }
@@ -305,13 +297,8 @@ internal class MainViewModel: INotifyPropertyChanged
 
     private void UpdateRemainingTiles()
     {
-        int r = Model.Bag.Tiles.Count;
-        if (r == 0)
-            RemainingTiles = "Toutes les tuiles ont été jouées";
-        else if (r == 1)
-            RemainingTiles = "Une tuile restante";
-        else
-            RemainingTiles = $"{r} tuiles restantes";
+        int r = GetModel.Bag.Tiles.Count;
+        RemainingTiles = r == 0 ? "Toutes les tuiles ont été jouées" : r == 1 ? "Une tuile restante" : $"{r} tuiles restantes";
     }
 
     void RefillPlayerHand()
@@ -336,15 +323,15 @@ internal class MainViewModel: INotifyPropertyChanged
             var moves = new Moves(CurrentMoves.Select(uitrc => new TileRowCol(uitrc.Tile, uitrc.RC)));
 
             // Count points and update display
-            var pb = Model.Board.CountPoints(moves);
+            var pb = GetModel.Board.CountPoints(moves);
             Debug.Assert(pb.Points > 0);
             CurrentPlayer.Score += pb.Points;
             CurrentHandViewModel.Score = CurrentPlayer.Score.ToString();
-            Model.UpdateRanks();
-            for (int p = 0; p < Model.PlayersCount; p++)
-                HandViewModels[p].Rank = Model.Players[p].Rank;
+            GetModel.UpdateRanks();
+            for (int p = 0; p < GetModel.PlayersCount; p++)
+                HandViewModels[p].Rank = GetModel.Players[p].Rank;
 
-            Model.Board.AddMoves(moves, true);
+            GetModel.Board.AddMoves(moves, true);
             foreach (var move in CurrentMoves)
             {
                 move.UIT.SelectionBorder = false;
@@ -383,25 +370,22 @@ internal class MainViewModel: INotifyPropertyChanged
     // Returns false once game has ended (at least one player has an empty hand) and current player is last player
     bool NextPlayer()
     {
-        bool endGame = Model.Players.Any(pl => pl.Hand.Count == 0);
-        if (endGame && Model.PlayerIndex == Model.PlayersCount - 1)
+        bool endGame = GetModel.Players.Any(pl => pl.Hand.Count == 0);
+        if (endGame && GetModel.PlayerIndex == GetModel.PlayersCount - 1)
             return false;
 
-        if (Model.PlayersCount > 1)
+        if (GetModel.PlayersCount > 1)
         {
-            var oldIndex = Model.PlayerIndex;
-            Model.PlayerIndex = (Model.PlayerIndex + 1) % Model.PlayersCount;
+            var oldIndex = GetModel.PlayerIndex;
+            GetModel.PlayerIndex = (GetModel.PlayerIndex + 1) % GetModel.PlayersCount;
             HandViewModels[oldIndex].UpdateTitleBrush();
-            HandViewModels[Model.PlayerIndex].UpdateTitleBrush();
+            HandViewModels[GetModel.PlayerIndex].UpdateTitleBrush();
         }
 
-        if (Model.PlayerIndex == 0)
-            Model.RoundNumber++;
+        if (GetModel.PlayerIndex == 0)
+            GetModel.RoundNumber++;
 
-        if (endGame)
-            RoundNumber = $"Tour #{Model.RoundNumber} (dernier tour)";
-        else
-            RoundNumber = $"Tour #{Model.RoundNumber}";
+        RoundNumber = endGame ? $"Tour #{GetModel.RoundNumber} (dernier tour)" : $"Tour #{GetModel.RoundNumber}";
 
         return true;
     }
@@ -441,14 +425,14 @@ internal class MainViewModel: INotifyPropertyChanged
 
     internal void PerformExchangeTiles()
     {
-        if (Model.Bag.IsEmpty || CurrentPlayer.Hand.Count == 0)
+        if (GetModel.Bag.IsEmpty || CurrentPlayer.Hand.Count == 0)
             return;
 
         // Repeat exchange until we get something playable
         for (; ; )
         {
-            Model.Bag.ReturnTiles(CurrentPlayer.Hand);
-            var newBagTiles = new List<Tile>(Model.Bag.Tiles);      // Keep a copy before refilling player hand
+            GetModel.Bag.ReturnTiles(CurrentPlayer.Hand);
+            var newBagTiles = new List<Tile>(GetModel.Bag.Tiles);      // Keep a copy before refilling player hand
             CurrentPlayer.Hand.Clear();
             CurrentHandViewModel.RemoveAllUITiles();
             RefillPlayerHand();
@@ -536,7 +520,7 @@ internal class MainViewModel: INotifyPropertyChanged
     // Keep existing players
     internal void PerformNewGame(List<Tile>? initialBagTiles = null)
     {
-        Model.NewBoard(initialBagTiles);
+        GetModel.NewBoard(initialBagTiles);
         View.BoardDrawingCanvasRemoveAllUITiles();
         CurrentMoves.Clear();
         RoundNumber = "Tour #1";
@@ -544,15 +528,15 @@ internal class MainViewModel: INotifyPropertyChanged
         if (initialBagTiles == null)    // Don't clear or update history while replaying it
         {
             HistoryActions.Clear();
-            Debug.Assert(Model.Bag.Tiles.Count == 3 * 6 * 6);
-            HistoryActions.AddLast(new HistoryActionBag(new List<Tile>(Model.Bag.Tiles)));
+            Debug.Assert(GetModel.Bag.Tiles.Count == 3 * 6 * 6);
+            HistoryActions.AddLast(new HistoryActionBag(new List<Tile>(GetModel.Bag.Tiles)));
         }
 
-        for (int i = 0; i < Model.Players.Length; i++)
+        for (int i = 0; i < GetModel.Players.Length; i++)
         {
             HandViewModels[i].RemoveAllUITiles();
-            Model.Players[i].Hand.Clear();
-            Model.Players[i].Score = 0;
+            GetModel.Players[i].Hand.Clear();
+            GetModel.Players[i].Score = 0;
             HandViewModels[i].RefillAndDrawHand();
         }
 
@@ -566,8 +550,10 @@ internal class MainViewModel: INotifyPropertyChanged
     // Update players, then PerformNewGame()
     internal void PerformNewPlayers()
     {
-        var ng = new NewGameWindow(Model);
-        ng.Owner = View;
+        var ng = new NewGameWindow(GetModel)
+        {
+            Owner = View
+        };
         var res = ng.ShowDialog() ?? false;
         if (!res)
         {
@@ -577,32 +563,32 @@ internal class MainViewModel: INotifyPropertyChanged
 
         //MessageBox.Show($"Dialog: {res}  Players count: {Model.PlayersCount}");
 
-        Debug.Assert(Model.PlayersCount >= 1 && Model.PlayersCount <= 4);
+        Debug.Assert(GetModel.PlayersCount is >= 1 and <= 4);
 
-        HandViewModels = new HandViewModel[Model.PlayersCount];
+        HandViewModels = new HandViewModel[GetModel.PlayersCount];
         View.Player1HandUserControl.Visibility = Visibility.Visible;
-        HandViewModels[0] = new HandViewModel(View, View.Player1HandUserControl, Model, 0);
+        HandViewModels[0] = new HandViewModel(View, View.Player1HandUserControl, GetModel, 0);
 
-        if (Model.PlayersCount > 1)
+        if (GetModel.PlayersCount > 1)
         {
             View.Player2HandUserControl.Visibility = Visibility.Visible;
-            HandViewModels[1] = new HandViewModel(View, View.Player2HandUserControl, Model, 1);
+            HandViewModels[1] = new HandViewModel(View, View.Player2HandUserControl, GetModel, 1);
         }
         else
             View.Player2HandUserControl.Visibility = Visibility.Collapsed;
 
-        if (Model.PlayersCount > 2)
+        if (GetModel.PlayersCount > 2)
         {
             View.Player3HandUserControl.Visibility = Visibility.Visible;
-            HandViewModels[2] = new HandViewModel(View, View.Player3HandUserControl, Model, 2);
+            HandViewModels[2] = new HandViewModel(View, View.Player3HandUserControl, GetModel, 2);
         }
         else
             View.Player3HandUserControl.Visibility = Visibility.Collapsed;
 
-        if (Model.PlayersCount > 3)
+        if (GetModel.PlayersCount > 3)
         {
             View.Player4HandUserControl.Visibility = Visibility.Visible;
-            HandViewModels[3] = new HandViewModel(View, View.Player4HandUserControl, Model, 3);
+            HandViewModels[3] = new HandViewModel(View, View.Player4HandUserControl, GetModel, 3);
         }
         else
             View.Player4HandUserControl.Visibility = Visibility.Collapsed;
@@ -620,7 +606,7 @@ internal class MainViewModel: INotifyPropertyChanged
     // ToDo: Only for dev I think
     internal void DrawBoard()
     {
-        foreach (TileRowCol m in Model.Board)
+        foreach (TileRowCol m in GetModel.Board)
             View.BoardDrawingCanvasAddUITile(m.Tile, new RowCol(m.Row, m.Col), false);
     }
 
@@ -657,7 +643,7 @@ internal class MainViewModel: INotifyPropertyChanged
     }
 
     internal CellState GetCellState(int row, int col)
-        => Model.Board.GetCellState(row, col);
+        => GetModel.Board.GetCellState(row, col);
 
     // -------------------------------------------------
     // Commands
@@ -700,17 +686,17 @@ internal class MainViewModel: INotifyPropertyChanged
 
     // -----------------------------------
 
-    private bool SuggestPlayCanExecute(object obj) => Model.Players.Length != 0 && CurrentPlayer.Hand.Count > 0;
+    private bool SuggestPlayCanExecute(object obj) => GetModel.Players.Length != 0 && CurrentPlayer.Hand.Count > 0;
 
     private void SuggestPlayExecute(object obj)
     {
-        PlaySuggestion = Model.Board.Play(CurrentPlayer.Hand);      // Generate a new suggestion each time wi click on button or hit f1, ignoring PlaySuggestion already computed
+        PlaySuggestion = GetModel.Board.Play(CurrentPlayer.Hand);      // Generate a new suggestion each time wi click on button or hit f1, ignoring PlaySuggestion already computed
         PerformSuggestPlay();
     }
 
     // -----------------------------------
 
-    private bool ExchangeTilesCanExecute(object obj) => !Model.IsBagEmpty;
+    private bool ExchangeTilesCanExecute(object obj) => !GetModel.IsBagEmpty;
 
     private void ExchangeTilesExecute(object obj) => PerformExchangeTiles();
 
@@ -725,8 +711,8 @@ internal class MainViewModel: INotifyPropertyChanged
     // -----------------------------------
 
     private static bool IsShiftPressed
-        => System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.LeftShift) ||
-           System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.RightShift);
+        => Keyboard.IsKeyDown(Key.LeftShift) ||
+           Keyboard.IsKeyDown(Key.RightShift);
 
     private void NewGameExecute(object obj)
     {

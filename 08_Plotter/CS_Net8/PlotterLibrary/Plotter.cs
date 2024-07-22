@@ -18,7 +18,7 @@ public partial class Plotter
 {
     private readonly List<PlotterCommand> Commands = [];
     public DrawingExtent Extent = new();
-    private PictureBox? picOut = null;
+    private PictureBox? picOut;
 
     /// <summary>
     /// All current pen attributes (position, color, width...)
@@ -273,7 +273,7 @@ public class CurrentPenAttributes
     /// <summary>
     /// Current Pen drawing color
     /// </summary>
-    public System.Drawing.Color Color;
+    public Color Color;
 
     /// <summary>
     /// Current Pen drawing width (unit is pixel for screen rendering, but for printer rendering, it seems thicker...
@@ -281,13 +281,7 @@ public class CurrentPenAttributes
     public float Width
     {
         get => width;
-        set
-        {
-            if (value >= 0)
-                width = value;
-            else
-                throw new ArgumentException("Width must be >=0");
-        }
+        set => width = value >= 0 ? value : throw new ArgumentException("Width must be >=0");
     }
 
     private float width;
@@ -315,7 +309,7 @@ public class CurrentPenAttributes
         X = 0;
         Y = 0;
         PenDown = false;
-        Color = System.Drawing.Color.Black;
+        Color = Color.Black;
         Width = 1.0f;
         Angle = 0;
 

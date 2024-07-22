@@ -36,9 +36,11 @@ public partial class HandUserControl: UserControl
         for (int r = 0; r < HandRows; r++)
             for (int c = 0; c < HandColumns; c++)
             {
-                var rect = new Rectangle();
-                rect.Width = UnitSize;
-                rect.Height = UnitSize;
+                var rect = new Rectangle
+                {
+                    Width = UnitSize,
+                    Height = UnitSize
+                };
                 rect.SetValue(Canvas.TopProperty, r * UnitSize);
                 rect.SetValue(Canvas.LeftProperty, c * UnitSize);
                 rect.StrokeThickness = 1.0;
@@ -71,8 +73,10 @@ public partial class HandUserControl: UserControl
 
     internal void AddUITile(Tile ti, RowCol p)
     {
-        var t = new UITile(ti);
-        t.GrayBackground = true;
+        var t = new UITile(ti)
+        {
+            GrayBackground = true
+        };
         t.SetValue(Canvas.TopProperty, p.Row * UnitSize);
         t.SetValue(Canvas.LeftProperty, p.Col * UnitSize);
         t.Width = UnitSize;
@@ -89,7 +93,7 @@ public partial class HandUserControl: UserControl
         HandDrawingCanvas.Children.Remove(tile);
     }
 
-    public void RemoveAllUITiles() 
+    public void RemoveAllUITiles()
         => HandDrawingCanvas.Children.Clear();
 
     // --------------------------------------------------------------------
@@ -97,7 +101,7 @@ public partial class HandUserControl: UserControl
 
     internal void HandCanvas_MouseMoveWhenUp(object sender, MouseEventArgs e)
     {
-        if (HandOverState==HandOverStateEnum.InTransition)
+        if (HandOverState == HandOverStateEnum.InTransition)
             return;
         //
 
@@ -119,7 +123,7 @@ public partial class HandUserControl: UserControl
         Point? handCanvasMousePosition = HandIM.IM_MouseMoveWhenDown(sender, e, HandCanvas, TransformationMatrix.Matrix);
 
         // If mouse is more than 20 points left HandCanvas, it's time for a handover to MainWindow
-        if (handCanvasMousePosition != null && handCanvasMousePosition.Value.X<-20)
+        if (handCanvasMousePosition != null && handCanvasMousePosition.Value.X < -20)
         {
             HandOverState = HandOverStateEnum.InTransition;  // Ignore MouseMove events to avoid nasty reentrency issues
             HandIM.StartHandOverEndCaptureAndPmm();
@@ -138,14 +142,14 @@ public partial class HandUserControl: UserControl
     }
 
     // Actually not used for Hand
-    private void HandCanvas_MouseWheel(object sender, MouseWheelEventArgs e) 
+    private void HandCanvas_MouseWheel(object sender, MouseWheelEventArgs e)
         => HandIM.IM_MouseWheel(sender, e);
 
-    private void HandCanvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e) 
+    private void HandCanvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         => HandIM.IM_MouseRightButtonDown(sender, e, HandCanvas, HandDrawingCanvas);
 }
 
-internal class HandInteractionManager(HashSet<UITileRowCol> hand /*, HandUserControl view*/ ): InteractionManager
+internal sealed class HandInteractionManager(HashSet<UITileRowCol> hand /*, HandUserControl view*/ ): InteractionManager
 {
     private readonly HashSet<UITileRowCol> Hand = hand;
     //private readonly HandUserControl View = view;

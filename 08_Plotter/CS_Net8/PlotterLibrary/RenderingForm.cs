@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace PlotterLibrary;
 
-internal partial class RenderingForm: Form
+internal sealed partial class RenderingForm: Form
 {
     private readonly Plotter p;
 

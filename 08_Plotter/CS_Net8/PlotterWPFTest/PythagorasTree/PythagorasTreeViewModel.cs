@@ -4,13 +4,11 @@
 // 2022-06-24    PV
 
 using PlotterLibrary;
-using System;
-using System.Collections.Generic;
 using System.Numerics;
 
 namespace PlotterWPFTest;
 
-internal class PythagorasTreeViewModel: BaseViewModel
+internal sealed class PythagorasTreeViewModel: BaseViewModel
 {
     private readonly PythagorasTreeUserControl View;
     public readonly PlotterCommonViewModel Pcvm;
@@ -69,7 +67,7 @@ internal class PythagorasTreeViewModel: BaseViewModel
             p.Plot(A);
             p.PenUp();
 
-            if (Depth>1)
+            if (Depth > 1)
             {
                 var P = PythagorasTreeModel.GetPTNewPoint(D, C, (float)X);
                 var c2 = (color + 1) % p.ColorsTable.Length;

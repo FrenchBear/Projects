@@ -8,7 +8,7 @@ using System;
 
 namespace PlotterWPFTest;
 
-internal class SpirographViewModel: BaseViewModel
+internal sealed class SpirographViewModel: BaseViewModel
 {
     private readonly SpirographUserControl View;
     public readonly PlotterCommonViewModel Pcvm;
@@ -21,9 +21,9 @@ internal class SpirographViewModel: BaseViewModel
 
     // ================================================================================
 
-        /// <summary>
-        /// Fixed wheel teeth count
-        /// </summary>
+    /// <summary>
+    /// Fixed wheel teeth count
+    /// </summary>
     public int Z1
     {
         get => _Z1;
@@ -52,7 +52,7 @@ internal class SpirographViewModel: BaseViewModel
     public override void PlotChart()
     {
         Plotter p = View.MyPlotter;
-        if (p== null)
+        if (p == null)
             return;
 
         p.Clear();

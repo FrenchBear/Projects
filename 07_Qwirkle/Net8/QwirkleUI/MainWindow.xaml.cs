@@ -176,7 +176,7 @@ public partial class MainWindow: Window
     }
 
     // Relay from Window_MouseDown handler when it's actually a right click
-    private void BoardCanvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e) 
+    private void BoardCanvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         => BoardIM.IM_MouseRightButtonDown(sender, e, BoardCanvas, BoardDrawingCanvas);
 
     private void BoardCanvas_MouseMoveWhenDown(object sender, MouseEventArgs e)
@@ -350,11 +350,13 @@ public partial class MainWindow: Window
             }
 
             // Add circle
-            var e = new Ellipse();
-            e.Width = 1.8 * UnitSize;
-            e.Height = 1.8 * UnitSize;
-            e.Stroke = Brushes.LightGray;
-            e.StrokeThickness = 5.0;
+            var e = new Ellipse
+            {
+                Width = 1.8 * UnitSize,
+                Height = 1.8 * UnitSize,
+                Stroke = Brushes.LightGray,
+                StrokeThickness = 5.0
+            };
             e.SetValue(Canvas.TopProperty, (50 - 0.4) * UnitSize);
             e.SetValue(Canvas.LeftProperty, (50 - 0.4) * UnitSize);
 
@@ -364,8 +366,10 @@ public partial class MainWindow: Window
 
     internal UITileRowCol BoardDrawingCanvasAddUITile(Tile ti, RowCol position, bool gray)
     {
-        var t = new UITile(ti);
-        t.GrayBackground = gray;
+        var t = new UITile(ti)
+        {
+            GrayBackground = gray
+        };
         t.SetValue(Canvas.TopProperty, position.Row * UnitSize);
         t.SetValue(Canvas.LeftProperty, position.Col * UnitSize);
         t.Width = UnitSize;
@@ -381,7 +385,7 @@ public partial class MainWindow: Window
         BoardDrawingCanvas.Children.Remove(uit);
     }
 
-    internal void BoardDrawingCanvasRemoveAllUITiles() 
+    internal void BoardDrawingCanvasRemoveAllUITiles()
         => BoardDrawingCanvas.Children.Clear();
 
     internal void MainWindowAcceptHandOver(HandInteractionManager playerIM)
@@ -416,11 +420,11 @@ public partial class MainWindow: Window
         HandOverState = HandOverStateEnum.Active;
     }
 
-    internal void Refresh() 
+    internal void Refresh()
         => Dispatcher.Invoke(new Action(() => { }), DispatcherPriority.ContextIdle, null);
 }
 
-internal class BoardInteractionManager(HashSet<UITileRowCol> currentMoves, MainWindow view, MainViewModel viewModel): InteractionManager
+internal sealed class BoardInteractionManager(HashSet<UITileRowCol> currentMoves, MainWindow view, MainViewModel viewModel): InteractionManager
 {
     private readonly HashSet<UITileRowCol> CurrentMoves = currentMoves;
     private readonly MainWindow View = view;
@@ -565,11 +569,7 @@ internal class BoardInteractionManager(HashSet<UITileRowCol> currentMoves, MainW
 
     public override void OnMouseRightButtonDown(object sender, UITilesSelection selection, bool tileHit)
     {
-        ContextMenu? cm;
-        if (tileHit)
-            cm = View.FindResource("MoveTileMenu") as ContextMenu;
-        else
-            cm = View.FindResource("BoardTileAndBackgroundMenu") as ContextMenu;
+        ContextMenu? cm = tileHit ? View.FindResource("MoveTileMenu") as ContextMenu : View.FindResource("BoardTileAndBackgroundMenu") as ContextMenu;
         Debug.Assert(cm != null);
         cm.PlacementTarget = sender as UIElement;
         cm.IsOpen = true;

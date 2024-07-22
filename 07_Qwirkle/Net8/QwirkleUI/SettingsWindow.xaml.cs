@@ -4,18 +4,8 @@
 // 2024-01-06   PV
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace QwirkleUI;
 
@@ -26,7 +16,7 @@ public enum HintOptionsEnum
     ShowNothing,
 }
 
-public partial class SettingsWindow : Window
+public partial class SettingsWindow: Window
 {
     private readonly GameSettings GS;
 
@@ -34,16 +24,17 @@ public partial class SettingsWindow : Window
     {
         InitializeComponent();
         GS = gs;
-        (gs.BestPlayHint switch { 
+        (gs.BestPlayHint switch
+        {
             HintOptionsEnum.ShowBestPlay => BestPlayHintShowBestPlayOption,
             HintOptionsEnum.ShowExcellent => BestPlayHintShowExcellentOption,
-            _ => BestPlayHintShowNothingOption
+            _ or HintOptionsEnum.ShowNothing => BestPlayHintShowNothingOption,
         }).IsChecked = true;
     }
 
     private void OKButton_Click(object sender, RoutedEventArgs e)
     {
-        GS.BestPlayHint = 
+        GS.BestPlayHint =
             BestPlayHintShowBestPlayOption.IsChecked ?? false ? HintOptionsEnum.ShowBestPlay :
             BestPlayHintShowExcellentOption.IsChecked ?? false ? HintOptionsEnum.ShowExcellent :
             HintOptionsEnum.ShowNothing;
@@ -59,7 +50,7 @@ public partial class SettingsWindow : Window
         => DialogResult = false;
 
     // Double click on option validates dialog
-    private void Option_MouseDoubleClick(object sender, MouseButtonEventArgs e) 
+    private void Option_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         => OKButton_Click(sender, new RoutedEventArgs());
 }
 

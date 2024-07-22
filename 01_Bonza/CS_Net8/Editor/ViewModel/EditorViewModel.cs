@@ -22,12 +22,12 @@ using System.Windows.Input;
 
 namespace Bonza.Editor.ViewModel;
 
-internal class EditorViewModel: INotifyPropertyChanged
+internal sealed class EditorViewModel: INotifyPropertyChanged
 {
     // Model and View
     private readonly EditorModel model;
 
-    private readonly View.EditorView view;
+    private readonly EditorView view;
 
     // Implementation of INotifyPropertyChanged, standard since View is only linked through DataBinding
     public event PropertyChangedEventHandler PropertyChanged;
@@ -59,7 +59,7 @@ internal class EditorViewModel: INotifyPropertyChanged
     public ICommand AboutCommand { get; }
 
     // Constructor
-    public EditorViewModel(View.EditorView view)
+    public EditorViewModel(EditorView view)
     {
         // Initialize ViewModel
         this.view = view;
@@ -98,7 +98,7 @@ internal class EditorViewModel: INotifyPropertyChanged
 
     internal WordPositionLayout GetLayoutExcludingWordPositionList(IEnumerable<WordPosition> wordPositionList) => model.GetLayoutExcludingWordPositionList(wordPositionList);
 
-    internal WordPositionLayout GetLayoutExcludingWordPosition(WordPosition wordPosition) => model.GetLayoutExcludingWordPositionList(new List<WordPosition> { wordPosition });
+    internal WordPositionLayout GetLayoutExcludingWordPosition(WordPosition wordPosition) => model.GetLayoutExcludingWordPositionList([wordPosition]);
 
     internal static PlaceWordStatus CanPlaceWordAtPositionInLayout(WordPositionLayout layout, WordPosition wordPosition, PositionOrientation positionOrientation) => EditorModel.CanPlaceWordAtPositionInLayout(layout, wordPosition, positionOrientation);
 
@@ -304,7 +304,7 @@ internal class EditorViewModel: INotifyPropertyChanged
 
     private void AddWordsExecute(object obj)
     {
-        var aww = new View.AddWordsView(model)
+        var aww = new AddWordsView(model)
         {
             Owner = view        // Make sure that AddWordsView window is always on the top of Editor
         };
@@ -451,7 +451,7 @@ internal class EditorViewModel: INotifyPropertyChanged
 
     private void AboutExecute(object obj)
     {
-        var aw = new View.AboutWindow();
+        var aw = new AboutWindow();
         aw.ShowDialog();
     }
 }

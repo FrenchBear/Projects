@@ -163,21 +163,17 @@ public class WordPositionLayout
 
     // Return layout bounds extended with a WordPosition added
     // Don't use Position version of BoundingRectangle constructor, too slow
-    internal static BoundingRectangle ExtendBounds(BoundingRectangle r, WordPosition wordPosition)
-    {
-        if (wordPosition.IsVertical)
-            return new BoundingRectangle(
+    internal static BoundingRectangle ExtendBounds(BoundingRectangle r, WordPosition wordPosition) => wordPosition.IsVertical
+            ? new BoundingRectangle(
                 Math.Min(r.Min.Row, wordPosition.StartRow),
                 Math.Max(r.Max.Row, wordPosition.StartRow + wordPosition.Word.Length - 1),
                 Math.Min(r.Min.Column, wordPosition.StartColumn),
-                Math.Max(r.Max.Column, wordPosition.StartColumn));
-        else
-            return new BoundingRectangle(
+                Math.Max(r.Max.Column, wordPosition.StartColumn))
+            : new BoundingRectangle(
                 Math.Min(r.Min.Row, wordPosition.StartRow),
                 Math.Max(r.Max.Row, wordPosition.StartRow),
                 Math.Min(r.Min.Column, wordPosition.StartColumn),
                 Math.Max(r.Max.Column, wordPosition.StartColumn + wordPosition.Word.Length - 1));
-    }
 
     // Try to place a word in current layout, following rules of puzzle layout
     // If withTooClose if false, a too close condition returns Invalid

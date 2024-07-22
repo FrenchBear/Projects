@@ -7,18 +7,17 @@ using LibQwirkle;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Windows.Documents;
 
 namespace QwirkleUI;
 
-internal class Model(/*MainViewModel viewModel*/)
+internal sealed class Model(/*MainViewModel viewModel*/)
 {
     //private readonly MainViewModel viewModel = viewModel;               // Useful?
     public Board Board = new();
     public Bag Bag = new();
     public Player[] Players = [];
 
-    public int PlayerIndex = 0;
+    public int PlayerIndex;
     public int PlayersCount = 1;
 
     public int RoundNumber = 1;

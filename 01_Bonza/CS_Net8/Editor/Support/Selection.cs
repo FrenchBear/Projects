@@ -11,7 +11,7 @@ using System.Collections.ObjectModel;
 
 namespace Bonza.Editor.Support;
 
-internal class Selection(EditorViewModel viewModel)
+internal sealed class Selection(EditorViewModel viewModel)
 {
     private List<WordAndCanvas> m_WordAndCanvasList;
     private readonly EditorViewModel viewModel = viewModel;

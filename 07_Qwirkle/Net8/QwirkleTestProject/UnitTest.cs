@@ -11,6 +11,8 @@ using System.Linq;
 
 namespace xUnit_QwirkleTestProject;
 
+#pragma warning disable IDE0051 // Remove unused private members
+
 public class UnitTests_Base
 {
     readonly Board board = new();
@@ -158,7 +160,7 @@ public class UnitTests_Play
 
         var hand = new Hand([h1, h2, h3, h4, h5, h6]);
         var play = board.Play(hand);
-        Debug.Assert(play.Moves.SetEquals(new Moves { new(h2, 48, 52), new(h1, 49, 52) }));
+        Debug.Assert(play.Moves.SetEquals([new(h2, 48, 52), new(h1, 49, 52)]));
         Debug.Assert(play.PB.Points == 7);
         Debug.Assert(play.NewHand.Equals(new Hand([h3, h4, h5, h6])));
         board.AddMoves(play.Moves);
@@ -222,7 +224,7 @@ public class UnitTests_Misc
                 for (int i = 1; i <= 3; i++)
                     Debug.Assert(check.Contains(new(s, c, i)));
 
-        Assert.Throws<InvalidOperationException>(() => bag.GetTile());
+        Assert.Throws<InvalidOperationException>(bag.GetTile);
     }
 
     [Fact]
@@ -297,7 +299,7 @@ public class UnitTests_Evaluate
         bool status;
         string msg;
         (status, msg) = board.EvaluateMoves(moves);
-        Debug.Assert(status == false);
+        Debug.Assert(!status);
         Debug.Assert(msg == "Les tuiles jouées doivent être situées sur une même ligne ou une même colonne");
     }
 
@@ -311,7 +313,7 @@ public class UnitTests_Evaluate
         bool status;
         string msg;
         (status, msg) = board.EvaluateMoves(moves);
-        Debug.Assert(status == false);
+        Debug.Assert(!status);
         Debug.Assert(msg == "2 couleurs et 2 formes différentes, les tuiles jouées doivent être de la même couleur ou de la même forme");
     }
 
@@ -324,7 +326,7 @@ public class UnitTests_Evaluate
         bool status;
         string msg;
         (status, msg) = board.EvaluateMoves(moves);
-        Debug.Assert(status == false);
+        Debug.Assert(!status);
         Debug.Assert(msg == "La tuile Circle Green #1 en position (48, 50) n'est pas posée sur une cellule jouable");
     }
 
@@ -337,7 +339,7 @@ public class UnitTests_Evaluate
         bool status;
         string msg;
         (status, msg) = board.EvaluateMoves(moves);
-        Debug.Assert(status == false);
+        Debug.Assert(!status);
         Debug.Assert(msg == "La tuile Star Blue #1 en position (49, 51) n'est pas compatible avec les tuiles qui l'entourent");
     }
 
@@ -350,7 +352,7 @@ public class UnitTests_Evaluate
         bool status;
         string msg;
         (status, msg) = board.EvaluateMoves(moves);
-        Debug.Assert(status == true);
+        Debug.Assert(status);
         Debug.Assert(msg == "");
     }
 }

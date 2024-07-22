@@ -7,10 +7,11 @@
 
 using System.Collections;
 using System.Diagnostics;
-using System.Drawing;
 using System.Text;
 
 namespace LibQwirkle;
+
+#pragma warning disable IDE0051 // Remove unused private members
 
 // ANSI sequences for color on console
 public static class ConsoleSupport
@@ -279,7 +280,7 @@ public class Bag
 
 public class Board: IEnumerable<TileRowCol>
 {
-    readonly Board? BaseBoard = null;
+    readonly Board? BaseBoard;
     readonly Moves Moves = [];
 
     public Board() { }
@@ -293,8 +294,8 @@ public class Board: IEnumerable<TileRowCol>
 
     public int MovesCount => BaseBoard == null ? Moves.Count : Moves.Count + BaseBoard.MovesCount;
 
-    private int rowMin = 100, rowMax = 0;
-    private int colMin = 100, colMax = 0;
+    private int rowMin = 100, rowMax;
+    private int colMin = 100, colMax;
 
     public bool IsEmpty => Moves.Count == 0 && (BaseBoard == null || BaseBoard.IsEmpty);
 
@@ -506,9 +507,7 @@ public class Board: IEnumerable<TileRowCol>
         foreach (var t in Moves)
             if (t.Row == row && t.Col == col)
                 return t.Tile;
-        if (BaseBoard == null)
-            return null;
-        return BaseBoard.GetTile(row, col);
+        return BaseBoard?.GetTile(row, col);
     }
 
     public CellState GetCellState(RowCol rc)
@@ -524,9 +523,7 @@ public class Board: IEnumerable<TileRowCol>
         Tile? ts = GetTile(row + 1, col);
         Tile? te = GetTile(row, col + 1);
         Tile? tw = GetTile(row, col - 1);
-        if (tn == null && ts == null && te == null && tw == null)
-            return CellState.EmptyIsolated;
-        return CellState.PotentiallyPlayable;
+        return tn == null && ts == null && te == null && tw == null ? CellState.EmptyIsolated : CellState.PotentiallyPlayable;
     }
 
     enum ConstraintMode
@@ -657,11 +654,7 @@ public class Board: IEnumerable<TileRowCol>
             TileRowCol? playable = null;
             foreach (var trc in moves)
             {
-                bool IsPlayable;
-                if (nb.IsEmpty && trc.Row == 50 && trc.Col == 50)
-                    IsPlayable = true;
-                else
-                    IsPlayable = nb.GetCellState(trc.RC) == CellState.PotentiallyPlayable;
+                bool IsPlayable = (nb.IsEmpty && trc.Row == 50 && trc.Col == 50) || nb.GetCellState(trc.RC) == CellState.PotentiallyPlayable;
                 if (IsPlayable)
                 {
                     if (!nb.IsCompatible(trc))

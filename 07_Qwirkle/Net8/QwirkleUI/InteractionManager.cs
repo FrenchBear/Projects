@@ -18,13 +18,13 @@ namespace QwirkleUI;
 
 // Combination of a UITile and a RowCol
 [DebuggerDisplay("UITileRowCol: {UIT} {RC}")]
-internal class UITileRowCol(UITile UIT, RowCol RC): IEquatable<UITileRowCol>
+internal sealed class UITileRowCol(UITile UIT, RowCol RC): IEquatable<UITileRowCol>
 {
     internal UITile UIT { get; private set; } = UIT;
     internal RowCol RC { get; set; } = RC;      // set accessor because RC is mutable
 
     // Helpers
-    public int Row => RC.Row; 
+    public int Row => RC.Row;
     public int Col => RC.Col;
     public Tile Tile => UIT.Tile;
 
@@ -34,34 +34,19 @@ internal class UITileRowCol(UITile UIT, RowCol RC): IEquatable<UITileRowCol>
     public override string ToString() => $"UITileRowCol: {UIT} {RC}";
 
     // Equality is only based on Tile information        
-    public bool EqualsTile(UITileRowCol? other)
-    {
-        if (other is null)
-            return false;
-        return Tile == other.Tile;
-    }
+    public bool EqualsTile(UITileRowCol? other) => other is not null && Tile == other.Tile;
 
     public override bool Equals(object? other)
-    {
-        if (ReferenceEquals(this, other))
-            return true;
-        if (other is null)
-            return false;
-        return EqualsTile(other as UITileRowCol);
-    }
+        => ReferenceEquals(this, other) || (other is not null && EqualsTile(other as UITileRowCol));
 
-    public bool Equals(UITileRowCol? other) 
+    public bool Equals(UITileRowCol? other)
         => EqualsTile(other);
 
     public override int GetHashCode()
         => Tile.GetHashCode();
 
     public static bool operator ==(UITileRowCol? left, UITileRowCol? right)
-    {
-        if (left is null || right is null)
-            return false;
-        return left.EqualsTile(right);
-    }
+        => left is not null && right is not null && left.EqualsTile(right);
 
     public static bool operator !=(UITileRowCol? left, UITileRowCol? right)
         => !(left == right);
@@ -92,7 +77,7 @@ internal readonly struct UITilesSelection: IReadOnlyCollection<UITileRowCol>
     internal readonly void Add(UITileRowCol hit)
     {
         Debug.Assert(!_items.Contains(hit));
-        Debug.Assert(hit.UIT.SelectionBorder == false);     // Why?
+        Debug.Assert(!hit.UIT.SelectionBorder);     // Why?
         _items.Add(hit);
         hit.UIT.SelectionBorder = true;                     // And then we add a selection border??
     }
@@ -100,9 +85,9 @@ internal readonly struct UITilesSelection: IReadOnlyCollection<UITileRowCol>
     internal readonly void RemoveUITile(UITile uit)
     {
         Debug.Assert(ContainsUITile(uit));
-        Debug.Assert(uit.SelectionBorder == true);
+        Debug.Assert(uit.SelectionBorder);
         var todel = _items.First(it => it.UIT == uit);
-        Debug.Assert(todel!=null);
+        Debug.Assert(todel != null);
         _items.Remove(todel);
         uit.SelectionBorder = false;
     }
@@ -196,10 +181,7 @@ abstract internal class InteractionManager
         mouseDownStartPosition = previousMousePosition;
         bool tileHit = UpdateSelectionAfterClick(e, c, dc);            // Ensures that selected tiles are on top of others in the visual tree
 
-        if (tileHit)
-            pmm = GetMouseDownMoveAction(m, false);
-        else
-            pmm = null;
+        pmm = tileHit ? GetMouseDownMoveAction(m, false) : null;
 
         // Be sure to call GetRowCol before Capture, otherwise GetRowCol returns 0 after Capture
         // Capture to get MouseUp event raised by grid

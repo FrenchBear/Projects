@@ -5,10 +5,10 @@
 
 namespace LSystemTest;
 
-internal class PointD
+internal sealed class PointD
 {
-    public double X = 0;
-    public double Y = 0;
+    public double X;
+    public double Y;
 
     public PointD(double nx, double ny) => (X, Y) = (nx, ny);
 

@@ -252,14 +252,14 @@ internal abstract class TalonBaseStack(GameDeck b, string n, Canvas c, Rectangle
 
 }   // class TalonBaseStack
 
-internal class TalonFaceDownStack(GameDeck b, string n, Canvas c, Rectangle r): TalonBaseStack(b, n, c, r)
+internal sealed class TalonFaceDownStack(GameDeck b, string n, Canvas c, Rectangle r): TalonBaseStack(b, n, c, r)
 {
 
     // For Talon face down, empty stack is valid to generate a Click to reset the talon
     protected override bool IsStackFromHit(Point P, out List<PlayingCard>? hitList, out bool isMovable)
     {
         var r = IsStackHit(P, true, true, true, out hitList, out isMovable);
-        Debug.Assert(r == false || isMovable == false);
+        Debug.Assert(!r || !isMovable);
         return r;
     }
 
@@ -306,7 +306,7 @@ internal class TalonFaceDownStack(GameDeck b, string n, Canvas c, Rectangle r): 
 #endif
 }   // class TalonFaceDownStack
 
-internal class TalonFaceUpStack(GameDeck b, string n, Canvas c, Rectangle r): TalonBaseStack(b, n, c, r)
+internal sealed class TalonFaceUpStack(GameDeck b, string n, Canvas c, Rectangle r): TalonBaseStack(b, n, c, r)
 {
     protected override bool IsStackFromHit(Point P, out List<PlayingCard>? hitList, out bool isMovable)
         => IsStackHit(P, true, false, false, out hitList, out isMovable);
@@ -328,7 +328,7 @@ internal class TalonFaceUpStack(GameDeck b, string n, Canvas c, Rectangle r): Ta
 }   // class TalonFaceUpStack
 
 // New cards are shown in a visible stack
-internal class ColumnStack(GameDeck b, string n, Canvas c, Rectangle r): GameStack(b, n, c, r)
+internal sealed class ColumnStack(GameDeck b, string n, Canvas c, Rectangle r): GameStack(b, n, c, r)
 {
     private const double visibleYOffset = 45.0;
     private const double notVvisibleYOffset = 10.0;
@@ -398,7 +398,7 @@ internal class ColumnStack(GameDeck b, string n, Canvas c, Rectangle r): GameSta
 #endif
 }   // class ColumnStack
 
-internal class BaseStack(GameDeck b, string n, Canvas c, Rectangle r): GameStack(b, n, c, r)
+internal sealed class BaseStack(GameDeck b, string n, Canvas c, Rectangle r): GameStack(b, n, c, r)
 {
     protected override bool RulesAllowMoveInCards(MovingGroup mg)
     {

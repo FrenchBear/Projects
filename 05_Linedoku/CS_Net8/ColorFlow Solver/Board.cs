@@ -49,10 +49,9 @@ partial class Program
             Grid[δEnd].Line = line;
             Grid[δEnd].IsEndLine = true;
             Lines[line].MinWalls = (byte)(Math.Abs(Lines[line].endRow - Lines[line].startRow) + Math.Abs(Lines[line].endColumn - Lines[line].startColumn));
-            if (line == (sbyte)(Lines.Length - 1))
-                Lines[line].MaxWalls = (byte)(Side * Side - Lines.Length);
-            else
-                Lines[line].MaxWalls = (byte)(Lines[line + 1].MaxWalls - Lines[line + 1].MinWalls);
+            Lines[line].MaxWalls = line == (sbyte)(Lines.Length - 1)
+                ? (byte)(Side * Side - Lines.Length)
+                : (byte)(Lines[line + 1].MaxWalls - Lines[line + 1].MinWalls);
         }
 
         // The rest is initialized at 0 or false
@@ -150,7 +149,8 @@ partial class Program
             {
                 res = CheckClosedAreas(line);
                 //PrintBoard($"CheckClosedAreas({line}) -> {res}");
-                if (!res) return false;
+                if (!res)
+                    return false;
                 AreasChecked = true;
             }
         }
@@ -173,7 +173,8 @@ partial class Program
                     AreasChecked = ac;
                     ResetHzWall(row, column);
                     ResetPointLine(row, cp1);
-                    if (res) return true;
+                    if (res)
+                        return true;
                 }
         }
 
@@ -190,7 +191,8 @@ partial class Program
                     AreasChecked = ac;
                     ResetPointLine(row, cm1);
                     ResetHzWall(row, cm1);
-                    if (res) return true;
+                    if (res)
+                        return true;
                 }
 
         // Up
@@ -206,7 +208,8 @@ partial class Program
                     AreasChecked = ac;
                     ResetVtWall(rm1, column);
                     ResetPointLine(rm1, column);
-                    if (res) return true;
+                    if (res)
+                        return true;
                 }
 
         // Down
@@ -223,7 +226,8 @@ partial class Program
                     AreasChecked = ac;
                     ResetVtWall(row, column);
                     ResetPointLine(rp1, column);
-                    if (res) return true;
+                    if (res)
+                        return true;
                 }
         }
 
@@ -268,10 +272,14 @@ partial class Program
     private static bool IsUnconnected(byte row, byte column)
     {
         // Debug.Assert(row >= 0 && row < Side && column >= 0 && column < Side);
-        if (row > 0 && GetVtWall((byte)(row - 1), column)) return false;         // Top
-        if (column > 0 && GetHzWall(row, (byte)(column - 1))) return false;      // Left
-        if (row < Sidem1 && GetVtWall(row, column)) return false;      // Bottom
-        if (column < Sidem1 && GetHzWall(row, column)) return false;   // Right
+        if (row > 0 && GetVtWall((byte)(row - 1), column))
+            return false;         // Top
+        if (column > 0 && GetHzWall(row, (byte)(column - 1)))
+            return false;      // Left
+        if (row < Sidem1 && GetVtWall(row, column))
+            return false;      // Bottom
+        if (column < Sidem1 && GetHzWall(row, column))
+            return false;   // Right
         return true;
     }
 
@@ -311,7 +319,7 @@ partial class Program
         {
             for (byte column = 0; column < Side; column++)
             {
-                Console.ForegroundColor = GetColor(row, column);
+                ForegroundColor = GetColor(row, column);
                 LogWrite(ExtremityOfLine(row, column) < byte.MaxValue ? "■" : "▪");
                 if (column < Sidem1)
                     LogWrite(GetHzWall(row, column) ? "──" : "  ");
@@ -322,7 +330,7 @@ partial class Program
             {
                 for (byte column = 0; column < Side; column++)
                 {
-                    Console.ForegroundColor = GetColor(row, column);
+                    ForegroundColor = GetColor(row, column);
                     LogWrite(GetVtWall(row, column) ? "│" : " ");
                     if (column < Side)
                         LogWrite("  ");
@@ -330,7 +338,7 @@ partial class Program
                 LogWriteLine();
             }
         }
-        Console.ForegroundColor = ConsoleColor.Gray;
+        ForegroundColor = ConsoleColor.Gray;
         LogWriteLine();
     }
 

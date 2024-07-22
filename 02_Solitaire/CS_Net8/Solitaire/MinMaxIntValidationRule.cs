@@ -18,16 +18,9 @@ public class MinMaxIntValidationRule: ValidationRule
     public string Message { get; set; } = string.Empty;
 
     public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
-    {
-        if (value == null)
-            return new ValidationResult(false, "Value is required");
-
-        if (!int.TryParse(value.ToString(), out int columns))
-            return new ValidationResult(false, "Cannot convert int value");
-
-        if (columns < Minimum || columns > Maximum)
-            return new ValidationResult(false, Message);
-
-        return ValidationResult.ValidResult;
-    }
+        => value == null
+            ? new ValidationResult(false, "Value is required")
+            : !int.TryParse(value.ToString(), out int columns)
+            ? new ValidationResult(false, "Cannot convert int value")
+            : columns < Minimum || columns > Maximum ? new ValidationResult(false, Message) : ValidationResult.ValidResult;
 }

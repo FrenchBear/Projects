@@ -26,13 +26,7 @@ public readonly struct Position(int row, int column): IEquatable<Position>
 
     public override int GetHashCode() => Row ^ Column;
 
-    public override bool Equals(object obj)
-    {
-        if (obj is not Position)
-            return false;
-
-        return Equals((Position)obj);
-    }
+    public override bool Equals(object obj) => obj is Position position && Equals(position);
 
     public bool Equals(Position other) => Row == other.Row && Column == other.Column;
 

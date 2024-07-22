@@ -8,7 +8,7 @@
 		<Description>Plotter library tests using LSystem</Description>
 		<Version>1.2.0</Version>
 		<Authors>Pierre Violent</Authors>
-		<Copyright>Copyright ©2021-2023 Pierre Violent</Copyright>
+		<Copyright>Copyright ©2021-2024 Pierre Violent</Copyright>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
