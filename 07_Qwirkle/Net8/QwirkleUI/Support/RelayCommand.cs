@@ -1,4 +1,4 @@
-﻿// BonzaEditor - WPF Tool to prepare Bonza-style puzzles
+﻿// QuirkleUIEditor - WPF Tool to prepare QuirkleUI-style puzzles
 // RelayCommand: Helper class for easy implementation of commands in VewModel through delegates
 // A simple bonus is the generic interface to support parameter types less abstract than 'object'
 //

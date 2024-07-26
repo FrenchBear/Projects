@@ -141,7 +141,7 @@
 
 
             <MenuItem Name="HelpMenu" Header="_?">
-                <MenuItem Name="AboutCommand" Command="{Binding AboutCommand}" Header="À _propos de Bonza...">
+                <MenuItem Name="AboutCommand" Command="{Binding AboutCommand}" Header="À _propos de QuirkleUI...">
                     <MenuItem.Icon>
                         <Image Source="/Icons/about.ico" />
                     </MenuItem.Icon>

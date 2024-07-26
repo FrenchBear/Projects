@@ -2,7 +2,7 @@
     x:Class="QwirkleUI.AboutWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="À propos de Bonza" Icon="/Qwirkle.ico" ResizeMode="NoResize" SizeToContent="Height" Width="450">
+    Title="À propos de QuirkleUI" Icon="/Qwirkle.ico" ResizeMode="NoResize" SizeToContent="Height" Width="450">
 
     <Grid Margin="12">
         <Grid.RowDefinitions>
