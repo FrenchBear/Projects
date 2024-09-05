@@ -4,15 +4,18 @@
 //
 // 2012-04-17   PV      First version
 // 2021-11-13   PV      Net6 C#10
+// 2023-11-20   PV      Net8 C#12
 
 using System;
 using System.Windows.Input;
 
 namespace Bonza.Editor.Support;
 
-internal sealed class RelayCommand<T>(Action<T> execute, Predicate<T> canExecute): ICommand
+#nullable enable
+
+internal sealed class RelayCommand<T>(Action<T> execute, Predicate<T>? canExecute): ICommand
 {
-    private readonly Predicate<T> canExecute = canExecute;
+    private readonly Predicate<T>? canExecute = canExecute;
     private readonly Action<T> execute = execute;
 
     // canExecute is optional, and by default is assumed returning true (directly in CanExecute)
@@ -21,11 +24,12 @@ internal sealed class RelayCommand<T>(Action<T> execute, Predicate<T> canExecute
 
     /* From ICommand */
 
-    public bool CanExecute(object parameter) => canExecute == null || canExecute((T)parameter);
+    public bool CanExecute(object? parameter)
+        => canExecute == null || (parameter == null ? canExecute(default!) : canExecute((T)parameter));
 
     /* From ICommand */
 
-    public void Execute(object parameter) => execute?.Invoke((T)parameter);
+    public void Execute(object? parameter) => execute?.Invoke((T)parameter!);
 
     // The 'black magic' part: according to help, CommandManager.RequerySuggested Event occurs when the
     // CommandManager """detects conditions that might change the ability of a command to execute"""...
@@ -39,7 +43,7 @@ internal sealed class RelayCommand<T>(Action<T> execute, Predicate<T> canExecute
 
     /* From ICommand */
 
-    public event EventHandler CanExecuteChanged
+    public event EventHandler? CanExecuteChanged
     {
         add => CommandManager.RequerySuggested += value;
         remove => CommandManager.RequerySuggested -= value;

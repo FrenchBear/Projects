@@ -4,6 +4,7 @@
 //
 // 2012-04-17   PV      First version
 // 2021-11-13   PV      Net6 C#10
+// 2023-11-20   PV      Net8 C#12
 
 using System;
 using System.Windows.Input;
