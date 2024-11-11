@@ -197,7 +197,7 @@ ClientBin/
 *.dbmdl
 *.dbproj.schemaview
 *.jfm
-*.pfx
+# *.pfx
 *.publishsettings
 orleans.codegen.cs
 
@@ -292,3 +292,5 @@ Output/
 
 # mypy
 .mypy_cache/
+/04_ForeignNumbers/CS_WinUI3 - Copy
+/04_ForeignNumbers/CS_WinUI3 With assets
