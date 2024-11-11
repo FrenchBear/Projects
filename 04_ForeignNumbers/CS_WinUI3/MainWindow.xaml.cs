@@ -1,3 +1,8 @@
+// ForeignNumbers WinUI3
+// MainWindow, empty frame to load MainPage
+//
+// 2024-11-11   PV      Converted from UWP version
+
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -19,7 +24,7 @@ public sealed partial class MainWindow: Window
         m_AppWindow = GetAppWindowForCurrentWindow();
 
         // No customization of title bar, use standard one
-        m_AppWindow.Resize(new Windows.Graphics.SizeInt32 { Width = 450, Height = 250 });
+        m_AppWindow.Resize(new Windows.Graphics.SizeInt32 { Width = 450, Height = 330 });
         m_AppWindow.Title = "ForeignNumbers WinUI3";
         m_AppWindow.SetIcon(@"Assets\Icons\ForeignNumbers.ico");
 

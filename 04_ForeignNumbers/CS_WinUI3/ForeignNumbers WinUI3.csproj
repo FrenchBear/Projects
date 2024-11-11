@@ -12,10 +12,13 @@
 		<PackageCertificateThumbprint>81C1FB1D8410AFEBEE21EC60E0C298EBFF892A9B</PackageCertificateThumbprint>
 		<UseWinUI>true</UseWinUI>
 		<Platforms>x86;x64;arm64</Platforms>
-		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
 		<RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+		<ApplicationIcon>Assets\Icons\ForeignNumbers.ico</ApplicationIcon>
 		<PackageIcon>ForeignNumbers.png</PackageIcon>
+		<Authors>Pierre Violent</Authors>
+		<Copyright></Copyright>
+		<Description>Showing a number in various foreign numbering systems (WinUI3 Net8)</Description>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -23,7 +26,6 @@
 			<SubType>Designer</SubType>
 		</AppxManifest>
 	</ItemGroup>
-
 	<ItemGroup>
 		<Content Include="Properties\Default.rd.xml" />
 		<Content Include="Assets\LockScreenLogo.scale-200.png" />

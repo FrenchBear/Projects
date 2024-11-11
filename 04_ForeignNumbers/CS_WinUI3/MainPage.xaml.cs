@@ -1,22 +1,18 @@
-﻿// ForeignNumbers UWP
-// Formatting numbers in Arabic and Chinese
+﻿// ForeignNumbers WinUI3
+// MainPage, showing a number in various foreign numbering systems
 //
 // 2019-03-21   PV
 // 2019-04-07   PV      UWP version
 // 2023-05-21   PV      Refresh; Hebrew; AccessKeys
+// 2024-11-11   PV      WinUI3 version, added Bengali and Thai
 
 using System;
 using System.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
-//#pragma warning disable IDE0060 // Remove unused parameter
-
 namespace ForeignNumbersWinUI3;
 
-/// <summary>
-/// An empty page that can be used on its own or navigated to within a Frame.
-/// </summary>
 public sealed partial class MainPage: Page
 {
     public MainPage()
@@ -37,6 +33,8 @@ public sealed partial class MainPage: Page
             ArabicTextBlock.Text = ArabicNumber(n);
             RomanTextBlock.Text = RomanNumber(n);
             HebrewTextBlock.Text = HebrewNumber(n);
+            BengaliTextBlock.Text = BengaliNumber(n);
+            ThaiTextBlock.Text = ThaiNumber(n);
         }
         else
         {
@@ -44,6 +42,8 @@ public sealed partial class MainPage: Page
             ArabicTextBlock.Text = "";
             RomanTextBlock.Text = "";
             HebrewTextBlock.Text = "";
+            BengaliTextBlock.Text = "";
+            ThaiTextBlock.Text = "";
         }
     }
 
@@ -223,6 +223,28 @@ public sealed partial class MainPage: Page
                 break;
         }
         return ret.ToString();
+    }
+
+    static string BengaliNumber(int n)
+    {
+        string digits = "০১২৩৪৫৬৭৮৯";
+        string s = n.ToString();
+        for (int d = 0; d <= 9; d++)
+        {
+            s = s.Replace((char)('0' + d), digits[d]);
+        }
+        return s;
+    }
+
+    static string ThaiNumber(int n)
+    {
+        string digits = "๐๑๒๓๔๕๖๗๘๙";
+        string s = n.ToString();
+        for (int d = 0; d <= 9; d++)
+        {
+            s = s.Replace((char)('0' + d), digits[d]);
+        }
+        return s;
     }
 
 }

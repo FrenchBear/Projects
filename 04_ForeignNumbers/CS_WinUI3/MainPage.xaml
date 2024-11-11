@@ -15,6 +15,8 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -27,11 +29,15 @@
         <TextBlock Grid.Row="2" Grid.Column="0" Text="Arabic" Margin="0,10,12,0"/>
         <TextBlock Grid.Row="3" Grid.Column="0" Text="Roman" Margin="0,10,12,0" />
         <TextBlock Grid.Row="4" Grid.Column="0" Text="Hebrew" Margin="0,10,12,0" />
+        <TextBlock Grid.Row="5" Grid.Column="0" Text="Bengali" Margin="0,10,12,0" />
+        <TextBlock Grid.Row="6" Grid.Column="0" Text="Thai" Margin="0,10,12,0" />
         <TextBox Grid.Row="0" Grid.Column="1" Name="WesternTextBlock" Padding="5" Margin="3" TextChanged="WesternTextBlock_TextChanged" AccessKey="W" />
         <TextBox Grid.Row="1" Grid.Column="1" Name="ChineseTextBlock" Padding="5" Margin="3" IsReadOnly="True" AccessKey="C" />
         <TextBox Grid.Row="2" Grid.Column="1" Name="ArabicTextBlock" Padding="5,2" Margin="3" IsReadOnly="True" FontSize="20" AccessKey="A" />
         <TextBox Grid.Row="3" Grid.Column="1" Name="RomanTextBlock" Padding="5" Margin="3" IsReadOnly="True" AccessKey="R" />
         <TextBox Grid.Row="4" Grid.Column="1" Name="HebrewTextBlock" Padding="5,2" Margin="3" IsReadOnly="True" FontSize="20" AccessKey="H" />
+        <TextBox Grid.Row="5" Grid.Column="1" Name="BengaliTextBlock" Padding="5,2" Margin="3" IsReadOnly="True" FontSize="20" AccessKey="B" />
+        <TextBox Grid.Row="6" Grid.Column="1" Name="ThaiTextBlock" Padding="5,2" Margin="3" IsReadOnly="True" FontSize="20" AccessKey="T" />
 
         <Button Grid.Column="2" Content="Random" Padding="15,5" Margin="12,3" Click="GenerateButton_Click" AccessKey="M" />
     </Grid>
