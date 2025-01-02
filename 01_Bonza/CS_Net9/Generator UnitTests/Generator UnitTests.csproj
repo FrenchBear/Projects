@@ -5,7 +5,7 @@
 		<RootNamespace>Bonza.Generator.UnitTests</RootNamespace>
 		<Authors>Pierre Violenr</Authors>
 		<Description>Unit Tests for Bonza Generator</Description>
-		<Copyright>Copyright ©2017-2024 Pierre Violent</Copyright>
+		<Copyright>Copyright ©2017-2025 Pierre Violent</Copyright>
 		<Version>1.3.0</Version>
 		<AssemblyName>Bonza.Generator.UnitTests</AssemblyName>
 		<OutputPath>..\Output</OutputPath>
