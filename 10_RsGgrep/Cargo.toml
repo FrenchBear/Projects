@@ -1,0 +1,9 @@
+[package]
+name = "rsgrep"
+version = "1.0.0"
+authors = ["French Bear <FrenchBear38@outlook.com>"]
+edition = "2021"
+
+[dependencies]
+getopt = "1.1.7"
+regex = "1.11.1"

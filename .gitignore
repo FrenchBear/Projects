@@ -294,3 +294,6 @@ Output/
 .mypy_cache/
 /04_ForeignNumbers/CS_WinUI3 - Copy
 /04_ForeignNumbers/CS_WinUI3 With assets
+
+# Rust
+CACHEDIR.TAG
