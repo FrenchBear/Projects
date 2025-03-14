@@ -25,9 +25,10 @@ use glob::PatternError;
 use regex::Regex;
 
 // -----------------------------------
-// Unit tests
+// Submodules
 
 pub mod tests;
+pub mod grepiterator;
 
 // ==============================================================================================
 
@@ -137,6 +138,21 @@ impl Options {
 }
 
 fn main() {
+    test_iterator();
+}
+
+fn test_iterator() {
+    let re = Regex::new("(?m)pommes").unwrap();
+    let haystack = "Recette de la tarte aux pommes\r\nPréparez la pâte\r\nPrécuire la pâte 10 minutes\r\nPeler les pommes et ajouter les pommes\r\nFaire cuire\r\nLaisser refroidire\r\nDéguster!";
+    for gi in grepiterator::GrepLineMatches::new(haystack, &re) {
+        println!("\nLine: <{}>", gi.line);
+        for ma in gi.matches {
+            println!("- {}..{}", ma.start, ma.end);
+        }
+    }
+}
+
+fn zzmain() {
     /*
     // -------------------------------------------
     // Process options
