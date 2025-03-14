@@ -18,6 +18,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2a9e40b04867f241a94b98f4649825925553807ae34f07b953a590270f45d9d4"
 
 [[package]]
+name = "glob"
+version = "0.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a8d1add55171497b4705a648c6b583acafb01d58050a51727785f0b2c8e0a2b2"
+
+[[package]]
 name = "memchr"
 version = "2.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -57,5 +63,6 @@ name = "rsgrep"
 version = "1.0.0"
 dependencies = [
  "getopt",
+ "glob",
  "regex",
 ]

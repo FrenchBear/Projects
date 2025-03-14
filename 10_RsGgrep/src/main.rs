@@ -11,6 +11,7 @@ use std::process;
 
 // external crates imports
 use getopt::Opt;
+use glob::glob;
 
 // Dedicated struct to store command line arguments
 #[derive(Debug)]
@@ -88,7 +89,7 @@ impl Options {
                 return Err("".into());
             }
 
-            if options.patterns.len() == 0 {
+            if options.patterns.is_empty() {
                 options.patterns.push(arg);
                 continue;
             }
@@ -128,11 +129,26 @@ impl Options {
                 options.filters.push(f.to_string());
                 options.folders.push(parent.to_str().unwrap().to_string());
                 continue;
+            } else if options.recurse && !f.contains('/') && !f.contains('\\') && !f.contains(':') {
+                // No glob char, no path/drive and recurse mode, we accept it as a file pattern that will
+                // be used in a recurse search, even if not present in current folder
+                options.files.push(arg);
+                continue;
             }
 
             // Nothing known
             return Err(format!("Invalid path [4] {}", arg).into());
         }
+
+        // Early verifications
+        if options.patterns.is_empty() {
+            return Err("No search pattern specified".into());
+        }
+
+        // For now, we don't support reading from stdin if no file/folder has been specified
+        // if options.files.is_empty() && options.folders.is_empty() {
+        //     return Err("No input file/folder specified, this version doesn't support reading from stdin yet".into());
+        // }
 
         Ok(options)
     }
@@ -146,10 +162,23 @@ fn main() {
         if msg.is_empty() {
             process::exit(0);
         }
-        eprintln!("Problem parsing arguments: {}", err);
+        eprintln!("rsgrep: Problem parsing arguments: {}", err);
         process::exit(1);
     });
 
     println!("rsgrep");
-    println!("{:?}", options)
+    println!("{:?}", options);
+
+    // Getting list of files
+    for file in options.files {
+        println!("File: {}", file);
+
+        // If file is a simple name, no path, no drive, and recurse option is specified, then we search in subfolders
+        if options.recurse && !file.contains('/') && !file.contains('\\') && !file.contains(':') {
+            let gp = format!("**/{}", file);
+            for entry in glob(gp.as_str()).expect("Failed to read glob pattern") {
+                println!("File (recurse): {}", entry.unwrap().display());
+            }
+        }
+    }
 }
