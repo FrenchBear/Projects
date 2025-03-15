@@ -32,7 +32,7 @@ pub mod read_text {
         let r = crate::read_text_file(Path::new(r"C:\Utils\BookApps\Astructw.exe"));
         assert!(r.is_err());
         let e = r.err().unwrap();
-        assert_eq!(e.kind() , io::ErrorKind::InvalidData);
+        assert_eq!(e.kind(), io::ErrorKind::InvalidData);
     }
 
     #[test]
@@ -40,30 +40,87 @@ pub mod read_text {
         let r = crate::read_text_file(Path::new(r"C:\Utils\BookApps\Astructw.com"));
         assert!(r.is_err());
         let e = r.err().unwrap();
-        assert_eq!(e.kind() , io::ErrorKind::NotFound);
+        assert_eq!(e.kind(), io::ErrorKind::NotFound);
     }
 }
 
 #[cfg(test)]
 pub mod grep_iterator {
-    use regex::Regex;
-
     use crate::grepiterator::GrepLineMatches;
+    use regex::Regex;
 
     #[test]
     fn iterator() {
-        let re = Regex::new("(?m)pommes").unwrap();
-        let haystack = "Recette de la tarte aux pommes\r\nPréparez la pâte\r\nPrécuire la pâte 10 minutes\r\nPeler les pommes et ajouter les pommes\r\nFaire cuire\r\nLaisser refroidire\r\nDéguster!";
-        
-        let res:Vec<GrepLineMatches> = GrepLineMatches::new(haystack, &re).collect();
-        assert_eq!(res.len(),2);
-        assert_eq!(res[0].line,"Recette de la tarte aux pommes");
+        let re = Regex::new("(?imR)pommes").unwrap();
+        let haystack = "RECETTE DE LA TARTE AUX POMMES\r\nPréparer la pâte\r\nPrécuire la pâte 10 minutes\r\nPeler les pommes et ajouter les pommes\r\nFaire cuire\r\nVous préférez froid? Laisser refroidir\r\nDéguster!";
+
+        let res: Vec<GrepLineMatches> = GrepLineMatches::new(haystack, &re).collect();
+        assert_eq!(res.len(), 2);
+        assert_eq!(res[0].line, "RECETTE DE LA TARTE AUX POMMES");
         assert_eq!(res[0].matches.len(), 1);
         assert_eq!(res[0].matches[0], 24..30);
 
-        assert_eq!(res[1].line,"Peler les pommes et ajouter les pommes");
+        assert_eq!(res[1].line, "Peler les pommes et ajouter les pommes");
         assert_eq!(res[1].matches.len(), 2);
         assert_eq!(res[1].matches[0], 10..16);
         assert_eq!(res[1].matches[1], 32..38);
     }
+}
+
+#[cfg(test)]
+pub mod build_re {
+    use crate::grepiterator::GrepLineMatches;
+    use crate::{build_re, Options};
+
+    #[test]
+    fn case_sensitive() {
+        let haystack = "RECETTE DE LA TARTE AUX POMMES\r\nPréparer la pâte\r\nPrécuire la pâte 10 minutes\r\nPeler les pommes et ajouter les pommes\r\nFaire cuire\r\nVous préférez froid? Laisser refroidir\r\nDéguster!";
+        let options = Options {
+            pattern: String::from("pommes"),
+            ignore_case: false,
+            ..Default::default()
+        };
+        let re = build_re(&options).unwrap();
+        let res: Vec<GrepLineMatches> = GrepLineMatches::new(haystack, &re).collect();
+        assert_eq!(res.len(), 1);
+    }
+
+    #[test]
+    fn case_insensitive() {
+        let haystack = "RECETTE DE LA TARTE AUX POMMES\r\nPréparer la pâte\r\nPrécuire la pâte 10 minutes\r\nPeler les pommes et ajouter les pommes\r\nFaire cuire\r\nVous préférez froid? Laisser refroidir\r\nDéguster!";
+        let options = Options {
+            pattern: String::from("pommes"),
+            ignore_case: true,
+            ..Default::default()
+        };
+        let re = build_re(&options).unwrap();
+        let res: Vec<GrepLineMatches> = GrepLineMatches::new(haystack, &re).collect();
+        assert_eq!(res.len(), 2);
+    }
+
+    #[test]
+    fn full_line() {
+        let haystack = "RECETTE DE LA TARTE AUX POMMES\r\nPréparer la pâte\r\nPrécuire la pâte 10 minutes\r\nPeler les pommes et ajouter les pommes\r\nFaire cuire\r\nVous préférez froid? Laisser refroidir\r\nDéguster!";
+        let options = Options {
+            pattern: String::from("^Préparer la pâte$"),
+            ..Default::default()
+        };
+        let re = build_re(&options).unwrap();
+        let res: Vec<GrepLineMatches> = GrepLineMatches::new(haystack, &re).collect();
+        assert_eq!(res.len(), 1);
+    }
+
+    #[test]
+    fn fixed_string() {
+        let haystack = "RECETTE DE LA TARTE AUX POMMES\r\nPréparer la pâte\r\nPrécuire la pâte 10 minutes\r\nPeler les pommes et ajouter les pommes\r\nFaire cuire\r\nVous préférez froid? Laisser refroidir\r\nDéguster!";
+        let options = Options {
+            pattern: String::from("froid? Laisser"),
+            fixed_string: true,
+            ..Default::default()
+        };
+        let re = build_re(&options).unwrap();
+        let res: Vec<GrepLineMatches> = GrepLineMatches::new(haystack, &re).collect();
+        assert_eq!(res.len(), 1);
+    }
+
 }

@@ -3,8 +3,7 @@
 //
 // 2025-03-14   PV
 
-use std::{ops::Range, str::Lines};
-
+use std::ops::Range;
 use regex::{Match, Matches, Regex};
 
 // Returned by grep_iterator

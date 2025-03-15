@@ -2,28 +2,22 @@
 //
 // 2025-03-13	PV      First version
 
-#![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+//#![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
 
 // standard library imports
-use encoding_rs::{Encoding, UTF_16LE, UTF_8, WINDOWS_1252};
 use std::error::Error;
-use std::fs::{self, File};
-use std::io::{self, BufRead, BufReader, Read};
-use std::io::{ErrorKind, Write};
-use std::path::Path;
-use std::path::PathBuf;
+use std::fs::File;
+use std::io::{self, BufReader, ErrorKind, Read, Write};
+use std::path::{Path, PathBuf};
 use std::process;
-use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
+use std::time::Instant;
 
 // external crates imports
+use encoding_rs::{Encoding, UTF_16LE, UTF_8, WINDOWS_1252};
 use getopt::Opt;
-use glob::glob;
-use glob::glob_with;
-use glob::GlobError;
-use glob::MatchOptions;
-use glob::Paths;
-use glob::PatternError;
+use glob::{glob_with, MatchOptions};
 use regex::Regex;
+use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
 
 // -----------------------------------
 // Submodules
@@ -34,24 +28,30 @@ pub mod tests;
 // ==============================================================================================
 
 // Dedicated struct to store command line arguments
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Options {
     pattern: String,
     sources: Vec<String>,
     ignore_case: bool,
+    fixed_string: bool,
     recurse: bool,
     show_path: bool,
+    out_level: u8, // 0: normal output, 1: (-l) matching filenames only, 2: (-c) filenames and martching lines count, 3: (-c -l) only matching filenames and matching lines count
     verbose: bool,
 }
 
 impl Options {
     fn usage() {
         eprintln!(
-            "rsgrep, simplified grep in rust\n\
-            Usage: rsgrep [?|-?|-h] [-i] [-r] [-v] pattern glob...\n\
+            "rsgrep 1.0\n\
+            Simplified grep in rust\n\
+            Usage: rsgrep [?|-?|-h] [-i] [-F] [-r] [-v] [-c] [-l] pattern glob...\n\
             -h       Shows this message\n\
             -i       Ignore case during search\n\
+            -F       Fixed string search (no regexp interpretation)\n\
             -r       Recurse search in subfolders (add **/ ahead of glob not containing /)\n\
+            -c       Suppress normal output, show count of matching lines for each file\n\
+            -l       Suppress normal output, show matching file names only\n\
             -v       Verbose output\n\
             pattern  Regular expression to search\n\
             glob     File or folder where to search, glob syntax supported"
@@ -60,17 +60,9 @@ impl Options {
 
     fn new() -> Result<Options, Box<dyn Error>> {
         // default
-        let mut options = Options {
-            pattern: String::new(),
-            sources: Vec::new(),
-            ignore_case: false,
-            recurse: false,
-            show_path: false,
-            verbose: false,
-        };
-
+        let mut options = Options { ..Default::default() };
         let mut args: Vec<String> = std::env::args().collect();
-        let mut opts = getopt::Parser::new(&args, "h?irv");
+        let mut opts = getopt::Parser::new(&args, "h?iFrvcl");
 
         loop {
             match opts.next().transpose()? {
@@ -85,8 +77,20 @@ impl Options {
                         options.ignore_case = true;
                     }
 
+                    Opt('F', None) => {
+                        options.fixed_string = true;
+                    }
+
                     Opt('r', None) => {
                         options.recurse = true;
+                    }
+
+                    Opt('l', None) => {
+                        options.out_level |= 1;
+                    }
+
+                    Opt('c', None) => {
+                        options.out_level |= 2;
                     }
 
                     Opt('v', None) => {
@@ -103,22 +107,6 @@ impl Options {
             if arg == "?" || arg == "help" {
                 Self::usage();
                 return Err("".into());
-            }
-
-            // -r, -i accpter after pattern
-            if arg == "-r" {
-                options.recurse = true;
-                continue;
-            }
-
-            if arg == "-i" {
-                options.ignore_case = true;
-                continue;
-            }
-
-            if arg == "-v" {
-                options.verbose = true;
-                continue;
             }
 
             if arg.starts_with("-") {
@@ -151,24 +139,12 @@ fn main() {
         process::exit(1);
     });
 
-    // // For testing
-    // let mut options = Options {
-    //     pattern: String::from("elle"),
-    //     sources: vec![String::from(r"C:\DocumentsOD\Doc tech\Encodings\prenoms-utf8.txt"), String::from(r"C:\DocumentsOD\Doc tech\Encodings\prenoms-ansi,1252.txt")],
-    //     ignore_case: false,
-    //     recurse: false,
-    //     show_path: false,
-    //     verbose: true,
-    // };
-
-    // Make sure search pattern is valid
-    let pat = match Regex::new(options.pattern.as_str()) {
-        Ok(p) => p,
-        Err(pe) => {
-            eprintln!("rsgrep: Problem with search pattern: {}", pe);
-            process::exit(1);
-        }
-    };
+    let re = build_re(&options);
+    if !re.is_ok() {
+        eprintln!("rsgrep: Problem with search pattern: {:?}", re.err());
+        process::exit(1);
+    }
+    let re = re.unwrap();
 
     // MatchOptions has trait Copy, so only 1 global version is enough
     let mo = MatchOptions {
@@ -177,8 +153,10 @@ fn main() {
         require_literal_leading_dot: false,
     };
 
+    let start = Instant::now();
+
     // Building list of files
-    let mut files:Vec<PathBuf> = Vec::new();
+    let mut files: Vec<PathBuf> = Vec::new();
     for source in options.sources.clone() {
         // If file is a simple name, no path, no drive, and recurse option is specified, then we search in subfolders
         let source2 = if options.recurse && !source.contains('/') && !source.contains('\\') && !source.contains(':') {
@@ -215,12 +193,28 @@ fn main() {
     }
 
     // Finally processing files, if more than 1 file, prefix output with file
-    if files.len()>1 {
+    if files.len() > 1 {
         options.show_path = true;
     }
-    for pb in files {
-        process_path(&pat, &pb, &options);
+    for pb in &files {
+        process_path(&re, pb, &options);
     }
+    let duration = start.elapsed();
+
+    if options.verbose {
+        print!("\n{} file(s) searched in in {:.3}s", files.len(), duration.as_secs_f64());
+    }
+}
+
+// Helper, build Regex according to options
+pub fn build_re(options: &Options) -> Result<Regex, regex::Error> {
+    let spat = if options.fixed_string {
+        regex::escape(options.pattern.as_str())
+    } else {
+        options.pattern.clone()
+    };
+    let spat = String::from(if options.ignore_case { "(?imR)" } else { "(?mR)" }) + spat.as_str();
+    Regex::new(spat.as_str())
 }
 
 pub fn read_text_file(path: &Path) -> Result<String, io::Error> {
@@ -282,7 +276,7 @@ pub fn read_text_file(path: &Path) -> Result<String, io::Error> {
     ))
 }
 
-fn process_path(pat: &Regex, pb: &PathBuf, options: &Options) {
+fn process_path(re: &Regex, pb: &PathBuf, options: &Options) {
     let txtres = read_text_file(pb);
     if let Err(e) = txtres {
         if e.kind() == ErrorKind::InvalidData {
@@ -303,23 +297,36 @@ fn process_path(pat: &Regex, pb: &PathBuf, options: &Options) {
     let mut file_color = ColorSpec::new();
     file_color.set_fg(Some(Color::Black)).set_intense(true);
 
-    // search...
-    for gi in grepiterator::GrepLineMatches::new(txt, pat) {
-        if options.show_path {
-            let _ = stdout.set_color(&file_color);
-            let _ = write!(&mut stdout, "{}: ", pb.display());
-            let _ = stdout.reset();
+    // search
+    let mut matchlinecount = 0;
+    for gi in grepiterator::GrepLineMatches::new(txt, re) {
+        matchlinecount += 1;
+
+        if options.out_level == 1 {
+            println!("{}", pb.display());
+            return;
         }
 
-        let mut p: usize = 0;
-        for ma in gi.matches {
-            let e = ma.end;
-            print!("{}", &gi.line[p..ma.start]);
-            let _ = stdout.set_color(&match_color);
-            let _ = write!(&mut stdout, "{}", &gi.line[ma]);
-            let _ = stdout.reset();
-            p = e;
+        if options.out_level == 0 {
+            if options.show_path {
+                let _ = stdout.set_color(&file_color);
+                let _ = write!(&mut stdout, "{}: ", pb.display());
+                let _ = stdout.reset();
+            }
+
+            let mut p: usize = 0;
+            for ma in gi.matches {
+                let e = ma.end;
+                print!("{}", &gi.line[p..ma.start]);
+                let _ = stdout.set_color(&match_color);
+                let _ = write!(&mut stdout, "{}", &gi.line[ma]);
+                let _ = stdout.reset();
+                p = e;
+            }
+            println!("{}", &gi.line[p..]);
         }
-        println!("{}", &gi.line[p..]);
+    }
+    if options.out_level == 2 || (options.out_level == 3 && matchlinecount > 0) {
+        println!("{}:{}", pb.display(), matchlinecount);
     }
 }
