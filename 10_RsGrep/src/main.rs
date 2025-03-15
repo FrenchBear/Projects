@@ -8,11 +8,12 @@
 use encoding_rs::{Encoding, UTF_16LE, UTF_8, WINDOWS_1252};
 use std::error::Error;
 use std::fs::{self, File};
-use std::io::ErrorKind;
 use std::io::{self, BufRead, BufReader, Read};
+use std::io::{ErrorKind, Write};
 use std::path::Path;
 use std::path::PathBuf;
 use std::process;
+use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
 
 // external crates imports
 use getopt::Opt;
@@ -27,8 +28,8 @@ use regex::Regex;
 // -----------------------------------
 // Submodules
 
-pub mod tests;
 pub mod grepiterator;
+pub mod tests;
 
 // ==============================================================================================
 
@@ -39,6 +40,7 @@ pub struct Options {
     sources: Vec<String>,
     ignore_case: bool,
     recurse: bool,
+    show_path: bool,
     verbose: bool,
 }
 
@@ -63,6 +65,7 @@ impl Options {
             sources: Vec::new(),
             ignore_case: false,
             recurse: false,
+            show_path: false,
             verbose: false,
         };
 
@@ -138,25 +141,8 @@ impl Options {
 }
 
 fn main() {
-    test_iterator();
-}
-
-fn test_iterator() {
-    let re = Regex::new("(?m)pommes").unwrap();
-    let haystack = "Recette de la tarte aux pommes\r\nPréparez la pâte\r\nPrécuire la pâte 10 minutes\r\nPeler les pommes et ajouter les pommes\r\nFaire cuire\r\nLaisser refroidire\r\nDéguster!";
-    for gi in grepiterator::GrepLineMatches::new(haystack, &re) {
-        println!("\nLine: <{}>", gi.line);
-        for ma in gi.matches {
-            println!("- {}..{}", ma.start, ma.end);
-        }
-    }
-}
-
-fn zzmain() {
-    /*
-    // -------------------------------------------
     // Process options
-    let options = Options::new().unwrap_or_else(|err| {
+    let mut options = Options::new().unwrap_or_else(|err| {
         let msg = format!("{}", err);
         if msg.is_empty() {
             process::exit(0);
@@ -165,18 +151,16 @@ fn zzmain() {
         process::exit(1);
     });
 
-    // println!("rsgrep");
-    // println!("{:?}", options);
-    */
+    // // For testing
+    // let mut options = Options {
+    //     pattern: String::from("elle"),
+    //     sources: vec![String::from(r"C:\DocumentsOD\Doc tech\Encodings\prenoms-utf8.txt"), String::from(r"C:\DocumentsOD\Doc tech\Encodings\prenoms-ansi,1252.txt")],
+    //     ignore_case: false,
+    //     recurse: false,
+    //     show_path: false,
+    //     verbose: true,
+    // };
 
-    // For testing
-    let options = Options {
-        pattern: String::from("tine"),
-        sources: vec![String::from(r"C:\DocumentsOD\Doc tech\Encodings\prenoms-utf8.txt")],
-        ignore_case: false,
-        recurse: false,
-        verbose: true,
-    };
     // Make sure search pattern is valid
     let pat = match Regex::new(options.pattern.as_str()) {
         Ok(p) => p,
@@ -193,11 +177,9 @@ fn zzmain() {
         require_literal_leading_dot: false,
     };
 
-
-    // Getting list of files
+    // Building list of files
+    let mut files:Vec<PathBuf> = Vec::new();
     for source in options.sources.clone() {
-        println!("\n---------------------\nSource: {}", source);
-
         // If file is a simple name, no path, no drive, and recurse option is specified, then we search in subfolders
         let source2 = if options.recurse && !source.contains('/') && !source.contains('\\') && !source.contains(':') {
             format!("{}", source)
@@ -212,28 +194,12 @@ fn zzmain() {
                     match entry {
                         Ok(pb) => {
                             count += 1;
-                            process_path(&pat, &pb, &options);
+                            files.push(pb);
                         }
                         Err(err) => {
-                            // A GlobError is actually an io:Error and a Path
-                            // For now, just ignore
-                            //println!("%%% Glob error {}", err);
-
-                            /*
-                            let pa = String::from(err.path().to_str().unwrap());
-                            let ww = err.into_error();
-                            match ww.kind() {
-                                ErrorKind::NotFound => {
-                                    println!("Path not found: {}", pa);
-                                }
-                                ErrorKind::PermissionDenied => {
-                                    println!("Permission denied opening path: {}", pa);
-                                }
-                                _ => {
-                                    eprintln!("Other error opening path {}: {}", pa, ww);
-                                }
-                            };
-                            */
+                            if options.verbose {
+                                println!("rsrust: error {}", err);
+                            }
                         }
                     };
                 }
@@ -244,8 +210,16 @@ fn zzmain() {
             }
         }
         if count == 0 {
-            print!("rsgrep: no file found mtching {}", source);
+            print!("rsgrep: no file found matching {}", source);
         }
+    }
+
+    // Finally processing files, if more than 1 file, prefix output with file
+    if files.len()>1 {
+        options.show_path = true;
+    }
+    for pb in files {
+        process_path(&pat, &pb, &options);
     }
 }
 
@@ -309,21 +283,43 @@ pub fn read_text_file(path: &Path) -> Result<String, io::Error> {
 }
 
 fn process_path(pat: &Regex, pb: &PathBuf, options: &Options) {
-    //println!("{}", pb.display());
-    //let pb = Path::new(r"D:\Pierre\OneDrive\Calculators\Performances\Crible\Basic\frmCrible1.frm");
-    let txtres = fs::read_to_string(pb);
+    let txtres = read_text_file(pb);
     if let Err(e) = txtres {
         if e.kind() == ErrorKind::InvalidData {
             // Files not containing UTF-8 are ignored
             if options.verbose {
                 println!("rsrust: ignored non-text file {}", pb.display());
             } else {
-                println!("rsrust: error reading file {}: {}", pb.display(), e);
+                eprintln!("rsrust: error reading file {}: {}", pb.display(), e);
             }
         }
         return;
     }
+    let txt = &txtres.unwrap()[..];
+
+    let mut stdout = StandardStream::stdout(ColorChoice::Always);
+    let mut match_color = ColorSpec::new();
+    match_color.set_fg(Some(Color::Red)).set_bold(true);
+    let mut file_color = ColorSpec::new();
+    file_color.set_fg(Some(Color::Black)).set_intense(true);
 
     // search...
-    println!("Searching...");
+    for gi in grepiterator::GrepLineMatches::new(txt, pat) {
+        if options.show_path {
+            let _ = stdout.set_color(&file_color);
+            let _ = write!(&mut stdout, "{}: ", pb.display());
+            let _ = stdout.reset();
+        }
+
+        let mut p: usize = 0;
+        for ma in gi.matches {
+            let e = ma.end;
+            print!("{}", &gi.line[p..ma.start]);
+            let _ = stdout.set_color(&match_color);
+            let _ = write!(&mut stdout, "{}", &gi.line[ma]);
+            let _ = stdout.reset();
+            p = e;
+        }
+        println!("{}", &gi.line[p..]);
+    }
 }
