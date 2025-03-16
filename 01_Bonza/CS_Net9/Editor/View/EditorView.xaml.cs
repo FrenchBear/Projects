@@ -132,7 +132,7 @@ public partial class EditorView: Window
     {
         Debug.Assert(m_Sel.WordAndCanvasList != null && m_Sel.WordAndCanvasList.Count > 0);
 
-        DeleteWordAndCanvasList(new List<WordAndCanvas>(m_Sel.WordAndCanvasList), true);
+        DeleteWordAndCanvasList([.. m_Sel.WordAndCanvasList], true);
     }
 
     // More general Delete function, also used by Undo support

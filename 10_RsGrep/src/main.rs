@@ -25,6 +25,7 @@ pub mod grepiterator;
 pub mod tests;
 
 // ==============================================================================================
+// Options processing
 
 // Dedicated struct to store command line arguments
 #[derive(Debug, Default)]
@@ -36,7 +37,7 @@ pub struct Options {
     fixed_string: bool,
     recurse: bool,
     show_path: bool,
-    out_level: u8, // 0: normal output, 1: (-l) matching filenames only, 2: (-c) filenames and martching lines count, 3: (-c -l) only matching filenames and matching lines count
+    out_level: u8, // 0: normal output, 1: (-l) matching filenames only, 2: (-c) filenames and matching lines count, 3: (-c -l) only matching filenames and matching lines count
     verbose: bool,
 }
 
@@ -76,6 +77,8 @@ impl Options {
         );
     }
 
+    /// Build a new struct Options analyzing command line parameters.<br/>
+    /// Some invalid/inconsistent options or missing arguments return an error.
     fn new() -> Result<Options, Box<dyn Error>> {
         let mut args: Vec<String> = std::env::args().collect();
         if args.len() > 1 {
@@ -159,18 +162,17 @@ impl Options {
             return Err("".into());
         }
 
-        // Special tolerant case, securse search without specifying source does not search from stdin but from all files
+        // Special tolerant case, recurse search without specifying source does not search from stdin but from all files
         if options.recurse && options.sources.is_empty() {
             options.sources.push("*.*".to_string());
-        }
-
-        if options.sources.is_empty() && options.verbose {
-            println!("Reading from stdin");
         }
 
         Ok(options)
     }
 }
+
+// -----------------------------------
+// Main
 
 fn main() {
     // Process options
@@ -238,6 +240,9 @@ fn main() {
 
     // Finally processing files, if more than 1 file, prefix output with file
     if options.sources.is_empty() {
+        if options.verbose {
+            println!("Reading from stdin");
+        }
         let s = io::read_to_string(io::stdin()).unwrap();
         process_text(&re, s.as_str(), "(stdin)", &options);
     } else {
@@ -263,7 +268,8 @@ fn main() {
     }
 }
 
-// Helper, build Regex according to options
+/// Helper, build Regex according to options (case, fixed string, whole word).<br/>
+/// Return an error in case of invalid Regex.
 pub fn build_re(options: &Options) -> Result<Regex, regex::Error> {
     let spat = if options.fixed_string {
         regex::escape(options.pattern.as_str())
@@ -276,6 +282,9 @@ pub fn build_re(options: &Options) -> Result<Regex, regex::Error> {
     Regex::new(spat.as_str())
 }
 
+/// Helper detecting if path is a text file, detect encoding and return content as an utf-8 String.<br/>
+/// Only UTF-8, UTF-16 LE and Windows 1252 are detected using heuristics (mays not be always correct).<br/>
+/// Unrecognized files return an io::ErrorKind::InvalidData.
 pub fn read_text_file(path: &Path) -> Result<String, io::Error> {
     let file = File::open(path)?;
     let mut reader = BufReader::new(file);
@@ -335,22 +344,24 @@ pub fn read_text_file(path: &Path) -> Result<String, io::Error> {
     ))
 }
 
-fn process_path(re: &Regex, pb: &Path, options: &Options) {
-    let txtres = read_text_file(pb);
+/// First step processing a file, read text content from path and call process_text.
+fn process_path(re: &Regex, path: &Path, options: &Options) {
+    let txtres = read_text_file(path);
     if let Err(e) = txtres {
         if e.kind() == ErrorKind::InvalidData {
             // Non-text files are ignored
             if options.verbose {
-                println!("rsgrep: ignored non-text file {}", pb.display());
+                println!("rsgrep: ignored non-text file {}", path.display());
             };
         }
         return;
     }
     let txt = &txtres.unwrap()[..];
-    let filename = pb.display().to_string();
+    let filename = path.display().to_string();
     process_text(re, txt, filename.as_str(), options);
 }
 
+/// Core rsgrep process, search for re in txt, read from filename, according to options.
 fn process_text(re: &Regex, txt: &str, filename: &str, options: &Options) {
     let mut stdout = StandardStream::stdout(ColorChoice::Always);
     let mut match_color = ColorSpec::new();
@@ -376,7 +387,7 @@ fn process_text(re: &Regex, txt: &str, filename: &str, options: &Options) {
             }
 
             let mut p: usize = 0;
-            for ma in gi.matches {
+            for ma in gi.ranges {
                 let e = ma.end;
                 print!("{}", &gi.line[p..ma.start]);
                 let _ = stdout.set_color(&match_color);

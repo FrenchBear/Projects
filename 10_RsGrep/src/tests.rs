@@ -57,13 +57,13 @@ pub mod grep_iterator {
         let res: Vec<GrepLineMatches> = GrepLineMatches::new(haystack, &re).collect();
         assert_eq!(res.len(), 2);
         assert_eq!(res[0].line, "RECETTE DE LA TARTE AUX POMMES");
-        assert_eq!(res[0].matches.len(), 1);
-        assert_eq!(res[0].matches[0], 24..30);
+        assert_eq!(res[0].ranges.len(), 1);
+        assert_eq!(res[0].ranges[0], 24..30);
 
         assert_eq!(res[1].line, "Peler les pommes et ajouter les pommes");
-        assert_eq!(res[1].matches.len(), 2);
-        assert_eq!(res[1].matches[0], 10..16);
-        assert_eq!(res[1].matches[1], 32..38);
+        assert_eq!(res[1].ranges.len(), 2);
+        assert_eq!(res[1].ranges[0], 10..16);
+        assert_eq!(res[1].ranges[1], 32..38);
     }
 }
 

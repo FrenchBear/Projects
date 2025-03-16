@@ -10,24 +10,26 @@ use regex::{Match, Matches, Regex};
 #[derive(Debug)]
 pub struct GrepLineMatches {
     pub line: String,
-    pub matches: Vec<Range<usize>>,
+    pub ranges: Vec<Range<usize>>,
 }
 
 impl GrepLineMatches {
-    pub fn new<'a>(s: &'a str, re: &'a Regex) -> impl Iterator<Item = GrepLineMatches> + 'a {
+    /// Build a line iterator over txt, returning lines with at leat a match, grouping all matches of a line together.<br/>
+    /// A line is returned with all its matches.
+    pub fn new<'a>(txt: &'a str, re: &'a Regex) -> impl Iterator<Item = GrepLineMatches> + 'a {
         GrepIterator {
-            text: s,
-            fi: re.find_iter(s),
+            txt,
+            fi: re.find_iter(txt),
             ma: None,
         }
     }
 }
 
-// Private internal iterator object storing current state
+/// Private internal iterator object storing current iterator state
 struct GrepIterator<'a> {
-    text: &'a str,
-    fi: Matches<'a, 'a>,
-    ma: Option<Match<'a>>, // Match ahead
+    txt: &'a str,
+    fi: Matches<'a, 'a>,   // Find iterator
+    ma: Option<Match<'a>>, // Match ahead (next fi already read)
 }
 
 impl Iterator for GrepIterator<'_> {
@@ -46,7 +48,7 @@ impl Iterator for GrepIterator<'_> {
                     }
                     return Some(GrepLineMatches {
                         line: currentline,
-                        matches: currentmatches,
+                        ranges: currentmatches,
                     });
                 }
                 m.unwrap()
@@ -62,7 +64,7 @@ impl Iterator for GrepIterator<'_> {
             let mut startlineix: usize = 0;
             while matchix > 0 {
                 matchix -= 1;
-                let b = self.text.as_bytes()[matchix];
+                let b = self.txt.as_bytes()[matchix];
                 if b == 10 || b == 13 {
                     startlineix = matchix + 1;
                     break;
@@ -73,16 +75,16 @@ impl Iterator for GrepIterator<'_> {
                 prevstartix = startlineix;
                 // First match for the line, find end of line
                 let mut matchix = ma.end();
-                let mut endlineix: usize = self.text.len();
+                let mut endlineix: usize = self.txt.len();
                 while matchix < endlineix {
-                    let b = self.text.as_bytes()[matchix];
+                    let b = self.txt.as_bytes()[matchix];
                     if b == 10 || b == 13 {
                         endlineix = matchix;
                         break;
                     }
                     matchix += 1;
                 }
-                currentline = String::from(&self.text[prevstartix..endlineix]);
+                currentline = String::from(&self.txt[prevstartix..endlineix]);
                 currentmatches.push(ma.start() - prevstartix..ma.end() - prevstartix);
             } else if prevstartix == startlineix {
                 currentmatches.push(ma.start() - prevstartix..ma.end() - prevstartix);
@@ -90,7 +92,7 @@ impl Iterator for GrepIterator<'_> {
                 self.ma = Some(ma);
                 return Some(GrepLineMatches {
                     line: currentline,
-                    matches: currentmatches,
+                    ranges: currentmatches,
                 });
             }
         }

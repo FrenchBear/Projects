@@ -51,7 +51,7 @@ internal sealed class UndoStackClass
 
         var a = new UndoAction(action)
         {
-            WordAndCanvasList = new List<WordAndCanvas>(wordAndCanvasList),
+            WordAndCanvasList = [.. wordAndCanvasList],
             PositionOrientationList = topLeftList
         };
         undoStack.Push(a);

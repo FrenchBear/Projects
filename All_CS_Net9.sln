@@ -3,58 +3,58 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generator", "01_Bonza\CS_Net8\Generator\Generator.csproj", "{5D1C39AC-D1E6-4D2F-A780-DBC582198FF0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generator", "01_Bonza\CS_Net9\Generator\Generator.csproj", "{5D1C39AC-D1E6-4D2F-A780-DBC582198FF0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generator Tests", "01_Bonza\CS_Net8\Generator Tests\Generator Tests.csproj", "{57C1B4B9-2D2D-4B5F-93F1-99280B40A892}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generator Tests", "01_Bonza\CS_Net9\Generator Tests\Generator Tests.csproj", "{57C1B4B9-2D2D-4B5F-93F1-99280B40A892}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generator UnitTests", "01_Bonza\CS_Net8\Generator UnitTests\Generator UnitTests.csproj", "{0A11A60D-5C6F-45AA-BEB2-45509419BEB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generator UnitTests", "01_Bonza\CS_Net9\Generator UnitTests\Generator UnitTests.csproj", "{0A11A60D-5C6F-45AA-BEB2-45509419BEB4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Editor", "01_Bonza\CS_Net8\Editor\Editor.csproj", "{4EC43A76-48C1-47B0-894D-449C4E71CA91}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Editor", "01_Bonza\CS_Net9\Editor\Editor.csproj", "{4EC43A76-48C1-47B0-894D-449C4E71CA91}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01 Bonza", "01 Bonza", "{0682E6E0-F522-4CE7-8CC6-C6BE8C4B84A5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02 Solitaire", "02 Solitaire", "{3140EBFD-FF3F-4F2B-AF30-149E7EB3C7B3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solitaire", "02_Solitaire\CS_Net8\Solitaire\Solitaire.csproj", "{1AB8990D-9EE9-4CD6-BA46-65022A869964}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solitaire", "02_Solitaire\CS_Net9\Solitaire\Solitaire.csproj", "{1AB8990D-9EE9-4CD6-BA46-65022A869964}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SolLib", "02_Solitaire\CS_Net8\SolLib\SolLib.csproj", "{53BACD3F-2C6F-455D-B155-F77D527CE17E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SolLib", "02_Solitaire\CS_Net9\SolLib\SolLib.csproj", "{53BACD3F-2C6F-455D-B155-F77D527CE17E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SolSolver", "02_Solitaire\CS_Net8\SolSolver\SolSolver.csproj", "{896B198E-F79F-43AB-B8B7-F2AD13369D13}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SolSolver", "02_Solitaire\CS_Net9\SolSolver\SolSolver.csproj", "{896B198E-F79F-43AB-B8B7-F2AD13369D13}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForeignNumbers", "04_ForeignNumbers\CS_Net8\ForeignNumbers.csproj", "{6908CD3A-2B02-4FFE-9423-F4538C0C33BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ForeignNumbers", "04_ForeignNumbers\CS_Net9\ForeignNumbers.csproj", "{6908CD3A-2B02-4FFE-9423-F4538C0C33BF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "05 Linedoku", "05 Linedoku", "{118323B5-29E6-4CD4-B952-3F5BB6156215}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ColorFlow Solver", "05_Linedoku\CS_Net8\ColorFlow Solver\ColorFlow Solver.csproj", "{A00AEAEB-0695-4186-BCF2-DFA5C8B8EECD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ColorFlow Solver", "05_Linedoku\CS_Net9\ColorFlow Solver\ColorFlow Solver.csproj", "{A00AEAEB-0695-4186-BCF2-DFA5C8B8EECD}"
 EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "CrossPath", "05_Linedoku\CS_Net8\CrossPath Solver\CrossPath.pyproj", "{9E5C6014-69C5-49A0-95DC-9438971B8F7E}"
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "CrossPath", "05_Linedoku\CS_Net9\CrossPath Solver\CrossPath.pyproj", "{9E5C6014-69C5-49A0-95DC-9438971B8F7E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DetectClosedArea", "05_Linedoku\CS_Net8\DetectClosedArea\DetectClosedArea.csproj", "{1A6FD9E1-7166-4795-B61E-8CA0429738C4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DetectClosedArea", "05_Linedoku\CS_Net9\DetectClosedArea\DetectClosedArea.csproj", "{1A6FD9E1-7166-4795-B61E-8CA0429738C4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "04 Foreign numbers", "04 Foreign numbers", "{D1729B91-536E-47F7-9189-2BEC2FC79086}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "07 Qwirkle", "07 Qwirkle", "{23A1E9A2-B02F-428B-BB48-DF31685E4594}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Q2", "07_Qwirkle\Net8\Q2\Q2.csproj", "{8ED66EF9-C6D3-421D-BC2E-E25E08CE0D3A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Q2", "07_Qwirkle\CS_Net9\Q2\Q2.csproj", "{8ED66EF9-C6D3-421D-BC2E-E25E08CE0D3A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibQwirkle", "07_Qwirkle\Net8\LibQwirkle\LibQwirkle.csproj", "{F83263C9-C749-418C-87E4-417EC908C480}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibQwirkle", "07_Qwirkle\CS_Net9\LibQwirkle\LibQwirkle.csproj", "{F83263C9-C749-418C-87E4-417EC908C480}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QwirkleTestProject", "07_Qwirkle\Net8\QwirkleTestProject\QwirkleTestProject.csproj", "{C487D0B8-C777-4C78-BE1D-CCB15E144E93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QwirkleTestProject", "07_Qwirkle\CS_Net9\QwirkleTestProject\QwirkleTestProject.csproj", "{C487D0B8-C777-4C78-BE1D-CCB15E144E93}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPFTilesGenerator", "07_Qwirkle\Net8\WPFTilesGenerator\WPFTilesGenerator.csproj", "{80CFF887-FE22-4339-A1D8-74D66DF4D90D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPFTilesGenerator", "07_Qwirkle\CS_Net9\WPFTilesGenerator\WPFTilesGenerator.csproj", "{80CFF887-FE22-4339-A1D8-74D66DF4D90D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QwirkleUI", "07_Qwirkle\Net8\QwirkleUI\QwirkleUI.csproj", "{CFFD4459-8F11-4549-A7C3-C637CD5C2609}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QwirkleUI", "07_Qwirkle\CS_Net9\QwirkleUI\QwirkleUI.csproj", "{CFFD4459-8F11-4549-A7C3-C637CD5C2609}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "08 Plotter", "08 Plotter", "{4E69BD99-05B3-40CD-B044-762D7D703E45}"
 	ProjectSection(SolutionItems) = preProject
-		08_Plotter\CS_Net8\PlotterTestApp\TestPlotter.csproj = 08_Plotter\CS_Net8\PlotterTestApp\TestPlotter.csproj
+		08_Plotter\CS_Net9\PlotterTestApp\TestPlotter.csproj = 08_Plotter\CS_Net9\PlotterTestApp\TestPlotter.csproj
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlotterLibrary", "08_Plotter\CS_Net8\PlotterLibrary\PlotterLibrary.csproj", "{1BE1ADC4-5601-46B6-92AE-06840C05C903}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlotterLibrary", "08_Plotter\CS_Net9\PlotterLibrary\PlotterLibrary.csproj", "{1BE1ADC4-5601-46B6-92AE-06840C05C903}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LSystemTest", "08_Plotter\CS_Net8\PlotterLSystemTest\LSystemTest.csproj", "{C93D0488-02E4-4E7D-98C6-E3B8DCE7EAB9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LSystemTest", "08_Plotter\CS_Net9\PlotterLSystemTest\LSystemTest.csproj", "{C93D0488-02E4-4E7D-98C6-E3B8DCE7EAB9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlotterWPFTest", "08_Plotter\CS_Net8\PlotterWPFTest\PlotterWPFTest.csproj", "{241756E5-D0E7-4268-80CA-E0CEC715E6EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlotterWPFTest", "08_Plotter\CS_Net9\PlotterWPFTest\PlotterWPFTest.csproj", "{241756E5-D0E7-4268-80CA-E0CEC715E6EE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{99CD9A37-B425-478C-9FA2-B50EE84AD1D3}"
 	ProjectSection(SolutionItems) = preProject

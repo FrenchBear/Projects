@@ -1,0 +1,91 @@
+﻿<Window x:Class="Solitaire.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Solitaire"
+        mc:Ignorable="d"
+        Title="Solitaire WPF" Height="800" Width="800"
+        Loaded="Window_Loaded"
+        Icon="SolWPF.ico">
+
+    <Window.InputBindings>
+        <!--<KeyBinding Key="N" Modifiers="Shift+Ctrl" Command="{Binding ApplicationsCommands.New}" />-->
+        <!--<KeyBinding Key="Z" Modifiers="Ctrl"  Command="ApplicationCommands.Undo" />-->
+        <!--  In fact, Ctrl+N or Ctrl+Z are default keybindings -->
+    </Window.InputBindings>
+
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.Undo"
+                        CanExecute="UndoCommand_CanExecute"
+                        Executed="UndoCommand_Executed" />
+        <CommandBinding Command="ApplicationCommands.New"
+                        Executed="NewCommand_Executed" />
+        <CommandBinding Command="ApplicationCommands.Print"
+                        Executed="PlayCommand_Executed" />
+    </Window.CommandBindings>
+
+    <Grid Name="mainGrid" MouseMove="MainGrid_MouseMoveWhenUp" PreviewMouseDown="MainGrid_MouseDown" MouseUp="MainGrid_MouseUp" MouseWheel="MainGrid_MouseWheel" Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Background="SeaGreen">
+            <Canvas Name="PlayingCanvas" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <Canvas.RenderTransform>
+                    <MatrixTransform x:Name="mainMatrixTransform" />
+                </Canvas.RenderTransform>
+
+                <Rectangle Name="Base0" StrokeThickness="3" Stroke="Black" Canvas.Left="10" Canvas.Top="10" RadiusX="12" RadiusY="12" />
+                <Rectangle Name="Base1" StrokeThickness="3" Stroke="Black" Canvas.Left="120" Canvas.Top="10" RadiusX="12" RadiusY="12" />
+                <Rectangle Name="Base2" StrokeThickness="3" Stroke="Black" Canvas.Left="230" Canvas.Top="10" RadiusX="12" RadiusY="12" />
+                <Rectangle Name="Base3" StrokeThickness="3" Stroke="Black" Canvas.Left="340" Canvas.Top="10" RadiusX="12" RadiusY="12" />
+
+                <Rectangle Name="Talon0" StrokeThickness="3" Stroke="Black" Canvas.Left="670" Canvas.Top="10" RadiusX="12" RadiusY="12" />
+                <Rectangle Name="Talon1" StrokeThickness="3" Stroke="Black" Canvas.Left="560" Canvas.Top="10" RadiusX="12" RadiusY="12" />
+
+                <Rectangle Name="Column0" StrokeThickness="3" Stroke="Black" Canvas.Left="10"  Canvas.Top="170" RadiusX="12" RadiusY="12" />
+                <Rectangle Name="Column1" StrokeThickness="3" Stroke="Black" Canvas.Left="120" Canvas.Top="170" RadiusX="12" RadiusY="12" />
+                <Rectangle Name="Column2" StrokeThickness="3" Stroke="Black" Canvas.Left="230" Canvas.Top="170" RadiusX="12" RadiusY="12" />
+                <Rectangle Name="Column3" StrokeThickness="3" Stroke="Black" Canvas.Left="340" Canvas.Top="170" RadiusX="12" RadiusY="12" />
+                <Rectangle Name="Column4" StrokeThickness="3" Stroke="Black" Canvas.Left="450" Canvas.Top="170" RadiusX="12" RadiusY="12" />
+                <Rectangle Name="Column5" StrokeThickness="3" Stroke="Black" Canvas.Left="560" Canvas.Top="170" RadiusX="12" RadiusY="12" />
+                <Rectangle Name="Column6" StrokeThickness="3" Stroke="Black" Canvas.Left="670" Canvas.Top="170" RadiusX="12" RadiusY="12" />
+            </Canvas>
+        </Grid>
+
+        <StatusBar Grid.Row="1" FontSize="16" HorizontalContentAlignment="Left">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="170" />
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" Grid.Column="0" Margin="0,0,12,0">
+                    <TextBlock Margin="0,0,6,0">Moves:</TextBlock>
+                    <TextBlock Text="{Binding MoveCount}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="1" Margin="0,0,12,0">
+                    <TextBlock Margin="0,0,6,0">Status:</TextBlock>
+                    <TextBlock Text="{Binding GameStatus}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="2" Margin="0,0,12,0">
+                    <TextBlock Margin="0,0,6,0">Solver:</TextBlock>
+                    <TextBlock Text="{Binding SolverStatus}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="3" Margin="0,0,12,0">
+                    <TextBlock Margin="0,0,6,0">Game #:</TextBlock>
+                    <TextBlock Text="{Binding GameSerial}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="4">
+                    <Button Content="New Game" Command="ApplicationCommands.New" Padding="3,0" Margin="0,0,6,0" />
+                    <Button Content="Undo" Command="ApplicationCommands.Undo" Padding="3,0" Margin="0,0,6,0" />
+                    <Button Content="Play" Command="ApplicationCommands.Print" Padding="3,0" />
+                </StackPanel>
+            </Grid>
+        </StatusBar>
+    </Grid>
+</Window>

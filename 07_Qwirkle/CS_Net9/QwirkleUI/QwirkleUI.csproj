@@ -1,0 +1,87 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net9.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<UseWPF>true</UseWPF>
+		<Authors>Pierre Violent</Authors>
+		<Copyright>Copyright ©2023-2024 Pierre Violent</Copyright>
+		<Description>Qwirkle interactive game, V2 (Net8 C#12)</Description>
+		<Version>2.0.0</Version>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="Icons\about.ico" />
+		<None Remove="Icons\accept.ico" />
+		<None Remove="Icons\addwords.ico" />
+		<None Remove="Icons\auto.ico" />
+		<None Remove="Icons\autoforever.ico" />
+		<None Remove="Icons\autoplace.ico" />
+		<None Remove="Icons\close.ico" />
+		<None Remove="Icons\delete.ico" />
+		<None Remove="Icons\exchange.ico" />
+		<None Remove="Icons\find.ico" />
+		<None Remove="Icons\new.ico" />
+		<None Remove="Icons\open.ico" />
+		<None Remove="Icons\players.ico" />
+		<None Remove="Icons\recenter.ico" />
+		<None Remove="Icons\reject.ico" />
+		<None Remove="Icons\rejectall.ico" />
+		<None Remove="Icons\returnalltiles.ico" />
+		<None Remove="Icons\returnselectedtiles.ico" />
+		<None Remove="Icons\save.ico" />
+		<None Remove="Icons\settings.ico" />
+		<None Remove="Icons\suggest.ico" />
+		<None Remove="Icons\swap.ico" />
+		<None Remove="Icons\undo.ico" />
+		<None Remove="Qwirkle.ico" />
+		<None Remove="Qwirkle.png" />
+		<None Remove="Resources\QwirkleAbout.png" />
+		<None Remove="Resources\QwirkleBackground.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="Icons\returnalltiles.ico" />
+	  <Resource Include="Icons\returnselectedtiles.ico" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\LibQwirkle\LibQwirkle.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="Icons\about.ico" />
+		<Resource Include="Icons\accept.ico" />
+		<Resource Include="Icons\auto.ico" />
+		<Resource Include="Icons\autoforever.ico" />
+		<Resource Include="Icons\close.ico" />
+		<Resource Include="Icons\exchange.ico" />
+		<Resource Include="Icons\new.ico" />
+		<Resource Include="Icons\players.ico" />
+		<Resource Include="Icons\recenter.ico" />
+		<Resource Include="Icons\settings.ico" />
+		<Resource Include="Icons\suggest.ico" />
+		<Resource Include="Icons\undo.ico" />
+		<Resource Include="Qwirkle.ico" />
+		<Resource Include="Resources\QwirkleAbout.png" />
+		<Resource Include="Resources\QwirkleBackground.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Properties\Settings.Designer.cs">
+	    <DesignTimeSharedInput>True</DesignTimeSharedInput>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Settings.settings</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Properties\Settings.settings">
+	    <Generator>SettingsSingleFileGenerator</Generator>
+	    <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+	  </None>
+	</ItemGroup>
+
+</Project>
