@@ -1,8 +1,7 @@
 // rsgrep: Basic grep project in Rust
 //
 // 2025-03-13	PV      First version
-
-//#![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+// 2025-03-16	PV      1.0.1   Extended help, support reading from stdin
 
 // standard library imports
 use std::error::Error;
@@ -33,6 +32,7 @@ pub struct Options {
     pattern: String,
     sources: Vec<String>,
     ignore_case: bool,
+    whole_word: bool,
     fixed_string: bool,
     recurse: bool,
     show_path: bool,
@@ -41,28 +41,57 @@ pub struct Options {
 }
 
 impl Options {
-    fn usage() {
+    fn header() {
         eprintln!(
-            "rsgrep 1.0\n\
-            Simplified grep in rust\n\
-            Usage: rsgrep [?|-?|-h] [-i] [-F] [-r] [-v] [-c] [-l] pattern glob...\n\
-            -h       Shows this message\n\
+            "rsgrep 1.0.1\n\
+            Simplified grep in rust"
+        );
+    }
+
+    fn usage() {
+        Options::header();
+        eprintln!(
+            "\nUsage: rsgrep [?|-?|-h|??] [-i] [-w] [-F] [-r] [-v] [-c] [-l] pattern source...\n\
+            ?|-?|-h  Show this message\n\
+            ??       Show advanced usage notes\n\
             -i       Ignore case during search\n\
+            -w       Whole word search\n\
             -F       Fixed string search (no regexp interpretation)\n\
             -r       Recurse search in subfolders (add **/ ahead of glob not containing /)\n\
             -c       Suppress normal output, show count of matching lines for each file\n\
             -l       Suppress normal output, show matching file names only\n\
             -v       Verbose output\n\
             pattern  Regular expression to search\n\
-            glob     File or folder where to search, glob syntax supported"
+            source   File or folder where to search, glob syntax supported"
+        );
+    }
+
+    fn extended_usage() {
+        Options::header();
+        eprintln!("Copyright ©2025 Pierre Violent\n\n\
+            Advanced usage notes\n--------------------\n\n\
+            Options -c (show count of matching lines) and -l (show matching file names only) can be used together to show matching lines count only for matching files.\n\n\
+            Glob supports recursive search without using option -r: C:\\Development\\GitVSTS\\**\\Net[7-9]\\**\\*.cs (current version does not support brances extension).\n\n\
+            Only UTF-8, UTF-16 LE and Windows 1252 text files are currently supported, but automatic format detection using heuristics may not be always corrent. Other formats are silently ignored unless verbose output is requested."
         );
     }
 
     fn new() -> Result<Options, Box<dyn Error>> {
-        // default
-        let mut options = Options { ..Default::default() };
         let mut args: Vec<String> = std::env::args().collect();
-        let mut opts = getopt::Parser::new(&args, "h?iFrvcl");
+        if args.len() > 1 {
+            if args[1].to_lowercase() == "help" {
+                Self::usage();
+                return Err("".into());
+            }
+
+            if args[1] == "??" || args[1] == "-??" {
+                Self::extended_usage();
+                return Err("".into());
+            }
+        }
+
+        let mut options = Options { ..Default::default() };
+        let mut opts = getopt::Parser::new(&args, "h?iwFrvcl");
 
         loop {
             match opts.next().transpose()? {
@@ -75,6 +104,10 @@ impl Options {
 
                     Opt('i', None) => {
                         options.ignore_case = true;
+                    }
+
+                    Opt('w', None) => {
+                        options.whole_word = true;
                     }
 
                     Opt('F', None) => {
@@ -120,8 +153,19 @@ impl Options {
             }
         }
 
-        if options.sources.is_empty() {
-            return Err("No source specified for search, this version doesn't support yet reading from stdin".into());
+        if options.pattern.is_empty() {
+            Self::header();
+            eprintln!("\nNo pattern specified.\nUse rsgrep ? to show options or rsgrep ?? for advanced usage notes.");
+            return Err("".into());
+        }
+
+        // Special tolerant case, securse search without specifying source does not search from stdin but from all files 
+        if options.recurse && options.sources.is_empty() {
+            options.sources.push("*.*".to_string());
+        }
+
+        if options.sources.is_empty() && options.verbose {
+            println!("Reading from stdin");
         }
 
         Ok(options)
@@ -176,14 +220,14 @@ fn main() {
                         }
                         Err(err) => {
                             if options.verbose {
-                                println!("rsrust: error {}", err);
+                                println!("rsgrep: error {}", err);
                             }
                         }
                     };
                 }
             }
             Err(err) => {
-                println!("rsglob: pattern error {}", err);
+                println!("rsgrep: pattern error {}", err);
                 count = -1; // No need to display "no file found" in this case
             }
         }
@@ -193,16 +237,29 @@ fn main() {
     }
 
     // Finally processing files, if more than 1 file, prefix output with file
-    if files.len() > 1 {
-        options.show_path = true;
-    }
-    for pb in &files {
-        process_path(&re, pb, &options);
+    if files.is_empty() {
+        let s = io::read_to_string(io::stdin()).unwrap();
+        process_text(&re, s.as_str(), "(stdin)", &options);
+    } else {
+        if files.len() > 1 {
+            options.show_path = true;
+        }
+        for pb in &files {
+            process_path(&re, pb, &options);
+        }
     }
     let duration = start.elapsed();
 
     if options.verbose {
-        print!("\n{} file(s) searched in in {:.3}s", files.len(), duration.as_secs_f64());
+        if files.is_empty() {
+            print!("\nstdin");
+        } else {
+            print!("\n{} file", files.len());
+            if files.len() > 1 {
+                print!("s");
+            }
+        }
+        println!(" searched in in {:.3}s", duration.as_secs_f64());
     }
 }
 
@@ -210,6 +267,8 @@ fn main() {
 pub fn build_re(options: &Options) -> Result<Regex, regex::Error> {
     let spat = if options.fixed_string {
         regex::escape(options.pattern.as_str())
+    } else if options.whole_word {
+        format!("\\b{}\\b", options.pattern)
     } else {
         options.pattern.clone()
     };
@@ -282,15 +341,19 @@ fn process_path(re: &Regex, pb: &PathBuf, options: &Options) {
         if e.kind() == ErrorKind::InvalidData {
             // Files not containing UTF-8 are ignored
             if options.verbose {
-                println!("rsrust: ignored non-text file {}", pb.display());
+                println!("rsgrep: ignored non-text file {}", pb.display());
             } else {
-                eprintln!("rsrust: error reading file {}: {}", pb.display(), e);
+                eprintln!("rsgrep: error reading file {}: {}", pb.display(), e);
             }
         }
         return;
     }
     let txt = &txtres.unwrap()[..];
+    let filename = pb.display().to_string();
+    process_text(re, txt, filename.as_str(), options);
+}
 
+fn process_text(re: &Regex, txt: &str, filename: &str, options: &Options) {
     let mut stdout = StandardStream::stdout(ColorChoice::Always);
     let mut match_color = ColorSpec::new();
     match_color.set_fg(Some(Color::Red)).set_bold(true);
@@ -303,14 +366,14 @@ fn process_path(re: &Regex, pb: &PathBuf, options: &Options) {
         matchlinecount += 1;
 
         if options.out_level == 1 {
-            println!("{}", pb.display());
+            println!("{}", filename);
             return;
         }
 
         if options.out_level == 0 {
             if options.show_path {
                 let _ = stdout.set_color(&file_color);
-                let _ = write!(&mut stdout, "{}: ", pb.display());
+                let _ = write!(&mut stdout, "{}: ", filename);
                 let _ = stdout.reset();
             }
 
@@ -327,6 +390,6 @@ fn process_path(re: &Regex, pb: &PathBuf, options: &Options) {
         }
     }
     if options.out_level == 2 || (options.out_level == 3 && matchlinecount > 0) {
-        println!("{}:{}", pb.display(), matchlinecount);
+        println!("{}:{}", filename, matchlinecount);
     }
 }
