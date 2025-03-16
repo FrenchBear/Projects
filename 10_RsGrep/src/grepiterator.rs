@@ -30,7 +30,7 @@ struct GrepIterator<'a> {
     ma: Option<Match<'a>>, // Match ahead
 }
 
-impl<'a> Iterator for GrepIterator<'a> {
+impl Iterator for GrepIterator<'_> {
     type Item = GrepLineMatches;
 
     fn next(&mut self) -> Option<Self::Item> {

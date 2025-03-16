@@ -159,7 +159,7 @@ impl Options {
             return Err("".into());
         }
 
-        // Special tolerant case, securse search without specifying source does not search from stdin but from all files 
+        // Special tolerant case, securse search without specifying source does not search from stdin but from all files
         if options.recurse && options.sources.is_empty() {
             options.sources.push("*.*".to_string());
         }
@@ -184,7 +184,7 @@ fn main() {
     });
 
     let re = build_re(&options);
-    if !re.is_ok() {
+    if re.is_err() {
         eprintln!("rsgrep: Problem with search pattern: {:?}", re.err());
         process::exit(1);
     }
@@ -204,13 +204,13 @@ fn main() {
     for source in options.sources.clone() {
         // If file is a simple name, no path, no drive, and recurse option is specified, then we search in subfolders
         let source2 = if options.recurse && !source.contains('/') && !source.contains('\\') && !source.contains(':') {
-            format!("{}", source)
+            format!("**/{}", source)
         } else {
             source.clone()
         };
 
         let mut count = 0;
-        match glob_with(&source2.as_str(), mo) {
+        match glob_with(source2.as_str(), mo) {
             Ok(paths) => {
                 for entry in paths {
                     match entry {
@@ -232,12 +232,12 @@ fn main() {
             }
         }
         if count == 0 {
-            print!("rsgrep: no file found matching {}", source);
+            println!("rsgrep: no file found matching {}", source);
         }
     }
 
     // Finally processing files, if more than 1 file, prefix output with file
-    if files.is_empty() {
+    if options.sources.is_empty() {
         let s = io::read_to_string(io::stdin()).unwrap();
         process_text(&re, s.as_str(), "(stdin)", &options);
     } else {
@@ -283,7 +283,7 @@ pub fn read_text_file(path: &Path) -> Result<String, io::Error> {
     reader.read_to_end(&mut buffer)?;
 
     // Define the encodings to try, in order of preference.
-    let encodings: [&'static Encoding; 3] = [&UTF_8, &UTF_16LE, &WINDOWS_1252];
+    let encodings: [&'static Encoding; 3] = [UTF_8, UTF_16LE, WINDOWS_1252];
 
     for encoding in encodings {
         let (decoded_string, used_encoding, had_errors) = encoding.decode(&buffer);
@@ -310,7 +310,7 @@ pub fn read_text_file(path: &Path) -> Result<String, io::Error> {
                 let mut ix = 0;
                 while ix < buffer.len() {
                     let b = buffer[ix];
-                    if b >= 32 && b < 128 || b == 9 || b == 10 || b == 13 {
+                    if (32..128).contains(&b) || b == 9 || b == 10 || b == 13 {
                         acount += 1;
                     } else if b == 0 {
                         acount = 0;
@@ -335,16 +335,14 @@ pub fn read_text_file(path: &Path) -> Result<String, io::Error> {
     ))
 }
 
-fn process_path(re: &Regex, pb: &PathBuf, options: &Options) {
+fn process_path(re: &Regex, pb: &Path, options: &Options) {
     let txtres = read_text_file(pb);
     if let Err(e) = txtres {
         if e.kind() == ErrorKind::InvalidData {
-            // Files not containing UTF-8 are ignored
+            // Non-text files are ignored
             if options.verbose {
                 println!("rsgrep: ignored non-text file {}", pb.display());
-            } else {
-                eprintln!("rsgrep: error reading file {}: {}", pb.display(), e);
-            }
+            };
         }
         return;
     }
@@ -389,6 +387,7 @@ fn process_text(re: &Regex, txt: &str, filename: &str, options: &Options) {
             println!("{}", &gi.line[p..]);
         }
     }
+    // Note: both options -c and -l (out_level==3) is not supported by Linux version
     if options.out_level == 2 || (options.out_level == 3 && matchlinecount > 0) {
         println!("{}:{}", filename, matchlinecount);
     }
