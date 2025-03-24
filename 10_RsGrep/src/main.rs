@@ -2,6 +2,7 @@
 //
 // 2025-03-13	PV      First version
 // 2025-03-16	PV      1.0.1   Extended help, support reading from stdin
+// 2025-03-25	PV      1.1.0   Globals; Ignore $RECYCLE.BIN
 
 // standard library imports
 use std::error::Error;
@@ -12,9 +13,9 @@ use std::process;
 use std::time::Instant;
 
 // external crates imports
-use encoding_rs::{Encoding, UTF_16LE, UTF_8, WINDOWS_1252};
+use encoding_rs::{Encoding, UTF_8, UTF_16LE, WINDOWS_1252};
 use getopt::Opt;
-use glob::{glob_with, MatchOptions};
+use glob::{MatchOptions, glob_with};
 use regex::Regex;
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
 
@@ -23,6 +24,12 @@ use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
 
 pub mod grepiterator;
 pub mod tests;
+
+// -----------------------------------
+// Globals
+
+const APP_NAME: &str = "rsgrep";
+const APP_VERSION: &str = "1.1.0";
 
 // ==============================================================================================
 // Options processing
@@ -44,7 +51,7 @@ pub struct Options {
 impl Options {
     fn header() {
         eprintln!(
-            "rsgrep 1.0.1\n\
+            "{APP_NAME} {APP_VERSION}\n\
             Simplified grep in rust"
         );
     }
@@ -52,7 +59,7 @@ impl Options {
     fn usage() {
         Options::header();
         eprintln!(
-            "\nUsage: rsgrep [?|-?|-h|??] [-i] [-w] [-F] [-r] [-v] [-c] [-l] pattern source...\n\
+            "\nUsage: {APP_NAME} [?|-?|-h|??] [-i] [-w] [-F] [-r] [-v] [-c] [-l] pattern source...\n\
             ?|-?|-h  Show this message\n\
             ??       Show advanced usage notes\n\
             -i       Ignore case during search\n\
@@ -69,7 +76,8 @@ impl Options {
 
     fn extended_usage() {
         Options::header();
-        eprintln!("Copyright ©2025 Pierre Violent\n\n\
+        eprintln!(
+            "Copyright ©2025 Pierre Violent\n\n\
             Advanced usage notes\n--------------------\n\n\
             Options -c (show count of matching lines) and -l (show matching file names only) can be used together to show matching lines count only for matching files.\n\n\
             Glob supports recursive search without using option -r: C:\\Development\\GitVSTS\\**\\Net[7-9]\\**\\*.cs (current version does not support brances extension).\n\n\
@@ -158,7 +166,7 @@ impl Options {
 
         if options.pattern.is_empty() {
             Self::header();
-            eprintln!("\nNo pattern specified.\nUse rsgrep ? to show options or rsgrep ?? for advanced usage notes.");
+            eprintln!("\nNo pattern specified.\nUse {APP_NAME} ? to show options or {APP_NAME} ?? for advanced usage notes.");
             return Err("".into());
         }
 
@@ -181,13 +189,13 @@ fn main() {
         if msg.is_empty() {
             process::exit(0);
         }
-        eprintln!("rsgrep: Problem parsing arguments: {}", err);
+        eprintln!("{APP_NAME}: Problem parsing arguments: {}", err);
         process::exit(1);
     });
 
     let re = build_re(&options);
     if re.is_err() {
-        eprintln!("rsgrep: Problem with search pattern: {:?}", re.err());
+        eprintln!("{APP_NAME}: Problem with search pattern: {:?}", re.err());
         process::exit(1);
     }
     let re = re.unwrap();
@@ -217,24 +225,26 @@ fn main() {
                 for entry in paths {
                     match entry {
                         Ok(pb) => {
-                            count += 1;
-                            files.push(pb);
+                            if !pb.to_string_lossy().contains("$RECYCLE.BIN") {
+                                count += 1;
+                                files.push(pb);
+                            }
                         }
                         Err(err) => {
                             if options.verbose {
-                                println!("rsgrep: error {}", err);
+                                println!("{APP_NAME}: error {}", err);
                             }
                         }
                     };
                 }
             }
             Err(err) => {
-                println!("rsgrep: pattern error {}", err);
+                println!("{APP_NAME}: pattern error {}", err);
                 count = -1; // No need to display "no file found" in this case
             }
         }
         if count == 0 {
-            println!("rsgrep: no file found matching {}", source);
+            println!("{APP_NAME}: no file found matching {}", source);
         }
     }
 
@@ -351,7 +361,7 @@ fn process_path(re: &Regex, path: &Path, options: &Options) {
         if e.kind() == ErrorKind::InvalidData {
             // Non-text files are ignored
             if options.verbose {
-                println!("rsgrep: ignored non-text file {}", path.display());
+                println!("{APP_NAME}: ignored non-text file {}", path.display());
             };
         }
         return;

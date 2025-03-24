@@ -31,7 +31,7 @@ pub mod tests;
 const APP_NAME: &str = "rscheckfiles";
 const APP_VERSION: &str = "1.0.0";
 
-const SPECIAL_CHARS: &str = "€®™©–—…×·•∶⧹⧸／⚹†‽¿🎜🎝“”⚡♥";
+const SPECIAL_CHARS: &str = "€®™©–—…×·•∶⧹⧸／⚹†‽¿🎜🎝♫♪“”⚡♥";
 
 // Confusables for space
 const CONF_SPC: [char; 13] = [
