@@ -2,12 +2,11 @@
 name = "rscheckfiles"
 version = "1.0.0"
 authors = ["French Bear <FrenchBear38@outlook.com>"]
-edition = "2021"
+edition = "2024"
 
 [dependencies]
 getopt = "1.1.7"
 walkdir = "2"
-#encoding_rs = "0.8.35"
 termcolor = "1.4.1"
 unicode-normalization = "0.1.24"
 chrono = "0.4.40"
