@@ -1,13 +1,15 @@
-// recheckfiles: Detect and fix incorrect filenames
+// rscheckfiles: Detect and fix incorrect filenames
 //
 // 2025-03-23	PV      First version
+// 2025-03-25	PV      1.1 Simplified code, less calls to meta(), about twice faster
+// 2025-03-25	PV      1.2 Use DirEntry::file_type() to check whether entry is a dir or a file 3 times faster than path.is_file()/is_dir() !!!
 
 //#![allow(unused_imports, unused_variables, dead_code)]
 
 // standard library imports
 use std::collections::HashSet;
 use std::error::Error;
-use std::fs::{self, File, Metadata};
+use std::fs::{self, File};
 use std::io::{BufWriter, Write};
 use std::os::windows::prelude::*;
 use std::path::Path;
@@ -18,7 +20,7 @@ use std::time::Instant;
 use chrono::{DateTime, Local};
 use getopt::Opt;
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
-use unicode_normalization::{is_nfc, UnicodeNormalization};
+use unicode_normalization::{UnicodeNormalization, is_nfc};
 
 // -----------------------------------
 // Submodules
@@ -29,7 +31,7 @@ pub mod tests;
 // Globals
 
 const APP_NAME: &str = "rscheckfiles";
-const APP_VERSION: &str = "1.0.0";
+const APP_VERSION: &str = "1.2.0";
 
 const SPECIAL_CHARS: &str = "€®™©–—…×·•∶⧹⧸／⚹†‽¿🎜🎝♫♪“”⚡♥";
 
@@ -244,249 +246,226 @@ fn main() {
     for source in options.sources {
         logln(&mut writer, &format!("Analyzing {}", source));
         let p = Path::new(&source);
-        let m = p.metadata();
-        match m {
-            Err(e) => logln(&mut writer, &format!("*** Error accessing path {source}: {e}")),
-            Ok(m) => {
-                if m.is_dir() {
-                    process_folder(p, &m, &mut folders_stats, &mut files_stats, options.fixit, &mut writer, &confusables);
-                } else if m.is_file() {
-                    process_file(p, &mut files_stats, options.fixit, &mut writer, &confusables);
-                } else {
-                    logln(&mut writer, "*** Symlinks not supported: {source}");
-                    continue;
-                };
-            }
-        };
-
-        let duration = start.elapsed();
-
-        fn s(n: i32) -> &'static str {
-            if n > 1 {
-                "s"
-            } else {
-                ""
-            }
-        }
-
-        fn final_status(pwriter: &mut BufWriter<File>, stats: &Statistics, typename: &str) {
-            log(pwriter, &format!("{} {}{} checked", stats.total, typename, s(stats.total)));
-            if stats.nnn > 0 {
-                log(pwriter, &format!(", {} non-normalized", stats.nnn));
-            }
-            if stats.apo > 0 {
-                log(pwriter, &format!(", {} wrong apostrophe", stats.apo));
-            }
-            if stats.spc > 0 {
-                log(pwriter, &format!(", {} wrong space", stats.spc));
-            }
-            if stats.sp2 > 0 {
-                log(pwriter, &format!(", {} multiple space", stats.sp2));
-            }
-            if stats.car > 0 {
-                log(pwriter, &format!(", {} wrong character", stats.car));
-            }
-            if stats.fix > 0 {
-                log(pwriter, &format!(", {} problem{} fixed", stats.fix, s(stats.fix)));
-            }
-            if stats.err > 0 {
-                log(pwriter, &format!(", {} error{}", stats.err, s(stats.err)));
-            }
-            logln(pwriter, "");
-        }
-
-        logln(&mut writer, "");
-        final_status(&mut writer, &folders_stats, "folder");
-        final_status(&mut writer, &files_stats, "file");
-        logln(&mut writer, &format!("Total duration: {:.3}s", duration.as_secs_f64()));
-
-        let _ = writer.flush();
-    }
-
-    fn process_folder(
-        pa: &Path,
-        m: &Metadata,
-        folders_stats: &mut Statistics,
-        files_stats: &mut Statistics,
-        fixit: bool,
-        pwriter: &mut BufWriter<File>,
-        pconfusables: &Confusables,
-    ) {
-        let mut pb = pa.to_path_buf();
-
-        // Silently ignore hidden or system folders
-        let attributes = m.file_attributes();
-        if (attributes & 0x2/* Hidden */) > 0 || (attributes & 0x4/* System */) > 0 {
-            return;
-        }
-
-        // First check folder basename
-        folders_stats.total += 1;
-        if let Some(new_name) = check_basename(&pb, "folder", folders_stats, pwriter, pconfusables) {
-            if fixit {
-                logln(pwriter, &format!("  --> rename folder \"{new_name}\""));
-                let newpath = pb.parent().unwrap().join(Path::new(&new_name));
-                //logln(pwriter, &format!("  --> \"{}\"", newpath.display()));
-                match fs::rename(&pb, &newpath) {
-                    Ok(_) => {
-                        folders_stats.fix += 1;
-                        pb = newpath;
-                    }
-                    Err(e) => logln(pwriter, &format!("*** Error {e}")), // Rename failed, but we continue anyway, don't really know if it's Ok or not...
-                }
-            }
-        }
-
-        // Then process folder content
-        let contents = fs::read_dir(&pb);
-        if contents.is_err() {
-            logln(pwriter, &format!("*** Error enumerating folder {}: {:?}", pb.display(), contents.err()));
-            return;
-        }
-        for entry in contents.unwrap() {
-            if entry.is_err() {
-                logln(pwriter, &format!("*** Error accessing entry: {:?}", entry.err()));
-                continue;
-            }
-            let entry = entry.unwrap();
-            let path = entry.path();
-            let meta = path.metadata();
-            if meta.is_err() {
-                logln(
-                    pwriter,
-                    &format!("*** Error accessing metadata of entry {}: {:?}", path.display(), meta.err()),
-                );
-                continue;
-            }
-            if path.is_file() {
-                process_file(&path, files_stats, fixit, pwriter, pconfusables);
-            } else if path.is_dir() {
-                let meta = meta.unwrap();
-                process_folder(&path, &meta, folders_stats, files_stats, fixit, pwriter, pconfusables);
-            }
-        }
-    }
-
-    fn process_file(p: &Path, files_stats: &mut Statistics, fixit: bool, pwriter: &mut BufWriter<File>, pconfusables: &Confusables) {
-        files_stats.total += 1;
-        if let Some(new_name) = check_basename(p, "file", files_stats, pwriter, pconfusables) {
-            if fixit {
-                logln(pwriter, &format!("  --> rename file \"{new_name}\""));
-                let newpath = p.parent().unwrap().join(Path::new(&new_name));
-                //logln(pwriter, &format!("  --> \"{}\"", newpath.display()));
-                match fs::rename(p, &newpath) {
-                    Ok(_) => files_stats.fix += 1,
-                    Err(e) => logln(pwriter, &format!("*** Error {e}")), // Rename failed
-                }
-            }
-        }
-    }
-
-    fn check_basename(p: &Path, pt: &str, stats: &mut Statistics, pwriter: &mut BufWriter<File>, pconfusables: &Confusables) -> Option<String> {
-        let fp = p.display();
-        let file = p.file_name();
-        if file.is_none() {
-            stats.err += 1;
-            logln(pwriter, &format!("*** Invalid (1) {pt} name {fp}, ignored"));
-            return None;
-        }
-        let file = file.unwrap().to_str();
-        if file.is_none() {
-            stats.err += 1;
-            logln(pwriter, &format!("*** Invalid (2) {pt} name {fp}, ignored"));
-            return None;
-        }
-
-        let mut file = file.unwrap().to_string();
-        let original_file = file.clone();
-
-        // Check normalization
-        if !is_nfc(&file) {
-            logln(pwriter, &format!("Non-normalized {pt} name {fp}"));
-            stats.nnn += 1;
-            // Normalize it for the rest to avoind complaining on combining accents as invalid characters
-            file = file.nfc().collect();
-        }
-
-        let mut vc: Vec<char> = file.chars().collect();
-
-        // Check apostrophes
-        let mut pbapo = false;
-        for c in &mut vc {
-            //if CONF_APO.contains(c) {
-            if pconfusables.apostrophe.contains(c) {
-                logln(pwriter, &format!("Invalid apostrophe in {pt} name {fp} -> {c} {:04X}", *c as i32));
-                if !pbapo {
-                    pbapo = true;
-                    stats.apo += 1;
-                }
-                *c = '\'';
-            }
-        }
-
-        // Check spaces
-        let mut pbspc = false;
-        for c in &mut vc {
-            //if CONF_SPC.contains(c) {
-            if pconfusables.space.contains(c) {
-                logln(pwriter, &format!("Invalid space in {pt} name {fp} -> {:04X}", *c as i32));
-                if !pbspc {
-                    pbspc = true;
-                    stats.spc += 1;
-                }
-                *c = ' ';
-            }
-        }
-
-        if pbapo || pbspc {
-            file = vc.into_iter().collect();
-        }
-
-        // Check multiple spaces (and space before extension)
-        let mut pbsp2 = false;
-        let mut vc: Vec<char> = Vec::new();
-        let mut lastc = '_';
-        for c in file.chars() {
-            if c == ' ' {
-                if lastc == ' ' {
-                    if !pbsp2 {
-                        logln(pwriter, &format!("Multiple spaces in {pt} name {fp}"));
-                        pbsp2 = true;
-                        stats.sp2 += 1;
-                    }
-                } else {
-                    vc.push(c);
-                }
-            } else if c == '.' {
-                if lastc == ' ' {
-                    vc.pop();
-                }
-                vc.push(c);
-            } else {
-                vc.push(c);
-            }
-            lastc = c;
-        }
-        if pbsp2 {
-            file = vc.iter().collect();
-        }
-
-        // Check characters
-        let mut pbchr = false;
-        for c in file.chars() {
-            if !(c.is_alphanumeric() || (32..127).contains(&(c as i32)) || (160..256).contains(&(c as i32)) || SPECIAL_CHARS.contains(c)) {
-                if !pbchr {
-                    pbchr = true;
-                    stats.car += 1;
-                }
-                logln(pwriter, &format!("Invalid char in {pt} name {fp} -> {c} {:04X}", c as i32));
-            }
-        }
-
-        if file == original_file {
-            None
+        if p.is_dir() {
+            process_folder(p, &mut folders_stats, &mut files_stats, options.fixit, &mut writer, &confusables);
+        } else if p.is_file() {
+            process_file(p, &mut files_stats, options.fixit, &mut writer, &confusables);
         } else {
-            Some(file)
+            logln(&mut writer, "*** Symlinks not supported: {source}");
+            continue;
+        };
+    }
+
+    let duration = start.elapsed();
+
+    fn s(n: i32) -> &'static str {
+        if n > 1 { "s" } else { "" }
+    }
+
+    fn final_status(pwriter: &mut BufWriter<File>, stats: &Statistics, typename: &str) {
+        log(pwriter, &format!("{} {}{} checked", stats.total, typename, s(stats.total)));
+        if stats.nnn > 0 {
+            log(pwriter, &format!(", {} non-normalized", stats.nnn));
+        }
+        if stats.apo > 0 {
+            log(pwriter, &format!(", {} wrong apostrophe", stats.apo));
+        }
+        if stats.spc > 0 {
+            log(pwriter, &format!(", {} wrong space", stats.spc));
+        }
+        if stats.sp2 > 0 {
+            log(pwriter, &format!(", {} multiple space", stats.sp2));
+        }
+        if stats.car > 0 {
+            log(pwriter, &format!(", {} wrong character", stats.car));
+        }
+        if stats.fix > 0 {
+            log(pwriter, &format!(", {} problem{} fixed", stats.fix, s(stats.fix)));
+        }
+        if stats.err > 0 {
+            log(pwriter, &format!(", {} error{}", stats.err, s(stats.err)));
+        }
+        logln(pwriter, "");
+    }
+
+    logln(&mut writer, "");
+    final_status(&mut writer, &folders_stats, "folder");
+    final_status(&mut writer, &files_stats, "file");
+    logln(&mut writer, &format!("Total duration: {:.3}s", duration.as_secs_f64()));
+
+    let _ = writer.flush();
+}
+
+fn process_folder(
+    pa: &Path,
+    folders_stats: &mut Statistics,
+    files_stats: &mut Statistics,
+    fixit: bool,
+    pwriter: &mut BufWriter<File>,
+    pconfusables: &Confusables,
+) {
+    let mut pb = pa.to_path_buf();
+
+    // Silently ignore hidden or system folders
+    let attributes = pa.metadata().unwrap().file_attributes();
+    if (attributes & 0x2/* Hidden */) > 0 || (attributes & 0x4/* System */) > 0 {
+        return;
+    }
+
+    // First check folder basename
+    folders_stats.total += 1;
+    if let Some(new_name) = check_basename(pa, "folder", folders_stats, pwriter, pconfusables) {
+        if fixit {
+            logln(pwriter, &format!("  --> rename folder \"{new_name}\""));
+            let newpath = pb.parent().unwrap().join(Path::new(&new_name));
+            //logln(pwriter, &format!("  --> \"{}\"", newpath.display()));
+            match fs::rename(&pb, &newpath) {
+                Ok(_) => {
+                    folders_stats.fix += 1;
+                    pb = newpath;
+                }
+                Err(e) => logln(pwriter, &format!("*** Error {e}")), // Rename failed, but we continue anyway, don't really know if it's Ok or not...
+            }
         }
     }
+
+    // Then process folder content
+    let contents = fs::read_dir(&pb);
+    if contents.is_err() {
+        logln(pwriter, &format!("*** Error enumerating folder {}: {:?}", pb.display(), contents.err()));
+        return;
+    }
+    for entry in contents.unwrap() {
+        if entry.is_err() {
+            logln(pwriter, &format!("*** Error accessing entry: {:?}", entry.err()));
+            continue;
+        }
+        let entry = entry.unwrap();
+        let pb = entry.path();
+        let ft = entry.file_type().unwrap();
+        if ft.is_file() {
+            process_file(&pb, files_stats, fixit, pwriter, pconfusables);
+        } else if ft.is_dir() {
+            process_folder(&pb, folders_stats, files_stats, fixit, pwriter, pconfusables);
+        }
+    }
+}
+
+fn process_file(p: &Path, files_stats: &mut Statistics, fixit: bool, pwriter: &mut BufWriter<File>, pconfusables: &Confusables) {
+    files_stats.total += 1;
+    if let Some(new_name) = check_basename(p, "file", files_stats, pwriter, pconfusables) {
+        if fixit {
+            logln(pwriter, &format!("  --> rename file \"{new_name}\""));
+            let newpath = p.parent().unwrap().join(Path::new(&new_name));
+            //logln(pwriter, &format!("  --> \"{}\"", newpath.display()));
+            match fs::rename(p, &newpath) {
+                Ok(_) => files_stats.fix += 1,
+                Err(e) => logln(pwriter, &format!("*** Error {e}")), // Rename failed
+            }
+        }
+    }
+}
+
+fn check_basename(p: &Path, pt: &str, stats: &mut Statistics, pwriter: &mut BufWriter<File>, pconfusables: &Confusables) -> Option<String> {
+    let fp = p.display();
+    let file = p.file_name();
+    if file.is_none() {
+        stats.err += 1;
+        logln(pwriter, &format!("*** Invalid (1) {pt} name {fp}, ignored"));
+        return None;
+    }
+    let file = file.unwrap().to_str();
+    if file.is_none() {
+        stats.err += 1;
+        logln(pwriter, &format!("*** Invalid (2) {pt} name {fp}, ignored"));
+        return None;
+    }
+
+    let mut file = file.unwrap().to_string();
+    let original_file = file.clone();
+
+    // Check normalization
+    if !is_nfc(&file) {
+        logln(pwriter, &format!("Non-normalized {pt} name {fp}"));
+        stats.nnn += 1;
+        // Normalize it for the rest to avoind complaining on combining accents as invalid characters
+        file = file.nfc().collect();
+    }
+
+    let mut vc: Vec<char> = file.chars().collect();
+
+    // Check apostrophes
+    let mut pbapo = false;
+    for c in &mut vc {
+        //if CONF_APO.contains(c) {
+        if pconfusables.apostrophe.contains(c) {
+            logln(pwriter, &format!("Invalid apostrophe in {pt} name {fp} -> {c} {:04X}", *c as i32));
+            if !pbapo {
+                pbapo = true;
+                stats.apo += 1;
+            }
+            *c = '\'';
+        }
+    }
+
+    // Check spaces
+    let mut pbspc = false;
+    for c in &mut vc {
+        //if CONF_SPC.contains(c) {
+        if pconfusables.space.contains(c) {
+            logln(pwriter, &format!("Invalid space in {pt} name {fp} -> {:04X}", *c as i32));
+            if !pbspc {
+                pbspc = true;
+                stats.spc += 1;
+            }
+            *c = ' ';
+        }
+    }
+
+    if pbapo || pbspc {
+        file = vc.into_iter().collect();
+    }
+
+    // Check multiple spaces (and space before extension)
+    let mut pbsp2 = false;
+    let mut vc: Vec<char> = Vec::new();
+    let mut lastc = '_';
+    for c in file.chars() {
+        if c == ' ' {
+            if lastc == ' ' {
+                if !pbsp2 {
+                    logln(pwriter, &format!("Multiple spaces in {pt} name {fp}"));
+                    pbsp2 = true;
+                    stats.sp2 += 1;
+                }
+            } else {
+                vc.push(c);
+            }
+        } else if c == '.' {
+            if lastc == ' ' {
+                vc.pop();
+            }
+            vc.push(c);
+        } else {
+            vc.push(c);
+        }
+        lastc = c;
+    }
+    if pbsp2 {
+        file = vc.iter().collect();
+    }
+
+    // Check characters
+    let mut pbchr = false;
+    for c in file.chars() {
+        if !(c.is_alphanumeric() || (32..127).contains(&(c as i32)) || (160..256).contains(&(c as i32)) || SPECIAL_CHARS.contains(c)) {
+            if !pbchr {
+                pbchr = true;
+                stats.car += 1;
+            }
+            logln(pwriter, &format!("Invalid char in {pt} name {fp} -> {c} {:04X}", c as i32));
+        }
+    }
+
+    if file == original_file { None } else { Some(file) }
 }

@@ -195,7 +195,7 @@ fn main() {
 
     let re = build_re(&options);
     if re.is_err() {
-        eprintln!("{APP_NAME}: Problem with search pattern: {:?}", re.err());
+        eprintln!("{APP_NAME}: Problem with search pattern: {:?}", re.err().unwrap());
         process::exit(1);
     }
     let re = re.unwrap();
@@ -274,7 +274,7 @@ fn main() {
                 print!("s");
             }
         }
-        println!(" searched in in {:.3}s", duration.as_secs_f64());
+        println!(" searched in {:.3}s", duration.as_secs_f64());
     }
 }
 
