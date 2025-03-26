@@ -14,6 +14,7 @@ fn main() {
 
     // Should find C:\Development\GitHub\Projects\10_RsGrep\target\release\rsgrep.d
     //my_glob::my_glob_main(r"C:\Development\**\projects\**\target\release\rsgrep.d");
-    my_glob::my_glob_main(r"C:\Development\**\rsgrep.d");
+    //my_glob::my_glob_main(r"C:\Development\**\rsgrep.d");
+    my_glob::my_glob_main(r"C:\Development\Git*\**\rsgrep.d");
     //my_glob::my_glob_main(r"C:\Development\Git*\*.txt");
 }
