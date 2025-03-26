@@ -1,7 +1,7 @@
 // my_glob library
 // Attempt to implement an efficient glob in Rust
 //
-// 2025-03-25   PV  First version
+// 2025-03-25   PV      First version, experiments around various options to select the fastest
 
 #![allow(unused_variables, dead_code, unused_imports)]
 

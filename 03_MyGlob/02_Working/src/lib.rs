@@ -1,7 +1,8 @@
 // my_glob library
 // Attempt to implement an efficient glob in Rust
 //
-// 2025-03-25   PV  First version
+// 2025-03-25   PV      First version, experiments around various options to select the fastest
+// 2025-03-26   PV      Second version, use my own algorithm, and use regexp for Filter segments match check
 
 #![allow(unused_variables, dead_code, unused_imports)]
 
