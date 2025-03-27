@@ -31,7 +31,7 @@ pub struct MyGlobSearch {
     ignore_folders: Vec<String>,
 }
 
-/// Error returned by MyGlob, either a Regex error or a io::Error
+/// Error returned by MyGlob, either a Regex error or an io::Error
 #[derive(Debug)]
 pub enum MyGlobError {
     IoError(std::io::Error),
@@ -39,7 +39,7 @@ pub enum MyGlobError {
 }
 
 impl MyGlobSearch {
-    /// Constructs a new MyGlobSearch
+    /// Constructs a new MyGlobSearch based on pattern glob expression, or return an error if there is Glob/Regex error
     pub fn build(pattern: &str) -> Result<Self, MyGlobError> {
         // Break pattern into root and a vector of Segments
 
@@ -90,6 +90,7 @@ impl MyGlobSearch {
         })
     }
 
+    /// Iterator returning all files matching glob pattern
     pub fn explore_iter(&self) -> impl Iterator<Item = MyGlobMatch> {
         // Special case, segments is empty, only search for file
         // It's actually a but faster to process it before iterator loop, so there is no special case to handle at the beginning of each iterator call
