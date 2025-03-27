@@ -3,6 +3,7 @@
 // 2025-03-13	PV      First version
 // 2025-03-16	PV      1.0.1   Extended help, support reading from stdin
 // 2025-03-25	PV      1.1.0   Globals; Ignore $RECYCLE.BIN
+// 2025-03-27   PV      1.2.0   Option -2 to use MyGlob crate (experimental)
 
 // standard library imports
 use std::error::Error;
@@ -16,6 +17,7 @@ use std::time::Instant;
 use encoding_rs::{Encoding, UTF_8, UTF_16LE, WINDOWS_1252};
 use getopt::Opt;
 use glob::{MatchOptions, glob_with};
+use myglob::{MyGlobMatch, MyGlobSearch};
 use regex::Regex;
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
 
@@ -39,6 +41,7 @@ const APP_VERSION: &str = "1.1.0";
 pub struct Options {
     pattern: String,
     sources: Vec<String>,
+    use_myglob: bool,
     ignore_case: bool,
     whole_word: bool,
     fixed_string: bool,
@@ -59,10 +62,11 @@ impl Options {
     fn usage() {
         Options::header();
         eprintln!(
-            "\nUsage: {APP_NAME} [?|-?|-h|??] [-i] [-w] [-F] [-r] [-v] [-c] [-l] pattern source...\n\
+            "\nUsage: {APP_NAME} [?|-?|-h|??] [-2] [-i] [-w] [-F] [-r] [-v] [-c] [-l] pattern source...\n\
             ?|-?|-h  Show this message\n\
             ??       Show advanced usage notes\n\
             -i       Ignore case during search\n\
+            -2       Use MuGlob crate for glob search\n\
             -w       Whole word search\n\
             -F       Fixed string search (no regexp interpretation)\n\
             -r       Recurse search in subfolders (add **/ ahead of glob not containing /)\n\
@@ -102,7 +106,7 @@ impl Options {
         }
 
         let mut options = Options { ..Default::default() };
-        let mut opts = getopt::Parser::new(&args, "h?iwFrvcl");
+        let mut opts = getopt::Parser::new(&args, "h?2iwFrvcl");
 
         loop {
             match opts.next().transpose()? {
@@ -111,6 +115,10 @@ impl Options {
                     Opt('h', None) | Opt('?', None) => {
                         Self::usage();
                         return Err("".into());
+                    }
+
+                    Opt('2', None) => {
+                        options.use_myglob = true;
                     }
 
                     Opt('i', None) => {
@@ -210,6 +218,7 @@ fn main() {
     let start = Instant::now();
 
     // Building list of files
+    // ToDo: It could be better to process file just when it's returned by iterator rather than stored in a Vec and procesed later...
     let mut files: Vec<PathBuf> = Vec::new();
     for source in options.sources.clone() {
         // If file is a simple name, no path, no drive, and recurse option is specified, then we search in subfolders
@@ -220,29 +229,59 @@ fn main() {
         };
 
         let mut count = 0;
-        match glob_with(source2.as_str(), mo) {
-            Ok(paths) => {
-                for entry in paths {
-                    match entry {
-                        Ok(pb) => {
-                            if !pb.to_string_lossy().contains("$RECYCLE.BIN") {
+
+        if options.use_myglob {
+            // Use my own crate, a bit faster than glob, and ignore $RECYCLE.BIN, System Volume Information and .git folders
+            let resgs = MyGlobSearch::build(&source2);
+            match resgs {
+                Ok(gs) => {
+                    for ma in gs.explore_iter() {
+                        match ma {
+                            MyGlobMatch::File(pb) => {
                                 count += 1;
                                 files.push(pb);
                             }
-                        }
-                        Err(err) => {
-                            if options.verbose {
-                                println!("{APP_NAME}: error {}", err);
+                            MyGlobMatch::Error(err) => {
+                                if options.verbose {
+                                    eprintln!("{APP_NAME}: error {}", err);
+                                }
                             }
                         }
-                    };
+                    }
+                }
+
+                Err(e) => {
+                    eprintln!("{APP_NAME}: Error building MyGlob: {:?}", e);
+                    count = -1; // No need to display "no file found" in this case
                 }
             }
-            Err(err) => {
-                println!("{APP_NAME}: pattern error {}", err);
-                count = -1; // No need to display "no file found" in this case
+        } else {
+            // Use standard glob crate, that returns everything, including $RECYCLE.BIN content for instance
+            match glob_with(source2.as_str(), mo) {
+                Ok(paths) => {
+                    for entry in paths {
+                        match entry {
+                            Ok(pb) => {
+                                if !pb.to_string_lossy().contains("$RECYCLE.BIN") {
+                                    count += 1;
+                                    files.push(pb);
+                                }
+                            }
+                            Err(err) => {
+                                if options.verbose {
+                                    eprintln!("{APP_NAME}: error {}", err);
+                                }
+                            }
+                        };
+                    }
+                }
+                Err(err) => {
+                    eprintln!("{APP_NAME}: pattern error {}", err);
+                    count = -1; // No need to display "no file found" in this case
+                }
             }
         }
+        
         if count == 0 {
             println!("{APP_NAME}: no file found matching {}", source);
         }
