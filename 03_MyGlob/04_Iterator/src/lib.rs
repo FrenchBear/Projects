@@ -13,9 +13,9 @@ use std::{
     fs::{self, File},
     io::Error,
     path::{Iter, Path, PathBuf},
-    time::Instant,
 };
 
+// Internal structure, store one segment of a glob pattern, either a constant string, a recurse tag (**), or a glob filter, converted into a Regex
 #[derive(Debug)]
 enum Segment {
     Constant(String),
@@ -23,15 +23,24 @@ enum Segment {
     Filter(Regex),
 }
 
+/// Main struct of myglob, string information such as root part, glob, folders to ignore, ...
 #[derive(Debug)]
-struct MyGlobSearch {
+pub struct MyGlobSearch {
     root: String,
     segments: Vec<Segment>,
     ignore_folders: Vec<String>,
 }
 
+/// Error returned by MyGlob, either a Regex error or a io::Error
+#[derive(Debug)]
+pub enum MyGlobError {
+    IoError(std::io::Error),
+    RegexError(regex::Error),
+}
+
 impl MyGlobSearch {
-    fn build(pattern: &str) -> Self {
+    /// Constructs a new MyGlobSearch
+    pub fn build(pattern: &str) -> Result<Self, MyGlobError> {
         // Break pattern into root and a vector of Segments
 
         // Simple helper to detect recurse or filter segments
@@ -54,9 +63,15 @@ impl MyGlobSearch {
                 if s == "**" {
                     segments.push(Segment::Recurse);
                 } else if is_filter_segment(s) {
-                    // Simple basic translation glob->regex, to elaborate
+                    // Simple basic translation glob->regex, to elaborate (ex: process {} alternatives, escape other special characters)
                     let repat = format!("(?i){}", s.replace(".", r"\.").replace("*", r".*").replace("?", r"."));
-                    segments.push(Segment::Filter(Regex::new(&repat).unwrap()));
+                    let resre = Regex::new(&repat);
+                    match resre {
+                        Ok(re) => segments.push(Segment::Filter(re)),
+                        Err(e) => {
+                            return Err(MyGlobError::RegexError(e));
+                        }
+                    }
                 } else {
                     segments.push(Segment::Constant(String::from(s)));
                 }
@@ -64,7 +79,7 @@ impl MyGlobSearch {
             (root, segments)
         };
 
-        MyGlobSearch {
+        Ok(MyGlobSearch {
             root,
             segments,
             ignore_folders: vec![
@@ -72,10 +87,10 @@ impl MyGlobSearch {
                 String::from("system volume information"),
                 String::from(".git"),
             ],
-        }
+        })
     }
 
-    fn explore_iter(&self) -> impl Iterator<Item = MyGlobMatch> {
+    pub fn explore_iter(&self) -> impl Iterator<Item = MyGlobMatch> {
         // Special case, segments is empty, only search for file
         // It's actually a but faster to process it before iterator loop, so there is no special case to handle at the beginning of each iterator call
         if self.segments.is_empty() {
@@ -103,7 +118,7 @@ impl MyGlobSearch {
 // Enum returned by iterator
 // Looks loke a Result<PathBuf, Error>, but I prefer to use an ad-hoc Enum so I can expand it later (return folders, non-io errors, ...)
 #[derive(Debug)]
-enum MyGlobMatch {
+pub enum MyGlobMatch {
     File(PathBuf),
     Error(Error),
 }
@@ -247,31 +262,5 @@ impl Iterator for MyGlobIteratorState<'_> {
         }
 
         None
-    }
-}
-
-// Entry point for testing
-pub fn my_glob_main(pattern: &str) {
-    for pass in 0..3 {
-        println!("\nTest #{pass}");
-
-        let start = Instant::now();
-        let gs = MyGlobSearch::build(pattern);
-
-        let mut nf = 0;
-        for ma in gs.explore_iter() {
-            match ma {
-                MyGlobMatch::File(pb) => {
-                    println!("{}", pb.display());
-                    nf += 1;
-                }
-                MyGlobMatch::Error(e) => {
-                    println!("{}", e);
-                }
-            }
-        }
-        println!("{nf} file(s) found");
-        let duration = start.elapsed();
-        println!("Iterator search in {:.3}s", duration.as_secs_f64());
     }
 }
