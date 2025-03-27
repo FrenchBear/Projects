@@ -17,7 +17,7 @@ impl GrepLineMatches {
     /// Build a line iterator over txt, returning lines with at leat a match, grouping all matches of a line together.<br/>
     /// A line is returned with all its matches.
     pub fn new<'a>(txt: &'a str, re: &'a Regex) -> impl Iterator<Item = GrepLineMatches> + 'a {
-        GrepIterator {
+        GrepIteratorState {
             txt,
             fi: re.find_iter(txt),
             ma: None,
@@ -26,13 +26,13 @@ impl GrepLineMatches {
 }
 
 /// Private internal iterator object storing current iterator state
-struct GrepIterator<'a> {
+struct GrepIteratorState<'a> {
     txt: &'a str,
     fi: Matches<'a, 'a>,   // Find iterator
     ma: Option<Match<'a>>, // Match ahead (next fi already read)
 }
 
-impl Iterator for GrepIterator<'_> {
+impl Iterator for GrepIteratorState<'_> {
     type Item = GrepLineMatches;
 
     fn next(&mut self) -> Option<Self::Item> {
