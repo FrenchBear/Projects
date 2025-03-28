@@ -3,7 +3,7 @@
 // 2025-03-23	PV      First version
 // 2025-03-25	PV      1.1 Simplified code, less calls to meta(), about twice faster
 // 2025-03-25	PV      1.2 Use DirEntry::file_type() to check whether entry is a dir or a file 3 times faster than path.is_file()/is_dir() !!!
-// 2025-03-28	PV      1.2.1 Handle gracefully errors about inexistent folders such as \\teraz\videos rather than panicking
+// 2025-03-28	PV      1.2.1 Handle gracefully errors about inexistent folders such as \\teraz\videos rather than panicking. No error for network root (no basename)
 
 //#![allow(unused_imports, unused_variables, dead_code)]
 
@@ -377,14 +377,13 @@ fn check_basename(p: &Path, pt: &str, stats: &mut Statistics, pwriter: &mut BufW
     let fp = p.display();
     let file = p.file_name();
     if file.is_none() {
-        stats.err += 1;
-        logln(pwriter, &format!("*** Invalid (1) {pt} name {fp}, ignored"));
+        // This is the case with network paths such as \\terazalt\photo, file_name() is None, that's normal
         return None;
     }
     let file = file.unwrap().to_str();
     if file.is_none() {
         stats.err += 1;
-        logln(pwriter, &format!("*** Invalid (2) {pt} name {fp}, ignored"));
+        logln(pwriter, &format!("*** Invalid {pt} name {fp}, ignored"));
         return None;
     }
 
@@ -464,6 +463,7 @@ fn check_basename(p: &Path, pt: &str, stats: &mut Statistics, pwriter: &mut BufW
 
     // Check characters
     let mut pbchr = false;
+    let mut to_fix = false;
     for c in file.chars() {
         if !(c.is_alphanumeric() || (32..127).contains(&(c as i32)) || (160..256).contains(&(c as i32)) || SPECIAL_CHARS.contains(c)) {
             if !pbchr {
@@ -471,7 +471,14 @@ fn check_basename(p: &Path, pt: &str, stats: &mut Statistics, pwriter: &mut BufW
                 stats.car += 1;
             }
             logln(pwriter, &format!("Invalid char in {pt} name {fp} -> {c} {:04X}", c as i32));
+            // Special case, fix U+200E by removing it (LEFT-TO-RIGHT MARK)
+            if c=='\u{200E}' {
+                to_fix=true;
+            }
         }
+    }
+    if to_fix {
+        file = file.replace("\u{200E}", "");
     }
 
     if file == original_file { None } else { Some(file) }

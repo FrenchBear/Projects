@@ -34,6 +34,18 @@
             "type": "cargo",
             "command": "run",
             "args": [
+                "--",
+                "\\\\terazalt\\photo",
+            ],
+            "problemMatcher": [
+                "$rustc"
+            ],
+            "label": "rust: cargo run for debug"
+        },
+        {
+            "type": "cargo",
+            "command": "run",
+            "args": [
                 "--release",
             ],
             "problemMatcher": [
