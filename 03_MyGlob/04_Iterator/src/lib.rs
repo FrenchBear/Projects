@@ -5,6 +5,8 @@
 // 2025-03-26   PV      Second version, use my own algorithm, and use regex for Filter segments match check
 // 2025-03-26   PV      Third version, a non-recursive version of explore to prepare for iterator version
 // 2025-03-27   PV      Fourth version, iterator
+// 2025-03-27   PV      1.0  First official version of the crate
+// 2025-03-28   PV      1.1  Proper conversion from glob to regex with glob_to_segments
 
 #![allow(unused_variables, dead_code, unused_imports)]
 
@@ -36,47 +38,38 @@ pub struct MyGlobSearch {
 pub enum MyGlobError {
     IoError(std::io::Error),
     RegexError(regex::Error),
+    GlobError(String),
 }
 
 impl MyGlobSearch {
     /// Constructs a new MyGlobSearch based on pattern glob expression, or return an error if there is Glob/Regex error
-    pub fn build(pattern: &str) -> Result<Self, MyGlobError> {
-        // Break pattern into root and a vector of Segments
+    pub fn build(globstr: &str) -> Result<Self, MyGlobError> {
+        if globstr.ends_with('\\') || globstr.ends_with('/') {
+            return Err(MyGlobError::GlobError("Glob pattern can't end with \\ or /".to_string()));
+        }
+        // Add a final \ so that we don't have duplicate code to process last segment
+        let glob = globstr.to_string() + "\\";
 
-        // Simple helper to detect recurse or filter segments
-        // For now, we don't manage escape character to suppress special interpretation of * ? ...
-        fn is_filter_segment(pat: &str) -> bool {
-            pat.chars().any(|c| "*?[{".contains(c))
+        // First get root part, the constant segments at the beginning
+        let mut cut = 0;
+        for (ix, c) in glob.chars().enumerate() {
+            if "*?[{".contains(c) {
+                break;
+            } else if c == '/' || c == '\\' {
+                // Note that \ have a special meaning between [ ] but we break the loop at the first [ so it's Ok
+                cut = ix;
+            }
+        }
+        let mut root = globstr[..cut].to_string();
+        if root.is_empty() {
+            root.push('.');
         }
 
-        let v: Vec<&str> = pattern.split(&['/', '\\'][..]).collect();
-        let k = v.iter().enumerate().find(|&(_, &s)| is_filter_segment(s));
-
-        let (root, segments) = if k.is_none() {
-            // No filter segment, the whole pattern is just a constant string
-            (String::from(pattern), Vec::<Segment>::new())
+        // Then build segments
+        let segments = if cut == globstr.len() {
+            Vec::<Segment>::new()
         } else {
-            let split = k.unwrap().0;
-            let root = v[..split].join("\\");
-            let mut segments: Vec<Segment> = Vec::new();
-            for &s in &v[split..] {
-                if s == "**" {
-                    segments.push(Segment::Recurse);
-                } else if is_filter_segment(s) {
-                    // Simple basic translation glob->regex, to elaborate (ex: process {} alternatives, escape other special characters)
-                    let repat = format!("(?i){}", s.replace(".", r"\.").replace("*", r".*").replace("?", r"."));
-                    let resre = Regex::new(&repat);
-                    match resre {
-                        Ok(re) => segments.push(Segment::Filter(re)),
-                        Err(e) => {
-                            return Err(MyGlobError::RegexError(e));
-                        }
-                    }
-                } else {
-                    segments.push(Segment::Constant(String::from(s)));
-                }
-            }
-            (root, segments)
+            Self::glob_to_segments(&glob[(cut + 1)..])?
         };
 
         Ok(MyGlobSearch {
@@ -88,6 +81,100 @@ impl MyGlobSearch {
                 String::from(".git"),
             ],
         })
+    }
+
+    fn glob_to_segments(globstr: &str) -> Result<Vec<Segment>, MyGlobError> {
+        // globstr ends with \ so no duplicate code to process last segment
+
+        let mut segments = Vec::<Segment>::new();
+        let mut regex_buffer = String::new();
+        let mut constant_buffer = String::new();
+        let mut brace_depth = 0;
+        let mut iter = globstr.chars();
+        while let Some(c) = iter.next() {
+            if c != '\\' && c != '/' {
+                constant_buffer.push(c);
+            }
+
+            match c {
+                '*' => regex_buffer.push_str(".*"),
+                '?' => regex_buffer.push('.'),
+                '{' => {
+                    brace_depth += 1;
+                    regex_buffer.push('(');
+                }
+                ',' if brace_depth > 0 => regex_buffer.push('|'),
+                '}' => {
+                    brace_depth -= 1;
+                    if brace_depth < 0 {
+                        return Err(MyGlobError::GlobError("Extra closing }".to_string()));
+                    }
+                    regex_buffer.push(')');
+                }
+                '\\' | '/' => {
+                    if brace_depth > 0 {
+                        return Err(MyGlobError::GlobError("Invalid \\ between { }".to_string()));
+                    }
+
+                    if constant_buffer == "**" {
+                        segments.push(Segment::Recurse);
+                    } else if constant_buffer.contains("**") {
+                        return Err(MyGlobError::GlobError("Glob pattern ** must be alone between \\".to_string()));
+                    } else if constant_buffer.chars().any(|c| "*?[{".contains(c)) {
+                        if brace_depth > 0 {
+                            return Err(MyGlobError::GlobError("Unclosed {".to_string()));
+                        }
+
+                        let repat = format!("(?i)^{}$", regex_buffer);
+                        let resre = Regex::new(&repat);
+                        match resre {
+                            Ok(re) => segments.push(Segment::Filter(re)),
+                            Err(e) => {
+                                return Err(MyGlobError::RegexError(e));
+                            }
+                        }
+                    } else {
+                        segments.push(Segment::Constant(constant_buffer.clone()));
+                    }
+                    regex_buffer.clear();
+                    constant_buffer.clear();
+                }
+                '[' => {
+                    regex_buffer.push('[');
+                    let mut depth = 1;
+                    while let Some(inner_c) = iter.next() {
+                        match inner_c {
+                            ']' => {
+                                regex_buffer.push(inner_c);
+                                depth -= 1;
+                                if depth == 0 {
+                                    break;
+                                }
+                            }
+                            '\\' => {
+                                if let Some(next_c) = iter.next() {
+                                    regex_buffer.push(next_c);
+                                    regex_buffer.push('\\');
+                                } else {
+                                    regex_buffer.push('\\'); //Handle trailing backslash
+                                }
+                            }
+                            _ => regex_buffer.push(inner_c),
+                        }
+                    }
+                }
+                '.' | '+' | '(' | ')' | '|' | '^' | '$' => {
+                    regex_buffer.push('\\');
+                    regex_buffer.push(c);
+                }
+                _ => regex_buffer.push(c),
+            }
+        }
+        if !regex_buffer.is_empty() {
+            return Err(MyGlobError::GlobError("Internal error".to_string()));
+        }
+
+        Ok(segments)
     }
 
     /// Iterator returning all files matching glob pattern
