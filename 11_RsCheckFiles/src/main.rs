@@ -3,6 +3,7 @@
 // 2025-03-23	PV      First version
 // 2025-03-25	PV      1.1 Simplified code, less calls to meta(), about twice faster
 // 2025-03-25	PV      1.2 Use DirEntry::file_type() to check whether entry is a dir or a file 3 times faster than path.is_file()/is_dir() !!!
+// 2025-03-28	PV      1.2.1 Handle gracefully errors about inexistent folders such as \\teraz\videos rather than panicking
 
 //#![allow(unused_imports, unused_variables, dead_code)]
 
@@ -31,7 +32,7 @@ pub mod tests;
 // Globals
 
 const APP_NAME: &str = "rscheckfiles";
-const APP_VERSION: &str = "1.2.0";
+const APP_VERSION: &str = "1.2.1";
 
 const SPECIAL_CHARS: &str = "€®™©–—…×·•∶⧹⧸／⚹†‽¿🎜🎝♫♪“”⚡♥";
 
@@ -246,14 +247,11 @@ fn main() {
     for source in options.sources {
         logln(&mut writer, &format!("Analyzing {}", source));
         let p = Path::new(&source);
-        if p.is_dir() {
-            process_folder(p, &mut folders_stats, &mut files_stats, options.fixit, &mut writer, &confusables);
-        } else if p.is_file() {
+        if p.is_file() {
             process_file(p, &mut files_stats, options.fixit, &mut writer, &confusables);
         } else {
-            logln(&mut writer, "*** Symlinks not supported: {source}");
-            continue;
-        };
+            process_folder(p, &mut folders_stats, &mut files_stats, options.fixit, &mut writer, &confusables);
+        }
     }
 
     let duration = start.elapsed();
@@ -307,9 +305,18 @@ fn process_folder(
     let mut pb = pa.to_path_buf();
 
     // Silently ignore hidden or system folders
-    let attributes = pa.metadata().unwrap().file_attributes();
-    if (attributes & 0x2/* Hidden */) > 0 || (attributes & 0x4/* System */) > 0 {
-        return;
+    let resattributes = pa.metadata();
+    match resattributes {
+        Ok(md) => {
+            let attributes = md.file_attributes();
+            if (attributes & 0x2/* Hidden */) > 0 || (attributes & 0x4/* System */) > 0 {
+                return;
+            }
+        }
+        Err(e) => {
+            logln(pwriter, &format!("*** Error {e}")); // Rename failed, but we continue anyway, don't really know if it's Ok or not...
+            return;
+        }
     }
 
     // First check folder basename

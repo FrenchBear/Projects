@@ -48,7 +48,7 @@ pub struct Options {
     recurse: bool,
     show_path: bool,
     out_level: u8, // 0: normal output, 1: (-l) matching filenames only, 2: (-c) filenames and matching lines count, 3: (-c -l) only matching filenames and matching lines count
-    verbose: bool,
+    verbose: u8,
 }
 
 impl Options {
@@ -146,7 +146,7 @@ impl Options {
                     }
 
                     Opt('v', None) => {
-                        options.verbose = true;
+                        options.verbose += 1;
                     }
 
                     _ => unreachable!(),
@@ -242,7 +242,7 @@ fn main() {
                                 files.push(pb);
                             }
                             MyGlobMatch::Error(err) => {
-                                if options.verbose {
+                                if options.verbose>0 {
                                     eprintln!("{APP_NAME}: error {}", err);
                                 }
                             }
@@ -268,7 +268,7 @@ fn main() {
                                 }
                             }
                             Err(err) => {
-                                if options.verbose {
+                                if options.verbose>0 {
                                     eprintln!("{APP_NAME}: error {}", err);
                                 }
                             }
@@ -289,7 +289,7 @@ fn main() {
 
     // Finally processing files, if more than 1 file, prefix output with file
     if options.sources.is_empty() {
-        if options.verbose {
+        if options.verbose>0 {
             println!("Reading from stdin");
         }
         let s = io::read_to_string(io::stdin()).unwrap();
@@ -299,12 +299,15 @@ fn main() {
             options.show_path = true;
         }
         for pb in &files {
+            if options.verbose>1 {
+                println!("Process: {}", pb.display());
+            }
             process_path(&re, pb, &options);
         }
     }
     let duration = start.elapsed();
 
-    if options.verbose {
+    if options.verbose>0 {
         if files.is_empty() {
             print!("\nstdin");
         } else {
@@ -399,7 +402,7 @@ fn process_path(re: &Regex, path: &Path, options: &Options) {
     if let Err(e) = txtres {
         if e.kind() == ErrorKind::InvalidData {
             // Non-text files are ignored
-            if options.verbose {
+            if options.verbose==1 {
                 println!("{APP_NAME}: ignored non-text file {}", path.display());
             };
         }

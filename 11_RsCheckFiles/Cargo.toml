@@ -1,6 +1,6 @@
 [package]
 name = "rscheckfiles"
-version = "1.0.0"
+version = "1.2.1"
 authors = ["French Bear <FrenchBear38@outlook.com>"]
 edition = "2024"
 
