@@ -2,8 +2,9 @@
 //
 // 2025-03-13	PV      First version
 // 2025-03-16	PV      1.0.1   Extended help, support reading from stdin
-// 2025-03-25	PV      1.1.0   Globals; Ignore $RECYCLE.BIN
+// 2025-03-25	PV      1.1.0   Global constants; Ignore $RECYCLE.BIN
 // 2025-03-27   PV      1.2.0   Option -2 to use MyGlob crate (experimental)
+// 2025-03-28   PV      1.2.1   Option -1 to use glob crate, glob syntax documented in extended help
 
 // standard library imports
 use std::error::Error;
@@ -28,7 +29,7 @@ pub mod grepiterator;
 pub mod tests;
 
 // -----------------------------------
-// Globals
+// Global constants
 
 const APP_NAME: &str = "rsgrep";
 const APP_VERSION: &str = "1.1.0";
@@ -41,12 +42,12 @@ const APP_VERSION: &str = "1.1.0";
 pub struct Options {
     pattern: String,
     sources: Vec<String>,
-    use_myglob: bool,
     ignore_case: bool,
     whole_word: bool,
     fixed_string: bool,
     recurse: bool,
     show_path: bool,
+    search_create: u8,
     out_level: u8, // 0: normal output, 1: (-l) matching filenames only, 2: (-c) filenames and matching lines count, 3: (-c -l) only matching filenames and matching lines count
     verbose: u8,
 }
@@ -62,11 +63,11 @@ impl Options {
     fn usage() {
         Options::header();
         eprintln!(
-            "\nUsage: {APP_NAME} [?|-?|-h|??] [-2] [-i] [-w] [-F] [-r] [-v] [-c] [-l] pattern source...\n\
+            "\nUsage: {APP_NAME} [?|-?|-h|??] [-1|-2] [-i] [-w] [-F] [-r] [-v] [-c] [-l] pattern source...\n\
             ?|-?|-h  Show this message\n\
             ??       Show advanced usage notes\n\
             -i       Ignore case during search\n\
-            -2       Use MuGlob crate for glob search\n\
+            -1|-2    For glob search, -1: Use glob crate, -2: Use MyGlob crate\n\
             -w       Whole word search\n\
             -F       Fixed string search (no regexp interpretation)\n\
             -r       Recurse search in subfolders (add **/ ahead of glob not containing /)\n\
@@ -81,11 +82,21 @@ impl Options {
     fn extended_usage() {
         Options::header();
         eprintln!(
-            "Copyright ©2025 Pierre Violent\n\n\
-            Advanced usage notes\n--------------------\n\n\
-            Options -c (show count of matching lines) and -l (show matching file names only) can be used together to show matching lines count only for matching files.\n\n\
-            Glob supports recursive search without using option -r: C:\\Development\\GitVSTS\\**\\Net[7-9]\\**\\*.cs (current version does not support brances extension).\n\n\
-            Only UTF-8, UTF-16 LE and Windows 1252 text files are currently supported, but automatic format detection using heuristics may not be always corrent. Other formats are silently ignored unless verbose output is requested."
+"Copyright ©2025 Pierre Violent\n
+Advanced usage notes\n--------------------\n
+Options -c (show count of matching lines) and -l (show matching file names only) can be used together to show matching lines count only for matching files.\n
+Glob supports recursive search without using option -r: C:\\Development\\GitVSTS\\**\\Net[7-9]\\**\\*.cs (current version does not support brances extension).\n
+Only UTF-8, UTF-16 LE and Windows 1252 text files are currently supported, but automatic format detection using heuristics may not be always correct. Other formats are silently ignored unless verbose output is requested.\n
+Glob crate pattern nules:
+•   ? matches any single character.
+•   * matches any (possibly empty) sequence of characters.
+•   ** matches the current directory and arbitrary subdirectories. To match files in arbitrary subdiretories, use **\\*. This sequence must form a single path component, so both **a and b** are invalid and will result in an error. A sequence of more than two consecutive * characters is also invalid.
+•   [...] matches any character inside the brackets. Character sequences can also specify ranges of characters, as ordered by Unicode, so e.g. [0-9] specifies any character between 0 and 9 inclusive. An unclosed bracket is invalid.
+•   [!...] is the negation of [...], i.e. it matches any characters not in the brackets.
+•   The metacharacters ?, *, [, ] can be matched by using brackets (e.g. [?]). When a ] occurs immediately following [ or [! then it is interpreted as being part of, rather then ending, the character set, so ] and NOT ] can be matched by []] and [!]] respectively. The - character can be specified inside a character sequence pattern by placing it at the start or the end, e.g. [abc-].\n
+MyGlob care rule patters: Include all above patterns, plus:
+•   {{choice1,choice2...}}  match any of the comma-separated choices between braces. Can be nested.
+•   character classes [ ] accept regex syntax, see https://docs.rs/regex/latest/regex/#character-classes for character classes and escape sequences supported."
         );
     }
 
@@ -106,7 +117,7 @@ impl Options {
         }
 
         let mut options = Options { ..Default::default() };
-        let mut opts = getopt::Parser::new(&args, "h?2iwFrvcl");
+        let mut opts = getopt::Parser::new(&args, "h?12iwFrvcl");
 
         loop {
             match opts.next().transpose()? {
@@ -117,8 +128,12 @@ impl Options {
                         return Err("".into());
                     }
 
+                    Opt('1', None) => {
+                        options.search_create = 1;
+                    }
+
                     Opt('2', None) => {
-                        options.use_myglob = true;
+                        options.search_create = 2;
                     }
 
                     Opt('i', None) => {
@@ -218,7 +233,7 @@ fn main() {
     let start = Instant::now();
 
     // Building list of files
-    // ToDo: It could be better to process file just when it's returned by iterator rather than stored in a Vec and procesed later...
+    // ToDo: It could be better to process file just when it's returned by iterator rather than stored in a Vec and processed later...
     let mut files: Vec<PathBuf> = Vec::new();
     for source in options.sources.clone() {
         // If file is a simple name, no path, no drive, and recurse option is specified, then we search in subfolders
@@ -230,8 +245,9 @@ fn main() {
 
         let mut count = 0;
 
-        if options.use_myglob {
-            // Use my own crate, a bit faster than glob, and ignore $RECYCLE.BIN, System Volume Information and .git folders
+        if options.search_create==2 {
+            // Use my own crate MyGlob, a bit faster than glob, and ignore $RECYCLE.BIN, System Volume Information and .git folders.
+            // Also supports {} alternations
             let resgs = MyGlobSearch::build(&source2);
             match resgs {
                 Ok(gs) => {
@@ -256,7 +272,8 @@ fn main() {
                 }
             }
         } else {
-            // Use standard glob crate, that returns everything, including $RECYCLE.BIN content for instance
+            // Use standard glob crate, that returns everything, including $RECYCLE.BIN content for instance.
+            // See extended help to see options, or https://docs.rs/glob/latest/glob/struct.Pattern.html
             match glob_with(source2.as_str(), mo) {
                 Ok(paths) => {
                     for entry in paths {

@@ -20,8 +20,27 @@ fn main() {
 
     // SHould find 4 files
     //test_myglob(r"C:\Development\**\rsgrep.d");
-    test_myglob(r"C:\Development\Git*\**\rsgrep.d");
+    //test_myglob(r"C:\Development\Git*\**\rsgrep.d");
     //test_myglob(r"C:\Development\Git*\*.txt");
+
+    let globstr = "file.[!0-9]s";
+    let mut iter = globstr.chars().peekable();
+    while let Some(c) = iter.next() {
+        match c {
+            '[' => {
+                match iter.peek() {
+                    Some(next_c) => {
+                        if *next_c=='!' {
+                            iter.next();
+                            println!("[^")
+                        }
+                    },
+                    None => println!("{}", c),
+                }
+            },
+            _ =>         println!("{}", c)
+        }
+    }
 }
 
 // Entry point for testing

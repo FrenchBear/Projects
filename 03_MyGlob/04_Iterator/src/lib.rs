@@ -7,8 +7,11 @@
 // 2025-03-27   PV      Fourth version, iterator
 // 2025-03-27   PV      1.0  First official version of the crate
 // 2025-03-28   PV      1.1  Proper conversion from glob to regex with glob_to_segments
+// 2025-03-29   PV      1.2  Test cases, documentation of regex, bug of \ inside a [ ] fixed
 
 #![allow(unused_variables, dead_code, unused_imports)]
+
+mod tests;
 
 use regex::Regex;
 use std::{
@@ -83,14 +86,14 @@ impl MyGlobSearch {
         })
     }
 
-    fn glob_to_segments(globstr: &str) -> Result<Vec<Segment>, MyGlobError> {
+    pub(crate) fn glob_to_segments(globstr: &str) -> Result<Vec<Segment>, MyGlobError> {
         // globstr ends with \ so no duplicate code to process last segment
 
         let mut segments = Vec::<Segment>::new();
         let mut regex_buffer = String::new();
         let mut constant_buffer = String::new();
         let mut brace_depth = 0;
-        let mut iter = globstr.chars();
+        let mut iter = globstr.chars().peekable();
         while let Some(c) = iter.next() {
             if c != '\\' && c != '/' {
                 constant_buffer.push(c);
@@ -142,6 +145,18 @@ impl MyGlobSearch {
                 '[' => {
                     regex_buffer.push('[');
                     let mut depth = 1;
+
+                    // Special case, ! at the beginning of a glob match is converted to a ^ in regex syntax
+                    match iter.peek() {
+                        Some(next_c) => {
+                            if *next_c == '!' {
+                                iter.next();
+                                regex_buffer.push('^');
+                            }
+                        },
+                        None => {},
+                    }
+
                     while let Some(inner_c) = iter.next() {
                         match inner_c {
                             ']' => {
@@ -153,8 +168,8 @@ impl MyGlobSearch {
                             }
                             '\\' => {
                                 if let Some(next_c) = iter.next() {
-                                    regex_buffer.push(next_c);
                                     regex_buffer.push('\\');
+                                    regex_buffer.push(next_c);
                                 } else {
                                     regex_buffer.push('\\'); //Handle trailing backslash
                                 }
@@ -246,7 +261,7 @@ impl Iterator for MyGlobIteratorState<'_> {
                             let pb = root.join(name);
                             if depth == self.segments.len() - 1 {
                                 // Final segment, can only match a file
-                                if pb.is_file() {
+                                if pb.is_file() {       // Case-insensitive comparison is provided by filesystem
                                     self.stack.push(SearchPendingData::File(pb));
                                 }
                             } else {
