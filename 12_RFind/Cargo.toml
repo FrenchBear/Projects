@@ -1,0 +1,10 @@
+[package]
+name = "rfind"
+description = "A Rust version of find/XFind/Search"
+version = "1.0.0"
+authors = ["Pierre Violent"]
+edition = "2024"
+
+[dependencies]
+termcolor = "1.4.1"
+myglob = { path = "../03_MyGlob/04_Iterator" }

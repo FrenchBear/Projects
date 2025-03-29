@@ -1,7 +1,8 @@
 [package]
-name = "rsgrep"
-version = "1.2.0"
-authors = ["French Bear <FrenchBear38@outlook.com>"]
+name = "rgrep"
+description = "Basic grep project in Rust"
+version = "1.2.2"
+authors = ["Pierre Violent"]
 edition = "2024"
 
 [dependencies]

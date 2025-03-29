@@ -1,10 +1,11 @@
-// rsgrep: Basic grep project in Rust
+// rgrep: Basic grep project in Rust
 //
 // 2025-03-13	PV      First version
 // 2025-03-16	PV      1.0.1   Extended help, support reading from stdin
 // 2025-03-25	PV      1.1.0   Global constants; Ignore $RECYCLE.BIN
 // 2025-03-27   PV      1.2.0   Option -2 to use MyGlob crate (experimental)
 // 2025-03-28   PV      1.2.1   Option -1 to use glob crate, glob syntax documented in extended help
+// 2025-03-29   PV      1.2.2   Option -2 is now default; Rename rgrep
 
 // standard library imports
 use std::error::Error;
@@ -31,8 +32,8 @@ pub mod tests;
 // -----------------------------------
 // Global constants
 
-const APP_NAME: &str = "rsgrep";
-const APP_VERSION: &str = "1.1.0";
+const APP_NAME: &str = "rgrep";
+const APP_VERSION: &str = "1.2.2";
 
 // ==============================================================================================
 // Options processing
@@ -47,7 +48,7 @@ pub struct Options {
     fixed_string: bool,
     recurse: bool,
     show_path: bool,
-    search_create: u8,
+    search_create: u8, // 1=Glob, 2=MyGlob
     out_level: u8, // 0: normal output, 1: (-l) matching filenames only, 2: (-c) filenames and matching lines count, 3: (-c -l) only matching filenames and matching lines count
     verbose: u8,
 }
@@ -67,7 +68,7 @@ impl Options {
             ?|-?|-h  Show this message\n\
             ??       Show advanced usage notes\n\
             -i       Ignore case during search\n\
-            -1|-2    For glob search, -1: Use glob crate, -2: Use MyGlob crate\n\
+            -1|-2    For glob search, -1: Use glob crate, -2: Use MyGlob crate (default)\n\
             -w       Whole word search\n\
             -F       Fixed string search (no regexp interpretation)\n\
             -r       Recurse search in subfolders (add **/ ahead of glob not containing /)\n\
@@ -85,16 +86,16 @@ impl Options {
 "Copyright ©2025 Pierre Violent\n
 Advanced usage notes\n--------------------\n
 Options -c (show count of matching lines) and -l (show matching file names only) can be used together to show matching lines count only for matching files.\n
-Glob supports recursive search without using option -r: C:\\Development\\GitVSTS\\**\\Net[7-9]\\**\\*.cs (current version does not support brances extension).\n
-Only UTF-8, UTF-16 LE and Windows 1252 text files are currently supported, but automatic format detection using heuristics may not be always correct. Other formats are silently ignored unless verbose output is requested.\n
-Glob crate pattern nules:
+Glob supports recursive search without using option, for instance, C:\\Development\\GitVSTS\\**\\Net[7-9]\\**\\*.cs\n
+Only UTF-8, UTF-16 LE and Windows 1252 text files are currently supported, but automatic format detection using heuristics may not be always correct. Other formats are silently ignored.\n
+Glob crate pattern nules (option -1):
 •   ? matches any single character.
 •   * matches any (possibly empty) sequence of characters.
 •   ** matches the current directory and arbitrary subdirectories. To match files in arbitrary subdiretories, use **\\*. This sequence must form a single path component, so both **a and b** are invalid and will result in an error. A sequence of more than two consecutive * characters is also invalid.
 •   [...] matches any character inside the brackets. Character sequences can also specify ranges of characters, as ordered by Unicode, so e.g. [0-9] specifies any character between 0 and 9 inclusive. An unclosed bracket is invalid.
 •   [!...] is the negation of [...], i.e. it matches any characters not in the brackets.
 •   The metacharacters ?, *, [, ] can be matched by using brackets (e.g. [?]). When a ] occurs immediately following [ or [! then it is interpreted as being part of, rather then ending, the character set, so ] and NOT ] can be matched by []] and [!]] respectively. The - character can be specified inside a character sequence pattern by placing it at the start or the end, e.g. [abc-].\n
-MyGlob care rule patters: Include all above patterns, plus:
+MyGlob care rule patters (option -2, default): Include all above patterns, plus:
 •   {{choice1,choice2...}}  match any of the comma-separated choices between braces. Can be nested.
 •   character classes [ ] accept regex syntax, see https://docs.rs/regex/latest/regex/#character-classes for character classes and escape sequences supported."
         );
@@ -116,7 +117,10 @@ MyGlob care rule patters: Include all above patterns, plus:
             }
         }
 
-        let mut options = Options { ..Default::default() };
+        let mut options = Options {
+            search_create: 2,
+            ..Default::default()
+        };
         let mut opts = getopt::Parser::new(&args, "h?12iwFrvcl");
 
         loop {
@@ -235,7 +239,7 @@ fn main() {
     // Building list of files
     // ToDo: It could be better to process file just when it's returned by iterator rather than stored in a Vec and processed later...
     let mut files: Vec<PathBuf> = Vec::new();
-    for source in options.sources.clone() {
+    for source in options.sources.iter() {
         // If file is a simple name, no path, no drive, and recurse option is specified, then we search in subfolders
         let source2 = if options.recurse && !source.contains('/') && !source.contains('\\') && !source.contains(':') {
             format!("**/{}", source)
@@ -245,7 +249,7 @@ fn main() {
 
         let mut count = 0;
 
-        if options.search_create==2 {
+        if options.search_create == 2 {
             // Use my own crate MyGlob, a bit faster than glob, and ignore $RECYCLE.BIN, System Volume Information and .git folders.
             // Also supports {} alternations
             let resgs = MyGlobSearch::build(&source2);
@@ -257,8 +261,12 @@ fn main() {
                                 count += 1;
                                 files.push(pb);
                             }
+
+                            // We ignore matching directories in rgrep, we only look for files
+                            MyGlobMatch::Dir(_) => {}
+
                             MyGlobMatch::Error(err) => {
-                                if options.verbose>0 {
+                                if options.verbose > 0 {
                                     eprintln!("{APP_NAME}: error {}", err);
                                 }
                             }
@@ -285,7 +293,7 @@ fn main() {
                                 }
                             }
                             Err(err) => {
-                                if options.verbose>0 {
+                                if options.verbose > 0 {
                                     eprintln!("{APP_NAME}: error {}", err);
                                 }
                             }
@@ -298,7 +306,7 @@ fn main() {
                 }
             }
         }
-        
+
         if count == 0 {
             println!("{APP_NAME}: no file found matching {}", source);
         }
@@ -306,7 +314,7 @@ fn main() {
 
     // Finally processing files, if more than 1 file, prefix output with file
     if options.sources.is_empty() {
-        if options.verbose>0 {
+        if options.verbose > 0 {
             println!("Reading from stdin");
         }
         let s = io::read_to_string(io::stdin()).unwrap();
@@ -316,7 +324,7 @@ fn main() {
             options.show_path = true;
         }
         for pb in &files {
-            if options.verbose>1 {
+            if options.verbose > 1 {
                 println!("Process: {}", pb.display());
             }
             process_path(&re, pb, &options);
@@ -324,7 +332,7 @@ fn main() {
     }
     let duration = start.elapsed();
 
-    if options.verbose>0 {
+    if options.verbose > 0 {
         if files.is_empty() {
             print!("\nstdin");
         } else {
@@ -419,7 +427,7 @@ fn process_path(re: &Regex, path: &Path, options: &Options) {
     if let Err(e) = txtres {
         if e.kind() == ErrorKind::InvalidData {
             // Non-text files are ignored
-            if options.verbose==1 {
+            if options.verbose == 1 {
                 println!("{APP_NAME}: ignored non-text file {}", path.display());
             };
         }
@@ -430,7 +438,7 @@ fn process_path(re: &Regex, path: &Path, options: &Options) {
     process_text(re, txt, filename.as_str(), options);
 }
 
-/// Core rsgrep process, search for re in txt, read from filename, according to options.
+/// Core rgrep process, search for re in txt, read from filename, according to options.
 fn process_text(re: &Regex, txt: &str, filename: &str, options: &Options) {
     let mut stdout = StandardStream::stdout(ColorChoice::Always);
     let mut match_color = ColorSpec::new();

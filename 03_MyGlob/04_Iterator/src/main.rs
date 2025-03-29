@@ -23,24 +23,27 @@ fn main() {
     //test_myglob(r"C:\Development\Git*\**\rsgrep.d");
     //test_myglob(r"C:\Development\Git*\*.txt");
 
-    let globstr = "file.[!0-9]s";
-    let mut iter = globstr.chars().peekable();
-    while let Some(c) = iter.next() {
-        match c {
-            '[' => {
-                match iter.peek() {
-                    Some(next_c) => {
-                        if *next_c=='!' {
-                            iter.next();
-                            println!("[^")
-                        }
-                    },
-                    None => println!("{}", c),
-                }
-            },
-            _ =>         println!("{}", c)
-        }
-    }
+    test_myglob(r"C:\Development\Git*\**\rgrep.d");
+    test_myglob(r"C:\Development\Git*\**\target");
+
+    // let globstr = "file.[!0-9]s";
+    // let mut iter = globstr.chars().peekable();
+    // while let Some(c) = iter.next() {
+    //     match c {
+    //         '[' => {
+    //             match iter.peek() {
+    //                 Some(next_c) => {
+    //                     if *next_c=='!' {
+    //                         iter.next();
+    //                         println!("[^")
+    //                     }
+    //                 },
+    //                 None => println!("{}", c),
+    //             }
+    //         },
+    //         _ =>         println!("{}", c)
+    //     }
+    // }
 }
 
 // Entry point for testing
@@ -54,11 +57,16 @@ pub fn test_myglob(pattern: &str) {
         match resgs {
             Ok(gs) => {
                 let mut nf = 0;
+                let mut nd = 0;
                 for ma in gs.explore_iter() {
                     match ma {
                         MyGlobMatch::File(pb) => {
                             println!("{}", pb.display());
                             nf += 1;
+                        }
+                        MyGlobMatch::Dir(pb) => {
+                            println!("{}\\", pb.display());
+                            nd += 1;
                         }
                         MyGlobMatch::Error(e) => {
                             println!("{}", e);
@@ -66,6 +74,7 @@ pub fn test_myglob(pattern: &str) {
                     }
                 }
                 println!("{nf} file(s) found");
+                println!("{nd} dir(s) found");
                 let duration = start.elapsed();
                 println!("Iterator search in {:.3}s", duration.as_secs_f64());
             }

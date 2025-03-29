@@ -1,4 +1,4 @@
-// rsgrep core iterator
+// rgrep core iterator
 // Iterates over lines of a text matching some pattern
 //
 // 2025-03-14   PV

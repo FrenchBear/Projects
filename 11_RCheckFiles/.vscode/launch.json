@@ -5,7 +5,7 @@
             "name": "Rust debug",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/target/debug/rscheckfiles.exe",
+            "program": "${workspaceRoot}/target/debug/rcheckfiles.exe",
             "args": ["\\\\terazalt\\photo"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

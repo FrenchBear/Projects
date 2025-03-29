@@ -1,11 +1,10 @@
-// rscheckfiles: Detect and fix incorrect filenames
+// rcheckfiles: Detect and optionally fix incorrect filenames
 //
 // 2025-03-23	PV      First version
 // 2025-03-25	PV      1.1 Simplified code, less calls to meta(), about twice faster
 // 2025-03-25	PV      1.2 Use DirEntry::file_type() to check whether entry is a dir or a file 3 times faster than path.is_file()/is_dir() !!!
 // 2025-03-28	PV      1.2.1 Handle gracefully errors about inexistent folders such as \\teraz\videos rather than panicking. No error for network root (no basename)
-
-//#![allow(unused_imports, unused_variables, dead_code)]
+// 2025-03-29	PV      1.2.2 Renamed rcheckfiles
 
 // standard library imports
 use std::collections::HashSet;
@@ -31,8 +30,8 @@ pub mod tests;
 // -----------------------------------
 // Globals
 
-const APP_NAME: &str = "rscheckfiles";
-const APP_VERSION: &str = "1.2.1";
+const APP_NAME: &str = "rcheckfiles";
+const APP_VERSION: &str = "1.2.2";
 
 const SPECIAL_CHARS: &str = "€®™©–—…×·•∶⧹⧸／⚹†‽¿🎜🎝♫♪“”⚡♥";
 
