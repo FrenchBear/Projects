@@ -31,7 +31,9 @@ fn glob_one_segment_test(glob_pattern: &str, cr: ConvResult, test_string: &str, 
         }
 
         Ok(seg_vec) => {
-            assert_eq!(seg_vec.len(), 1);
+            if glob_pattern!="**" {
+                assert_eq!(seg_vec.len(), 1);
+            }
             match &seg_vec[0] {
                 Segment::Constant(k) => {
                     assert_eq!(cr, ConvResult::Constant, "Conversion of «{}» produced a Constant instead of a {:?}", glob_pattern, cr);
@@ -205,4 +207,18 @@ fn conversions_tests() {
     //   [[:xdigit:]]   hex digit ([0-9A-Fa-f])
         
 
+}
+
+#[test]
+fn glob_ending_with_recurse() {
+    let res = MyGlobSearch::glob_to_segments("**\\").unwrap();
+    assert_eq!(res.len(), 2);
+    match &res[0] {
+        Segment::Recurse => {},
+        _ => panic!(),
+    }
+    match &res[1] {
+        Segment::Filter(re) => assert_eq!(re.as_str(), "(?i)^.*$"),
+        _ => panic!(),
+    }
 }

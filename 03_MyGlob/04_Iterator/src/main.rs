@@ -23,8 +23,11 @@ fn main() {
     //test_myglob(r"C:\Development\Git*\**\rsgrep.d");
     //test_myglob(r"C:\Development\Git*\*.txt");
 
-    test_myglob(r"C:\Development\Git*\**\rgrep.d");
-    test_myglob(r"C:\Development\Git*\**\target");
+    // test_myglob(r"C:\Development\Git*\**\rgrep.d");
+    // test_myglob(r"C:\Development\Git*\**\target");
+
+    //test_myglob(r"C:\Development\GitHub\Projects\03_MyGlob\04_Iterator\**");
+    test_myglob(r"C:\Temp\zop");
 
     // let globstr = "file.[!0-9]s";
     // let mut iter = globstr.chars().peekable();

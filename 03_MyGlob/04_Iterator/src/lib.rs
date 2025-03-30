@@ -9,6 +9,7 @@
 // 2025-03-28   PV      1.1  Proper conversion from glob to regex with glob_to_segments
 // 2025-03-29   PV      1.2  Test cases, documentation of regex, bug of \ inside a [ ] fixed
 // 2025-03-29   PV      1.3  Now returns files and directories
+// 2025-03-30   PV      1.3.1 Search for constant directory fixed; Append \* to glob ending with **
 
 #![allow(unused_variables, dead_code, unused_imports)]
 
@@ -192,6 +193,14 @@ impl MyGlobSearch {
             return Err(MyGlobError::GlobError("Internal error".to_string()));
         }
 
+        // If last segment is a **, append a Filter * to find everything
+        match &segments[segments.len() - 1] {
+            Segment::Recurse => {
+                //panic!("$1");
+                segments.push(Segment::Filter(Regex::new("(?i)^.*$").unwrap()));},
+            _ => {}
+        }
+
         Ok(segments)
     }
 
@@ -204,6 +213,8 @@ impl MyGlobSearch {
             let mut stack: Vec<SearchPendingData> = Vec::new();
             if p.is_file() {
                 stack.push(SearchPendingData::File(p.to_path_buf()));
+            } else if p.is_dir() {
+                stack.push(SearchPendingData::Dir(p.to_path_buf()));
             }
             return MyGlobIteratorState {
                 stack,

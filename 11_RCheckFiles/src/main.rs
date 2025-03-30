@@ -228,6 +228,7 @@ fn main() {
         apostrophe: HashSet::from_iter(CONF_APO),
     };
 
+    // Prepare log writer
     let now: DateTime<Local> = Local::now();
     let formatted_now = now.format("%Y-%m-%d-%H.%M.%S");
     let logpath = format!("c:\\temp\\{APP_NAME}-{formatted_now}.txt");

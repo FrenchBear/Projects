@@ -8,3 +8,5 @@ edition = "2024"
 [dependencies]
 termcolor = "1.4.1"
 myglob = { path = "../03_MyGlob/04_Iterator" }
+trash = "5.2.2"
+chrono = "0.4.40"
