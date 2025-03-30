@@ -19,12 +19,12 @@ impl ActionPrint {
 }
 
 impl Action for ActionPrint {
-    fn action(&self, writer: &mut BufWriter<File>, path: &Path, _do_it: bool, _verbose: bool) {
+    fn action(&self, lw: &mut LogWriter, path: &Path, _do_it: bool, _verbose: bool) {
         //println!("Action Print\n  Path: {}\n  do_it: {do_it}\n  verbose: {verbose}", path.display());
         if path.is_file() {
-            logln(writer, path.display().to_string().as_str());
+            logln(lw, path.display().to_string().as_str());
         } else {
-            logln(writer,(path.display().to_string()+"\\").as_str());
+            logln(lw,(path.display().to_string()+"\\").as_str());
         }
     }
 
@@ -48,24 +48,24 @@ impl ActionDelete {
 }
 
 impl Action for ActionDelete {
-    fn action(&self, writer: &mut BufWriter<File>, path: &Path, noaction: bool, verbose: bool) {
+    fn action(&self, lw: &mut LogWriter, path: &Path, noaction: bool, verbose: bool) {
         if path.is_file() {
             let s = quoted_path(path);
             let qp = s.as_str();
             if self.norecycle {
-                logln(writer, format!("DEL {}", qp).as_str());
+                logln(lw, format!("DEL {}", qp).as_str());
                 if !noaction {
                     match fs::remove_file(path) {
-                        Ok(_) => if verbose { logln(writer, format!("File {} deleted successfully.", qp).as_str()); },
-                        Err(e) => logln(writer, format!("*** Error deleting file (fs::remove_file) {}: {}", qp, e).as_str()),
+                        Ok(_) => if verbose { logln(lw, format!("File {} deleted successfully.", qp).as_str()); },
+                        Err(e) => logln(lw, format!("*** Error deleting file (fs::remove_file) {}: {}", qp, e).as_str()),
                     }
                 }
              } else {
-                logln(writer, format!("PDEL {}", qp).as_str());
+                logln(lw, format!("PDEL {}", qp).as_str());
                 if !noaction {
                     match delete(path) {
-                        Ok(_) => if verbose { logln(writer, format!("File {} deleted successfully.", qp).as_str()); },
-                        Err(e) => logln(writer, format!("*** Error deleting file (trash::delete) '{}': {}", qp, e).as_str()),
+                        Ok(_) => if verbose { logln(lw, format!("File {} deleted successfully.", qp).as_str()); },
+                        Err(e) => logln(lw, format!("*** Error deleting file (trash::delete) '{}': {}", qp, e).as_str()),
                     }
                 }
             }
@@ -102,7 +102,7 @@ impl ActionRmdir {
 }
 
 impl Action for ActionRmdir {
-    fn action(&self, writer: &mut BufWriter<File>, path: &Path, noaction: bool, verbose: bool) {
+    fn action(&self, writer: &mut LogWriter, path: &Path, noaction: bool, verbose: bool) {
         if path.is_dir() {
             let s = quoted_path(path);
             let qp = s.as_str();

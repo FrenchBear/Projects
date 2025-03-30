@@ -18,6 +18,7 @@ use std::time::Instant;
 use chrono::{DateTime, Local};
 use myglob::{MyGlobMatch, MyGlobSearch};
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
+use terminal_size::{terminal_size, Width};
 
 // -----------------------------------
 // Submodules
@@ -29,20 +30,22 @@ mod tests;
 // Global constants
 
 const APP_NAME: &str = "rfind";
-const APP_VERSION: &str = "1.0.0";
+const APP_VERSION: &str = "1.0.1";
 
 // -----------------------------------
 // Traits
 
+type LogWriter = Option<BufWriter<File>>;
+
 trait Action: Debug {
-    fn action(&self, writer: &mut BufWriter<File>, path: &Path, noaction: bool, verbose: bool);
+    fn action(&self, lw: &mut LogWriter, path: &Path, noaction: bool, verbose: bool);
     fn name(&self) -> &'static str;
 }
 
 // ==============================================================================================
 // Logging
 
-pub fn logln(writer: &mut BufWriter<File>, msg: &str) {
+pub fn logln(lw: &mut LogWriter, msg: &str) {
     if msg.starts_with("***") {
         let mut stdout = StandardStream::stdout(ColorChoice::Always);
         let mut err_color = ColorSpec::new();
@@ -54,13 +57,17 @@ pub fn logln(writer: &mut BufWriter<File>, msg: &str) {
     } else {
         println!("{}", msg);
     }
-    let _ = writeln!(writer, "{}", msg);
+    if let Some(bw) = lw {
+        let _ = writeln!(bw, "{}", msg);
+    }
 }
 
 #[allow(unused)]
-fn log(writer: &mut BufWriter<File>, msg: &str) {
+fn log(lw: &mut LogWriter, msg: &str) {
     print!("{}", msg);
-    let _ = write!(writer, "{}", msg);
+    if let Some(bw) = lw {
+        let _ = write!(bw, "{}", msg);
+    }
 }
 
 // ==============================================================================================
@@ -89,35 +96,84 @@ impl Options {
     fn usage() {
         Options::header();
         eprintln!(
-            "\nUsage: {APP_NAME} [?|-?|-h|??] [-v] [-n] [-f|-type f|-d|-type d] [-[no]recycle] source...
-            ?|-?|-h     Show this message
-            ??          Show advanced usage notes
-            -v          Verbose output
-            -n          No action: display actions, but don't execute them
-            -f|-type f  Search for files
-            -d|-type d  Search for directories
-            -norecycle  Delete forever (default: -recycle, delete local files to recycle bin)
-            source      File or folder where to search, glob syntax supported (see advanced notes)"
+"\nUsage: {APP_NAME} [?|-?|-h|??] [-v] [-n] [-f|-type f|-d|-type d] [-[no]recycle] [action...] source...
+?|-?|-h     Show this message
+??          Show advanced usage notes
+-v          Verbose output
+-n          No action: display actions, but don't execute them
+-f|-type f  Search for files
+-d|-type d  Search for directories
+-norecycle  Delete forever (default: -recycle, delete local files to recycle bin)
+source      File or folder where to search, glob syntax supported (see advanced notes)
+
+Actions:
+-print      Default, print matching files names and dir names (dir names end with \\)
+-delete     Delete matching files
+-rmdir      Delete matching directories, whether empty or not"
         );
     }
 
     fn extended_usage() {
         Options::header();
-        eprintln!(
+        let width = if let Some((Width(w), _)) = terminal_size() { w as usize } else {80usize};
+        let text = 
 "Copyright ©2025 Pierre Violent\n
 Advanced usage notes\n--------------------\n
 Glob pattern nules:
 •   ? matches any single character.
 •   * matches any (possibly empty) sequence of characters.
-•   ** matches the current directory and arbitrary subdirectories. To match files in arbitrary subdiretories, use **\\*. This sequence must form a single path component, so both **a and b** are invalid and will result in an error. A sequence of more than two consecutive * characters is also invalid.
+•   ** matches the current directory and arbitrary subdirectories. To match files in arbitrary subdiretories, use **\\*. This sequence must form a single path component, so both **a and b** are invalid and will result in an error.
 •   [...] matches any character inside the brackets. Character sequences can also specify ranges of characters, as ordered by Unicode, so e.g. [0-9] specifies any character between 0 and 9 inclusive. An unclosed bracket is invalid.
 •   [!...] is the negation of [...], i.e. it matches any characters not in the brackets.
-•   The metacharacters ?, *, [, ] can be matched by using brackets (e.g. [?]). When a ] occurs immediately following [ or [! then it is interpreted as being part of, rather then ending, the character set, so ] and NOT ] can be matched by []] and [!]] respectively. The - character can be specified inside a character sequence pattern by placing it at the start or the end, e.g. [abc-].\n
-•   {{choice1,choice2...}}  match any of the comma-separated choices between braces. Can be nested.
-•   character classes [ ] accept regex syntax, see https://docs.rs/regex/latest/regex/#character-classes for character classes and escape sequences supported."
-        );
+•   The metacharacters ?, *, [, ] can be matched by using brackets (e.g. [?]). When a ] occurs immediately following [ or [! then it is interpreted as being part of, rather then ending, the character set, so ] and NOT ] can be matched by []] and [!]] respectively. The - character can be specified inside a character sequence pattern by placing it at the start or the end, e.g. [abc-].
+•   {choice1,choice2...}  match any of the comma-separated choices between braces. Can be nested, and include ?, * and character classes.
+•   Character classes [ ] accept regex syntax, see https://docs.rs/regex/latest/regex/#character-classes for character classes and escape sequences supported.";
+
+        println!("{}", Self::format_text(text, width));
     }
 
+    fn format_text(text: &str, width: usize) -> String {
+        let mut s = String::new();
+        for line in text.split('\n') {
+            if !s.is_empty() {s.push('\n');}
+            s.push_str(Self::format_line(line, width).as_str());
+        }
+        s
+    }
+    
+    fn format_line(line: &str, width: usize) -> String {
+        let mut result = String::new();
+        let mut current_line_length = 0;
+    
+        let left_margin = if line.starts_with('•') {"  "} else {""};
+    
+        for word in line.split_whitespace() {
+            let word_length = word.len();
+    
+            if current_line_length + word_length + 1 <= width {
+                if !result.is_empty() {
+                    result.push(' ');
+                    current_line_length += 1; // Add space
+                }
+                result.push_str(word);
+                current_line_length += word_length;
+            } else {
+                if !result.is_empty() {
+                    result.push('\n');
+                    current_line_length =
+                    if !left_margin.is_empty() {
+                        result.push_str(left_margin);
+                        2
+                    } else {0};
+                }
+                result.push_str(word);
+                current_line_length += word_length;
+            }
+        }
+        result
+    }
+
+    
     /// Build a new struct Options analyzing command line parameters.<br/>
     /// Some invalid/inconsistent options or missing arguments return an error.
     fn new() -> Result<Options, Box<dyn Error>> {
@@ -161,6 +217,7 @@ Glob pattern nules:
                         }
                     }
 
+                    "recycle" => options.norecycle = false,
                     "norecycle" => options.norecycle = true,
 
                     "print" => {
@@ -222,7 +279,7 @@ fn main() {
         if msg.is_empty() {
             process::exit(0);
         }
-        eprintln!("{APP_NAME}: Problem parsing arguments: {}", err);
+        logln(&mut None, format!("*** {APP_NAME}: Problem parsing arguments: {}", err).as_str());
         process::exit(1);
     });
 
@@ -235,7 +292,7 @@ fn main() {
         eprintln!("{APP_NAME}: Error when crating log file {logpath}: {:?}", file.err());
         process::exit(1);
     }
-    let mut writer = BufWriter::new(file.unwrap());
+    let mut writer = Some(BufWriter::new(file.unwrap()));
     if options.verbose {
         logln(&mut writer, &format!("{APP_NAME} {APP_VERSION}"));
     }
@@ -254,7 +311,8 @@ fn main() {
         }
     }
     if sources.is_empty() {
-        logln(&mut writer, "*** No source specified");
+        logln(&mut writer, format!("*** No source specified. Use {APP_NAME} ? to show usage.").as_str());
+        process::exit(1);
     }
 
     if options.verbose {
@@ -329,15 +387,18 @@ fn main() {
     let duration = start.elapsed();
 
     if options.verbose {
+        if files_count+dirs_count>0 {
+            logln(&mut writer,"");
+        }
         if options.search_files {
-            print!("{files_count} files(s)");
+            log(&mut writer,format!("{files_count} files(s)").as_str());
         }
         if options.search_dirs {
             if options.search_files {
-                print!(", ");
+                log(&mut writer,", ");
             }
-            print!("{dirs_count} dir(s)");
+            log(&mut writer,format!("{dirs_count} dir(s)").as_str());
         }
-        println!(" found in {:.3}s", duration.as_secs_f64());
+        logln(&mut writer,format!(" found in {:.3}s", duration.as_secs_f64()).as_str());
     }
 }

@@ -22,6 +22,7 @@ use glob::{MatchOptions, glob_with};
 use myglob::{MyGlobMatch, MyGlobSearch};
 use regex::Regex;
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
+use terminal_size::{terminal_size, Width};
 
 // -----------------------------------
 // Submodules
@@ -64,25 +65,26 @@ impl Options {
     fn usage() {
         Options::header();
         eprintln!(
-            "\nUsage: {APP_NAME} [?|-?|-h|??] [-1|-2] [-i] [-w] [-F] [-r] [-v] [-c] [-l] pattern source...\n\
-            ?|-?|-h  Show this message\n\
-            ??       Show advanced usage notes\n\
-            -i       Ignore case during search\n\
-            -1|-2    For glob search, -1: Use glob crate, -2: Use MyGlob crate (default)\n\
-            -w       Whole word search\n\
-            -F       Fixed string search (no regexp interpretation)\n\
-            -r       Recurse search in subfolders (add **/ ahead of glob not containing /)\n\
-            -c       Suppress normal output, show count of matching lines for each file\n\
-            -l       Suppress normal output, show matching file names only\n\
-            -v       Verbose output\n\
-            pattern  Regular expression to search\n\
-            source   File or folder where to search, glob syntax supported"
+"\nUsage: {APP_NAME} [?|-?|-h|??] [-1|-2] [-i] [-w] [-F] [-r] [-v] [-c] [-l] pattern source...
+?|-?|-h  Show this message
+??       Show advanced usage notes
+-i       Ignore case during search
+-1|-2    For glob search, -1: Use glob crate, -2: Use MyGlob crate (default)
+-w       Whole word search
+-F       Fixed string search (no regexp interpretation)
+-r       Recurse search in subfolders (add **/ ahead of glob not containing /)
+-c       Suppress normal output, show count of matching lines for each file
+-l       Suppress normal output, show matching file names only
+-v       Verbose output
+pattern  Regular expression to search
+source   File or folder where to search, glob syntax supported"
         );
     }
 
     fn extended_usage() {
         Options::header();
-        eprintln!(
+        let width = if let Some((Width(w), _)) = terminal_size() { w as usize } else {80usize};
+        let text = 
 "Copyright ©2025 Pierre Violent\n
 Advanced usage notes\n--------------------\n
 Options -c (show count of matching lines) and -l (show matching file names only) can be used together to show matching lines count only for matching files.\n
@@ -91,15 +93,57 @@ Only UTF-8, UTF-16 LE and Windows 1252 text files are currently supported, but a
 Glob crate pattern nules (option -1):
 •   ? matches any single character.
 •   * matches any (possibly empty) sequence of characters.
-•   ** matches the current directory and arbitrary subdirectories. To match files in arbitrary subdiretories, use **\\*. This sequence must form a single path component, so both **a and b** are invalid and will result in an error. A sequence of more than two consecutive * characters is also invalid.
+•   ** matches the current directory and arbitrary subdirectories. To match files in arbitrary subdiretories, use **\\*. This sequence must form a single path component, so both **a and b** are invalid and will result in an error.
 •   [...] matches any character inside the brackets. Character sequences can also specify ranges of characters, as ordered by Unicode, so e.g. [0-9] specifies any character between 0 and 9 inclusive. An unclosed bracket is invalid.
 •   [!...] is the negation of [...], i.e. it matches any characters not in the brackets.
 •   The metacharacters ?, *, [, ] can be matched by using brackets (e.g. [?]). When a ] occurs immediately following [ or [! then it is interpreted as being part of, rather then ending, the character set, so ] and NOT ] can be matched by []] and [!]] respectively. The - character can be specified inside a character sequence pattern by placing it at the start or the end, e.g. [abc-].\n
 MyGlob care rule patters (option -2, default): Include all above patterns, plus:
-•   {{choice1,choice2...}}  match any of the comma-separated choices between braces. Can be nested.
-•   character classes [ ] accept regex syntax, see https://docs.rs/regex/latest/regex/#character-classes for character classes and escape sequences supported."
-        );
+•   {choice1,choice2...}  match any of the comma-separated choices between braces. Can be nested, and include ?, * and character classes.
+•   Character classes [ ] accept regex syntax, see https://docs.rs/regex/latest/regex/#character-classes for character classes and escape sequences supported.";
+    
+    println!("{}", Self::format_text(text, width));
+}
+
+fn format_text(text: &str, width: usize) -> String {
+    let mut s = String::new();
+    for line in text.split('\n') {
+        if !s.is_empty() {s.push('\n');}
+        s.push_str(Self::format_line(line, width).as_str());
     }
+    s
+}
+
+fn format_line(line: &str, width: usize) -> String {
+    let mut result = String::new();
+    let mut current_line_length = 0;
+
+    let left_margin = if line.starts_with('•') {"  "} else {""};
+
+    for word in line.split_whitespace() {
+        let word_length = word.len();
+
+        if current_line_length + word_length + 1 <= width {
+            if !result.is_empty() {
+                result.push(' ');
+                current_line_length += 1; // Add space
+            }
+            result.push_str(word);
+            current_line_length += word_length;
+        } else {
+            if !result.is_empty() {
+                result.push('\n');
+                current_line_length =
+                if !left_margin.is_empty() {
+                    result.push_str(left_margin);
+                    2
+                } else {0};
+            }
+            result.push_str(word);
+            current_line_length += word_length;
+        }
+    }
+    result
+}
 
     /// Build a new struct Options analyzing command line parameters.<br/>
     /// Some invalid/inconsistent options or missing arguments return an error.
