@@ -1,6 +1,7 @@
 // rfind: A Rust version of find/XFind/Search
 //
 // 2025-03-29	PV      First version
+// 2025-03-31	PV      1.1.0 Action Dir
 
 //#![allow(unused)]
 
@@ -18,7 +19,7 @@ use std::time::Instant;
 use chrono::{DateTime, Local};
 use myglob::{MyGlobMatch, MyGlobSearch};
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
-use terminal_size::{terminal_size, Width};
+use terminal_size::{Width, terminal_size};
 
 // -----------------------------------
 // Submodules
@@ -30,7 +31,7 @@ mod tests;
 // Global constants
 
 const APP_NAME: &str = "rfind";
-const APP_VERSION: &str = "1.0.1";
+const APP_VERSION: &str = "1.1.0";
 
 // -----------------------------------
 // Traits
@@ -80,7 +81,7 @@ struct Options {
     actions_names: HashSet<&'static str>,
     search_files: bool,
     search_dirs: bool,
-    norecycle: bool,
+    no_recycle: bool,
     noaction: bool,
     verbose: bool,
 }
@@ -103,11 +104,12 @@ impl Options {
 -n          No action: display actions, but don't execute them
 -f|-type f  Search for files
 -d|-type d  Search for directories
--norecycle  Delete forever (default: -recycle, delete local files to recycle bin)
+-no_recycle  Delete forever (default: -recycle, delete local files to recycle bin)
 source      File or folder where to search, glob syntax supported (see advanced notes)
 
 Actions:
 -print      Default, print matching files names and dir names (dir names end with \\)
+-dir        Variant of -print, with last modification date and size
 -delete     Delete matching files
 -rmdir      Delete matching directories, whether empty or not"
         );
@@ -115,8 +117,12 @@ Actions:
 
     fn extended_usage() {
         Options::header();
-        let width = if let Some((Width(w), _)) = terminal_size() { w as usize } else {80usize};
-        let text = 
+        let width = if let Some((Width(w), _)) = terminal_size() {
+            w as usize
+        } else {
+            80usize
+        };
+        let text =
 "Copyright ©2025 Pierre Violent\n
 Advanced usage notes\n--------------------\n
 Glob pattern nules:
@@ -135,21 +141,23 @@ Glob pattern nules:
     fn format_text(text: &str, width: usize) -> String {
         let mut s = String::new();
         for line in text.split('\n') {
-            if !s.is_empty() {s.push('\n');}
+            if !s.is_empty() {
+                s.push('\n');
+            }
             s.push_str(Self::format_line(line, width).as_str());
         }
         s
     }
-    
+
     fn format_line(line: &str, width: usize) -> String {
         let mut result = String::new();
         let mut current_line_length = 0;
-    
-        let left_margin = if line.starts_with('•') {"  "} else {""};
-    
+
+        let left_margin = if line.starts_with('•') { "  " } else { "" };
+
         for word in line.split_whitespace() {
             let word_length = word.len();
-    
+
             if current_line_length + word_length + 1 <= width {
                 if !result.is_empty() {
                     result.push(' ');
@@ -160,11 +168,12 @@ Glob pattern nules:
             } else {
                 if !result.is_empty() {
                     result.push('\n');
-                    current_line_length =
-                    if !left_margin.is_empty() {
+                    current_line_length = if !left_margin.is_empty() {
                         result.push_str(left_margin);
                         2
-                    } else {0};
+                    } else {
+                        0
+                    };
                 }
                 result.push_str(word);
                 current_line_length += word_length;
@@ -173,7 +182,6 @@ Glob pattern nules:
         result
     }
 
-    
     /// Build a new struct Options analyzing command line parameters.<br/>
     /// Some invalid/inconsistent options or missing arguments return an error.
     fn new() -> Result<Options, Box<dyn Error>> {
@@ -217,11 +225,14 @@ Glob pattern nules:
                         }
                     }
 
-                    "recycle" => options.norecycle = false,
-                    "norecycle" => options.norecycle = true,
+                    "recycle" => options.no_recycle = false,
+                    "no_recycle" => options.no_recycle = true,
 
                     "print" => {
                         options.actions_names.insert("print");
+                    }
+                    "dir" => {
+                        options.actions_names.insert("dir");
                     }
                     "rm" | "del" | "delete" => {
                         options.actions_names.insert("delete");
@@ -331,11 +342,18 @@ fn main() {
     }
 
     let mut actions = Vec::<Box<dyn Action>>::new();
-    for action_name in options.actions_names {
-        match action_name {
-            "print" => actions.push(Box::new(actions::ActionPrint::new())),
-            "delete" => actions.push(Box::new(actions::ActionDelete::new(options.norecycle))),
-            "rmdir" => actions.push(Box::new(actions::ActionRmdir::new(options.norecycle))),
+    for action_name in options.actions_names.iter() {
+        match *action_name {
+            "print" => {
+                if options.actions_names.contains("dir") {
+                    logln(&mut writer, "*** Both actions print and dir used, action print ignored.");
+                } else {
+                    actions.push(Box::new(actions::ActionPrint::new(false)))
+                }
+            }
+            "dir" => actions.push(Box::new(actions::ActionPrint::new(true))),
+            "delete" => actions.push(Box::new(actions::ActionDelete::new(options.no_recycle))),
+            "rmdir" => actions.push(Box::new(actions::ActionRmdir::new(options.no_recycle))),
             _ => panic!("{APP_NAME}: Internal error, unknown action_name {action_name}"),
         }
     }
@@ -387,18 +405,18 @@ fn main() {
     let duration = start.elapsed();
 
     if options.verbose {
-        if files_count+dirs_count>0 {
-            logln(&mut writer,"");
+        if files_count + dirs_count > 0 {
+            logln(&mut writer, "");
         }
         if options.search_files {
-            log(&mut writer,format!("{files_count} files(s)").as_str());
+            log(&mut writer, format!("{files_count} files(s)").as_str());
         }
         if options.search_dirs {
             if options.search_files {
-                log(&mut writer,", ");
+                log(&mut writer, ", ");
             }
-            log(&mut writer,format!("{dirs_count} dir(s)").as_str());
+            log(&mut writer, format!("{dirs_count} dir(s)").as_str());
         }
-        logln(&mut writer,format!(" found in {:.3}s", duration.as_secs_f64()).as_str());
+        logln(&mut writer, format!(" found in {:.3}s", duration.as_secs_f64()).as_str());
     }
 }
