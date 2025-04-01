@@ -6,17 +6,16 @@
 // 2025-03-27   PV      1.2.0   Option -2 to use MyGlob crate (experimental)
 // 2025-03-28   PV      1.2.1   Option -1 to use glob crate, glob syntax documented in extended help
 // 2025-03-29   PV      1.2.2   Option -2 is now default; Rename rgrep
+// 2025-04-01   PV      1.3.0   read_text_file_2, faster to detect text encoding
 
 // standard library imports
 use std::error::Error;
-use std::fs::File;
-use std::io::{self, BufReader, ErrorKind, Read, Write};
+use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 use std::process;
 use std::time::Instant;
 
 // external crates imports
-use encoding_rs::{Encoding, UTF_8, UTF_16LE, WINDOWS_1252};
 use getopt::Opt;
 use glob::{MatchOptions, glob_with};
 use myglob::{MyGlobMatch, MyGlobSearch};
@@ -27,8 +26,11 @@ use terminal_size::{terminal_size, Width};
 // -----------------------------------
 // Submodules
 
-pub mod grepiterator;
+mod grepiterator;
+mod decode_encoding;
 pub mod tests;
+
+use decode_encoding::*;
 
 // -----------------------------------
 // Global constants
@@ -403,83 +405,41 @@ pub fn build_re(options: &Options) -> Result<Regex, regex::Error> {
     Regex::new(spat.as_str())
 }
 
-/// Helper detecting if path is a text file, detect encoding and return content as an utf-8 String.<br/>
-/// Only UTF-8, UTF-16 LE and Windows 1252 are detected using heuristics (mays not be always correct).<br/>
-/// Unrecognized files return an io::ErrorKind::InvalidData.
-pub fn read_text_file(path: &Path) -> Result<String, io::Error> {
-    let file = File::open(path)?;
-    let mut reader = BufReader::new(file);
-    let mut buffer = Vec::new();
-    reader.read_to_end(&mut buffer)?;
-
-    // Define the encodings to try, in order of preference.
-    let encodings: [&'static Encoding; 3] = [UTF_8, UTF_16LE, WINDOWS_1252];
-
-    for encoding in encodings {
-        let (decoded_string, used_encoding, had_errors) = encoding.decode(&buffer);
-        if !had_errors {
-            // For UTF-16, we need to confirm. Count 0 in odd positions, should be >=40% of file size
-            if used_encoding == UTF_16LE {
-                let mut zcount = 0;
-                let mut ix = 1;
-                while ix < buffer.len() {
-                    if buffer[ix] == 0 {
-                        zcount += 1
-                    };
-                    ix += 2;
-                }
-                if zcount * 10 < 4 * buffer.len() {
-                    continue;
-                }
-            }
-
-            // For Windows 1252, we need to confirm. Characters in {0x20..0x7F, 9, 10, 13} should be >=90% of file size
-            // And no \0 in file
-            if used_encoding == WINDOWS_1252 {
-                let mut acount = 0;
-                let mut ix = 0;
-                while ix < buffer.len() {
-                    let b = buffer[ix];
-                    if (32..128).contains(&b) || b == 9 || b == 10 || b == 13 {
-                        acount += 1;
-                    } else if b == 0 {
-                        acount = 0;
-                        break;
-                    }
-                    ix += 1;
-                }
-                if acount * 10 < 9 * buffer.len() {
-                    continue;
-                }
-            }
-
-            // If decoding succeeded without errors, return the string.
-            return Ok(decoded_string.into_owned());
-        }
-    }
-
-    // If none of the encodings worked without errors, return an error.
-    Err(io::Error::new(
-        io::ErrorKind::InvalidData,
-        "File does not appear to be UTF-8, UTF-16 or Windows-1252 encoded.",
-    ))
-}
-
 /// First step processing a file, read text content from path and call process_text.
 fn process_path(re: &Regex, path: &Path, options: &Options) {
+    /*
     let txtres = read_text_file(path);
     if let Err(e) = txtres {
         if e.kind() == ErrorKind::InvalidData {
             // Non-text files are ignored
             if options.verbose == 1 {
-                println!("{APP_NAME}: ignored non-text file {}", path.display());
+                //println!("{APP_NAME}: ignored non-text file {}", path.display());
             };
         }
         return;
     }
     let txt = &txtres.unwrap()[..];
-    let filename = path.display().to_string();
-    process_text(re, txt, filename.as_str(), options);
+    */
+
+    let res = read_text_file_2(path);
+    match res {
+        Ok((Some(s),_)) => {
+            let filename = path.display().to_string();
+            process_text(re, s.as_str(), filename.as_str(), options);
+        },
+        Ok((None, _)) => {
+            // Non-text files are ignored
+            if options.verbose == 1 {
+                println!("{APP_NAME}: ignored non-text file {}", path.display());
+            }
+            return;
+        },
+        Err(e) => {
+            eprintln!("*** Error reading file {}: {}", path.display(), e);
+            return;
+        }
+    }
+
 }
 
 /// Core rgrep process, search for re in txt, read from filename, according to options.
