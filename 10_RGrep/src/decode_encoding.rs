@@ -120,7 +120,8 @@ pub fn read_text_file_2(path: &Path) -> Result<(Option<String>, &str), io::Error
         let test_buffer = if encoding == UTF_8 {
             // Since we potentially truncated a UTF-8 sequence at the end, we may have to reduce buffer size to avoid a
             // truncated sequence that would render buffer invalid for UTF-8.
-            // A quick way is just en ensure that the buffer ends with a byte<128.
+            // A quick way is just en ensure that the buffer ends with a byte<128, any value >=128 could be in the middle
+            // of a 2-4 bytes sequence. We could check if the sequence is complete or truncated, but the quick way is good enough.
             if n == 1000 {
                 let mut pa = 999;
                 while pa > 0 && buffer_1000[pa] >= 128 {
@@ -129,14 +130,16 @@ pub fn read_text_file_2(path: &Path) -> Result<(Option<String>, &str), io::Error
                 // No single byte<128 over 1000 bytes, don't bother decode that as UTF-16, not interesting
                 if pa == 0 {
                     return Ok((None, "Not text 1"));
-                    //return Err(io::Error::new(io::ErrorKind::InvalidData, "File does not appear to contain text."));
                 }
                 &buffer_1000[..=pa]
             } else {
                 &buffer_1000[..n]
             }
         } else if encoding == UTF_16LE {
-            // We have to check whether we truncated reading in the middle of a surrogate sequence
+            // We have to check whether we truncated reading in the middle of a surrogate sequence when readind 1000 bytes max.
+            // Lead surrogate is 0xD800-0xDBFF (and tail surrogate is 0xDC00-0xDFFF), if the byte at index 998 is 0xD8, then
+            // we cut a surrogate. Note that optional byte order header (0xFF, 0xFE) is two bytes long, so all UTF-16 words
+            // start at en even index.
             if n == 1000 {
                 let mut pa = 998;
                 while pa > 0 && buffer_1000[pa] >= 0xD8 && buffer_1000[pa] <= 0xDB {
@@ -144,7 +147,6 @@ pub fn read_text_file_2(path: &Path) -> Result<(Option<String>, &str), io::Error
                 }
                 if pa == 0 {
                     return Ok((None, "Not text 2"));
-                    //return Err(io::Error::new(io::ErrorKind::InvalidData, "File does not appear to contain text."));
                 }
                 &buffer_1000[..=pa]
             } else {

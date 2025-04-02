@@ -231,7 +231,7 @@ fn main() {
     // Prepare log writer
     let now: DateTime<Local> = Local::now();
     let formatted_now = now.format("%Y-%m-%d-%H.%M.%S");
-    let logpath = format!("c:\\temp\\{APP_NAME}-{formatted_now}.txt");
+    let logpath = format!("c:\\temp\\{APP_NAME}-{formatted_now}.log");
     let file = File::create(logpath.clone());
     if file.is_err() {
         eprintln!("{APP_NAME}: Error when crating log file {logpath}: {:?}", file.err());
