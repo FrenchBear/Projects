@@ -2,6 +2,7 @@
 //
 // 2025-03-29	PV      First version
 // 2025-03-31	PV      1.1.0 Action Dir
+// 2025-04-03	PV      1.2.0 Core reorganization, logging module
 
 //#![allow(unused)]
 
@@ -9,66 +10,35 @@
 use std::collections::HashSet;
 use std::error::Error;
 use std::fmt::Debug;
-use std::fs::File;
-use std::io::{BufWriter, Write};
 use std::path::Path;
 use std::process;
 use std::time::Instant;
 
 // external crates imports
-use chrono::{DateTime, Local};
 use myglob::{MyGlobMatch, MyGlobSearch};
-use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
 use terminal_size::{Width, terminal_size};
 
 // -----------------------------------
 // Submodules
 
+mod logging;
 mod actions;
 mod tests;
+
+use logging::*;
 
 // -----------------------------------
 // Global constants
 
 const APP_NAME: &str = "rfind";
-const APP_VERSION: &str = "1.1.0";
+const APP_VERSION: &str = "1.2.0";
 
 // -----------------------------------
 // Traits
 
-type LogWriter = Option<BufWriter<File>>;
-
 trait Action: Debug {
     fn action(&self, lw: &mut LogWriter, path: &Path, noaction: bool, verbose: bool);
     fn name(&self) -> &'static str;
-}
-
-// ==============================================================================================
-// Logging
-
-pub fn logln(lw: &mut LogWriter, msg: &str) {
-    if msg.starts_with("***") {
-        let mut stdout = StandardStream::stdout(ColorChoice::Always);
-        let mut err_color = ColorSpec::new();
-        err_color.set_fg(Some(Color::Red)).set_bold(true);
-
-        let _ = stdout.set_color(&err_color);
-        let _ = writeln!(&mut stdout, "{}", msg);
-        let _ = stdout.reset();
-    } else {
-        println!("{}", msg);
-    }
-    if let Some(bw) = lw {
-        let _ = writeln!(bw, "{}", msg);
-    }
-}
-
-#[allow(unused)]
-fn log(lw: &mut LogWriter, msg: &str) {
-    print!("{}", msg);
-    if let Some(bw) = lw {
-        let _ = write!(bw, "{}", msg);
-    }
 }
 
 // ==============================================================================================
@@ -295,18 +265,7 @@ fn main() {
     });
 
     // Prepare log writer
-    let now: DateTime<Local> = Local::now();
-    let formatted_now = now.format("%Y-%m-%d-%H.%M.%S");
-    let logpath = format!("c:\\temp\\{APP_NAME}-{formatted_now}.log");
-    let file = File::create(logpath.clone());
-    if file.is_err() {
-        eprintln!("{APP_NAME}: Error when crating log file {logpath}: {:?}", file.err());
-        process::exit(1);
-    }
-    let mut writer = Some(BufWriter::new(file.unwrap()));
-    if options.verbose {
-        logln(&mut writer, &format!("{APP_NAME} {APP_VERSION}"));
-    }
+    let mut writer = logging::new(options.verbose);
 
     let start = Instant::now();
 

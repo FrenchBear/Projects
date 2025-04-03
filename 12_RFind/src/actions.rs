@@ -122,7 +122,7 @@ impl Action for ActionDelete {
                                 logln(lw, format!("File {} deleted successfully.", qp).as_str());
                             }
                         }
-                        Err(e) => logln(lw, format!("*** Error deleting file (trash::delete) '{}': {}", qp, e).as_str()),
+                        Err(e) => logln(lw, format!("*** Error deleting file (trash::delete) {}: {}", qp, e).as_str()),
                     }
                 }
             }
@@ -168,10 +168,10 @@ impl Action for ActionRmdir {
                     match fs::remove_dir(path) {
                         Ok(_) => {
                             if verbose {
-                                logln(writer, format!("Dir '{}' deleted successfully.", qp).as_str());
+                                logln(writer, format!("Dir {} deleted successfully.", qp).as_str());
                             }
                         }
-                        Err(e) => logln(writer, format!("*** Error deleting dir (fs::remove_dir) '{}': {}", qp, e).as_str()),
+                        Err(e) => logln(writer, format!("*** Error deleting dir (fs::remove_dir) {}: {}", qp, e).as_str()),
                     }
                 }
             } else {
@@ -183,7 +183,7 @@ impl Action for ActionRmdir {
                                 logln(writer, format!("Dir '{}' deleted successfully.", qp).as_str());
                             }
                         }
-                        Err(e) => logln(writer, format!("*** Error deleting dir (trash::delete) '{}': {}", qp, e).as_str()),
+                        Err(e) => logln(writer, format!("*** Error deleting dir (trash::delete) {}: {}", qp, e).as_str()),
                     }
                 }
             }

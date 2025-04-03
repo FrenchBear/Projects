@@ -1,7 +1,7 @@
 [package]
 name = "rcheckfiles"
 description = "Detect and optionally fix incorrect filenames"
-version = "1.2.1"
+version = "1.3.0"
 authors = ["Pierre Violent"]
 edition = "2024"
 

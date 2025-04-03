@@ -5,33 +5,33 @@
 // 2025-03-25	PV      1.2 Use DirEntry::file_type() to check whether entry is a dir or a file 3 times faster than path.is_file()/is_dir() !!!
 // 2025-03-28	PV      1.2.1 Handle gracefully errors about inexistent folders such as \\teraz\videos rather than panicking. No error for network root (no basename)
 // 2025-03-29	PV      1.2.2 Renamed rcheckfiles
+// 2025-04-03	PV      1.3.0 Code reorganization, module logging
 
 // standard library imports
 use std::collections::HashSet;
+use std::fs;
 use std::error::Error;
-use std::fs::{self, File};
-use std::io::{BufWriter, Write};
 use std::os::windows::prelude::*;
 use std::path::Path;
 use std::process;
 use std::time::Instant;
 
 // external crates imports
-use chrono::{DateTime, Local};
 use getopt::Opt;
-use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
 use unicode_normalization::{UnicodeNormalization, is_nfc};
+use logging::*;
 
 // -----------------------------------
 // Submodules
 
+mod logging;
 pub mod tests;
 
 // -----------------------------------
 // Globals
 
 const APP_NAME: &str = "rcheckfiles";
-const APP_VERSION: &str = "1.2.2";
+const APP_VERSION: &str = "1.3.0";
 
 const SPECIAL_CHARS: &str = "€®™©–—…×·•∶⧹⧸／⚹†‽¿🎜🎝♫♪“”⚡♥";
 
@@ -185,26 +185,6 @@ struct Confusables {
     apostrophe: HashSet<char>,
 }
 
-fn logln(writer: &mut BufWriter<File>, msg: &str) {
-    if msg.starts_with("***") {
-        let mut stdout = StandardStream::stdout(ColorChoice::Always);
-        let mut err_color = ColorSpec::new();
-        err_color.set_fg(Some(Color::Red)).set_bold(true);
-
-        let _ = stdout.set_color(&err_color);
-        let _ = writeln!(&mut stdout, "{}", msg);
-        let _ = stdout.reset();
-    } else {
-        println!("{}", msg);
-    }
-    let _ = writeln!(writer, "{}", msg);
-}
-
-fn log(writer: &mut BufWriter<File>, msg: &str) {
-    print!("{}", msg);
-    let _ = write!(writer, "{}", msg);
-}
-
 fn main() {
     // Process options
     let options = Options::new().unwrap_or_else(|err| {
@@ -216,29 +196,13 @@ fn main() {
         process::exit(1);
     });
 
-    // // For dev testing
-    // let options = Options {
-    //     //sources: vec![String::from(r"c:\temp\Testroot - copy")],
-    //     sources: vec![String::from(r"\\terazalt\books\Livres")],
-    //     fixit: true,
-    // };
-
     let confusables = Confusables {
         space: HashSet::from_iter(CONF_SPC),
         apostrophe: HashSet::from_iter(CONF_APO),
     };
 
     // Prepare log writer
-    let now: DateTime<Local> = Local::now();
-    let formatted_now = now.format("%Y-%m-%d-%H.%M.%S");
-    let logpath = format!("c:\\temp\\{APP_NAME}-{formatted_now}.log");
-    let file = File::create(logpath.clone());
-    if file.is_err() {
-        eprintln!("{APP_NAME}: Error when crating log file {logpath}: {:?}", file.err());
-        process::exit(1);
-    }
-    let mut writer = BufWriter::new(file.unwrap());
-    logln(&mut writer, &format!("{APP_NAME} {APP_VERSION}"));
+    let mut writer = logging::new(true);
 
     let mut files_stats = Statistics { ..Default::default() };
     let mut folders_stats = Statistics { ..Default::default() };
@@ -260,38 +224,36 @@ fn main() {
         if n > 1 { "s" } else { "" }
     }
 
-    fn final_status(pwriter: &mut BufWriter<File>, stats: &Statistics, typename: &str) {
-        log(pwriter, &format!("{} {}{} checked", stats.total, typename, s(stats.total)));
+    fn final_status(writer: &mut LogWriter, stats: &Statistics, typename: &str) {
+        log(writer, &format!("{} {}{} checked", stats.total, typename, s(stats.total)));
         if stats.nnn > 0 {
-            log(pwriter, &format!(", {} non-normalized", stats.nnn));
+            log(writer, &format!(", {} non-normalized", stats.nnn));
         }
         if stats.apo > 0 {
-            log(pwriter, &format!(", {} wrong apostrophe", stats.apo));
+            log(writer, &format!(", {} wrong apostrophe", stats.apo));
         }
         if stats.spc > 0 {
-            log(pwriter, &format!(", {} wrong space", stats.spc));
+            log(writer, &format!(", {} wrong space", stats.spc));
         }
         if stats.sp2 > 0 {
-            log(pwriter, &format!(", {} multiple space", stats.sp2));
+            log(writer, &format!(", {} multiple space", stats.sp2));
         }
         if stats.car > 0 {
-            log(pwriter, &format!(", {} wrong character", stats.car));
+            log(writer, &format!(", {} wrong character", stats.car));
         }
         if stats.fix > 0 {
-            log(pwriter, &format!(", {} problem{} fixed", stats.fix, s(stats.fix)));
+            log(writer, &format!(", {} problem{} fixed", stats.fix, s(stats.fix)));
         }
         if stats.err > 0 {
-            log(pwriter, &format!(", {} error{}", stats.err, s(stats.err)));
+            log(writer, &format!(", {} error{}", stats.err, s(stats.err)));
         }
-        logln(pwriter, "");
+        logln(writer, "");
     }
 
     logln(&mut writer, "");
     final_status(&mut writer, &folders_stats, "folder");
     final_status(&mut writer, &files_stats, "file");
     logln(&mut writer, &format!("Total duration: {:.3}s", duration.as_secs_f64()));
-
-    let _ = writer.flush();
 }
 
 fn process_folder(
@@ -299,7 +261,7 @@ fn process_folder(
     folders_stats: &mut Statistics,
     files_stats: &mut Statistics,
     fixit: bool,
-    pwriter: &mut BufWriter<File>,
+    writer: &mut LogWriter,
     pconfusables: &Confusables,
 ) {
     let mut pb = pa.to_path_buf();
@@ -314,16 +276,16 @@ fn process_folder(
             }
         }
         Err(e) => {
-            logln(pwriter, &format!("*** Error {e}")); // Rename failed, but we continue anyway, don't really know if it's Ok or not...
+            logln(writer, &format!("*** Error {e}")); // Rename failed, but we continue anyway, don't really know if it's Ok or not...
             return;
         }
     }
 
     // First check folder basename
     folders_stats.total += 1;
-    if let Some(new_name) = check_basename(pa, "folder", folders_stats, pwriter, pconfusables) {
+    if let Some(new_name) = check_basename(pa, "folder", folders_stats, writer, pconfusables) {
         if fixit {
-            logln(pwriter, &format!("  --> rename folder \"{new_name}\""));
+            logln(writer, &format!("  --> rename folder \"{new_name}\""));
             let newpath = pb.parent().unwrap().join(Path::new(&new_name));
             //logln(pwriter, &format!("  --> \"{}\"", newpath.display()));
             match fs::rename(&pb, &newpath) {
@@ -331,7 +293,7 @@ fn process_folder(
                     folders_stats.fix += 1;
                     pb = newpath;
                 }
-                Err(e) => logln(pwriter, &format!("*** Error {e}")), // Rename failed, but we continue anyway, don't really know if it's Ok or not...
+                Err(e) => logln(writer, &format!("*** Error {e}")), // Rename failed, but we continue anyway, don't really know if it's Ok or not...
             }
         }
     }
@@ -339,41 +301,41 @@ fn process_folder(
     // Then process folder content
     let contents = fs::read_dir(&pb);
     if contents.is_err() {
-        logln(pwriter, &format!("*** Error enumerating folder {}: {:?}", pb.display(), contents.err()));
+        logln(writer, &format!("*** Error enumerating folder {}: {:?}", pb.display(), contents.err()));
         return;
     }
     for entry in contents.unwrap() {
         if entry.is_err() {
-            logln(pwriter, &format!("*** Error accessing entry: {:?}", entry.err()));
+            logln(writer, &format!("*** Error accessing entry: {:?}", entry.err()));
             continue;
         }
         let entry = entry.unwrap();
         let pb = entry.path();
         let ft = entry.file_type().unwrap();
         if ft.is_file() {
-            process_file(&pb, files_stats, fixit, pwriter, pconfusables);
+            process_file(&pb, files_stats, fixit, writer, pconfusables);
         } else if ft.is_dir() {
-            process_folder(&pb, folders_stats, files_stats, fixit, pwriter, pconfusables);
+            process_folder(&pb, folders_stats, files_stats, fixit, writer, pconfusables);
         }
     }
 }
 
-fn process_file(p: &Path, files_stats: &mut Statistics, fixit: bool, pwriter: &mut BufWriter<File>, pconfusables: &Confusables) {
+fn process_file(p: &Path, files_stats: &mut Statistics, fixit: bool, writer: &mut LogWriter, pconfusables: &Confusables) {
     files_stats.total += 1;
-    if let Some(new_name) = check_basename(p, "file", files_stats, pwriter, pconfusables) {
+    if let Some(new_name) = check_basename(p, "file", files_stats, writer, pconfusables) {
         if fixit {
-            logln(pwriter, &format!("  --> rename file \"{new_name}\""));
+            logln(writer, &format!("  --> rename file \"{new_name}\""));
             let newpath = p.parent().unwrap().join(Path::new(&new_name));
             //logln(pwriter, &format!("  --> \"{}\"", newpath.display()));
             match fs::rename(p, &newpath) {
                 Ok(_) => files_stats.fix += 1,
-                Err(e) => logln(pwriter, &format!("*** Error {e}")), // Rename failed
+                Err(e) => logln(writer, &format!("*** Error {e}")), // Rename failed
             }
         }
     }
 }
 
-fn check_basename(p: &Path, pt: &str, stats: &mut Statistics, pwriter: &mut BufWriter<File>, pconfusables: &Confusables) -> Option<String> {
+fn check_basename(p: &Path, pt: &str, stats: &mut Statistics, writer: &mut LogWriter, pconfusables: &Confusables) -> Option<String> {
     let fp = p.display();
     let file = p.file_name();
     if file.is_none() {
@@ -383,7 +345,7 @@ fn check_basename(p: &Path, pt: &str, stats: &mut Statistics, pwriter: &mut BufW
     let file = file.unwrap().to_str();
     if file.is_none() {
         stats.err += 1;
-        logln(pwriter, &format!("*** Invalid {pt} name {fp}, ignored"));
+        logln(writer, &format!("*** Invalid {pt} name {fp}, ignored"));
         return None;
     }
 
@@ -392,7 +354,7 @@ fn check_basename(p: &Path, pt: &str, stats: &mut Statistics, pwriter: &mut BufW
 
     // Check normalization
     if !is_nfc(&file) {
-        logln(pwriter, &format!("Non-normalized {pt} name {fp}"));
+        logln(writer, &format!("Non-normalized {pt} name {fp}"));
         stats.nnn += 1;
         // Normalize it for the rest to avoind complaining on combining accents as invalid characters
         file = file.nfc().collect();
@@ -405,7 +367,7 @@ fn check_basename(p: &Path, pt: &str, stats: &mut Statistics, pwriter: &mut BufW
     for c in &mut vc {
         //if CONF_APO.contains(c) {
         if pconfusables.apostrophe.contains(c) {
-            logln(pwriter, &format!("Invalid apostrophe in {pt} name {fp} -> {c} {:04X}", *c as i32));
+            logln(writer, &format!("Invalid apostrophe in {pt} name {fp} -> {c} {:04X}", *c as i32));
             if !pbapo {
                 pbapo = true;
                 stats.apo += 1;
@@ -419,7 +381,7 @@ fn check_basename(p: &Path, pt: &str, stats: &mut Statistics, pwriter: &mut BufW
     for c in &mut vc {
         //if CONF_SPC.contains(c) {
         if pconfusables.space.contains(c) {
-            logln(pwriter, &format!("Invalid space in {pt} name {fp} -> {:04X}", *c as i32));
+            logln(writer, &format!("Invalid space in {pt} name {fp} -> {:04X}", *c as i32));
             if !pbspc {
                 pbspc = true;
                 stats.spc += 1;
@@ -440,7 +402,7 @@ fn check_basename(p: &Path, pt: &str, stats: &mut Statistics, pwriter: &mut BufW
         if c == ' ' {
             if lastc == ' ' {
                 if !pbsp2 {
-                    logln(pwriter, &format!("Multiple spaces in {pt} name {fp}"));
+                    logln(writer, &format!("Multiple spaces in {pt} name {fp}"));
                     pbsp2 = true;
                     stats.sp2 += 1;
                 }
@@ -470,7 +432,7 @@ fn check_basename(p: &Path, pt: &str, stats: &mut Statistics, pwriter: &mut BufW
                 pbchr = true;
                 stats.car += 1;
             }
-            logln(pwriter, &format!("Invalid char in {pt} name {fp} -> {c} {:04X}", c as i32));
+            logln(writer, &format!("Invalid char in {pt} name {fp} -> {c} {:04X}", c as i32));
             // Special case, fix U+200E by removing it (LEFT-TO-RIGHT MARK)
             if c=='\u{200E}' {
                 to_fix=true;

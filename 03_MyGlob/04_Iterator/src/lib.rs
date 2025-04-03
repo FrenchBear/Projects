@@ -10,6 +10,7 @@
 // 2025-03-29   PV      1.2  Test cases, documentation of regex, bug of \ inside a [ ] fixed
 // 2025-03-29   PV      1.3  Now returns files and directories
 // 2025-03-30   PV      1.3.1 Search for constant directory fixed; Append \* to glob ending with **
+// 2025-04-03   PV      1.3.2 is_constant member added to MyGlobSearch
 
 #![allow(unused_variables, dead_code, unused_imports)]
 
@@ -229,6 +230,11 @@ impl MyGlobSearch {
             segments: &self.segments,
             ignore_dirs: &self.ignore_dirs,
         }
+    }
+
+    /// Returns true if glob is valid, but it's just a constant, no filter segment and no recurse segment
+    pub fn is_constant(&self) -> bool {
+        self.segments.is_empty()
     }
 }
 
