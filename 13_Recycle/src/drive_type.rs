@@ -1,5 +1,5 @@
 // drive_type.rs
-// Calls xx to find out the type behind a path
+// Calls GetDriveTypeW to find out the type of drive behind a path
 //
 // 2025-04-03   PV      First version
 

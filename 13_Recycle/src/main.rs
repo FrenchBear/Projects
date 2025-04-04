@@ -2,9 +2,6 @@
 //
 // 2025-04-03	PV      First version
 
-// ToDo:
-// - Check for dir + NTFS reparse point, ignore them (file+reparse should be Ok, but not sure...)
-// - After delete folder, ignore content below this folder (not sure whether MyGlob will enumerate, test it)
 
 #![allow(unused)]
 
@@ -21,12 +18,14 @@ use myglob::{MyGlobMatch, MyGlobSearch};
 // -----------------------------------
 // Submodules
 
-mod logging;
 mod drive_type;
-pub mod tests;
+mod logging;
+mod reparse;
+mod tests;
 
-use logging::*;
 use drive_type::*;
+use logging::*;
+use reparse::*;
 
 // -----------------------------------
 // Globals
@@ -132,7 +131,7 @@ fn main() {
         if msg.is_empty() {
             process::exit(0);
         }
-        logln(&mut None, format!( "*** {APP_NAME}: Problem parsing arguments: {}", err).as_str());
+        logln(&mut None, format!("*** {APP_NAME}: Problem parsing arguments: {}", err).as_str());
         process::exit(1);
     });
 
@@ -146,6 +145,7 @@ fn main() {
 
     // for source in options.sources.iter() {
     //     println!("{} -> {:?}", source, drive_type(&Path::new(source)));
+    //     println!("{} -> {:?}", source, reparse_type(&Path::new(source)));
     // }
     // process::exit(0);
 
@@ -238,14 +238,37 @@ fn recycle_dir(writer: &mut LogWriter, path: &Path, dirs_count: &mut i32, option
 
     // We don't recycle dirs located on a remote drive
     if let Ok(dt) = drive_type(path) {
-        if dt==DriveType::DRIVE_REMOTE {
+        if dt == DriveType::DRIVE_REMOTE {
             if !options.silent {
                 logln(
                     writer,
                     format!("*** Can't recycle dir {} located on a remote drive", quoted_path(path)).as_str(),
                 );
-                return true;
+                return true; // Block glob processing, since all other dirs are on remote drive
             }
+        }
+    }
+
+    if let Ok(rt) = reparse_type(path) {
+        if rt == ReparseType::JUNCTION || rt == ReparseType::SYMLINK || rt == ReparseType::STUB {
+            if !options.silent {
+                logln(
+                    writer,
+                    format!(
+                        "*** Can't recycle dir {} reparse point {}",
+                        if rt == ReparseType::JUNCTION {
+                            "JUNCTION"
+                        } else if rt == ReparseType::SYMLINK {
+                            "SYMLINK"
+                        } else {
+                            "STUB"
+                        },
+                        quoted_path(path)
+                    )
+                    .as_str(),
+                );
+            }
+            return false; // Don't block glob processing
         }
     }
 
@@ -266,7 +289,7 @@ fn recycle_dir(writer: &mut LogWriter, path: &Path, dirs_count: &mut i32, option
             }
         }
     }
-    false   // No problem
+    false // No problem
 }
 
 fn recycle_file(writer: &mut LogWriter, path: &Path, files_count: &mut i32, options: &Options) -> bool {
@@ -280,18 +303,29 @@ fn recycle_file(writer: &mut LogWriter, path: &Path, files_count: &mut i32, opti
 
     // We don't recycle files located on a remote drive
     if let Ok(dt) = drive_type(path) {
-        if dt==DriveType::DRIVE_REMOTE {
+        if dt == DriveType::DRIVE_REMOTE {
             if !options.silent {
                 logln(
                     writer,
                     format!("*** Can't recycle file {} located on a remote drive", quoted_path(path)).as_str(),
                 );
-                return true;
+                return true; // Block glob processing, since all other files are on remote drive
             }
         }
     }
-    
-    
+
+    // SYMLINK files can safely be sent to trash, no need to block them
+    // OneDrive Stubs are deleted locally AND on OneDrive, they're not copied to local recycle.bin, but in
+    // outlook recycle.bin.  For security, let refuse to delete them by default
+    if let Ok(rt) = reparse_type(path) {
+        if rt == ReparseType::STUB {
+            if !options.silent {
+                logln(writer, format!("*** Can't recycle file stub {}", quoted_path(path)).as_str());
+            }
+            return false; // Don't block glob processing
+        }
+    }
+
     match trash::delete(path) {
         Ok(_) => {
             if options.verbose {
@@ -309,7 +343,7 @@ fn recycle_file(writer: &mut LogWriter, path: &Path, files_count: &mut i32, opti
             }
         }
     }
-    false   // No problem
+    false // No problem
 }
 
 fn quoted_path(path: &Path) -> String {

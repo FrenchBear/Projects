@@ -11,4 +11,4 @@ termcolor = "1.4.1"
 chrono = "0.4.40"
 trash = "5.2.2"
 myglob = { path = "../03_MyGlob/04_Iterator" }
-windows = {version= "0.61.1", features = ["Win32_Storage_FileSystem"]}
+windows = {version= "0.61.1", features = ["Win32_Foundation", "Win32_Storage_FileSystem", "Win32_System_IO"]}
