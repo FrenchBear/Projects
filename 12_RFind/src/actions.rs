@@ -2,6 +2,7 @@
 //
 // 2025-03-29	PV      First version
 // 2025-03-31	PV      Action Print with option detail
+// 2025-04-06	PV      Use fs::remove_dir_all instead of fs::remove_dir to delete non-empty directories
 
 use super::*;
 
@@ -165,13 +166,13 @@ impl Action for ActionRmdir {
             if self.no_recycle {
                 logln(writer, format!("RD /S {}", qp).as_str());
                 if !noaction {
-                    match fs::remove_dir(path) {
+                    match fs::remove_dir_all(path) {
                         Ok(_) => {
                             if verbose {
                                 logln(writer, format!("Dir {} deleted successfully.", qp).as_str());
                             }
                         }
-                        Err(e) => logln(writer, format!("*** Error deleting dir (fs::remove_dir) {}: {}", qp, e).as_str()),
+                        Err(e) => logln(writer, format!("*** Error deleting dir (fs::remove_dir_all) {}: {}", qp, e).as_str()),
                     }
                 }
             } else {

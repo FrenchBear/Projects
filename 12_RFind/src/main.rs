@@ -3,6 +3,7 @@
 // 2025-03-29	PV      First version
 // 2025-03-31	PV      1.1.0 Action Dir
 // 2025-04-03	PV      1.2.0 Core reorganization, logging module
+// 2025-04-06	PV      1.3.0 Use fs::remove_dir_all instead of fs::remove_dir to delete non-empty directories
 
 //#![allow(unused)]
 
@@ -31,7 +32,7 @@ use logging::*;
 // Global constants
 
 const APP_NAME: &str = "rfind";
-const APP_VERSION: &str = "1.2.0";
+const APP_VERSION: &str = "1.3.0";
 
 // -----------------------------------
 // Traits
@@ -74,7 +75,7 @@ impl Options {
 -n          No action: display actions, but don't execute them
 -f|-type f  Search for files
 -d|-type d  Search for directories
--no_recycle  Delete forever (default: -recycle, delete local files to recycle bin)
+-norecycle  Delete forever (default: -recycle, delete local files to recycle bin)
 source      File or folder where to search, glob syntax supported (see advanced notes)
 
 Actions:
@@ -196,7 +197,7 @@ Glob pattern nules:
                     }
 
                     "recycle" => options.no_recycle = false,
-                    "no_recycle" => options.no_recycle = true,
+                    "norecycle" => options.no_recycle = true,
 
                     "print" => {
                         options.actions_names.insert("print");
