@@ -196,6 +196,7 @@ fn main() {
         process::exit(1);
     });
 
+    // Just for dev
     if options.sources.is_empty() {
         options.sources.push(r"W:\Livres\Art\**\*.pdf".to_string());
     }
@@ -229,6 +230,7 @@ fn main() {
         }
     }
 
+    // First collect information on files in DataBag
     for gs in sources.iter() {
         for ma in gs.1.explore_iter() {
             match ma {
@@ -243,6 +245,12 @@ fn main() {
                 }
             }
         }
+    }
+
+    if b.books.is_empty() {
+        logln(&mut writer, "*** No book found, nothing to report."); 
+    } else {
+        logln(&mut writer, (format!("{} book(s) found, consolidating data", b.books.len()).as_str()));
     }
 
     let duration = start.elapsed();
@@ -270,6 +278,7 @@ struct BookName {
     edition_year: String,
     edition: String,
     year: String,
+    braced: String,
 }
 
 // fn split_path_and_basename(path: &Path) -> (PathBuf, Option<String>) {
@@ -318,7 +327,7 @@ fn get_book_name(pb: PathBuf) -> Result<BookName, String> {
         };
         let blockp = &full_title[ix_start + 1..ix_end];
         let base_title = String::from(&full_title[..ix_start]) + &full_title[ix_end + 1..];
-        
+
         use std::sync::LazyLock;
         static BLOCK_PAR: LazyLock<Regex> =
             LazyLock::new(|| Regex::new(r"^(?:(1ère|[12]?\dè|[2-9]?1st|[2-9]?2nd|[2-9]?3rd|\d?[04-9]th|11th|12th|13th) ed, )?(\d{4}|X)$").unwrap());
@@ -332,9 +341,27 @@ fn get_book_name(pb: PathBuf) -> Result<BookName, String> {
             None => "",
         };
 
-        (String::from(String::from(base_title.trim())), String::from(blockp), String::from(year), String::from(&ca[2]))
+        (
+            String::from(String::from(base_title.trim())),
+            String::from(blockp),
+            String::from(year),
+            String::from(&ca[2]),
+        )
     } else {
         (full_title.clone(), String::new(), String::new(), String::new())
+    };
+
+    let (base_title, braced) = if base_title.contains('{') {
+        let ix_start = base_title.find('{').unwrap();
+        let Some(ix_end) = find_from_position(&base_title, '}', ix_start + 1) else {
+            return Err(format!("Err: Missing closing curly brace: {}", filefp));
+        };
+        let blockb = &base_title[ix_start + 1..ix_end];
+        let base_title = String::from(&base_title[..ix_start]) + &base_title[ix_end + 1..];
+
+        (String::from(base_title.trim_end()), String::from(blockb))
+    } else {
+        (base_title, String::new())
     };
 
     Ok(BookName {
@@ -346,6 +373,7 @@ fn get_book_name(pb: PathBuf) -> Result<BookName, String> {
         edition_year,
         edition,
         year,
+        braced,
     })
 }
 
