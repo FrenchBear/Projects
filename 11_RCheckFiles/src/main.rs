@@ -6,11 +6,12 @@
 // 2025-03-28	PV      1.2.1 Handle gracefully errors about inexistent folders such as \\teraz\videos rather than panicking. No error for network root (no basename)
 // 2025-03-29	PV      1.2.2 Renamed rcheckfiles
 // 2025-04-03	PV      1.3.0 Code reorganization, module logging
+// 2025-04-08	PV      1.4.0 Check brackets (incl. unit tests)
 
 // standard library imports
 use std::collections::HashSet;
-use std::fs;
 use std::error::Error;
+use std::fs;
 use std::os::windows::prelude::*;
 use std::path::Path;
 use std::process;
@@ -18,8 +19,8 @@ use std::time::Instant;
 
 // external crates imports
 use getopt::Opt;
-use unicode_normalization::{UnicodeNormalization, is_nfc};
 use logging::*;
+use unicode_normalization::{UnicodeNormalization, is_nfc};
 
 // -----------------------------------
 // Submodules
@@ -31,7 +32,7 @@ pub mod tests;
 // Globals
 
 const APP_NAME: &str = "rcheckfiles";
-const APP_VERSION: &str = "1.3.0";
+const APP_VERSION: &str = "1.4.0";
 
 const SPECIAL_CHARS: &str = "€®™©–—…×·•∶⧹⧸／⚹†‽¿🎜🎝♫♪“”⚡♥";
 
@@ -172,6 +173,7 @@ impl Options {
 struct Statistics {
     total: i32, // Total files/folders processed
     nnn: i32,   // Non-normalized names
+    bra: i32,   // Bracket issue
     apo: i32,   // Incorrect apostrophe
     spc: i32,   // Incorrect space
     car: i32,   // Maybe incorrect char
@@ -228,6 +230,9 @@ fn main() {
         log(writer, &format!("{} {}{} checked", stats.total, typename, s(stats.total)));
         if stats.nnn > 0 {
             log(writer, &format!(", {} non-normalized", stats.nnn));
+        }
+        if stats.bra > 0 {
+            log(writer, &format!(", {} brackets issue{}", stats.bra, s(stats.bra)));
         }
         if stats.apo > 0 {
             log(writer, &format!(", {} wrong apostrophe", stats.apo));
@@ -352,6 +357,12 @@ fn check_basename(p: &Path, pt: &str, stats: &mut Statistics, writer: &mut LogWr
     let mut file = file.unwrap().to_string();
     let original_file = file.clone();
 
+    // Check for balanced brackets, but don't attempt a correction
+    if !is_balanced(&file) {
+        logln(writer, &format!("Non-balanced brackets {pt} name {fp}"));
+        stats.bra += 1;
+    }
+
     // Check normalization
     if !is_nfc(&file) {
         logln(writer, &format!("Non-normalized {pt} name {fp}"));
@@ -434,8 +445,8 @@ fn check_basename(p: &Path, pt: &str, stats: &mut Statistics, writer: &mut LogWr
             }
             logln(writer, &format!("Invalid char in {pt} name {fp} -> {c} {:04X}", c as i32));
             // Special case, fix U+200E by removing it (LEFT-TO-RIGHT MARK)
-            if c=='\u{200E}' {
-                to_fix=true;
+            if c == '\u{200E}' {
+                to_fix = true;
             }
         }
     }
@@ -444,4 +455,42 @@ fn check_basename(p: &Path, pt: &str, stats: &mut Statistics, writer: &mut LogWr
     }
 
     if file == original_file { None } else { Some(file) }
+}
+
+
+/// Checks that () [] {} «» ‹› pairs are correctly embedded and closed in a string
+pub fn is_balanced(s: &str) -> bool {
+    let mut stack = Vec::<char>::new();
+    let mut current_state = ' ';
+
+    for c in s.chars() {
+        match c {
+            '(' | '[' | '{' | '«' | '‹' => {
+                stack.push(current_state);
+                current_state = c;
+            }
+            ')' | ']' | '}' | '»' | '›' => {
+                if stack.len() == 0 {
+                    return false;
+                }
+
+                let opener = match c {
+                    ')' => '(',
+                    ']' => '[',
+                    '}' => '{',
+                    '»' => '«',
+                    '›' => '‹',
+                    _ => unreachable!(),
+                };
+                if current_state == opener {
+                    current_state = stack.pop().unwrap();
+                } else {
+                    return false;
+                }
+            }
+            _ => {}
+        }
+    }
+
+    current_state==' '
 }

@@ -5,16 +5,16 @@
 #![allow(unused)]
 
 // standard library imports
-use std::{error::Error, ops::Index};
 use std::fmt::Debug;
 use std::path::{Path, PathBuf};
 use std::process;
 use std::time::Instant;
+use std::{error::Error, ops::Index};
 
 // external crates imports
 use myglob::{MyGlobMatch, MyGlobSearch};
+use regex::{Captures, Regex};
 use terminal_size::{Width, terminal_size};
-use regex::Regex;
 
 // -----------------------------------
 // Submodules
@@ -263,9 +263,13 @@ fn process_file(writer: &mut LogWriter, b: &mut DataBag, pb: PathBuf) {
 #[derive(Debug)]
 struct BookName {
     pb: PathBuf,
-    base: String,
+    full_title: String,
+    base_title: String,
     editor: String,
     authors: String,
+    edition_year: String,
+    edition: String,
+    year: String,
 }
 
 // fn split_path_and_basename(path: &Path) -> (PathBuf, Option<String>) {
@@ -286,11 +290,11 @@ fn get_book_name(pb: PathBuf) -> Result<BookName, String> {
     let file = pb.file_name().unwrap().to_str().unwrap();
     let stem = pb.file_stem().unwrap().to_str().unwrap();
     let extension = pb.extension().unwrap().to_str().unwrap();
-    
-    let t = file.split(" - ").collect::<Vec<&str>>();
 
-    let (base, editor, authors) = match t.len() {
-        1 => (file, "", ""),
+    let t = stem.split(" - ").collect::<Vec<&str>>();
+
+    let (full_title, editor, authors) = match t.len() {
+        1 => (stem, "", ""),
         2 => {
             if t[1].starts_with('[') {
                 (t[0], t[1], "")
@@ -299,51 +303,97 @@ fn get_book_name(pb: PathBuf) -> Result<BookName, String> {
             }
         }
         3 => (t[0], t[1], t[2]),
-        _ => return Err(format!("Err: >3 seg: {}", filefp))
+        _ => return Err(format!("Err: >3 seg: {}", filefp)),
     };
 
     // Transform &str in String to free mutable borrow of pb
-    let base = base.into();
+    let full_title = String::from(full_title);
     let editor = editor.into();
     let authors = authors.into();
 
+    let (base_title, edition_year, edition, year) = if full_title.contains('(') {
+        let ix_start = full_title.find('(').unwrap();
+        let Some(ix_end) = find_from_position(&full_title, ')', ix_start + 1) else {
+            return Err(format!("Err: Missing closing parenthesis: {}", filefp));
+        };
+        let blockp = &full_title[ix_start + 1..ix_end];
+        let base_title = String::from(&full_title[..ix_start]) + &full_title[ix_end + 1..];
+        
+        use std::sync::LazyLock;
+        static BLOCK_PAR: LazyLock<Regex> =
+            LazyLock::new(|| Regex::new(r"^(?:(1ère|[12]?\dè|[2-9]?1st|[2-9]?2nd|[2-9]?3rd|\d?[04-9]th|11th|12th|13th) ed, )?(\d{4}|X)$").unwrap());
+        let Some(ca) = BLOCK_PAR.captures(blockp) else {
+            return Err(format!("Err: Invalid block between parentheses: {}", filefp));
+        };
+
+        // Since capture group 1 is optional, can't use indexed access that will panic if captire 1 is None --> use get(1)
+        let year = match ca.get(1) {
+            Some(ma) => ma.as_str(),
+            None => "",
+        };
+
+        (String::from(String::from(base_title.trim())), String::from(blockp), String::from(year), String::from(&ca[2]))
+    } else {
+        (full_title.clone(), String::new(), String::new(), String::new())
+    };
+
     Ok(BookName {
         pb,
-        base,
+        full_title,
+        base_title,
         editor,
         authors,
+        edition_year,
+        edition,
+        year,
     })
-
 }
 
-//     if base.contains('(') {
-//         let ix_start = base.find('(').unwrap();
-//         let Some(ix_end) = find_from_position(base, ')', ix_start+1) else {
-//             logln(writer, format!("Err: Missing closing parenthesis: {}", filefp).as_str());
-//             b.errors_count += 1;
-//             return;
-//         };
-//         let blockp = &base[ix_start+1..ix_end];
+fn find_from_position(s: &str, c: char, start_position: usize) -> Option<usize> {
+    if start_position >= s.len() {
+        return None; // Start position is out of bounds
+    }
 
-//         use std::sync::LazyLock;
-//         static BLOCK_PAR:LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^((1ère|[12]?\dè|[2-9]?1st|[2-9]?2nd|[2-9]?3rd|\d?[04-9]th|11th|12th|13th) ed, )?(\d{4}|X)$").unwrap());
-//         let Some(caps) = BLOCK_PAR.captures(blockp) else {
-//             logln(writer, format!("Err: Invalid block betweed parenthesis: {}", filefp).as_str());
-//             b.errors_count += 1;
-//             return;
-//         };
-    
+    let search_slice = &s[start_position..];
+    // Note that the following map is NOT the usual iterator map, but Option::map
+    // Maps an Option<T> to Option<U> by applying a function to a contained value (if Some) or returns None (if None).
+    search_slice.find(c).map(|relative_position| start_position + relative_position)
+}
 
-//     }
-// }
+/// Checks that () [] {} «» ‹› pairs are correctly embedded and closed in a string
+pub fn is_balanced(s: &str) -> bool {
+    // Unit tests in rcheckfiles
+    let mut stack = Vec::<char>::new();
+    let mut current_state = ' ';
 
-// fn find_from_position(s: &str, c: char, start_position: usize) -> Option<usize> {
-//     if start_position >= s.len() {
-//         return None; // Start position is out of bounds
-//     }
+    for c in s.chars() {
+        match c {
+            '(' | '[' | '{' | '«' | '‹' => {
+                stack.push(current_state);
+                current_state = c;
+            }
+            ')' | ']' | '}' | '»' | '›' => {
+                if stack.len() == 0 {
+                    return false;
+                }
 
-//     let search_slice = &s[start_position..];
-//     // Note that the following map is NOT the usual iterator map, but Option::map
-//     // Maps an Option<T> to Option<U> by applying a function to a contained value (if Some) or returns None (if None).
-//     search_slice.find(c).map(|relative_position| start_position + relative_position)
-//}
+                let opener = match c {
+                    ')' => '(',
+                    ']' => '[',
+                    '}' => '{',
+                    '»' => '«',
+                    '›' => '‹',
+                    _ => unreachable!(),
+                };
+                if current_state == opener {
+                    current_state = stack.pop().unwrap();
+                } else {
+                    return false;
+                }
+            }
+            _ => {}
+        }
+    }
+
+    current_state == ' '
+}

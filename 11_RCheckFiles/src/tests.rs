@@ -1,17 +1,32 @@
 // rcheckfiles tests
-// Actually a placeholder, no test are currently implemented
 //
-// 2025-03-23   PV
+// 2025-04-08   PV
 
 #[cfg(test)]
-pub mod some_tests {
+pub mod balanced_tests {
+    use crate::is_balanced;
 
-    // #[test]
-    // fn text_utf8() {
-    //     let r = crate::read_text_file(Path::new(r"C:\DocumentsOD\Doc tech\Encodings\prenoms-utf8.txt"));
-    //     assert!(r.is_ok());
-    //     assert_eq!(&r.unwrap()[25..35], "géraldine");
-    // }
+    #[test]
+    fn balanced1() { assert!(is_balanced("simple texte")); }
 
+    #[test]
+    fn balanced2() { assert!(is_balanced("a (b) [c] {d} «e» ‹f›")); }
 
+    #[test]
+    fn balanced3() { assert!(is_balanced("({[«‹Hello›»]})")); }
+
+    #[test]
+    fn balanced4() { assert!(is_balanced("((a[[b]c]d)e)")); }
+
+    #[test]
+    fn balanced5() { assert!(is_balanced("")); }
+
+    #[test]
+    fn not_balanced1() { assert!(!is_balanced("((a((b)cd)e)")); }
+
+    #[test]
+    fn not_balanced2() { assert!(!is_balanced("a(b[c]}")); }
+
+    #[test]
+    fn not_balanced3() { assert!(!is_balanced("pom)me")); }
 }
