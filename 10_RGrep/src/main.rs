@@ -7,6 +7,7 @@
 // 2025-03-28   PV      1.2.1   Option -1 to use glob crate, glob syntax documented in extended help
 // 2025-03-29   PV      1.2.2   Option -2 is now default; Rename rgrep
 // 2025-04-01   PV      1.3.0   read_text_file_2, faster to detect text encoding
+// 2025-04-08   PV      1.4.0   When stdout is redirected, don't use colors (atty crate)
 
 // standard library imports
 use std::error::Error;
@@ -21,13 +22,13 @@ use glob::{MatchOptions, glob_with};
 use myglob::{MyGlobMatch, MyGlobSearch};
 use regex::Regex;
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
-use terminal_size::{terminal_size, Width};
+use terminal_size::{Width, terminal_size};
 
 // -----------------------------------
 // Submodules
 
-mod grepiterator;
 mod decode_encoding;
+mod grepiterator;
 pub mod tests;
 
 use decode_encoding::*;
@@ -36,7 +37,7 @@ use decode_encoding::*;
 // Global constants
 
 const APP_NAME: &str = "rgrep";
-const APP_VERSION: &str = "1.2.2";
+const APP_VERSION: &str = "1.4.0";
 
 // ==============================================================================================
 // Options processing
@@ -67,7 +68,7 @@ impl Options {
     fn usage() {
         Options::header();
         eprintln!(
-"\nUsage: {APP_NAME} [?|-?|-h|??] [-1|-2] [-i] [-w] [-F] [-r] [-v] [-c] [-l] pattern source...
+            "\nUsage: {APP_NAME} [?|-?|-h|??] [-1|-2] [-i] [-w] [-F] [-r] [-v] [-c] [-l] pattern source...
 ?|-?|-h  Show this message
 ??       Show advanced usage notes
 -i       Ignore case during search
@@ -85,8 +86,12 @@ source   File or folder where to search, glob syntax supported"
 
     fn extended_usage() {
         Options::header();
-        let width = if let Some((Width(w), _)) = terminal_size() { w as usize } else {80usize};
-        let text = 
+        let width = if let Some((Width(w), _)) = terminal_size() {
+            w as usize
+        } else {
+            80usize
+        };
+        let text =
 "Copyright ©2025 Pierre Violent\n
 Advanced usage notes\n--------------------\n
 Options -c (show count of matching lines) and -l (show matching file names only) can be used together to show matching lines count only for matching files.\n
@@ -102,50 +107,53 @@ Glob crate pattern nules (option -1):
 MyGlob care rule patters (option -2, default): Include all above patterns, plus:
 •   {choice1,choice2...}  match any of the comma-separated choices between braces. Can be nested, and include ?, * and character classes.
 •   Character classes [ ] accept regex syntax, see https://docs.rs/regex/latest/regex/#character-classes for character classes and escape sequences supported.";
-    
-    println!("{}", Self::format_text(text, width));
-}
 
-fn format_text(text: &str, width: usize) -> String {
-    let mut s = String::new();
-    for line in text.split('\n') {
-        if !s.is_empty() {s.push('\n');}
-        s.push_str(Self::format_line(line, width).as_str());
+        println!("{}", Self::format_text(text, width));
     }
-    s
-}
 
-fn format_line(line: &str, width: usize) -> String {
-    let mut result = String::new();
-    let mut current_line_length = 0;
-
-    let left_margin = if line.starts_with('•') {"  "} else {""};
-
-    for word in line.split_whitespace() {
-        let word_length = word.len();
-
-        if current_line_length + word_length + 1 <= width {
-            if !result.is_empty() {
-                result.push(' ');
-                current_line_length += 1; // Add space
+    fn format_text(text: &str, width: usize) -> String {
+        let mut s = String::new();
+        for line in text.split('\n') {
+            if !s.is_empty() {
+                s.push('\n');
             }
-            result.push_str(word);
-            current_line_length += word_length;
-        } else {
-            if !result.is_empty() {
-                result.push('\n');
-                current_line_length =
-                if !left_margin.is_empty() {
-                    result.push_str(left_margin);
-                    2
-                } else {0};
-            }
-            result.push_str(word);
-            current_line_length += word_length;
+            s.push_str(Self::format_line(line, width).as_str());
         }
+        s
     }
-    result
-}
+
+    fn format_line(line: &str, width: usize) -> String {
+        let mut result = String::new();
+        let mut current_line_length = 0;
+
+        let left_margin = if line.starts_with('•') { "  " } else { "" };
+
+        for word in line.split_whitespace() {
+            let word_length = word.len();
+
+            if current_line_length + word_length + 1 <= width {
+                if !result.is_empty() {
+                    result.push(' ');
+                    current_line_length += 1; // Add space
+                }
+                result.push_str(word);
+                current_line_length += word_length;
+            } else {
+                if !result.is_empty() {
+                    result.push('\n');
+                    current_line_length = if !left_margin.is_empty() {
+                        result.push_str(left_margin);
+                        2
+                    } else {
+                        0
+                    };
+                }
+                result.push_str(word);
+                current_line_length += word_length;
+            }
+        }
+        result
+    }
 
     /// Build a new struct Options analyzing command line parameters.<br/>
     /// Some invalid/inconsistent options or missing arguments return an error.
@@ -423,62 +431,80 @@ fn process_path(re: &Regex, path: &Path, options: &Options) {
 
     let res = read_text_file_2(path);
     match res {
-        Ok((Some(s),_)) => {
+        Ok((Some(s), _)) => {
             let filename = path.display().to_string();
             process_text(re, s.as_str(), filename.as_str(), options);
-        },
+        }
         Ok((None, _)) => {
             // Non-text files are ignored
             if options.verbose == 1 {
                 println!("{APP_NAME}: ignored non-text file {}", path.display());
             }
             return;
-        },
+        }
         Err(e) => {
             eprintln!("*** Error reading file {}: {}", path.display(), e);
             return;
         }
     }
-
 }
 
 /// Core rgrep process, search for re in txt, read from filename, according to options.
 fn process_text(re: &Regex, txt: &str, filename: &str, options: &Options) {
-    let mut stdout = StandardStream::stdout(ColorChoice::Always);
-    let mut match_color = ColorSpec::new();
-    match_color.set_fg(Some(Color::Red)).set_bold(true);
-    let mut file_color = ColorSpec::new();
-    file_color.set_fg(Some(Color::Black)).set_intense(true);
-
-    // search
     let mut matchlinecount = 0;
-    for gi in grepiterator::GrepLineMatches::new(txt, re) {
-        matchlinecount += 1;
 
-        if options.out_level == 1 {
-            println!("{}", filename);
-            return;
+    if atty::is(atty::Stream::Stdout) {
+        let mut stdout = StandardStream::stdout(ColorChoice::Always);
+        let mut match_color = ColorSpec::new();
+        match_color.set_fg(Some(Color::Red)).set_bold(true);
+        let mut file_color = ColorSpec::new();
+        file_color.set_fg(Some(Color::Black)).set_intense(true);
+
+        for gi in grepiterator::GrepLineMatches::new(txt, re) {
+            matchlinecount += 1;
+
+            if options.out_level == 1 {
+                println!("{}", filename);
+                return;
+            }
+
+            if options.out_level == 0 {
+                if options.show_path {
+                    let _ = stdout.set_color(&file_color);
+                    let _ = write!(&mut stdout, "{}: ", filename);
+                    let _ = stdout.reset();
+                }
+
+                let mut p: usize = 0;
+                for ma in gi.ranges {
+                    let e = ma.end;
+                    print!("{}", &gi.line[p..ma.start]);
+                    let _ = stdout.set_color(&match_color);
+                    let _ = write!(&mut stdout, "{}", &gi.line[ma]);
+                    let _ = stdout.reset();
+                    p = e;
+                }
+                println!("{}", &gi.line[p..]);
+            }
         }
+    } else {
+        for gi in grepiterator::GrepLineMatches::new(txt, re) {
+            matchlinecount += 1;
 
-        if options.out_level == 0 {
-            if options.show_path {
-                let _ = stdout.set_color(&file_color);
-                let _ = write!(&mut stdout, "{}: ", filename);
-                let _ = stdout.reset();
+            if options.out_level == 1 {
+                println!("{}", filename);
+                return;
             }
 
-            let mut p: usize = 0;
-            for ma in gi.ranges {
-                let e = ma.end;
-                print!("{}", &gi.line[p..ma.start]);
-                let _ = stdout.set_color(&match_color);
-                let _ = write!(&mut stdout, "{}", &gi.line[ma]);
-                let _ = stdout.reset();
-                p = e;
+            if options.out_level == 0 {
+                if options.show_path {
+                    print!("{}: ", filename);
+                }
+                println!("{}", gi.line);
             }
-            println!("{}", &gi.line[p..]);
         }
     }
+
     // Note: both options -c and -l (out_level==3) is not supported by Linux version
     if options.out_level == 2 || (options.out_level == 3 && matchlinecount > 0) {
         println!("{}:{}", filename, matchlinecount);

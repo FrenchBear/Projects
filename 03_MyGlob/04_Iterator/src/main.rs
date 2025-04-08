@@ -27,7 +27,7 @@ fn main() {
     // test_myglob(r"C:\Development\Git*\**\target");
 
     //test_myglob(r"C:\Development\GitHub\Projects\03_MyGlob\04_Iterator\**");
-    test_myglob(r"C:\Temp\zop");
+    test_myglob(r"W:\Livres\Art\**\*.*");
 
     // let globstr = "file.[!0-9]s";
     // let mut iter = globstr.chars().peekable();
@@ -51,6 +51,7 @@ fn main() {
 
 // Entry point for testing
 pub fn test_myglob(pattern: &str) {
+    let mut durations:Vec<f64>=Vec::new();
     for pass in 0..3 {
         println!("\nTest #{pass}");
 
@@ -76,13 +77,17 @@ pub fn test_myglob(pattern: &str) {
                         }
                     }
                 }
+                let duration = start.elapsed();
                 println!("{nf} file(s) found");
                 println!("{nd} dir(s) found");
-                let duration = start.elapsed();
-                println!("Iterator search in {:.3}s", duration.as_secs_f64());
+                println!("Iterator search in {:.3}s\n", duration.as_secs_f64());
+                durations.push(duration.as_secs_f64());
             }
 
             Err(e) => println!("Error building MyGlob: {:?}", e),
         }
     }
+
+    durations.sort_by(|a, b| a.partial_cmp(b).unwrap());
+    println!("Median time: {:.3}", durations[1]);
 }

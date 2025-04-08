@@ -9,7 +9,9 @@ pub mod read_text {
 
     #[test]
     fn text_utf8() {
-        let r = crate::read_text_file_2(Path::new(r"C:\DocumentsOD\Doc tech\Encodings\prenoms-utf8.txt"));
+        let r = crate::read_text_file_2(Path::new(
+            r"C:\DocumentsOD\Doc tech\Encodings\prenoms-utf8.txt",
+        ));
         assert!(r.is_ok());
         let res = r.unwrap();
         assert!(res.0.is_some());
@@ -19,7 +21,9 @@ pub mod read_text {
 
     #[test]
     fn text_1252() {
-        let r = crate::read_text_file_2(Path::new(r"C:\DocumentsOD\Doc tech\Encodings\prenoms-ansi,1252.txt"));
+        let r = crate::read_text_file_2(Path::new(
+            r"C:\DocumentsOD\Doc tech\Encodings\prenoms-ansi,1252.txt",
+        ));
         assert!(r.is_ok());
         let res = r.unwrap();
         assert!(res.0.is_some());
@@ -29,7 +33,9 @@ pub mod read_text {
 
     #[test]
     fn text_utf16() {
-        let r = crate::read_text_file_2(Path::new(r"C:\DocumentsOD\Doc tech\Encodings\prenoms-utf16lebom.txt"));
+        let r = crate::read_text_file_2(Path::new(
+            r"C:\DocumentsOD\Doc tech\Encodings\prenoms-utf16lebom.txt",
+        ));
         assert!(r.is_ok());
         let res = r.unwrap();
         assert!(res.0.is_some());
@@ -80,7 +86,7 @@ pub mod grep_iterator {
 #[cfg(test)]
 pub mod build_re {
     use crate::grepiterator::GrepLineMatches;
-    use crate::{build_re, Options};
+    use crate::{Options, build_re};
 
     #[test]
     fn case_sensitive() {
@@ -132,5 +138,4 @@ pub mod build_re {
         let res: Vec<GrepLineMatches> = GrepLineMatches::new(haystack, &re).collect();
         assert_eq!(res.len(), 1);
     }
-
 }

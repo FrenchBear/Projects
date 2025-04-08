@@ -11,7 +11,6 @@ use std::path::Path;
 // external crates imports
 use encoding_rs::{Encoding, UTF_8, UTF_16LE, WINDOWS_1252};
 
-
 /*
 /// Helper detecting if path is a text file, detect encoding and return content as an utf-8 String.<br/>
 /// Only UTF-8, UTF-16 LE and Windows 1252 are detected using heuristics (mays not be always correct).<br/>
@@ -110,7 +109,11 @@ pub fn read_text_file_2(path: &Path) -> Result<(Option<String>, &str), io::Error
                 acount += 1;
             }
         }
-        if len < 10 { true } else { acount * 10 >= 9 * len }
+        if len < 10 {
+            true
+        } else {
+            acount * 10 >= 9 * len
+        }
     }
 
     // Define the encodings to try, in order of preference.
