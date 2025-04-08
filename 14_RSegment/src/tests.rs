@@ -8,6 +8,21 @@ use super::*;
 #[cfg(test)]
 
 #[test]
+fn test_simple_name_4_parts() {
+    let bres = get_book_name(PathBuf::from(r"W:\Livres\Physique\Physique des particules (2è ed, 2017) - [Dunod] - Benoît Clément - ISBN 978-2-10-077183-7.pdf"));
+    assert!(bres.is_ok());
+    let b = bres.unwrap();
+    assert_eq!(b.full_title, "Physique des particules (2è ed, 2017)");
+    assert_eq!(b.editor, "[Dunod]");
+    assert_eq!(b.authors, "Benoît Clément");
+    assert_eq!(b.edition_year, "2è ed, 2017");
+    assert_eq!(b.edition, "2è");
+    assert_eq!(b.year, "2017");
+    assert_eq!(b.braced, "");
+    assert_eq!(b.isbn, "ISBN 978-2-10-077183-7");
+}
+
+#[test]
 fn test_simple_name_3_parts() {
     let bres = get_book_name(PathBuf::from(r"C:\Temp\Title - [Editor] - Author.pdf"));
     assert!(bres.is_ok());
@@ -100,3 +115,4 @@ fn test_year_braced_1() {
     assert_eq!(b.year, "2024");
     assert_eq!(b.braced, "Scan");
 }
+

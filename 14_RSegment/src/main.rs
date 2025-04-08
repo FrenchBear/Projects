@@ -4,6 +4,7 @@
 
 #![allow(unused)]
 
+use std::collections::HashMap;
 // standard library imports
 use std::fmt::Debug;
 use std::path::{Path, PathBuf};
@@ -15,6 +16,7 @@ use std::{error::Error, ops::Index};
 use myglob::{MyGlobMatch, MyGlobSearch};
 use regex::{Captures, Regex};
 use terminal_size::{Width, terminal_size};
+use unicode_normalization::UnicodeNormalization;
 
 // -----------------------------------
 // Submodules
@@ -198,7 +200,8 @@ fn main() {
 
     // Just for dev
     if options.sources.is_empty() {
-        options.sources.push(r"W:\Livres\Art\**\*.pdf".to_string());
+        //options.sources.push(r"W:\Livres\Informatique\**\*.pdf".to_string());
+        options.sources.push(r"C:\DocumentsOD\A_Lire\**\*[\[]*.pdf".to_string());
     }
 
     // Prepare log writer
@@ -248,9 +251,85 @@ fn main() {
     }
 
     if b.books.is_empty() {
-        logln(&mut writer, "*** No book found, nothing to report."); 
+        logln(&mut writer, "*** No book found, nothing to report.");
     } else {
         logln(&mut writer, (format!("{} book(s) found, consolidating data", b.books.len()).as_str()));
+
+        fn getter(book: &BookName) -> &str {
+            &book.editor
+        }
+        let data_name = "Editor";
+
+        // Counters
+        let mut counter = HashMap::<&str, u32>::new();
+        let mut counter_ics = HashMap::<String, (u32, HashMap<&str, u32>)>::new(); // Ignore case and spaces
+        for book in b.books.iter() {
+            let data = getter(book);
+            *counter.entry(data).or_insert(0) += 1;
+
+            let data_ics = filter_alphanum(data);
+            let entry_ics = counter_ics.entry(data_ics).or_insert((0, HashMap::<&str, u32>::new()));
+            (*entry_ics).0 += 1;
+            let subentry_ics = entry_ics.1.entry(data).or_insert(0);
+            *subentry_ics += 1;
+        }
+
+        // Sort and print direct counter
+        println!("\n{data_name}: Simple groups, at least 2 values");
+        let mut vec: Vec<(&&str, &u32)> = counter.iter().collect();
+        vec.sort_by(|&a, &b| b.1.cmp(a.1));
+        for (key, value) in vec.into_iter().take_while(|&x| *(x.1) > 1) {
+            let skey = if key.is_empty() { "(empty)" } else { *key };
+            logln(&mut writer, format!("{}: {}", skey, value).as_str());
+        }
+
+        // Sort and print case-insensitive space-insensitive direct counter
+        println!("\n{data_name}: Groups ignoring case and spaces");
+        let mut vec_ics: Vec<(&String, &(u32, HashMap<&str, u32>))> = counter_ics.iter().collect();
+        vec_ics.sort_by(|&a, &b| (b.1.0).cmp(&a.1.0));
+        let mut vec_repr = Vec::<(&str, &str)>::new(); // Collect representants for Levenshtein distance
+        for (key, value) in vec_ics.into_iter() /* .take_while(|&x| *(&x.1.0) > 1) */ {
+            // Now sort subvector
+            let mut subvec: Vec<(&&str, &u32)> = value.1.iter().collect();
+            if subvec.len() == 1 {
+                // Single form class
+                let (ukey, uvalue) = *subvec.first().unwrap();
+                let sukey = if ukey.is_empty() { "(empty)" } else { *ukey };
+                vec_repr.push((key, sukey));
+                logln(&mut writer, format!("{}: {}", sukey, uvalue).as_str());
+            } else {
+                // Representant of class is the most encountered element
+                subvec.sort_by(|a, b| b.1.cmp(a.1));
+                let repr = subvec.first().unwrap();
+                let (rkey, rvalue) = *repr;
+                let srkey = if rkey.is_empty() { "(empty)" } else { *rkey };
+                vec_repr.push((key, srkey));
+                // Print representant and total count
+                log(&mut writer, format!("{}: {}\t", srkey, rvalue).as_str());
+                // Print all variants and individual count
+                for (vkey, vvalue) in subvec.iter() {
+                    let svkey = if vkey.is_empty() { "(empty)" } else { *vkey };
+                    log(&mut writer, format!("{}: {}\t", svkey, vvalue).as_str());
+                }
+                logln(&mut writer, "");
+            }
+        }
+
+        // Find close representants
+        println!("\n{data_name}: Possible confusions, Levenshtein distance=1");
+        for i in 0..vec_repr.len() {
+            let (cnorm1, crepr1) = vec_repr[i];
+            for j in i+1..vec_repr.len() {
+                let (cnorm2, crepr2) = vec_repr[j];
+                let d = levenshtein_distance(cnorm1, cnorm2, 1);
+                if d == 1 {
+                    // Found a close pair, print it
+                    let s1 = if crepr1.is_empty() { "(empty)" } else { crepr1 };
+                    let s2 = if crepr2.is_empty() { "(empty)" } else { crepr2 };
+                    logln(&mut writer, format!("{} <-> {}", s1, s2).as_str());
+                }
+            }
+        }
     }
 
     let duration = start.elapsed();
@@ -259,12 +338,21 @@ fn main() {
     logln(&mut writer, format!(" found in {:.3}s", duration.as_secs_f64()).as_str());
 }
 
+/// Only keep letters and digits, converted to ASCII lowercase
+fn filter_alphanum(s: &str) -> String {
+    s.chars()
+        .nfd()
+        .filter(|c| c.is_ascii_alphanumeric())
+        .map(|c| c.to_ascii_lowercase())
+        .collect::<String>()
+}
+
 fn process_file(writer: &mut LogWriter, b: &mut DataBag, pb: PathBuf) {
     b.files_count += 1;
     let book_name = get_book_name(pb);
     match book_name {
         Ok(book) => b.books.push(book),
-        Err(_) => todo!(),
+        Err(e) => logln(writer, format!("*** {}", e).as_str()),
     }
 }
 
@@ -275,24 +363,12 @@ struct BookName {
     base_title: String,
     editor: String,
     authors: String,
+    isbn: String,
     edition_year: String,
     edition: String,
     year: String,
     braced: String,
 }
-
-// fn split_path_and_basename(path: &Path) -> (PathBuf, Option<String>) {
-//     let ppath = path.parent().unwrap_or_else(|| Path::new(""));
-//     let basename = path.file_name().map(|name| name.to_string_lossy().into_owned());
-//     (ppath.to_path_buf(), basename)
-// }
-
-// fn split_basename(basename: &str) -> (String, Option<String>) {
-//     let path = Path::new(basename);
-//     let file_stem = path.file_stem().map(|s| s.to_string_lossy().into_owned()).unwrap_or_default();
-//     let extension = path.extension().map(|ext| ext.to_string_lossy().into_owned());
-//     (file_stem, extension)
-// }
 
 fn get_book_name(pb: PathBuf) -> Result<BookName, String> {
     let filefp = pb.to_str().unwrap();
@@ -300,25 +376,43 @@ fn get_book_name(pb: PathBuf) -> Result<BookName, String> {
     let stem = pb.file_stem().unwrap().to_str().unwrap();
     let extension = pb.extension().unwrap().to_str().unwrap();
 
+    if !is_balanced(file) {
+        return Err(format!("Err: Unbalanced braces: {}", file));
+    }
+
     let t = stem.split(" - ").collect::<Vec<&str>>();
 
-    let (full_title, editor, authors) = match t.len() {
-        1 => (stem, "", ""),
+    let (full_title, editor, authors, isbn) = match t.len() {
+        1 => (stem, "", "", ""),
         2 => {
             if t[1].starts_with('[') {
-                (t[0], t[1], "")
+                (t[0], t[1], "", "")
             } else {
-                (t[0], "", t[1])
+                (t[0], "", t[1], "")
             }
         }
-        3 => (t[0], t[1], t[2]),
-        _ => return Err(format!("Err: >3 seg: {}", filefp)),
+        3 => (t[0], t[1], t[2], ""),
+        4 => (t[0], t[1], t[2], t[3]),
+        _ => return Err(format!("Err: >4 seg: {}", filefp)),
     };
+
+    if !editor.is_empty() {
+        if !editor.starts_with('[') && editor.ends_with(']') {
+            return Err(format!("Err: Invalid editor: {}", file));
+        }
+    }
+
+    if !isbn.is_empty() {
+        if !isbn.starts_with("ISBN ") {
+            return Err(format!("Err: Invalid ISBN: {}", file));
+        }
+    }
 
     // Transform &str in String to free mutable borrow of pb
     let full_title = String::from(full_title);
     let editor = editor.into();
     let authors = authors.into();
+    let isbn = isbn.into();
 
     let (base_title, edition_year, edition, year) = if full_title.contains('(') {
         let ix_start = full_title.find('(').unwrap();
@@ -370,6 +464,7 @@ fn get_book_name(pb: PathBuf) -> Result<BookName, String> {
         base_title,
         editor,
         authors,
+        isbn,
         edition_year,
         edition,
         year,
@@ -424,4 +519,47 @@ pub fn is_balanced(s: &str) -> bool {
     }
 
     current_state == ' '
+}
+
+
+/// Computes Levenshtein distance between two strings with early exit if the distance exceeds dmax.
+pub fn levenshtein_distance(s1: &str, s2: &str, dmax: usize) -> usize {
+    let len1 = s1.len();
+    let len2 = s2.len();
+
+    // If the difference in lengths exceeds dmax, return early
+    if (len1 as isize - len2 as isize).abs() as usize > dmax {
+        return dmax + 1;
+    }
+
+    let mut prev_row: Vec<usize> = (0..=len2).collect();
+    let mut curr_row = vec![0; len2 + 1];
+
+    for (i, c1) in s1.chars().enumerate() {
+        curr_row[0] = i + 1;
+
+        let mut min_in_row = curr_row[0]; // Track the minimum value in the current row
+        for (j, c2) in s2.chars().enumerate() {
+            let cost = if c1 == c2 { 0 } else { 1 };
+            curr_row[j + 1] = (prev_row[j + 1] + 1)
+                .min(curr_row[j] + 1)
+                .min(prev_row[j] + cost);
+
+            min_in_row = min_in_row.min(curr_row[j + 1]);
+        }
+
+        // Early exit if the minimum value in the row exceeds dmax
+        if min_in_row > dmax {
+            return dmax + 1;
+        }
+
+        prev_row.copy_from_slice(&curr_row);
+    }
+
+    let distance = curr_row[len2];
+    if distance > dmax {
+        dmax + 1
+    } else {
+        distance
+    }
 }
