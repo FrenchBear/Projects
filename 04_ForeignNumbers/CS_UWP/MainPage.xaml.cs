@@ -10,7 +10,7 @@ using System.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-#pragma warning disable IDE0060 // Remove unused parameter
+//#pragma warning disable IDE0060 // Remove unused parameter
 
 namespace ForeignNumbersUWP
 {
@@ -22,7 +22,7 @@ namespace ForeignNumbersUWP
         public MainPage()
         {
             InitializeComponent();
-            Loaded += (s,e) => 
+            Loaded += (s, e) =>
                 WesternTextBlock.Focus(FocusState.Programmatic);
         }
 
@@ -182,11 +182,11 @@ namespace ForeignNumbersUWP
         // https://stackoverflow.com/questions/30675226/convert-number-to-string-using-hebrew-letters
         static string HebrewNumber(int num)
         {
-            if (num <= 0 || num>=3000)
+            if (num <= 0 || num >= 3000)
                 return "---";
 
             var ret = new StringBuilder();  // new string('ת', num / 400));
-            if (num>=2000)
+            if (num >= 2000)
             {
                 ret.Append("ב׳");
                 num -= 2000;

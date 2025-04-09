@@ -15,7 +15,7 @@ namespace ForeignNumbersUWP
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
-    sealed partial class App : Application
+    sealed partial class App: Application
     {
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -52,7 +52,7 @@ namespace ForeignNumbersUWP
                 Window.Current.Content = rootFrame;
             }
 
-            if (args.PrelaunchActivated == false)
+            if (!args.PrelaunchActivated)
             {
                 if (rootFrame.Content == null)
                 {
@@ -71,7 +71,7 @@ namespace ForeignNumbersUWP
         /// </summary>
         /// <param name="sender">The Frame which failed navigation</param>
         /// <param name="e">Details about the navigation failure</param>
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e) 
+        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
             => throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
 
         /// <summary>

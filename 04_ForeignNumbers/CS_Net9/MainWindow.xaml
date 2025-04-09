@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:IntlNumbersWPFCore"
         mc:Ignorable="d"
-        Title="ForeignNumbers WPF Core" Height="450" Width="800" 
+        Title="ForeignNumbers WPF" Height="450" Width="800" 
         Icon="/ForeignNumbers.ico">
 
     <Window.Resources>
@@ -23,6 +23,9 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -34,10 +37,16 @@
         <Label Grid.Row="1" Grid.Column="0" Content="Chinese" Margin="0,6,6,0" />
         <Label Grid.Row="2" Grid.Column="0" Content="Arabic" Margin="0,6,6,0"/>
         <Label Grid.Row="3" Grid.Column="0" Content="Roman" Margin="0,6,6,0" />
+        <Label Grid.Row="4" Grid.Column="0" Content="Hebrew" Margin="0,6,6,0" />
+        <Label Grid.Row="5" Grid.Column="0" Content="Bengali" Margin="0,6,6,0" />
+        <Label Grid.Row="6" Grid.Column="0" Content="Thai" Margin="0,6,6,0" />
         <TextBox Grid.Row="0" Grid.Column="1" Name="WesternTextBlock" Padding="5,2" Margin="3"  TextChanged="WesternTextBlock_TextChanged" />
         <TextBox Grid.Row="1" Grid.Column="1" Name="ChineseTextBlock" Padding="5,2" Margin="3" IsReadOnly="True" />
-        <TextBox Grid.Row="2" Grid.Column="1" Name="ArabicTextBlock" Padding="5,2" Margin="3" IsReadOnly="True" FontSize="20" FlowDirection="RightToLeft" />
+        <TextBox Grid.Row="2" Grid.Column="1" Name="ArabicTextBlock" Padding="5,0" Margin="3" IsReadOnly="True" FontSize="20" FlowDirection="RightToLeft" />
         <TextBox Grid.Row="3" Grid.Column="1" Name="RomanTextBlock" Padding="5,2" Margin="3" IsReadOnly="True" />
+        <TextBox Grid.Row="4" Grid.Column="1" Name="HebrewTextBlock" Padding="5,0" Margin="3" IsReadOnly="True" FontSize="20" FlowDirection="RightToLeft" />
+        <TextBox Grid.Row="5" Grid.Column="1" Name="BengaliTextBlock" Padding="5,0" Margin="3" IsReadOnly="True" FontSize="20" />
+        <TextBox Grid.Row="6" Grid.Column="1" Name="ThaiTextBlock" Padding="5,0" Margin="3" IsReadOnly="True" FontSize="20"  />
 
         <Button Grid.Column="2" Content="Random" Padding="15,5" Margin="12,3" Click="RandomButton_Click" HorizontalAlignment="Left" />
     </Grid>

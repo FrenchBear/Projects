@@ -11,6 +11,9 @@ using System.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+#pragma warning disable IDE0051 // Remove unused private members
+
 namespace ForeignNumbersWinUI3;
 
 public sealed partial class MainPage: Page

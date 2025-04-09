@@ -7,8 +7,7 @@
 // 2023-03-16   PV      Net7 C#11
 // 2023-11-20   PV      Net8 C#12
 // 2025-03-16   PV      Net9 C#13
-
-//#pragma warning disable IDE0060 // Remove unused parameter
+// 2025-04-09   PV      Added Hebrew, Bengali and Thai
 
 using System;
 using System.Diagnostics;
@@ -67,12 +66,18 @@ public partial class MainWindow: Window
             ChineseTextBlock.Text = ChineseNumber(n);
             ArabicTextBlock.Text = ArabicNumber(n);
             RomanTextBlock.Text = RomanNumber(n);
+            HebrewTextBlock.Text = HebrewNumber(n);
+            BengaliTextBlock.Text = BengaliNumber(n);
+            ThaiTextBlock.Text = ThaiNumber(n);
         }
         else
         {
             ChineseTextBlock.Text = "";
             ArabicTextBlock.Text = "";
             RomanTextBlock.Text = "";
+            HebrewTextBlock.Text = "";
+            BengaliTextBlock.Text = "";
+            ThaiTextBlock.Text = "";
         }
     }
 
@@ -204,57 +209,71 @@ public partial class MainWindow: Window
         return sb.ToString();
     }
 
-    /*
-    static readonly Dictionary<string, int> RomanDigits = new() {
-        { "I", 1 },
-        { "V", 5 },
-        { "X", 10 },
-        { "L", 50 },
-        { "C", 100 },
-        { "D", 500 },
-        { "M", 1000 },
-        { "V̄", 5000 },
-        { "X̄", 10000 },
-        { "L̄", 50000 },
-        { "C̄", 100000 },
-        { "D̄", 500000 },
-        { "M̄", 1000000 },
-    };
-
-    static int RomanToInt(string romanNumber)
+    // https://stackoverflow.com/questions/30675226/convert-number-to-string-using-hebrew-letters
+    static string HebrewNumber(int num)
     {
-        static IEnumerable<int> BreakRomanString(string s)
+        if (num is <= 0 or >= 3000)
+            return "---";
+
+        var ret = new StringBuilder();  // new string('ת', num / 400));
+        if (num >= 2000)
         {
-            while (s.Length > 0)
-            {
-                if (s.Length >= 2 && RomanDigits.TryGetValue(s[0..2], out int value2))
-                {
-                    yield return value2;
-                    s = s[2..];
-                }
-                else if (RomanDigits.TryGetValue(s[0..1], out int value1))
-                {
-                    yield return value1;
-                    s = s[1..];
-                }
-                else
-                    throw new Exception("Invalid Roman digit: " + s);
-            }
-            yield break;
+            ret.Append("ב׳");
+            num -= 2000;
+        }
+        else if (num >= 1000)
+        {
+            ret.Append("א'");
+            num -= 1000;
         }
 
-        int lastDigit = 0;
-        int value = 0;
-        foreach (var digit in BreakRomanString(romanNumber))
+        if (num >= 100)
         {
-            if (lastDigit < digit)
-                value -= lastDigit;
-            else
-                value += lastDigit;
-            lastDigit = digit;
+            ret.Append("קרשתךםןףץ"[num / 100 - 1]);
+            num %= 100;
         }
-        value += lastDigit;
-        return value;
+        switch (num)
+        {
+            // Avoid letter combinations from the Tetragrammaton
+            case 16:
+                ret.Append("טז");
+                break;
+            case 15:
+                ret.Append("טו");
+                break;
+            default:
+                if (num >= 10)
+                {
+                    //ret.Append("כלמנסעפצי"[num / 10 - 1]);
+                    ret.Append("יכלמנסעפצ"[num / 10 - 1]);
+                    num %= 10;
+                }
+                if (num > 0)
+                    ret.Append("אבגדהוזחט"[num - 1]);
+                break;
+        }
+        return ret.ToString();
     }
-    */
+
+    static string BengaliNumber(int n)
+    {
+        string digits = "০১২৩৪৫৬৭৮৯";
+        string s = n.ToString();
+        for (int d = 0; d <= 9; d++)
+        {
+            s = s.Replace((char)('0' + d), digits[d]);
+        }
+        return s;
+    }
+
+    static string ThaiNumber(int n)
+    {
+        string digits = "๐๑๒๓๔๕๖๗๘๙";
+        string s = n.ToString();
+        for (int d = 0; d <= 9; d++)
+        {
+            s = s.Replace((char)('0' + d), digits[d]);
+        }
+        return s;
+    }
 }
