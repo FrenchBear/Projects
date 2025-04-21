@@ -2,7 +2,7 @@
 // Formatting numbers in Roman, Arabic and Chinese
 //
 // 2019-03-21   PV
-// 2919-12-27   PV      Icon
+// 2019-12-27   PV      Icon
 // 2021-07-13   PV      .Net 4.8
 
 #pragma warning disable IDE0060 // Remove unused parameter
