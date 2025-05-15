@@ -8,40 +8,42 @@
 using System;
 using System.Collections.Generic;
 
-namespace SolLib;
-
-public class SolverCard
+namespace SolLib
 {
-    public const string Colors = "HSDC";
-    public const string Values = "A23456789XJQK";
 
-    private const string SignatureColors = "♥♠♦♣";
-    private const string SignatureValues = "A23456789XJQK";
-    private const string SignatureFaceUp = "˄";
-    private const string SignatureFaceDown = "˅";
-
-    public string Face { get; set; }
-    public bool IsFaceUp { get; set; }
-
-    public int Color => Colors.IndexOf(Face[0], StringComparison.Ordinal);            // 0..3; %2==0 => Red, %2==1 => Black
-    public int Value => Values.IndexOf(Face[1], StringComparison.Ordinal) + 1;        // 1..13
-
-    public SolverCard(int v, int c, bool isFaceUp)
+    public class SolverCard
     {
-        Face = string.Concat(Colors.AsSpan(c, 1), Values.AsSpan(v - 1, 1));
-        IsFaceUp = isFaceUp;
-    }
+        public const string Colors = "HSDC";
+        public const string Values = "A23456789XJQK";
 
-    public override string ToString() => $"PlayingCard {Face}, IsFaceUp={IsFaceUp}";
+        private const string SignatureColors = "♥♠♦♣";
+        private const string SignatureValues = "A23456789XJQK";
+        private const string SignatureFaceUp = "˄";
+        private const string SignatureFaceDown = "˅";
 
-    internal string Signature(bool overrideFaceUp = false) => string.Concat(SignatureValues.AsSpan(Value - 1, 1), SignatureColors.AsSpan(Color, 1), (IsFaceUp || overrideFaceUp) ? SignatureFaceUp : SignatureFaceDown);
+        public string Face { get; set; }
+        public bool IsFaceUp { get; set; }
 
-    public static List<SolverCard> Set52()
-    {
-        var Cards = new List<SolverCard>();
-        for (int v = 1; v <= 13; v++)
-            for (int ci = 0; ci <= 3; ci++)
-                Cards.Add(new SolverCard(v, ci, true));
-        return Cards;
-    }
-}   // class SolverCard
+        public int Color => Colors.IndexOf(Face[0], StringComparison.Ordinal);            // 0..3; %2==0 => Red, %2==1 => Black
+        public int Value => Values.IndexOf(Face[1], StringComparison.Ordinal) + 1;        // 1..13
+
+        public SolverCard(int v, int c, bool isFaceUp)
+        {
+            Face = string.Concat(Colors.AsSpan(c, 1), Values.AsSpan(v - 1, 1));
+            IsFaceUp = isFaceUp;
+        }
+
+        public override string ToString() => $"PlayingCard {Face}, IsFaceUp={IsFaceUp}";
+
+        internal string Signature(bool overrideFaceUp = false) => string.Concat(SignatureValues.AsSpan(Value - 1, 1), SignatureColors.AsSpan(Color, 1), (IsFaceUp || overrideFaceUp) ? SignatureFaceUp : SignatureFaceDown);
+
+        public static List<SolverCard> Set52()
+        {
+            var Cards = new List<SolverCard>();
+            for (int v = 1; v <= 13; v++)
+                for (int ci = 0; ci <= 3; ci++)
+                    Cards.Add(new SolverCard(v, ci, true));
+            return Cards;
+        }
+    }   // class SolverCard
+}

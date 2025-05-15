@@ -8,22 +8,24 @@
 
 using System.Collections.Generic;
 
-namespace SolLib;
-
-public class SolverStack
+namespace SolLib
 {
-    public string Name;
-    public List<SolverCard> PlayingCards;
 
-    public SolverStack(string name)
+    public class SolverStack
     {
-        Name = name;
-        PlayingCards = new List<SolverCard>();
-    }
+        public string Name;
+        public List<SolverCard> PlayingCards;
 
-    internal void AddCard(SolverCard c, bool isFaceUp)
-    {
-        c.IsFaceUp = isFaceUp;
-        PlayingCards.Add(c);
+        public SolverStack(string name)
+        {
+            Name = name;
+            PlayingCards = new List<SolverCard>();
+        }
+
+        internal void AddCard(SolverCard c, bool isFaceUp)
+        {
+            c.IsFaceUp = isFaceUp;
+            PlayingCards.Add(c);
+        }
     }
 }
