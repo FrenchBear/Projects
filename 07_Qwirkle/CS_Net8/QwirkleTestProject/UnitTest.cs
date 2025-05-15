@@ -42,9 +42,9 @@ public class UnitTests_Base
                    "46       x   \r\n" +
                    "47     x O x \r\n" +
                    "48     x O x \r\n" +
-                   "49   · · O x \r\n" +
-                   "50 · [ < O · \r\n" +
-                   "51   · · x   \r\n";
+                   "49   Â· Â· O x \r\n" +
+                   "50 Â· [ < O Â· \r\n" +
+                   "51   Â· Â· x   \r\n";
         string s2 = board.AsString(false, new Tile(Shape.Circle, Color.Purple, 2));
         Debug.Assert(s == s2);
     }
@@ -54,12 +54,12 @@ public class UnitTests_Base
     {
         string s = "Col4 5 5 5 5 \r\n" +
                    "Row9 0 1 2 3 \r\n" +
-                   "46       ·   \r\n" +
-                   "47     · O · \r\n" +
+                   "46       Â·   \r\n" +
+                   "47     Â· O Â· \r\n" +
                    "48     x O x \r\n" +
-                   "49   · · O · \r\n" +
-                   "50 · [ < O · \r\n" +
-                   "51   · x ·   \r\n";
+                   "49   Â· Â· O Â· \r\n" +
+                   "50 Â· [ < O Â· \r\n" +
+                   "51   Â· x Â·   \r\n";
 
         string s2 = board.AsString(false, new Tile(Shape.Lozange, Color.Green, 2));
         Debug.Assert(s == s2);
@@ -300,7 +300,7 @@ public class UnitTests_Evaluate
         string msg;
         (status, msg) = board.EvaluateMoves(moves);
         Debug.Assert(!status);
-        Debug.Assert(msg == "Les tuiles jouées doivent être situées sur une même ligne ou une même colonne");
+        Debug.Assert(msg == "Les tuiles jouÃ©es doivent Ãªtre situÃ©es sur une mÃªme ligne ou une mÃªme colonne");
     }
 
     [Fact]
@@ -314,7 +314,7 @@ public class UnitTests_Evaluate
         string msg;
         (status, msg) = board.EvaluateMoves(moves);
         Debug.Assert(!status);
-        Debug.Assert(msg == "2 couleurs et 2 formes différentes, les tuiles jouées doivent être de la même couleur ou de la même forme");
+        Debug.Assert(msg == "2 couleurs et 2 formes diffÃ©rentes, les tuiles jouÃ©es doivent Ãªtre de la mÃªme couleur ou de la mÃªme forme");
     }
 
     [Fact]
@@ -327,7 +327,7 @@ public class UnitTests_Evaluate
         string msg;
         (status, msg) = board.EvaluateMoves(moves);
         Debug.Assert(!status);
-        Debug.Assert(msg == "La tuile Circle Green #1 en position (48, 50) n'est pas posée sur une cellule jouable");
+        Debug.Assert(msg == "La tuile Circle Green #1 en position (48, 50) n'est pas posÃ©e sur une cellule jouable");
     }
 
     [Fact]
