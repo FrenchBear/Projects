@@ -1,0 +1,112 @@
+﻿<Window x:Class="UniView_CS_Net8.SearchWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UniView_CS_Net8"
+        FontSize="12" FontFamily="Segoe UI" 
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=local:SearchViewModel}"
+        Title="Search Unicode character by name" Height="450" Width="800">
+    
+    <Grid Margin="6">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Margin="6,0,0,0">
+            <Button Margin="0,0,0,6" Content="Ok" IsDefault="True" Click="OkButton_Click" />
+            <Button Margin="0,0,0,6" Content="Cancel" IsCancel="True" Click="CancelButton_Click" />
+        </StackPanel>
+
+        <Label Content="_Filter" Padding="0" Margin="0,0,0,6" FontWeight="SemiBold" Target="{Binding ElementName=FilterTextBox}"/>
+        <TextBox Name="FilterTextBox" Grid.Row="0" Grid.Column="1" Margin="0,0,0,6" Height="23" VerticalContentAlignment="Center"
+                 Text="{Binding Filter, Delay=250, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}" />
+
+        <Label Grid.Row="1" Content="_Options" Padding="0" Margin="0,0,0,6" FontWeight="SemiBold" />
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Margin="0,0,0,6">
+            <GroupBox Margin="0,-1,6,0">
+                <GroupBox.Header>
+                    <Label Content="Output" Padding="0" Margin="0,0,0,3" FontWeight="SemiBold"  />
+                </GroupBox.Header>
+                <StackPanel>
+                    <RadioButton IsChecked="{Binding OutputName}" Content="Name {BOAR}" />
+                    <RadioButton IsChecked="{Binding OutputCharacters}" Content="Characters 🐗" />
+                    <RadioButton IsChecked="{Binding OutputCodepoints}" Content="Codepoints U+1F417" />
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+        
+        <Label Grid.Row="2" Content="_Sources" Padding="0" Margin="0,0,0,6" FontWeight="SemiBold" />
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" Margin="0,0,0,6">
+            <GroupBox Margin="0,-1,6,0">
+                <GroupBox.Header>
+                    <Label Content="Symbols/Emoji" Padding="0" Margin="0,0,0,3" FontWeight="SemiBold"  />
+                </GroupBox.Header>
+                <StackPanel>
+                    <RadioButton IsChecked="{Binding SymbolNone}" Content="_None" />
+                    <RadioButton IsChecked="{Binding SymbolEmoji}" Content="_Emoji" />
+                    <RadioButton IsChecked="{Binding SymbolAll}" Content="_All symbols" />
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Margin="0,-1,6,0">
+                <GroupBox.Header>
+                    <Label Content="Scripts" Padding="0" Margin="0,0,0,3" FontWeight="SemiBold"  />
+                </GroupBox.Header>
+                <StackPanel>
+                    <RadioButton IsChecked="{Binding ScriptNone}" Content="_None" />
+                    <RadioButton IsChecked="{Binding ScriptLatin}" Content="_Latin+Greek " />
+                    <RadioButton IsChecked="{Binding ScriptAll}" Content="_All scripts" />
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Margin="0,-1,6,0">
+                <GroupBox.Header>
+                    <CheckBox IsThreeState="True" Content="Emoji sequences" Padding="0" Margin="0,0,0,3" FontWeight="SemiBold" IsChecked="{Binding EmojiSequenceAll}" />
+                </GroupBox.Header>
+                <StackPanel>
+                    <CheckBox Content="_Keycaps" IsChecked="{Binding EmojiSequenceKeycaps}" />
+                    <CheckBox Content="_Flags" IsChecked="{Binding EmojiSequenceFlags}"  />
+                    <CheckBox Content="_Modifiers" IsChecked="{Binding EmojiSequenceModifiers}"  />
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Margin="0,-1,6,0">
+                <GroupBox.Header>
+                    <CheckBox IsThreeState="True" Content="ZWJ sequences" Padding="0" Margin="0,0,0,3" FontWeight="SemiBold" IsChecked="{Binding ZWJSequenceAll}" />
+                </GroupBox.Header>
+                <StackPanel>
+                    <CheckBox IsChecked="{Binding ZWJSequenceFamily}" Content="_Family" />
+                    <CheckBox IsChecked="{Binding ZWJSequenceRole}" Content="_Roles" />
+                    <CheckBox IsChecked="{Binding ZWJSequenceGendered}" Content="_Gendered" />
+                    <CheckBox IsChecked="{Binding ZWJSequenceHair}" Content="_Hair" />
+                    <CheckBox IsChecked="{Binding ZWJSequenceOther}" Content="_Other" />
+                </StackPanel>
+            </GroupBox>
+
+
+        </StackPanel>
+
+        <Label Grid.Row="3" Content="_Matches" Padding="0" Margin="0,0,6,6" FontWeight="SemiBold" Target="{Binding ElementName=MatchesListView}"/>
+        <ListView Name="MatchesListView" Grid.Row="3" Grid.Column="1" ItemsSource="{Binding Matches}" SelectedItem="{Binding SelectedSequence}" MouseDoubleClick="Matches_MouseDoubleClick" >
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
+                    <GridViewColumn Header="Sequence" DisplayMemberBinding="{Binding SequenceHexString}"/>
+                    <GridViewColumn Header="Type" DisplayMemberBinding="{Binding TypeAsString}"/>
+                    <GridViewColumn Header="View" DisplayMemberBinding="{Binding SequenceAsString}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+    </Grid>
+</Window>

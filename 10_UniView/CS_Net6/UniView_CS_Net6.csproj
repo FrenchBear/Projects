@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<Platforms>AnyCPU</Platforms>
+		<Authors>Pierre Violent</Authors>
+		<Copyright>Copyright ©2018-2021 Pierre Violent</Copyright>
+		<Version>1.7.0</Version>
+		<Description>Unicode Character Details Tool (WPF Net6 C#10 Nullable]</Description>
+		<ApplicationIcon>Cat.ico</ApplicationIcon>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="Cat.ico" />
+		<None Remove="UnicodeData.txt" />
+		<None Remove="UniData\Scripts.txt" />
+		<None Remove="UniData\UnicodeData.txt" />
+		<None Remove="UnicodeVersion.txt" />
+		<None Remove="Unicorn.ico" />
+		<None Remove="UniData\UnicodeVersion.txt" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="UniData\Scripts.txt" />
+		<EmbeddedResource Include="UniData\UnicodeData.txt" />
+		<EmbeddedResource Include="UniData\UnicodeVersion.txt" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="Cat.ico" />
+	</ItemGroup>
+
+</Project>

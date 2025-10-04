@@ -1,0 +1,324 @@
+﻿<Window 
+  x:Class="UniSearch.SearchWindow" x:ClassModifier="internal"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:dw="clr-namespace:UniSearch.Controls"
+  FontSize="13" FontFamily="Segoe UI"
+  Title="UniSearch – Unicode Character Search Tool (WPF Net6)"
+  Width="1000" Height="700" 
+  WindowStartupLocation="CenterScreen" Icon="Unicorn.ico">
+
+    <Window.Resources>
+        <Style TargetType="TextBlock" x:Key="ZoomableTB" >
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform x:Name="transform" CenterX="7" CenterY="16" />
+                </Setter.Value>
+            </Setter>
+            <Setter Property="FontFamily" Value="{StaticResource LastResortHE-Regular}" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="Background" Value="Wheat" />
+            <Setter Property="Margin" Value="0,0,6,0" />
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <BeginStoryboard Name="zoomIn">
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" To="8" Duration="00:00:00.25" />
+                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" To="8" Duration="00:00:00.25" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger  RoutedEvent="MouseLeave">
+                    <BeginStoryboard  Name="zoomOut">
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX" To="1" Duration="00:00:00.25" />
+                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY" To="1" Duration="00:00:00.25" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="TreeViewItemStyle" TargetType="TreeViewItem">
+            <Setter Property="KeyboardNavigation.AcceptsReturn" Value="True" />
+            <Setter Property="dw:VirtualToggleButton.IsVirtualToggleButton" Value="True" />
+            <Setter Property="dw:VirtualToggleButton.IsChecked" Value="{Binding IsChecked}" />
+            <Setter Property="IsExpanded" Value="{Binding IsNodeExpanded}" />
+
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Level}" Value="3">
+                    <Setter Property="FontSize" Value="18" />
+                    <Setter Property="FontWeight" Value="Bold" />
+                    <Setter Property="Margin" Value="0,3" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Level}" Value="2">
+                    <Setter Property="FontSize" Value="16" />
+                    <Setter Property="FontWeight" Value="Bold" />
+                    <Setter Property="Margin" Value="0,2" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Level}" Value="1">
+                    <Setter Property="FontSize" Value="14" />
+                    <Setter Property="FontWeight" Value="SemiBold" />
+                    <Setter Property="Margin" Value="0,1" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Level}" Value="0">
+                    <Setter Property="FontSize" Value="12" />
+                    <Setter Property="FontWeight" Value="Normal" />
+                </DataTrigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Level}" Value="0" />
+                        <Condition Binding="{Binding IsChecked}" Value="True" />
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="FontWeight" Value="SemiBold" />
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <HierarchicalDataTemplate x:Key="CheckBoxItemTemplate" ItemsSource="{Binding Children, Mode=OneTime}"  >
+            <StackPanel Orientation="Horizontal">
+                <!-- These elements are bound to a CheckableNode object. -->
+                <CheckBox Focusable="False" IsChecked="{Binding IsChecked}" VerticalAlignment="Center" Click="CheckBox_Flip" />
+                <TextBlock Visibility="{Binding LRFIconVisibility}" Text="{Binding RepresentantCharacter}" Margin="6,0,0,0" FontSize="16" MinWidth="20" FontFamily="{StaticResource LastResortHE-Regular}" />
+                <ContentPresenter Content="{Binding Name}" Margin="3,0" />
+            </StackPanel>
+        </HierarchicalDataTemplate>
+
+        <DataTemplate x:Key="CharacterCellTemplate">
+            <TextBlock Foreground="DarkBlue" FontSize="16" Text="{Binding Character}" Margin="0,-1" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="CodepointCellTemplate">
+            <TextBlock >
+                <Hyperlink Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=DataContext.ShowDetailCommand}" CommandParameter="{Binding Codepoint}" >
+                    <TextBlock Text="{Binding CodepointHex}" />
+                </Hyperlink>
+            </TextBlock>
+        </DataTemplate>
+
+    </Window.Resources>
+
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding CopyRecordsCommand}" CommandParameter="0" Key="C" Modifiers="Ctrl" />
+        <KeyBinding Command="{Binding CopyRecordsCommand}" CommandParameter="1" Key="L" Modifiers="Ctrl" />
+        <KeyBinding Command="{Binding CopyRecordsCommand}" CommandParameter="2" Key="D" Modifiers="Ctrl" />
+        <KeyBinding Command="{Binding CopyRecordsCommand}" CommandParameter="3" Key="F" Modifiers="Ctrl" />
+    </Window.InputBindings>
+
+    <Grid >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+
+
+        <!-- Left grid, character -->
+        <Grid Margin="0,6,6,6" Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+
+            <!-- Input and control for characters -->
+            <StackPanel Grid.Row="0">
+                <Grid Margin="0,0,0,6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="Character _Name Filter " FontWeight="SemiBold" Target="{Binding ElementName=CharacterFilterTextBox}" />
+                    <TextBox Grid.Column="1" Name="CharacterFilterTextBox" Text="{Binding CharNameFilter, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" ToolTip="Enter a list of words to filter character names, or use an advanced filter." />
+
+                    <ToggleButton Name="CharFilterHelp" Grid.Column="2" Content="?" Padding="6,0" />
+                    <Popup Grid.Column="0" IsOpen="{Binding IsChecked, ElementName=CharFilterHelp}" PlacementTarget="{Binding ElementName=CharacterFilterTextBox}" StaysOpen="True">
+                        <Border Background="LightYellow" Padding="6">
+                            <TextBlock>
+                                Enter a list of words to filter character names (case insensitive, accent insensitive).
+                                <LineBreak/>
+                                Use - before a word to exclude it: <Run Foreground="Green">interro -ornament</Run>.
+                                <LineBreak/>
+                                Put double quotes around a word for an exact match: <Run Foreground="Green">&quot;cat face&quot;</Run>.
+                                <LineBreak/>
+                                A single-letter word is always searched for a strict full-word match.
+                                <LineBreak/>
+                                Use w: to search for full words: <Run Foreground="Green">w:cat</Run> does not match multipli<Bold>cat</Bold>ion.
+                                <LineBreak/>
+                                Use U+ prefix to search for a specific hex codepoint or range: <Run Foreground="Green">U+CAFE</Run> or <Run Foreground="Green">U+0020..00FF</Run>.
+                                <LineBreak/>
+                                Use b: to filter on block name: <Run Foreground="Green">b:Mahjong</Run>.
+                                <LineBreak/>
+                                Use s: to filter on subheader name: <Run Foreground="Green">s:musical</Run>.
+                                <LineBreak/>
+                                Use a: to filter on character age. Also support comparison operators such as <Run Foreground="Green">a:&lt;=10</Run>.
+                                <LineBreak/>
+                                Use l: to filter on letters of a word: <Run Foreground="Green">l:&quot;Où ça?&quot;</Run>.
+                                <LineBreak/>
+                                Use gc: to filer on a Unicode Category: <Run Foreground="Green">gc:D</Run> for digits, or <Run Foreground="Green">gc:LU</Run> for uppercase letters.
+                                <LineBreak/>
+                                Use sc: to filer on a Unicode Script: <Run Foreground="Green">sc:javanese</Run>.
+                            </TextBlock>
+                        </Border>
+                    </Popup>
+                </Grid>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                    <Label Content="Copy " />
+                    <Button Content=" _Chars " Margin="0,0,6,0"  Command="{Binding CopyRecordsCommand}" CommandParameter="0" ToolTip="Copy selected chars (Ctrl+C)" />
+                    <Button Content=" _Lines " Margin="0,0,6,0"  Command="{Binding CopyRecordsCommand}" CommandParameter="1" ToolTip="Copy Character, Codepoint and Name of selected chars (Ctrl+L)"/>
+                    <Button Content=" _Details " Margin="0,0,6,0" Command="{Binding CopyRecordsCommand}" CommandParameter="2" ToolTip="Copy full details of selected chars (Ctrl+D)" />
+                    <Button Content=" _Full Info " Margin="0,0,6,0" Command="{Binding CopyRecordsCommand}" CommandParameter="3" ToolTip="Copy all information on selected chars (Ctrl+F)" />
+                    <Button Content=" _Image " Margin="6,0,6,0" Command="{Binding CopyImageCommand}" />
+                </StackPanel>
+            </StackPanel>
+
+
+            <!-- List of filtered characters -->
+            <ListView Name="CharListView" Grid.Row="1" Foreground="Black" 
+                      VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                      SelectedItem="{Binding SelectedChar}" ItemsSource="{Binding CharactersRecordsList}" >
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Width="60" Header="Character" CellTemplate="{StaticResource CharacterCellTemplate}"/>
+                        <GridViewColumn Width="80"  Header="Codepoint" CellTemplate="{StaticResource CodepointCellTemplate}" />
+                        <GridViewColumn Width="400" Header="Name" DisplayMemberBinding="{Binding Name}" />
+                    </GridView>
+                </ListView.View>
+
+                <ListBox.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock FontWeight="Bold" FontSize="14" Text="{Binding Name}" Margin="0,6,0,0" />
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </ListBox.GroupStyle>
+
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="_Copy chars" InputGestureText="Ctrl+C" Command="{Binding CopyRecordsCommand}" CommandParameter="0" />
+                        <MenuItem Header="Copy _lines" InputGestureText="Ctrl+L" Command="{Binding CopyRecordsCommand}" CommandParameter="1" />
+                        <MenuItem Header="Copy _details" InputGestureText="Ctrl+D" Command="{Binding CopyRecordsCommand}" CommandParameter="2" />
+                        <MenuItem Header="Copy _image" Command="{Binding CopyImageCommand}" />
+                    </ContextMenu>
+                </ListView.ContextMenu>
+            </ListView>
+
+
+            <!-- Selected character detail on main window -->
+            <Grid Grid.Row="2" Margin="0,6,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border Background="White" BorderThickness="2" BorderBrush="Black" Padding="6" Grid.RowSpan="5" VerticalAlignment="Top" Margin="0,3,12,0">
+                    <Image Name="CharImage" Source="{Binding SelectedCharImage}" MinWidth="90" MaxWidth="160" Height="80" Stretch="Uniform" StretchDirection="DownOnly" >
+                    </Image>
+                    <Border.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Copy image" Command="{Binding CopyImageCommand}" />
+                        </ContextMenu>
+                    </Border.ContextMenu>
+                </Border>
+
+
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="UTF-8" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding SelectedChar.UTF8}" />
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="UTF-16" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding SelectedChar.UTF16}" />
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="Character" FontWeight="SemiBold" />
+                <ContentPresenter Grid.Row="2" Grid.Column="2" Content="{Binding StrContent}" />
+                <TextBlock Grid.Row="3" Grid.Column="1" Text="Block" FontWeight="SemiBold" />
+                <ContentPresenter Grid.Row="3" Grid.Column="2" Content="{Binding BlockContent}" />
+                <TextBlock Grid.Row="4" Grid.Column="1" Text="Subheader " FontWeight="SemiBold" />
+                <ContentPresenter Grid.Row="4" Grid.Column="2" Content="{Binding SubheaderContent}" />
+            </Grid>
+
+
+            <!-- Status bar character count/filtered/selected -->
+            <WrapPanel Grid.Row="3" Background="LightGray" Margin="0,6,0,0">
+                <TextBlock Text="{Binding NumChars}" />
+                <TextBlock Text=" characters  " />
+                <TextBlock Text="{Binding FilChars}" Margin="18,0,0,0" />
+                <TextBlock Text="  filtered  " />
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel.Style>
+                        <Style>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelChars}" Value="0">
+                                    <Setter Property="UIElement.Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+                    <TextBlock Text="{Binding SelChars}" Margin="18,0,0,0" />
+                    <TextBlock Text="  selected  " />
+                </StackPanel>
+            </WrapPanel>
+
+        </Grid>
+
+
+        <GridSplitter Grid.Column="1" HorizontalAlignment="Center" Cursor="SizeWE" Width="6" Background="Transparent" Focusable="False" />
+
+        <!-- Right grid, block -->
+        <Grid Margin="6,6,0,6" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+
+            <!-- Input and control for block -->
+            <StackPanel Grid.Row="0">
+                <Grid Margin="0,0,0,6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Column="0" Content="_Block Name Filter " FontWeight="SemiBold" Target ="{Binding ElementName=BlockFilterTextBox}"/>
+                    <TextBox Grid.Column="1" Name="BlockFilterTextBox" Text="{Binding BlockNameFilter, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" ToolTip="Enter a list of words to filter block names." />
+                </Grid>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                    <Label Content="View " />
+                    <Button Command="{Binding ShowLevelCommand}" CommandParameter="3" Content=" L_3 " Margin="0,0,6,0" />
+                    <Button Command="{Binding ShowLevelCommand}" CommandParameter="2" Content=" L_2 " Margin="0,0,6,0" />
+                    <Button Command="{Binding ShowLevelCommand}" CommandParameter="1" Content=" L_1 " Margin="0,0,6,0" />
+                    <Button Command="{Binding ShowLevelCommand}" CommandParameter="0" Content=" Bloc_k " Margin="0,0,12,0" />
+                    <Button Command="{Binding SelectAllCommand}" CommandParameter="1" Content=" Check _all " Margin="0,0,6,0" />
+                    <Button Command="{Binding SelectAllCommand}" CommandParameter="0" Content=" Unchec_k all " Margin="0,0,6,0" />
+                </StackPanel>
+            </StackPanel>
+
+            <TreeView Grid.Row="1" ItemContainerStyle="{StaticResource TreeViewItemStyle}" 
+                  ItemsSource="{Binding Roots, Mode=OneTime}" 
+                  ItemTemplate="{StaticResource CheckBoxItemTemplate}" MouseDoubleClick="TreeView_MouseDoubleClick" />
+
+            <WrapPanel Grid.Row="2" Background="LightGray" Margin="0,6,0,0">
+                <TextBlock Text="{Binding NumBlocks}" />
+                <TextBlock Text=" blocks  " />
+                <TextBlock Text="{Binding SelBlocks}" Margin="18,0,0,0" />
+                <TextBlock Text="  selected  " />
+            </WrapPanel>
+
+        </Grid>
+
+    </Grid>
+
+</Window>

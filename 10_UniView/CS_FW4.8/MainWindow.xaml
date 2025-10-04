@@ -1,0 +1,183 @@
+﻿<Window x:Class="UniViewNS.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UniViewNS"
+        mc:Ignorable="d" FontSize="12" FontFamily="Segoe UI" 
+        Title="UniView CS WPF" Height="800" Width="900" Icon="/Cat.ico">
+
+    <Grid Margin="6">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Label Content="_Text" Padding="0" Margin="0,0,0,6" FontWeight="DemiBold" Target="{Binding ElementName=InputText}"/>
+        <StackPanel Grid.Row="0" Grid.Column="1">
+
+            <TextBox Name="InputText" Height="80" Margin="0,0,0,4" 
+                     Text="{Binding SourceText, Delay=250, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True}"
+                     SourceUpdated="SourceUpdated_Handler"
+                     AcceptsReturn="True" AcceptsTab="True" FontSize="14"
+                     VerticalScrollBarVisibility="Auto" >
+            </TextBox>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Text samples"  Margin="0,3,12,0" VerticalAlignment="Top" FontWeight="SemiBold" />
+                <ComboBox Name="TextSamplesCombo" Grid.Column="1" Margin="0,0,0,6" VerticalAlignment="Top" HorizontalAlignment="Stretch" 
+                                        ItemsSource="{Binding SamplesCollection}" 
+                                        SelectionChanged="SamplesList_SelectionChanged" />
+            </Grid>
+        </StackPanel>
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Transformations"  Margin="0,0,6,0" FontWeight="DemiBold" />
+        <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,0,0,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+
+            <GroupBox Margin="0,-1,6,0">
+                <GroupBox.Header>
+                    <Label Content="Case" Padding="0" Margin="0,0,0,3" FontWeight="DemiBold"  />
+                </GroupBox.Header>
+                <StackPanel Name="CaseOptionsPanel">
+                    <RadioButton Name="Case_Lower" Content="_Lowercase" Click="Option_Click" />
+                    <RadioButton Name="Case_Upper" Content="_Uppercase" Click="Option_Click" />
+                    <RadioButton Name="Case_None" Content="Non_e" Click="Option_Click" />
+                </StackPanel>
+            </GroupBox>
+
+
+            <GroupBox Grid.Column="1" Margin="0,-1,6,0">
+                <GroupBox.Header>
+                    <Label Content="Normalization" Padding="0" Margin="0,0,0,3" FontWeight="DemiBold" />
+                </GroupBox.Header>
+                <StackPanel>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60" />
+                            <ColumnDefinition Width="60" />
+                        </Grid.ColumnDefinitions>
+
+                        <RadioButton Grid.Row="0" Grid.Column="0" Name="Norm_NFC" Content="NF_C" Click="Option_Click" ToolTip="NFC: Normal Form C, canonical decomposition then canonical composition" />
+                        <RadioButton Grid.Row="0" Grid.Column="1" Name="Norm_NFD" Content="NF_D" Click="Option_Click" ToolTip="NFD: Normal Form D, canonical decomposition"/>
+                        <RadioButton Grid.Row="1" Grid.Column="0" Name="Norm_NFKC" Content="NF_KC" Click="Option_Click" ToolTip="NFKC: Normal Form KC, compatibility decomposition then canonical composition"/>
+                        <RadioButton Grid.Row="1" Grid.Column="1" Name="Norm_NFKD" Content="N_FKD" Click="Option_Click" ToolTip="NFKD: Normal Form KD, compatibility decomposition" />
+                        <RadioButton Grid.Row="2" Grid.Column="0" Name="Norm_None" Content="N_one" Click="Option_Click" />
+                    </Grid>
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Grid.Column="2" Margin="0,0,6,0">
+                <GroupBox.Header>
+                    <Label Content="Sequence" Padding="0" Margin="0,-1,0,3" FontWeight="DemiBold" />
+                </GroupBox.Header>
+                <StackPanel>
+                    <RadioButton Name="Seq_CN" Content="C_ase then Normalization" Click="Option_Click" />
+                    <RadioButton Name="Seq_NC" Content="_Normalization then Case" Click="Option_Click" />
+                </StackPanel>
+            </GroupBox>
+        </Grid>
+
+        <Label Grid.Row="2" Grid.Column="0" Content="_Result" Padding="0" FontWeight="DemiBold" Target="{Binding ElementName=ResultText}"/>
+        <TextBox Name="ResultText" Grid.Row="2" Grid.Column="1" Height="80" Margin="0,0,0,6" AcceptsReturn="True"
+                     SelectionChanged="ResultText_SelectionChanged"
+                     IsInactiveSelectionHighlightEnabled="True"
+                     VerticalScrollBarVisibility="Auto" IsReadOnly="True" FontSize="14" >
+            <TextBox.Resources>
+                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Orange" />
+            </TextBox.Resources>
+        </TextBox>
+
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="Counts"  Margin="0,0,6,0" FontWeight="DemiBold" />
+        <Grid Grid.Row="3" Grid.Column="1" Margin="0,0,0,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="50" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="Characters (UTF-16 units)"  Margin="0,0,6,0" />
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding CharactersCount}"  Margin="0,0,6,0" HorizontalAlignment="Right" />
+            <TextBlock Grid.Row="1" Text="Codepoints (Unicode units)"  Margin="0,0,6,0" />
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CodepointsCount}"  Margin="0,0,6,0" HorizontalAlignment="Right" />
+            <TextBlock Grid.Row="2" Text="Glyphs (Visual units)"  Margin="0,0,6,0" />
+            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding GlyphsCount}"  Margin="0,0,6,0" HorizontalAlignment="Right" />
+        </Grid>
+
+        <Label Grid.Row="4" Grid.Column="0" Content="Code_points" Margin="0,3,0,0" Padding="0" FontWeight="DemiBold" Target="{Binding ElementName=CodepointsList}"/>
+        <ListView Name="CodepointsList" Grid.Row="4" Grid.Column="1" SelectionMode="Extended" SelectionChanged="CodepointsList_SelectionChanged" ItemsSource="{Binding CodepointsCollection}" >
+            <ListView.Resources>
+                <Style TargetType="{x:Type ListViewItem}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding GlyphAlternation}" Value="-1">
+                            <Setter Property="Background" Value="LightGray" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding GlyphAlternation}" Value="0">
+                            <Setter Property="Background" Value="Lavender" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding GlyphAlternation}" Value="1">
+                            <Setter Property="Background" Value="Aquamarine" />
+                        </DataTrigger>
+                        <Trigger Property="IsSelected" Value="true" >
+                            <Setter Property="Foreground" Value="Black" />
+                            <Setter Property="Background" Value="Orange" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ListView.Resources>
+
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="CP" DisplayMemberBinding="{Binding CodepointIndex}"/>
+                    <GridViewColumn Header="Char" DisplayMemberBinding="{Binding CharIndexStr}"/>
+                    <GridViewColumn Header="Glyph" DisplayMemberBinding="{Binding GlyphIndexStr}"/>
+                    <GridViewColumn Header="Code" DisplayMemberBinding="{Binding CodepointUString}" />
+                    <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
+                    <GridViewColumn Header="Script" DisplayMemberBinding="{Binding Script}"/>
+                    <GridViewColumn Header="Cat" DisplayMemberBinding="{Binding Category}"/>
+                    <GridViewColumn Header="UTF-16" DisplayMemberBinding="{Binding UTF16}"/>
+                    <GridViewColumn Header="UTF-8" DisplayMemberBinding="{Binding UTF8}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+
+        <StackPanel Grid.Column="2" Margin="6,0,0,0">
+            <!-- Note that F1 key is already mapped to Help command, so there is nothing more to do -->
+            <Button Width="80" Content="About" Command="Help">
+                <Button.ToolTip>[F1] Show application information</Button.ToolTip>
+            </Button>
+            <Button Width="80" Content="Close" Click="CloseButton_Click" Margin="0,6,0,0" />
+        </StackPanel>
+
+        <StackPanel Grid.Column="2" Grid.Row="4" Margin="6,0,0,0">
+            <Button Width="80" Content="Copy" Command="Copy" />
+        </StackPanel>
+    </Grid>
+</Window>

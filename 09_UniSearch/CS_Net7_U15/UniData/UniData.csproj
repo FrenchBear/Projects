@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<RootNamespace>UniDataNS</RootNamespace>
+		<Platforms>AnyCPU;x64</Platforms>
+		<Nullable>enable</Nullable>
+		<Version>1.15.0</Version>
+		<Authors>Pierre Violent</Authors>
+		<Company>Pierre Violent</Company>
+		<Copyright>Copyright ©2018-2022 Pierre Violent</Copyright>
+		<Description>Unicode characters and blocks information (Unicode 15) [Net7 C#11]</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="UCD\DerivedAge.txt" />
+		<None Remove="UCD\MetaBlocks.txt" />
+		<None Remove="UCD\NamesList.txt" />
+		<None Remove="UCD\Scripts.txt" />
+		<None Remove="UCD\UnicodeData.txt" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="UCD\DerivedAge.txt" />
+		<EmbeddedResource Include="UCD\MetaBlocks.txt" />
+		<EmbeddedResource Include="UCD\NamesList.txt" />
+		<EmbeddedResource Include="UCD\Scripts.txt" />
+		<EmbeddedResource Include="UCD\UnicodeData.txt" />
+	</ItemGroup>
+
+</Project>

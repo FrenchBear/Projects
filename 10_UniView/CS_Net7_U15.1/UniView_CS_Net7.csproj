@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net7.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<Nullable>enable</Nullable>
+		<Platforms>AnyCPU</Platforms>
+		<Authors>Pierre Violent</Authors>
+		<Copyright>Copyright ©2018-2023 Pierre Violent</Copyright>
+		<Version>2.1.0</Version>
+		<Description>Unicode Character Details Tool (WPF Net7 C#11 U15.1)</Description>
+		<ApplicationIcon>Cat.ico</ApplicationIcon>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="Cat.ico" />
+		<None Remove="UnicodeData.txt" />
+		<None Remove="UniData\emoji-sequences.txt" />
+		<None Remove="UniData\emoji-zwj-sequences.txt" />
+		<None Remove="UniData\MetaBlocks.txt" />
+		<None Remove="UniData\Scripts.txt" />
+		<None Remove="UniData\UnicodeData.txt" />
+		<None Remove="UnicodeVersion.txt" />
+		<None Remove="Unicorn.ico" />
+		<None Remove="UniData\UnicodeVersion.txt" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="UniData\UCD\emoji-sequences.txt" />
+		<EmbeddedResource Include="UniData\UCD\emoji-zwj-sequences.txt" />
+		<EmbeddedResource Include="UniData\UCD\MetaBlocks.txt" />
+		<EmbeddedResource Include="UniData\UCD\Scripts.txt" />
+		<EmbeddedResource Include="UniData\UCD\UnicodeData.txt" />
+		<EmbeddedResource Include="UniData\UCD\UnicodeVersion.txt" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="Cat.ico" />
+	</ItemGroup>
+
+</Project>

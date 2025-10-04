@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<RootNamespace>UniDataNS</RootNamespace>
+		<Platforms>x64</Platforms>
+		<Nullable>enable</Nullable>
+		<Version>1.15.2</Version>
+		<Authors>Pierre Violent</Authors>
+		<Company>Pierre Violent</Company>
+		<Copyright>Copyright ©2018-2024 Pierre Violent</Copyright>
+		<Description>Unicode characters and blocks information [Net8 C#12 U15.1]</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="Julia\julia-tab-completion.txt" />
+		<None Remove="UCD\DerivedAge.txt" />
+		<None Remove="UCD\MetaBlocks.txt" />
+		<None Remove="UCD\NamesList.txt" />
+		<None Remove="UCD\Scripts.txt" />
+		<None Remove="UCD\UnicodeData.txt" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Julia\julia-tab-completion.txt" />
+		<EmbeddedResource Include="UCD\DerivedAge.txt" />
+		<EmbeddedResource Include="UCD\MetaBlocks.txt" />
+		<EmbeddedResource Include="UCD\NamesList.txt" />
+		<EmbeddedResource Include="UCD\Scripts.txt" />
+		<EmbeddedResource Include="UCD\UnicodeData.txt" />
+	</ItemGroup>
+
+</Project>

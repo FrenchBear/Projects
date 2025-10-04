@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<RootNamespace>DirectDrawWrite</RootNamespace>
+		<Platforms>x64</Platforms>
+		<Description>Draws a text using DirectDraw/DirectWrite, and returns a cropped image as a byte[] for BGRA32bpp bitmap</Description>
+		<Authors>Pierre Violent</Authors>
+		<Copyright>Copyright ©2018-2023 Pierre Violent</Copyright>
+		<Version>1.1.0</Version>
+		<UseWPF>true</UseWPF>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<NoWarn>NU1701</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="WindowsAPICodePackDirectX" Version="1.1.2" />
+	</ItemGroup>
+
+</Project>

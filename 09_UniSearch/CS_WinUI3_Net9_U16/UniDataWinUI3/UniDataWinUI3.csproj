@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	
+	<PropertyGroup>
+		<TargetFramework>net9.0-windows10.0.19041.0</TargetFramework>
+		<TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+		<RootNamespace>UniDataNS</RootNamespace>
+		<RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+		<UseWinUI>true</UseWinUI>
+		<Version>1.16.2</Version>
+		<Authors>Pierre Violent</Authors>
+		<Company>Pierre Violent</Company>
+		<Copyright>Copyright ©2018-2025 Pierre Violent</Copyright>
+		<Description>Unicode characters and blocks information [WinUI3 Net9 C#13 U16+J+C]</Description>
+		<Nullable>enable</Nullable>
+		<Platforms>AnyCPU;x64</Platforms>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="Confusables\confusables.txt" />
+		<None Remove="Julia\julia-tab-completion.txt" />
+		<None Remove="UCD\DerivedAge.txt" />
+		<None Remove="UCD\MetaBlocks.txt" />
+		<None Remove="UCD\NamesList.txt" />
+		<None Remove="UCD\Scripts.txt" />
+		<None Remove="UCD\UnicodeData.txt" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Confusables\confusables.txt" />
+		<EmbeddedResource Include="Julia\julia-tab-completion.txt" />
+		<EmbeddedResource Include="UCD\DerivedAge.txt" />
+		<EmbeddedResource Include="UCD\MetaBlocks.txt" />
+		<EmbeddedResource Include="UCD\NamesList.txt" />
+		<EmbeddedResource Include="UCD\Scripts.txt" />
+		<EmbeddedResource Include="UCD\UnicodeData.txt" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.241114003" />
+		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
+	</ItemGroup>
+
+</Project>

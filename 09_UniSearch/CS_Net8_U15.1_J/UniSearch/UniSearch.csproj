@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<Authors>Pierre Violent</Authors>
+		<Version>1.9.0</Version>
+		<Copyright>Copyright ©2018-2024 Pierre Violent</Copyright>
+		<Description>Unicode Character Search Tool [WPF Net8 C#12]</Description>
+		<ApplicationIcon>Unicorn.ico</ApplicationIcon>
+		<Platforms>x64</Platforms>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Nullable>enable</Nullable>
+		<NoWarn>NU1701</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="Unicorn.ico" />
+		<None Remove="Unicorn.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\DirectDrawWrite\DirectDrawWrite.csproj" />
+		<ProjectReference Include="..\UniData\UniData.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="Fonts\LastResortHE-Regular.ttf" />
+		<Resource Include="Unicorn.ico" />
+		<Resource Include="Unicorn.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="AboutWindow.xaml.cs">
+			<DependentUpon>AboutWindow.xaml</DependentUpon>
+		</Compile>
+		<Compile Update="CharDetailWindow.xaml.cs">
+			<DependentUpon>CharDetailWindow.xaml</DependentUpon>
+		</Compile>
+		<Compile Update="SearchWindow.xaml.cs">
+			<SubType>Code</SubType>
+			<DependentUpon>SearchWindow.xaml</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Page Update="AboutWindow.xaml">
+			<SubType>Designer</SubType>
+		</Page>
+		<Page Update="CharDetailWindow.xaml">
+			<SubType>Designer</SubType>
+		</Page>
+		<Page Update="SearchWindow.xaml">
+			<SubType>Designer</SubType>
+		</Page>
+	</ItemGroup>
+
+</Project>

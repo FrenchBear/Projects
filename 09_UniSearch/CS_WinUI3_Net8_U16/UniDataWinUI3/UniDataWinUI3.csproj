@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	
+	<PropertyGroup>
+		<TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+		<TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+		<RootNamespace>UniDataNS</RootNamespace>
+		<RuntimeIdentifiers Condition="$([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')) &gt;= 8">win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+		<RuntimeIdentifiers Condition="$([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)')) &lt; 8">win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
+		<UseWinUI>true</UseWinUI>
+		<Version>1.16.0</Version>
+		<Authors>Pierre Violent</Authors>
+		<Company>Pierre Violent</Company>
+		<Copyright>Copyright ©2018-2024 Pierre Violent</Copyright>
+		<Description>Unicode characters and blocks information [WinUI3 Net8 C#12 U16+J+C]</Description>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="Confusables\confusables.txt" />
+		<None Remove="Julia\julia-tab-completion.txt" />
+		<None Remove="UCD\DerivedAge.txt" />
+		<None Remove="UCD\MetaBlocks.txt" />
+		<None Remove="UCD\NamesList.txt" />
+		<None Remove="UCD\Scripts.txt" />
+		<None Remove="UCD\UnicodeData.txt" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Confusables\confusables.txt" />
+		<EmbeddedResource Include="Julia\julia-tab-completion.txt" />
+		<EmbeddedResource Include="UCD\DerivedAge.txt" />
+		<EmbeddedResource Include="UCD\MetaBlocks.txt" />
+		<EmbeddedResource Include="UCD\NamesList.txt" />
+		<EmbeddedResource Include="UCD\Scripts.txt" />
+		<EmbeddedResource Include="UCD\UnicodeData.txt" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240311000" />
+		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
+	</ItemGroup>
+
+</Project>

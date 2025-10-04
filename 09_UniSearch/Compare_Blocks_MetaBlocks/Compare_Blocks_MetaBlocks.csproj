@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<RootNamespace>Compare_Blocks_MetaBlocks</RootNamespace>
+		<Version>17.0.0</Version>
+		<Authors>Pierre Violent</Authors>
+		<Company>Pierre Violent</Company>
+		<Copyright>Copyright ©2022-2025 Pierre Violent</Copyright>
+		<Description>Tool to compare Blocks.txt from Unicode UCD and MetaBlocks.txt (personal file) when a new version of Unicode is released</Description>
+	</PropertyGroup>
+
+</Project>

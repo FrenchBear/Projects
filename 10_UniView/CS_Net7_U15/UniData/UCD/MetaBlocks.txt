@@ -1,0 +1,359 @@
+﻿# MetaBlocks.txt
+# Supplementary file to UCD, maintained by Pierre Violent
+# Define hierarchical grouping levels for Unicode blocks.
+# Format: range;Block Name;Level 1 Name;Level 2 Name;Level3 Name
+# Range and Block Name come from UCD Blocks.txt; The rest of the fields are manually gathered from Unicode site Web Pages listing characters
+#
+# 2016-12-09	PV		Unicode 10
+# 2018-08-18	PV		Unicode 11
+# 2019-03-06	PV		Unicode 12
+# 2020-09-03	PV		Unicode 13
+# 2021-01-01	PV		Specials End of Plane 15 and 16
+# 2022-04-27	PV		Unicode 14
+# 2022-11-18	PV		Unicode 15
+
+0000..001F;ASCII Controls C0;;Specials;Symbols and Punctuation
+0020..007F;Basic Latin (ASCII);Latin;European Scripts;Scripts
+0080..009F;ASCII Controls C1;;Specials;Symbols and Punctuation
+00A0..00FF;Latin-1 Supplement;Latin;European Scripts;Scripts
+0100..017F;Latin Extended-A;Latin;European Scripts;Scripts
+0180..024F;Latin Extended-B;Latin;European Scripts;Scripts
+0250..02AF;IPA Extensions;Latin;European Scripts;Scripts
+02B0..02FF;Spacing Modifier Letters;;Modifier Letters;Scripts
+0300..036F;Combining Diacritical Marks;Combining Diacritical Marks;Combining Marks;Scripts
+0370..03FF;Greek and Coptic;Greek;European Scripts;Scripts
+0400..04FF;Cyrillic;Cyrillic;European Scripts;Scripts
+0500..052F;Cyrillic Supplement;Cyrillic;European Scripts;Scripts
+0530..058F;Armenian;Armenian;European Scripts;Scripts
+0590..05FF;Hebrew;Hebrew;Middle Eastern Scripts;Scripts
+0600..06FF;Arabic;Arabic;Middle Eastern Scripts;Scripts
+0700..074F;Syriac;;Middle Eastern Scripts;Scripts
+0750..077F;Arabic Supplement;Arabic;Middle Eastern Scripts;Scripts
+0780..07BF;Thaana;;South Asian Scripts;Scripts
+07C0..07FF;NKo;;African Scripts;Scripts
+0800..083F;Samaritan;;Middle Eastern Scripts;Scripts
+0840..085F;Mandaic;;Middle Eastern Scripts;Scripts
+0860..086F;Syriac Supplement;Syriac;Middle Eastern Scripts;Scripts
+0870..089F;Arabic Extended-B;Arabic;Middle Eastern Scripts;Scripts
+08A0..08FF;Arabic Extended-A;Arabic;Middle Eastern Scripts;Scripts
+0900..097F;Devanagari;Devanagari;South Asian Scripts;Scripts
+0980..09FF;Bengali;;South Asian Scripts;Scripts
+0A00..0A7F;Gurmukhi;;South Asian Scripts;Scripts
+0A80..0AFF;Gujarati;;South Asian Scripts;Scripts
+0B00..0B7F;Oriya;;South Asian Scripts;Scripts
+0B80..0BFF;Tamil;;South Asian Scripts;Scripts
+0C00..0C7F;Telugu;;South Asian Scripts;Scripts
+0C80..0CFF;Kannada;;South Asian Scripts;Scripts
+0D00..0D7F;Malayalam;;South Asian Scripts;Scripts
+0D80..0DFF;Sinhala;Sinhala;South Asian Scripts;Scripts
+0E00..0E7F;Thai;;Southeast Asian Scripts;Scripts
+0E80..0EFF;Lao;;Southeast Asian Scripts;Scripts
+0F00..0FFF;Tibetan;;Central Asian Scripts;Scripts
+1000..109F;Myanmar;Myanmar;Southeast Asian Scripts;Scripts
+10A0..10FF;Georgian;Georgian;European Scripts;Scripts
+1100..11FF;Hangul Jamo;Hangul Jamo;East Asian Scripts;Scripts
+1200..137F;Ethiopic;Ethiopic;African Scripts;Scripts
+1380..139F;Ethiopic Supplement;Ethiopic;African Scripts;Scripts
+13A0..13FF;Cherokee;Cherokee;American Scripts;Scripts
+1400..167F;Unified Canadian Aboriginal Syllabics;Unified Canadian Aboriginal Syllabics;American Scripts;Scripts
+1680..169F;Ogham;;European Scripts;Scripts
+16A0..16FF;Runic;;European Scripts;Scripts
+1700..171F;Tagalog;;Indonesia & Oceania Scripts;Scripts
+1720..173F;Hanunoo;;Indonesia & Oceania Scripts;Scripts
+1740..175F;Buhid;;Indonesia & Oceania Scripts;Scripts
+1760..177F;Tagbanwa;;Indonesia & Oceania Scripts;Scripts
+1780..17FF;Khmer;Khmer;Southeast Asian Scripts;Scripts
+1800..18AF;Mongolian;Mongolian;Central Asian Scripts;Scripts
+18B0..18FF;Unified Canadian Aboriginal Syllabics Extended;Unified Canadian Aboriginal Syllabics;American Scripts;Scripts
+1900..194F;Limbu;;South Asian Scripts;Scripts
+1950..197F;Tai Le;;Southeast Asian Scripts;Scripts
+1980..19DF;New Tai Lue;;Southeast Asian Scripts;Scripts
+19E0..19FF;Khmer Symbols;Khmer;Southeast Asian Scripts;Scripts
+1A00..1A1F;Buginese;;Indonesia & Oceania Scripts;Scripts
+1A20..1AAF;Tai Tham;;Southeast Asian Scripts;Scripts
+1AB0..1AFF;Combining Diacritical Marks Extended;Combining Diacritical Marks;Combining Marks;Scripts
+1B00..1B7F;Balinese;;Indonesia & Oceania Scripts;Scripts
+1B80..1BBF;Sundanese;Sundanese;Indonesia & Oceania Scripts;Scripts
+1BC0..1BFF;Batak;;Indonesia & Oceania Scripts;Scripts
+1C00..1C4F;Lepcha;;South Asian Scripts;Scripts
+1C50..1C7F;Ol Chiki;;South Asian Scripts;Scripts
+1C80..1C8F;Cyrillic Extended-C;Cyrillic;European Scripts;Scripts
+1C90..1CBF;Georgian Extended;Georgian;European Scripts;Scripts
+1CC0..1CCF;Sundanese Supplement;Sundanese;Indonesia & Oceania Scripts;Scripts
+1CD0..1CFF;Vedic Extensions;;South Asian Scripts;Scripts
+1D00..1D7F;Phonetic Extensions;Latin;European Scripts;Scripts
+1D80..1DBF;Phonetic Extensions Supplement;Latin;European Scripts;Scripts
+1DC0..1DFF;Combining Diacritical Marks Supplement;Combining Diacritical Marks;Combining Marks;Scripts
+1E00..1EFF;Latin Extended Additional;Latin;European Scripts;Scripts
+1F00..1FFF;Greek Extended;Greek;European Scripts;Scripts
+2000..206F;General Punctuation;General Punctuation;Punctuation;Symbols and Punctuation
+2070..209F;Superscripts and Subscripts;;Numbers & Digits;Symbols and Punctuation
+20A0..20CF;Currency Symbols;;Other Symbols;Symbols and Punctuation
+20D0..20FF;Combining Diacritical Marks for Symbols;;Combining Marks;Scripts
+2100..214F;Letterlike Symbols;Letterlike Symbols;Alphanumeric Symbols;Symbols and Punctuation
+2150..218F;Number Forms;;Numbers & Digits;Symbols and Punctuation
+2190..21FF;Arrows;Arrows;Mathematical Symbols;Symbols and Punctuation
+2200..22FF;Mathematical Operators;Mathematical Operators;Mathematical Symbols;Symbols and Punctuation
+2300..23FF;Miscellaneous Technical;;Technical Symbols;Symbols and Punctuation
+2400..243F;Control Pictures;;Technical Symbols;Symbols and Punctuation
+2440..245F;Optical Character Recognition;;Technical Symbols;Symbols and Punctuation
+2460..24FF;Enclosed Alphanumerics;;Enclosed Alphanumerics;Symbols and Punctuation
+2500..257F;Box Drawing;Geometric Shapes;Mathematical Symbols;Symbols and Punctuation
+2580..259F;Block Elements;Geometric Shapes;Mathematical Symbols;Symbols and Punctuation
+25A0..25FF;Geometric Shapes;Geometric Shapes;Mathematical Symbols;Symbols and Punctuation
+2600..26FF;Miscellaneous Symbols;;Emoji & Pictographs;Symbols and Punctuation
+2700..27BF;Dingbats;Dingbats;Emoji & Pictographs;Symbols and Punctuation
+27C0..27EF;Miscellaneous Mathematical Symbols-A;;Mathematical Operators;Symbols and Punctuation
+27F0..27FF;Supplemental Arrows-A;Arrows;Mathematical Symbols;Symbols and Punctuation
+2800..28FF;Braille Patterns;;Notational Systems;Symbols and Punctuation
+2900..297F;Supplemental Arrows-B;Arrows;Mathematical Symbols;Symbols and Punctuation
+2980..29FF;Miscellaneous Mathematical Symbols-B;;Mathematical Operators;Symbols and Punctuation
+2A00..2AFF;Supplemental Mathematical Operators;;Mathematical Operators;Symbols and Punctuation
+2B00..2BFF;Miscellaneous Symbols and Arrows;Arrows;Mathematical Symbols;Symbols and Punctuation
+2C00..2C5F;Glagolitic;Glagolitic;European Scripts;Scripts
+2C60..2C7F;Latin Extended-C;Latin;European Scripts;Scripts
+2C80..2CFF;Coptic;;European Scripts;Scripts
+2D00..2D2F;Georgian Supplement;Georgian;European Scripts;Scripts
+2D30..2D7F;Tifinagh;;African Scripts;Scripts
+2D80..2DDF;Ethiopic Extended;Ethiopic;African Scripts;Scripts
+2DE0..2DFF;Cyrillic Extended-A;Cyrillic;European Scripts;Scripts
+2E00..2E7F;Supplemental Punctuation;General Punctuation;Punctuation;Symbols and Punctuation
+2E80..2EFF;CJK Radicals Supplement;CJK Radicals / Kangxi Radicals;East Asian Scripts;Scripts
+2F00..2FDF;Kangxi Radicals;CJK Radicals / Kangxi Radicals;East Asian Scripts;Scripts
+2FF0..2FFF;Ideographic Description Characters;CJK Radicals / Kangxi Radicals;East Asian Scripts;Scripts
+3000..303F;CJK Symbols and Punctuation;CJK Symbols and Punctuation;Punctuation;Symbols and Punctuation
+3040..309F;Hiragana;;East Asian Scripts;Scripts
+30A0..30FF;Katakana;Katakana;East Asian Scripts;Scripts
+3100..312F;Bopomofo;Bopomofo;East Asian Scripts;Scripts
+3130..318F;Hangul Compatibility Jamo;Hangul Jamo;East Asian Scripts;Scripts
+3190..319F;Kanbun;;East Asian Scripts;Scripts
+31A0..31BF;Bopomofo Extended;Bopomofo;East Asian Scripts;Scripts
+31C0..31EF;CJK Strokes;CJK Radicals / Kangxi Radicals;East Asian Scripts;Scripts
+31F0..31FF;Katakana Phonetic Extensions;Katakana;East Asian Scripts;Scripts
+3200..32FF;Enclosed CJK Letters and Months;Enclosed CJK Letters and Months;Alphanumeric Symbols;Symbols and Punctuation
+3300..33FF;CJK Compatibility;CJK Compatibility;Alphanumeric Symbols;Symbols and Punctuation
+3400..4DBF;CJK Unified Ideographs Extension A;CJK Unified Ideographs (Han);East Asian Scripts;Scripts
+4DC0..4DFF;Yijing Hexagram Symbols;Yijing Symbols;Other Symbols;Symbols and Punctuation
+4E00..9FFF;CJK Unified Ideographs;CJK Unified Ideographs (Han);East Asian Scripts;Scripts
+A000..A48F;Yi Syllables;Yi;East Asian Scripts;Scripts
+A490..A4CF;Yi Radicals;Yi;East Asian Scripts;Scripts
+A4D0..A4FF;Lisu;;East Asian Scripts;Scripts
+A500..A63F;Vai;;African Scripts;Scripts
+A640..A69F;Cyrillic Extended-B;Cyrillic;European Scripts;Scripts
+A6A0..A6FF;Bamum;Bamum;African Scripts;Scripts
+A700..A71F;Modifier Tone Letters;;Modifier Letters;Scripts
+A720..A7FF;Latin Extended-D;Latin;European Scripts;Scripts
+A800..A82F;Syloti Nagri;;South Asian Scripts;Scripts
+A830..A83F;Common Indic Number Forms;;Numbers & Digits;Symbols and Punctuation
+A840..A87F;Phags-pa;;Central Asian Scripts;Scripts
+A880..A8DF;Saurashtra;;South Asian Scripts;Scripts
+A8E0..A8FF;Devanagari Extended;Devanagari;South Asian Scripts;Scripts
+A900..A92F;Kayah Li;;Southeast Asian Scripts;Scripts
+A930..A95F;Rejang;;Indonesia & Oceania Scripts;Scripts
+A960..A97F;Hangul Jamo Extended-A;Hangul Jamo;East Asian Scripts;Scripts
+A980..A9DF;Javanese;;Indonesia & Oceania Scripts;Scripts
+A9E0..A9FF;Myanmar Extended-B;Myanmar;Southeast Asian Scripts;Scripts
+AA00..AA5F;Cham;;Southeast Asian Scripts;Scripts
+AA60..AA7F;Myanmar Extended-A;Myanmar;Southeast Asian Scripts;Scripts
+AA80..AADF;Tai Viet;;Southeast Asian Scripts;Scripts
+AAE0..AAFF;Meetei Mayek Extensions;Meetei Mayek;South Asian Scripts;Scripts
+AB00..AB2F;Ethiopic Extended-A;Ethiopic;African Scripts;Scripts
+AB30..AB6F;Latin Extended-E;Latin;European Scripts;Scripts
+AB70..ABBF;Cherokee Supplement;Cherokee;American Scripts;Scripts
+ABC0..ABFF;Meetei Mayek;Meetei Mayek;South Asian Scripts;Scripts
+AC00..D7AF;Hangul Syllables;;East Asian Scripts;Scripts
+D7B0..D7FF;Hangul Jamo Extended-B;Hangul Jamo;East Asian Scripts;Scripts
+D800..DB7F;High Surrogates;;Surrogates;Symbols and Punctuation
+DB80..DBFF;High Private Use Surrogates;;Surrogates;Symbols and Punctuation
+DC00..DFFF;Low Surrogates;;Surrogates;Symbols and Punctuation
+E000..F8FF;Private Use Area;;Private Use;Symbols and Punctuation
+F900..FAFF;CJK Compatibility Ideographs;CJK Compatibility Ideographs;East Asian Scripts;Scripts
+FB00..FB4F;Alphabetic Presentation Forms;;Other;Scripts
+FB50..FDFF;Arabic Presentation Forms-A;Arabic;Middle Eastern Scripts;Scripts
+FE00..FE0F;Variation Selectors;Variation Selectors;Specials;Symbols and Punctuation
+FE10..FE1F;Vertical Forms;CJK Compatibility Forms;Punctuation;Symbols and Punctuation
+FE20..FE2F;Combining Half Marks;;Combining Marks;Scripts
+FE30..FE4F;CJK Compatibility Forms;CJK Compatibility Forms;Punctuation;Symbols and Punctuation
+FE50..FE6F;Small Form Variants;CJK Compatibility Forms;Punctuation;Symbols and Punctuation
+FE70..FEFF;Arabic Presentation Forms-B;Arabic;Middle Eastern Scripts;Scripts
+FF00..FFEF;Halfwidth and Fullwidth Forms;CJK Compatibility Forms;Punctuation;Symbols and Punctuation
+FFF0..FFFF;Specials;;Specials;Symbols and Punctuation
+10000..1007F;Linear B Syllabary;Linear B;Latin;Scripts
+10080..100FF;Linear B Ideograms;Linear B;Latin;Scripts
+10100..1013F;Aegean Numbers;Linear B;Latin;Scripts
+10140..1018F;Ancient Greek Numbers;Greek;European Scripts;Scripts
+10190..101CF;Ancient Symbols;;Other Symbols;Symbols and Punctuation
+101D0..101FF;Phaistos Disc;;European Scripts;Scripts
+10280..1029F;Lycian;;Middle Eastern Scripts;Scripts
+102A0..102DF;Carian;;Middle Eastern Scripts;Scripts
+102E0..102FF;Coptic Epact Numbers;;Numbers & Digits;Symbols and Punctuation
+10300..1032F;Old Italic;;Latin;Scripts
+10330..1034F;Gothic;;Latin;Scripts
+10350..1037F;Old Permic;;Latin;Scripts
+10380..1039F;Ugaritic;Cuneiform;Middle Eastern Scripts;Scripts
+103A0..103DF;Old Persian;Cuneiform;Middle Eastern Scripts;Scripts
+10400..1044F;Deseret;;American Scripts;Scripts
+10450..1047F;Shavian;;Latin;Scripts
+10480..104AF;Osmanya;;African Scripts;Scripts
+104B0..104FF;Osage;;American Scripts;Scripts
+10500..1052F;Elbasan;;European Scripts;Scripts
+10530..1056F;Caucasian Albanian;;European Scripts;Scripts
+10570..105BF;Vithkuqi;;European Scripts;Scripts
+10600..1077F;Linear A;;European Scripts;Scripts
+10780..107BF;Latin Extended-F;Latin;European Scripts;Scripts
+10800..1083F;Cypriot Syllabary;;European Scripts;Scripts
+10840..1085F;Imperial Aramaic;;Middle Eastern Scripts;Scripts
+10860..1087F;Palmyrene;;Middle Eastern Scripts;Scripts
+10880..108AF;Nabataean;;Middle Eastern Scripts;Scripts
+108E0..108FF;Hatran;;Middle Eastern Scripts;Scripts
+10900..1091F;Phoenician;;Middle Eastern Scripts;Scripts
+10920..1093F;Lydian;;Middle Eastern Scripts;Scripts
+10980..1099F;Meroitic Hieroglyphs;Meroitic;African Scripts;Scripts
+109A0..109FF;Meroitic Cursive;Meroitic;African Scripts;Scripts
+10A00..10A5F;Kharoshthi;;South Asian Scripts;Scripts
+10A60..10A7F;Old South Arabian;;Middle Eastern Scripts;Scripts
+10A80..10A9F;Old North Arabian;;Middle Eastern Scripts;Scripts
+10AC0..10AFF;Manichaean;;Central Asian Scripts;Scripts
+10B00..10B3F;Avestan;;Middle Eastern Scripts;Scripts
+10B40..10B5F;Inscriptional Parthian;;Middle Eastern Scripts;Scripts
+10B60..10B7F;Inscriptional Pahlavi;;Middle Eastern Scripts;Scripts
+10B80..10BAF;Psalter Pahlavi;;Middle Eastern Scripts;Scripts
+10C00..10C4F;Old Turkic;;Central Asian Scripts;Scripts
+10C80..10CFF;Old Hungarian;Latin;European Scripts;Scripts
+10D00..10D3F;Hanifi Rohingya;;Southeast Asian Scripts;Scripts
+10E60..10E7F;Rumi Numeral Symbols;;Numbers & Digits;Symbols and Punctuation
+10E80..10EBF;Yezidi;;Middle Eastern Scripts;Scripts
+10EC0..10EFF;Arabic Extended-C;Arabic;Middle Eastern Scripts;Scripts
+10F00..10F2F;Old Sogdian;;Central Asian Scripts;Scripts
+10F30..10F6F;Sogdian;;Central Asian Scripts;Scripts
+10F70..10FAF;Old Uyghur;;Central Asian Scripts;Scripts
+10FB0..10FDF;Chorasmian;;Middle Eastern Scripts;Scripts
+10FE0..10FFF;Elymaic;;Middle Eastern Scripts;Scripts
+11000..1107F;Brahmi;;South Asian Scripts;Scripts
+11080..110CF;Kaithi;;South Asian Scripts;Scripts
+110D0..110FF;Sora Sompeng;;South Asian Scripts;Scripts
+11100..1114F;Chakma;;South Asian Scripts;Scripts
+11150..1117F;Mahajani;;South Asian Scripts;Scripts
+11180..111DF;Sharada;;South Asian Scripts;Scripts
+111E0..111FF;Sinhala Archaic Numbers;Sinhala;South Asian Scripts;Scripts
+11200..1124F;Khojki;;South Asian Scripts;Scripts
+11280..112AF;Multani;;South Asian Scripts;Scripts
+112B0..112FF;Khudawadi;;South Asian Scripts;Scripts
+11300..1137F;Grantha;;South Asian Scripts;Scripts
+11400..1147F;Newa;;South Asian Scripts;Scripts
+11480..114DF;Tirhuta;;South Asian Scripts;Scripts
+11580..115FF;Siddham;;South Asian Scripts;Scripts
+11600..1165F;Modi;;South Asian Scripts;Scripts
+11660..1167F;Mongolian Supplement;Mongolian;Central Asian Scripts;Scripts
+11680..116CF;Takri;;South Asian Scripts;Scripts
+11700..1174F;Ahom;;South Asian Scripts;Scripts
+11800..1184F;Dogra;;South Asian Scripts;Scripts
+118A0..118FF;Warang Citi;;South Asian Scripts;Scripts
+11900..1195F;Dives Akuru;;South Asian Scripts;Scripts
+119A0..119FF;Nandinagari;;South Asian Scripts;Scripts
+11A00..11A4F;Zanabazar Square;;Central Asian Scripts;Scripts
+11A50..11AAF;Soyombo;;Central Asian Scripts;Scripts
+11AB0..11ABF;Unified Canadian Aboriginal Syllabics Extended-A;Unified Canadian Aboriginal Syllabics;American Scripts;Scripts
+11AC0..11AFF;Pau Cin Hau;;Southeast Asian Scripts;Scripts
+11B00..11B5F;Devanagari Extended-A;Devanagari;South Asian Scripts;Scripts
+11C00..11C6F;Bhaiksuki;;South Asian Scripts;Scripts
+11C70..11CBF;Marchen;;Central Asian Scripts;Scripts
+11D00..11D5F;Masaram Gondi;;South Asian Scripts;Scripts
+11D60..11DAF;Gunjala Gondi;;South Asian Scripts;Scripts
+11EE0..11EFF;Makasar;;Indonesia & Oceania Scripts;Scripts
+11F00..11F5F;Kawi;;Indonesia & Oceania Scripts;Scripts
+11FB0..11FBF;Lisu Supplement;Lisu;East Asian Scripts;Scripts
+11FC0..11FFF;Tamil Supplement;Tamil;South Asian Scripts;Scripts
+12000..123FF;Cuneiform;Cuneiform;Middle Eastern Scripts;Scripts
+12400..1247F;Cuneiform Numbers and Punctuation;Cuneiform;Middle Eastern Scripts;Scripts
+12480..1254F;Early Dynastic Cuneiform;Cuneiform;Middle Eastern Scripts;Scripts
+12F90..12FFF;Cypro-Minoan;;European Scripts;Scripts
+13000..1342F;Egyptian Hieroglyphs;;African Scripts;Scripts
+13430..1345F;Egyptian Hieroglyph Format Controls;Egyptian Hieroglyphs;African Scripts;Scripts
+14400..1467F;Anatolian Hieroglyphs;;Middle Eastern Scripts;Scripts
+16800..16A3F;Bamum Supplement;Bamum;African Scripts;Scripts
+16A40..16A6F;Mro;;South Asian Scripts;Scripts
+16A70..16ACF;Tangsa;;Southeast Asian Scripts;Scripts
+16AD0..16AFF;Bassa Vah;;African Scripts;Scripts
+16B00..16B8F;Pahawh Hmong;;Southeast Asian Scripts;Scripts
+16E40..16E9F;Medefaidrin;;African Scripts;Scripts
+16F00..16F9F;Miao;;East Asian Scripts;Scripts
+16FE0..16FFF;Ideographic Symbols and Punctuation;;CJK Symbols and Punctuation;Symbols and Punctuation
+17000..187FF;Tangut;Tangut;East Asian Scripts;Scripts
+18800..18AFF;Tangut Components;Tangut;East Asian Scripts;Scripts
+18B00..18CFF;Khitan Small Script;;East Asian Scripts;Scripts
+18D00..18D7F;Tangut Supplement;Tangut;East Asian Scripts;Scripts
+1AFF0..1AFFF;Kana Extended-B;;East Asian Scripts;Scripts
+1B000..1B0FF;Kana Supplement;Katakana;East Asian Scripts;Scripts
+1B100..1B12F;Kana Extended-A;;East Asian Scripts;Scripts
+1B130..1B16F;Small Kana Extension;;East Asian Scripts;Scripts
+1B170..1B2FF;Nushu;;East Asian Scripts;Scripts
+1BC00..1BC9F;Duployan;Duployan;Notational Systems;Symbols and Punctuation
+1BCA0..1BCAF;Shorthand Format Controls;Duployan;Notational Systems;Symbols and Punctuation
+1CF00..1CFCF;Znamenny Musical Notation;Musical Symbols;Notational Systems;Symbols and Punctuation
+1D000..1D0FF;Byzantine Musical Symbols;Musical Symbols;Notational Systems;Symbols and Punctuation
+1D100..1D1FF;Musical Symbols;Musical Symbols;Notational Systems;Symbols and Punctuation
+1D200..1D24F;Ancient Greek Musical Notation;Musical Symbols;Notational Systems;Symbols and Punctuation
+1D2C0..1D2DF;Kaktovik Numerals;;Numbers & Digits;Symbols and Punctuation
+1D2E0..1D2FF;Mayan Numerals;;Numbers & Digits;Symbols and Punctuation
+1D300..1D35F;Tai Xuan Jing Symbols;Yijing Symbols;Other Symbols;Symbols and Punctuation
+1D360..1D37F;Counting Rod Numerals;;Numbers & Digits;Symbols and Punctuation
+1D400..1D7FF;Mathematical Alphanumeric Symbols;;Alphanumeric Symbols;Symbols and Punctuation
+1D800..1DAAF;Sutton SignWriting;;Notational Systems;Symbols and Punctuation
+1DF00..1DFFF;Latin Extended-G;Latin;European Scripts;Scripts
+1E000..1E02F;Glagolitic Supplement;Glagolitic;European Scripts;Scripts
+1E030..1E08F;Cyrillic Extended-D;Cyrillic;European Scripts;Scripts
+1E100..1E14F;Nyiakeng Puachue Hmong;;Southeast Asian Scripts;Scripts
+1E290..1E2BF;Toto;;South Asian Scripts;Scripts
+1E2C0..1E2FF;Wancho;;South Asian Scripts;Scripts
+1E4D0..1E4FF;Nag Mundari;;South Asian Scripts;Scripts
+1E7E0..1E7FF;Ethiopic Extended-B;Ethiopic;African Scripts;Scripts
+1E800..1E8DF;Mende Kikakui;;African Scripts;Scripts
+1E900..1E95F;Adlam;;African Scripts;Scripts
+1EC70..1ECBF;Indic Siyaq Numbers;;Numbers & Digits;Symbols and Punctuation
+1ED00..1ED4F;Ottoman Siyaq Numbers;;Numbers & Digits;Symbols and Punctuation
+1EE00..1EEFF;Arabic Mathematical Alphabetic Symbols;;Alphanumeric Symbols;Symbols and Punctuation
+1F000..1F02F;Mahjong Tiles;Game Symbols;Other Symbols;Symbols and Punctuation
+1F030..1F09F;Domino Tiles;Game Symbols;Other Symbols;Symbols and Punctuation
+1F0A0..1F0FF;Playing Cards;Game Symbols;Other Symbols;Symbols and Punctuation
+1F100..1F1FF;Enclosed Alphanumeric Supplement;;Alphanumeric Symbols;Symbols and Punctuation
+1F200..1F2FF;Enclosed Ideographic Supplement;Enclosed CJK Letters and Months;Alphanumeric Symbols;Symbols and Punctuation
+1F300..1F5FF;Miscellaneous Symbols and Pictographs;;Emoji & Pictographs;Symbols and Punctuation
+1F600..1F64F;Emoticons;;Emoji & Pictographs;Symbols and Punctuation
+1F650..1F67F;Ornamental Dingbats;Dingbats;Emoji & Pictographs;Symbols and Punctuation
+1F680..1F6FF;Transport and Map Symbols;;Emoji & Pictographs;Symbols and Punctuation
+1F700..1F77F;Alchemical Symbols;;Other Symbols;Symbols and Punctuation
+1F780..1F7FF;Geometric Shapes Extended;Geometric Shapes;Mathematical Symbols;Symbols and Punctuation
+1F800..1F8FF;Supplemental Arrows-C;Arrows;Mathematical Symbols;Symbols and Punctuation
+1F900..1F9FF;Supplemental Symbols and Pictographs;;Emoji & Pictographs;Symbols and Punctuation
+1FA00..1FA6F;Chess Symbols;Game Symbols;Other Symbols;Symbols and Punctuation
+1FA70..1FAFF;Symbols and Pictographs Extended-A;;Emoji & Pictographs;Symbols and Punctuation
+1FB00..1FBFF;Symbols for Legacy Computing;;Other Symbols;Symbols and Punctuation
+1FFFE..1FFFF;Specials End of Plane 1;;Specials;Symbols and Punctuation
+20000..2A6DF;CJK Unified Ideographs Extension B;CJK Unified Ideographs (Han);East Asian Scripts;Scripts
+2A700..2B73F;CJK Unified Ideographs Extension C;CJK Unified Ideographs (Han);East Asian Scripts;Scripts
+2B740..2B81F;CJK Unified Ideographs Extension D;CJK Unified Ideographs (Han);East Asian Scripts;Scripts
+2B820..2CEAF;CJK Unified Ideographs Extension E;CJK Unified Ideographs (Han);East Asian Scripts;Scripts
+2CEB0..2EBEF;CJK Unified Ideographs Extension F;CJK Unified Ideographs (Han);East Asian Scripts;Scripts
+2F800..2FA1F;CJK Compatibility Ideographs Supplement;CJK Compatibility Ideographs;East Asian Scripts;Scripts
+2FFFE..2FFFF;Specials End of Plane 2;;Specials;Symbols and Punctuation
+30000..3134F;CJK Unified Ideographs Extension G;CJK Unified Ideographs (Han);East Asian Scripts;Scripts
+31350..323AF;CJK Unified Ideographs Extension H;CJK Unified Ideographs (Han);East Asian Scripts;Scripts
+3FFFE..3FFFF;Specials End of Plane 3;;Specials;Symbols and Punctuation
+4FFFE..4FFFF;Specials End of Plane 4;;Specials;Symbols and Punctuation
+5FFFE..5FFFF;Specials End of Plane 5;;Specials;Symbols and Punctuation
+6FFFE..6FFFF;Specials End of Plane 6;;Specials;Symbols and Punctuation
+7FFFE..7FFFF;Specials End of Plane 7;;Specials;Symbols and Punctuation
+8FFFE..8FFFF;Specials End of Plane 8;;Specials;Symbols and Punctuation
+9FFFE..9FFFF;Specials End of Plane 9;;Specials;Symbols and Punctuation
+AFFFE..AFFFF;Specials End of Plane 10;;Specials;Symbols and Punctuation
+BFFFE..BFFFF;Specials End of Plane 11;;Specials;Symbols and Punctuation
+CFFFE..CFFFF;Specials End of Plane 12;;Specials;Symbols and Punctuation
+DFFFE..DFFFF;Specials End of Plane 13;;Specials;Symbols and Punctuation
+E0000..E007F;Tags;;Specials;Symbols and Punctuation
+E0100..E01EF;Variation Selectors Supplement;Variation Selectors;Specials;Symbols and Punctuation
+EFFFE..EFFFF;Specials End of Plane 14;;Specials;Symbols and Punctuation
+F0000..FFFFD;Supplementary Private Use Area-A;;Private Use;Symbols and Punctuation
+FFFFE..FFFFF;Specials End of Plane 15;;Specials;Symbols and Punctuation
+100000..10FFFD;Supplementary Private Use Area-B;;Private Use;Symbols and Punctuation
+10FFFE..10FFFF;Specials End of Plane 16;;Specials;Symbols and Punctuation
