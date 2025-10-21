@@ -32,7 +32,6 @@
 		<AppxBundle>Auto</AppxBundle>
 		<AppxBundlePlatforms>x64</AppxBundlePlatforms>
 		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-		<PackageCertificateThumbprint>F6C9C15B8BEE033BA811F0D546B23C514519E0F3</PackageCertificateThumbprint>
 	</PropertyGroup>
 	
 	<ItemGroup>
