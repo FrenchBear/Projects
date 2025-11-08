@@ -1,0 +1,112 @@
+ML-02 DETERMINANT, MATRIX & SIMUL. EQ.
+i; ->xi#-> A-1#j;->aij-1##->|A|,A-1#
+n#j;->aij#->|A|#i;bi#-> x#
+=================================================
+     ML-02 DETERMINANT, MATRIX & SIMUL. EQ.
+=================================================
+
+Three operations are performed by this program:
+
+    1. Evaluation of the Determinant
+    2. Matrix Inversion
+    3. Solution of Linear Simultaneous Equations
+
+First, the determinant, |A| of an n * n matrix A
+may be evaluated. Then, if the determinant is not
+zero the inverse of the matrix, A-1, can be
+found. Also, a system of n linear equations with
+n unknowns may be solved, provided the
+determinant of the coefficient matrix is not
+zero.
+
+An n * n matrix may be described by the
+following notation:
+
+                   |¯                 ¯|
+                   |  a11 a12 ... aln  |
+       Matrix A =  |  a21 a22 ... a2n  |
+                   |  ... ... ... ...  |
+                   |  an1 an2 ... ann  |
+                   |_                 _|
+
+
+USER INSTRUCTIONS
+-----------------
++-------------------------+-----+-------+-------+
+|    PROCEDURE            |ENTER| PRESS |DISPLAY|
++-------------------------+-----+-------+-------+
+|Enter order of matrix    |  n  |   A   |   n  *|
++-------------------------+-----+-------+-------+
+|Enter elements of matrix |  1  |   B   |   1   |
+|A by columns starting    | a11 |  R/S  |  a11 *|
+|with column 1 (To correct| a21 |  R/S  |  a21 *|
+|an entry in column j,    |  .  |   .   |   .   |
+|simply enter j and press |  .  |   .   |   .   |
+|[ B ]. Then reenter the  |  .  |   .   |   .   |
+|entire column using the  | an1 |  R/S  |  an1 *|
+|[R/S] key)               | a12 |  R/S  |  a12 *|
+|                         | a22 |  R/S  |  a22 *|
+|                         |  .  |   .   |   .   |
+|                         |  .  |   .   |   .   |
+|                         |  .  |   .   |   .   |
+|                         | ann |  R/S  |  ann *|
++-------------------------+-----+-------+-------+
+|Calculate Determinant    |     |   C   |  |A| *|
++-------------------------+-----+-------+-------+
+|if |A|<>0: Solve Ax=b perform steps above first|
++-------------------------+-----+-------+-------+
+|Enter elements of column |  1  |   D   |   1   |
+|vector b starting with b1| b1  |  R/S  |  b1  *|
+|(To correct an entry     |  .  |   .   |   .   |
+|error for b, simply enter|  .  |   .   |   .   |
+|i and press [ D ]. Then  |  .  |   .   |   .   |
+|reenter b using the [R/S]| bn  |  R/S  |  bn  *|
+| key)                    |     |       |       |
++-------------------------+-----+-------+-------+
+|Calculate x              |     | CLR E |   1   |
++-------------------------+-----+-------+-------+
+|Display the elements of x|  1  | 2nd A'|   1   |
+|starting with x1         |     |  R/S  |  x1  *|
+|                         |     |   .   |   .   |
+|                         |     |   .   |   .   |
+|                         |     |   .   |   .   |
+|                         |     |  R/S  |  xn  *|
++-------------------------+-----+-------+-------+
+|Display xi only          |  i  | 2nd A'|   i   |
+|                         |     |  R/S  |  xi  *|
++-------------------------+-----+-------+-------+
+| To solve the system for a new vector b,       |
+|                    repeat last 4 steps above. |
++-------------------------+-----+-------+-------+
+|if |A|<>0: Find A-1 perform 4 first steps above|
++-------------------------+-----+-------+-------+
+|Calculate A-1            |     |  CLR  |       |
+|                         |     | 2nd B'|   1   |
++-------------------------+-----+-------+-------+
+|Display the elements of  |  1  | 2nd C'|   1   |
+|A-1 by columns starting  |     |  R/S  | a11-1*|
+|with column 1 (To display|     |  R/S  | a21-1*|
+|the elements of A-1      |     |   .   |   .   |
+|starting with column j,  |     |   .   |   .   |
+|enter j before pressing  |     |   .   |   .   |
+|2nd C'). Due to pivoting,|     |  R/S  | an1-1*|
+|A- 1 may be stored with  |     |  R/S  | a12-1*|
+|its columns permuted even|     |   .   |   .   |
+|though it is displayed in|     |   .   |   .   |
+|the correct order.       |     |   .   |   .   |
+|Therefore, A-1 must be   |     |  R/S  | ann-1*|
+|reentered for use in     |     |       |       |
+|subsequent calculations. |     |       |       |
+|Note: A is lost once A-1 |     |       |       |
+|is calculated.           |     |       |       |
++-------------------------+-----+-------+-------+
+|To compute |A| and A-1   |     | 2nd E'|  |A| *|
+|simultaneously, perform  |     |       |       |
+|3 first steps and        |     |       |       |
+|continue with previous   |     |       |       |
+|step to display A-1      |     |       |       |
+|if |A|<>0.               |     |       |       |
++-------------------------+-----+-------+-------+
+  *  These values are automatically printed
+     when the Print Cradle is connected.
+

@@ -1,0 +1,168 @@
+A
+B
+C
+D
+E
+A'
+B'
+C'
+D'
+E'
+
+lnx
+INV lnx
+e^x
+CE
+CLR
+
+log
+INV log
+10^X
+CP
+X<>T
+X²
+√X
+SQRT
+√
+1/X
+Pgm 02
+Pgm Ind 12
+PG* 12
+P->R
+INV P->R
+sin
+INV sin
+cos
+INV cos
+tan
+INV tan
+
+STO 12
+STO IND 04
+ST* 04
+RCL 7
+RCL IND 7
+RC* 7
+SUM 11
+SUM Ind 11
+sm* 11
+^
+y^X
+**
+CMS
+Exc 33
+Exc Ind 33
+EX* 33
+Prd 99
+PRD ind 99
+PD* 99
+
+EE
+(
+)
+/
+÷
+Eng
+INV Eng
+Fix 4
+INV Fix
+Int
+INV Int
+|x|
+ABS
+
+GTO A
+GTO Abs
+GTO 421
+GTO IND 12
+GO* 8
+*
+×
+Pause
+X=T +
+X=T 123
+X=T Ind 12
+Nop
+OP 09
+OP IND 33
+OP* 33
+Deg
+
+SBR CLR
+SBR 240
+SBR Ind 07
+-
+Lbl SIG+
+X>=T 12
+GE 123
+GE IND 04
+Σ+
+SIG+
+INV Σ+
+AVG
+INV AVG
+INV x̄
+Rad
+
+RST
+HIR 82
++
+STF 2
+STF Ind 12
+INV STF 2
+INV STF Ind 12
+IFF 5 +
+IFF 5 STO
+IFF 5 22
+IFF 5 123
+IFF 5 Ind 12
+IFF Ind 0 +
+IFF IND 0 25
+IFF Ind 0 Exc
+IFF Ind 0 421
+IFF Ind 0 Ind 3
+INV IFF 5 +
+INV IFF 5 STO
+INV IFF 5 22
+INV IFF 5 123
+INV IFF 5 Ind 12
+INV IFF Ind 0 +
+INV IFF IND 0 25
+INV IFF Ind 0 Exc
+INV IFF Ind 0 421
+INV IFF Ind 0 Ind 3
+DMS
+D.MS
+π
+Pi
+Grad
+
+R/S
++/-
+-3.1415926
+6.02e23
+=
+Wrt
+DSZ 5 +
+DSZ 5 STO
+DSZ 5 22
+DSZ 5 123
+DSZ 5 Ind 12
+DSZ Ind 0 +
+DSZ IND 0 25
+DSZ Ind 0 Exc
+DSZ Ind 0 421
+DSZ Ind 0 Ind 3
+INV Dsz 5 +
+INV Dsz 5 STO
+INV Dsz 5 22
+INV Dsz 5 123
+INV Dsz 5 Ind 12
+INV Dsz Ind 0 +
+INV Dsz IND 0 25
+INV Dsz Ind 0 Exc
+INV Dsz Ind 0 421
+INV Dsz Ind 0 Ind 3
+Adv
+Prt
+List

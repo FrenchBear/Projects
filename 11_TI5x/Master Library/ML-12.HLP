@@ -1,0 +1,80 @@
+ML-12 TRIANGLE SOLUTION (2)
+ASA /_A'#SAA /_B'#AREA###
+a#/_A, /_B#/_C#b#c#
+=================================================
+           ML-12 TRIANGLE SOLUTION (2)
+=================================================
+
+A continuation of ML-11, TRIANGLE SOLUTION (1),
+this program will compute the following:
+
+Knowing ASA (angles B, C, side a): 
+                     compute sides b, c, angle A. 
+
+Knowing SAA (side a, angles A, C): 
+                     compute sides b, c, angle B. 
+
+The area of any triangle knowing its three sides.
+
+                         A 
+                         /\
+                        /  \
+                       /    \
+                     c/      \b
+                     /        \
+                    /          \
+                   /____________\
+                  B       a      C
+
+USER INSTRUCTIONS
+-----------------
++-----------------+-----------+---------+-------+
+|    PROCEDURE    |   ENTER   |  PRESS  |DISPLAY|
++-----------------+-----------+---------+-------+
+| Select degree, grad, or radian mode           |
++===============================================+
+| Knowing ASA                                   |
++-----------------+-----------+---------+-------+
+|Enter a          |      a    |    A    |   a   |
++-----------------+-----------+---------+-------+
+|Enter angle B    |     /_B   |    B    |  /_B  |
++-----------------+-----------+---------+-------+
+|Enter angle C    |     /_C   |    C    |  /_C  |
++-----------------+-----------+---------+-------+
+|Calculate angle A|           | 2nd A'  |  /_A  |
++-----------------+-----------+---------+-------+
+|Calculate b      |           |    D    |   b   |
++-----------------+-----------+---------+-------+
+|Calculate c      |           |    E    |   c   |
++=================+===========+=========+=======+
+| Knowing SAA                                   |
++-----------------+-----------+---------+-------+
+|Enter a          |       a   |    A    |   a   |
++-----------------+-----------+---------+-------+
+|Enter angle A    |     /_A   |    B    |  /_A  |
++-----------------+-----------+---------+-------+
+|Enter angle C    |     /_C   |    C    |  /_C  |
++-----------------+-----------+---------+-------+
+|Calculate angle B|           | 2nd B'  |  /_B  |
++-----------------+-----------+---------+-------+
+|Calculate b      |           |    D    |   b   |
++-----------------+-----------+---------+-------+
+|Calculate c      |           |    E    |   c   |
++=================+===========+=========+=======+
+| Calculate Area                                |
++-----------------+-----------+---------+-------+
+|Calculate area of|           | 2nd C'  | Area  |
+|triangle.        |           |         |       |
+|Sides b, c, a    |           |         |       |
+|must have been   |           |         |       |
+|previously       |           |         |       |
+|computed and     |           |         |       |
+|consequently     |           |         |       |
+|reside in R01,   |           |         |       |
+|R02, and R07,    |           |         |       |
+|respectively.    |           |         |       |
+|If not, they can |           |         |       |
+|be manually      |           |         |       |
+|placed there.    |           |         |       |
++=================+===========+=========+=======+
+

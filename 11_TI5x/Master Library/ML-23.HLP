@@ -1,0 +1,51 @@
+ML-23 DMS OPERATIONS
+(dd.mmss)#####
+n#±p->n±p#a->n * a#a->n / a##
+=================================================
+    M L - 2 3   D M S   O P E R A T I O N S
+=================================================
+
+Addition or subtraction of two numbers in degree
+-minute-second format (dd.mmss) can be
+accomplished using this program. Also, a number
+in degree-minute-second format can be multiplied
+or divided by a scalar.
+
+The program can also be used for time
+calculations with the values in hour_minute_
+second format (hh.mmss).
+
+
+USER INSTRUCTIONS
+-----------------
++-------------------+---------+---------+-------+
+|    PROCEDURE      |  ENTER  |  PRESS  |DISPLAY|
++-------------------+---------+---------+-------+
+|Enter number n     |    n    |    A    |   n   |
+|(dd.mmss)          |         |         |dec.deg|
++-------------------+---------+---------+-------+
+|  For addition or subtraction                  |
++-------------------+---------+---------+-------+
+|For addition,      |    p    |    B    | (n+p) |
+|Enter number p     |         |         |       |
+|(dd.mmss)          |         |         |       |
++-------------------+---------+---------+-------+
+|For Subtraction,   |    p    | +/-   B | (n-p) |
+|Enter number p     |         |         |       |
+|(dd.mmss)          |         |         |       |
++-------------------+---------+---------+-------+
+|  For multiplication or division               |
++-------------------+---------+---------+-------+
+|For multiplication,|    a    |    C    | (n*a) |
+|Enter scalar a     |         |         |       |
++-------------------+---------+---------+-------+
+|For division,      |    a    |    D    | (n/a) |
+|Enter scalar a     |         |         |       |
++-------------------+---------+---------+-------+
+
+NOTES: 1. Display is in Fix 4 format after any of
+          the four operations is performed.
+       2. For chained operations, the resuit of
+          an operation should be used directly as
+          the entered number in Step 2. This will
+          minimize rounding errors.

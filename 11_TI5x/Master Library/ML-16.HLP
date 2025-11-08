@@ -1,0 +1,50 @@
+ML-16 COMBINATIONS, PERMUTATIONS, FACTORIALS
+#####
+n#r#n!#P#C#
+=================================================
+  ML-16 COMBINATIONS, PERMUTATIONS, FACTORIALS
+=================================================
+
+This program performs three functions.
+
+ Factorial:    Calculates the factorial (n!) of
+               a positive integer (0 =< n =< 69).
+
+ Permutations: Calculates the number of possible
+               permutations of n items taken r at
+               a time.
+
+ Combinations: Calculates the number of possible
+               combinations of n items taken r at
+               a time.
+
+
+USER INSTRUCTIONS
+-----------------
++-----------------+-----------+---------+-------+
+|    PROCEDURE    |   ENTER   |  PRESS  |DISPLAY|
++-----------------+-----------+---------+-------+
+|Enter n          |     n     |    A    |   n   |
++-----------------+-----------+---------+-------+
+|Enter r          |     r     |    B    |   r   |
+|(0 <= r <=n)     |           |         |       |
++=================+===========+=========+=======+
+| Factorial                                     |
++-----------------+-----------+---------+-------+
+|Calculate        |           |    C    |   n!  |
+|factorial of     |           |         |       |
+|  n (0<=n<=69)   |           |         |       |
++=================+===========+=========+=======+
+| Permutation                                   |
++-----------------+-----------+---------+-------+
+|Calculate number |           |    D    | P(n)  |
+|of possible      |           |         |   r   |
+|permutations     |           |         |       |
++=================+===========+=========+=======+
+| Combination                                   |
++-----------------+-----------+---------+-------+
+|Calculate number |           |    E    | C(n)  |
+|of possible      |           |         |   r   |
+|combinations     |           |         |       |
++=================+===========+=========+=======+
+    

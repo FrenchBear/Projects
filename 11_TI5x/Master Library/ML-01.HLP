@@ -1,0 +1,112 @@
+ML-01 MASTER LIBRARY DIAGNOSTIC
+DIAGNOSTIC: SBR =#
+INITIALIZATION: SBR CLR#
+=================================================
+         ML-01 MASTER LIBRARY DIAGNOSTIC
+=================================================
+
+This program performs the following functions
+separately.
+
+         1. Diagnostic/Library Module Check
+         2. Linear Regression Initialization
+         3. Print Routine
+
+Diagnostic/Library Module Check
+-------------------------------
+This routine checks the operation of your
+calculator and most of its functions, including
+conversion and statistics functions that are
+preprogrammed in the calculator, trigonometric
+functions, data register operations, program
+transfers, and comparisons. It also uses other
+master library programs to verify that the module
+is connected and operating correctly. If this
+diagnostic routine runs successfully, in
+approximately 15 seconds the numeral 1. will be
+displayed. If the calculator is attached to a
+PC-100A or PC-1000 print cradle, the following
+will be printed:
+If there is a malfunction in the calculator or
+the Solid State Software module, a flashing
+number will be displayed. Refer to Appendix A of
+the Owner's Manual for an explanation of the
+various procedures to be followed when you have
+difficulties.
+
+When you simply want to know which of your Solid
+State Software modules is in the calculator
+without physically looking at it, you can call
+the Library Module check portion of the routine
+directly. If the Master Library Module is in the
+calculator, the number 1. will be displayed. This
+number is unique to the Master Library (other
+optional libraries use other identifying digits).
+
+Linear Regression Initialization
+--------------------------------
+This routine initializes the calculator for
+linear regression by clearing data registers R01,
+through R06 and the T-register. It should be used
+whenever linear regression or other built-in
+statistics functions are to be started. You can
+also use the routine at any time to clear these
+registers selectively without disturbing any
+other registers.
+
+Print Routine
+-------------
+This routine provides automatic printing of the
+input and output numbers associated with the
+userdefined keys for the Master Library programs
+or any program in the calculator's program
+memory. That is, whenever you press any of the
+user-defined keys, the number in the display at
+that time and the number appearing in the display
+after the calculation are automatically printed
+on the printer if it is connected. To assist you
+in understanding operation of this routine with
+the various programs, printer results are shown
+with each of the example problems in this manual.
+
+
+USER INSTRUCTIONS
+-----------------
++---------------------+-----+-----------+-------+
+|    PROCEDURE        |ENTER|   PRESS   |DISPLAY|
++=====================+=====+===========+=======+
+|  Diagnostic/Module Check                      |
++---------------------+-----+-----------+-------+
+| Run Diagnostic      |     |   SBR =   |   1*  |
+|  or                 |     |           |       |
+|Library module check |     |SBR 2nd Wri|  1**  |
++=====================+=====+===========+=======+
+|  Linear Regression Initialization                  |
++---------------------+-----+-----------+-------+
+|Initialize Linear    |     |  SBR CLR  |   0   |
+|Regression           |     |           |       |
++=====================+=====+===========+=======+
+|  Print Routine                                |
++---------------------+-----+-----------+-------+
+|Set calculator to    | mm  |   STO 00  |  mm   |
+|print input and      |     |           |       |
+|defined keys of      |     |           |       |
+|program numbered mm. |     |           |       |
+|Now the User         |     |           |       |
+|Instructions for that|     |           |       |
+|program can be       |     |           |       |
+|followed except that |     |           |       |
+|the program need not |     |           |       |
+|be called.           |     |           |       |
++---------------------+-----+-----------+-------+
+NOTES:
+   *  This output is obtained if the calculator 
+	  is operating properly.
+   ** The number 1 indicates the Master Library.
+
+   The Master Library programs are numbered 1
+   through 25. 
+   Program number 0 is the calculator's program
+   memory. Do not use print routine with program
+   ML-02, ML-03, ML-07, or ML-10.
+

@@ -1,0 +1,83 @@
+ML-19 ANNUITIES
+Sinking Fund#Ann Due/FV#Ord Ann/PV#Ann Due/PV#INIT#
+N#%I#PMT#PV/FV#B.PMT#
+=================================================
+         M L - 1 9   A N N U I T I E S
+=================================================
+
+An annuity is a series of equal payments made at
+regular intervals of time. The time intervals
+between payments are called payment periods. An
+annuity is a compound interest situation with
+periodic payments. When the payments are made at
+the ends of the payment periods, the annuity is
+called an ordinary annuity. When the payments are
+made at the beginning of the payment periods, the
+annuity is called an annuity due.
+
+There are many money situations that involve not
+only a series of payments, but also a payment at
+termination that is larger or smaller than the
+regular payments. These are called balloon
+payments and can be for a loan you decide to pay
+off before its normal duration is complete or for
+situations like the ownership of property from
+which you have received a steady flow of rent,
+then decided to sell, producing a large impulse
+of income at the end of the investment. A balloon
+payment is equal to the remaining principal
+balance at that time.
+
+This program handles four types of annuities:
+
+                 Sinking Fund
+                 Annuity Due/FV
+                 Ordinary Annuity/PV
+                 Annuity Due/PV
+
+
+USER INSTRUCTIONS
+-----------------
++-----------------+-----------+---------+-------+
+|    PROCEDURE    |   ENTER   |  PRESS  |DISPLAY|
++-----------------+-----------+---------+-------+
+|Initialize       |           | 2nd E'  |   0.  |
++=================+===========+=========+=======+
+|  Select Type of routine:                      |
++-----------------+-----------+---------+-------+
+| Sinking Fund    |           | 2nd A'  |   0.  |
++-----------------+-----------+---------+-------+
+| Annuity Due/FV  |           | 2nd B'  |   0.  |
++-----------------+-----------+---------+-------+
+| Ordinary Annuity|           | 2nd C'  |   0.  |
++-----------------+-----------+---------+-------+
+| Annuity Due/PV  |           | 2nd D'  |   0.  |
++=================+===========+=========+=======+
+|  Enter the known variables in any order       |
++-----------------+-----------+---------+-------+
+|Number of periods|     N     |    A    |   N   |
++-----------------+-----------+---------+-------+
+|Interest rate    |    %I     |    B    |  %I   |
+|percent / period |           |         |       |
++-----------------+-----------+---------+-------+
+|Payment / period |    PMT    |    C    |  PMT  |
++-----------------+-----------+---------+-------+
+|PV or FV         |  PV or FV |    D    |PV / FV|
++-----------------+-----------+---------+-------+
+|Balloon payment  |    BAL    |    E    |  BAL  |
++-----------------+-----------+---------+-------+
+|  Solve for the unknown variable                
+  |
++-----------------+-----------+---------+-------+
+|Number of periods|     0     |    A    |   N   |
++-----------------+-----------+---------+-------+
+|Interest rate    |     0     |    B    |  %I   |
+|percent / period |           |         |       |
++-----------------+-----------+---------+-------+
+|Payment / period |     0     |    C    |  PMT  |
++-----------------+-----------+---------+-------+
+|PV or FV         |     0     |    D    |PV / FV|
++-----------------+-----------+---------+-------+
+|Balloon payment  |     0     |    E    |  BAL  |
++-----------------+-----------+---------+-------+
+

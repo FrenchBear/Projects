@@ -1,0 +1,87 @@
+ML-13 CURVE SOLUTION
+theta'#r'#s'#c'#a'#
+theta#r#s#c#A'#
+=================================================
+    M L - 1 3   C U R V E   S O L U T I O N 
+=================================================
+
+For an arc of a circle, this program calculates
+the remaining parameters when certain pairs are
+given.
+One of the following pairs of parameters must be
+supplied as input:
+                    theta,r 
+                    theta,s 
+                    theta,c 
+                    r,s 
+                    r,c
+                                                                    
+                              *    *
+                        *                * s
+                    *                        *
+                 *______________________________*
+                  \             a              /
+                   \ c                        /
+                    \                        /
+                     \                      /
+                      \                    /
+                       \                  /
+theta - Central angle   \       A        /
+r     - Radius           \              /
+s     - Arc length        \            /
+c     - Chord length       \          /r
+A     - Sector area         \        /
+a     - Segment area         \theta /
+                              \    /
+                               \  /
+                                \/
+
+
+
+USER INSTRUCTIONS
+-----------------
++-----------------+-----------+---------+-------+
+|    PROCEDURE    |   ENTER   |  PRESS  |DISPLAY|
++=================+===========+=========+=======+
+| Enter one pair of following:                  |
++-----------------+-----------+---------+-------+
+| a Enter theta   |   theta   |     A   | theta |
+| a Enter r       |     r     |     B   |   r   |
++-----------------+-----------+---------+-------+
+|   or                                          |
++-----------------+-----------+---------+-------+
+| b Enter theta   |   theta   |     A   | theta |
+| b Enter s       |     s     |     C   |   s   |
++-----------------+-----------+---------+-------+
+|   or                                          |
++-----------------+-----------+---------+-------+
+| c Enter theta   |   theta   |     A   | theta |
+|   (radians)     |           |         |       |
+| c Enter c       |     c     |     D   |   c   |
++-----------------+-----------+---------+-------+
+|   or                                          |
++-----------------+-----------+---------+-------+
+| d Enter r       |     r     |     B   |   r   |
+| d Enter s       |     s     |     C   |   s   |
++-----------------+-----------+---------+-------+
+|   or                                          |
++-----------------+-----------+---------+-------+
+| e Enter r       |     r     |     B   |   r   |
+| e Enter c       |     c     |     D   |   c   |
++=================+===========+=========+=======+
+| Next six steps must be performed in sequence  |
++-----------------+-----------+---------+-------+
+|Calculate theta  |           | 2nd A'  | theta'|
++-----------------+-----------+---------+-------+
+|Calculate r      |           | 2nd B'  |   r'  |
++-----------------+-----------+---------+-------+
+|Calculate s      |           | 2nd C'  |   s'  |
++-----------------+-----------+---------+-------+
+|Calculate c      |           | 2nd D'  |   c'  |
++-----------------+-----------+---------+-------+
+|Calculate A      |           |     E   |   A'  |
++-----------------+-----------+---------+-------+
+|Calculate a      |           | 2nd E'  |   a'  |
++=================+===========+=========+=======+
+
+

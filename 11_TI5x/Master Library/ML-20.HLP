@@ -1,0 +1,43 @@
+ML-20 DAY OF THE WEEK, DAYS BETWEEN DATES
+MMDD.YYYY#####
+DATE 1#DATE 2#No.DAYS#D->D of W##
+=================================================
+    ML-20 DAY OF THE WEEK, DAYS BETWEEN DATES
+=================================================
+
+This program calculates the number of days
+between any two calendar dates after the year
+1582. It also determines the day of the week for
+any date after the year 1582. The calculations
+are based on the Gregorian calendar.
+
+Note that the dates are entered in the order:
+month, day, year using the format MMDD.YYYY.
+The days of the week are represented by single
+digits 0 through 6 for Saturday through Friday,
+respectively.
+
+USER INSTRUCTIONS
+-----------------
++-----------------+-----------+---------+-------+
+|    PROCEDURE    |   ENTER   |  PRESS  |DISPLAY|
++-----------------+-----------+---------+-------+
+|  Days between Dates                           |
++-----------------+-----------+---------+-------+
+|Enter first date | MMDD.YYYY |    A    |   0.  |
++-----------------+-----------+---------+-------+
+|Enter second date| MMDD.YYYY |    B    |   0.  |
++-----------------+-----------+---------+-------+
+|Calculate number |           |    C    | No of |
+|of days  between |           |         | days  |
+|given dates      |           |         |       |
++-----------------+-----------+---------+-------+
+|  Day of the Week                              |
++-----------------+-----------+---------+-------+
+|Enter date       | MMDD.YYYY |    D    |Day of |
+|*0 - Sat 4 - Wed |           |         | Week* |
+| 1 - Sun 5 - Thur|           |         |       |
+| 2 - Mon 6 - Fri |           |         |       |
+| 3 - Tue         |           |         |       |
++-----------------+-----------+---------+-------+
+

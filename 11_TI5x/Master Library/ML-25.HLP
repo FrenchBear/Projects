@@ -1,0 +1,54 @@
+ML-25 UNIT CONVERSIONS (2)
+°C -> °F#lit -> oz#lit -> gal#grm -> oz#kg -> lb#
+°F -> °C#oz -> lit#gal -> lit#oz -> grm#lb -> kg#
+=================================================
+           ML-25 UNIT CONVERSIONS (2)
+=================================================
+
+This program provides volume, weight, and
+temperature conversions through the user-defined
+keys as follows:
+
+          A       °F to °C
+       2nd A'     °C to °F
+          B       fluid ounces to liters
+       2nd B'     liters to fluid ounces
+          C       gallons (U.S.) to liters
+       2nd C'     liters to gallons (U.S.)
+          D       ounces (av.) to grams
+       2nd D'     grams to ounces (av.)
+          E       pounds (av.) to kilograms
+       2nd E'     kilograms to pounds (av.)
+
+The output of one conversion may be used as input
+to another by simply leaving the answer in the
+dis-play and pressing another user-defined key.
+
+USER INSTRUCTIONS
+-----------------
++-----------------+-----------+---------+-------+
+|    PROCEDURE    |   ENTER   |  PRESS  |DISPLAY|
++-----------------+-----------+---------+-------+
+| To convert:     |           |         |       |
++-----------------+-----------+---------+-------+
+|  °F to °C       |    °F     |    A    |  °C   |
++-----------------+-----------+---------+-------+
+|  °C to °F       |    °C     | 2nd A'  |  °F   |
++-----------------+-----------+---------+-------+
+|  oz to lit      |    oz     |    B    |  lit  |
++-----------------+-----------+---------+-------+
+|  lit to oz      |    lit    | 2nd B'  |  oz   |
++-----------------+-----------+---------+-------+
+|  gal to lit     |    gal    |    C    |  lit  |
++-----------------+-----------+---------+-------+
+|  lit to gal     |    lit    | 2nd C'  |  gal  |
++-----------------+-----------+---------+-------+
+|  oz to grm      |    oz     |    D    |  grm  |
++-----------------+-----------+---------+-------+
+|  grm to oz      |    grm    | 2nd D'  |  oz   |
++-----------------+-----------+---------+-------+
+|  lb to kg       |    lb     |    E    |  kg   |
++-----------------+-----------+---------+-------+
+|  kg to lb       |    kg     | 2nd E'  |  lb   |
++-----------------+-----------+---------+-------+
+

@@ -1,0 +1,54 @@
+ML-07 POLYNOMIAL EVALUATION
+#####
+n#i; ai#x -> P(x)###
+=================================================
+           ML-07 POLYNOMIAL EVALUATION
+=================================================
+
+This program evaluates the polynomial
+
+                               2            n
+          P(x) = ao + a1x + a2x  + ... + anx
+
+for any real number x where ao, a1,... , an are
+known real numbers.
+
+The maximum value of n is limited by the number
+of data registers available. The number of
+registers available must be equal to or greater
+than the value (n + 6). With the normal
+partitioning, the Tl Programmable 58C will
+evaluate 24th degree polynomials and the Tl
+Programmable 59 will handle 54th degree. These
+limits will suffice for most applications, but
+can be increased by repartitioning as described
+in program ML-02, if necessary.
+
+USER INSTRUCTIONS
+-----------------
++--------------------------+------+-----+-------+
+|    PROCEDURE             |ENTER |PRESS|DISPLAY|
++--------------------------+------+-----+-------+
+|Enter n                   |  n   |  A  |   n   |
++--------------------------+------+-----+-------+
+|Enter all coefficients    |  0   |  B  |   0   |
+|starting with a0          |  a0  | R/S |  a0   |
+|                          |  a1  | R/S |  a1   |
+|                          |  .   |  .  |   .   |
+|                          |  .   |  .  |   .   |
+|                          |  .   |  .  |   .   |
+|                          |  an  | R/S |  an   |
++--------------------------+------+-----+-------+
+|Enter X and compute P(x)  |  x   |  C  | P(x)  |
++--------------------------+------+-----+-------+
+|   For a new value of x repeat last step       |
++-----------------------------------------------+
+
+Notes:
+       1. Number of registers available >= n+6
+       2. Even if a coeficient is zero, it must
+          be entered
+       3. This program contains print commands
+          and should not be used with program
+          ML-01.
+

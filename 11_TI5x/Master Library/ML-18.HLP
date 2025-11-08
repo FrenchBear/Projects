@@ -1,0 +1,108 @@
+ML-18 COMPOUND INTEREST
+Sni#(1+i)Sni#ani#(1+i)ani#INIT#
+N#%I#PV#FV##
+=================================================
+ M L - 1 8   C O M P O U N D   I N T E R E S T
+=================================================
+
+In many investment situations involving interest,
+the interest earned is compounded to the
+principal for each interest period. In this
+manner, the interest earned in one period becomes
+principal and will earn interest during the
+following period.
+
+The mathematical relationship that gives you a
+future value (FV) based on a present value (PV),
+or principal, compounded for N periods at an
+interest rate of 1% per period is:
+
+              FV = PV (1 + 1/100)N
+
+Given any three of these four factors as input
+data, this program solves for the remaining
+factor in this equation. The forms of the
+equation used in solving for each of the factors
+are shown in Methods Used.
+
+The program can be used to solve compound
+interest problems using either the nominal annual
+rate method (U.S. method) or yearly effective
+rate method (European method). The two interest
+rates may be defined as follows:
+
+           Nominal Annual Rate = I X Nc
+          1 + (YER/100) = 1(1 + I/100)Nc
+
+     where
+
+         Nc  is the number of compounding 
+             period per year
+         YER is the yearly effective rate.
+
+Given FV, PV, and N, the program solves for the
+periodic interest rate, I, which is the same for
+either method. The nominal annual rate is found
+by simple multiplication by the number of periods
+per year as shown. To find YER, the term 1
++(YER/100) is solved for using the program and
+YER is determined manually.
+
+If the nominal annual interest rate is given,
+dividing this value by N~ provides I for input to
+the program. However, if the yearly effective
+interest rate is the known factor, the periodic
+rate I must be computed first using the program.
+This value can then be used without reentering in
+further calculations.
+
+To simplify using the program for either method,
+two separate User Instructions are provided.
+Examples are given to demonstrate operation of
+the program for both methods.
+
+
+USER INSTRUCTIONS
+-----------------
++------------------+----------+--------+--------+
+|    PROCEDURE     |  ENTER   |  PRESS |DISPLAY |
++------------------+----------+--------+--------+
+|Initialize        |          | 2nd E' |  0.00  |
++==================+==========+========+========+
+| Enter three of the following four variables   |
+| in any order :                                |
++------------------+----------+--------+--------+
+|Number of periods |    N     |    A   |    N   |
++------------------+----------+--------+--------+
+|Interest rate     |    %I    |    B   |   %I   |
+|(% per period)    |          |        |        |
++------------------+----------+--------+--------+
+|Present value     |    PV    |    C   |   PV   |
++------------------+----------+--------+--------+
+|Future value      |    FV    |    D   |   PV   |
++==================+==========+========+========+
+| Calculate the remaining variable              |
++------------------+----------+--------+--------+
+|Number of periods |     0    |    A   |    N   |
++------------------+----------+--------+--------+
+|Interest rate     |     0    |    B   |   %I   |
+|(% per period)    |          |        |        |
++------------------+----------+--------+--------+
+|Present value     |     0    |    C   |   PV   |
++------------------+----------+--------+--------+
+|Future value      |     0    |    D   |   PV   |
++==================+==========+========+========+
+| Annuity Formulas                              |
++-----------------------------------------------+
+| Store N in R01,I/100 in R08, (I/100)+1 in R09 |
++------------------+----------+--------+--------+
+|Solve for Sni     |          | 2nd A' |   Sni  |
++------------------+----------+--------+--------+
+|Solve for (1+i)Sni|          | 2nd B' |(1+i)Sni|
++------------------+----------+--------+--------+
+|Solve for ani     |          | 2nd C' |   ani  |
++------------------+----------+--------+--------+
+|Solve for (1+i)ani|          | 2nd D' |(1+i)ani|
++==================+==========+========+========+
+
+

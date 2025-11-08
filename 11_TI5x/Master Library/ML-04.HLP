@@ -1,0 +1,81 @@
+ML-04 COMPLEX ARITHMETIC
+Y#=> X-Y#=> X/Y#=> logyX#X<>Y#
+X#=> X+Y#=> X*Y#=> YX#=> XthV¯Y#
+=================================================
+M L - 0 4   C O M P L E X   A R I T H M E T I C
+=================================================
+
+
+For two given complex numbers X = a + bi and
+Y = c + di this program calculates the following:
+
+                   X + Y
+                   X - Y
+                   X * Y
+                   X / Y
+                   YX
+                   Xth root of Y
+                   log X(base Y)
+
+These operations may be chained in the following
+manner. Initially, two complex numbers are
+entered with the first number being X and the
+second number Y. After a function has been
+performed, the result becomes the new X, and a
+new Y may be entered. X and Y may be interchanged
+when necessary.
+
+Also, a result from this program is stored in R01
+and R02 and may be used (without reentering it)
+as the input for this program or for programs
+ML-05 and ML-06.
+
+USER INSTRUCTIONS
+-----------------
++------------------+----------+---------+-------+
+|    PROCEDURE     |   ENTER  |  PRESS  |DISPLAY|
++==================+==========+=========+=======+
+|  If rectangular from:                         |
++------------------+----------+---------+-------+
+|Enter real        |     a    |    A    |   a   |
+|part of X         |          |         |       |
++------------------+----------+---------+-------+
+|Enter imaginary   |     b    |    A    |   b   |
+|part of X         |          |         |       |
++------------------+----------+---------+-------+
+|The 2 steps above must be performed in sequence|
++------------------+----------+---------+-------+
+|Enter real        |     c    | 2nd A'  |   c   |
+|part of Y         |          |         |       |
++------------------+----------+---------+-------+
+|Enter imaginary   |     d    | 2nd A'  |   d   |
+|part of Y         |          |         |       |
++------------------+----------+---------+-------+
+|The 2 steps above must be performed in sequence|
++------------------+----------+---------+-------+
+|Calculate any of the following:                |
++------------------+----------+---------+-------+
+|Calculate X + Y   |          |    B    |  rp   |
+|                  |          |   x<>t  |  ip   |
++------------------+----------+---------+-------+
+|Calculate X - Y   |          | 2nd B'  |  rp   |
+|                  |          |   x<>t  |  ip   |
++------------------+----------+---------+-------+
+|Calculate X * Y   |          |    C    |  rp   |
+|                  |          |   x<>t  |  ip   |
++------------------+----------+---------+-------+
+|Calculate X / Y   |          | 2nd C'  |  rp   |
+|                  |          |   x<>t  |  ip   |
++------------------+----------+---------+-------+
+|Calculate YX      |          |    D    |  rp   |
+|                  |          |   x<>t  |  ip   |
++------------------+----------+---------+-------+
+|Calculate log y X |          | 2nd D'  |  rp   |
+|                  |          |   x<>t  |  ip   |
++------------------+----------+---------+-------+
+|Calculate XthV¯Y  |          |    E    |  rp   |
+|                  |          |   x<>t  |  ip   |
++------------------+----------+---------+-------+
+|To swap X and Y   |          | 2nd E'  |  0.   |
++==================+==========+=========+=======+
+

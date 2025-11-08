@@ -1,0 +1,44 @@
+ML-10 SIMPSON'S APPROXIMATION (DISCRETE)
+#####
+n#h#i, fi#-> I##
+=================================================
+    ML-10 SIMPSON'S APPROXIMATION (DISCRETE)
+=================================================
+
+This program may be used to approximate the
+integral, I, using Simpson's Rule.
+The value of f(x) must be known at n + 1 equally
+spaced points (f0 - fn). 
+The number of subintervals is limited by the
+number of available data registers.
+
+USER INSTRUCTIONS
+-----------------
++---------------------+-------+---------+-------+
+|    PROCEDURE        | ENTER |  PRESS  |DISPLAY|
++---------------------+-------+---------+-------+
+|Enter n(n=2,4,6,...) |   n   |    A    |   n * |
+|display flashes if   |       |         |       |
+|a legal entry        |       |         |       |
++---------------------+-------+---------+-------+
+|Enter h              |   h   |    B    |   h * |
++---------------------+-------+---------+-------+
+|Enter function values|   0   |    C    |   0   |
+|starting with f0     |  f0   |   R/S   |  f0 * |
+|                     |  f1   |   R/S   |  f1 * |
+|                     |  .    |    .    |   .   |
+|                     |  .    |    .    |   .   |
+|                     |  .    |    .    |   .   |
+|                     |  fn   |   R/S   |  fn * |
++---------------------+-------+---------+-------+
+|Calculate integral   |       |    D    |   I * |
++---------------------+-------+---------+-------+
+
+Notes:
+    1. This program contains print commands and
+       should not be used with ML-01
+    2. n + 7 <No. of data registers
+
+* These values are printed automatically if the
+  calculator is connected to the Print Cradle.
+

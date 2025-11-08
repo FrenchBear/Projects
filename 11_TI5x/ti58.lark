@@ -1,0 +1,228 @@
+// Parser for TI58/TI59 programming language
+// Some extensions added (multiple mnemonic names supported, comments, free format)
+// Note: some weird variants support format of .t59 files such as YX for y^x,
+// addresses such as 02 73, X2 for x², IXI for |x|, STA for Σ+, AVR for x̄...
+//
+// 2025-11-08   PV      First version
+
+NUMBER: /-?\d+(\.\d+)?([eE][+-]?\d+)?(?=$|[ \t\n\r])/
+WS: /[ \t\n\r]+/
+
+start: WS* | WS* instruction_or_comment (WS instruction_or_comment)* WS*
+
+instruction_or_comment: instruction
+        | comment
+
+comment: /#.*/
+
+instruction: NUMBER
+		| change_sign
+        | dot
+		| exponent
+		| operator
+		| parenthesis
+		| equals
+		| invert
+        | fix
+		| atomic_instruction
+		| clear_instruction
+		| memory_or_flag_instruction
+		| label_instruction
+		| branch_instruction
+		| conditional_instruction
+        | op_instruction
+        | pgm_instruction
+        | invert
+
+single_digit: /\d/
+memory: /\d\d?/
+pgm_number: /\d\d?/
+address_label: /(\d\d\d)|(0\d[ \r\n]+\d\d)/
+numeric_key_label: /[1-9][0-9]/
+flag_number: /0?[0-7]/
+op_number: /[0-3]?[0-9]/
+
+i11_a: "A"i
+i12_b: "B"i
+i13_c: "C"i
+i14_d: "D"i
+i15_e: "E"i
+i16_a_prime: "A'"i
+i17_b_prime: "B'"i
+i18_c_prime: "C'"i
+i19_d_prime: "D'"i
+i10_e_prime: "E'"i
+
+i22_invert: "Inv"i
+i23_ln: "lnx"i
+i24_correct_entry: "CE"i
+i25_clear: "CLR"i
+i27_2nd_invert: "IN'"i
+i28_log: "log"i
+i29_clear_program: "CP"i
+i20_2nd_clear: "CL'"i
+
+i31_learn: "LRN"i
+i32_exchange_x_and_t: "x<>t"i | "x/t"i
+i33_square: "x²"i | "x^2"i | "X2"i
+i34_square_root: "√" | "√x"i | "SQR"i | "SQRT"i
+i35_reciprocal: "1/x"i
+i36_program: "Pgm"i
+i37_polar_to_rectangular: "P->R"i | "P/R"i
+i38_sin: "sin"i
+i39_cos: "cos"i
+i30_tan: "tan"i
+
+i41_single_step: "SST"i
+i42_store: "STO"i
+i43_recall: "RCL"i
+i44_sum: "SUM"i
+i45_power: "^" | "y^x"i | "YX"i | "**"
+i46_insert: "Ins"i
+i47_clear_memory: "CMs"i
+i48_exchange: "Exc"i
+i49_product: "Prd"i
+i40_indirect: "Ind"i
+
+i51_backstep: "BST"i
+i52_exponent: "EE"i
+i53_left_parenthesis: "("
+i54_right_parenthesis: ")"
+i55_divide: "/"
+i56_delete: "Del"i
+i57_engineering: "Eng"i
+i58_fix: "Fix"i
+i59_integer: "Int"i
+i50_absolute: "|x|"i | "ABS"i | "IXI"i
+
+// continue
+
+i78_sigma_plus: "Σ+" | "SIG+"i | "STA"i
+i79_average: "x̄"i | "AVG"i | "AVR"i
+
+change_sign: "+/-"
+
+dot: "."
+
+exponent: [invert WS?] "EE"i
+
+operator: "+" | "-" | "*" | "×" | "/" | "÷" | i45_power
+
+parenthesis: "(" | ")"
+
+equals: "="
+
+invert: "INV"i
+
+fix:    "Fix"i WS? single_digit_or_indirect
+
+atomic_instruction: 
+		| [invert WS?] i23_ln
+        | "e^x"i
+		| [invert WS?] i28_log
+        | "10^x"i
+        | i50_absolute
+        | "NOP"i
+		| i32_exchange_x_and_t
+		| i33_square
+		| i34_square_root
+		| i35_reciprocal
+        | [invert WS?] i37_polar_to_rectangular
+		| [invert WS?] i38_sin
+		| [invert WS?] i39_cos
+		| [invert WS?] i30_tan
+		| "R/S"i
+        | "Pause"i
+        | "Deg"i
+        | "Rad"i
+        | "Grad"i | "GRD"i
+        | "π" | "PI"i
+        | [invert WS?] i78_sigma_plus
+        | [invert WS?] i79_average
+        | [invert WS?] "Int"i
+        | [invert WS?] ("DMS"i | "D.MS"i)
+        | [invert WS?] "Fix"i
+        | [invert WS?] "Eng"i
+        | "Write"i | "WRT"i
+        | "Adv"i
+        | "Prt"i
+        | "List"i | "LST"i
+		
+clear_instruction: "CLR"i | "CE"i | "CP"i | "CMs"i
+
+memory_or_flag_instruction: "STO"i WS? memory_or_indirect
+		| "ST*"i WS? memory
+		| "RCL"i WS? memory_or_indirect
+		| "RC*"i WS? memory
+		| "EXC"i WS? memory_or_indirect
+		| "EX*"i WS? memory
+		| [invert WS?] "SUM"i WS? memory_or_indirect
+		| [invert WS?] "SM*"i WS? memory
+		| [invert WS?] "PRD"i WS? memory_or_indirect
+		| [invert WS?] "PD*"i WS? memory
+        | [invert WS?] "STF"i WS? flag_or_indirect
+        | "ST*"i WS? memory
+		| "HIR"i WS? memory
+		
+memory_or_indirect: memory | indirect_memory
+
+indirect_memory: "Ind"i WS? memory
+
+label_instruction: "Lbl"i WS? ( key_label | numeric_key_label ) /[ \t\n\r]:/?
+
+branch_instruction: "GTO"i WS? address_or_label_or_indirect
+        | "GO*" WS? memory
+		| "SBR"i WS? address_or_label_or_indirect
+		| "RTN"i WS? | invert WS? "SBR"i
+        | "RST"i
+		| i11_a | i12_b | i13_c | i14_d | i15_e
+        | i16_a_prime | i17_b_prime | i18_c_prime | i19_d_prime | i10_e_prime
+
+address_or_label_or_indirect: address_label
+		| key_label
+		| numeric_key_label
+		| indirect_memory
+
+key_label: 
+        |i11_a|i12_b|i13_c|i14_d|i15_e
+        |i16_a_prime|i17_b_prime|i18_c_prime|i19_d_prime|i10_e_prime
+
+        |"2nd"i|"INV"i|i23_ln|i24_correct_entry|i25_clear
+        |"2n'"i|i27_2nd_invert|i28_log|i29_clear_program|i20_2nd_clear
+        
+        |i31_learn|i32_exchange_x_and_t|i33_square|i34_square_root|i35_reciprocal
+        |i36_program|i37_polar_to_rectangular|i38_sin|i39_cos|i30_tan
+
+        | "SST"i|"STO"i|"RCL"i|"SUM"i|i45_power|"Ins"i|"CMs"i|"Exc"i|"Prd"i|"Ind"i
+        | "BST"i|"EE"i|"("|")"|"/"|"÷"|"Del"i|"Eng"i|"Fix"i|"Int"i|"|x|"i|"ABS"i|"IXI"i
+        | "GTO"i|"*"i|"×"|"Pause"i|"x=t"i|"EQ"i|"Nop"i|"Op"i|"Deg"i
+        | "SBR"i|"x>=t"i|"GE"i|i78_sigma_plus|i79_average|"Rad"i
+        | "RST"i|"+"|"STF"i|"IFF"i|"DMS"i|"D.MS"i|"π"|"Pi"i|"Grad"i|"GRD"i
+        | "R/S"i|"="|"Write"i|"Wrt"i|"Dsz"i|"Adv"i|"Prt"i|"List"i|"LST"i
+
+flag_or_indirect: flag_number | indirect_memory
+
+conditional_instruction: x_equals_t_statement
+		| x_greater_or_equal_than_t_statement
+		| decrement_and_skip_on_zero_statement
+		| test_flag_statement
+		
+x_equals_t_statement: [invert WS?] ("x=t"i | "EQ"i) WS? address_or_label_or_indirect
+
+x_greater_or_equal_than_t_statement: [invert WS?] ("x>=t"i | "GE"i) WS? address_or_label_or_indirect
+
+decrement_and_skip_on_zero_statement: [invert WS?] "DSZ"i WS? single_digit_or_indirect WS address_or_label_or_indirect
+
+single_digit_or_indirect: "0"? single_digit | indirect_memory
+
+test_flag_statement: [invert WS?] "IFF"i WS? flag_or_indirect WS? address_or_label_or_indirect
+
+op_instruction: "Op"i WS? op_number_or_indirect
+        | "Op*"i WS? memory
+
+op_number_or_indirect: op_number | indirect_memory 
+
+pgm_instruction: "Pgm"i WS? pgm_number_or_indirect
+        | "PG*"i WS? pgm_number
+
+pgm_number_or_indirect: pgm_number | indirect_memory

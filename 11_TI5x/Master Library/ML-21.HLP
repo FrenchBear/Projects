@@ -1,0 +1,87 @@
+ML-21 HI-LO GAME
+M INIT#M LO#M HI#M CORR##
+INIT#GO#GUESS#SCORE##
+=================================================
+        M L - 2 1   H I - L O   G A M E
+=================================================
+
+In addition to recreational diversion, this
+program serves as a nontechnical demonstration
+of the library module. The game is easy to play,
+permitting almost immediate hands-on experience
+for any user.
+
+The object of the game is to guess a secret
+number (whole numbers only) from 1 to 1023 that
+has been generated in the calculator. The
+calculator responds with a "too high," "too low,"
+or "correct" indication to each of your guesses.
+Your score (number of guesses) is tallied by the
+calculator.
+
+Also, you may select a number in the range 1 to
+1023 and the calculator will attempt to guess
+this number as you supply proper responses to
+each of its guesses. When the calculator has
+found the number you selected, its score will be
+displayed.
+
+An exercise which often casts doubt on the "man
+over machine" axiom is to have the calculator
+guess the same number that it generated for you
+to guess. Now, follow the User Instructions and
+see if you can uphold the superiority of man.
+
+USER INSTRUCTIONS
+-----------------
++-----------------+-----------+---------+-------+
+|    PROCEDURE    |   ENTER   |  PRESS  |DISPLAY|
++=================+===========+=========+=======+
+|  You Guess                                    |
++-----------------+-----------+---------+-------+
+|Key in a number  |  number   |    A    |number |
+|(0 to 199017)    |           |         |       |
++-----------------+-----------+---------+-------+
+|Generate secret  |           |    B    |   0.  |
+|number           |           |         |       |
++-----------------+-----------+---------+-------+
+|Enter your guess |   Guess   |    C    | Clue  |
+|(1 to 1023)      |           |         |       |
+|  Clue:          |           |         |       |
+|-1 if guess      |           |         |       |
+|   was low       |           |         |       |
+| 1 if guess      |           |         |       |
+|   was high      |           |         |       |
+|flashing 0       |           |         |       |
+|   if your guess |           |         |       |
+|   was correct   |           |         |       |
++-----------------+-----------+---------+-------+
+|  Repeat last step above as required           |
++-----------------+-----------+---------+-------+
+|Display score    |           |    D    | Score |
++-----------------+-----------+---------+-------+
+| For a new number go to Generate secret number |
++===============================================+
+|  Calculator guesses                           |
++-----------------+-----------+---------+-------+
+|Select a number  |           |         |       |
+|(1 to 1023)      |           |         |       |
++-----------------+-----------+---------+-------+
+|Display          |           | 2nd A'  | Calc. |
+|calculator's     |           |         | guess |
+|first guess      |           |         |       |
++-----------------+-----------+---------+-------+
+|If calculator    |           |         |       |
+|guess is:        |           |         |       |
+|       Low       |           | 2nd B'  | Calc. |
+|                 |           |         | guess |
+|       High      |           | 2nd C'  | Calc. |
+|                 |           |         | guess |
+|       Correct   |           | 2nd D'  |  #    |
+|                 |           |         |guesses|
++-----------------+-----------+---------+-------+
+|  Repeat last step above as required           |
++-----------------------------------------------+
+| For a new game, go to Select a number         |
++===============================================+
+

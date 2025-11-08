@@ -1,0 +1,27 @@
+ML-14 NORMAL DISTRIBUTION
+#####
+x -> Z(x)#Q(x)####
+=================================================
+            ML-14 NORMAL DISTRIBUTION
+=================================================
+
+In many circumstances the set of numbers which
+measure some characteristic of a set of objects
+under study are said to be normal/y distributed.
+That is, a plot of these numbers against their
+number of occurrences would follow the normal
+curve, with the peak at the mean (average value)
+of these numbers.
+
+
+USER INSTRUCTIONS
+-----------------
++-----------------+-----------+---------+-------+
+|    PROCEDURE    |   ENTER   |  PRESS  |DISPLAY|
++-----------------+-----------+---------+-------+
+|Enter data and         x     |    A    |  Z(x) |
+|calculate Z(x)   |           |         |       |
++-----------------+-----------+---------+-------+
+|Calculate Q(x)   |           |    B    |  Q(x) |
++-----------------+-----------+---------+-------+
+

@@ -1,0 +1,91 @@
+ML-22 CHECKING/SAVINGS ACCOUNT MANAGEMENT
+Checking#Savings#I%/Yr#Periods/Yr##
+Balance#Deposit#Withdrawal#No.Periods#New bal.#
+=================================================
+    ML-22 CHECKING/SAVINGS ACCOUNT MANAGEMENT
+=================================================
+
+This program will determine the current balances
+on checking and savings accounts when given the
+starting balances as inputs. In addition to
+accepting checking and savings deposits and
+withdrawals (checks), the program will add
+savings interest when given the interest rate and
+the number of compounding periods. The resulting
+balances may be carried forward by the Constant
+MemoryTM feature of the TI Programmable 58C, by
+the magnetic card feature of the TI Programmable
+59, or may be written clown and keyed in the next
+time the program is used.
+
+The savings balance is adjusted for interest
+using the classical compound interest equation:
+               FV = PV(1 + i)N 
+
+where
+         FV = future value (new balance)
+         PV = present value (current balance)
+         i  = periodic interest rate (decimal)
+         N  = number of periods
+
+Note that this formula must be applied to periods
+when PV has not been altered by deposits or
+withdrawals. Therefore, an active account having
+daily compounding periods will require several
+applications of this formula (once for each
+deposit or withdrawal).
+
+USER INSTRUCTIONS
+-----------------
++-----------------+-----------+---------+-------+
+|    PROCEDURE    |   ENTER   |  PRESS  |DISPLAY|
++=================+===========+=========+=======+
+| Load data registers from card or              |
++-----------------+-----------+---------+-------+
+|Enter checking   |    cbal   |2nd A'  E| cbal  |
+|balance          |           |         |       |
++-----------------+-----------+---------+-------+
+|Enter savings    |    sbal   |2nd B'  E| sbal  |
+|balance          |           |         |       |
++=================+===========+=========+=======+
+|Select checking  |           | 2nd A'  |       |
+|mode             |           |         |       |
++=================+===========+=========+=======+
+|Enter deposit    |  Dep.amt. |    B    |New Bal|
+|amount           |           |         |       |
++-----------------+-----------+---------+-------+
+|Enter check      |  Chk.amt. |    C    |New Bal|
+|amount           |           |         |       |
++-----------------+-----------+---------+-------+
+| Repeat 2 steps above as necessary             |
++=================+===========+=========+=======+
+|Select savings   |           | 2nd B'  |       |
+|mode             |           |         |       |
++=================+===========+=========+=======+
+| To add interest:                              |
++-----------------+-----------+---------+-------+
+|Enter annual     |   %I/yr   | 2nd C'  | %I/yr |
+|interest rate (%)|           |         |       |
++-----------------+-----------+---------+-------+
+|Enter compounding|     p     | 2nd D'  |   P   |
+|periods per year |           |         |       |
++-----------------+-----------+---------+-------+
+|Enter number of  |     n     |    D    |New Bal|
+|periods          |           |         |       |
++=================+===========+=========+=======+
+|To add savings   |  Dep.amt. |    B    |New Bal|
+|deposit          |           |         |       |
++-----------------+-----------+---------+-------+
+|To subtract      |Withdr.amt.|    C    |New Bal|
+|savings          |           |         |       |
+|withdrawal       |           |         |       |
++-----------------+-----------+---------+-------+
+|To display       |           |2nd A'  A|Chk Bal|
+|checking balance |           |         |       |
++-----------------+-----------+---------+-------+
+|To display       |           |2nd B'  A|Sav Bal|
+|savings balance  |           |         |       |
++=================+===========+=========+=======+
+| Optional:  Record data registers on card      |
++=================+===========+=========+=======+
+

@@ -1,0 +1,94 @@
+ML-03 MATRIX ADDITION AND MULTIPLICATION
+J;cij#i;xi#->Ax#i;->Yi##
+m,n#j;aij#j;bij#lmd1,lmd2#lmd1A+lmd2B#
+=================================================
+    ML-03 MATRIX ADDITION AND MULTIPLICATION
+=================================================
+
+
+
+
+USER INSTRUCTIONS
+-----------------
++-----------------+-----------+---------+-------+
+|    PROCEDURE    |   ENTER   |  PRESS  |DISPLAY|
++-----------------+-----------+---------+-------+
+|Enter number of  |     m     |    A    |   m   |
+|rows in A        |           |         |       |
++-----------------+-----------+---------+-------+
+|Enter number of  |     n     |    A    |   n   |
+|columns in A     |           |         |       |
++-----------------+-----------+---------+-------+
+| Two steps above must be performed in sequence |
++-----------------+-----------+---------+-------+
+|Enter the        |     1     |    B    |   1   |
+|elements of      |    a11    |   R/S   |  a11  |
+|matrix A starting|    a21    |   R/S   |  a21  |
+|with column 1.   |     .     |    .    |   .   |
+|                 |     .     |    .    |   .   |
+|                 |     .     |    .    |   .   |
+|                 |    am1    |   R/S   |  am1  |
+|                 |    a12    |   R/S   |  a12  |
+|                 |    a22    |   R/S   |  a22  |
+|                 |     .     |    .    |   .   |
+|                 |     .     |    .    |   .   |
+|                 |     .     |    .    |   .   |
+|                 |    amn    |   R/S   |  amn  |
++-----------------+-----------+---------+-------+
+| Matrix addition                               |
++-----------------+-----------+---------+-------+
+|First            |     1     |    C    |   1   |
+|then enter       |           |         |       |
+|the elements of  |           |         |       |
+|matrix B using   |           |         |       |
+|the [R/S] as in  |           |         |       |
+|previous step    |           |         |       |
++-----------------+-----------+---------+-------+
+|Enter lamda1     |  lamda1   |    D    |lamda1*|
++-----------------+-----------+---------+-------+
+|Enter lamda2     |  lamda2   |    D    |lamda2*|
++-----------------+-----------+---------+-------+
+| Two steps above must be performed in sequence |
++-----------------+-----------+---------+-------+
+|Calculate        |           | CLR   E |   1   |
+|lambda1A+lambda2B|           |         |       |
++-----------------+-----------+---------+-------+
+|Display the      |     1     | 2nd A'  |   1   |
+|elements of C    |           |   R/S   |  c11 *|
+|starting with    |           |   R/S   |  c21 *|
+|column 1.        |           |    .    |   .   |
+|To display the   |           |    .    |   .   |
+|elements of C    |           |    .    |   .   |
+|starting with    |           |   R/S   |  cm1 *|
+|column j, enter j|           |   R/S   |  c12 *|
+|before pressing  |           |   R/S   |  c22 *|
+|2nd A'.          |           |    .    |   .   |
+|                 |           |    .    |   .   |
+|                 |           |    .    |   .   |
+|                 |           |   R/S   |  cmn *|
++-----------------+-----------+---------+-------+
+| Matrix multiplication                         |
++-----------------------------------------------+
+| Perform three first steps before              |
++-----------------+-----------+---------+-------+
+|Enter elements of|     1     | 2nd B'  |   1   |
+|column j of      |    b1j    |   R/S   |  b1j *|
+|matrix B starting|     .     |    .    |   .   |
+|with b1j.        |     .     |    .    |   .   |
+|                 |     .     |    .    |   .   |
+|                 |    bnj    |   R/S   |  bnj *|
++-----------------+-----------+---------+-------+
+|Calculate column |           | 2nd C'  |   1   |
+|j of matrix      |           |         |       |
++-----------------+-----------+---------+-------+
+|Display elements |     1     | 2nd D'  |   1   |
+|of column j of   |           |   R/S   |  c1j *|
+|matrix C,        |           |    .    |   .   |
+|starting with c1j|           |    .    |   .   |
+|                 |           |    .    |   .   |
+|                 |           |   R/S   |  cmj *|
++-----------------+-----------+---------+-------+
+|Display cij only |     i     | 2nd D'  |   i  *|
+|                 |           |   R/S   |  cij *|
++-----------------+-----------+---------+-------+
+

@@ -1,0 +1,54 @@
+ML-24 UNIT CONVERSIONS (l)
+cm -> in#m -> ft#m -> yd#km -> mi#n.mi -> mi#
+in -> cm#ft -> m#yd -> m#mi -> km#mi -> n.mi#
+=================================================
+           ML-24 UNIT CONVERSIONS (L)
+=================================================
+
+This program provides length conversions through
+the user-defined keys as follows:
+
+    A     inches to centimeters
+ 2nd A'   centimeters to inches
+    B     feet to meters
+ 2nd B'   meters to feet
+    C     yards to meters
+ 2nd C'   meters to yards
+    D     statute miles to kilometers
+ 2nd D'   kilometers to statute miles
+    E     statute miles to nautical miles (Int.)
+ 2nd E'   nautical miles (Int.) to statute miles
+
+Area conversions may be obtained by pressing the
+conversion key twice. Volume conversions may be
+obtained by pressing the conversion key three
+times.
+
+USER INSTRUCTIONS
+-----------------
++-----------------+-----------+---------+-------+
+|    PROCEDURE    |   ENTER   |  PRESS  |DISPLAY|
++-----------------+-----------+---------+-------+
+| To convert:     |           |         |       |
++-----------------+-----------+---------+-------+
+|  in to cm       |    in     |    A    |  cm   |
++-----------------+-----------+---------+-------+
+|  cm to in       |    cm     | 2nd A'  |  in   |
++-----------------+-----------+---------+-------+
+|  ft to metrs    |    ft     |    B    | metrs |
++-----------------+-----------+---------+-------+
+|  metrs to ft    |   metrs   | 2nd B'  |  ft   |
++-----------------+-----------+---------+-------+
+|  yds to metrs   |    yds    |    C    | metrs |
++-----------------+-----------+---------+-------+
+|  metrs to yds   |   metrs   | 2nd C'  |  yds  |
++-----------------+-----------+---------+-------+
+|  mi to km       |    mi     |    D    |  km   |
++-----------------+-----------+---------+-------+
+|  km to mi       |    km     | 2nd D'  |  mi   |
++-----------------+-----------+---------+-------+
+|  mi to nat mi   |    mi     |    E    |nat.mi |
++-----------------+-----------+---------+-------+
+|  nat mi to mi   |  nat.mi   | 2nd E'  |  mi   |
++-----------------+-----------+---------+-------+
+

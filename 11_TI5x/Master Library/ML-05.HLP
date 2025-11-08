@@ -1,0 +1,58 @@
+ML-05 COMPLEX FUNCTIONS
+=> ln X#=> eX##=> a+bi##
+X#=> r,a#=> X2#=> V¯X#=> 1/X#
+=================================================
+ M L - 0 5   C O M P L E X   F U N C T I O N S 
+=================================================
+
+The following functionsare calculated for the
+complex number X = a + bi.
+
+        Polar representation (r,theta) of X
+        X2
+        V¯X
+        1/X
+        eX
+        ln X
+
+After a function has been performed, the result
+is stored in R01 and R02 and becomes the new X.
+Therefore a result may be used without reentering
+it in this program and in programs ML-04 and
+ML-06.
+
+USER INSTRUCTIONS
+-----------------
++------------------+----------+---------+-------+
+|    PROCEDURE     |   ENTER  |  PRESS  |DISPLAY|
++------------------+----------+---------+-------+
+|Enter real        |     a    |    A    |   a   |
+|part of X         |          |         |       |
++------------------+----------+---------+-------+
+|Enter imaginary   |     b    |    A    |   b   |
+|part of X         |          |         |       |
++------------------+----------+---------+-------+
+|The 2 steps above must be performed in sequence|
++------------------+----------+---------+-------+
+|Calculate         |          |    B    |  r    |
+|polar form of X   |          |   x<>t  | theta |
+|if desired        |          |         |       |
++------------------+----------+---------+-------+
+|Calculate any of the following:                |
++------------------+----------+---------+-------+
+|Calculate X2      |          |    C    |  rp   |
+|                  |          |   x<>t  |  ip   |
++------------------+----------+---------+-------+
+|Calculate V¯X     |          |    D    |  rp   |
+|                  |          |   x<>t  |  ip   |
++------------------+----------+---------+-------+
+|Calculate 1/X     |          |    E    |  rp   |
+|                  |          |   x<>t  |  ip   |
++------------------+----------+---------+-------+
+|Calculate ln X    |          | 2nd A'  |  rp   |
+|                  |          |   x<>t  |  ip   |
++------------------+----------+---------+-------+
+|Calculate e X     |          | 2nd B'  |  rp   |
+|                  |          |   x<>t  |  ip   |
++------------------+----------+---------+-------+
+

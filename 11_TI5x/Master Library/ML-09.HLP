@@ -1,0 +1,52 @@
+ML-09 SIMPSON'S APPROXIMATION (CONTINUOUS)
+#####
+X0#Xn#n##-> I#
+=================================================
+   ML-09 SIMPSON'S APPROXIMATION (CONTINUOUS)
+=================================================
+
+This program may be used to approximate the
+integral, I, of a function defined by the user,
+over an interval xo to xn, using Simpson's Rule.
+
+The function f(x) must be expressed as a sequence
+of keystrokes in the user program memory.
+
+USER INSTRUCTIONS
+-----------------
++----------------------+-----+----------+-------+
+|    PROCEDURE         |ENTER|  PRESS   |DISPLAY|
++----------------------+-----+----------+-------+
+|Initialize            |     |   RST    |   0.  |
++----------------------+-----+----------+-------+
+|Select LRN mode       |     |   LRN    | 000 00|
++----------------------+-----+----------+-------+
+|Use A' as LBL         |     | 2nd Lbl  | 001 00|
+|                      |     | 2nd A    | 002 00|
++----------------------+-----+----------+-------+
+|Enter f(x) as a series of keystrokes. Do not   |
+|use [ = ] or [ CLR ]. Do not use registers 0-5.|
++----------------------+-----+----------+-------+
+|End f(x) with INV SBR |     | INV SBR  | xxx 00|
++----------------------+-----+----------+-------+
+|Leave LRN mode        |     |   LRN    |   0.  |
++----------------------+-----+----------+-------+
+|Select program        |     |2nd Pgm 09|       |
++----------------------+-----+----------+-------+
+|Enter lower limit     |  l  |     A    |   l   |
++----------------------+-----+----------+-------+
+|Enter upper limit     |  u  |     B    |   u   |
++----------------------+-----+----------+-------+
+|Enter n(n=2,4,6,...)  |  n  |     C    |   n   |
+|display flashes if not|     |          |       |
+|legal entry           |     |          |       |
++----------------------+-----+----------+-------+
+|Compute integral      |     |     D    |   I   |
++----------------------+-----+----------+-------+
+|For a new interval repeat 5 steps above        |
++----------------------+-----+----------+-------+
+
+Notes:
+       1. Evaluate expressions with parentheses only.
+       2. Running time is dependent on input data.
+

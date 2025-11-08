@@ -1,0 +1,59 @@
+ML-17 MOVING AVERAGES
+####INIT#
+NUMBER#m -> AVG####
+=================================================
+   M L - 1 7   M O V I N G   A V E R A G E S
+=================================================
+
+This program calculates the moving average of the
+n most recent values in a sequence of variables.
+For example, the three-day moving average of
+maximum temperatures would contain the following
+values:
+
+                   m, + m2 +m3
+      day 3:       -----------
+                        3
+
+                   m2 + m3 + m4
+      day 4:       ------------
+                        3
+
+                   m3 + m4 + m5
+      day 5:       ------------ , etc.
+                        3
+
+
+The values for this type of sequence may be
+expressed as:
+
+    1
+    - (m k+ m k+1 + ... + m k+n-1)  k = 1,2, ...
+    n
+
+
+USER INSTRUCTIONS
+-----------------
++--------------------------+---+--------+-------+
+|    PROCEDURE             |ENT| PRESS  |DISPLAY|
++--------------------------+---+--------+-------+
+|Initialize                |   | 2nd E' |  0.   |
++--------------------------+---+--------+-------+
+|Enter number of values to | n |   A    |   n   |
+|be averaged               |   |        |       |
++--------------------------+---+--------+-------+
+|Enter value to be averaged| m |   B    |average|
++--------------------------+---+--------+-------+
+|Repeat for each value     |   |        |       |
++--------------------------+---+--------+-------+
+
+NOTES: 1. Error conditions:
+          For n=<0 or n non-integer, the display
+          will flash 9.9999999 99.
+       2. An average will be taken for all values
+          entered below the nth value. Once the
+          nth value is entered, the concept of
+          moving averages begins.
+       3. The number of data registers available
+          must be greater than or equal to n + 5.
+

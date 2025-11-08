@@ -1,0 +1,73 @@
+ML-06 COMPLEX TRIGONOMETRIC FUNCTIONS
+#=>arcsin X#=>arccos X#=>arctan X##
+X#=>sin X#=>cos X#=>tan X##
+=================================================
+      ML-06 COMPLEX TRIGONOMETRIC FUNCTIONS
+=================================================
+
+This program calculates the value of
+trigonometric functions for a complex number
+X = a + bi.
+The folowing functions are evaluated:
+ 
+                     sin X
+                     cos X
+                     tan X
+                     arcsin X
+                     arccos X
+                     arctan X
+					 
+The result of any function is stored in R01 and
+R02 and becomes the new value of X. Therefore a
+result may be used without reentering it in this
+program and in programs ML-04 and ML-05.
+
+
+USER INSTRUCTIONS
+-----------------
++------------------+----------+---------+-------+
+|    PROCEDURE     |   ENTER  |  PRESS  |DISPLAY|
++------------------+----------+---------+-------+
+|Enter real        |     a    |    A    |   a   |
+|part of X         |          |         |       |
++------------------+----------+---------+-------+
+|Enter imaginary   |     b    |    A    |   b   |
+|part of X         |          |         |       |
++------------------+----------+---------+-------+
+|The 2 steps above must be performed in sequence|
++------------------+----------+---------+-------+
+|Calculate any of the following:                |
++------------------+----------+---------+-------+
+|Calculate sin X   |          |    B    |  rp   |
+|                  |          |   x<>t  |  ip   |
++------------------+----------+---------+-------+
+|Calculate cos X   |          |    C    |  rp   |
+|                  |          |   x<>t  |  ip   |
++------------------+----------+---------+-------+
+|Calculate tan X   |          |    D    |  rp   |
+|                  |          |   x<>t  |  ip   |
++------------------+----------+---------+-------+
+|Calculate arcsin X|          | 2nd B'  |  rp   |
+|                  |          |   x<>t  |  ip   |
++------------------+----------+---------+-------+
+|if imaginary      |          |   +/-   |  ip   |
+|part (b) of input |          | STO 02  |       |
+|X is negative     |          |         |       |
++------------------+----------+---------+-------+
+|Calculate arccos X|          | 2nd C'  |  rp   |
+|                  |          |   x<>t  |  ip   |
++------------------+----------+---------+-------+
+|if imaginary      |          |   +/-   |  ip   |
+|part (b) of input |          | STO 01  |       |
+|X is negative     |          |         |       |
++------------------+----------+---------+-------+
+|Calculate arctan X|          | 2nd D'  |  rp   |
+|                  |          |   x<>t  |  ip   |
++------------------+----------+---------+-------+
+
+NOTES:
+  1. After a calculation, the result becomes
+     the nex X.
+  2. X is expressed in radians. Program leaves
+     calculator in radian mode. 
+  

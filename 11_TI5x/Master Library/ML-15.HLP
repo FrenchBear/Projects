@@ -1,0 +1,90 @@
+ML-15 RANDOM NUMBER GENERATOR
+##No.(x,sig)##INIT#
+A,x#B,sig#No.(A,B)##SEED#
+=================================================
+          ML-15 RANDOM NUMBER GENERATOR
+=================================================
+
+This program generates sequences of uniformly or
+normally distributed random numbers.
+A seed number (0 to 199017) selected by the user
+is to initiate the sequences. As an additional
+feature the program compiles statistical data to
+allow computation of the mean and standard
+deviation of the generated numbers.
+For normally distributed random numbers, the
+seed, desired mean z, and desired standard
+deviation must be entered by the user.
+For uniformly distributed random numbers, the
+lower limit A, upper limit B, and the seed are
+entered.
+
+Uniformly distributed random numbers on the
+interval (0,1) may be generated at any time
+without entering upper and lower limits. Mean and
+standard deviation statistics are not collected
+for these numbers.
+
+
+USER INSTRUCTIONS
+-----------------
++--------------------+--------+---------+-------+
+|    PROCEDURE       | ENTER  |  PRESS  |DISPLAY|
++--------------------+--------+---------+-------+
+|Initialize          |        | 2nd E'  |   0.  |
++--------------------+--------+---------+-------+
+|Enter rand number   |  seed  |    E    | seed  |
+|seed (0<n<199017)   |        |         |       |
++====================+========+=========+=======+
+| For Uniform Distribution                      |
++--------------------+--------+---------+-------+
+|Enter lower limit   |   A    |    A    |   A   |
++--------------------+--------+---------+-------+
+|Enter upper limit   |   B    |    B    |   B   |
++--------------------+--------+---------+-------+
+|Generate            |        |    C    |Rand No|
+|random number       |        |         |       |
++--------------------+--------+---------+-------+
+|(repeat as needed)  |        |         |       |
++====================+========+=========+=======+
+| For Normal Distribution                       |
++--------------------+--------+---------+-------+
+|Enter desired mean  |   x    |    A    |desired|
+|                    |        |         |   x   |
++--------------------+--------+---------+-------+
+|Enter desired       | sigma  |    B    |desired|
+|standard deviation  |        |         | sigma |
++--------------------+--------+---------+-------+
+|Generate            |        | 2nd C'  |Rand No|
+|random number       |        |         |       |
++--------------------+--------+---------+-------+
+|(repeat as needed)  |        |         |       |
++====================+========+=========+=======+
+| For Either Distribution                       |
++--------------------+--------+---------+-------+
+|Compute actual mean |        | 2nd x   |actual |
+|of generated numbers|        |         |   x   |
++--------------------+--------+---------+-------+
+|Compute actual      |        |INV 2nd x|actual |
+|standard deviation  |        |         | sigma |
+|of generated numbers|        |         |       |
++--------------------+--------+---------+-------+
+|Display numbers     |        | RCL 03  |   N   |
+|of generated numbers|        |         |       |
++====================+========+=========+=======+
+| For range of (0,1)                            |
++--------------------+--------+---------+-------+
+|Generate            |        |   SBR   |Rand No|
+|random number       |        | 2nd DMS |       |
++--------------------+--------+---------+-------+
+|(repeat as needed)  |        |         |       |
++====================+========+=========+=======+
+
+NOTE:
+    1. Five significant digits of the originally
+       generated number are retained for further
+       calculations. Therefore, no more than the
+       first five significant digits of the
+       generated numbers may be considered to be
+       random.
+

@@ -1,0 +1,75 @@
+ML-08 ZEROS OF FUNCTIONS
+#####
+a#b#delta x#e#-> x#
+=================================================
+             ML-08 ZEROS OF FUNCTIONS
+=================================================
+
+Using the graphical bisection method, this
+program calculates the roots of a function
+defined by the user.
+The values of a and b, the lower and upper limits
+for evaluation, must be supplied whereas the
+sampling increment Ox, if not specified by the
+user, defaults to b - a. The degree of accuracy
+(error limit) defaults to 0.01 if not specified
+by the user.
+
+The method used will find only one root in a
+subinterval (delta x). To find all the roots,
+the selected sampling increment (delta x) must be
+small enough to ensure that the function changes
+sign only once in any subinterval.
+
+If there are no roots in the overall inter-val
+evaluated, or after all the roots have been
+found, the display will flash 9.9999999 99. If
+the display flashes another number, the number
+flashed may be a root. In this case the flashing
+is triggered when an undefinable point is
+encountered white evaluating the function (1/x
+evaluated at 0, for example).
+
+
+
+USER INSTRUCTIONS
+-----------------
++----------------------+-----+----------+-------+
+|    PROCEDURE         |ENTER|  PRESS   |DISPLAY|
++----------------------+-----+----------+-------+
+|Initialize            |     |   RST    |   0.  |
++----------------------+-----+----------+-------+
+|Select LRN mode       |     |   LRN    | 000 00|
++----------------------+-----+----------+-------+
+|Use A' as LBL         |     | 2nd Lbl  | 001 00|
+|                      |     | 2nd A    | 002 00|
++----------------------+-----+----------+-------+
+|Enter f(x) as a series of keystrokes. Do not   |
+|use [ = ] or [ CLR ]. Do not use registers 0-5.|
++----------------------+-----+----------+-------+
+|End f(x) with INV SBR |     | INV SBR  | xxx 00|
++----------------------+-----+----------+-------+
+|Leave LRN mode        |     |   LRN    |   0.  |
++----------------------+-----+----------+-------+
+|Select program        |     |2nd Pgm 09|       |
++----------------------+-----+----------+-------+
+|Enter lower limit     |  a  |     A    |   a   |
++----------------------+-----+----------+-------+
+|Enter upper limit     |  b  |     B    |   b   |
++----------------------+-----+----------+-------+
+|Enter sampling        | d.x |     C    |delta x|
+|increment             |     |          |       |
++----------------------+-----+----------+-------+
+|Enter maximum error   |  e  |     D    |   e   |
++----------------------+-----+----------+-------+
+|Calculate roots       |     |     E    | root  |
++----------------------+-----+----------+-------+
+| repeat last step until flashing 9's display is|
+| obtained which indicates all roots in [a,b)   |
+| have been found.                              |
++-----------------------------------------------+
+| To use a different interval,                  |
+|                    repeat 5 last steps above. |
+
+Notes: Evaluate expressions with parentheses only
+       Running time is dependent on input data
