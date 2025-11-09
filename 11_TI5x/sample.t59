@@ -1,0 +1,9 @@
+Lbl A
+STO 00
+0
+Lbl +
++ RCL 00
+DSZ 0 +
+=
+R/S
+RST
