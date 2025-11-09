@@ -56,6 +56,12 @@ public interface Iti58Visitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitMemory([NotNull] ti58Parser.MemoryContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="ti58Parser.indmemory"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitIndmemory([NotNull] ti58Parser.IndmemoryContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="ti58Parser.pgm_number"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -110,29 +116,11 @@ public interface Iti58Visitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitInstruction([NotNull] ti58Parser.InstructionContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="ti58Parser.exponent"/>.
+	/// Visit a parse tree produced by <see cref="ti58Parser.inv"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitExponent([NotNull] ti58Parser.ExponentContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="ti58Parser.operator"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitOperator([NotNull] ti58Parser.OperatorContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="ti58Parser.invert"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitInvert([NotNull] ti58Parser.InvertContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="ti58Parser.fix"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitFix([NotNull] ti58Parser.FixContext context);
+	Result VisitInv([NotNull] ti58Parser.InvContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="ti58Parser.atomic_instruction"/>.
 	/// </summary>
@@ -140,23 +128,101 @@ public interface Iti58Visitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitAtomic_instruction([NotNull] ti58Parser.Atomic_instructionContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="ti58Parser.memory_or_flag_instruction"/>.
+	/// Visit a parse tree produced by <see cref="ti58Parser.atomic_instruction_invertible"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitMemory_or_flag_instruction([NotNull] ti58Parser.Memory_or_flag_instructionContext context);
+	Result VisitAtomic_instruction_invertible([NotNull] ti58Parser.Atomic_instruction_invertibleContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="ti58Parser.memory_or_indirect"/>.
+	/// Visit a parse tree produced by <see cref="ti58Parser.atomic_instruction_inverted"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitMemory_or_indirect([NotNull] ti58Parser.Memory_or_indirectContext context);
+	Result VisitAtomic_instruction_inverted([NotNull] ti58Parser.Atomic_instruction_invertedContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="ti58Parser.fix_instruction"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFix_instruction([NotNull] ti58Parser.Fix_instructionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="ti58Parser.single_digit_or_indirect"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitSingle_digit_or_indirect([NotNull] ti58Parser.Single_digit_or_indirectContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="ti58Parser.flag_instruction"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFlag_instruction([NotNull] ti58Parser.Flag_instructionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="ti58Parser.flag_or_indirect"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFlag_or_indirect([NotNull] ti58Parser.Flag_or_indirectContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="ti58Parser.op_instruction"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitOp_instruction([NotNull] ti58Parser.Op_instructionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="ti58Parser.op_number_or_indirect"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitOp_number_or_indirect([NotNull] ti58Parser.Op_number_or_indirectContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="ti58Parser.indirect_memory"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitIndirect_memory([NotNull] ti58Parser.Indirect_memoryContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="ti58Parser.pgm_instruction"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitPgm_instruction([NotNull] ti58Parser.Pgm_instructionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="ti58Parser.pgm_number_or_indirect"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitPgm_number_or_indirect([NotNull] ti58Parser.Pgm_number_or_indirectContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="ti58Parser.memory_instruction"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitMemory_instruction([NotNull] ti58Parser.Memory_instructionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="ti58Parser.memory_instruction_indirect"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitMemory_instruction_indirect([NotNull] ti58Parser.Memory_instruction_indirectContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="ti58Parser.memory_instruction_invertible"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitMemory_instruction_invertible([NotNull] ti58Parser.Memory_instruction_invertibleContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="ti58Parser.memory_instruction_invertible_indirect"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitMemory_instruction_invertible_indirect([NotNull] ti58Parser.Memory_instruction_invertible_indirectContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="ti58Parser.memory_or_indirect"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitMemory_or_indirect([NotNull] ti58Parser.Memory_or_indirectContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="ti58Parser.label_instruction"/>.
 	/// </summary>
@@ -182,12 +248,6 @@ public interface Iti58Visitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitKey_label([NotNull] ti58Parser.Key_labelContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="ti58Parser.flag_or_indirect"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitFlag_or_indirect([NotNull] ti58Parser.Flag_or_indirectContext context);
-	/// <summary>
 	/// Visit a parse tree produced by <see cref="ti58Parser.conditional_instruction"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -212,39 +272,9 @@ public interface Iti58Visitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitDecrement_and_skip_on_zero_statement([NotNull] ti58Parser.Decrement_and_skip_on_zero_statementContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="ti58Parser.single_digit_or_indirect"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitSingle_digit_or_indirect([NotNull] ti58Parser.Single_digit_or_indirectContext context);
-	/// <summary>
 	/// Visit a parse tree produced by <see cref="ti58Parser.test_flag_statement"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitTest_flag_statement([NotNull] ti58Parser.Test_flag_statementContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="ti58Parser.op_instruction"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitOp_instruction([NotNull] ti58Parser.Op_instructionContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="ti58Parser.op_number_or_indirect"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitOp_number_or_indirect([NotNull] ti58Parser.Op_number_or_indirectContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="ti58Parser.pgm_instruction"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitPgm_instruction([NotNull] ti58Parser.Pgm_instructionContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="ti58Parser.pgm_number_or_indirect"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitPgm_number_or_indirect([NotNull] ti58Parser.Pgm_number_or_indirectContext context);
 }

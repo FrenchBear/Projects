@@ -1,20 +1,5 @@
 // Parser for TI58/TI59 programming language for Antlr
-//
-// Note: to use INV alone or in a non-standard context, use INV! instead
-// This enables a clean integration of INV with instructions supporting it
-// Extensions: 
-// - Multiple (case-insensitive) mnemonic names: 'x²' 'x^2' and 'X2' are identical
-// - Comments: # until end of line
-// - Extra instructions such as e^x for INV lnx...
-// - Numbers accepted in usual form: 6.02e23, -56.8612, ...
-// - Two digits are accepted as equivalents of key names for labels: Lbl 25 is equivalent to Lbl CLR
-// Some weird mnemonic variants support format of .t59 files such as YX for y^x,
-// addresses such as 02 73, X2 for x², IXI for |x|, STA for Σ+, AVR for x̄...
-// Some mnemonics are not valid instructions (SST, LRN, Ins...) but are accepted
-// as labels (Lbl SST, Lbl LRN, Lbl Ins...)
-//
 // 2025-11-08   PV      First version
-// 2025-11-09   PV      Version 2, flatten model
 
 grammar ti58;
 
@@ -139,7 +124,6 @@ d: '0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9';
 number: '-'? d+ ('.' d+)? ('E' ('+'|'-')? d+)?;             // Generalisation allowed by this language
 single_digit:   '0'? d;
 memory:         d d?;                                       // Register number
-indmemory:      d d?;                                       // Indirect Register number
 pgm_number:     d d?;
 address_label:  (d d d)|('0' d WS d d);                     // The version nn<space>nn is for T59 programs
 numeric_key_label: ('1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9') d; // 10..99, an extension as a substitute to keys labels (25=CLR)
@@ -163,36 +147,43 @@ instruction_or_comment
     
 instruction
     : number
-	| inv '!'        // Trick to allow a standalone Inv while keeping grammar simple
+    | I93_dot
+	| I94_change_sign
+	| exponent
+	| I53_left_parenthesis
+	| I54_right_parenthesis
+	| operator
+	| I95_equals
+	| invert '!'        // Trick to allow a standalone Inv while keeping grammar simple
+    | fix
 	| atomic_instruction
-	| atomic_instruction_invertible
-    | atomic_instruction_inverted
-    | fix_instruction
-    | flag_instruction
-    | op_instruction
-    | pgm_instruction
-	| memory_instruction
-    | memory_instruction_invertible
-    | memory_instruction_indirect
-    | memory_instruction_invertible_indirect
+	| memory_or_flag_instruction
 	| label_instruction
 	| branch_instruction
 	| conditional_instruction
+    | op_instruction
+    | pgm_instruction
     ;
     
-inv: I22_invert WS?;
+exponent: (invert WS?)* I52_exponent;
+
+operator
+    : I85_add
+    | I75_subtract
+    | I65_multiply
+    | I55_divide
+    | I45_power
+    ;
+
+invert: I22_invert;
+
+fix:    I58_fix WS? single_digit_or_indirect;
 
 atomic_instruction 
-	: I11_a 
-    | I12_b 
-    | I13_c 
-    | I14_d 
-    | I15_e
-	| I16_a_prime 
-    | I17_b_prime 
-    | I18_c_prime 
-    | I19_d_prime 
-    | I10_e_prime
+	: (invert WS?)* I23_ln
+	| I123_e_power_x
+	| (invert WS?)* I28_log
+	| I128_10_power_x
     | I24_correct_entry
     | I25_clear
     | I29_clear_program
@@ -200,110 +191,63 @@ atomic_instruction
 	| I33_square
 	| I34_square_root
 	| I35_reciprocal
-    | I45_power
+	| (invert WS?)* I37_polar_to_rectangular
+	| (invert WS?)* I38_sin
+	| (invert WS?)* I39_cos
+	| (invert WS?)* I30_tan
     | I47_clear_memory
-	| I53_left_parenthesis
-	| I54_right_parenthesis
-    | I55_divide
+	| (invert WS?)* I57_engineering
+	| (invert WS?)* I58_fix
+	| (invert WS?)* I59_integer
 	| I50_absolute
-    | I65_multiply
 	| I66_pause
 	| I68_nop
 	| I60_degrees
-    | I75_subtract
+	| (invert WS?)* I78_sigma_plus
+	| (invert WS?)* I79_average
 	| I70_radians
-	| I81_reset
-    | I85_add
+	| (invert WS?)* I88_dms
 	| I89_pi
 	| I80_grades
 	| I91_run_stop
-    | I93_dot
-	| I94_change_sign
-	| I95_equals
 	| I96_write
 	| I98_advance
 	| I99_print
 	| I90_list
-	| I92_return
     ;
-
-atomic_instruction_invertible
-	: inv? I23_ln
-	| inv? I28_log
-	| inv? I37_polar_to_rectangular
-	| inv? I38_sin
-	| inv? I39_cos
-	| inv? I30_tan
-    | inv? I52_exponent
-	| inv? I57_engineering
-	| inv? I58_fix
-	| inv? I59_integer
-	| inv? I78_sigma_plus
-	| inv? I79_average
-	| inv? I88_dms
-    ;
-
-atomic_instruction_inverted
-    : inv I71_subroutine        // Normally I92_return, but the split format is also valid
-	| I123_e_power_x
-	| I128_10_power_x
-    ;
-
-fix_instruction: I58_fix WS? single_digit_or_indirect;
-
-single_digit_or_indirect: single_digit | indirect_memory ;
-
-flag_instruction: inv? I86_set_flag WS? flag_or_indirect;
-
-flag_or_indirect: flag_number | indirect_memory ;
-
-op_instruction
-    : I69_operation WS? op_number_or_indirect
-	| I84_operation_indirect WS? indmemory
-    ;
-
-op_number_or_indirect: op_number | indirect_memory ;
-
-indirect_memory: I40_indirect WS? indmemory;
-
-pgm_instruction
-    : I36_program WS? pgm_number_or_indirect
-	| I62_program_indirect WS? pgm_number
-    ;
-
-pgm_number_or_indirect: pgm_number | indirect_memory ;
-
-memory_instruction
+	
+memory_or_flag_instruction
     : I42_store WS? memory_or_indirect
+	| I72_store_indirect WS? memory
 	| I43_recall WS? memory_or_indirect
+	| I73_recall_indirect WS? memory
 	| I48_exchange WS? memory_or_indirect
+	| I63_exchange_indirect WS? memory
+	| (invert WS?)* I44_sum WS? memory_or_indirect
+	| (invert WS?)* I74_sum_indirect WS? memory
+	| (invert WS?)* I49_product WS? memory_or_indirect
+	| (invert WS?)* I64_product_indirect WS? memory
+	| (invert WS?)* I86_set_flag WS? flag_or_indirect
 	| I82_hir WS? memory
     ;
-
-memory_instruction_indirect
-	: I72_store_indirect WS? indmemory
-	| I73_recall_indirect WS? indmemory
-	| I63_exchange_indirect WS? indmemory
+	
+memory_or_indirect
+    : memory 
+    | indirect_memory
     ;
 
-memory_instruction_invertible
-	: inv? I44_sum WS? memory_or_indirect
-	| inv? I49_product WS? memory_or_indirect
-    ;
-
-memory_instruction_invertible_indirect:
-	| inv? I74_sum_indirect WS? indmemory
-	| inv? I64_product_indirect WS? indmemory
-    ;
-
-memory_or_indirect: memory | indirect_memory ;
+indirect_memory: I40_indirect WS? memory;
 
 label_instruction: I76_label WS? ( key_label | numeric_key_label );
 
 branch_instruction
     : I61_goto WS? address_or_label_or_indirect
-	| I83_goto_indirect WS? indmemory
+	| I83_goto_indirect WS? memory
 	| I71_subroutine WS? address_or_label_or_indirect
+	| I92_return WS? | invert WS? I71_subroutine
+	| I81_reset
+	| I11_a | I12_b | I13_c | I14_d | I15_e
+	| I16_a_prime | I17_b_prime | I18_c_prime | I19_d_prime | I10_e_prime
     ;
 
 address_or_label_or_indirect
@@ -342,6 +286,11 @@ key_label
 	| I96_write | I97_dsz | I98_advance | I99_print | I90_list
     ;
 
+flag_or_indirect
+    : flag_number
+    | indirect_memory
+    ;
+
 conditional_instruction
     : x_equals_t_statement
 	| x_greater_or_equal_than_t_statement
@@ -350,13 +299,37 @@ conditional_instruction
     ;
 
 // x=t
-x_equals_t_statement: inv? I67_x_equals_t WS? address_or_label_or_indirect;
+x_equals_t_statement: (invert WS?)* I67_x_equals_t WS? address_or_label_or_indirect;
 
 // x>=t
-x_greater_or_equal_than_t_statement: inv? I77_x_greater_or_equal_than_t WS? address_or_label_or_indirect;
+x_greater_or_equal_than_t_statement: (invert WS?)* I77_x_greater_or_equal_than_t WS? address_or_label_or_indirect;
 
 // Dsz (note that while officially only memories from 0 to 9 are supported, in fact all 99 memories are supported)
-decrement_and_skip_on_zero_statement: inv? I97_dsz WS? memory_or_indirect WS address_or_label_or_indirect;
+decrement_and_skip_on_zero_statement: (invert WS?)* I97_dsz WS? single_digit_or_indirect WS address_or_label_or_indirect;
+
+single_digit_or_indirect: single_digit | indirect_memory;
 
 // If flg
-test_flag_statement: inv? I87_if_flag WS? flag_or_indirect WS? address_or_label_or_indirect;
+test_flag_statement: (invert WS?)* I87_if_flag WS? flag_or_indirect WS? address_or_label_or_indirect;
+
+// Op
+op_instruction
+    : I69_operation WS? op_number_or_indirect
+	| I84_operation_indirect WS? memory
+    ;
+
+op_number_or_indirect
+    : op_number
+    | indirect_memory 
+    ;
+
+// Pgm
+pgm_instruction
+    : I36_program WS? pgm_number_or_indirect
+	| I62_program_indirect WS? pgm_number
+    ;
+
+pgm_number_or_indirect
+    : pgm_number
+    | indirect_memory
+    ;

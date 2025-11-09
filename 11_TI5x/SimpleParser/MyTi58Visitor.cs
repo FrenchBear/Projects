@@ -1,6 +1,9 @@
+using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
-using static System.Console;
+using System;
+using System.Collections.Generic;
+//using static System.Console;
 
 namespace SimpleParser;
 
@@ -8,63 +11,50 @@ namespace SimpleParser;
 // The 'object' type means your visit methods can return any type.
 public class MyTi58Visitor: ti58BaseVisitor<object>
 {
+    // 1. Add a private field to hold the parser
+    private readonly ti58Parser _parser;
+
+    // 2. Add a constructor that takes the parser
+    public MyTi58Visitor(ti58Parser parser)
+    {
+        _parser = parser;
+    }
+
     // This method is called for every single token in the tree.
     // It's a good way to see the visitor in action.
     public override object VisitTerminal(ITerminalNode node)
     {
-        //System.Console.WriteLine($"  -> Visiting terminal: {node.GetText()}");
+        // Create a list to hold the rule names
+        var hierarchy = new List<string>();
+
+        // Start walking up the tree from the terminal's parent
+        IParseTree current = node.Parent;
+        while (current != null)
+        {
+            // We only care about RuleContexts (parser rules), not other nodes
+            if (current is ParserRuleContext ruleContext)
+            {
+                // Use the parser's RuleNames array to get the name
+                string ruleName = _parser.RuleNames[ruleContext.RuleIndex];
+                hierarchy.Add(ruleName);
+            }
+            // Move to the next parent
+            current = current.Parent;
+        }
+
+        // The list is "child-to-root", so reverse it to "root-to-child"
+        hierarchy.Reverse();
+
+        // Get the token's integer type
+        int tokenType = node.Symbol.Type;
+
+        // Get the symbolic name from the parser's vocabulary
+        string symbolicName = _parser.Vocabulary.GetSymbolicName(tokenType);
+
+        // Print the hierarchy and the new symbolic name
+        Console.WriteLine($"  -> Visiting: {node.GetText()} (Type: {symbolicName})");
+        Console.WriteLine($"     Hierarchy: {string.Join(" / ", hierarchy)}");
+
         return base.VisitTerminal(node);
     }
-
-    //public override object VisitAtomic_instruction([NotNull] ti58Parser.Atomic_instructionContext context)
-    //{
-    //    var inst = context.GetText();
-    //    WriteLine($"«{inst}»");
-
-    //    return base.VisitAtomic_instruction(context);
-    //}
-
-    //public override object VisitMemory_or_flag_instruction([NotNull] ti58Parser.Memory_or_flag_instructionContext context)
-    //{
-    //    //foreach (var child in context.children)
-    //    //{
-    //    //    WriteLine(child);
-    //    //}
-    //    //WriteLine();
-    //    var inst = context.GetText();
-    //    WriteLine($"‹{inst}›");
-
-    //    return base.VisitMemory_or_flag_instruction(context);
-    //}
-
-    public override object VisitInstruction([NotNull] ti58Parser.InstructionContext context)
-    {
-        var inst = context.GetText();
-        WriteLine($"«{inst}»");
-
-        return base.VisitInstruction(context);
-    }
-
-    // --- THIS IS WHERE YOU ADD YOUR LOGIC ---
-    //
-    // You need to override the 'Visit' methods for the rules from
-    // your 'ti58.g4' grammar file that you care about.
-    //
-    // For example, if your grammar had a rule like:
-    //
-    //     assignment : ID '=' NUMBER;
-    //
-    // You would add a method like this:
-    //
-    // public override object VisitAssignment(ti58Parser.AssignmentContext context)
-    // {
-    //     string varName = context.ID().GetText();
-    //     string varValue = context.NUMBER().GetText();
-    //
-    //     Console.WriteLine($"Found assignment: {varName} = {varValue}");
-    //
-    //     // You must visit the children if you want the visitor to continue
-    //     // walking down the tree from this node.
-    //     return base.VisitAssignment(context);
-    // }
 }

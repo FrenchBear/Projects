@@ -71,6 +71,16 @@ public interface Iti58Listener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitMemory([NotNull] ti58Parser.MemoryContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.indmemory"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterIndmemory([NotNull] ti58Parser.IndmemoryContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.indmemory"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitIndmemory([NotNull] ti58Parser.IndmemoryContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="ti58Parser.pgm_number"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -161,45 +171,15 @@ public interface Iti58Listener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitInstruction([NotNull] ti58Parser.InstructionContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.exponent"/>.
+	/// Enter a parse tree produced by <see cref="ti58Parser.inv"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterExponent([NotNull] ti58Parser.ExponentContext context);
+	void EnterInv([NotNull] ti58Parser.InvContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.exponent"/>.
+	/// Exit a parse tree produced by <see cref="ti58Parser.inv"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitExponent([NotNull] ti58Parser.ExponentContext context);
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.operator"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterOperator([NotNull] ti58Parser.OperatorContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.operator"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitOperator([NotNull] ti58Parser.OperatorContext context);
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.invert"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterInvert([NotNull] ti58Parser.InvertContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.invert"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitInvert([NotNull] ti58Parser.InvertContext context);
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.fix"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterFix([NotNull] ti58Parser.FixContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.fix"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitFix([NotNull] ti58Parser.FixContext context);
+	void ExitInv([NotNull] ti58Parser.InvContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="ti58Parser.atomic_instruction"/>.
 	/// </summary>
@@ -211,25 +191,85 @@ public interface Iti58Listener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitAtomic_instruction([NotNull] ti58Parser.Atomic_instructionContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.memory_or_flag_instruction"/>.
+	/// Enter a parse tree produced by <see cref="ti58Parser.atomic_instruction_invertible"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterMemory_or_flag_instruction([NotNull] ti58Parser.Memory_or_flag_instructionContext context);
+	void EnterAtomic_instruction_invertible([NotNull] ti58Parser.Atomic_instruction_invertibleContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.memory_or_flag_instruction"/>.
+	/// Exit a parse tree produced by <see cref="ti58Parser.atomic_instruction_invertible"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitMemory_or_flag_instruction([NotNull] ti58Parser.Memory_or_flag_instructionContext context);
+	void ExitAtomic_instruction_invertible([NotNull] ti58Parser.Atomic_instruction_invertibleContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.memory_or_indirect"/>.
+	/// Enter a parse tree produced by <see cref="ti58Parser.atomic_instruction_inverted"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterMemory_or_indirect([NotNull] ti58Parser.Memory_or_indirectContext context);
+	void EnterAtomic_instruction_inverted([NotNull] ti58Parser.Atomic_instruction_invertedContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.memory_or_indirect"/>.
+	/// Exit a parse tree produced by <see cref="ti58Parser.atomic_instruction_inverted"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitMemory_or_indirect([NotNull] ti58Parser.Memory_or_indirectContext context);
+	void ExitAtomic_instruction_inverted([NotNull] ti58Parser.Atomic_instruction_invertedContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.fix_instruction"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterFix_instruction([NotNull] ti58Parser.Fix_instructionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.fix_instruction"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitFix_instruction([NotNull] ti58Parser.Fix_instructionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.single_digit_or_indirect"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterSingle_digit_or_indirect([NotNull] ti58Parser.Single_digit_or_indirectContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.single_digit_or_indirect"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitSingle_digit_or_indirect([NotNull] ti58Parser.Single_digit_or_indirectContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.flag_instruction"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterFlag_instruction([NotNull] ti58Parser.Flag_instructionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.flag_instruction"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitFlag_instruction([NotNull] ti58Parser.Flag_instructionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.flag_or_indirect"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterFlag_or_indirect([NotNull] ti58Parser.Flag_or_indirectContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.flag_or_indirect"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitFlag_or_indirect([NotNull] ti58Parser.Flag_or_indirectContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.op_instruction"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterOp_instruction([NotNull] ti58Parser.Op_instructionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.op_instruction"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitOp_instruction([NotNull] ti58Parser.Op_instructionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.op_number_or_indirect"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterOp_number_or_indirect([NotNull] ti58Parser.Op_number_or_indirectContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.op_number_or_indirect"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitOp_number_or_indirect([NotNull] ti58Parser.Op_number_or_indirectContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="ti58Parser.indirect_memory"/>.
 	/// </summary>
@@ -240,6 +280,76 @@ public interface Iti58Listener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitIndirect_memory([NotNull] ti58Parser.Indirect_memoryContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.pgm_instruction"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterPgm_instruction([NotNull] ti58Parser.Pgm_instructionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.pgm_instruction"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitPgm_instruction([NotNull] ti58Parser.Pgm_instructionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.pgm_number_or_indirect"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterPgm_number_or_indirect([NotNull] ti58Parser.Pgm_number_or_indirectContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.pgm_number_or_indirect"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitPgm_number_or_indirect([NotNull] ti58Parser.Pgm_number_or_indirectContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.memory_instruction"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterMemory_instruction([NotNull] ti58Parser.Memory_instructionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.memory_instruction"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitMemory_instruction([NotNull] ti58Parser.Memory_instructionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.memory_instruction_indirect"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterMemory_instruction_indirect([NotNull] ti58Parser.Memory_instruction_indirectContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.memory_instruction_indirect"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitMemory_instruction_indirect([NotNull] ti58Parser.Memory_instruction_indirectContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.memory_instruction_invertible"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterMemory_instruction_invertible([NotNull] ti58Parser.Memory_instruction_invertibleContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.memory_instruction_invertible"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitMemory_instruction_invertible([NotNull] ti58Parser.Memory_instruction_invertibleContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.memory_instruction_invertible_indirect"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterMemory_instruction_invertible_indirect([NotNull] ti58Parser.Memory_instruction_invertible_indirectContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.memory_instruction_invertible_indirect"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitMemory_instruction_invertible_indirect([NotNull] ti58Parser.Memory_instruction_invertible_indirectContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.memory_or_indirect"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterMemory_or_indirect([NotNull] ti58Parser.Memory_or_indirectContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.memory_or_indirect"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitMemory_or_indirect([NotNull] ti58Parser.Memory_or_indirectContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="ti58Parser.label_instruction"/>.
 	/// </summary>
@@ -281,16 +391,6 @@ public interface Iti58Listener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitKey_label([NotNull] ti58Parser.Key_labelContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.flag_or_indirect"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterFlag_or_indirect([NotNull] ti58Parser.Flag_or_indirectContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.flag_or_indirect"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitFlag_or_indirect([NotNull] ti58Parser.Flag_or_indirectContext context);
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="ti58Parser.conditional_instruction"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -331,16 +431,6 @@ public interface Iti58Listener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitDecrement_and_skip_on_zero_statement([NotNull] ti58Parser.Decrement_and_skip_on_zero_statementContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.single_digit_or_indirect"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterSingle_digit_or_indirect([NotNull] ti58Parser.Single_digit_or_indirectContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.single_digit_or_indirect"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitSingle_digit_or_indirect([NotNull] ti58Parser.Single_digit_or_indirectContext context);
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="ti58Parser.test_flag_statement"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -350,44 +440,4 @@ public interface Iti58Listener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitTest_flag_statement([NotNull] ti58Parser.Test_flag_statementContext context);
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.op_instruction"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterOp_instruction([NotNull] ti58Parser.Op_instructionContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.op_instruction"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitOp_instruction([NotNull] ti58Parser.Op_instructionContext context);
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.op_number_or_indirect"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterOp_number_or_indirect([NotNull] ti58Parser.Op_number_or_indirectContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.op_number_or_indirect"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitOp_number_or_indirect([NotNull] ti58Parser.Op_number_or_indirectContext context);
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.pgm_instruction"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterPgm_instruction([NotNull] ti58Parser.Pgm_instructionContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.pgm_instruction"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitPgm_instruction([NotNull] ti58Parser.Pgm_instructionContext context);
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.pgm_number_or_indirect"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterPgm_number_or_indirect([NotNull] ti58Parser.Pgm_number_or_indirectContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.pgm_number_or_indirect"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitPgm_number_or_indirect([NotNull] ti58Parser.Pgm_number_or_indirectContext context);
 }

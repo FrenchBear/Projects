@@ -59,28 +59,32 @@ public partial class ti58Parser : Parser {
 		I97_dsz=100, I98_advance=101, I99_print=102, I90_list=103, I123_e_power_x=104, 
 		I128_10_power_x=105;
 	public const int
-		RULE_d = 0, RULE_number = 1, RULE_single_digit = 2, RULE_memory = 3, RULE_pgm_number = 4, 
-		RULE_address_label = 5, RULE_numeric_key_label = 6, RULE_flag_number = 7, 
-		RULE_op_number = 8, RULE_startRule = 9, RULE_program = 10, RULE_instruction_or_comment = 11, 
-		RULE_instruction = 12, RULE_exponent = 13, RULE_operator = 14, RULE_invert = 15, 
-		RULE_fix = 16, RULE_atomic_instruction = 17, RULE_memory_or_flag_instruction = 18, 
-		RULE_memory_or_indirect = 19, RULE_indirect_memory = 20, RULE_label_instruction = 21, 
-		RULE_branch_instruction = 22, RULE_address_or_label_or_indirect = 23, 
-		RULE_key_label = 24, RULE_flag_or_indirect = 25, RULE_conditional_instruction = 26, 
-		RULE_x_equals_t_statement = 27, RULE_x_greater_or_equal_than_t_statement = 28, 
-		RULE_decrement_and_skip_on_zero_statement = 29, RULE_single_digit_or_indirect = 30, 
-		RULE_test_flag_statement = 31, RULE_op_instruction = 32, RULE_op_number_or_indirect = 33, 
-		RULE_pgm_instruction = 34, RULE_pgm_number_or_indirect = 35;
+		RULE_d = 0, RULE_number = 1, RULE_single_digit = 2, RULE_memory = 3, RULE_indmemory = 4, 
+		RULE_pgm_number = 5, RULE_address_label = 6, RULE_numeric_key_label = 7, 
+		RULE_flag_number = 8, RULE_op_number = 9, RULE_startRule = 10, RULE_program = 11, 
+		RULE_instruction_or_comment = 12, RULE_instruction = 13, RULE_inv = 14, 
+		RULE_atomic_instruction = 15, RULE_atomic_instruction_invertible = 16, 
+		RULE_atomic_instruction_inverted = 17, RULE_fix_instruction = 18, RULE_single_digit_or_indirect = 19, 
+		RULE_flag_instruction = 20, RULE_flag_or_indirect = 21, RULE_op_instruction = 22, 
+		RULE_op_number_or_indirect = 23, RULE_indirect_memory = 24, RULE_pgm_instruction = 25, 
+		RULE_pgm_number_or_indirect = 26, RULE_memory_instruction = 27, RULE_memory_instruction_indirect = 28, 
+		RULE_memory_instruction_invertible = 29, RULE_memory_instruction_invertible_indirect = 30, 
+		RULE_memory_or_indirect = 31, RULE_label_instruction = 32, RULE_branch_instruction = 33, 
+		RULE_address_or_label_or_indirect = 34, RULE_key_label = 35, RULE_conditional_instruction = 36, 
+		RULE_x_equals_t_statement = 37, RULE_x_greater_or_equal_than_t_statement = 38, 
+		RULE_decrement_and_skip_on_zero_statement = 39, RULE_test_flag_statement = 40;
 	public static readonly string[] ruleNames = {
-		"d", "number", "single_digit", "memory", "pgm_number", "address_label", 
+		"d", "number", "single_digit", "memory", "indmemory", "pgm_number", "address_label", 
 		"numeric_key_label", "flag_number", "op_number", "startRule", "program", 
-		"instruction_or_comment", "instruction", "exponent", "operator", "invert", 
-		"fix", "atomic_instruction", "memory_or_flag_instruction", "memory_or_indirect", 
-		"indirect_memory", "label_instruction", "branch_instruction", "address_or_label_or_indirect", 
-		"key_label", "flag_or_indirect", "conditional_instruction", "x_equals_t_statement", 
-		"x_greater_or_equal_than_t_statement", "decrement_and_skip_on_zero_statement", 
-		"single_digit_or_indirect", "test_flag_statement", "op_instruction", "op_number_or_indirect", 
-		"pgm_instruction", "pgm_number_or_indirect"
+		"instruction_or_comment", "instruction", "inv", "atomic_instruction", 
+		"atomic_instruction_invertible", "atomic_instruction_inverted", "fix_instruction", 
+		"single_digit_or_indirect", "flag_instruction", "flag_or_indirect", "op_instruction", 
+		"op_number_or_indirect", "indirect_memory", "pgm_instruction", "pgm_number_or_indirect", 
+		"memory_instruction", "memory_instruction_indirect", "memory_instruction_invertible", 
+		"memory_instruction_invertible_indirect", "memory_or_indirect", "label_instruction", 
+		"branch_instruction", "address_or_label_or_indirect", "key_label", "conditional_instruction", 
+		"x_equals_t_statement", "x_greater_or_equal_than_t_statement", "decrement_and_skip_on_zero_statement", 
+		"test_flag_statement"
 	};
 
 	private static readonly string[] _LiteralNames = {
@@ -184,7 +188,7 @@ public partial class ti58Parser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 72;
+			State = 82;
 			_la = TokenStream.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 2046L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
@@ -251,67 +255,67 @@ public partial class ti58Parser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 75;
+			State = 85;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==I75_subtract) {
 				{
-				State = 74;
+				State = 84;
 				Match(I75_subtract);
 				}
 			}
 
-			State = 78;
+			State = 88;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			do {
 				{
 				{
-				State = 77;
+				State = 87;
 				d();
 				}
 				}
-				State = 80;
+				State = 90;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & 2046L) != 0) );
-			State = 88;
+			State = 98;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==I93_dot) {
 				{
-				State = 82;
+				State = 92;
 				Match(I93_dot);
-				State = 84;
+				State = 94;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				do {
 					{
 					{
-					State = 83;
+					State = 93;
 					d();
 					}
 					}
-					State = 86;
+					State = 96;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 				} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & 2046L) != 0) );
 				}
 			}
 
-			State = 99;
+			State = 109;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==I15_e) {
 				{
-				State = 90;
+				State = 100;
 				Match(I15_e);
-				State = 92;
+				State = 102;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				if (_la==I75_subtract || _la==I85_add) {
 					{
-					State = 91;
+					State = 101;
 					_la = TokenStream.LA(1);
 					if ( !(_la==I75_subtract || _la==I85_add) ) {
 					ErrorHandler.RecoverInline(this);
@@ -323,17 +327,17 @@ public partial class ti58Parser : Parser {
 					}
 				}
 
-				State = 95;
+				State = 105;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				do {
 					{
 					{
-					State = 94;
+					State = 104;
 					d();
 					}
 					}
-					State = 97;
+					State = 107;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 				} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & 2046L) != 0) );
@@ -387,17 +391,17 @@ public partial class ti58Parser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 102;
+			State = 112;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,7,Context) ) {
 			case 1:
 				{
-				State = 101;
+				State = 111;
 				Match(T__0);
 				}
 				break;
 			}
-			State = 104;
+			State = 114;
 			d();
 			}
 		}
@@ -446,17 +450,80 @@ public partial class ti58Parser : Parser {
 	public MemoryContext memory() {
 		MemoryContext _localctx = new MemoryContext(Context, State);
 		EnterRule(_localctx, 6, RULE_memory);
+		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 106;
+			State = 116;
 			d();
-			State = 108;
+			State = 118;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,8,Context) ) {
+			_la = TokenStream.LA(1);
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 2046L) != 0)) {
+				{
+				State = 117;
+				d();
+				}
+			}
+
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class IndmemoryContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public DContext[] d() {
+			return GetRuleContexts<DContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public DContext d(int i) {
+			return GetRuleContext<DContext>(i);
+		}
+		public IndmemoryContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_indmemory; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.EnterIndmemory(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.ExitIndmemory(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitIndmemory(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public IndmemoryContext indmemory() {
+		IndmemoryContext _localctx = new IndmemoryContext(Context, State);
+		EnterRule(_localctx, 8, RULE_indmemory);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 120;
+			d();
+			State = 122;
+			ErrorHandler.Sync(this);
+			switch ( Interpreter.AdaptivePredict(TokenStream,9,Context) ) {
 			case 1:
 				{
-				State = 107;
+				State = 121;
 				d();
 				}
 				break;
@@ -507,19 +574,19 @@ public partial class ti58Parser : Parser {
 	[RuleVersion(0)]
 	public Pgm_numberContext pgm_number() {
 		Pgm_numberContext _localctx = new Pgm_numberContext(Context, State);
-		EnterRule(_localctx, 8, RULE_pgm_number);
+		EnterRule(_localctx, 10, RULE_pgm_number);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 110;
+			State = 124;
 			d();
-			State = 112;
+			State = 126;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 2046L) != 0)) {
 				{
-				State = 111;
+				State = 125;
 				d();
 				}
 			}
@@ -571,20 +638,20 @@ public partial class ti58Parser : Parser {
 	[RuleVersion(0)]
 	public Address_labelContext address_label() {
 		Address_labelContext _localctx = new Address_labelContext(Context, State);
-		EnterRule(_localctx, 10, RULE_address_label);
+		EnterRule(_localctx, 12, RULE_address_label);
 		try {
-			State = 124;
+			State = 138;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,10,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,11,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
 				{
-				State = 114;
+				State = 128;
 				d();
-				State = 115;
+				State = 129;
 				d();
-				State = 116;
+				State = 130;
 				d();
 				}
 				}
@@ -593,15 +660,15 @@ public partial class ti58Parser : Parser {
 				EnterOuterAlt(_localctx, 2);
 				{
 				{
-				State = 118;
+				State = 132;
 				Match(T__0);
-				State = 119;
+				State = 133;
 				d();
-				State = 120;
+				State = 134;
 				Match(WS);
-				State = 121;
+				State = 135;
 				d();
-				State = 122;
+				State = 136;
 				d();
 				}
 				}
@@ -649,12 +716,12 @@ public partial class ti58Parser : Parser {
 	[RuleVersion(0)]
 	public Numeric_key_labelContext numeric_key_label() {
 		Numeric_key_labelContext _localctx = new Numeric_key_labelContext(Context, State);
-		EnterRule(_localctx, 12, RULE_numeric_key_label);
+		EnterRule(_localctx, 14, RULE_numeric_key_label);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 126;
+			State = 140;
 			_la = TokenStream.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 2044L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
@@ -663,7 +730,7 @@ public partial class ti58Parser : Parser {
 				ErrorHandler.ReportMatch(this);
 			    Consume();
 			}
-			State = 127;
+			State = 141;
 			d();
 			}
 		}
@@ -705,22 +772,22 @@ public partial class ti58Parser : Parser {
 	[RuleVersion(0)]
 	public Flag_numberContext flag_number() {
 		Flag_numberContext _localctx = new Flag_numberContext(Context, State);
-		EnterRule(_localctx, 14, RULE_flag_number);
+		EnterRule(_localctx, 16, RULE_flag_number);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 130;
+			State = 144;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,11,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,12,Context) ) {
 			case 1:
 				{
-				State = 129;
+				State = 143;
 				Match(T__0);
 				}
 				break;
 			}
-			State = 132;
+			State = 146;
 			_la = TokenStream.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 510L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
@@ -772,10 +839,10 @@ public partial class ti58Parser : Parser {
 	[RuleVersion(0)]
 	public Op_numberContext op_number() {
 		Op_numberContext _localctx = new Op_numberContext(Context, State);
-		EnterRule(_localctx, 16, RULE_op_number);
+		EnterRule(_localctx, 18, RULE_op_number);
 		int _la;
 		try {
-			State = 138;
+			State = 152;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case T__0:
@@ -785,7 +852,7 @@ public partial class ti58Parser : Parser {
 				EnterOuterAlt(_localctx, 1);
 				{
 				{
-				State = 134;
+				State = 148;
 				_la = TokenStream.LA(1);
 				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 30L) != 0)) ) {
 				ErrorHandler.RecoverInline(this);
@@ -794,7 +861,7 @@ public partial class ti58Parser : Parser {
 					ErrorHandler.ReportMatch(this);
 				    Consume();
 				}
-				State = 135;
+				State = 149;
 				d();
 				}
 				}
@@ -803,9 +870,9 @@ public partial class ti58Parser : Parser {
 				EnterOuterAlt(_localctx, 2);
 				{
 				{
-				State = 136;
+				State = 150;
 				Match(T__4);
-				State = 137;
+				State = 151;
 				Match(T__0);
 				}
 				}
@@ -857,26 +924,26 @@ public partial class ti58Parser : Parser {
 	[RuleVersion(0)]
 	public StartRuleContext startRule() {
 		StartRuleContext _localctx = new StartRuleContext(Context, State);
-		EnterRule(_localctx, 18, RULE_startRule);
+		EnterRule(_localctx, 20, RULE_startRule);
 		try {
-			State = 145;
+			State = 159;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,13,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,14,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 140;
+				State = 154;
 				program();
-				State = 141;
+				State = 155;
 				Match(Eof);
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 143;
+				State = 157;
 				Match(WS);
-				State = 144;
+				State = 158;
 				Match(Eof);
 				}
 				break;
@@ -930,48 +997,48 @@ public partial class ti58Parser : Parser {
 	[RuleVersion(0)]
 	public ProgramContext program() {
 		ProgramContext _localctx = new ProgramContext(Context, State);
-		EnterRule(_localctx, 20, RULE_program);
+		EnterRule(_localctx, 22, RULE_program);
 		int _la;
 		try {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 148;
+			State = 162;
 			ErrorHandler.Sync(this);
-			_la = TokenStream.LA(1);
-			if (_la==WS) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,15,Context) ) {
+			case 1:
 				{
-				State = 147;
+				State = 161;
 				Match(WS);
 				}
+				break;
 			}
-
-			State = 150;
+			State = 164;
 			instruction_or_comment();
-			State = 155;
+			State = 169;
 			ErrorHandler.Sync(this);
-			_alt = Interpreter.AdaptivePredict(TokenStream,15,Context);
+			_alt = Interpreter.AdaptivePredict(TokenStream,16,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
 					{
-					State = 151;
+					State = 165;
 					Match(WS);
-					State = 152;
+					State = 166;
 					instruction_or_comment();
 					}
 					} 
 				}
-				State = 157;
+				State = 171;
 				ErrorHandler.Sync(this);
-				_alt = Interpreter.AdaptivePredict(TokenStream,15,Context);
+				_alt = Interpreter.AdaptivePredict(TokenStream,16,Context);
 			}
-			State = 159;
+			State = 173;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==WS) {
 				{
-				State = 158;
+				State = 172;
 				Match(WS);
 				}
 			}
@@ -1020,11 +1087,12 @@ public partial class ti58Parser : Parser {
 	[RuleVersion(0)]
 	public Instruction_or_commentContext instruction_or_comment() {
 		Instruction_or_commentContext _localctx = new Instruction_or_commentContext(Context, State);
-		EnterRule(_localctx, 22, RULE_instruction_or_comment);
+		EnterRule(_localctx, 24, RULE_instruction_or_comment);
 		try {
-			State = 163;
+			State = 177;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
+			case Eof:
 			case T__0:
 			case T__1:
 			case T__2:
@@ -1035,6 +1103,7 @@ public partial class ti58Parser : Parser {
 			case T__7:
 			case T__8:
 			case T__9:
+			case WS:
 			case I11_a:
 			case I12_b:
 			case I13_c:
@@ -1119,14 +1188,14 @@ public partial class ti58Parser : Parser {
 			case I128_10_power_x:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 161;
+				State = 175;
 				instruction();
 				}
 				break;
 			case LineComment:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 162;
+				State = 176;
 				Match(LineComment);
 				}
 				break;
@@ -1149,28 +1218,41 @@ public partial class ti58Parser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public NumberContext number() {
 			return GetRuleContext<NumberContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I93_dot() { return GetToken(ti58Parser.I93_dot, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I94_change_sign() { return GetToken(ti58Parser.I94_change_sign, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ExponentContext exponent() {
-			return GetRuleContext<ExponentContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I53_left_parenthesis() { return GetToken(ti58Parser.I53_left_parenthesis, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I54_right_parenthesis() { return GetToken(ti58Parser.I54_right_parenthesis, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public OperatorContext @operator() {
-			return GetRuleContext<OperatorContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I95_equals() { return GetToken(ti58Parser.I95_equals, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public InvertContext invert() {
-			return GetRuleContext<InvertContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public FixContext fix() {
-			return GetRuleContext<FixContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public InvContext inv() {
+			return GetRuleContext<InvContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public Atomic_instructionContext atomic_instruction() {
 			return GetRuleContext<Atomic_instructionContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public Memory_or_flag_instructionContext memory_or_flag_instruction() {
-			return GetRuleContext<Memory_or_flag_instructionContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public Atomic_instruction_invertibleContext atomic_instruction_invertible() {
+			return GetRuleContext<Atomic_instruction_invertibleContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public Atomic_instruction_invertedContext atomic_instruction_inverted() {
+			return GetRuleContext<Atomic_instruction_invertedContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public Fix_instructionContext fix_instruction() {
+			return GetRuleContext<Fix_instructionContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public Flag_instructionContext flag_instruction() {
+			return GetRuleContext<Flag_instructionContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public Op_instructionContext op_instruction() {
+			return GetRuleContext<Op_instructionContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public Pgm_instructionContext pgm_instruction() {
+			return GetRuleContext<Pgm_instructionContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public Memory_instructionContext memory_instruction() {
+			return GetRuleContext<Memory_instructionContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public Memory_instruction_invertibleContext memory_instruction_invertible() {
+			return GetRuleContext<Memory_instruction_invertibleContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public Memory_instruction_indirectContext memory_instruction_indirect() {
+			return GetRuleContext<Memory_instruction_indirectContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public Memory_instruction_invertible_indirectContext memory_instruction_invertible_indirect() {
+			return GetRuleContext<Memory_instruction_invertible_indirectContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public Label_instructionContext label_instruction() {
 			return GetRuleContext<Label_instructionContext>(0);
@@ -1180,12 +1262,6 @@ public partial class ti58Parser : Parser {
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public Conditional_instructionContext conditional_instruction() {
 			return GetRuleContext<Conditional_instructionContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public Op_instructionContext op_instruction() {
-			return GetRuleContext<Op_instructionContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public Pgm_instructionContext pgm_instruction() {
-			return GetRuleContext<Pgm_instructionContext>(0);
 		}
 		public InstructionContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -1213,130 +1289,123 @@ public partial class ti58Parser : Parser {
 	[RuleVersion(0)]
 	public InstructionContext instruction() {
 		InstructionContext _localctx = new InstructionContext(Context, State);
-		EnterRule(_localctx, 24, RULE_instruction);
+		EnterRule(_localctx, 26, RULE_instruction);
 		try {
-			State = 184;
+			State = 197;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,18,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,19,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 165;
+				State = 179;
 				number();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 166;
-				Match(I93_dot);
+				State = 180;
+				inv();
+				State = 181;
+				Match(T__10);
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 167;
-				Match(I94_change_sign);
+				State = 183;
+				atomic_instruction();
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 168;
-				exponent();
+				State = 184;
+				atomic_instruction_invertible();
 				}
 				break;
 			case 5:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 169;
-				Match(I53_left_parenthesis);
+				State = 185;
+				atomic_instruction_inverted();
 				}
 				break;
 			case 6:
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 170;
-				Match(I54_right_parenthesis);
+				State = 186;
+				fix_instruction();
 				}
 				break;
 			case 7:
 				EnterOuterAlt(_localctx, 7);
 				{
-				State = 171;
-				@operator();
+				State = 187;
+				flag_instruction();
 				}
 				break;
 			case 8:
 				EnterOuterAlt(_localctx, 8);
 				{
-				State = 172;
-				Match(I95_equals);
+				State = 188;
+				op_instruction();
 				}
 				break;
 			case 9:
 				EnterOuterAlt(_localctx, 9);
 				{
-				State = 173;
-				invert();
-				State = 174;
-				Match(T__10);
+				State = 189;
+				pgm_instruction();
 				}
 				break;
 			case 10:
 				EnterOuterAlt(_localctx, 10);
 				{
-				State = 176;
-				fix();
+				State = 190;
+				memory_instruction();
 				}
 				break;
 			case 11:
 				EnterOuterAlt(_localctx, 11);
 				{
-				State = 177;
-				atomic_instruction();
+				State = 191;
+				memory_instruction_invertible();
 				}
 				break;
 			case 12:
 				EnterOuterAlt(_localctx, 12);
 				{
-				State = 178;
-				memory_or_flag_instruction();
+				State = 192;
+				memory_instruction_indirect();
 				}
 				break;
 			case 13:
 				EnterOuterAlt(_localctx, 13);
 				{
-				State = 179;
-				label_instruction();
+				State = 193;
+				memory_instruction_invertible_indirect();
 				}
 				break;
 			case 14:
 				EnterOuterAlt(_localctx, 14);
 				{
-				State = 180;
-				branch_instruction();
+				State = 194;
+				label_instruction();
 				}
 				break;
 			case 15:
 				EnterOuterAlt(_localctx, 15);
 				{
-				State = 181;
-				conditional_instruction();
+				State = 195;
+				branch_instruction();
 				}
 				break;
 			case 16:
 				EnterOuterAlt(_localctx, 16);
 				{
-				State = 182;
-				op_instruction();
-				}
-				break;
-			case 17:
-				EnterOuterAlt(_localctx, 17);
-				{
-				State = 183;
-				pgm_instruction();
+				State = 196;
+				conditional_instruction();
 				}
 				break;
 			}
@@ -1352,245 +1421,52 @@ public partial class ti58Parser : Parser {
 		return _localctx;
 	}
 
-	public partial class ExponentContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I52_exponent() { return GetToken(ti58Parser.I52_exponent, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public InvertContext[] invert() {
-			return GetRuleContexts<InvertContext>();
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public InvertContext invert(int i) {
-			return GetRuleContext<InvertContext>(i);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] WS() { return GetTokens(ti58Parser.WS); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WS(int i) {
-			return GetToken(ti58Parser.WS, i);
-		}
-		public ExponentContext(ParserRuleContext parent, int invokingState)
-			: base(parent, invokingState)
-		{
-		}
-		public override int RuleIndex { get { return RULE_exponent; } }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.EnterExponent(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.ExitExponent(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitExponent(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-
-	[RuleVersion(0)]
-	public ExponentContext exponent() {
-		ExponentContext _localctx = new ExponentContext(Context, State);
-		EnterRule(_localctx, 26, RULE_exponent);
-		int _la;
-		try {
-			EnterOuterAlt(_localctx, 1);
-			{
-			State = 192;
-			ErrorHandler.Sync(this);
-			_la = TokenStream.LA(1);
-			while (_la==I22_invert) {
-				{
-				{
-				State = 186;
-				invert();
-				State = 188;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				if (_la==WS) {
-					{
-					State = 187;
-					Match(WS);
-					}
-				}
-
-				}
-				}
-				State = 194;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-			}
-			State = 195;
-			Match(I52_exponent);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			ErrorHandler.ReportError(this, re);
-			ErrorHandler.Recover(this, re);
-		}
-		finally {
-			ExitRule();
-		}
-		return _localctx;
-	}
-
-	public partial class OperatorContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I85_add() { return GetToken(ti58Parser.I85_add, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I75_subtract() { return GetToken(ti58Parser.I75_subtract, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I65_multiply() { return GetToken(ti58Parser.I65_multiply, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I55_divide() { return GetToken(ti58Parser.I55_divide, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I45_power() { return GetToken(ti58Parser.I45_power, 0); }
-		public OperatorContext(ParserRuleContext parent, int invokingState)
-			: base(parent, invokingState)
-		{
-		}
-		public override int RuleIndex { get { return RULE_operator; } }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.EnterOperator(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.ExitOperator(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitOperator(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-
-	[RuleVersion(0)]
-	public OperatorContext @operator() {
-		OperatorContext _localctx = new OperatorContext(Context, State);
-		EnterRule(_localctx, 28, RULE_operator);
-		int _la;
-		try {
-			EnterOuterAlt(_localctx, 1);
-			{
-			State = 197;
-			_la = TokenStream.LA(1);
-			if ( !(((((_la - 48)) & ~0x3f) == 0 && ((1L << (_la - 48)) & 1100586419201L) != 0)) ) {
-			ErrorHandler.RecoverInline(this);
-			}
-			else {
-				ErrorHandler.ReportMatch(this);
-			    Consume();
-			}
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			ErrorHandler.ReportError(this, re);
-			ErrorHandler.Recover(this, re);
-		}
-		finally {
-			ExitRule();
-		}
-		return _localctx;
-	}
-
-	public partial class InvertContext : ParserRuleContext {
+	public partial class InvContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I22_invert() { return GetToken(ti58Parser.I22_invert, 0); }
-		public InvertContext(ParserRuleContext parent, int invokingState)
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WS() { return GetToken(ti58Parser.WS, 0); }
+		public InvContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_invert; } }
+		public override int RuleIndex { get { return RULE_inv; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.EnterInvert(this);
+			if (typedListener != null) typedListener.EnterInv(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void ExitRule(IParseTreeListener listener) {
 			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.ExitInvert(this);
+			if (typedListener != null) typedListener.ExitInv(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitInvert(this);
+			if (typedVisitor != null) return typedVisitor.VisitInv(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public InvertContext invert() {
-		InvertContext _localctx = new InvertContext(Context, State);
-		EnterRule(_localctx, 30, RULE_invert);
+	public InvContext inv() {
+		InvContext _localctx = new InvContext(Context, State);
+		EnterRule(_localctx, 28, RULE_inv);
+		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
 			State = 199;
 			Match(I22_invert);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			ErrorHandler.ReportError(this, re);
-			ErrorHandler.Recover(this, re);
-		}
-		finally {
-			ExitRule();
-		}
-		return _localctx;
-	}
-
-	public partial class FixContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I58_fix() { return GetToken(ti58Parser.I58_fix, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public Single_digit_or_indirectContext single_digit_or_indirect() {
-			return GetRuleContext<Single_digit_or_indirectContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WS() { return GetToken(ti58Parser.WS, 0); }
-		public FixContext(ParserRuleContext parent, int invokingState)
-			: base(parent, invokingState)
-		{
-		}
-		public override int RuleIndex { get { return RULE_fix; } }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.EnterFix(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.ExitFix(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitFix(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-
-	[RuleVersion(0)]
-	public FixContext fix() {
-		FixContext _localctx = new FixContext(Context, State);
-		EnterRule(_localctx, 32, RULE_fix);
-		int _la;
-		try {
-			EnterOuterAlt(_localctx, 1);
-			{
 			State = 201;
-			Match(I58_fix);
-			State = 203;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==WS) {
 				{
-				State = 202;
+				State = 200;
 				Match(WS);
 				}
 			}
 
-			State = 205;
-			single_digit_or_indirect();
 			}
 		}
 		catch (RecognitionException re) {
@@ -1605,20 +1481,16 @@ public partial class ti58Parser : Parser {
 	}
 
 	public partial class Atomic_instructionContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I23_ln() { return GetToken(ti58Parser.I23_ln, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public InvertContext[] invert() {
-			return GetRuleContexts<InvertContext>();
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public InvertContext invert(int i) {
-			return GetRuleContext<InvertContext>(i);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] WS() { return GetTokens(ti58Parser.WS); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WS(int i) {
-			return GetToken(ti58Parser.WS, i);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I123_e_power_x() { return GetToken(ti58Parser.I123_e_power_x, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I28_log() { return GetToken(ti58Parser.I28_log, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I128_10_power_x() { return GetToken(ti58Parser.I128_10_power_x, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I11_a() { return GetToken(ti58Parser.I11_a, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I12_b() { return GetToken(ti58Parser.I12_b, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I13_c() { return GetToken(ti58Parser.I13_c, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I14_d() { return GetToken(ti58Parser.I14_d, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I15_e() { return GetToken(ti58Parser.I15_e, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I16_a_prime() { return GetToken(ti58Parser.I16_a_prime, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I17_b_prime() { return GetToken(ti58Parser.I17_b_prime, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I18_c_prime() { return GetToken(ti58Parser.I18_c_prime, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I19_d_prime() { return GetToken(ti58Parser.I19_d_prime, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I10_e_prime() { return GetToken(ti58Parser.I10_e_prime, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I24_correct_entry() { return GetToken(ti58Parser.I24_correct_entry, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I25_clear() { return GetToken(ti58Parser.I25_clear, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I29_clear_program() { return GetToken(ti58Parser.I29_clear_program, 0); }
@@ -1626,29 +1498,31 @@ public partial class ti58Parser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I33_square() { return GetToken(ti58Parser.I33_square, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I34_square_root() { return GetToken(ti58Parser.I34_square_root, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I35_reciprocal() { return GetToken(ti58Parser.I35_reciprocal, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I37_polar_to_rectangular() { return GetToken(ti58Parser.I37_polar_to_rectangular, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I38_sin() { return GetToken(ti58Parser.I38_sin, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I39_cos() { return GetToken(ti58Parser.I39_cos, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I30_tan() { return GetToken(ti58Parser.I30_tan, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I45_power() { return GetToken(ti58Parser.I45_power, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I47_clear_memory() { return GetToken(ti58Parser.I47_clear_memory, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I57_engineering() { return GetToken(ti58Parser.I57_engineering, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I58_fix() { return GetToken(ti58Parser.I58_fix, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I59_integer() { return GetToken(ti58Parser.I59_integer, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I53_left_parenthesis() { return GetToken(ti58Parser.I53_left_parenthesis, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I54_right_parenthesis() { return GetToken(ti58Parser.I54_right_parenthesis, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I55_divide() { return GetToken(ti58Parser.I55_divide, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I50_absolute() { return GetToken(ti58Parser.I50_absolute, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I65_multiply() { return GetToken(ti58Parser.I65_multiply, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I66_pause() { return GetToken(ti58Parser.I66_pause, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I68_nop() { return GetToken(ti58Parser.I68_nop, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I60_degrees() { return GetToken(ti58Parser.I60_degrees, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I78_sigma_plus() { return GetToken(ti58Parser.I78_sigma_plus, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I79_average() { return GetToken(ti58Parser.I79_average, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I75_subtract() { return GetToken(ti58Parser.I75_subtract, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I70_radians() { return GetToken(ti58Parser.I70_radians, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I88_dms() { return GetToken(ti58Parser.I88_dms, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I81_reset() { return GetToken(ti58Parser.I81_reset, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I85_add() { return GetToken(ti58Parser.I85_add, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I89_pi() { return GetToken(ti58Parser.I89_pi, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I80_grades() { return GetToken(ti58Parser.I80_grades, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I91_run_stop() { return GetToken(ti58Parser.I91_run_stop, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I93_dot() { return GetToken(ti58Parser.I93_dot, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I94_change_sign() { return GetToken(ti58Parser.I94_change_sign, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I95_equals() { return GetToken(ti58Parser.I95_equals, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I96_write() { return GetToken(ti58Parser.I96_write, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I98_advance() { return GetToken(ti58Parser.I98_advance, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I99_print() { return GetToken(ti58Parser.I99_print, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I90_list() { return GetToken(ti58Parser.I90_list, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I92_return() { return GetToken(ti58Parser.I92_return, 0); }
 		public Atomic_instructionContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -1675,536 +1549,301 @@ public partial class ti58Parser : Parser {
 	[RuleVersion(0)]
 	public Atomic_instructionContext atomic_instruction() {
 		Atomic_instructionContext _localctx = new Atomic_instructionContext(Context, State);
-		EnterRule(_localctx, 34, RULE_atomic_instruction);
+		EnterRule(_localctx, 30, RULE_atomic_instruction);
 		int _la;
 		try {
-			State = 349;
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 203;
+			_la = TokenStream.LA(1);
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & -8717560983595270144L) != 0) || ((((_la - 68)) & ~0x3f) == 0 && ((1L << (_la - 68)) & 64408880171L) != 0)) ) {
+			ErrorHandler.RecoverInline(this);
+			}
+			else {
+				ErrorHandler.ReportMatch(this);
+			    Consume();
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class Atomic_instruction_invertibleContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I23_ln() { return GetToken(ti58Parser.I23_ln, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public InvContext inv() {
+			return GetRuleContext<InvContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I28_log() { return GetToken(ti58Parser.I28_log, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I37_polar_to_rectangular() { return GetToken(ti58Parser.I37_polar_to_rectangular, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I38_sin() { return GetToken(ti58Parser.I38_sin, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I39_cos() { return GetToken(ti58Parser.I39_cos, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I30_tan() { return GetToken(ti58Parser.I30_tan, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I52_exponent() { return GetToken(ti58Parser.I52_exponent, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I57_engineering() { return GetToken(ti58Parser.I57_engineering, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I58_fix() { return GetToken(ti58Parser.I58_fix, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I59_integer() { return GetToken(ti58Parser.I59_integer, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I78_sigma_plus() { return GetToken(ti58Parser.I78_sigma_plus, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I79_average() { return GetToken(ti58Parser.I79_average, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I88_dms() { return GetToken(ti58Parser.I88_dms, 0); }
+		public Atomic_instruction_invertibleContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_atomic_instruction_invertible; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.EnterAtomic_instruction_invertible(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.ExitAtomic_instruction_invertible(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitAtomic_instruction_invertible(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Atomic_instruction_invertibleContext atomic_instruction_invertible() {
+		Atomic_instruction_invertibleContext _localctx = new Atomic_instruction_invertibleContext(Context, State);
+		EnterRule(_localctx, 32, RULE_atomic_instruction_invertible);
+		int _la;
+		try {
+			State = 257;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,46,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,34,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 213;
+				State = 206;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-				while (_la==I22_invert) {
+				if (_la==I22_invert) {
 					{
-					{
-					State = 207;
-					invert();
-					State = 209;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-					if (_la==WS) {
-						{
-						State = 208;
-						Match(WS);
-						}
+					State = 205;
+					inv();
 					}
-
-					}
-					}
-					State = 215;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
 				}
-				State = 216;
+
+				State = 208;
 				Match(I23_ln);
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 217;
-				Match(I123_e_power_x);
+				State = 210;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (_la==I22_invert) {
+					{
+					State = 209;
+					inv();
+					}
+				}
+
+				State = 212;
+				Match(I28_log);
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 224;
+				State = 214;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-				while (_la==I22_invert) {
+				if (_la==I22_invert) {
 					{
-					{
-					State = 218;
-					invert();
-					State = 220;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-					if (_la==WS) {
-						{
-						State = 219;
-						Match(WS);
-						}
+					State = 213;
+					inv();
 					}
-
-					}
-					}
-					State = 226;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
 				}
-				State = 227;
-				Match(I28_log);
+
+				State = 216;
+				Match(I37_polar_to_rectangular);
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 228;
-				Match(I128_10_power_x);
+				State = 218;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (_la==I22_invert) {
+					{
+					State = 217;
+					inv();
+					}
+				}
+
+				State = 220;
+				Match(I38_sin);
 				}
 				break;
 			case 5:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 229;
-				Match(I24_correct_entry);
+				State = 222;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (_la==I22_invert) {
+					{
+					State = 221;
+					inv();
+					}
+				}
+
+				State = 224;
+				Match(I39_cos);
 				}
 				break;
 			case 6:
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 230;
-				Match(I25_clear);
+				State = 226;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (_la==I22_invert) {
+					{
+					State = 225;
+					inv();
+					}
+				}
+
+				State = 228;
+				Match(I30_tan);
 				}
 				break;
 			case 7:
 				EnterOuterAlt(_localctx, 7);
 				{
-				State = 231;
-				Match(I29_clear_program);
+				State = 230;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (_la==I22_invert) {
+					{
+					State = 229;
+					inv();
+					}
+				}
+
+				State = 232;
+				Match(I52_exponent);
 				}
 				break;
 			case 8:
 				EnterOuterAlt(_localctx, 8);
 				{
-				State = 232;
-				Match(I32_exchange_x_and_t);
+				State = 234;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (_la==I22_invert) {
+					{
+					State = 233;
+					inv();
+					}
+				}
+
+				State = 236;
+				Match(I57_engineering);
 				}
 				break;
 			case 9:
 				EnterOuterAlt(_localctx, 9);
 				{
-				State = 233;
-				Match(I33_square);
+				State = 238;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (_la==I22_invert) {
+					{
+					State = 237;
+					inv();
+					}
+				}
+
+				State = 240;
+				Match(I58_fix);
 				}
 				break;
 			case 10:
 				EnterOuterAlt(_localctx, 10);
 				{
-				State = 234;
-				Match(I34_square_root);
+				State = 242;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (_la==I22_invert) {
+					{
+					State = 241;
+					inv();
+					}
+				}
+
+				State = 244;
+				Match(I59_integer);
 				}
 				break;
 			case 11:
 				EnterOuterAlt(_localctx, 11);
 				{
-				State = 235;
-				Match(I35_reciprocal);
+				State = 246;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (_la==I22_invert) {
+					{
+					State = 245;
+					inv();
+					}
+				}
+
+				State = 248;
+				Match(I78_sigma_plus);
 				}
 				break;
 			case 12:
 				EnterOuterAlt(_localctx, 12);
 				{
-				State = 242;
+				State = 250;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-				while (_la==I22_invert) {
+				if (_la==I22_invert) {
 					{
-					{
-					State = 236;
-					invert();
-					State = 238;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-					if (_la==WS) {
-						{
-						State = 237;
-						Match(WS);
-						}
+					State = 249;
+					inv();
 					}
-
-					}
-					}
-					State = 244;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
 				}
-				State = 245;
-				Match(I37_polar_to_rectangular);
+
+				State = 252;
+				Match(I79_average);
 				}
 				break;
 			case 13:
 				EnterOuterAlt(_localctx, 13);
 				{
-				State = 252;
+				State = 254;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-				while (_la==I22_invert) {
+				if (_la==I22_invert) {
 					{
-					{
-					State = 246;
-					invert();
-					State = 248;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-					if (_la==WS) {
-						{
-						State = 247;
-						Match(WS);
-						}
+					State = 253;
+					inv();
 					}
+				}
 
-					}
-					}
-					State = 254;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-				}
-				State = 255;
-				Match(I38_sin);
-				}
-				break;
-			case 14:
-				EnterOuterAlt(_localctx, 14);
-				{
-				State = 262;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				while (_la==I22_invert) {
-					{
-					{
-					State = 256;
-					invert();
-					State = 258;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-					if (_la==WS) {
-						{
-						State = 257;
-						Match(WS);
-						}
-					}
-
-					}
-					}
-					State = 264;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-				}
-				State = 265;
-				Match(I39_cos);
-				}
-				break;
-			case 15:
-				EnterOuterAlt(_localctx, 15);
-				{
-				State = 272;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				while (_la==I22_invert) {
-					{
-					{
-					State = 266;
-					invert();
-					State = 268;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-					if (_la==WS) {
-						{
-						State = 267;
-						Match(WS);
-						}
-					}
-
-					}
-					}
-					State = 274;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-				}
-				State = 275;
-				Match(I30_tan);
-				}
-				break;
-			case 16:
-				EnterOuterAlt(_localctx, 16);
-				{
-				State = 276;
-				Match(I47_clear_memory);
-				}
-				break;
-			case 17:
-				EnterOuterAlt(_localctx, 17);
-				{
-				State = 283;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				while (_la==I22_invert) {
-					{
-					{
-					State = 277;
-					invert();
-					State = 279;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-					if (_la==WS) {
-						{
-						State = 278;
-						Match(WS);
-						}
-					}
-
-					}
-					}
-					State = 285;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-				}
-				State = 286;
-				Match(I57_engineering);
-				}
-				break;
-			case 18:
-				EnterOuterAlt(_localctx, 18);
-				{
-				State = 293;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				while (_la==I22_invert) {
-					{
-					{
-					State = 287;
-					invert();
-					State = 289;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-					if (_la==WS) {
-						{
-						State = 288;
-						Match(WS);
-						}
-					}
-
-					}
-					}
-					State = 295;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-				}
-				State = 296;
-				Match(I58_fix);
-				}
-				break;
-			case 19:
-				EnterOuterAlt(_localctx, 19);
-				{
-				State = 303;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				while (_la==I22_invert) {
-					{
-					{
-					State = 297;
-					invert();
-					State = 299;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-					if (_la==WS) {
-						{
-						State = 298;
-						Match(WS);
-						}
-					}
-
-					}
-					}
-					State = 305;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-				}
-				State = 306;
-				Match(I59_integer);
-				}
-				break;
-			case 20:
-				EnterOuterAlt(_localctx, 20);
-				{
-				State = 307;
-				Match(I50_absolute);
-				}
-				break;
-			case 21:
-				EnterOuterAlt(_localctx, 21);
-				{
-				State = 308;
-				Match(I66_pause);
-				}
-				break;
-			case 22:
-				EnterOuterAlt(_localctx, 22);
-				{
-				State = 309;
-				Match(I68_nop);
-				}
-				break;
-			case 23:
-				EnterOuterAlt(_localctx, 23);
-				{
-				State = 310;
-				Match(I60_degrees);
-				}
-				break;
-			case 24:
-				EnterOuterAlt(_localctx, 24);
-				{
-				State = 317;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				while (_la==I22_invert) {
-					{
-					{
-					State = 311;
-					invert();
-					State = 313;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-					if (_la==WS) {
-						{
-						State = 312;
-						Match(WS);
-						}
-					}
-
-					}
-					}
-					State = 319;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-				}
-				State = 320;
-				Match(I78_sigma_plus);
-				}
-				break;
-			case 25:
-				EnterOuterAlt(_localctx, 25);
-				{
-				State = 327;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				while (_la==I22_invert) {
-					{
-					{
-					State = 321;
-					invert();
-					State = 323;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-					if (_la==WS) {
-						{
-						State = 322;
-						Match(WS);
-						}
-					}
-
-					}
-					}
-					State = 329;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-				}
-				State = 330;
-				Match(I79_average);
-				}
-				break;
-			case 26:
-				EnterOuterAlt(_localctx, 26);
-				{
-				State = 331;
-				Match(I70_radians);
-				}
-				break;
-			case 27:
-				EnterOuterAlt(_localctx, 27);
-				{
-				State = 338;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				while (_la==I22_invert) {
-					{
-					{
-					State = 332;
-					invert();
-					State = 334;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-					if (_la==WS) {
-						{
-						State = 333;
-						Match(WS);
-						}
-					}
-
-					}
-					}
-					State = 340;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-				}
-				State = 341;
+				State = 256;
 				Match(I88_dms);
-				}
-				break;
-			case 28:
-				EnterOuterAlt(_localctx, 28);
-				{
-				State = 342;
-				Match(I89_pi);
-				}
-				break;
-			case 29:
-				EnterOuterAlt(_localctx, 29);
-				{
-				State = 343;
-				Match(I80_grades);
-				}
-				break;
-			case 30:
-				EnterOuterAlt(_localctx, 30);
-				{
-				State = 344;
-				Match(I91_run_stop);
-				}
-				break;
-			case 31:
-				EnterOuterAlt(_localctx, 31);
-				{
-				State = 345;
-				Match(I96_write);
-				}
-				break;
-			case 32:
-				EnterOuterAlt(_localctx, 32);
-				{
-				State = 346;
-				Match(I98_advance);
-				}
-				break;
-			case 33:
-				EnterOuterAlt(_localctx, 33);
-				{
-				State = 347;
-				Match(I99_print);
-				}
-				break;
-			case 34:
-				EnterOuterAlt(_localctx, 34);
-				{
-				State = 348;
-				Match(I90_list);
 				}
 				break;
 			}
@@ -2220,416 +1859,1237 @@ public partial class ti58Parser : Parser {
 		return _localctx;
 	}
 
-	public partial class Memory_or_flag_instructionContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I42_store() { return GetToken(ti58Parser.I42_store, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public Memory_or_indirectContext memory_or_indirect() {
-			return GetRuleContext<Memory_or_indirectContext>(0);
+	public partial class Atomic_instruction_invertedContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public InvContext inv() {
+			return GetRuleContext<InvContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] WS() { return GetTokens(ti58Parser.WS); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WS(int i) {
-			return GetToken(ti58Parser.WS, i);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I72_store_indirect() { return GetToken(ti58Parser.I72_store_indirect, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public MemoryContext memory() {
-			return GetRuleContext<MemoryContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I43_recall() { return GetToken(ti58Parser.I43_recall, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I73_recall_indirect() { return GetToken(ti58Parser.I73_recall_indirect, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I48_exchange() { return GetToken(ti58Parser.I48_exchange, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I63_exchange_indirect() { return GetToken(ti58Parser.I63_exchange_indirect, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I44_sum() { return GetToken(ti58Parser.I44_sum, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public InvertContext[] invert() {
-			return GetRuleContexts<InvertContext>();
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public InvertContext invert(int i) {
-			return GetRuleContext<InvertContext>(i);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I74_sum_indirect() { return GetToken(ti58Parser.I74_sum_indirect, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I49_product() { return GetToken(ti58Parser.I49_product, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I64_product_indirect() { return GetToken(ti58Parser.I64_product_indirect, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I86_set_flag() { return GetToken(ti58Parser.I86_set_flag, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public Flag_or_indirectContext flag_or_indirect() {
-			return GetRuleContext<Flag_or_indirectContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I82_hir() { return GetToken(ti58Parser.I82_hir, 0); }
-		public Memory_or_flag_instructionContext(ParserRuleContext parent, int invokingState)
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I71_subroutine() { return GetToken(ti58Parser.I71_subroutine, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I123_e_power_x() { return GetToken(ti58Parser.I123_e_power_x, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I128_10_power_x() { return GetToken(ti58Parser.I128_10_power_x, 0); }
+		public Atomic_instruction_invertedContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_memory_or_flag_instruction; } }
+		public override int RuleIndex { get { return RULE_atomic_instruction_inverted; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.EnterMemory_or_flag_instruction(this);
+			if (typedListener != null) typedListener.EnterAtomic_instruction_inverted(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void ExitRule(IParseTreeListener listener) {
 			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.ExitMemory_or_flag_instruction(this);
+			if (typedListener != null) typedListener.ExitAtomic_instruction_inverted(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitMemory_or_flag_instruction(this);
+			if (typedVisitor != null) return typedVisitor.VisitAtomic_instruction_inverted(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public Memory_or_flag_instructionContext memory_or_flag_instruction() {
-		Memory_or_flag_instructionContext _localctx = new Memory_or_flag_instructionContext(Context, State);
-		EnterRule(_localctx, 36, RULE_memory_or_flag_instruction);
-		int _la;
+	public Atomic_instruction_invertedContext atomic_instruction_inverted() {
+		Atomic_instruction_invertedContext _localctx = new Atomic_instruction_invertedContext(Context, State);
+		EnterRule(_localctx, 34, RULE_atomic_instruction_inverted);
 		try {
-			State = 456;
+			State = 264;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,69,Context) ) {
-			case 1:
+			switch (TokenStream.LA(1)) {
+			case I22_invert:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 351;
-				Match(I42_store);
-				State = 353;
+				State = 259;
+				inv();
+				State = 260;
+				Match(I71_subroutine);
+				}
+				break;
+			case I123_e_power_x:
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 262;
+				Match(I123_e_power_x);
+				}
+				break;
+			case I128_10_power_x:
+				EnterOuterAlt(_localctx, 3);
+				{
+				State = 263;
+				Match(I128_10_power_x);
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class Fix_instructionContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I58_fix() { return GetToken(ti58Parser.I58_fix, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public Single_digit_or_indirectContext single_digit_or_indirect() {
+			return GetRuleContext<Single_digit_or_indirectContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WS() { return GetToken(ti58Parser.WS, 0); }
+		public Fix_instructionContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_fix_instruction; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.EnterFix_instruction(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.ExitFix_instruction(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFix_instruction(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Fix_instructionContext fix_instruction() {
+		Fix_instructionContext _localctx = new Fix_instructionContext(Context, State);
+		EnterRule(_localctx, 36, RULE_fix_instruction);
+		int _la;
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 266;
+			Match(I58_fix);
+			State = 268;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			if (_la==WS) {
+				{
+				State = 267;
+				Match(WS);
+				}
+			}
+
+			State = 270;
+			single_digit_or_indirect();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class Single_digit_or_indirectContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public Single_digitContext single_digit() {
+			return GetRuleContext<Single_digitContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public Indirect_memoryContext indirect_memory() {
+			return GetRuleContext<Indirect_memoryContext>(0);
+		}
+		public Single_digit_or_indirectContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_single_digit_or_indirect; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.EnterSingle_digit_or_indirect(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.ExitSingle_digit_or_indirect(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitSingle_digit_or_indirect(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Single_digit_or_indirectContext single_digit_or_indirect() {
+		Single_digit_or_indirectContext _localctx = new Single_digit_or_indirectContext(Context, State);
+		EnterRule(_localctx, 38, RULE_single_digit_or_indirect);
+		try {
+			State = 274;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case T__0:
+			case T__1:
+			case T__2:
+			case T__3:
+			case T__4:
+			case T__5:
+			case T__6:
+			case T__7:
+			case T__8:
+			case T__9:
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 272;
+				single_digit();
+				}
+				break;
+			case I40_indirect:
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 273;
+				indirect_memory();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class Flag_instructionContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I86_set_flag() { return GetToken(ti58Parser.I86_set_flag, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public Flag_or_indirectContext flag_or_indirect() {
+			return GetRuleContext<Flag_or_indirectContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public InvContext inv() {
+			return GetRuleContext<InvContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WS() { return GetToken(ti58Parser.WS, 0); }
+		public Flag_instructionContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_flag_instruction; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.EnterFlag_instruction(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.ExitFlag_instruction(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFlag_instruction(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Flag_instructionContext flag_instruction() {
+		Flag_instructionContext _localctx = new Flag_instructionContext(Context, State);
+		EnterRule(_localctx, 40, RULE_flag_instruction);
+		int _la;
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 277;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			if (_la==I22_invert) {
+				{
+				State = 276;
+				inv();
+				}
+			}
+
+			State = 279;
+			Match(I86_set_flag);
+			State = 281;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			if (_la==WS) {
+				{
+				State = 280;
+				Match(WS);
+				}
+			}
+
+			State = 283;
+			flag_or_indirect();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class Flag_or_indirectContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public Flag_numberContext flag_number() {
+			return GetRuleContext<Flag_numberContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public Indirect_memoryContext indirect_memory() {
+			return GetRuleContext<Indirect_memoryContext>(0);
+		}
+		public Flag_or_indirectContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_flag_or_indirect; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.EnterFlag_or_indirect(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.ExitFlag_or_indirect(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFlag_or_indirect(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Flag_or_indirectContext flag_or_indirect() {
+		Flag_or_indirectContext _localctx = new Flag_or_indirectContext(Context, State);
+		EnterRule(_localctx, 42, RULE_flag_or_indirect);
+		try {
+			State = 287;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case T__0:
+			case T__1:
+			case T__2:
+			case T__3:
+			case T__4:
+			case T__5:
+			case T__6:
+			case T__7:
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 285;
+				flag_number();
+				}
+				break;
+			case I40_indirect:
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 286;
+				indirect_memory();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class Op_instructionContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I69_operation() { return GetToken(ti58Parser.I69_operation, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public Op_number_or_indirectContext op_number_or_indirect() {
+			return GetRuleContext<Op_number_or_indirectContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WS() { return GetToken(ti58Parser.WS, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I84_operation_indirect() { return GetToken(ti58Parser.I84_operation_indirect, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public IndmemoryContext indmemory() {
+			return GetRuleContext<IndmemoryContext>(0);
+		}
+		public Op_instructionContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_op_instruction; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.EnterOp_instruction(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.ExitOp_instruction(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitOp_instruction(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Op_instructionContext op_instruction() {
+		Op_instructionContext _localctx = new Op_instructionContext(Context, State);
+		EnterRule(_localctx, 44, RULE_op_instruction);
+		int _la;
+		try {
+			State = 299;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case I69_operation:
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 289;
+				Match(I69_operation);
+				State = 291;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				if (_la==WS) {
 					{
-					State = 352;
+					State = 290;
 					Match(WS);
 					}
 				}
 
-				State = 355;
+				State = 293;
+				op_number_or_indirect();
+				}
+				break;
+			case I84_operation_indirect:
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 294;
+				Match(I84_operation_indirect);
+				State = 296;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (_la==WS) {
+					{
+					State = 295;
+					Match(WS);
+					}
+				}
+
+				State = 298;
+				indmemory();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class Op_number_or_indirectContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public Op_numberContext op_number() {
+			return GetRuleContext<Op_numberContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public Indirect_memoryContext indirect_memory() {
+			return GetRuleContext<Indirect_memoryContext>(0);
+		}
+		public Op_number_or_indirectContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_op_number_or_indirect; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.EnterOp_number_or_indirect(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.ExitOp_number_or_indirect(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitOp_number_or_indirect(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Op_number_or_indirectContext op_number_or_indirect() {
+		Op_number_or_indirectContext _localctx = new Op_number_or_indirectContext(Context, State);
+		EnterRule(_localctx, 46, RULE_op_number_or_indirect);
+		try {
+			State = 303;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case T__0:
+			case T__1:
+			case T__2:
+			case T__3:
+			case T__4:
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 301;
+				op_number();
+				}
+				break;
+			case I40_indirect:
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 302;
+				indirect_memory();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class Indirect_memoryContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I40_indirect() { return GetToken(ti58Parser.I40_indirect, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public IndmemoryContext indmemory() {
+			return GetRuleContext<IndmemoryContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WS() { return GetToken(ti58Parser.WS, 0); }
+		public Indirect_memoryContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_indirect_memory; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.EnterIndirect_memory(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.ExitIndirect_memory(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitIndirect_memory(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Indirect_memoryContext indirect_memory() {
+		Indirect_memoryContext _localctx = new Indirect_memoryContext(Context, State);
+		EnterRule(_localctx, 48, RULE_indirect_memory);
+		int _la;
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 305;
+			Match(I40_indirect);
+			State = 307;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			if (_la==WS) {
+				{
+				State = 306;
+				Match(WS);
+				}
+			}
+
+			State = 309;
+			indmemory();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class Pgm_instructionContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I36_program() { return GetToken(ti58Parser.I36_program, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public Pgm_number_or_indirectContext pgm_number_or_indirect() {
+			return GetRuleContext<Pgm_number_or_indirectContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WS() { return GetToken(ti58Parser.WS, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I62_program_indirect() { return GetToken(ti58Parser.I62_program_indirect, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public Pgm_numberContext pgm_number() {
+			return GetRuleContext<Pgm_numberContext>(0);
+		}
+		public Pgm_instructionContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_pgm_instruction; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.EnterPgm_instruction(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.ExitPgm_instruction(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitPgm_instruction(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Pgm_instructionContext pgm_instruction() {
+		Pgm_instructionContext _localctx = new Pgm_instructionContext(Context, State);
+		EnterRule(_localctx, 50, RULE_pgm_instruction);
+		int _la;
+		try {
+			State = 321;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case I36_program:
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 311;
+				Match(I36_program);
+				State = 313;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (_la==WS) {
+					{
+					State = 312;
+					Match(WS);
+					}
+				}
+
+				State = 315;
+				pgm_number_or_indirect();
+				}
+				break;
+			case I62_program_indirect:
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 316;
+				Match(I62_program_indirect);
+				State = 318;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (_la==WS) {
+					{
+					State = 317;
+					Match(WS);
+					}
+				}
+
+				State = 320;
+				pgm_number();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class Pgm_number_or_indirectContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public Pgm_numberContext pgm_number() {
+			return GetRuleContext<Pgm_numberContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public Indirect_memoryContext indirect_memory() {
+			return GetRuleContext<Indirect_memoryContext>(0);
+		}
+		public Pgm_number_or_indirectContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_pgm_number_or_indirect; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.EnterPgm_number_or_indirect(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.ExitPgm_number_or_indirect(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitPgm_number_or_indirect(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Pgm_number_or_indirectContext pgm_number_or_indirect() {
+		Pgm_number_or_indirectContext _localctx = new Pgm_number_or_indirectContext(Context, State);
+		EnterRule(_localctx, 52, RULE_pgm_number_or_indirect);
+		try {
+			State = 325;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case T__0:
+			case T__1:
+			case T__2:
+			case T__3:
+			case T__4:
+			case T__5:
+			case T__6:
+			case T__7:
+			case T__8:
+			case T__9:
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 323;
+				pgm_number();
+				}
+				break;
+			case I40_indirect:
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 324;
+				indirect_memory();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class Memory_instructionContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I42_store() { return GetToken(ti58Parser.I42_store, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public Memory_or_indirectContext memory_or_indirect() {
+			return GetRuleContext<Memory_or_indirectContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WS() { return GetToken(ti58Parser.WS, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I43_recall() { return GetToken(ti58Parser.I43_recall, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I48_exchange() { return GetToken(ti58Parser.I48_exchange, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I82_hir() { return GetToken(ti58Parser.I82_hir, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public MemoryContext memory() {
+			return GetRuleContext<MemoryContext>(0);
+		}
+		public Memory_instructionContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_memory_instruction; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.EnterMemory_instruction(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.ExitMemory_instruction(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitMemory_instruction(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Memory_instructionContext memory_instruction() {
+		Memory_instructionContext _localctx = new Memory_instructionContext(Context, State);
+		EnterRule(_localctx, 54, RULE_memory_instruction);
+		int _la;
+		try {
+			State = 347;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case I42_store:
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 327;
+				Match(I42_store);
+				State = 329;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (_la==WS) {
+					{
+					State = 328;
+					Match(WS);
+					}
+				}
+
+				State = 331;
+				memory_or_indirect();
+				}
+				break;
+			case I43_recall:
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 332;
+				Match(I43_recall);
+				State = 334;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (_la==WS) {
+					{
+					State = 333;
+					Match(WS);
+					}
+				}
+
+				State = 336;
+				memory_or_indirect();
+				}
+				break;
+			case I48_exchange:
+				EnterOuterAlt(_localctx, 3);
+				{
+				State = 337;
+				Match(I48_exchange);
+				State = 339;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (_la==WS) {
+					{
+					State = 338;
+					Match(WS);
+					}
+				}
+
+				State = 341;
+				memory_or_indirect();
+				}
+				break;
+			case I82_hir:
+				EnterOuterAlt(_localctx, 4);
+				{
+				State = 342;
+				Match(I82_hir);
+				State = 344;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (_la==WS) {
+					{
+					State = 343;
+					Match(WS);
+					}
+				}
+
+				State = 346;
+				memory();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class Memory_instruction_indirectContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I72_store_indirect() { return GetToken(ti58Parser.I72_store_indirect, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public IndmemoryContext indmemory() {
+			return GetRuleContext<IndmemoryContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WS() { return GetToken(ti58Parser.WS, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I73_recall_indirect() { return GetToken(ti58Parser.I73_recall_indirect, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I63_exchange_indirect() { return GetToken(ti58Parser.I63_exchange_indirect, 0); }
+		public Memory_instruction_indirectContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_memory_instruction_indirect; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.EnterMemory_instruction_indirect(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.ExitMemory_instruction_indirect(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitMemory_instruction_indirect(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Memory_instruction_indirectContext memory_instruction_indirect() {
+		Memory_instruction_indirectContext _localctx = new Memory_instruction_indirectContext(Context, State);
+		EnterRule(_localctx, 56, RULE_memory_instruction_indirect);
+		int _la;
+		try {
+			State = 364;
+			ErrorHandler.Sync(this);
+			switch (TokenStream.LA(1)) {
+			case I72_store_indirect:
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 349;
+				Match(I72_store_indirect);
+				State = 351;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (_la==WS) {
+					{
+					State = 350;
+					Match(WS);
+					}
+				}
+
+				State = 353;
+				indmemory();
+				}
+				break;
+			case I73_recall_indirect:
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 354;
+				Match(I73_recall_indirect);
+				State = 356;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (_la==WS) {
+					{
+					State = 355;
+					Match(WS);
+					}
+				}
+
+				State = 358;
+				indmemory();
+				}
+				break;
+			case I63_exchange_indirect:
+				EnterOuterAlt(_localctx, 3);
+				{
+				State = 359;
+				Match(I63_exchange_indirect);
+				State = 361;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (_la==WS) {
+					{
+					State = 360;
+					Match(WS);
+					}
+				}
+
+				State = 363;
+				indmemory();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class Memory_instruction_invertibleContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I44_sum() { return GetToken(ti58Parser.I44_sum, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public Memory_or_indirectContext memory_or_indirect() {
+			return GetRuleContext<Memory_or_indirectContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public InvContext inv() {
+			return GetRuleContext<InvContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WS() { return GetToken(ti58Parser.WS, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I49_product() { return GetToken(ti58Parser.I49_product, 0); }
+		public Memory_instruction_invertibleContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_memory_instruction_invertible; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.EnterMemory_instruction_invertible(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.ExitMemory_instruction_invertible(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitMemory_instruction_invertible(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Memory_instruction_invertibleContext memory_instruction_invertible() {
+		Memory_instruction_invertibleContext _localctx = new Memory_instruction_invertibleContext(Context, State);
+		EnterRule(_localctx, 58, RULE_memory_instruction_invertible);
+		int _la;
+		try {
+			State = 382;
+			ErrorHandler.Sync(this);
+			switch ( Interpreter.AdaptivePredict(TokenStream,63,Context) ) {
+			case 1:
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 367;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (_la==I22_invert) {
+					{
+					State = 366;
+					inv();
+					}
+				}
+
+				State = 369;
+				Match(I44_sum);
+				State = 371;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (_la==WS) {
+					{
+					State = 370;
+					Match(WS);
+					}
+				}
+
+				State = 373;
 				memory_or_indirect();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 356;
-				Match(I72_store_indirect);
-				State = 358;
+				State = 375;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (_la==I22_invert) {
+					{
+					State = 374;
+					inv();
+					}
+				}
+
+				State = 377;
+				Match(I49_product);
+				State = 379;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				if (_la==WS) {
 					{
-					State = 357;
+					State = 378;
 					Match(WS);
 					}
 				}
 
-				State = 360;
-				memory();
+				State = 381;
+				memory_or_indirect();
+				}
+				break;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class Memory_instruction_invertible_indirectContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I74_sum_indirect() { return GetToken(ti58Parser.I74_sum_indirect, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public IndmemoryContext indmemory() {
+			return GetRuleContext<IndmemoryContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public InvContext inv() {
+			return GetRuleContext<InvContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WS() { return GetToken(ti58Parser.WS, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I64_product_indirect() { return GetToken(ti58Parser.I64_product_indirect, 0); }
+		public Memory_instruction_invertible_indirectContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_memory_instruction_invertible_indirect; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.EnterMemory_instruction_invertible_indirect(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			Iti58Listener typedListener = listener as Iti58Listener;
+			if (typedListener != null) typedListener.ExitMemory_instruction_invertible_indirect(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitMemory_instruction_invertible_indirect(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public Memory_instruction_invertible_indirectContext memory_instruction_invertible_indirect() {
+		Memory_instruction_invertible_indirectContext _localctx = new Memory_instruction_invertible_indirectContext(Context, State);
+		EnterRule(_localctx, 60, RULE_memory_instruction_invertible_indirect);
+		int _la;
+		try {
+			State = 401;
+			ErrorHandler.Sync(this);
+			switch ( Interpreter.AdaptivePredict(TokenStream,68,Context) ) {
+			case 1:
+				EnterOuterAlt(_localctx, 1);
+				{
+				}
+				break;
+			case 2:
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 386;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (_la==I22_invert) {
+					{
+					State = 385;
+					inv();
+					}
+				}
+
+				State = 388;
+				Match(I74_sum_indirect);
+				State = 390;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (_la==WS) {
+					{
+					State = 389;
+					Match(WS);
+					}
+				}
+
+				State = 392;
+				indmemory();
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 361;
-				Match(I43_recall);
-				State = 363;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				if (_la==WS) {
-					{
-					State = 362;
-					Match(WS);
-					}
-				}
-
-				State = 365;
-				memory_or_indirect();
-				}
-				break;
-			case 4:
-				EnterOuterAlt(_localctx, 4);
-				{
-				State = 366;
-				Match(I73_recall_indirect);
-				State = 368;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				if (_la==WS) {
-					{
-					State = 367;
-					Match(WS);
-					}
-				}
-
-				State = 370;
-				memory();
-				}
-				break;
-			case 5:
-				EnterOuterAlt(_localctx, 5);
-				{
-				State = 371;
-				Match(I48_exchange);
-				State = 373;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				if (_la==WS) {
-					{
-					State = 372;
-					Match(WS);
-					}
-				}
-
-				State = 375;
-				memory_or_indirect();
-				}
-				break;
-			case 6:
-				EnterOuterAlt(_localctx, 6);
-				{
-				State = 376;
-				Match(I63_exchange_indirect);
-				State = 378;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				if (_la==WS) {
-					{
-					State = 377;
-					Match(WS);
-					}
-				}
-
-				State = 380;
-				memory();
-				}
-				break;
-			case 7:
-				EnterOuterAlt(_localctx, 7);
-				{
-				State = 387;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				while (_la==I22_invert) {
-					{
-					{
-					State = 381;
-					invert();
-					State = 383;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-					if (_la==WS) {
-						{
-						State = 382;
-						Match(WS);
-						}
-					}
-
-					}
-					}
-					State = 389;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-				}
-				State = 390;
-				Match(I44_sum);
-				State = 392;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				if (_la==WS) {
-					{
-					State = 391;
-					Match(WS);
-					}
-				}
-
 				State = 394;
-				memory_or_indirect();
-				}
-				break;
-			case 8:
-				EnterOuterAlt(_localctx, 8);
-				{
-				State = 401;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-				while (_la==I22_invert) {
+				if (_la==I22_invert) {
 					{
-					{
-					State = 395;
-					invert();
-					State = 397;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-					if (_la==WS) {
-						{
-						State = 396;
-						Match(WS);
-						}
-					}
-
-					}
-					}
-					State = 403;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-				}
-				State = 404;
-				Match(I74_sum_indirect);
-				State = 406;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				if (_la==WS) {
-					{
-					State = 405;
-					Match(WS);
+					State = 393;
+					inv();
 					}
 				}
 
-				State = 408;
-				memory();
-				}
-				break;
-			case 9:
-				EnterOuterAlt(_localctx, 9);
-				{
-				State = 415;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				while (_la==I22_invert) {
-					{
-					{
-					State = 409;
-					invert();
-					State = 411;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-					if (_la==WS) {
-						{
-						State = 410;
-						Match(WS);
-						}
-					}
-
-					}
-					}
-					State = 417;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-				}
-				State = 418;
-				Match(I49_product);
-				State = 420;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				if (_la==WS) {
-					{
-					State = 419;
-					Match(WS);
-					}
-				}
-
-				State = 422;
-				memory_or_indirect();
-				}
-				break;
-			case 10:
-				EnterOuterAlt(_localctx, 10);
-				{
-				State = 429;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				while (_la==I22_invert) {
-					{
-					{
-					State = 423;
-					invert();
-					State = 425;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-					if (_la==WS) {
-						{
-						State = 424;
-						Match(WS);
-						}
-					}
-
-					}
-					}
-					State = 431;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-				}
-				State = 432;
+				State = 396;
 				Match(I64_product_indirect);
-				State = 434;
+				State = 398;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				if (_la==WS) {
 					{
-					State = 433;
+					State = 397;
 					Match(WS);
 					}
 				}
 
-				State = 436;
-				memory();
-				}
-				break;
-			case 11:
-				EnterOuterAlt(_localctx, 11);
-				{
-				State = 443;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				while (_la==I22_invert) {
-					{
-					{
-					State = 437;
-					invert();
-					State = 439;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-					if (_la==WS) {
-						{
-						State = 438;
-						Match(WS);
-						}
-					}
-
-					}
-					}
-					State = 445;
-					ErrorHandler.Sync(this);
-					_la = TokenStream.LA(1);
-				}
-				State = 446;
-				Match(I86_set_flag);
-				State = 448;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				if (_la==WS) {
-					{
-					State = 447;
-					Match(WS);
-					}
-				}
-
-				State = 450;
-				flag_or_indirect();
-				}
-				break;
-			case 12:
-				EnterOuterAlt(_localctx, 12);
-				{
-				State = 451;
-				Match(I82_hir);
-				State = 453;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				if (_la==WS) {
-					{
-					State = 452;
-					Match(WS);
-					}
-				}
-
-				State = 455;
-				memory();
+				State = 400;
+				indmemory();
 				}
 				break;
 			}
@@ -2678,9 +3138,9 @@ public partial class ti58Parser : Parser {
 	[RuleVersion(0)]
 	public Memory_or_indirectContext memory_or_indirect() {
 		Memory_or_indirectContext _localctx = new Memory_or_indirectContext(Context, State);
-		EnterRule(_localctx, 38, RULE_memory_or_indirect);
+		EnterRule(_localctx, 62, RULE_memory_or_indirect);
 		try {
-			State = 460;
+			State = 405;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case T__0:
@@ -2695,83 +3155,19 @@ public partial class ti58Parser : Parser {
 			case T__9:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 458;
+				State = 403;
 				memory();
 				}
 				break;
 			case I40_indirect:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 459;
+				State = 404;
 				indirect_memory();
 				}
 				break;
 			default:
 				throw new NoViableAltException(this);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			ErrorHandler.ReportError(this, re);
-			ErrorHandler.Recover(this, re);
-		}
-		finally {
-			ExitRule();
-		}
-		return _localctx;
-	}
-
-	public partial class Indirect_memoryContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I40_indirect() { return GetToken(ti58Parser.I40_indirect, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public MemoryContext memory() {
-			return GetRuleContext<MemoryContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WS() { return GetToken(ti58Parser.WS, 0); }
-		public Indirect_memoryContext(ParserRuleContext parent, int invokingState)
-			: base(parent, invokingState)
-		{
-		}
-		public override int RuleIndex { get { return RULE_indirect_memory; } }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.EnterIndirect_memory(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.ExitIndirect_memory(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitIndirect_memory(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-
-	[RuleVersion(0)]
-	public Indirect_memoryContext indirect_memory() {
-		Indirect_memoryContext _localctx = new Indirect_memoryContext(Context, State);
-		EnterRule(_localctx, 40, RULE_indirect_memory);
-		int _la;
-		try {
-			EnterOuterAlt(_localctx, 1);
-			{
-			State = 462;
-			Match(I40_indirect);
-			State = 464;
-			ErrorHandler.Sync(this);
-			_la = TokenStream.LA(1);
-			if (_la==WS) {
-				{
-				State = 463;
-				Match(WS);
-				}
-			}
-
-			State = 466;
-			memory();
 			}
 		}
 		catch (RecognitionException re) {
@@ -2820,24 +3216,24 @@ public partial class ti58Parser : Parser {
 	[RuleVersion(0)]
 	public Label_instructionContext label_instruction() {
 		Label_instructionContext _localctx = new Label_instructionContext(Context, State);
-		EnterRule(_localctx, 42, RULE_label_instruction);
+		EnterRule(_localctx, 64, RULE_label_instruction);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 468;
+			State = 407;
 			Match(I76_label);
-			State = 470;
+			State = 409;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==WS) {
 				{
-				State = 469;
+				State = 408;
 				Match(WS);
 				}
 			}
 
-			State = 474;
+			State = 413;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case I11_a:
@@ -2931,7 +3327,7 @@ public partial class ti58Parser : Parser {
 			case I99_print:
 			case I90_list:
 				{
-				State = 472;
+				State = 411;
 				key_label();
 				}
 				break;
@@ -2945,7 +3341,7 @@ public partial class ti58Parser : Parser {
 			case T__8:
 			case T__9:
 				{
-				State = 473;
+				State = 412;
 				numeric_key_label();
 				}
 				break;
@@ -2972,25 +3368,10 @@ public partial class ti58Parser : Parser {
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WS() { return GetToken(ti58Parser.WS, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I83_goto_indirect() { return GetToken(ti58Parser.I83_goto_indirect, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public MemoryContext memory() {
-			return GetRuleContext<MemoryContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public IndmemoryContext indmemory() {
+			return GetRuleContext<IndmemoryContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I71_subroutine() { return GetToken(ti58Parser.I71_subroutine, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I92_return() { return GetToken(ti58Parser.I92_return, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public InvertContext invert() {
-			return GetRuleContext<InvertContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I81_reset() { return GetToken(ti58Parser.I81_reset, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I11_a() { return GetToken(ti58Parser.I11_a, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I12_b() { return GetToken(ti58Parser.I12_b, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I13_c() { return GetToken(ti58Parser.I13_c, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I14_d() { return GetToken(ti58Parser.I14_d, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I15_e() { return GetToken(ti58Parser.I15_e, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I16_a_prime() { return GetToken(ti58Parser.I16_a_prime, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I17_b_prime() { return GetToken(ti58Parser.I17_b_prime, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I18_c_prime() { return GetToken(ti58Parser.I18_c_prime, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I19_d_prime() { return GetToken(ti58Parser.I19_d_prime, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I10_e_prime() { return GetToken(ti58Parser.I10_e_prime, 0); }
 		public Branch_instructionContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -3017,180 +3398,67 @@ public partial class ti58Parser : Parser {
 	[RuleVersion(0)]
 	public Branch_instructionContext branch_instruction() {
 		Branch_instructionContext _localctx = new Branch_instructionContext(Context, State);
-		EnterRule(_localctx, 44, RULE_branch_instruction);
+		EnterRule(_localctx, 66, RULE_branch_instruction);
 		int _la;
 		try {
-			State = 512;
+			State = 430;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case I61_goto:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 476;
+				State = 415;
 				Match(I61_goto);
-				State = 478;
+				State = 417;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				if (_la==WS) {
 					{
-					State = 477;
+					State = 416;
 					Match(WS);
 					}
 				}
 
-				State = 480;
+				State = 419;
 				address_or_label_or_indirect();
 				}
 				break;
 			case I83_goto_indirect:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 481;
+				State = 420;
 				Match(I83_goto_indirect);
-				State = 483;
+				State = 422;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				if (_la==WS) {
 					{
-					State = 482;
+					State = 421;
 					Match(WS);
 					}
 				}
 
-				State = 485;
-				memory();
+				State = 424;
+				indmemory();
 				}
 				break;
 			case I71_subroutine:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 486;
+				State = 425;
 				Match(I71_subroutine);
-				State = 488;
+				State = 427;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				if (_la==WS) {
 					{
-					State = 487;
+					State = 426;
 					Match(WS);
 					}
 				}
 
-				State = 490;
+				State = 429;
 				address_or_label_or_indirect();
-				}
-				break;
-			case I92_return:
-				EnterOuterAlt(_localctx, 4);
-				{
-				State = 491;
-				Match(I92_return);
-				State = 493;
-				ErrorHandler.Sync(this);
-				switch ( Interpreter.AdaptivePredict(TokenStream,77,Context) ) {
-				case 1:
-					{
-					State = 492;
-					Match(WS);
-					}
-					break;
-				}
-				}
-				break;
-			case I22_invert:
-				EnterOuterAlt(_localctx, 5);
-				{
-				State = 495;
-				invert();
-				State = 497;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				if (_la==WS) {
-					{
-					State = 496;
-					Match(WS);
-					}
-				}
-
-				State = 499;
-				Match(I71_subroutine);
-				}
-				break;
-			case I81_reset:
-				EnterOuterAlt(_localctx, 6);
-				{
-				State = 501;
-				Match(I81_reset);
-				}
-				break;
-			case I11_a:
-				EnterOuterAlt(_localctx, 7);
-				{
-				State = 502;
-				Match(I11_a);
-				}
-				break;
-			case I12_b:
-				EnterOuterAlt(_localctx, 8);
-				{
-				State = 503;
-				Match(I12_b);
-				}
-				break;
-			case I13_c:
-				EnterOuterAlt(_localctx, 9);
-				{
-				State = 504;
-				Match(I13_c);
-				}
-				break;
-			case I14_d:
-				EnterOuterAlt(_localctx, 10);
-				{
-				State = 505;
-				Match(I14_d);
-				}
-				break;
-			case I15_e:
-				EnterOuterAlt(_localctx, 11);
-				{
-				State = 506;
-				Match(I15_e);
-				}
-				break;
-			case I16_a_prime:
-				EnterOuterAlt(_localctx, 12);
-				{
-				State = 507;
-				Match(I16_a_prime);
-				}
-				break;
-			case I17_b_prime:
-				EnterOuterAlt(_localctx, 13);
-				{
-				State = 508;
-				Match(I17_b_prime);
-				}
-				break;
-			case I18_c_prime:
-				EnterOuterAlt(_localctx, 14);
-				{
-				State = 509;
-				Match(I18_c_prime);
-				}
-				break;
-			case I19_d_prime:
-				EnterOuterAlt(_localctx, 15);
-				{
-				State = 510;
-				Match(I19_d_prime);
-				}
-				break;
-			case I10_e_prime:
-				EnterOuterAlt(_localctx, 16);
-				{
-				State = 511;
-				Match(I10_e_prime);
 				}
 				break;
 			default:
@@ -3247,36 +3515,36 @@ public partial class ti58Parser : Parser {
 	[RuleVersion(0)]
 	public Address_or_label_or_indirectContext address_or_label_or_indirect() {
 		Address_or_label_or_indirectContext _localctx = new Address_or_label_or_indirectContext(Context, State);
-		EnterRule(_localctx, 46, RULE_address_or_label_or_indirect);
+		EnterRule(_localctx, 68, RULE_address_or_label_or_indirect);
 		try {
-			State = 518;
+			State = 436;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,80,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,76,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 514;
+				State = 432;
 				address_label();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 515;
+				State = 433;
 				key_label();
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 516;
+				State = 434;
 				numeric_key_label();
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 517;
+				State = 435;
 				indirect_memory();
 				}
 				break;
@@ -3410,12 +3678,12 @@ public partial class ti58Parser : Parser {
 	[RuleVersion(0)]
 	public Key_labelContext key_label() {
 		Key_labelContext _localctx = new Key_labelContext(Context, State);
-		EnterRule(_localctx, 48, RULE_key_label);
+		EnterRule(_localctx, 70, RULE_key_label);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 520;
+			State = 438;
 			_la = TokenStream.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & -16384L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 1099511627775L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
@@ -3424,80 +3692,6 @@ public partial class ti58Parser : Parser {
 				ErrorHandler.ReportMatch(this);
 			    Consume();
 			}
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			ErrorHandler.ReportError(this, re);
-			ErrorHandler.Recover(this, re);
-		}
-		finally {
-			ExitRule();
-		}
-		return _localctx;
-	}
-
-	public partial class Flag_or_indirectContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public Flag_numberContext flag_number() {
-			return GetRuleContext<Flag_numberContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public Indirect_memoryContext indirect_memory() {
-			return GetRuleContext<Indirect_memoryContext>(0);
-		}
-		public Flag_or_indirectContext(ParserRuleContext parent, int invokingState)
-			: base(parent, invokingState)
-		{
-		}
-		public override int RuleIndex { get { return RULE_flag_or_indirect; } }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.EnterFlag_or_indirect(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.ExitFlag_or_indirect(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitFlag_or_indirect(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-
-	[RuleVersion(0)]
-	public Flag_or_indirectContext flag_or_indirect() {
-		Flag_or_indirectContext _localctx = new Flag_or_indirectContext(Context, State);
-		EnterRule(_localctx, 50, RULE_flag_or_indirect);
-		try {
-			State = 524;
-			ErrorHandler.Sync(this);
-			switch (TokenStream.LA(1)) {
-			case T__0:
-			case T__1:
-			case T__2:
-			case T__3:
-			case T__4:
-			case T__5:
-			case T__6:
-			case T__7:
-				EnterOuterAlt(_localctx, 1);
-				{
-				State = 522;
-				flag_number();
-				}
-				break;
-			case I40_indirect:
-				EnterOuterAlt(_localctx, 2);
-				{
-				State = 523;
-				indirect_memory();
-				}
-				break;
-			default:
-				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -3550,36 +3744,36 @@ public partial class ti58Parser : Parser {
 	[RuleVersion(0)]
 	public Conditional_instructionContext conditional_instruction() {
 		Conditional_instructionContext _localctx = new Conditional_instructionContext(Context, State);
-		EnterRule(_localctx, 52, RULE_conditional_instruction);
+		EnterRule(_localctx, 72, RULE_conditional_instruction);
 		try {
-			State = 530;
+			State = 444;
 			ErrorHandler.Sync(this);
-			switch ( Interpreter.AdaptivePredict(TokenStream,82,Context) ) {
+			switch ( Interpreter.AdaptivePredict(TokenStream,77,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 526;
+				State = 440;
 				x_equals_t_statement();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 527;
+				State = 441;
 				x_greater_or_equal_than_t_statement();
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 528;
+				State = 442;
 				decrement_and_skip_on_zero_statement();
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 529;
+				State = 443;
 				test_flag_statement();
 				}
 				break;
@@ -3601,16 +3795,10 @@ public partial class ti58Parser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public Address_or_label_or_indirectContext address_or_label_or_indirect() {
 			return GetRuleContext<Address_or_label_or_indirectContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public InvertContext[] invert() {
-			return GetRuleContexts<InvertContext>();
+		[System.Diagnostics.DebuggerNonUserCode] public InvContext inv() {
+			return GetRuleContext<InvContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public InvertContext invert(int i) {
-			return GetRuleContext<InvertContext>(i);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] WS() { return GetTokens(ti58Parser.WS); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WS(int i) {
-			return GetToken(ti58Parser.WS, i);
-		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WS() { return GetToken(ti58Parser.WS, 0); }
 		public X_equals_t_statementContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -3637,48 +3825,34 @@ public partial class ti58Parser : Parser {
 	[RuleVersion(0)]
 	public X_equals_t_statementContext x_equals_t_statement() {
 		X_equals_t_statementContext _localctx = new X_equals_t_statementContext(Context, State);
-		EnterRule(_localctx, 54, RULE_x_equals_t_statement);
+		EnterRule(_localctx, 74, RULE_x_equals_t_statement);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 538;
+			State = 447;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while (_la==I22_invert) {
+			if (_la==I22_invert) {
 				{
-				{
-				State = 532;
-				invert();
-				State = 534;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				if (_la==WS) {
-					{
-					State = 533;
-					Match(WS);
-					}
+				State = 446;
+				inv();
 				}
-
-				}
-				}
-				State = 540;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
 			}
-			State = 541;
+
+			State = 449;
 			Match(I67_x_equals_t);
-			State = 543;
+			State = 451;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==WS) {
 				{
-				State = 542;
+				State = 450;
 				Match(WS);
 				}
 			}
 
-			State = 545;
+			State = 453;
 			address_or_label_or_indirect();
 			}
 		}
@@ -3698,16 +3872,10 @@ public partial class ti58Parser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public Address_or_label_or_indirectContext address_or_label_or_indirect() {
 			return GetRuleContext<Address_or_label_or_indirectContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public InvertContext[] invert() {
-			return GetRuleContexts<InvertContext>();
+		[System.Diagnostics.DebuggerNonUserCode] public InvContext inv() {
+			return GetRuleContext<InvContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public InvertContext invert(int i) {
-			return GetRuleContext<InvertContext>(i);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] WS() { return GetTokens(ti58Parser.WS); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WS(int i) {
-			return GetToken(ti58Parser.WS, i);
-		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WS() { return GetToken(ti58Parser.WS, 0); }
 		public X_greater_or_equal_than_t_statementContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
@@ -3734,48 +3902,34 @@ public partial class ti58Parser : Parser {
 	[RuleVersion(0)]
 	public X_greater_or_equal_than_t_statementContext x_greater_or_equal_than_t_statement() {
 		X_greater_or_equal_than_t_statementContext _localctx = new X_greater_or_equal_than_t_statementContext(Context, State);
-		EnterRule(_localctx, 56, RULE_x_greater_or_equal_than_t_statement);
+		EnterRule(_localctx, 76, RULE_x_greater_or_equal_than_t_statement);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 553;
+			State = 456;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while (_la==I22_invert) {
+			if (_la==I22_invert) {
 				{
-				{
-				State = 547;
-				invert();
-				State = 549;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				if (_la==WS) {
-					{
-					State = 548;
-					Match(WS);
-					}
+				State = 455;
+				inv();
 				}
-
-				}
-				}
-				State = 555;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
 			}
-			State = 556;
+
+			State = 458;
 			Match(I77_x_greater_or_equal_than_t);
-			State = 558;
+			State = 460;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==WS) {
 				{
-				State = 557;
+				State = 459;
 				Match(WS);
 				}
 			}
 
-			State = 560;
+			State = 462;
 			address_or_label_or_indirect();
 			}
 		}
@@ -3792,8 +3946,8 @@ public partial class ti58Parser : Parser {
 
 	public partial class Decrement_and_skip_on_zero_statementContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I97_dsz() { return GetToken(ti58Parser.I97_dsz, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public Single_digit_or_indirectContext single_digit_or_indirect() {
-			return GetRuleContext<Single_digit_or_indirectContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public Memory_or_indirectContext memory_or_indirect() {
+			return GetRuleContext<Memory_or_indirectContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] WS() { return GetTokens(ti58Parser.WS); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WS(int i) {
@@ -3802,11 +3956,8 @@ public partial class ti58Parser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public Address_or_label_or_indirectContext address_or_label_or_indirect() {
 			return GetRuleContext<Address_or_label_or_indirectContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public InvertContext[] invert() {
-			return GetRuleContexts<InvertContext>();
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public InvertContext invert(int i) {
-			return GetRuleContext<InvertContext>(i);
+		[System.Diagnostics.DebuggerNonUserCode] public InvContext inv() {
+			return GetRuleContext<InvContext>(0);
 		}
 		public Decrement_and_skip_on_zero_statementContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -3834,129 +3985,39 @@ public partial class ti58Parser : Parser {
 	[RuleVersion(0)]
 	public Decrement_and_skip_on_zero_statementContext decrement_and_skip_on_zero_statement() {
 		Decrement_and_skip_on_zero_statementContext _localctx = new Decrement_and_skip_on_zero_statementContext(Context, State);
-		EnterRule(_localctx, 58, RULE_decrement_and_skip_on_zero_statement);
+		EnterRule(_localctx, 78, RULE_decrement_and_skip_on_zero_statement);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 568;
+			State = 465;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while (_la==I22_invert) {
+			if (_la==I22_invert) {
 				{
-				{
-				State = 562;
-				invert();
-				State = 564;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				if (_la==WS) {
-					{
-					State = 563;
-					Match(WS);
-					}
+				State = 464;
+				inv();
 				}
-
-				}
-				}
-				State = 570;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
 			}
-			State = 571;
+
+			State = 467;
 			Match(I97_dsz);
-			State = 573;
+			State = 469;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==WS) {
 				{
-				State = 572;
+				State = 468;
 				Match(WS);
 				}
 			}
 
-			State = 575;
-			single_digit_or_indirect();
-			State = 576;
+			State = 471;
+			memory_or_indirect();
+			State = 472;
 			Match(WS);
-			State = 577;
+			State = 473;
 			address_or_label_or_indirect();
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			ErrorHandler.ReportError(this, re);
-			ErrorHandler.Recover(this, re);
-		}
-		finally {
-			ExitRule();
-		}
-		return _localctx;
-	}
-
-	public partial class Single_digit_or_indirectContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public Single_digitContext single_digit() {
-			return GetRuleContext<Single_digitContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public Indirect_memoryContext indirect_memory() {
-			return GetRuleContext<Indirect_memoryContext>(0);
-		}
-		public Single_digit_or_indirectContext(ParserRuleContext parent, int invokingState)
-			: base(parent, invokingState)
-		{
-		}
-		public override int RuleIndex { get { return RULE_single_digit_or_indirect; } }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.EnterSingle_digit_or_indirect(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.ExitSingle_digit_or_indirect(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitSingle_digit_or_indirect(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-
-	[RuleVersion(0)]
-	public Single_digit_or_indirectContext single_digit_or_indirect() {
-		Single_digit_or_indirectContext _localctx = new Single_digit_or_indirectContext(Context, State);
-		EnterRule(_localctx, 60, RULE_single_digit_or_indirect);
-		try {
-			State = 581;
-			ErrorHandler.Sync(this);
-			switch (TokenStream.LA(1)) {
-			case T__0:
-			case T__1:
-			case T__2:
-			case T__3:
-			case T__4:
-			case T__5:
-			case T__6:
-			case T__7:
-			case T__8:
-			case T__9:
-				EnterOuterAlt(_localctx, 1);
-				{
-				State = 579;
-				single_digit();
-				}
-				break;
-			case I40_indirect:
-				EnterOuterAlt(_localctx, 2);
-				{
-				State = 580;
-				indirect_memory();
-				}
-				break;
-			default:
-				throw new NoViableAltException(this);
 			}
 		}
 		catch (RecognitionException re) {
@@ -3978,11 +4039,8 @@ public partial class ti58Parser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public Address_or_label_or_indirectContext address_or_label_or_indirect() {
 			return GetRuleContext<Address_or_label_or_indirectContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public InvertContext[] invert() {
-			return GetRuleContexts<InvertContext>();
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public InvertContext invert(int i) {
-			return GetRuleContext<InvertContext>(i);
+		[System.Diagnostics.DebuggerNonUserCode] public InvContext inv() {
+			return GetRuleContext<InvContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] WS() { return GetTokens(ti58Parser.WS); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WS(int i) {
@@ -4014,60 +4072,46 @@ public partial class ti58Parser : Parser {
 	[RuleVersion(0)]
 	public Test_flag_statementContext test_flag_statement() {
 		Test_flag_statementContext _localctx = new Test_flag_statementContext(Context, State);
-		EnterRule(_localctx, 62, RULE_test_flag_statement);
+		EnterRule(_localctx, 80, RULE_test_flag_statement);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 589;
+			State = 476;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while (_la==I22_invert) {
+			if (_la==I22_invert) {
 				{
-				{
-				State = 583;
-				invert();
-				State = 585;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				if (_la==WS) {
-					{
-					State = 584;
-					Match(WS);
-					}
+				State = 475;
+				inv();
 				}
-
-				}
-				}
-				State = 591;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
 			}
-			State = 592;
+
+			State = 478;
 			Match(I87_if_flag);
-			State = 594;
+			State = 480;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==WS) {
 				{
-				State = 593;
+				State = 479;
 				Match(WS);
 				}
 			}
 
-			State = 596;
+			State = 482;
 			flag_or_indirect();
-			State = 598;
+			State = 484;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==WS) {
 				{
-				State = 597;
+				State = 483;
 				Match(WS);
 				}
 			}
 
-			State = 600;
+			State = 486;
 			address_or_label_or_indirect();
 			}
 		}
@@ -4082,582 +4126,185 @@ public partial class ti58Parser : Parser {
 		return _localctx;
 	}
 
-	public partial class Op_instructionContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I69_operation() { return GetToken(ti58Parser.I69_operation, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public Op_number_or_indirectContext op_number_or_indirect() {
-			return GetRuleContext<Op_number_or_indirectContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WS() { return GetToken(ti58Parser.WS, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I84_operation_indirect() { return GetToken(ti58Parser.I84_operation_indirect, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public MemoryContext memory() {
-			return GetRuleContext<MemoryContext>(0);
-		}
-		public Op_instructionContext(ParserRuleContext parent, int invokingState)
-			: base(parent, invokingState)
-		{
-		}
-		public override int RuleIndex { get { return RULE_op_instruction; } }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.EnterOp_instruction(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.ExitOp_instruction(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitOp_instruction(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-
-	[RuleVersion(0)]
-	public Op_instructionContext op_instruction() {
-		Op_instructionContext _localctx = new Op_instructionContext(Context, State);
-		EnterRule(_localctx, 64, RULE_op_instruction);
-		int _la;
-		try {
-			State = 612;
-			ErrorHandler.Sync(this);
-			switch (TokenStream.LA(1)) {
-			case I69_operation:
-				EnterOuterAlt(_localctx, 1);
-				{
-				State = 602;
-				Match(I69_operation);
-				State = 604;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				if (_la==WS) {
-					{
-					State = 603;
-					Match(WS);
-					}
-				}
-
-				State = 606;
-				op_number_or_indirect();
-				}
-				break;
-			case I84_operation_indirect:
-				EnterOuterAlt(_localctx, 2);
-				{
-				State = 607;
-				Match(I84_operation_indirect);
-				State = 609;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				if (_la==WS) {
-					{
-					State = 608;
-					Match(WS);
-					}
-				}
-
-				State = 611;
-				memory();
-				}
-				break;
-			default:
-				throw new NoViableAltException(this);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			ErrorHandler.ReportError(this, re);
-			ErrorHandler.Recover(this, re);
-		}
-		finally {
-			ExitRule();
-		}
-		return _localctx;
-	}
-
-	public partial class Op_number_or_indirectContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public Op_numberContext op_number() {
-			return GetRuleContext<Op_numberContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public Indirect_memoryContext indirect_memory() {
-			return GetRuleContext<Indirect_memoryContext>(0);
-		}
-		public Op_number_or_indirectContext(ParserRuleContext parent, int invokingState)
-			: base(parent, invokingState)
-		{
-		}
-		public override int RuleIndex { get { return RULE_op_number_or_indirect; } }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.EnterOp_number_or_indirect(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.ExitOp_number_or_indirect(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitOp_number_or_indirect(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-
-	[RuleVersion(0)]
-	public Op_number_or_indirectContext op_number_or_indirect() {
-		Op_number_or_indirectContext _localctx = new Op_number_or_indirectContext(Context, State);
-		EnterRule(_localctx, 66, RULE_op_number_or_indirect);
-		try {
-			State = 616;
-			ErrorHandler.Sync(this);
-			switch (TokenStream.LA(1)) {
-			case T__0:
-			case T__1:
-			case T__2:
-			case T__3:
-			case T__4:
-				EnterOuterAlt(_localctx, 1);
-				{
-				State = 614;
-				op_number();
-				}
-				break;
-			case I40_indirect:
-				EnterOuterAlt(_localctx, 2);
-				{
-				State = 615;
-				indirect_memory();
-				}
-				break;
-			default:
-				throw new NoViableAltException(this);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			ErrorHandler.ReportError(this, re);
-			ErrorHandler.Recover(this, re);
-		}
-		finally {
-			ExitRule();
-		}
-		return _localctx;
-	}
-
-	public partial class Pgm_instructionContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I36_program() { return GetToken(ti58Parser.I36_program, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public Pgm_number_or_indirectContext pgm_number_or_indirect() {
-			return GetRuleContext<Pgm_number_or_indirectContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WS() { return GetToken(ti58Parser.WS, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I62_program_indirect() { return GetToken(ti58Parser.I62_program_indirect, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public Pgm_numberContext pgm_number() {
-			return GetRuleContext<Pgm_numberContext>(0);
-		}
-		public Pgm_instructionContext(ParserRuleContext parent, int invokingState)
-			: base(parent, invokingState)
-		{
-		}
-		public override int RuleIndex { get { return RULE_pgm_instruction; } }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.EnterPgm_instruction(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.ExitPgm_instruction(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitPgm_instruction(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-
-	[RuleVersion(0)]
-	public Pgm_instructionContext pgm_instruction() {
-		Pgm_instructionContext _localctx = new Pgm_instructionContext(Context, State);
-		EnterRule(_localctx, 68, RULE_pgm_instruction);
-		int _la;
-		try {
-			State = 628;
-			ErrorHandler.Sync(this);
-			switch (TokenStream.LA(1)) {
-			case I36_program:
-				EnterOuterAlt(_localctx, 1);
-				{
-				State = 618;
-				Match(I36_program);
-				State = 620;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				if (_la==WS) {
-					{
-					State = 619;
-					Match(WS);
-					}
-				}
-
-				State = 622;
-				pgm_number_or_indirect();
-				}
-				break;
-			case I62_program_indirect:
-				EnterOuterAlt(_localctx, 2);
-				{
-				State = 623;
-				Match(I62_program_indirect);
-				State = 625;
-				ErrorHandler.Sync(this);
-				_la = TokenStream.LA(1);
-				if (_la==WS) {
-					{
-					State = 624;
-					Match(WS);
-					}
-				}
-
-				State = 627;
-				pgm_number();
-				}
-				break;
-			default:
-				throw new NoViableAltException(this);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			ErrorHandler.ReportError(this, re);
-			ErrorHandler.Recover(this, re);
-		}
-		finally {
-			ExitRule();
-		}
-		return _localctx;
-	}
-
-	public partial class Pgm_number_or_indirectContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public Pgm_numberContext pgm_number() {
-			return GetRuleContext<Pgm_numberContext>(0);
-		}
-		[System.Diagnostics.DebuggerNonUserCode] public Indirect_memoryContext indirect_memory() {
-			return GetRuleContext<Indirect_memoryContext>(0);
-		}
-		public Pgm_number_or_indirectContext(ParserRuleContext parent, int invokingState)
-			: base(parent, invokingState)
-		{
-		}
-		public override int RuleIndex { get { return RULE_pgm_number_or_indirect; } }
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void EnterRule(IParseTreeListener listener) {
-			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.EnterPgm_number_or_indirect(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override void ExitRule(IParseTreeListener listener) {
-			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.ExitPgm_number_or_indirect(this);
-		}
-		[System.Diagnostics.DebuggerNonUserCode]
-		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
-			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitPgm_number_or_indirect(this);
-			else return visitor.VisitChildren(this);
-		}
-	}
-
-	[RuleVersion(0)]
-	public Pgm_number_or_indirectContext pgm_number_or_indirect() {
-		Pgm_number_or_indirectContext _localctx = new Pgm_number_or_indirectContext(Context, State);
-		EnterRule(_localctx, 70, RULE_pgm_number_or_indirect);
-		try {
-			State = 632;
-			ErrorHandler.Sync(this);
-			switch (TokenStream.LA(1)) {
-			case T__0:
-			case T__1:
-			case T__2:
-			case T__3:
-			case T__4:
-			case T__5:
-			case T__6:
-			case T__7:
-			case T__8:
-			case T__9:
-				EnterOuterAlt(_localctx, 1);
-				{
-				State = 630;
-				pgm_number();
-				}
-				break;
-			case I40_indirect:
-				EnterOuterAlt(_localctx, 2);
-				{
-				State = 631;
-				indirect_memory();
-				}
-				break;
-			default:
-				throw new NoViableAltException(this);
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			ErrorHandler.ReportError(this, re);
-			ErrorHandler.Recover(this, re);
-		}
-		finally {
-			ExitRule();
-		}
-		return _localctx;
-	}
-
 	private static int[] _serializedATN = {
-		4,1,105,635,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
+		4,1,105,489,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,
 		7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,14,
 		2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,2,20,7,20,2,21,7,21,
 		2,22,7,22,2,23,7,23,2,24,7,24,2,25,7,25,2,26,7,26,2,27,7,27,2,28,7,28,
 		2,29,7,29,2,30,7,30,2,31,7,31,2,32,7,32,2,33,7,33,2,34,7,34,2,35,7,35,
-		1,0,1,0,1,1,3,1,76,8,1,1,1,4,1,79,8,1,11,1,12,1,80,1,1,1,1,4,1,85,8,1,
-		11,1,12,1,86,3,1,89,8,1,1,1,1,1,3,1,93,8,1,1,1,4,1,96,8,1,11,1,12,1,97,
-		3,1,100,8,1,1,2,3,2,103,8,2,1,2,1,2,1,3,1,3,3,3,109,8,3,1,4,1,4,3,4,113,
-		8,4,1,5,1,5,1,5,1,5,1,5,1,5,1,5,1,5,1,5,1,5,3,5,125,8,5,1,6,1,6,1,6,1,
-		7,3,7,131,8,7,1,7,1,7,1,8,1,8,1,8,1,8,3,8,139,8,8,1,9,1,9,1,9,1,9,1,9,
-		3,9,146,8,9,1,10,3,10,149,8,10,1,10,1,10,1,10,5,10,154,8,10,10,10,12,10,
-		157,9,10,1,10,3,10,160,8,10,1,11,1,11,3,11,164,8,11,1,12,1,12,1,12,1,12,
-		1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,
-		1,12,3,12,185,8,12,1,13,1,13,3,13,189,8,13,5,13,191,8,13,10,13,12,13,194,
-		9,13,1,13,1,13,1,14,1,14,1,15,1,15,1,16,1,16,3,16,204,8,16,1,16,1,16,1,
-		17,1,17,3,17,210,8,17,5,17,212,8,17,10,17,12,17,215,9,17,1,17,1,17,1,17,
-		1,17,3,17,221,8,17,5,17,223,8,17,10,17,12,17,226,9,17,1,17,1,17,1,17,1,
-		17,1,17,1,17,1,17,1,17,1,17,1,17,1,17,3,17,239,8,17,5,17,241,8,17,10,17,
-		12,17,244,9,17,1,17,1,17,1,17,3,17,249,8,17,5,17,251,8,17,10,17,12,17,
-		254,9,17,1,17,1,17,1,17,3,17,259,8,17,5,17,261,8,17,10,17,12,17,264,9,
-		17,1,17,1,17,1,17,3,17,269,8,17,5,17,271,8,17,10,17,12,17,274,9,17,1,17,
-		1,17,1,17,1,17,3,17,280,8,17,5,17,282,8,17,10,17,12,17,285,9,17,1,17,1,
-		17,1,17,3,17,290,8,17,5,17,292,8,17,10,17,12,17,295,9,17,1,17,1,17,1,17,
-		3,17,300,8,17,5,17,302,8,17,10,17,12,17,305,9,17,1,17,1,17,1,17,1,17,1,
-		17,1,17,1,17,3,17,314,8,17,5,17,316,8,17,10,17,12,17,319,9,17,1,17,1,17,
-		1,17,3,17,324,8,17,5,17,326,8,17,10,17,12,17,329,9,17,1,17,1,17,1,17,1,
-		17,3,17,335,8,17,5,17,337,8,17,10,17,12,17,340,9,17,1,17,1,17,1,17,1,17,
-		1,17,1,17,1,17,1,17,3,17,350,8,17,1,18,1,18,3,18,354,8,18,1,18,1,18,1,
-		18,3,18,359,8,18,1,18,1,18,1,18,3,18,364,8,18,1,18,1,18,1,18,3,18,369,
-		8,18,1,18,1,18,1,18,3,18,374,8,18,1,18,1,18,1,18,3,18,379,8,18,1,18,1,
-		18,1,18,3,18,384,8,18,5,18,386,8,18,10,18,12,18,389,9,18,1,18,1,18,3,18,
-		393,8,18,1,18,1,18,1,18,3,18,398,8,18,5,18,400,8,18,10,18,12,18,403,9,
-		18,1,18,1,18,3,18,407,8,18,1,18,1,18,1,18,3,18,412,8,18,5,18,414,8,18,
-		10,18,12,18,417,9,18,1,18,1,18,3,18,421,8,18,1,18,1,18,1,18,3,18,426,8,
-		18,5,18,428,8,18,10,18,12,18,431,9,18,1,18,1,18,3,18,435,8,18,1,18,1,18,
-		1,18,3,18,440,8,18,5,18,442,8,18,10,18,12,18,445,9,18,1,18,1,18,3,18,449,
-		8,18,1,18,1,18,1,18,3,18,454,8,18,1,18,3,18,457,8,18,1,19,1,19,3,19,461,
-		8,19,1,20,1,20,3,20,465,8,20,1,20,1,20,1,21,1,21,3,21,471,8,21,1,21,1,
-		21,3,21,475,8,21,1,22,1,22,3,22,479,8,22,1,22,1,22,1,22,3,22,484,8,22,
-		1,22,1,22,1,22,3,22,489,8,22,1,22,1,22,1,22,3,22,494,8,22,1,22,1,22,3,
-		22,498,8,22,1,22,1,22,1,22,1,22,1,22,1,22,1,22,1,22,1,22,1,22,1,22,1,22,
-		1,22,3,22,513,8,22,1,23,1,23,1,23,1,23,3,23,519,8,23,1,24,1,24,1,25,1,
-		25,3,25,525,8,25,1,26,1,26,1,26,1,26,3,26,531,8,26,1,27,1,27,3,27,535,
-		8,27,5,27,537,8,27,10,27,12,27,540,9,27,1,27,1,27,3,27,544,8,27,1,27,1,
-		27,1,28,1,28,3,28,550,8,28,5,28,552,8,28,10,28,12,28,555,9,28,1,28,1,28,
-		3,28,559,8,28,1,28,1,28,1,29,1,29,3,29,565,8,29,5,29,567,8,29,10,29,12,
-		29,570,9,29,1,29,1,29,3,29,574,8,29,1,29,1,29,1,29,1,29,1,30,1,30,3,30,
-		582,8,30,1,31,1,31,3,31,586,8,31,5,31,588,8,31,10,31,12,31,591,9,31,1,
-		31,1,31,3,31,595,8,31,1,31,1,31,3,31,599,8,31,1,31,1,31,1,32,1,32,3,32,
-		605,8,32,1,32,1,32,1,32,3,32,610,8,32,1,32,3,32,613,8,32,1,33,1,33,3,33,
-		617,8,33,1,34,1,34,3,34,621,8,34,1,34,1,34,1,34,3,34,626,8,34,1,34,3,34,
-		629,8,34,1,35,1,35,3,35,633,8,35,1,35,0,0,36,0,2,4,6,8,10,12,14,16,18,
-		20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,
-		68,70,0,7,1,0,1,10,2,0,78,78,88,88,1,0,2,10,1,0,1,8,1,0,1,4,5,0,48,48,
-		58,58,68,68,78,78,88,88,1,0,14,103,778,0,72,1,0,0,0,2,75,1,0,0,0,4,102,
-		1,0,0,0,6,106,1,0,0,0,8,110,1,0,0,0,10,124,1,0,0,0,12,126,1,0,0,0,14,130,
-		1,0,0,0,16,138,1,0,0,0,18,145,1,0,0,0,20,148,1,0,0,0,22,163,1,0,0,0,24,
-		184,1,0,0,0,26,192,1,0,0,0,28,197,1,0,0,0,30,199,1,0,0,0,32,201,1,0,0,
-		0,34,349,1,0,0,0,36,456,1,0,0,0,38,460,1,0,0,0,40,462,1,0,0,0,42,468,1,
-		0,0,0,44,512,1,0,0,0,46,518,1,0,0,0,48,520,1,0,0,0,50,524,1,0,0,0,52,530,
-		1,0,0,0,54,538,1,0,0,0,56,553,1,0,0,0,58,568,1,0,0,0,60,581,1,0,0,0,62,
-		589,1,0,0,0,64,612,1,0,0,0,66,616,1,0,0,0,68,628,1,0,0,0,70,632,1,0,0,
-		0,72,73,7,0,0,0,73,1,1,0,0,0,74,76,5,78,0,0,75,74,1,0,0,0,75,76,1,0,0,
-		0,76,78,1,0,0,0,77,79,3,0,0,0,78,77,1,0,0,0,79,80,1,0,0,0,80,78,1,0,0,
-		0,80,81,1,0,0,0,81,88,1,0,0,0,82,84,5,96,0,0,83,85,3,0,0,0,84,83,1,0,0,
-		0,85,86,1,0,0,0,86,84,1,0,0,0,86,87,1,0,0,0,87,89,1,0,0,0,88,82,1,0,0,
-		0,88,89,1,0,0,0,89,99,1,0,0,0,90,92,5,18,0,0,91,93,7,1,0,0,92,91,1,0,0,
-		0,92,93,1,0,0,0,93,95,1,0,0,0,94,96,3,0,0,0,95,94,1,0,0,0,96,97,1,0,0,
-		0,97,95,1,0,0,0,97,98,1,0,0,0,98,100,1,0,0,0,99,90,1,0,0,0,99,100,1,0,
-		0,0,100,3,1,0,0,0,101,103,5,1,0,0,102,101,1,0,0,0,102,103,1,0,0,0,103,
-		104,1,0,0,0,104,105,3,0,0,0,105,5,1,0,0,0,106,108,3,0,0,0,107,109,3,0,
-		0,0,108,107,1,0,0,0,108,109,1,0,0,0,109,7,1,0,0,0,110,112,3,0,0,0,111,
-		113,3,0,0,0,112,111,1,0,0,0,112,113,1,0,0,0,113,9,1,0,0,0,114,115,3,0,
-		0,0,115,116,3,0,0,0,116,117,3,0,0,0,117,125,1,0,0,0,118,119,5,1,0,0,119,
-		120,3,0,0,0,120,121,5,12,0,0,121,122,3,0,0,0,122,123,3,0,0,0,123,125,1,
-		0,0,0,124,114,1,0,0,0,124,118,1,0,0,0,125,11,1,0,0,0,126,127,7,2,0,0,127,
-		128,3,0,0,0,128,13,1,0,0,0,129,131,5,1,0,0,130,129,1,0,0,0,130,131,1,0,
-		0,0,131,132,1,0,0,0,132,133,7,3,0,0,133,15,1,0,0,0,134,135,7,4,0,0,135,
-		139,3,0,0,0,136,137,5,5,0,0,137,139,5,1,0,0,138,134,1,0,0,0,138,136,1,
-		0,0,0,139,17,1,0,0,0,140,141,3,20,10,0,141,142,5,0,0,1,142,146,1,0,0,0,
-		143,144,5,12,0,0,144,146,5,0,0,1,145,140,1,0,0,0,145,143,1,0,0,0,146,19,
-		1,0,0,0,147,149,5,12,0,0,148,147,1,0,0,0,148,149,1,0,0,0,149,150,1,0,0,
-		0,150,155,3,22,11,0,151,152,5,12,0,0,152,154,3,22,11,0,153,151,1,0,0,0,
-		154,157,1,0,0,0,155,153,1,0,0,0,155,156,1,0,0,0,156,159,1,0,0,0,157,155,
-		1,0,0,0,158,160,5,12,0,0,159,158,1,0,0,0,159,160,1,0,0,0,160,21,1,0,0,
-		0,161,164,3,24,12,0,162,164,5,13,0,0,163,161,1,0,0,0,163,162,1,0,0,0,164,
-		23,1,0,0,0,165,185,3,2,1,0,166,185,5,96,0,0,167,185,5,97,0,0,168,185,3,
-		26,13,0,169,185,5,56,0,0,170,185,5,57,0,0,171,185,3,28,14,0,172,185,5,
-		98,0,0,173,174,3,30,15,0,174,175,5,11,0,0,175,185,1,0,0,0,176,185,3,32,
-		16,0,177,185,3,34,17,0,178,185,3,36,18,0,179,185,3,42,21,0,180,185,3,44,
-		22,0,181,185,3,52,26,0,182,185,3,64,32,0,183,185,3,68,34,0,184,165,1,0,
-		0,0,184,166,1,0,0,0,184,167,1,0,0,0,184,168,1,0,0,0,184,169,1,0,0,0,184,
-		170,1,0,0,0,184,171,1,0,0,0,184,172,1,0,0,0,184,173,1,0,0,0,184,176,1,
-		0,0,0,184,177,1,0,0,0,184,178,1,0,0,0,184,179,1,0,0,0,184,180,1,0,0,0,
-		184,181,1,0,0,0,184,182,1,0,0,0,184,183,1,0,0,0,185,25,1,0,0,0,186,188,
-		3,30,15,0,187,189,5,12,0,0,188,187,1,0,0,0,188,189,1,0,0,0,189,191,1,0,
-		0,0,190,186,1,0,0,0,191,194,1,0,0,0,192,190,1,0,0,0,192,193,1,0,0,0,193,
-		195,1,0,0,0,194,192,1,0,0,0,195,196,5,55,0,0,196,27,1,0,0,0,197,198,7,
-		5,0,0,198,29,1,0,0,0,199,200,5,25,0,0,200,31,1,0,0,0,201,203,5,61,0,0,
-		202,204,5,12,0,0,203,202,1,0,0,0,203,204,1,0,0,0,204,205,1,0,0,0,205,206,
-		3,60,30,0,206,33,1,0,0,0,207,209,3,30,15,0,208,210,5,12,0,0,209,208,1,
-		0,0,0,209,210,1,0,0,0,210,212,1,0,0,0,211,207,1,0,0,0,212,215,1,0,0,0,
-		213,211,1,0,0,0,213,214,1,0,0,0,214,216,1,0,0,0,215,213,1,0,0,0,216,350,
-		5,26,0,0,217,350,5,104,0,0,218,220,3,30,15,0,219,221,5,12,0,0,220,219,
-		1,0,0,0,220,221,1,0,0,0,221,223,1,0,0,0,222,218,1,0,0,0,223,226,1,0,0,
-		0,224,222,1,0,0,0,224,225,1,0,0,0,225,227,1,0,0,0,226,224,1,0,0,0,227,
-		350,5,31,0,0,228,350,5,105,0,0,229,350,5,27,0,0,230,350,5,28,0,0,231,350,
-		5,32,0,0,232,350,5,35,0,0,233,350,5,36,0,0,234,350,5,37,0,0,235,350,5,
-		38,0,0,236,238,3,30,15,0,237,239,5,12,0,0,238,237,1,0,0,0,238,239,1,0,
-		0,0,239,241,1,0,0,0,240,236,1,0,0,0,241,244,1,0,0,0,242,240,1,0,0,0,242,
-		243,1,0,0,0,243,245,1,0,0,0,244,242,1,0,0,0,245,350,5,40,0,0,246,248,3,
-		30,15,0,247,249,5,12,0,0,248,247,1,0,0,0,248,249,1,0,0,0,249,251,1,0,0,
-		0,250,246,1,0,0,0,251,254,1,0,0,0,252,250,1,0,0,0,252,253,1,0,0,0,253,
-		255,1,0,0,0,254,252,1,0,0,0,255,350,5,41,0,0,256,258,3,30,15,0,257,259,
-		5,12,0,0,258,257,1,0,0,0,258,259,1,0,0,0,259,261,1,0,0,0,260,256,1,0,0,
-		0,261,264,1,0,0,0,262,260,1,0,0,0,262,263,1,0,0,0,263,265,1,0,0,0,264,
-		262,1,0,0,0,265,350,5,42,0,0,266,268,3,30,15,0,267,269,5,12,0,0,268,267,
-		1,0,0,0,268,269,1,0,0,0,269,271,1,0,0,0,270,266,1,0,0,0,271,274,1,0,0,
-		0,272,270,1,0,0,0,272,273,1,0,0,0,273,275,1,0,0,0,274,272,1,0,0,0,275,
-		350,5,43,0,0,276,350,5,50,0,0,277,279,3,30,15,0,278,280,5,12,0,0,279,278,
-		1,0,0,0,279,280,1,0,0,0,280,282,1,0,0,0,281,277,1,0,0,0,282,285,1,0,0,
-		0,283,281,1,0,0,0,283,284,1,0,0,0,284,286,1,0,0,0,285,283,1,0,0,0,286,
-		350,5,60,0,0,287,289,3,30,15,0,288,290,5,12,0,0,289,288,1,0,0,0,289,290,
-		1,0,0,0,290,292,1,0,0,0,291,287,1,0,0,0,292,295,1,0,0,0,293,291,1,0,0,
-		0,293,294,1,0,0,0,294,296,1,0,0,0,295,293,1,0,0,0,296,350,5,61,0,0,297,
-		299,3,30,15,0,298,300,5,12,0,0,299,298,1,0,0,0,299,300,1,0,0,0,300,302,
-		1,0,0,0,301,297,1,0,0,0,302,305,1,0,0,0,303,301,1,0,0,0,303,304,1,0,0,
-		0,304,306,1,0,0,0,305,303,1,0,0,0,306,350,5,62,0,0,307,350,5,63,0,0,308,
-		350,5,69,0,0,309,350,5,71,0,0,310,350,5,73,0,0,311,313,3,30,15,0,312,314,
-		5,12,0,0,313,312,1,0,0,0,313,314,1,0,0,0,314,316,1,0,0,0,315,311,1,0,0,
-		0,316,319,1,0,0,0,317,315,1,0,0,0,317,318,1,0,0,0,318,320,1,0,0,0,319,
-		317,1,0,0,0,320,350,5,81,0,0,321,323,3,30,15,0,322,324,5,12,0,0,323,322,
-		1,0,0,0,323,324,1,0,0,0,324,326,1,0,0,0,325,321,1,0,0,0,326,329,1,0,0,
-		0,327,325,1,0,0,0,327,328,1,0,0,0,328,330,1,0,0,0,329,327,1,0,0,0,330,
-		350,5,82,0,0,331,350,5,83,0,0,332,334,3,30,15,0,333,335,5,12,0,0,334,333,
-		1,0,0,0,334,335,1,0,0,0,335,337,1,0,0,0,336,332,1,0,0,0,337,340,1,0,0,
-		0,338,336,1,0,0,0,338,339,1,0,0,0,339,341,1,0,0,0,340,338,1,0,0,0,341,
-		350,5,91,0,0,342,350,5,92,0,0,343,350,5,93,0,0,344,350,5,94,0,0,345,350,
-		5,99,0,0,346,350,5,101,0,0,347,350,5,102,0,0,348,350,5,103,0,0,349,213,
-		1,0,0,0,349,217,1,0,0,0,349,224,1,0,0,0,349,228,1,0,0,0,349,229,1,0,0,
-		0,349,230,1,0,0,0,349,231,1,0,0,0,349,232,1,0,0,0,349,233,1,0,0,0,349,
-		234,1,0,0,0,349,235,1,0,0,0,349,242,1,0,0,0,349,252,1,0,0,0,349,262,1,
-		0,0,0,349,272,1,0,0,0,349,276,1,0,0,0,349,283,1,0,0,0,349,293,1,0,0,0,
-		349,303,1,0,0,0,349,307,1,0,0,0,349,308,1,0,0,0,349,309,1,0,0,0,349,310,
-		1,0,0,0,349,317,1,0,0,0,349,327,1,0,0,0,349,331,1,0,0,0,349,338,1,0,0,
-		0,349,342,1,0,0,0,349,343,1,0,0,0,349,344,1,0,0,0,349,345,1,0,0,0,349,
-		346,1,0,0,0,349,347,1,0,0,0,349,348,1,0,0,0,350,35,1,0,0,0,351,353,5,45,
-		0,0,352,354,5,12,0,0,353,352,1,0,0,0,353,354,1,0,0,0,354,355,1,0,0,0,355,
-		457,3,38,19,0,356,358,5,75,0,0,357,359,5,12,0,0,358,357,1,0,0,0,358,359,
-		1,0,0,0,359,360,1,0,0,0,360,457,3,6,3,0,361,363,5,46,0,0,362,364,5,12,
-		0,0,363,362,1,0,0,0,363,364,1,0,0,0,364,365,1,0,0,0,365,457,3,38,19,0,
-		366,368,5,76,0,0,367,369,5,12,0,0,368,367,1,0,0,0,368,369,1,0,0,0,369,
-		370,1,0,0,0,370,457,3,6,3,0,371,373,5,51,0,0,372,374,5,12,0,0,373,372,
-		1,0,0,0,373,374,1,0,0,0,374,375,1,0,0,0,375,457,3,38,19,0,376,378,5,66,
-		0,0,377,379,5,12,0,0,378,377,1,0,0,0,378,379,1,0,0,0,379,380,1,0,0,0,380,
-		457,3,6,3,0,381,383,3,30,15,0,382,384,5,12,0,0,383,382,1,0,0,0,383,384,
-		1,0,0,0,384,386,1,0,0,0,385,381,1,0,0,0,386,389,1,0,0,0,387,385,1,0,0,
-		0,387,388,1,0,0,0,388,390,1,0,0,0,389,387,1,0,0,0,390,392,5,47,0,0,391,
-		393,5,12,0,0,392,391,1,0,0,0,392,393,1,0,0,0,393,394,1,0,0,0,394,457,3,
-		38,19,0,395,397,3,30,15,0,396,398,5,12,0,0,397,396,1,0,0,0,397,398,1,0,
-		0,0,398,400,1,0,0,0,399,395,1,0,0,0,400,403,1,0,0,0,401,399,1,0,0,0,401,
-		402,1,0,0,0,402,404,1,0,0,0,403,401,1,0,0,0,404,406,5,77,0,0,405,407,5,
-		12,0,0,406,405,1,0,0,0,406,407,1,0,0,0,407,408,1,0,0,0,408,457,3,6,3,0,
-		409,411,3,30,15,0,410,412,5,12,0,0,411,410,1,0,0,0,411,412,1,0,0,0,412,
-		414,1,0,0,0,413,409,1,0,0,0,414,417,1,0,0,0,415,413,1,0,0,0,415,416,1,
-		0,0,0,416,418,1,0,0,0,417,415,1,0,0,0,418,420,5,52,0,0,419,421,5,12,0,
-		0,420,419,1,0,0,0,420,421,1,0,0,0,421,422,1,0,0,0,422,457,3,38,19,0,423,
-		425,3,30,15,0,424,426,5,12,0,0,425,424,1,0,0,0,425,426,1,0,0,0,426,428,
-		1,0,0,0,427,423,1,0,0,0,428,431,1,0,0,0,429,427,1,0,0,0,429,430,1,0,0,
-		0,430,432,1,0,0,0,431,429,1,0,0,0,432,434,5,67,0,0,433,435,5,12,0,0,434,
-		433,1,0,0,0,434,435,1,0,0,0,435,436,1,0,0,0,436,457,3,6,3,0,437,439,3,
-		30,15,0,438,440,5,12,0,0,439,438,1,0,0,0,439,440,1,0,0,0,440,442,1,0,0,
-		0,441,437,1,0,0,0,442,445,1,0,0,0,443,441,1,0,0,0,443,444,1,0,0,0,444,
-		446,1,0,0,0,445,443,1,0,0,0,446,448,5,89,0,0,447,449,5,12,0,0,448,447,
-		1,0,0,0,448,449,1,0,0,0,449,450,1,0,0,0,450,457,3,50,25,0,451,453,5,85,
-		0,0,452,454,5,12,0,0,453,452,1,0,0,0,453,454,1,0,0,0,454,455,1,0,0,0,455,
-		457,3,6,3,0,456,351,1,0,0,0,456,356,1,0,0,0,456,361,1,0,0,0,456,366,1,
-		0,0,0,456,371,1,0,0,0,456,376,1,0,0,0,456,387,1,0,0,0,456,401,1,0,0,0,
-		456,415,1,0,0,0,456,429,1,0,0,0,456,443,1,0,0,0,456,451,1,0,0,0,457,37,
-		1,0,0,0,458,461,3,6,3,0,459,461,3,40,20,0,460,458,1,0,0,0,460,459,1,0,
-		0,0,461,39,1,0,0,0,462,464,5,53,0,0,463,465,5,12,0,0,464,463,1,0,0,0,464,
-		465,1,0,0,0,465,466,1,0,0,0,466,467,3,6,3,0,467,41,1,0,0,0,468,470,5,79,
-		0,0,469,471,5,12,0,0,470,469,1,0,0,0,470,471,1,0,0,0,471,474,1,0,0,0,472,
-		475,3,48,24,0,473,475,3,12,6,0,474,472,1,0,0,0,474,473,1,0,0,0,475,43,
-		1,0,0,0,476,478,5,64,0,0,477,479,5,12,0,0,478,477,1,0,0,0,478,479,1,0,
-		0,0,479,480,1,0,0,0,480,513,3,46,23,0,481,483,5,86,0,0,482,484,5,12,0,
-		0,483,482,1,0,0,0,483,484,1,0,0,0,484,485,1,0,0,0,485,513,3,6,3,0,486,
-		488,5,74,0,0,487,489,5,12,0,0,488,487,1,0,0,0,488,489,1,0,0,0,489,490,
-		1,0,0,0,490,513,3,46,23,0,491,493,5,95,0,0,492,494,5,12,0,0,493,492,1,
-		0,0,0,493,494,1,0,0,0,494,513,1,0,0,0,495,497,3,30,15,0,496,498,5,12,0,
-		0,497,496,1,0,0,0,497,498,1,0,0,0,498,499,1,0,0,0,499,500,5,74,0,0,500,
-		513,1,0,0,0,501,513,5,84,0,0,502,513,5,14,0,0,503,513,5,15,0,0,504,513,
-		5,16,0,0,505,513,5,17,0,0,506,513,5,18,0,0,507,513,5,19,0,0,508,513,5,
-		20,0,0,509,513,5,21,0,0,510,513,5,22,0,0,511,513,5,23,0,0,512,476,1,0,
-		0,0,512,481,1,0,0,0,512,486,1,0,0,0,512,491,1,0,0,0,512,495,1,0,0,0,512,
-		501,1,0,0,0,512,502,1,0,0,0,512,503,1,0,0,0,512,504,1,0,0,0,512,505,1,
-		0,0,0,512,506,1,0,0,0,512,507,1,0,0,0,512,508,1,0,0,0,512,509,1,0,0,0,
-		512,510,1,0,0,0,512,511,1,0,0,0,513,45,1,0,0,0,514,519,3,10,5,0,515,519,
-		3,48,24,0,516,519,3,12,6,0,517,519,3,40,20,0,518,514,1,0,0,0,518,515,1,
-		0,0,0,518,516,1,0,0,0,518,517,1,0,0,0,519,47,1,0,0,0,520,521,7,6,0,0,521,
-		49,1,0,0,0,522,525,3,14,7,0,523,525,3,40,20,0,524,522,1,0,0,0,524,523,
-		1,0,0,0,525,51,1,0,0,0,526,531,3,54,27,0,527,531,3,56,28,0,528,531,3,58,
-		29,0,529,531,3,62,31,0,530,526,1,0,0,0,530,527,1,0,0,0,530,528,1,0,0,0,
-		530,529,1,0,0,0,531,53,1,0,0,0,532,534,3,30,15,0,533,535,5,12,0,0,534,
-		533,1,0,0,0,534,535,1,0,0,0,535,537,1,0,0,0,536,532,1,0,0,0,537,540,1,
-		0,0,0,538,536,1,0,0,0,538,539,1,0,0,0,539,541,1,0,0,0,540,538,1,0,0,0,
-		541,543,5,70,0,0,542,544,5,12,0,0,543,542,1,0,0,0,543,544,1,0,0,0,544,
-		545,1,0,0,0,545,546,3,46,23,0,546,55,1,0,0,0,547,549,3,30,15,0,548,550,
-		5,12,0,0,549,548,1,0,0,0,549,550,1,0,0,0,550,552,1,0,0,0,551,547,1,0,0,
-		0,552,555,1,0,0,0,553,551,1,0,0,0,553,554,1,0,0,0,554,556,1,0,0,0,555,
-		553,1,0,0,0,556,558,5,80,0,0,557,559,5,12,0,0,558,557,1,0,0,0,558,559,
-		1,0,0,0,559,560,1,0,0,0,560,561,3,46,23,0,561,57,1,0,0,0,562,564,3,30,
-		15,0,563,565,5,12,0,0,564,563,1,0,0,0,564,565,1,0,0,0,565,567,1,0,0,0,
-		566,562,1,0,0,0,567,570,1,0,0,0,568,566,1,0,0,0,568,569,1,0,0,0,569,571,
-		1,0,0,0,570,568,1,0,0,0,571,573,5,100,0,0,572,574,5,12,0,0,573,572,1,0,
-		0,0,573,574,1,0,0,0,574,575,1,0,0,0,575,576,3,60,30,0,576,577,5,12,0,0,
-		577,578,3,46,23,0,578,59,1,0,0,0,579,582,3,4,2,0,580,582,3,40,20,0,581,
-		579,1,0,0,0,581,580,1,0,0,0,582,61,1,0,0,0,583,585,3,30,15,0,584,586,5,
-		12,0,0,585,584,1,0,0,0,585,586,1,0,0,0,586,588,1,0,0,0,587,583,1,0,0,0,
-		588,591,1,0,0,0,589,587,1,0,0,0,589,590,1,0,0,0,590,592,1,0,0,0,591,589,
-		1,0,0,0,592,594,5,90,0,0,593,595,5,12,0,0,594,593,1,0,0,0,594,595,1,0,
-		0,0,595,596,1,0,0,0,596,598,3,50,25,0,597,599,5,12,0,0,598,597,1,0,0,0,
-		598,599,1,0,0,0,599,600,1,0,0,0,600,601,3,46,23,0,601,63,1,0,0,0,602,604,
-		5,72,0,0,603,605,5,12,0,0,604,603,1,0,0,0,604,605,1,0,0,0,605,606,1,0,
-		0,0,606,613,3,66,33,0,607,609,5,87,0,0,608,610,5,12,0,0,609,608,1,0,0,
-		0,609,610,1,0,0,0,610,611,1,0,0,0,611,613,3,6,3,0,612,602,1,0,0,0,612,
-		607,1,0,0,0,613,65,1,0,0,0,614,617,3,16,8,0,615,617,3,40,20,0,616,614,
-		1,0,0,0,616,615,1,0,0,0,617,67,1,0,0,0,618,620,5,39,0,0,619,621,5,12,0,
-		0,620,619,1,0,0,0,620,621,1,0,0,0,621,622,1,0,0,0,622,629,3,70,35,0,623,
-		625,5,65,0,0,624,626,5,12,0,0,625,624,1,0,0,0,625,626,1,0,0,0,626,627,
-		1,0,0,0,627,629,3,8,4,0,628,618,1,0,0,0,628,623,1,0,0,0,629,69,1,0,0,0,
-		630,633,3,8,4,0,631,633,3,40,20,0,632,630,1,0,0,0,632,631,1,0,0,0,633,
-		71,1,0,0,0,105,75,80,86,88,92,97,99,102,108,112,124,130,138,145,148,155,
-		159,163,184,188,192,203,209,213,220,224,238,242,248,252,258,262,268,272,
-		279,283,289,293,299,303,313,317,323,327,334,338,349,353,358,363,368,373,
-		378,383,387,392,397,401,406,411,415,420,425,429,434,439,443,448,453,456,
-		460,464,470,474,478,483,488,493,497,512,518,524,530,534,538,543,549,553,
-		558,564,568,573,581,585,589,594,598,604,609,612,616,620,625,628,632
+		2,36,7,36,2,37,7,37,2,38,7,38,2,39,7,39,2,40,7,40,1,0,1,0,1,1,3,1,86,8,
+		1,1,1,4,1,89,8,1,11,1,12,1,90,1,1,1,1,4,1,95,8,1,11,1,12,1,96,3,1,99,8,
+		1,1,1,1,1,3,1,103,8,1,1,1,4,1,106,8,1,11,1,12,1,107,3,1,110,8,1,1,2,3,
+		2,113,8,2,1,2,1,2,1,3,1,3,3,3,119,8,3,1,4,1,4,3,4,123,8,4,1,5,1,5,3,5,
+		127,8,5,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,1,6,3,6,139,8,6,1,7,1,7,1,
+		7,1,8,3,8,145,8,8,1,8,1,8,1,9,1,9,1,9,1,9,3,9,153,8,9,1,10,1,10,1,10,1,
+		10,1,10,3,10,160,8,10,1,11,3,11,163,8,11,1,11,1,11,1,11,5,11,168,8,11,
+		10,11,12,11,171,9,11,1,11,3,11,174,8,11,1,12,1,12,3,12,178,8,12,1,13,1,
+		13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,
+		13,1,13,1,13,3,13,198,8,13,1,14,1,14,3,14,202,8,14,1,15,1,15,1,16,3,16,
+		207,8,16,1,16,1,16,3,16,211,8,16,1,16,1,16,3,16,215,8,16,1,16,1,16,3,16,
+		219,8,16,1,16,1,16,3,16,223,8,16,1,16,1,16,3,16,227,8,16,1,16,1,16,3,16,
+		231,8,16,1,16,1,16,3,16,235,8,16,1,16,1,16,3,16,239,8,16,1,16,1,16,3,16,
+		243,8,16,1,16,1,16,3,16,247,8,16,1,16,1,16,3,16,251,8,16,1,16,1,16,3,16,
+		255,8,16,1,16,3,16,258,8,16,1,17,1,17,1,17,1,17,1,17,3,17,265,8,17,1,18,
+		1,18,3,18,269,8,18,1,18,1,18,1,19,1,19,3,19,275,8,19,1,20,3,20,278,8,20,
+		1,20,1,20,3,20,282,8,20,1,20,1,20,1,21,1,21,3,21,288,8,21,1,22,1,22,3,
+		22,292,8,22,1,22,1,22,1,22,3,22,297,8,22,1,22,3,22,300,8,22,1,23,1,23,
+		3,23,304,8,23,1,24,1,24,3,24,308,8,24,1,24,1,24,1,25,1,25,3,25,314,8,25,
+		1,25,1,25,1,25,3,25,319,8,25,1,25,3,25,322,8,25,1,26,1,26,3,26,326,8,26,
+		1,27,1,27,3,27,330,8,27,1,27,1,27,1,27,3,27,335,8,27,1,27,1,27,1,27,3,
+		27,340,8,27,1,27,1,27,1,27,3,27,345,8,27,1,27,3,27,348,8,27,1,28,1,28,
+		3,28,352,8,28,1,28,1,28,1,28,3,28,357,8,28,1,28,1,28,1,28,3,28,362,8,28,
+		1,28,3,28,365,8,28,1,29,3,29,368,8,29,1,29,1,29,3,29,372,8,29,1,29,1,29,
+		3,29,376,8,29,1,29,1,29,3,29,380,8,29,1,29,3,29,383,8,29,1,30,1,30,3,30,
+		387,8,30,1,30,1,30,3,30,391,8,30,1,30,1,30,3,30,395,8,30,1,30,1,30,3,30,
+		399,8,30,1,30,3,30,402,8,30,1,31,1,31,3,31,406,8,31,1,32,1,32,3,32,410,
+		8,32,1,32,1,32,3,32,414,8,32,1,33,1,33,3,33,418,8,33,1,33,1,33,1,33,3,
+		33,423,8,33,1,33,1,33,1,33,3,33,428,8,33,1,33,3,33,431,8,33,1,34,1,34,
+		1,34,1,34,3,34,437,8,34,1,35,1,35,1,36,1,36,1,36,1,36,3,36,445,8,36,1,
+		37,3,37,448,8,37,1,37,1,37,3,37,452,8,37,1,37,1,37,1,38,3,38,457,8,38,
+		1,38,1,38,3,38,461,8,38,1,38,1,38,1,39,3,39,466,8,39,1,39,1,39,3,39,470,
+		8,39,1,39,1,39,1,39,1,39,1,40,3,40,477,8,40,1,40,1,40,3,40,481,8,40,1,
+		40,1,40,3,40,485,8,40,1,40,1,40,1,40,0,0,41,0,2,4,6,8,10,12,14,16,18,20,
+		22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,
+		70,72,74,76,78,80,0,7,1,0,1,10,2,0,78,78,88,88,1,0,2,10,1,0,1,8,1,0,1,
+		4,16,0,14,23,27,28,32,32,35,38,48,48,50,50,56,58,63,63,68,69,71,71,73,
+		73,78,78,83,84,88,88,92,99,101,103,1,0,14,103,569,0,82,1,0,0,0,2,85,1,
+		0,0,0,4,112,1,0,0,0,6,116,1,0,0,0,8,120,1,0,0,0,10,124,1,0,0,0,12,138,
+		1,0,0,0,14,140,1,0,0,0,16,144,1,0,0,0,18,152,1,0,0,0,20,159,1,0,0,0,22,
+		162,1,0,0,0,24,177,1,0,0,0,26,197,1,0,0,0,28,199,1,0,0,0,30,203,1,0,0,
+		0,32,257,1,0,0,0,34,264,1,0,0,0,36,266,1,0,0,0,38,274,1,0,0,0,40,277,1,
+		0,0,0,42,287,1,0,0,0,44,299,1,0,0,0,46,303,1,0,0,0,48,305,1,0,0,0,50,321,
+		1,0,0,0,52,325,1,0,0,0,54,347,1,0,0,0,56,364,1,0,0,0,58,382,1,0,0,0,60,
+		401,1,0,0,0,62,405,1,0,0,0,64,407,1,0,0,0,66,430,1,0,0,0,68,436,1,0,0,
+		0,70,438,1,0,0,0,72,444,1,0,0,0,74,447,1,0,0,0,76,456,1,0,0,0,78,465,1,
+		0,0,0,80,476,1,0,0,0,82,83,7,0,0,0,83,1,1,0,0,0,84,86,5,78,0,0,85,84,1,
+		0,0,0,85,86,1,0,0,0,86,88,1,0,0,0,87,89,3,0,0,0,88,87,1,0,0,0,89,90,1,
+		0,0,0,90,88,1,0,0,0,90,91,1,0,0,0,91,98,1,0,0,0,92,94,5,96,0,0,93,95,3,
+		0,0,0,94,93,1,0,0,0,95,96,1,0,0,0,96,94,1,0,0,0,96,97,1,0,0,0,97,99,1,
+		0,0,0,98,92,1,0,0,0,98,99,1,0,0,0,99,109,1,0,0,0,100,102,5,18,0,0,101,
+		103,7,1,0,0,102,101,1,0,0,0,102,103,1,0,0,0,103,105,1,0,0,0,104,106,3,
+		0,0,0,105,104,1,0,0,0,106,107,1,0,0,0,107,105,1,0,0,0,107,108,1,0,0,0,
+		108,110,1,0,0,0,109,100,1,0,0,0,109,110,1,0,0,0,110,3,1,0,0,0,111,113,
+		5,1,0,0,112,111,1,0,0,0,112,113,1,0,0,0,113,114,1,0,0,0,114,115,3,0,0,
+		0,115,5,1,0,0,0,116,118,3,0,0,0,117,119,3,0,0,0,118,117,1,0,0,0,118,119,
+		1,0,0,0,119,7,1,0,0,0,120,122,3,0,0,0,121,123,3,0,0,0,122,121,1,0,0,0,
+		122,123,1,0,0,0,123,9,1,0,0,0,124,126,3,0,0,0,125,127,3,0,0,0,126,125,
+		1,0,0,0,126,127,1,0,0,0,127,11,1,0,0,0,128,129,3,0,0,0,129,130,3,0,0,0,
+		130,131,3,0,0,0,131,139,1,0,0,0,132,133,5,1,0,0,133,134,3,0,0,0,134,135,
+		5,12,0,0,135,136,3,0,0,0,136,137,3,0,0,0,137,139,1,0,0,0,138,128,1,0,0,
+		0,138,132,1,0,0,0,139,13,1,0,0,0,140,141,7,2,0,0,141,142,3,0,0,0,142,15,
+		1,0,0,0,143,145,5,1,0,0,144,143,1,0,0,0,144,145,1,0,0,0,145,146,1,0,0,
+		0,146,147,7,3,0,0,147,17,1,0,0,0,148,149,7,4,0,0,149,153,3,0,0,0,150,151,
+		5,5,0,0,151,153,5,1,0,0,152,148,1,0,0,0,152,150,1,0,0,0,153,19,1,0,0,0,
+		154,155,3,22,11,0,155,156,5,0,0,1,156,160,1,0,0,0,157,158,5,12,0,0,158,
+		160,5,0,0,1,159,154,1,0,0,0,159,157,1,0,0,0,160,21,1,0,0,0,161,163,5,12,
+		0,0,162,161,1,0,0,0,162,163,1,0,0,0,163,164,1,0,0,0,164,169,3,24,12,0,
+		165,166,5,12,0,0,166,168,3,24,12,0,167,165,1,0,0,0,168,171,1,0,0,0,169,
+		167,1,0,0,0,169,170,1,0,0,0,170,173,1,0,0,0,171,169,1,0,0,0,172,174,5,
+		12,0,0,173,172,1,0,0,0,173,174,1,0,0,0,174,23,1,0,0,0,175,178,3,26,13,
+		0,176,178,5,13,0,0,177,175,1,0,0,0,177,176,1,0,0,0,178,25,1,0,0,0,179,
+		198,3,2,1,0,180,181,3,28,14,0,181,182,5,11,0,0,182,198,1,0,0,0,183,198,
+		3,30,15,0,184,198,3,32,16,0,185,198,3,34,17,0,186,198,3,36,18,0,187,198,
+		3,40,20,0,188,198,3,44,22,0,189,198,3,50,25,0,190,198,3,54,27,0,191,198,
+		3,58,29,0,192,198,3,56,28,0,193,198,3,60,30,0,194,198,3,64,32,0,195,198,
+		3,66,33,0,196,198,3,72,36,0,197,179,1,0,0,0,197,180,1,0,0,0,197,183,1,
+		0,0,0,197,184,1,0,0,0,197,185,1,0,0,0,197,186,1,0,0,0,197,187,1,0,0,0,
+		197,188,1,0,0,0,197,189,1,0,0,0,197,190,1,0,0,0,197,191,1,0,0,0,197,192,
+		1,0,0,0,197,193,1,0,0,0,197,194,1,0,0,0,197,195,1,0,0,0,197,196,1,0,0,
+		0,198,27,1,0,0,0,199,201,5,25,0,0,200,202,5,12,0,0,201,200,1,0,0,0,201,
+		202,1,0,0,0,202,29,1,0,0,0,203,204,7,5,0,0,204,31,1,0,0,0,205,207,3,28,
+		14,0,206,205,1,0,0,0,206,207,1,0,0,0,207,208,1,0,0,0,208,258,5,26,0,0,
+		209,211,3,28,14,0,210,209,1,0,0,0,210,211,1,0,0,0,211,212,1,0,0,0,212,
+		258,5,31,0,0,213,215,3,28,14,0,214,213,1,0,0,0,214,215,1,0,0,0,215,216,
+		1,0,0,0,216,258,5,40,0,0,217,219,3,28,14,0,218,217,1,0,0,0,218,219,1,0,
+		0,0,219,220,1,0,0,0,220,258,5,41,0,0,221,223,3,28,14,0,222,221,1,0,0,0,
+		222,223,1,0,0,0,223,224,1,0,0,0,224,258,5,42,0,0,225,227,3,28,14,0,226,
+		225,1,0,0,0,226,227,1,0,0,0,227,228,1,0,0,0,228,258,5,43,0,0,229,231,3,
+		28,14,0,230,229,1,0,0,0,230,231,1,0,0,0,231,232,1,0,0,0,232,258,5,55,0,
+		0,233,235,3,28,14,0,234,233,1,0,0,0,234,235,1,0,0,0,235,236,1,0,0,0,236,
+		258,5,60,0,0,237,239,3,28,14,0,238,237,1,0,0,0,238,239,1,0,0,0,239,240,
+		1,0,0,0,240,258,5,61,0,0,241,243,3,28,14,0,242,241,1,0,0,0,242,243,1,0,
+		0,0,243,244,1,0,0,0,244,258,5,62,0,0,245,247,3,28,14,0,246,245,1,0,0,0,
+		246,247,1,0,0,0,247,248,1,0,0,0,248,258,5,81,0,0,249,251,3,28,14,0,250,
+		249,1,0,0,0,250,251,1,0,0,0,251,252,1,0,0,0,252,258,5,82,0,0,253,255,3,
+		28,14,0,254,253,1,0,0,0,254,255,1,0,0,0,255,256,1,0,0,0,256,258,5,91,0,
+		0,257,206,1,0,0,0,257,210,1,0,0,0,257,214,1,0,0,0,257,218,1,0,0,0,257,
+		222,1,0,0,0,257,226,1,0,0,0,257,230,1,0,0,0,257,234,1,0,0,0,257,238,1,
+		0,0,0,257,242,1,0,0,0,257,246,1,0,0,0,257,250,1,0,0,0,257,254,1,0,0,0,
+		258,33,1,0,0,0,259,260,3,28,14,0,260,261,5,74,0,0,261,265,1,0,0,0,262,
+		265,5,104,0,0,263,265,5,105,0,0,264,259,1,0,0,0,264,262,1,0,0,0,264,263,
+		1,0,0,0,265,35,1,0,0,0,266,268,5,61,0,0,267,269,5,12,0,0,268,267,1,0,0,
+		0,268,269,1,0,0,0,269,270,1,0,0,0,270,271,3,38,19,0,271,37,1,0,0,0,272,
+		275,3,4,2,0,273,275,3,48,24,0,274,272,1,0,0,0,274,273,1,0,0,0,275,39,1,
+		0,0,0,276,278,3,28,14,0,277,276,1,0,0,0,277,278,1,0,0,0,278,279,1,0,0,
+		0,279,281,5,89,0,0,280,282,5,12,0,0,281,280,1,0,0,0,281,282,1,0,0,0,282,
+		283,1,0,0,0,283,284,3,42,21,0,284,41,1,0,0,0,285,288,3,16,8,0,286,288,
+		3,48,24,0,287,285,1,0,0,0,287,286,1,0,0,0,288,43,1,0,0,0,289,291,5,72,
+		0,0,290,292,5,12,0,0,291,290,1,0,0,0,291,292,1,0,0,0,292,293,1,0,0,0,293,
+		300,3,46,23,0,294,296,5,87,0,0,295,297,5,12,0,0,296,295,1,0,0,0,296,297,
+		1,0,0,0,297,298,1,0,0,0,298,300,3,8,4,0,299,289,1,0,0,0,299,294,1,0,0,
+		0,300,45,1,0,0,0,301,304,3,18,9,0,302,304,3,48,24,0,303,301,1,0,0,0,303,
+		302,1,0,0,0,304,47,1,0,0,0,305,307,5,53,0,0,306,308,5,12,0,0,307,306,1,
+		0,0,0,307,308,1,0,0,0,308,309,1,0,0,0,309,310,3,8,4,0,310,49,1,0,0,0,311,
+		313,5,39,0,0,312,314,5,12,0,0,313,312,1,0,0,0,313,314,1,0,0,0,314,315,
+		1,0,0,0,315,322,3,52,26,0,316,318,5,65,0,0,317,319,5,12,0,0,318,317,1,
+		0,0,0,318,319,1,0,0,0,319,320,1,0,0,0,320,322,3,10,5,0,321,311,1,0,0,0,
+		321,316,1,0,0,0,322,51,1,0,0,0,323,326,3,10,5,0,324,326,3,48,24,0,325,
+		323,1,0,0,0,325,324,1,0,0,0,326,53,1,0,0,0,327,329,5,45,0,0,328,330,5,
+		12,0,0,329,328,1,0,0,0,329,330,1,0,0,0,330,331,1,0,0,0,331,348,3,62,31,
+		0,332,334,5,46,0,0,333,335,5,12,0,0,334,333,1,0,0,0,334,335,1,0,0,0,335,
+		336,1,0,0,0,336,348,3,62,31,0,337,339,5,51,0,0,338,340,5,12,0,0,339,338,
+		1,0,0,0,339,340,1,0,0,0,340,341,1,0,0,0,341,348,3,62,31,0,342,344,5,85,
+		0,0,343,345,5,12,0,0,344,343,1,0,0,0,344,345,1,0,0,0,345,346,1,0,0,0,346,
+		348,3,6,3,0,347,327,1,0,0,0,347,332,1,0,0,0,347,337,1,0,0,0,347,342,1,
+		0,0,0,348,55,1,0,0,0,349,351,5,75,0,0,350,352,5,12,0,0,351,350,1,0,0,0,
+		351,352,1,0,0,0,352,353,1,0,0,0,353,365,3,8,4,0,354,356,5,76,0,0,355,357,
+		5,12,0,0,356,355,1,0,0,0,356,357,1,0,0,0,357,358,1,0,0,0,358,365,3,8,4,
+		0,359,361,5,66,0,0,360,362,5,12,0,0,361,360,1,0,0,0,361,362,1,0,0,0,362,
+		363,1,0,0,0,363,365,3,8,4,0,364,349,1,0,0,0,364,354,1,0,0,0,364,359,1,
+		0,0,0,365,57,1,0,0,0,366,368,3,28,14,0,367,366,1,0,0,0,367,368,1,0,0,0,
+		368,369,1,0,0,0,369,371,5,47,0,0,370,372,5,12,0,0,371,370,1,0,0,0,371,
+		372,1,0,0,0,372,373,1,0,0,0,373,383,3,62,31,0,374,376,3,28,14,0,375,374,
+		1,0,0,0,375,376,1,0,0,0,376,377,1,0,0,0,377,379,5,52,0,0,378,380,5,12,
+		0,0,379,378,1,0,0,0,379,380,1,0,0,0,380,381,1,0,0,0,381,383,3,62,31,0,
+		382,367,1,0,0,0,382,375,1,0,0,0,383,59,1,0,0,0,384,402,1,0,0,0,385,387,
+		3,28,14,0,386,385,1,0,0,0,386,387,1,0,0,0,387,388,1,0,0,0,388,390,5,77,
+		0,0,389,391,5,12,0,0,390,389,1,0,0,0,390,391,1,0,0,0,391,392,1,0,0,0,392,
+		402,3,8,4,0,393,395,3,28,14,0,394,393,1,0,0,0,394,395,1,0,0,0,395,396,
+		1,0,0,0,396,398,5,67,0,0,397,399,5,12,0,0,398,397,1,0,0,0,398,399,1,0,
+		0,0,399,400,1,0,0,0,400,402,3,8,4,0,401,384,1,0,0,0,401,386,1,0,0,0,401,
+		394,1,0,0,0,402,61,1,0,0,0,403,406,3,6,3,0,404,406,3,48,24,0,405,403,1,
+		0,0,0,405,404,1,0,0,0,406,63,1,0,0,0,407,409,5,79,0,0,408,410,5,12,0,0,
+		409,408,1,0,0,0,409,410,1,0,0,0,410,413,1,0,0,0,411,414,3,70,35,0,412,
+		414,3,14,7,0,413,411,1,0,0,0,413,412,1,0,0,0,414,65,1,0,0,0,415,417,5,
+		64,0,0,416,418,5,12,0,0,417,416,1,0,0,0,417,418,1,0,0,0,418,419,1,0,0,
+		0,419,431,3,68,34,0,420,422,5,86,0,0,421,423,5,12,0,0,422,421,1,0,0,0,
+		422,423,1,0,0,0,423,424,1,0,0,0,424,431,3,8,4,0,425,427,5,74,0,0,426,428,
+		5,12,0,0,427,426,1,0,0,0,427,428,1,0,0,0,428,429,1,0,0,0,429,431,3,68,
+		34,0,430,415,1,0,0,0,430,420,1,0,0,0,430,425,1,0,0,0,431,67,1,0,0,0,432,
+		437,3,12,6,0,433,437,3,70,35,0,434,437,3,14,7,0,435,437,3,48,24,0,436,
+		432,1,0,0,0,436,433,1,0,0,0,436,434,1,0,0,0,436,435,1,0,0,0,437,69,1,0,
+		0,0,438,439,7,6,0,0,439,71,1,0,0,0,440,445,3,74,37,0,441,445,3,76,38,0,
+		442,445,3,78,39,0,443,445,3,80,40,0,444,440,1,0,0,0,444,441,1,0,0,0,444,
+		442,1,0,0,0,444,443,1,0,0,0,445,73,1,0,0,0,446,448,3,28,14,0,447,446,1,
+		0,0,0,447,448,1,0,0,0,448,449,1,0,0,0,449,451,5,70,0,0,450,452,5,12,0,
+		0,451,450,1,0,0,0,451,452,1,0,0,0,452,453,1,0,0,0,453,454,3,68,34,0,454,
+		75,1,0,0,0,455,457,3,28,14,0,456,455,1,0,0,0,456,457,1,0,0,0,457,458,1,
+		0,0,0,458,460,5,80,0,0,459,461,5,12,0,0,460,459,1,0,0,0,460,461,1,0,0,
+		0,461,462,1,0,0,0,462,463,3,68,34,0,463,77,1,0,0,0,464,466,3,28,14,0,465,
+		464,1,0,0,0,465,466,1,0,0,0,466,467,1,0,0,0,467,469,5,100,0,0,468,470,
+		5,12,0,0,469,468,1,0,0,0,469,470,1,0,0,0,470,471,1,0,0,0,471,472,3,62,
+		31,0,472,473,5,12,0,0,473,474,3,68,34,0,474,79,1,0,0,0,475,477,3,28,14,
+		0,476,475,1,0,0,0,476,477,1,0,0,0,477,478,1,0,0,0,478,480,5,90,0,0,479,
+		481,5,12,0,0,480,479,1,0,0,0,480,481,1,0,0,0,481,482,1,0,0,0,482,484,3,
+		42,21,0,483,485,5,12,0,0,484,483,1,0,0,0,484,485,1,0,0,0,485,486,1,0,0,
+		0,486,487,3,68,34,0,487,81,1,0,0,0,87,85,90,96,98,102,107,109,112,118,
+		122,126,138,144,152,159,162,169,173,177,197,201,206,210,214,218,222,226,
+		230,234,238,242,246,250,254,257,264,268,274,277,281,287,291,296,299,303,
+		307,313,318,321,325,329,334,339,344,347,351,356,361,364,367,371,375,379,
+		382,386,390,394,398,401,405,409,413,417,422,427,430,436,444,447,451,456,
+		460,465,469,476,480,484
 	};
 
 	public static readonly ATN _ATN =

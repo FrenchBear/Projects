@@ -25,11 +25,15 @@ public class Program
         }
         */
 
+        /*
         //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\sum.t59";
         const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master Library\ML-01.T59";
 
         string input = File.ReadAllText(filePath);
         Console.WriteLine($"Parsing file: {filePath}...");
+        */
+
+        string input = "LBL CLR 5 SUM Ind 12";
 
         // 2. The ANTLR parsing pipeline
         var inputStream = new AntlrInputStream(input);
@@ -62,7 +66,7 @@ public class Program
 
         // 6. Run the visitor (Goal 2)
         Console.WriteLine("\nRunning visitor on the parse tree...");
-        var visitor = new MyTi58Visitor();
+        var visitor = new MyTi58Visitor(parser);
         visitor.Visit(tree);
 
         Console.WriteLine("\nVisitor finished.");

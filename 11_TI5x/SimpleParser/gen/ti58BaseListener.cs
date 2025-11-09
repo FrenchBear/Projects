@@ -84,6 +84,18 @@ public partial class ti58BaseListener : Iti58Listener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitMemory([NotNull] ti58Parser.MemoryContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.indmemory"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterIndmemory([NotNull] ti58Parser.IndmemoryContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.indmemory"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitIndmemory([NotNull] ti58Parser.IndmemoryContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="ti58Parser.pgm_number"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -192,53 +204,17 @@ public partial class ti58BaseListener : Iti58Listener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitInstruction([NotNull] ti58Parser.InstructionContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.exponent"/>.
+	/// Enter a parse tree produced by <see cref="ti58Parser.inv"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterExponent([NotNull] ti58Parser.ExponentContext context) { }
+	public virtual void EnterInv([NotNull] ti58Parser.InvContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.exponent"/>.
+	/// Exit a parse tree produced by <see cref="ti58Parser.inv"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitExponent([NotNull] ti58Parser.ExponentContext context) { }
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.operator"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterOperator([NotNull] ti58Parser.OperatorContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.operator"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitOperator([NotNull] ti58Parser.OperatorContext context) { }
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.invert"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterInvert([NotNull] ti58Parser.InvertContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.invert"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitInvert([NotNull] ti58Parser.InvertContext context) { }
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.fix"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterFix([NotNull] ti58Parser.FixContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.fix"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitFix([NotNull] ti58Parser.FixContext context) { }
+	public virtual void ExitInv([NotNull] ti58Parser.InvContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="ti58Parser.atomic_instruction"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -252,29 +228,101 @@ public partial class ti58BaseListener : Iti58Listener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitAtomic_instruction([NotNull] ti58Parser.Atomic_instructionContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.memory_or_flag_instruction"/>.
+	/// Enter a parse tree produced by <see cref="ti58Parser.atomic_instruction_invertible"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterMemory_or_flag_instruction([NotNull] ti58Parser.Memory_or_flag_instructionContext context) { }
+	public virtual void EnterAtomic_instruction_invertible([NotNull] ti58Parser.Atomic_instruction_invertibleContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.memory_or_flag_instruction"/>.
+	/// Exit a parse tree produced by <see cref="ti58Parser.atomic_instruction_invertible"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitMemory_or_flag_instruction([NotNull] ti58Parser.Memory_or_flag_instructionContext context) { }
+	public virtual void ExitAtomic_instruction_invertible([NotNull] ti58Parser.Atomic_instruction_invertibleContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.memory_or_indirect"/>.
+	/// Enter a parse tree produced by <see cref="ti58Parser.atomic_instruction_inverted"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterMemory_or_indirect([NotNull] ti58Parser.Memory_or_indirectContext context) { }
+	public virtual void EnterAtomic_instruction_inverted([NotNull] ti58Parser.Atomic_instruction_invertedContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.memory_or_indirect"/>.
+	/// Exit a parse tree produced by <see cref="ti58Parser.atomic_instruction_inverted"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitMemory_or_indirect([NotNull] ti58Parser.Memory_or_indirectContext context) { }
+	public virtual void ExitAtomic_instruction_inverted([NotNull] ti58Parser.Atomic_instruction_invertedContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.fix_instruction"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterFix_instruction([NotNull] ti58Parser.Fix_instructionContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.fix_instruction"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitFix_instruction([NotNull] ti58Parser.Fix_instructionContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.single_digit_or_indirect"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterSingle_digit_or_indirect([NotNull] ti58Parser.Single_digit_or_indirectContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.single_digit_or_indirect"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitSingle_digit_or_indirect([NotNull] ti58Parser.Single_digit_or_indirectContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.flag_instruction"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterFlag_instruction([NotNull] ti58Parser.Flag_instructionContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.flag_instruction"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitFlag_instruction([NotNull] ti58Parser.Flag_instructionContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.flag_or_indirect"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterFlag_or_indirect([NotNull] ti58Parser.Flag_or_indirectContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.flag_or_indirect"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitFlag_or_indirect([NotNull] ti58Parser.Flag_or_indirectContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.op_instruction"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterOp_instruction([NotNull] ti58Parser.Op_instructionContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.op_instruction"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitOp_instruction([NotNull] ti58Parser.Op_instructionContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.op_number_or_indirect"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterOp_number_or_indirect([NotNull] ti58Parser.Op_number_or_indirectContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.op_number_or_indirect"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitOp_number_or_indirect([NotNull] ti58Parser.Op_number_or_indirectContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="ti58Parser.indirect_memory"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -287,6 +335,90 @@ public partial class ti58BaseListener : Iti58Listener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitIndirect_memory([NotNull] ti58Parser.Indirect_memoryContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.pgm_instruction"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterPgm_instruction([NotNull] ti58Parser.Pgm_instructionContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.pgm_instruction"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitPgm_instruction([NotNull] ti58Parser.Pgm_instructionContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.pgm_number_or_indirect"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterPgm_number_or_indirect([NotNull] ti58Parser.Pgm_number_or_indirectContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.pgm_number_or_indirect"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitPgm_number_or_indirect([NotNull] ti58Parser.Pgm_number_or_indirectContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.memory_instruction"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterMemory_instruction([NotNull] ti58Parser.Memory_instructionContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.memory_instruction"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitMemory_instruction([NotNull] ti58Parser.Memory_instructionContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.memory_instruction_indirect"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterMemory_instruction_indirect([NotNull] ti58Parser.Memory_instruction_indirectContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.memory_instruction_indirect"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitMemory_instruction_indirect([NotNull] ti58Parser.Memory_instruction_indirectContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.memory_instruction_invertible"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterMemory_instruction_invertible([NotNull] ti58Parser.Memory_instruction_invertibleContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.memory_instruction_invertible"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitMemory_instruction_invertible([NotNull] ti58Parser.Memory_instruction_invertibleContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.memory_instruction_invertible_indirect"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterMemory_instruction_invertible_indirect([NotNull] ti58Parser.Memory_instruction_invertible_indirectContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.memory_instruction_invertible_indirect"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitMemory_instruction_invertible_indirect([NotNull] ti58Parser.Memory_instruction_invertible_indirectContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.memory_or_indirect"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterMemory_or_indirect([NotNull] ti58Parser.Memory_or_indirectContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.memory_or_indirect"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitMemory_or_indirect([NotNull] ti58Parser.Memory_or_indirectContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="ti58Parser.label_instruction"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -336,18 +468,6 @@ public partial class ti58BaseListener : Iti58Listener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitKey_label([NotNull] ti58Parser.Key_labelContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.flag_or_indirect"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterFlag_or_indirect([NotNull] ti58Parser.Flag_or_indirectContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.flag_or_indirect"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitFlag_or_indirect([NotNull] ti58Parser.Flag_or_indirectContext context) { }
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="ti58Parser.conditional_instruction"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -396,18 +516,6 @@ public partial class ti58BaseListener : Iti58Listener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitDecrement_and_skip_on_zero_statement([NotNull] ti58Parser.Decrement_and_skip_on_zero_statementContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.single_digit_or_indirect"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterSingle_digit_or_indirect([NotNull] ti58Parser.Single_digit_or_indirectContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.single_digit_or_indirect"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitSingle_digit_or_indirect([NotNull] ti58Parser.Single_digit_or_indirectContext context) { }
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="ti58Parser.test_flag_statement"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -419,54 +527,6 @@ public partial class ti58BaseListener : Iti58Listener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitTest_flag_statement([NotNull] ti58Parser.Test_flag_statementContext context) { }
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.op_instruction"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterOp_instruction([NotNull] ti58Parser.Op_instructionContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.op_instruction"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitOp_instruction([NotNull] ti58Parser.Op_instructionContext context) { }
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.op_number_or_indirect"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterOp_number_or_indirect([NotNull] ti58Parser.Op_number_or_indirectContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.op_number_or_indirect"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitOp_number_or_indirect([NotNull] ti58Parser.Op_number_or_indirectContext context) { }
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.pgm_instruction"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterPgm_instruction([NotNull] ti58Parser.Pgm_instructionContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.pgm_instruction"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitPgm_instruction([NotNull] ti58Parser.Pgm_instructionContext context) { }
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.pgm_number_or_indirect"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterPgm_number_or_indirect([NotNull] ti58Parser.Pgm_number_or_indirectContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.pgm_number_or_indirect"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitPgm_number_or_indirect([NotNull] ti58Parser.Pgm_number_or_indirectContext context) { }
 
 	/// <inheritdoc/>
 	/// <remarks>The default implementation does nothing.</remarks>
