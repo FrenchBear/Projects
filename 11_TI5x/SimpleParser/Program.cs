@@ -25,15 +25,13 @@ public class Program
         }
         */
 
-        /*
         //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\sum.t59";
-        const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master Library\ML-01.T59";
+        const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master Library\ML-02.T59";
 
         string input = File.ReadAllText(filePath);
         Console.WriteLine($"Parsing file: {filePath}...");
-        */
 
-        string input = "LBL CLR 5 SUM Ind 12";
+        //string input = "# Test\nLBL CLR\nSUM 12\nSUM Ind 12\nINV SUM 12\nINV SUM IND 12\nGTO 25\nSBR CLR\n-3.1416\nOP 25\nOP Ind 12\nOP* 12\nGTO 123\nDsz 4 123\n";
 
         // 2. The ANTLR parsing pipeline
         var inputStream = new AntlrInputStream(input);
@@ -50,7 +48,7 @@ public class Program
         //    !!! YOU MUST CHANGE THIS !!!
         //    Replace 'program' with the name of your grammar's first rule.
         //    It's case-sensitive! Find it at the top of ti58.g4.
-        IParseTree tree = parser.program();
+        IParseTree tree = parser.startRule();
 
         // 5. Check for validation (Goal 1)
         if (errorListener.HadError)

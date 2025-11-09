@@ -4,6 +4,7 @@
 		<OutputType>Exe</OutputType>
 		<TargetFramework>net9.0</TargetFramework>
 		<RootNamespace>SimpleParser</RootNamespace>
+		<WarningLevel>0</WarningLevel>
 	</PropertyGroup>
 
 	<ItemGroup>

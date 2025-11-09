@@ -268,7 +268,7 @@ indirect_memory: I40_indirect WS? indmemory;
 
 pgm_instruction
     : I36_program WS? pgm_number_or_indirect
-	| I62_program_indirect WS? pgm_number
+	| I62_program_indirect WS? indmemory
     ;
 
 pgm_number_or_indirect: pgm_number | indirect_memory ;
@@ -291,8 +291,8 @@ memory_instruction_invertible
 	| inv? I49_product WS? memory_or_indirect
     ;
 
-memory_instruction_invertible_indirect:
-	| inv? I74_sum_indirect WS? indmemory
+memory_instruction_invertible_indirect
+	: inv? I74_sum_indirect WS? indmemory
 	| inv? I64_product_indirect WS? indmemory
     ;
 
