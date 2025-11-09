@@ -4,7 +4,7 @@ using System.IO;
 namespace SimpleParser;
 
 // Inherit from BaseErrorListener to override the default error handling
-public class MyErrorListener : BaseErrorListener
+public class MyErrorListener: BaseErrorListener
 {
     // Public property to check if an error occurred
     public bool HadError { get; private set; } = false;

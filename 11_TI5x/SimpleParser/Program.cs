@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Runtime.CompilerServices;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 
@@ -26,7 +25,8 @@ public class Program
         }
         */
 
-        const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\sample.t59";
+        //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\sum.t59";
+        const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master Library\ML-01.T59";
 
         string input = File.ReadAllText(filePath);
         Console.WriteLine($"Parsing file: {filePath}...");
