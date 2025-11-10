@@ -14,6 +14,7 @@ using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace SimpleParser;
 
@@ -73,22 +74,27 @@ public class MyTi58VisitorBaseColorize: ti58BaseVisitor<object>
                 Console.WriteLine();
             else
                 Colorize(node, SyntaxCategories.WhiteSpace);
-            goto exit;
+            goto Exit;
         }
         if (tokenType == ti58Lexer.LineComment)
         {
             Colorize(node, SyntaxCategories.Comment);
-            goto exit;
+            goto Exit;
         }
         if (tokenType == ti58Lexer.Eof)
         {
             Console.WriteLine();
-            goto exit;
+            goto Exit;
         }
         if (tokenType == ti58Lexer.Bang)
         {
             Colorize(node, SyntaxCategories.Instruction);
-            goto exit;
+            goto Exit;
+        }
+        if (tokenType == ti58Lexer.I40_indirect)
+        {
+            Colorize(node, SyntaxCategories.IndirectMemory);
+            goto Exit;
         }
 
         // Build a list of parent types (rules) so later we can easily check whether
@@ -113,44 +119,43 @@ public class MyTi58VisitorBaseColorize: ti58BaseVisitor<object>
         if (hierarchyInt.Contains(ti58Parser.RULE_number))
         {
             Colorize(node, SyntaxCategories.Number);
-            goto exit;
+            goto Exit;
         }
 
         if (hierarchyInt.Contains(ti58Parser.RULE_memory) || hierarchyInt.Contains(ti58Parser.RULE_op_number) || hierarchyInt.Contains(ti58Parser.RULE_pgm_number) || hierarchyInt.Contains(ti58Parser.RULE_single_digit))
         {
             Colorize(node, SyntaxCategories.MemoryOrNumber);
-            goto exit;
+            goto Exit;
         }
 
         if (hierarchyInt.Contains(ti58Parser.RULE_indmemory))
         {
             Colorize(node, SyntaxCategories.IndirectMemory);
-            goto exit;
+            goto Exit;
         }
 
         // Detect Key label before label
         if (hierarchyInt.Contains(ti58Parser.RULE_key_label) || hierarchyInt.Contains(ti58Parser.RULE_numeric_key_label))
         {
             Colorize(node, SyntaxCategories.KeyLabel);
-            goto exit;
+            goto Exit;
         }
 
         if (hierarchyInt.Contains(ti58Parser.RULE_address_label))
         {
             Colorize(node, SyntaxCategories.AddressLabel);
-            goto exit;
+            goto Exit;
         }
 
+    // If there is no match, print all info for easy debugging
+    Trace:
         // Get the symbolic name from the parser's vocabulary
         string symbolicName = _parser.Vocabulary.GetSymbolicName(tokenType);
         if (symbolicName != null && symbolicName.StartsWith('I'))
         {
             Colorize(node, SyntaxCategories.Instruction);
-            goto exit;
+            goto Exit;
         }
-
-
-        // If there is no match, print all info for easy debugging
 
         // Create a list to hold the rule names
         var hierarchy = new List<string>();
@@ -172,7 +177,7 @@ public class MyTi58VisitorBaseColorize: ti58BaseVisitor<object>
         Console.WriteLine($"  -> Visiting: {node.GetText()} (Type: {symbolicName})");
         Console.WriteLine($"     Hierarchy: {string.Join(" / ", hierarchy)}");
 
-    exit:
+    Exit:
         return base.VisitTerminal(node);
     }
 }

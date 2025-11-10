@@ -351,43 +351,43 @@ public interface Iti58Listener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitInstruction_conditional([NotNull] ti58Parser.Instruction_conditionalContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.x_equals_t_statement"/>.
+	/// Enter a parse tree produced by <see cref="ti58Parser.instruction_x_equals_t"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterX_equals_t_statement([NotNull] ti58Parser.X_equals_t_statementContext context);
+	void EnterInstruction_x_equals_t([NotNull] ti58Parser.Instruction_x_equals_tContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.x_equals_t_statement"/>.
+	/// Exit a parse tree produced by <see cref="ti58Parser.instruction_x_equals_t"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitX_equals_t_statement([NotNull] ti58Parser.X_equals_t_statementContext context);
+	void ExitInstruction_x_equals_t([NotNull] ti58Parser.Instruction_x_equals_tContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.x_greater_or_equal_than_t_statement"/>.
+	/// Enter a parse tree produced by <see cref="ti58Parser.instruction_x_greater_or_equal_than_t"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterX_greater_or_equal_than_t_statement([NotNull] ti58Parser.X_greater_or_equal_than_t_statementContext context);
+	void EnterInstruction_x_greater_or_equal_than_t([NotNull] ti58Parser.Instruction_x_greater_or_equal_than_tContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.x_greater_or_equal_than_t_statement"/>.
+	/// Exit a parse tree produced by <see cref="ti58Parser.instruction_x_greater_or_equal_than_t"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitX_greater_or_equal_than_t_statement([NotNull] ti58Parser.X_greater_or_equal_than_t_statementContext context);
+	void ExitInstruction_x_greater_or_equal_than_t([NotNull] ti58Parser.Instruction_x_greater_or_equal_than_tContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.decrement_and_skip_on_zero_statement"/>.
+	/// Enter a parse tree produced by <see cref="ti58Parser.instruction_decrement_and_skip_on_zero"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterDecrement_and_skip_on_zero_statement([NotNull] ti58Parser.Decrement_and_skip_on_zero_statementContext context);
+	void EnterInstruction_decrement_and_skip_on_zero([NotNull] ti58Parser.Instruction_decrement_and_skip_on_zeroContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.decrement_and_skip_on_zero_statement"/>.
+	/// Exit a parse tree produced by <see cref="ti58Parser.instruction_decrement_and_skip_on_zero"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitDecrement_and_skip_on_zero_statement([NotNull] ti58Parser.Decrement_and_skip_on_zero_statementContext context);
+	void ExitInstruction_decrement_and_skip_on_zero([NotNull] ti58Parser.Instruction_decrement_and_skip_on_zeroContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.test_flag_statement"/>.
+	/// Enter a parse tree produced by <see cref="ti58Parser.instruction_test_flag"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterTest_flag_statement([NotNull] ti58Parser.Test_flag_statementContext context);
+	void EnterInstruction_test_flag([NotNull] ti58Parser.Instruction_test_flagContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.test_flag_statement"/>.
+	/// Exit a parse tree produced by <see cref="ti58Parser.instruction_test_flag"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitTest_flag_statement([NotNull] ti58Parser.Test_flag_statementContext context);
+	void ExitInstruction_test_flag([NotNull] ti58Parser.Instruction_test_flagContext context);
 }

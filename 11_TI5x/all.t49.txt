@@ -26,16 +26,16 @@ EE INV EE
 1 2 3 4 5 6 7 8 9 0 . +/-
 GTO 123 GTO 25 GTO CLR GTO Ind 12 GO* 12
 Pause
-x=t CLR x=t 25 x=t 421 x=t IND 12 EQ 111 EQ* 112
-INVx=t CLR Inv x=t 25 Inv x=t 421 INV  x=t IND 12 INVEQ 111 INV EQ* 112
+x=t CLR x=t 25 x=t 421 x=t IND 12 EQ 111 EQ* 12
+INVx=t CLR Inv x=t 25 Inv x=t 421 INV  x=t IND 12 INVEQ 111 INV EQ* 12
 Nop
 OP 17 OP Ind 27 OP* 37
 Deg Rad Grad
 SBR 123 SBR 25 SBR CLR SBR Ind 12
 INV SBR RTN
 Lbl 25 Lbl CLR Lbl LRN
-x≥t CLR x≥t 25 x≥t 421 x≥t IND 12 GE 111 GE* 112
-INVx≥t CLR inv x≥t 25 inv  x≥t 421 INV x≥t IND 12 INVGE 111 inv GE* 112
+x≥t CLR x≥t 25 x≥t 421 x≥t IND 12 GE 111 GE* 12
+INVx≥t CLR inv x≥t 25 inv  x≥t 421 INV x≥t IND 12 INVGE 111 inv GE* 12
 Σ+ INV SIG+
 x̄ INV AVG
 RST 

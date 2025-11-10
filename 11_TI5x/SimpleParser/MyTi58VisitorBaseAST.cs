@@ -72,21 +72,27 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
                     Console.WriteLine($"Number: {string.Join(" ", opCodes.Select(b => b.ToString("D2")))}: {mnemonic}");
                     break;
 
-                // Need to be placed before case ASTAtomicInstruction since ASTInstructionArg inherits from ASTAtomicInstruction
-                case ASTInstructionArg(_, _, var opCodes, var inverted, var mnemonic, YesNoImplicit argIndirect, byte _argValue):
+                // Need to be placed before case ASTInstructionAtomic since ASTInstructionArg inherits from ASTInstructionAtomic
+                case ASTInstructionArg(_, _, var opCodes, var inverted, var mnemonic, YesNoImplicit argIndirect, byte argValue):
                     Console.Write($"InstructionArg: {string.Join(" ", opCodes.Select(b => b.ToString("D2")))}: ");
-                    Console.WriteLine(mnemonic);
+                    Console.WriteLine($"{mnemonic}\tinverted: {inverted}  argIndirect: {argIndirect}  argValue: {argValue}");
                     break;
+
+                // Same thing here
+                case ASTInstructionBranch(_, _, var opCodes, var inverted, var mnemonic, YesNoImplicit targetIndirect, string targetMnemonic, int targetValue):
+                    Console.Write($"InstructionBranch: {string.Join(" ", opCodes.Select(b => b.ToString("D2")))}: ");
+                    Console.WriteLine($"{mnemonic}\tinverted: {inverted}  targetIndirect: {targetIndirect}  targetMnemonic: «{targetMnemonic}»  targetValue: {targetValue}");
+                    break;
+
 
                 case ASTInstructionAtomic(_, _, var opCodes, var inverted, var mnemonic):
                     Console.Write($"AtomicInstruction: {string.Join(" ", opCodes.Select(b => b.ToString("D2")))}: ");
-                    Console.WriteLine(mnemonic);
+                    Console.WriteLine($"{mnemonic}\tinverted: {inverted}");
                     break;
 
                 case ASTInstructionLabel(_, _, var opCodes, _, var mnemonic, var labelMnemonic, byte labelOpCode):
                     Console.Write($"LabelInstruction: {string.Join(" ", opCodes.Select(b => b.ToString("D2")))}: ");
-                    Console.Write(mnemonic);
-                    Console.WriteLine($"\t\tLabelMnemonic: «{labelMnemonic}» labelOpCode: {labelOpCode}");
+                    Console.WriteLine($"{mnemonic}\tLabelMnemonic: «{labelMnemonic}» labelOpCode: {labelOpCode}");
                     break;
 
                 default:
@@ -286,6 +292,14 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
 
 
     public override object VisitInstruction_branch([NotNull] ti58Parser.Instruction_branchContext context)
+        => InstructionBranch(context);
+    public override object VisitInstruction_x_equals_t([NotNull] ti58Parser.Instruction_x_equals_tContext context)
+        => InstructionBranch(context);
+    public override object VisitInstruction_x_greater_or_equal_than_t([NotNull] ti58Parser.Instruction_x_greater_or_equal_than_tContext context)
+        => InstructionBranch(context);
+
+
+    object InstructionBranch(ParserRuleContext context)
     {
         var tn = GetTerminalNodes(context);
         var text = context.GetText();
@@ -308,6 +322,12 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
         opCodes.Add(byte.Parse(symbolicName[1..3]));
         if (symbolicName.Contains("indirect"))
             targetIndirect = YesNoImplicit.Implicit;
+        else if (symbolicName.Contains("indextra"))
+        {
+            targetIndirect = YesNoImplicit.Yes;
+            opCodes.Add(40);
+        }
+
         MoveToNextSymbol(tn, ref ixInstruction);
 
         // Ind prefix?
@@ -330,31 +350,32 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
         {   // Instruction label
             targetMnemonic = tn[ixInstruction].GetText();
             Debug.Assert(symbolicName.StartsWith('I') && symbolicName[3] == '_');
+
             targetValue = byte.Parse(symbolicName[1..3]);
             opCodes.Add((byte)targetValue);
         }
         else
         {
-                int digitsCount = 0;
-                foreach (var d in tn[ixInstruction..])
-                    if (d.Symbol.Type != ti58Lexer.WS)
-                    {
-                        digitsCount++;
-                        targetValue = 10 * targetValue + byte.Parse(d.GetText());
-                    }
-                switch (digitsCount)
+            int digitsCount = 0;
+            foreach (var d in tn[ixInstruction..])
+                if (d.Symbol.Type != ti58Lexer.WS)
                 {
-                    case 2:
-                        targetMnemonic = $"{targetValue:D2}";
-                        opCodes.Add((byte)targetValue);
-                        break;
-                    case 3:
-                    case 4:
-                        targetMnemonic = $"{targetValue/100:D2} {targetValue % 100:D2}";
-                        opCodes.Add((byte)(targetValue/100));
-                        opCodes.Add((byte)(targetValue%100));
-                        break;
+                    digitsCount++;
+                    targetValue = 10 * targetValue + byte.Parse(d.GetText());
                 }
+            switch (digitsCount)
+            {
+                case 2:
+                    targetMnemonic = $"{targetValue:D2}";
+                    opCodes.Add((byte)targetValue);
+                    break;
+                case 3:
+                case 4:
+                    targetMnemonic = $"{targetValue / 100:D2} {targetValue % 100:D2}";
+                    opCodes.Add((byte)(targetValue / 100));
+                    opCodes.Add((byte)(targetValue % 100));
+                    break;
+            }
         }
 
         var aa = new ASTInstructionBranch(tn, context, opCodes, inverted, text, targetIndirect, targetMnemonic, targetValue);

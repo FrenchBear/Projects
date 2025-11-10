@@ -16,7 +16,6 @@
 // 2025-11-08   PV      First version
 // 2025-11-09   PV      Version 2, flatten model
 // 2025-11-10   PV      Added missing invert instructions (INV Write, INV List, INV ^), 10 flags and not 7
-// 2025-11-11   PV      Renamed rules for consistency; Ind can't be a Key label (otherwise GTO Ind xx is misinterpreted); x≥t ant x>=t are two distinct variants!; Added EQ* and GE*
 
 grammar ti58;
 
@@ -95,7 +94,6 @@ I64_product_indirect: 'PD*';
 I65_multiply: '*' | '×';
 I66_pause: 'Pause' | 'PAU';
 I67_x_equals_t: 'x=t' | 'EQ';
-I67_x_equals_t_indextra: 'EQ*';         // Extension, indextra means that Ind must be generated
 I68_nop: 'Nop';
 I69_operation: 'Op';
 I60_degrees: 'Deg';
@@ -106,8 +104,7 @@ I73_recall_indirect: 'RC*';
 I74_sum_indirect: 'SM*';
 I75_subtract: '-';
 I76_label: 'Lbl';
-I77_x_greater_or_equal_than_t: 'x≥t' | 'x>=t' | 'GE';
-I77_x_greater_or_equal_than_t_indextra: 'GE*';         // Extension, indextra means that Ind must be generated
+I77_x_greater_or_equal_than_t: 'x>=t' | 'GE';
 I78_sigma_plus: 'Σ+' | 'SIG+' | 'STA';
 I79_average: 'x̄' | 'AVG' | 'AVR';
 I70_radians: 'Rad';
@@ -316,7 +313,7 @@ key_label
 	| I36_program | I37_polar_to_rectangular | I38_sin | I39_cos | I30_tan
 
 	| I41_single_step | I42_store | I43_recall | I44_sum | I45_power
-	| I46_insert | I47_clear_memory | I48_exchange | I49_product        // | I40_indirect       Actually, Ind is forbidden!
+	| I46_insert | I47_clear_memory | I48_exchange | I49_product | I40_indirect
 
 	| I51_backstep | I52_exponent | I53_left_parenthesis | I54_right_parenthesis | I55_divide
 	| I56_delete | I57_engineering | I58_fix | I59_integer | I50_absolute
@@ -335,26 +332,20 @@ key_label
     ;
 
 instruction_conditional
-    : instruction_x_equals_t
-	| instruction_x_greater_or_equal_than_t
-	| instruction_decrement_and_skip_on_zero
-	| instruction_test_flag
+    : x_equals_t_statement
+	| x_greater_or_equal_than_t_statement
+	| decrement_and_skip_on_zero_statement
+	| test_flag_statement
     ;
 
 // x=t
-instruction_x_equals_t
-    : inv? I67_x_equals_t WS? address_or_label_or_indirect
-    | inv? I67_x_equals_t_indextra WS? indmemory
-    ;
+x_equals_t_statement: inv? I67_x_equals_t WS? address_or_label_or_indirect;
 
 // x>=t
-instruction_x_greater_or_equal_than_t
-    : inv? I77_x_greater_or_equal_than_t WS? address_or_label_or_indirect
-    | inv? I77_x_greater_or_equal_than_t_indextra WS? indmemory
-    ;
+x_greater_or_equal_than_t_statement: inv? I77_x_greater_or_equal_than_t WS? address_or_label_or_indirect;
 
 // Dsz (note that while officially only memories from 0 to 9 are supported, in fact all 99 memories are supported)
-instruction_decrement_and_skip_on_zero: inv? I97_dsz WS? memory_or_indirect WS address_or_label_or_indirect;
+decrement_and_skip_on_zero_statement: inv? I97_dsz WS? memory_or_indirect WS address_or_label_or_indirect;
 
 // If flg
-instruction_test_flag: inv? I87_if_flag WS? single_digit_or_indirect WS? address_or_label_or_indirect;
+test_flag_statement: inv? I87_if_flag WS? single_digit_or_indirect WS? address_or_label_or_indirect;

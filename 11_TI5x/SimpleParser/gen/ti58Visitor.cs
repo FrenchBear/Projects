@@ -224,27 +224,27 @@ public interface Iti58Visitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitInstruction_conditional([NotNull] ti58Parser.Instruction_conditionalContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="ti58Parser.x_equals_t_statement"/>.
+	/// Visit a parse tree produced by <see cref="ti58Parser.instruction_x_equals_t"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitX_equals_t_statement([NotNull] ti58Parser.X_equals_t_statementContext context);
+	Result VisitInstruction_x_equals_t([NotNull] ti58Parser.Instruction_x_equals_tContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="ti58Parser.x_greater_or_equal_than_t_statement"/>.
+	/// Visit a parse tree produced by <see cref="ti58Parser.instruction_x_greater_or_equal_than_t"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitX_greater_or_equal_than_t_statement([NotNull] ti58Parser.X_greater_or_equal_than_t_statementContext context);
+	Result VisitInstruction_x_greater_or_equal_than_t([NotNull] ti58Parser.Instruction_x_greater_or_equal_than_tContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="ti58Parser.decrement_and_skip_on_zero_statement"/>.
+	/// Visit a parse tree produced by <see cref="ti58Parser.instruction_decrement_and_skip_on_zero"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitDecrement_and_skip_on_zero_statement([NotNull] ti58Parser.Decrement_and_skip_on_zero_statementContext context);
+	Result VisitInstruction_decrement_and_skip_on_zero([NotNull] ti58Parser.Instruction_decrement_and_skip_on_zeroContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="ti58Parser.test_flag_statement"/>.
+	/// Visit a parse tree produced by <see cref="ti58Parser.instruction_test_flag"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitTest_flag_statement([NotNull] ti58Parser.Test_flag_statementContext context);
+	Result VisitInstruction_test_flag([NotNull] ti58Parser.Instruction_test_flagContext context);
 }

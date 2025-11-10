@@ -355,7 +355,7 @@ public partial class ti58BaseVisitor<Result> : AbstractParseTreeVisitor<Result>,
 	/// <return>The visitor result.</return>
 	public virtual Result VisitInstruction_conditional([NotNull] ti58Parser.Instruction_conditionalContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="ti58Parser.x_equals_t_statement"/>.
+	/// Visit a parse tree produced by <see cref="ti58Parser.instruction_x_equals_t"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -363,9 +363,9 @@ public partial class ti58BaseVisitor<Result> : AbstractParseTreeVisitor<Result>,
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitX_equals_t_statement([NotNull] ti58Parser.X_equals_t_statementContext context) { return VisitChildren(context); }
+	public virtual Result VisitInstruction_x_equals_t([NotNull] ti58Parser.Instruction_x_equals_tContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="ti58Parser.x_greater_or_equal_than_t_statement"/>.
+	/// Visit a parse tree produced by <see cref="ti58Parser.instruction_x_greater_or_equal_than_t"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -373,9 +373,9 @@ public partial class ti58BaseVisitor<Result> : AbstractParseTreeVisitor<Result>,
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitX_greater_or_equal_than_t_statement([NotNull] ti58Parser.X_greater_or_equal_than_t_statementContext context) { return VisitChildren(context); }
+	public virtual Result VisitInstruction_x_greater_or_equal_than_t([NotNull] ti58Parser.Instruction_x_greater_or_equal_than_tContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="ti58Parser.decrement_and_skip_on_zero_statement"/>.
+	/// Visit a parse tree produced by <see cref="ti58Parser.instruction_decrement_and_skip_on_zero"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -383,9 +383,9 @@ public partial class ti58BaseVisitor<Result> : AbstractParseTreeVisitor<Result>,
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitDecrement_and_skip_on_zero_statement([NotNull] ti58Parser.Decrement_and_skip_on_zero_statementContext context) { return VisitChildren(context); }
+	public virtual Result VisitInstruction_decrement_and_skip_on_zero([NotNull] ti58Parser.Instruction_decrement_and_skip_on_zeroContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="ti58Parser.test_flag_statement"/>.
+	/// Visit a parse tree produced by <see cref="ti58Parser.instruction_test_flag"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -393,5 +393,5 @@ public partial class ti58BaseVisitor<Result> : AbstractParseTreeVisitor<Result>,
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitTest_flag_statement([NotNull] ti58Parser.Test_flag_statementContext context) { return VisitChildren(context); }
+	public virtual Result VisitInstruction_test_flag([NotNull] ti58Parser.Instruction_test_flagContext context) { return VisitChildren(context); }
 }

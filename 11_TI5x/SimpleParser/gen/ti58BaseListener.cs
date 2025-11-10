@@ -420,53 +420,53 @@ public partial class ti58BaseListener : Iti58Listener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitInstruction_conditional([NotNull] ti58Parser.Instruction_conditionalContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.x_equals_t_statement"/>.
+	/// Enter a parse tree produced by <see cref="ti58Parser.instruction_x_equals_t"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterX_equals_t_statement([NotNull] ti58Parser.X_equals_t_statementContext context) { }
+	public virtual void EnterInstruction_x_equals_t([NotNull] ti58Parser.Instruction_x_equals_tContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.x_equals_t_statement"/>.
+	/// Exit a parse tree produced by <see cref="ti58Parser.instruction_x_equals_t"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitX_equals_t_statement([NotNull] ti58Parser.X_equals_t_statementContext context) { }
+	public virtual void ExitInstruction_x_equals_t([NotNull] ti58Parser.Instruction_x_equals_tContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.x_greater_or_equal_than_t_statement"/>.
+	/// Enter a parse tree produced by <see cref="ti58Parser.instruction_x_greater_or_equal_than_t"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterX_greater_or_equal_than_t_statement([NotNull] ti58Parser.X_greater_or_equal_than_t_statementContext context) { }
+	public virtual void EnterInstruction_x_greater_or_equal_than_t([NotNull] ti58Parser.Instruction_x_greater_or_equal_than_tContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.x_greater_or_equal_than_t_statement"/>.
+	/// Exit a parse tree produced by <see cref="ti58Parser.instruction_x_greater_or_equal_than_t"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitX_greater_or_equal_than_t_statement([NotNull] ti58Parser.X_greater_or_equal_than_t_statementContext context) { }
+	public virtual void ExitInstruction_x_greater_or_equal_than_t([NotNull] ti58Parser.Instruction_x_greater_or_equal_than_tContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.decrement_and_skip_on_zero_statement"/>.
+	/// Enter a parse tree produced by <see cref="ti58Parser.instruction_decrement_and_skip_on_zero"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterDecrement_and_skip_on_zero_statement([NotNull] ti58Parser.Decrement_and_skip_on_zero_statementContext context) { }
+	public virtual void EnterInstruction_decrement_and_skip_on_zero([NotNull] ti58Parser.Instruction_decrement_and_skip_on_zeroContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.decrement_and_skip_on_zero_statement"/>.
+	/// Exit a parse tree produced by <see cref="ti58Parser.instruction_decrement_and_skip_on_zero"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitDecrement_and_skip_on_zero_statement([NotNull] ti58Parser.Decrement_and_skip_on_zero_statementContext context) { }
+	public virtual void ExitInstruction_decrement_and_skip_on_zero([NotNull] ti58Parser.Instruction_decrement_and_skip_on_zeroContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.test_flag_statement"/>.
+	/// Enter a parse tree produced by <see cref="ti58Parser.instruction_test_flag"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterTest_flag_statement([NotNull] ti58Parser.Test_flag_statementContext context) { }
+	public virtual void EnterInstruction_test_flag([NotNull] ti58Parser.Instruction_test_flagContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.test_flag_statement"/>.
+	/// Exit a parse tree produced by <see cref="ti58Parser.instruction_test_flag"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitTest_flag_statement([NotNull] ti58Parser.Test_flag_statementContext context) { }
+	public virtual void ExitInstruction_test_flag([NotNull] ti58Parser.Instruction_test_flagContext context) { }
 
 	/// <inheritdoc/>
 	/// <remarks>The default implementation does nothing.</remarks>
