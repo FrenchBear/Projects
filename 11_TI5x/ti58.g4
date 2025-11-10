@@ -173,10 +173,7 @@ instruction
     | op_instruction                            // 00..40 or indirect
     | pgm_instruction                           // 00..99 or indirect
 	| memory_instruction
-    | memory_instruction_invertible
-    | memory_instruction_indirect
-    | memory_instruction_invertible_indirect
-	| label_instruction
+    | label_instruction
 	| branch_instruction
 	| conditional_instruction
     ;
@@ -278,21 +275,12 @@ memory_instruction
 	| I43_recall WS? memory_or_indirect
 	| I48_exchange WS? memory_or_indirect
 	| I82_hir WS? memory
-    ;
-
-memory_instruction_indirect
-	: I72_store_indirect WS? indmemory
+	| I72_store_indirect WS? indmemory
 	| I73_recall_indirect WS? indmemory
 	| I63_exchange_indirect WS? indmemory
-    ;
-
-memory_instruction_invertible
-	: inv? I44_sum WS? memory_or_indirect
+	| inv? I44_sum WS? memory_or_indirect
 	| inv? I49_product WS? memory_or_indirect
-    ;
-
-memory_instruction_invertible_indirect
-	: inv? I74_sum_indirect WS? indmemory
+	| inv? I74_sum_indirect WS? indmemory
 	| inv? I64_product_indirect WS? indmemory
     ;
 

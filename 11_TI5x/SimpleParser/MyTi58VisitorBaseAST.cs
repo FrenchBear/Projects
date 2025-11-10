@@ -23,19 +23,23 @@ public enum YesNoImplicit
     Implicit
 }
 
-public record ASTProgram(List<ASTStatement> statements);
+public record ASTProgram(List<ASTStatementBase> statements);
 
-public abstract record ASTStatement(List<ITerminalNode> nodes);
-public record ASTWhiteSpace(List<ITerminalNode> nodes): ASTStatement(nodes);
-public record ASTComment(List<ITerminalNode> nodes): ASTStatement(nodes);
-public abstract record ASTInstruction(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte>OpCodes): ASTStatement(nodes);
-public record ASTNumber(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> OpCodes, string mnemonic): ASTInstruction(nodes, ruleContext, OpCodes);
-public record ASTAtomicInstruction(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> OpCodes, YesNoImplicit inverted, string mnemonic): ASTInstruction(nodes, ruleContext, OpCodes);
-public record ASTInstructionArg(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> OpCodes, YesNoImplicit inverted, string mnemonic, YesNoImplicit argIndirect, int Arg): ASTAtomicInstruction(nodes, ruleContext, OpCodes, inverted, mnemonic);
-public record ASTInstructionLabel(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> OpCodes, YesNoImplicit inverted, string mnemonic, string labelMnemonic, int labelOpCode): ASTAtomicInstruction(nodes, ruleContext, OpCodes, inverted, mnemonic);
+public abstract record ASTStatementBase(List<ITerminalNode> nodes);
+public record ASTWhiteSpace(List<ITerminalNode> nodes): ASTStatementBase(nodes);
+public record ASTComment(List<ITerminalNode> nodes): ASTStatementBase(nodes);
+public abstract record ASTInstruction(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes): ASTStatementBase(nodes);
+public record ASTNumber(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes, string mnemonic): ASTInstruction(nodes, ruleContext, opCodes);
+// Can't simply inherit ASTInstructionArg from ASTAtomicInstruction, since in a matching switch, if we have already matched ASTAtomicInstruction, 
+abstract public record ASTAtomicInstructionBase(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes, YesNoImplicit inverted, string mnemonic): ASTInstruction(nodes, ruleContext, opCodes);
+public record ASTAtomicInstruction(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes, YesNoImplicit inverted, string mnemonic): ASTAtomicInstructionBase(nodes, ruleContext, opCodes, inverted, mnemonic);
+abstract public record ASTInstructionArgBase(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes, YesNoImplicit inverted, string mnemonic, YesNoImplicit argIndirect, byte argValue): ASTAtomicInstructionBase(nodes, ruleContext, opCodes, inverted, mnemonic);
+public record ASTInstructionArg(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes, YesNoImplicit inverted, string mnemonic, YesNoImplicit argIndirect, byte argValue): ASTInstructionArgBase(nodes, ruleContext, opCodes, inverted, mnemonic, argIndirect, argValue);
+public record ASTInstructionLabel(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes, YesNoImplicit inverted, string mnemonic, string labelMnemonic, int labelOpCode): ASTAtomicInstructionBase(nodes, ruleContext, opCodes, inverted, mnemonic);
 // Branch includes GTO, GT*, SBR, x=t, x≥t 
-public record ASTInstructionBranch(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> OpCodes, YesNoImplicit inverted, string mnemonic, YesNoImplicit targetIndirect, string targetMnemonic, int targetValue): ASTAtomicInstruction(nodes, ruleContext, OpCodes, inverted, mnemonic);
-public record ASTInstructionConditionalArg(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> OpCodes, YesNoImplicit inverted, string mnemonic, YesNoImplicit targetIndirect, string targetMnemonic, int targetValue, YesNoImplicit argIndirect, int argValue): ASTInstructionBranch(nodes, ruleContext, OpCodes, inverted, mnemonic, targetIndirect, targetMnemonic, targetValue);
+public record ASTInstructionBranch(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes, YesNoImplicit inverted, string mnemonic, YesNoImplicit targetIndirect, string targetMnemonic, int targetValue): ASTAtomicInstruction(nodes, ruleContext, opCodes, inverted, mnemonic);
+// ArgBranch includes If Flag, Dsz
+public record ASTInstructionArgBranch(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes, YesNoImplicit inverted, string mnemonic, YesNoImplicit argIndirect, byte argValue, YesNoImplicit targetIndirect, string targetMnemonic, int targetValue): ASTInstructionArgBase(nodes, ruleContext, opCodes, inverted, mnemonic, argIndirect, argValue);
 
 
 // Inherit from the generated base visitor.
@@ -55,7 +59,7 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
     internal void PrintAST()
     {
         Console.WriteLine("\nAST Tree");
-        foreach (ASTStatement sta in program.statements)
+        foreach (ASTStatementBase sta in program.statements)
         {
             switch (sta)
             {
@@ -73,8 +77,11 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
 
                 case ASTAtomicInstruction(_, _, var opCodes, var inverted, var mnemonic):
                     Console.Write($"Instruction: {string.Join(" ", opCodes.Select(b => b.ToString("D2")))}: ");
-                    //if (inverted==YesNoImplicit.Yes)
-                    //    Console.Write("INV ");
+                    Console.WriteLine(mnemonic);
+                    break;
+
+                case ASTInstructionArg(_, _, var opCodes, var inverted, var mnemonic, YesNoImplicit argIndirect, byte _argValue):
+                    Console.Write($"Instruction: {string.Join(" ", opCodes.Select(b => b.ToString("D2")))}: ");
                     Console.WriteLine(mnemonic);
                     break;
 
@@ -128,55 +135,24 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
 
     public override object VisitAtomic_instruction([NotNull] ti58Parser.Atomic_instructionContext context)
         => AtomicInstruction(context);
-    //{
-    //    var tn = GetTerminalNodes(context);
-    //    var text = context.GetText();
-
-    //    int tokenType = tn.First().Symbol.Type;
-    //    string symbolicName = _parser.Vocabulary.GetSymbolicName(tokenType);
-    //    Debug.Assert(symbolicName.StartsWith('I') && symbolicName[3]=='_');
-    //    var opCode = byte.Parse(symbolicName[1..3]);
-    //    var ai = new ASTAtomicInstruction(tn, context, new List<byte> { opCode }, YesNoImplicit.No, text);
-    //    program.statements.Add(ai);
-
-    //    return null;
-    //}
 
     public override object VisitAtomic_instruction_inverted([NotNull] ti58Parser.Atomic_instruction_invertedContext context)
-                => AtomicInstruction(context);
-
-    //{
-    //    var tn = GetTerminalNodes(context);
-    //    var text = context.GetText();
-
-    //    int tokenType = tn.First().Symbol.Type;
-
-    //    var opcodes = tokenType switch {
-    //        ti58Lexer.I123_e_power_x => new List<byte> { 22, 23 },
-    //        ti58Lexer.I128_10_power_x => new List<byte> { 22, 28 },
-    //        _ => new List<byte>()
-    //    };
-
-    //    string symbolicName = _parser.Vocabulary.GetSymbolicName(tokenType);
-    //    Debug.Assert(symbolicName.StartsWith("I1"));
-    //    var ai = new ASTAtomicInstruction(tn, context, opcodes, YesNoImplicit.Implicit, text);
-    //    program.statements.Add(ai);
-
-    //    return null;
-    //}
+        => AtomicInstruction(context);
 
     public override object VisitAtomic_instruction_invertible([NotNull] ti58Parser.Atomic_instruction_invertibleContext context)
         => AtomicInstruction(context);
 
     object AtomicInstruction(ParserRuleContext context)
-    { 
+    {
         var tn = GetTerminalNodes(context);
         var text = context.GetText();
 
         int ixInstruction = 0;
         YesNoImplicit inverted = YesNoImplicit.No;
         List<byte> opCodes = new();
-        if (tn.First().Symbol.Type==ti58Lexer.I22_invert)
+
+        // INV prefix?
+        if (tn[ixInstruction].Symbol.Type == ti58Lexer.I22_invert)
         {
             inverted = YesNoImplicit.Yes;
             opCodes.Add(22);
@@ -209,12 +185,75 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
         return null;
     }
 
+    public override object VisitFix_instruction([NotNull] ti58Parser.Fix_instructionContext context) => InstructionArg(context);
+    public override object VisitFlag_instruction([NotNull] ti58Parser.Flag_instructionContext context) => InstructionArg(context);
+    public override object VisitOp_instruction([NotNull] ti58Parser.Op_instructionContext context) => InstructionArg(context);
+    public override object VisitPgm_instruction([NotNull] ti58Parser.Pgm_instructionContext context) => InstructionArg(context);
+    public override object VisitMemory_instruction([NotNull] ti58Parser.Memory_instructionContext context) => InstructionArg(context);
+
+
+    object InstructionArg(ParserRuleContext context)
+    {
+        var tn = GetTerminalNodes(context);
+        var text = context.GetText();
+
+        int ixInstruction = 0;
+        YesNoImplicit inverted = YesNoImplicit.No;
+        YesNoImplicit argIndirect = YesNoImplicit.No;
+        List<byte> opCodes = new();
+
+        // INV prefix?
+        if (tn[ixInstruction].Symbol.Type == ti58Lexer.I22_invert)
+        {
+            inverted = YesNoImplicit.Yes;
+            opCodes.Add(22);
+            ixInstruction++;
+            // Skip optional WS if present
+            if (tn[ixInstruction].Symbol.Type == ti58Lexer.WS)
+                ixInstruction++;
+        }
+
+        string symbolicName = _parser.Vocabulary.GetSymbolicName(tn[ixInstruction].Symbol.Type);
+        Debug.Assert(symbolicName.StartsWith('I') && symbolicName[3] == '_');
+        opCodes.Add(byte.Parse(symbolicName[1..3]));
+        if (symbolicName.Contains("indirect"))
+        {
+            argIndirect = YesNoImplicit.Implicit;
+            opCodes.Add(40);
+        }
+            ixInstruction++;
+        // Skip optional WS if present
+        if (tn[ixInstruction].Symbol.Type == ti58Lexer.WS)
+            ixInstruction++;
+
+        // Ind prefix?
+        if (tn[ixInstruction].Symbol.Type == ti58Lexer.I40_indirect)
+        {
+            // We don't add Ind prefix twice in case we have something like SM* Ind 40, just consider it's SUM Ind 40 or SM* 40
+            if (argIndirect == YesNoImplicit.No)
+            {
+                argIndirect = YesNoImplicit.Yes;
+                opCodes.Add(40);
+            }
+            ixInstruction++;
+            // Skip optional WS if present
+            if (tn[ixInstruction].Symbol.Type == ti58Lexer.WS)
+                ixInstruction++;
+        }
+
+        byte argValue = byte.Parse(tn[ixInstruction].GetText());
+        opCodes.Add(argValue);
+
+        var aa = new ASTInstructionArg(tn, context, opCodes, inverted, text, argIndirect, argValue);
+        program.statements.Add(aa);
+
+        return null;
+    }
+
+
     private List<ITerminalNode> GetTerminalNodes(ParserRuleContext context)
     {
         var tn = new List<ITerminalNode>();
-        //IParseTree pt;
-        //Antlr4.Runtime.IToken it;
-        //Antlr4.Runtime.RuleContext rc;
 
         foreach (var child in context.children)
         {

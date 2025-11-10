@@ -188,24 +188,6 @@ public interface Iti58Visitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitMemory_instruction([NotNull] ti58Parser.Memory_instructionContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="ti58Parser.memory_instruction_indirect"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitMemory_instruction_indirect([NotNull] ti58Parser.Memory_instruction_indirectContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="ti58Parser.memory_instruction_invertible"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitMemory_instruction_invertible([NotNull] ti58Parser.Memory_instruction_invertibleContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="ti58Parser.memory_instruction_invertible_indirect"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitMemory_instruction_invertible_indirect([NotNull] ti58Parser.Memory_instruction_invertible_indirectContext context);
-	/// <summary>
 	/// Visit a parse tree produced by <see cref="ti58Parser.memory_or_indirect"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
