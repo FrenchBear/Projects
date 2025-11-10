@@ -28,18 +28,16 @@ public record ASTProgram(List<ASTStatementBase> statements);
 public abstract record ASTStatementBase(List<ITerminalNode> nodes);
 public record ASTWhiteSpace(List<ITerminalNode> nodes): ASTStatementBase(nodes);
 public record ASTComment(List<ITerminalNode> nodes): ASTStatementBase(nodes);
-public abstract record ASTInstruction(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes): ASTStatementBase(nodes);
 public record ASTNumber(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes, string mnemonic): ASTInstruction(nodes, ruleContext, opCodes);
-// Can't simply inherit ASTInstructionArg from ASTAtomicInstruction, since in a matching switch, if we have already matched ASTAtomicInstruction, 
-abstract public record ASTAtomicInstructionBase(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes, YesNoImplicit inverted, string mnemonic): ASTInstruction(nodes, ruleContext, opCodes);
-public record ASTAtomicInstruction(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes, YesNoImplicit inverted, string mnemonic): ASTAtomicInstructionBase(nodes, ruleContext, opCodes, inverted, mnemonic);
-abstract public record ASTInstructionArgBase(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes, YesNoImplicit inverted, string mnemonic, YesNoImplicit argIndirect, byte argValue): ASTAtomicInstructionBase(nodes, ruleContext, opCodes, inverted, mnemonic);
-public record ASTInstructionArg(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes, YesNoImplicit inverted, string mnemonic, YesNoImplicit argIndirect, byte argValue): ASTInstructionArgBase(nodes, ruleContext, opCodes, inverted, mnemonic, argIndirect, argValue);
-public record ASTInstructionLabel(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes, YesNoImplicit inverted, string mnemonic, string labelMnemonic, int labelOpCode): ASTAtomicInstructionBase(nodes, ruleContext, opCodes, inverted, mnemonic);
+
+public abstract record ASTInstruction(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes): ASTStatementBase(nodes);
+public record ASTAtomicInstruction(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes, YesNoImplicit inverted, string mnemonic): ASTInstruction(nodes, ruleContext, opCodes);
+public record ASTInstructionArg(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes, YesNoImplicit inverted, string mnemonic, YesNoImplicit argIndirect, byte argValue): ASTAtomicInstruction(nodes, ruleContext, opCodes, inverted, mnemonic);
+public record ASTInstructionLabel(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes, YesNoImplicit inverted, string mnemonic, string labelMnemonic, int labelOpCode): ASTInstruction(nodes, ruleContext, opCodes);
 // Branch includes GTO, GT*, SBR, x=t, x≥t 
 public record ASTInstructionBranch(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes, YesNoImplicit inverted, string mnemonic, YesNoImplicit targetIndirect, string targetMnemonic, int targetValue): ASTAtomicInstruction(nodes, ruleContext, opCodes, inverted, mnemonic);
 // ArgBranch includes If Flag, Dsz
-public record ASTInstructionArgBranch(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes, YesNoImplicit inverted, string mnemonic, YesNoImplicit argIndirect, byte argValue, YesNoImplicit targetIndirect, string targetMnemonic, int targetValue): ASTInstructionArgBase(nodes, ruleContext, opCodes, inverted, mnemonic, argIndirect, argValue);
+public record ASTInstructionArgBranch(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes, YesNoImplicit inverted, string mnemonic, YesNoImplicit argIndirect, byte argValue, YesNoImplicit targetIndirect, string targetMnemonic, int targetValue): ASTInstructionArg(nodes, ruleContext, opCodes, inverted, mnemonic, argIndirect, argValue);
 
 
 // Inherit from the generated base visitor.
@@ -75,12 +73,13 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
                     Console.WriteLine($"Number: {string.Join(" ", opCodes.Select(b => b.ToString("D2")))}: {mnemonic}");
                     break;
 
-                case ASTAtomicInstruction(_, _, var opCodes, var inverted, var mnemonic):
+                // Need to be placed before case ASTAtomicInstruction since ASTInstructionArg inherits from ASTAtomicInstruction
+                case ASTInstructionArg(_, _, var opCodes, var inverted, var mnemonic, YesNoImplicit argIndirect, byte _argValue):
                     Console.Write($"Instruction: {string.Join(" ", opCodes.Select(b => b.ToString("D2")))}: ");
                     Console.WriteLine(mnemonic);
                     break;
 
-                case ASTInstructionArg(_, _, var opCodes, var inverted, var mnemonic, YesNoImplicit argIndirect, byte _argValue):
+                case ASTAtomicInstruction(_, _, var opCodes, var inverted, var mnemonic):
                     Console.Write($"Instruction: {string.Join(" ", opCodes.Select(b => b.ToString("D2")))}: ");
                     Console.WriteLine(mnemonic);
                     break;
