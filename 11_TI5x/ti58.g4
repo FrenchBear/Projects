@@ -29,6 +29,8 @@ WS: [ \r\n\t]+;
 
 LineComment: '#' ~[\r\n]*;
 
+Bang: '!';
+
 I11_a: 'A';
 I12_b: 'B';
 I13_c: 'C';
@@ -163,7 +165,7 @@ instruction_or_comment
     
 instruction
     : number
-	| inv '!'        // Trick to allow a standalone Inv while keeping grammar simple
+	| inv Bang        // Trick to allow a standalone Inv while keeping grammar simple
 	| atomic_instruction
 	| atomic_instruction_invertible
     | atomic_instruction_inverted

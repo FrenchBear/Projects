@@ -31,7 +31,7 @@ public class Program
         string input = File.ReadAllText(filePath);
         Console.WriteLine($"Parsing file: {filePath}...");
 
-        //string input = "# Test\nLBL CLR\nSUM 12\nSUM Ind 12\nINV SUM 12\nINV SUM IND 12\nGTO 25\nSBR CLR\n-3.1416\nOP 25\nOP Ind 12\nOP* 12\nGTO 123\nDsz 4 123\n";
+        input = "# Test\nINV! CLS\n";
 
         // 2. The ANTLR parsing pipeline
         var inputStream = new AntlrInputStream(input);
