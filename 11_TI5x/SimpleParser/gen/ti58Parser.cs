@@ -62,24 +62,24 @@ public partial class ti58Parser : Parser {
 		RULE_d = 0, RULE_number = 1, RULE_single_digit = 2, RULE_memory = 3, RULE_indmemory = 4, 
 		RULE_pgm_number = 5, RULE_address_label = 6, RULE_numeric_key_label = 7, 
 		RULE_op_number = 8, RULE_startRule = 9, RULE_program = 10, RULE_instruction_or_comment = 11, 
-		RULE_instruction = 12, RULE_inv = 13, RULE_atomic_instruction = 14, RULE_atomic_instruction_invertible = 15, 
-		RULE_atomic_instruction_inverted = 16, RULE_fix_instruction = 17, RULE_flag_instruction = 18, 
-		RULE_single_digit_or_indirect = 19, RULE_op_instruction = 20, RULE_op_number_or_indirect = 21, 
-		RULE_indirect_memory = 22, RULE_pgm_instruction = 23, RULE_pgm_number_or_indirect = 24, 
-		RULE_memory_instruction = 25, RULE_memory_or_indirect = 26, RULE_label_instruction = 27, 
-		RULE_branch_instruction = 28, RULE_address_or_label_or_indirect = 29, 
-		RULE_key_label = 30, RULE_conditional_instruction = 31, RULE_x_equals_t_statement = 32, 
-		RULE_x_greater_or_equal_than_t_statement = 33, RULE_decrement_and_skip_on_zero_statement = 34, 
-		RULE_test_flag_statement = 35;
+		RULE_instruction = 12, RULE_inv = 13, RULE_instruction_atomic_simple = 14, 
+		RULE_instruction_atomic_invertible = 15, RULE_instruction_atomic_inverted = 16, 
+		RULE_instruction_fix = 17, RULE_instruction_setflag = 18, RULE_single_digit_or_indirect = 19, 
+		RULE_instruction_op = 20, RULE_op_number_or_indirect = 21, RULE_indirect_memory = 22, 
+		RULE_instruction_pgm = 23, RULE_pgm_number_or_indirect = 24, RULE_instruction_memory = 25, 
+		RULE_memory_or_indirect = 26, RULE_instruction_label = 27, RULE_instruction_branch = 28, 
+		RULE_address_or_label_or_indirect = 29, RULE_key_label = 30, RULE_instruction_conditional = 31, 
+		RULE_x_equals_t_statement = 32, RULE_x_greater_or_equal_than_t_statement = 33, 
+		RULE_decrement_and_skip_on_zero_statement = 34, RULE_test_flag_statement = 35;
 	public static readonly string[] ruleNames = {
 		"d", "number", "single_digit", "memory", "indmemory", "pgm_number", "address_label", 
 		"numeric_key_label", "op_number", "startRule", "program", "instruction_or_comment", 
-		"instruction", "inv", "atomic_instruction", "atomic_instruction_invertible", 
-		"atomic_instruction_inverted", "fix_instruction", "flag_instruction", 
-		"single_digit_or_indirect", "op_instruction", "op_number_or_indirect", 
-		"indirect_memory", "pgm_instruction", "pgm_number_or_indirect", "memory_instruction", 
-		"memory_or_indirect", "label_instruction", "branch_instruction", "address_or_label_or_indirect", 
-		"key_label", "conditional_instruction", "x_equals_t_statement", "x_greater_or_equal_than_t_statement", 
+		"instruction", "inv", "instruction_atomic_simple", "instruction_atomic_invertible", 
+		"instruction_atomic_inverted", "instruction_fix", "instruction_setflag", 
+		"single_digit_or_indirect", "instruction_op", "op_number_or_indirect", 
+		"indirect_memory", "instruction_pgm", "pgm_number_or_indirect", "instruction_memory", 
+		"memory_or_indirect", "instruction_label", "instruction_branch", "address_or_label_or_indirect", 
+		"key_label", "instruction_conditional", "x_equals_t_statement", "x_greater_or_equal_than_t_statement", 
 		"decrement_and_skip_on_zero_statement", "test_flag_statement"
 	};
 
@@ -1152,38 +1152,38 @@ public partial class ti58Parser : Parser {
 			return GetRuleContext<InvContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Bang() { return GetToken(ti58Parser.Bang, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public Atomic_instructionContext atomic_instruction() {
-			return GetRuleContext<Atomic_instructionContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public Instruction_atomic_simpleContext instruction_atomic_simple() {
+			return GetRuleContext<Instruction_atomic_simpleContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public Atomic_instruction_invertibleContext atomic_instruction_invertible() {
-			return GetRuleContext<Atomic_instruction_invertibleContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public Instruction_atomic_invertibleContext instruction_atomic_invertible() {
+			return GetRuleContext<Instruction_atomic_invertibleContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public Atomic_instruction_invertedContext atomic_instruction_inverted() {
-			return GetRuleContext<Atomic_instruction_invertedContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public Instruction_atomic_invertedContext instruction_atomic_inverted() {
+			return GetRuleContext<Instruction_atomic_invertedContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public Fix_instructionContext fix_instruction() {
-			return GetRuleContext<Fix_instructionContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public Instruction_fixContext instruction_fix() {
+			return GetRuleContext<Instruction_fixContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public Flag_instructionContext flag_instruction() {
-			return GetRuleContext<Flag_instructionContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public Instruction_setflagContext instruction_setflag() {
+			return GetRuleContext<Instruction_setflagContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public Op_instructionContext op_instruction() {
-			return GetRuleContext<Op_instructionContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public Instruction_opContext instruction_op() {
+			return GetRuleContext<Instruction_opContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public Pgm_instructionContext pgm_instruction() {
-			return GetRuleContext<Pgm_instructionContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public Instruction_pgmContext instruction_pgm() {
+			return GetRuleContext<Instruction_pgmContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public Memory_instructionContext memory_instruction() {
-			return GetRuleContext<Memory_instructionContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public Instruction_memoryContext instruction_memory() {
+			return GetRuleContext<Instruction_memoryContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public Label_instructionContext label_instruction() {
-			return GetRuleContext<Label_instructionContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public Instruction_labelContext instruction_label() {
+			return GetRuleContext<Instruction_labelContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public Branch_instructionContext branch_instruction() {
-			return GetRuleContext<Branch_instructionContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public Instruction_branchContext instruction_branch() {
+			return GetRuleContext<Instruction_branchContext>(0);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public Conditional_instructionContext conditional_instruction() {
-			return GetRuleContext<Conditional_instructionContext>(0);
+		[System.Diagnostics.DebuggerNonUserCode] public Instruction_conditionalContext instruction_conditional() {
+			return GetRuleContext<Instruction_conditionalContext>(0);
 		}
 		public InstructionContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -1236,77 +1236,77 @@ public partial class ti58Parser : Parser {
 				EnterOuterAlt(_localctx, 3);
 				{
 				State = 168;
-				atomic_instruction();
+				instruction_atomic_simple();
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
 				State = 169;
-				atomic_instruction_invertible();
+				instruction_atomic_invertible();
 				}
 				break;
 			case 5:
 				EnterOuterAlt(_localctx, 5);
 				{
 				State = 170;
-				atomic_instruction_inverted();
+				instruction_atomic_inverted();
 				}
 				break;
 			case 6:
 				EnterOuterAlt(_localctx, 6);
 				{
 				State = 171;
-				fix_instruction();
+				instruction_fix();
 				}
 				break;
 			case 7:
 				EnterOuterAlt(_localctx, 7);
 				{
 				State = 172;
-				flag_instruction();
+				instruction_setflag();
 				}
 				break;
 			case 8:
 				EnterOuterAlt(_localctx, 8);
 				{
 				State = 173;
-				op_instruction();
+				instruction_op();
 				}
 				break;
 			case 9:
 				EnterOuterAlt(_localctx, 9);
 				{
 				State = 174;
-				pgm_instruction();
+				instruction_pgm();
 				}
 				break;
 			case 10:
 				EnterOuterAlt(_localctx, 10);
 				{
 				State = 175;
-				memory_instruction();
+				instruction_memory();
 				}
 				break;
 			case 11:
 				EnterOuterAlt(_localctx, 11);
 				{
 				State = 176;
-				label_instruction();
+				instruction_label();
 				}
 				break;
 			case 12:
 				EnterOuterAlt(_localctx, 12);
 				{
 				State = 177;
-				branch_instruction();
+				instruction_branch();
 				}
 				break;
 			case 13:
 				EnterOuterAlt(_localctx, 13);
 				{
 				State = 178;
-				conditional_instruction();
+				instruction_conditional();
 				}
 				break;
 			}
@@ -1381,7 +1381,7 @@ public partial class ti58Parser : Parser {
 		return _localctx;
 	}
 
-	public partial class Atomic_instructionContext : ParserRuleContext {
+	public partial class Instruction_atomic_simpleContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I11_a() { return GetToken(ti58Parser.I11_a, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I12_b() { return GetToken(ti58Parser.I12_b, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I13_c() { return GetToken(ti58Parser.I13_c, 0); }
@@ -1421,33 +1421,33 @@ public partial class ti58Parser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I98_advance() { return GetToken(ti58Parser.I98_advance, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I99_print() { return GetToken(ti58Parser.I99_print, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I92_return() { return GetToken(ti58Parser.I92_return, 0); }
-		public Atomic_instructionContext(ParserRuleContext parent, int invokingState)
+		public Instruction_atomic_simpleContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_atomic_instruction; } }
+		public override int RuleIndex { get { return RULE_instruction_atomic_simple; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.EnterAtomic_instruction(this);
+			if (typedListener != null) typedListener.EnterInstruction_atomic_simple(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void ExitRule(IParseTreeListener listener) {
 			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.ExitAtomic_instruction(this);
+			if (typedListener != null) typedListener.ExitInstruction_atomic_simple(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitAtomic_instruction(this);
+			if (typedVisitor != null) return typedVisitor.VisitInstruction_atomic_simple(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public Atomic_instructionContext atomic_instruction() {
-		Atomic_instructionContext _localctx = new Atomic_instructionContext(Context, State);
-		EnterRule(_localctx, 28, RULE_atomic_instruction);
+	public Instruction_atomic_simpleContext instruction_atomic_simple() {
+		Instruction_atomic_simpleContext _localctx = new Instruction_atomic_simpleContext(Context, State);
+		EnterRule(_localctx, 28, RULE_instruction_atomic_simple);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
@@ -1474,7 +1474,7 @@ public partial class ti58Parser : Parser {
 		return _localctx;
 	}
 
-	public partial class Atomic_instruction_invertibleContext : ParserRuleContext {
+	public partial class Instruction_atomic_invertibleContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I23_ln() { return GetToken(ti58Parser.I23_ln, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public InvContext inv() {
 			return GetRuleContext<InvContext>(0);
@@ -1495,33 +1495,33 @@ public partial class ti58Parser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I96_write() { return GetToken(ti58Parser.I96_write, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I90_list() { return GetToken(ti58Parser.I90_list, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I71_subroutine() { return GetToken(ti58Parser.I71_subroutine, 0); }
-		public Atomic_instruction_invertibleContext(ParserRuleContext parent, int invokingState)
+		public Instruction_atomic_invertibleContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_atomic_instruction_invertible; } }
+		public override int RuleIndex { get { return RULE_instruction_atomic_invertible; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.EnterAtomic_instruction_invertible(this);
+			if (typedListener != null) typedListener.EnterInstruction_atomic_invertible(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void ExitRule(IParseTreeListener listener) {
 			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.ExitAtomic_instruction_invertible(this);
+			if (typedListener != null) typedListener.ExitInstruction_atomic_invertible(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitAtomic_instruction_invertible(this);
+			if (typedVisitor != null) return typedVisitor.VisitInstruction_atomic_invertible(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public Atomic_instruction_invertibleContext atomic_instruction_invertible() {
-		Atomic_instruction_invertibleContext _localctx = new Atomic_instruction_invertibleContext(Context, State);
-		EnterRule(_localctx, 30, RULE_atomic_instruction_invertible);
+	public Instruction_atomic_invertibleContext instruction_atomic_invertible() {
+		Instruction_atomic_invertibleContext _localctx = new Instruction_atomic_invertibleContext(Context, State);
+		EnterRule(_localctx, 30, RULE_instruction_atomic_invertible);
 		int _la;
 		try {
 			State = 254;
@@ -1821,36 +1821,36 @@ public partial class ti58Parser : Parser {
 		return _localctx;
 	}
 
-	public partial class Atomic_instruction_invertedContext : ParserRuleContext {
+	public partial class Instruction_atomic_invertedContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I123_e_power_x() { return GetToken(ti58Parser.I123_e_power_x, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I128_10_power_x() { return GetToken(ti58Parser.I128_10_power_x, 0); }
-		public Atomic_instruction_invertedContext(ParserRuleContext parent, int invokingState)
+		public Instruction_atomic_invertedContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_atomic_instruction_inverted; } }
+		public override int RuleIndex { get { return RULE_instruction_atomic_inverted; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.EnterAtomic_instruction_inverted(this);
+			if (typedListener != null) typedListener.EnterInstruction_atomic_inverted(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void ExitRule(IParseTreeListener listener) {
 			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.ExitAtomic_instruction_inverted(this);
+			if (typedListener != null) typedListener.ExitInstruction_atomic_inverted(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitAtomic_instruction_inverted(this);
+			if (typedVisitor != null) return typedVisitor.VisitInstruction_atomic_inverted(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public Atomic_instruction_invertedContext atomic_instruction_inverted() {
-		Atomic_instruction_invertedContext _localctx = new Atomic_instruction_invertedContext(Context, State);
-		EnterRule(_localctx, 32, RULE_atomic_instruction_inverted);
+	public Instruction_atomic_invertedContext instruction_atomic_inverted() {
+		Instruction_atomic_invertedContext _localctx = new Instruction_atomic_invertedContext(Context, State);
+		EnterRule(_localctx, 32, RULE_instruction_atomic_inverted);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
@@ -1877,39 +1877,39 @@ public partial class ti58Parser : Parser {
 		return _localctx;
 	}
 
-	public partial class Fix_instructionContext : ParserRuleContext {
+	public partial class Instruction_fixContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I58_fix() { return GetToken(ti58Parser.I58_fix, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public Single_digit_or_indirectContext single_digit_or_indirect() {
 			return GetRuleContext<Single_digit_or_indirectContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WS() { return GetToken(ti58Parser.WS, 0); }
-		public Fix_instructionContext(ParserRuleContext parent, int invokingState)
+		public Instruction_fixContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_fix_instruction; } }
+		public override int RuleIndex { get { return RULE_instruction_fix; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.EnterFix_instruction(this);
+			if (typedListener != null) typedListener.EnterInstruction_fix(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void ExitRule(IParseTreeListener listener) {
 			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.ExitFix_instruction(this);
+			if (typedListener != null) typedListener.ExitInstruction_fix(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitFix_instruction(this);
+			if (typedVisitor != null) return typedVisitor.VisitInstruction_fix(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public Fix_instructionContext fix_instruction() {
-		Fix_instructionContext _localctx = new Fix_instructionContext(Context, State);
-		EnterRule(_localctx, 34, RULE_fix_instruction);
+	public Instruction_fixContext instruction_fix() {
+		Instruction_fixContext _localctx = new Instruction_fixContext(Context, State);
+		EnterRule(_localctx, 34, RULE_instruction_fix);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
@@ -1941,7 +1941,7 @@ public partial class ti58Parser : Parser {
 		return _localctx;
 	}
 
-	public partial class Flag_instructionContext : ParserRuleContext {
+	public partial class Instruction_setflagContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I86_set_flag() { return GetToken(ti58Parser.I86_set_flag, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public Single_digit_or_indirectContext single_digit_or_indirect() {
 			return GetRuleContext<Single_digit_or_indirectContext>(0);
@@ -1950,33 +1950,33 @@ public partial class ti58Parser : Parser {
 			return GetRuleContext<InvContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WS() { return GetToken(ti58Parser.WS, 0); }
-		public Flag_instructionContext(ParserRuleContext parent, int invokingState)
+		public Instruction_setflagContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_flag_instruction; } }
+		public override int RuleIndex { get { return RULE_instruction_setflag; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.EnterFlag_instruction(this);
+			if (typedListener != null) typedListener.EnterInstruction_setflag(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void ExitRule(IParseTreeListener listener) {
 			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.ExitFlag_instruction(this);
+			if (typedListener != null) typedListener.ExitInstruction_setflag(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitFlag_instruction(this);
+			if (typedVisitor != null) return typedVisitor.VisitInstruction_setflag(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public Flag_instructionContext flag_instruction() {
-		Flag_instructionContext _localctx = new Flag_instructionContext(Context, State);
-		EnterRule(_localctx, 36, RULE_flag_instruction);
+	public Instruction_setflagContext instruction_setflag() {
+		Instruction_setflagContext _localctx = new Instruction_setflagContext(Context, State);
+		EnterRule(_localctx, 36, RULE_instruction_setflag);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
@@ -2094,7 +2094,7 @@ public partial class ti58Parser : Parser {
 		return _localctx;
 	}
 
-	public partial class Op_instructionContext : ParserRuleContext {
+	public partial class Instruction_opContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I69_operation() { return GetToken(ti58Parser.I69_operation, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public Op_number_or_indirectContext op_number_or_indirect() {
 			return GetRuleContext<Op_number_or_indirectContext>(0);
@@ -2104,33 +2104,33 @@ public partial class ti58Parser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public IndmemoryContext indmemory() {
 			return GetRuleContext<IndmemoryContext>(0);
 		}
-		public Op_instructionContext(ParserRuleContext parent, int invokingState)
+		public Instruction_opContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_op_instruction; } }
+		public override int RuleIndex { get { return RULE_instruction_op; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.EnterOp_instruction(this);
+			if (typedListener != null) typedListener.EnterInstruction_op(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void ExitRule(IParseTreeListener listener) {
 			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.ExitOp_instruction(this);
+			if (typedListener != null) typedListener.ExitInstruction_op(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitOp_instruction(this);
+			if (typedVisitor != null) return typedVisitor.VisitInstruction_op(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public Op_instructionContext op_instruction() {
-		Op_instructionContext _localctx = new Op_instructionContext(Context, State);
-		EnterRule(_localctx, 40, RULE_op_instruction);
+	public Instruction_opContext instruction_op() {
+		Instruction_opContext _localctx = new Instruction_opContext(Context, State);
+		EnterRule(_localctx, 40, RULE_instruction_op);
 		int _la;
 		try {
 			State = 287;
@@ -2324,7 +2324,7 @@ public partial class ti58Parser : Parser {
 		return _localctx;
 	}
 
-	public partial class Pgm_instructionContext : ParserRuleContext {
+	public partial class Instruction_pgmContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I36_program() { return GetToken(ti58Parser.I36_program, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public Pgm_number_or_indirectContext pgm_number_or_indirect() {
 			return GetRuleContext<Pgm_number_or_indirectContext>(0);
@@ -2334,33 +2334,33 @@ public partial class ti58Parser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public IndmemoryContext indmemory() {
 			return GetRuleContext<IndmemoryContext>(0);
 		}
-		public Pgm_instructionContext(ParserRuleContext parent, int invokingState)
+		public Instruction_pgmContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_pgm_instruction; } }
+		public override int RuleIndex { get { return RULE_instruction_pgm; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.EnterPgm_instruction(this);
+			if (typedListener != null) typedListener.EnterInstruction_pgm(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void ExitRule(IParseTreeListener listener) {
 			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.ExitPgm_instruction(this);
+			if (typedListener != null) typedListener.ExitInstruction_pgm(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitPgm_instruction(this);
+			if (typedVisitor != null) return typedVisitor.VisitInstruction_pgm(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public Pgm_instructionContext pgm_instruction() {
-		Pgm_instructionContext _localctx = new Pgm_instructionContext(Context, State);
-		EnterRule(_localctx, 46, RULE_pgm_instruction);
+	public Instruction_pgmContext instruction_pgm() {
+		Instruction_pgmContext _localctx = new Instruction_pgmContext(Context, State);
+		EnterRule(_localctx, 46, RULE_instruction_pgm);
 		int _la;
 		try {
 			State = 309;
@@ -2495,7 +2495,7 @@ public partial class ti58Parser : Parser {
 		return _localctx;
 	}
 
-	public partial class Memory_instructionContext : ParserRuleContext {
+	public partial class Instruction_memoryContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I42_store() { return GetToken(ti58Parser.I42_store, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public Memory_or_indirectContext memory_or_indirect() {
 			return GetRuleContext<Memory_or_indirectContext>(0);
@@ -2520,33 +2520,33 @@ public partial class ti58Parser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I49_product() { return GetToken(ti58Parser.I49_product, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I74_sum_indirect() { return GetToken(ti58Parser.I74_sum_indirect, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I64_product_indirect() { return GetToken(ti58Parser.I64_product_indirect, 0); }
-		public Memory_instructionContext(ParserRuleContext parent, int invokingState)
+		public Instruction_memoryContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_memory_instruction; } }
+		public override int RuleIndex { get { return RULE_instruction_memory; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.EnterMemory_instruction(this);
+			if (typedListener != null) typedListener.EnterInstruction_memory(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void ExitRule(IParseTreeListener listener) {
 			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.ExitMemory_instruction(this);
+			if (typedListener != null) typedListener.ExitInstruction_memory(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitMemory_instruction(this);
+			if (typedVisitor != null) return typedVisitor.VisitInstruction_memory(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public Memory_instructionContext memory_instruction() {
-		Memory_instructionContext _localctx = new Memory_instructionContext(Context, State);
-		EnterRule(_localctx, 50, RULE_memory_instruction);
+	public Instruction_memoryContext instruction_memory() {
+		Instruction_memoryContext _localctx = new Instruction_memoryContext(Context, State);
+		EnterRule(_localctx, 50, RULE_instruction_memory);
 		int _la;
 		try {
 			State = 382;
@@ -2890,7 +2890,7 @@ public partial class ti58Parser : Parser {
 		return _localctx;
 	}
 
-	public partial class Label_instructionContext : ParserRuleContext {
+	public partial class Instruction_labelContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I76_label() { return GetToken(ti58Parser.I76_label, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public Key_labelContext key_label() {
 			return GetRuleContext<Key_labelContext>(0);
@@ -2899,33 +2899,33 @@ public partial class ti58Parser : Parser {
 			return GetRuleContext<Numeric_key_labelContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode WS() { return GetToken(ti58Parser.WS, 0); }
-		public Label_instructionContext(ParserRuleContext parent, int invokingState)
+		public Instruction_labelContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_label_instruction; } }
+		public override int RuleIndex { get { return RULE_instruction_label; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.EnterLabel_instruction(this);
+			if (typedListener != null) typedListener.EnterInstruction_label(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void ExitRule(IParseTreeListener listener) {
 			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.ExitLabel_instruction(this);
+			if (typedListener != null) typedListener.ExitInstruction_label(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitLabel_instruction(this);
+			if (typedVisitor != null) return typedVisitor.VisitInstruction_label(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public Label_instructionContext label_instruction() {
-		Label_instructionContext _localctx = new Label_instructionContext(Context, State);
-		EnterRule(_localctx, 54, RULE_label_instruction);
+	public Instruction_labelContext instruction_label() {
+		Instruction_labelContext _localctx = new Instruction_labelContext(Context, State);
+		EnterRule(_localctx, 54, RULE_instruction_label);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
@@ -3070,7 +3070,7 @@ public partial class ti58Parser : Parser {
 		return _localctx;
 	}
 
-	public partial class Branch_instructionContext : ParserRuleContext {
+	public partial class Instruction_branchContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I61_goto() { return GetToken(ti58Parser.I61_goto, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public Address_or_label_or_indirectContext address_or_label_or_indirect() {
 			return GetRuleContext<Address_or_label_or_indirectContext>(0);
@@ -3081,33 +3081,33 @@ public partial class ti58Parser : Parser {
 			return GetRuleContext<IndmemoryContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I71_subroutine() { return GetToken(ti58Parser.I71_subroutine, 0); }
-		public Branch_instructionContext(ParserRuleContext parent, int invokingState)
+		public Instruction_branchContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_branch_instruction; } }
+		public override int RuleIndex { get { return RULE_instruction_branch; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.EnterBranch_instruction(this);
+			if (typedListener != null) typedListener.EnterInstruction_branch(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void ExitRule(IParseTreeListener listener) {
 			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.ExitBranch_instruction(this);
+			if (typedListener != null) typedListener.ExitInstruction_branch(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitBranch_instruction(this);
+			if (typedVisitor != null) return typedVisitor.VisitInstruction_branch(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public Branch_instructionContext branch_instruction() {
-		Branch_instructionContext _localctx = new Branch_instructionContext(Context, State);
-		EnterRule(_localctx, 56, RULE_branch_instruction);
+	public Instruction_branchContext instruction_branch() {
+		Instruction_branchContext _localctx = new Instruction_branchContext(Context, State);
+		EnterRule(_localctx, 56, RULE_instruction_branch);
 		int _la;
 		try {
 			State = 411;
@@ -3414,7 +3414,7 @@ public partial class ti58Parser : Parser {
 		return _localctx;
 	}
 
-	public partial class Conditional_instructionContext : ParserRuleContext {
+	public partial class Instruction_conditionalContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public X_equals_t_statementContext x_equals_t_statement() {
 			return GetRuleContext<X_equals_t_statementContext>(0);
 		}
@@ -3427,33 +3427,33 @@ public partial class ti58Parser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public Test_flag_statementContext test_flag_statement() {
 			return GetRuleContext<Test_flag_statementContext>(0);
 		}
-		public Conditional_instructionContext(ParserRuleContext parent, int invokingState)
+		public Instruction_conditionalContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_conditional_instruction; } }
+		public override int RuleIndex { get { return RULE_instruction_conditional; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void EnterRule(IParseTreeListener listener) {
 			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.EnterConditional_instruction(this);
+			if (typedListener != null) typedListener.EnterInstruction_conditional(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override void ExitRule(IParseTreeListener listener) {
 			Iti58Listener typedListener = listener as Iti58Listener;
-			if (typedListener != null) typedListener.ExitConditional_instruction(this);
+			if (typedListener != null) typedListener.ExitInstruction_conditional(this);
 		}
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			Iti58Visitor<TResult> typedVisitor = visitor as Iti58Visitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitConditional_instruction(this);
+			if (typedVisitor != null) return typedVisitor.VisitInstruction_conditional(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public Conditional_instructionContext conditional_instruction() {
-		Conditional_instructionContext _localctx = new Conditional_instructionContext(Context, State);
-		EnterRule(_localctx, 62, RULE_conditional_instruction);
+	public Instruction_conditionalContext instruction_conditional() {
+		Instruction_conditionalContext _localctx = new Instruction_conditionalContext(Context, State);
+		EnterRule(_localctx, 62, RULE_instruction_conditional);
 		try {
 			State = 425;
 			ErrorHandler.Sync(this);

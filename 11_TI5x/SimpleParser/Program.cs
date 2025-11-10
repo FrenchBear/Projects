@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
@@ -31,7 +31,11 @@ public class Program
         string input = File.ReadAllText(filePath);
         Console.WriteLine($"Parsing file: {filePath}...");
 
-        input = "# Comment\n3.1416\nCLR\ne^x\nSin\nINVSin\nINV     Cos\n";
+        input = "GTO 123 GTO 25 GTO CLR GTO Ind 12 GO* 12\nSBR 123 SBR 25 SBR CLR SBR Ind 12\n" +
+            "x=t CLR x=t 25 x=t 421 x=t IND 12 EQ 111 EQ* 112\nINVx=t CLR Inv x=t 25 Inv x=t 421 INV  x=t IND 12 INVEQ 111 INV EQ* 112\n" +
+            "x≥t CLR x≥t 25 x≥t 421 x≥t IND 12 GE 111 GE* 112\nINVx≥t CLR inv x≥t 25 inv  x≥t 421 INV x≥t IND 12 INVGE 111 inv GE* 112\n";
+
+        input = "x≥t CLR";
 
         // 2. The ANTLR parsing pipeline
         var inputStream = new AntlrInputStream(input);
@@ -39,10 +43,15 @@ public class Program
         var tokenStream = new CommonTokenStream(lexer);
         var parser = new ti58Parser(tokenStream);
 
+
         // 3. Set up our custom error listener for validation
+        var myParserErrorListener = new MyParserErrorListener();
         parser.RemoveErrorListeners(); // Remove default console error listener
-        var errorListener = new MyErrorListener();
-        parser.AddErrorListener(errorListener); // Add our custom one
+        parser.AddErrorListener(myParserErrorListener); // Add our custom one
+
+        var myLexerErrorListener = new MyLexerErrorListener();
+        lexer.RemoveErrorListeners();
+        lexer.AddErrorListener(myLexerErrorListener);
 
         // 4. Start parsing at the "start rule"
         //    !!! YOU MUST CHANGE THIS !!!
@@ -51,7 +60,7 @@ public class Program
         IParseTree tree = parser.startRule();
 
         // Check for validation
-        if (errorListener.HadError)
+        if (myLexerErrorListener.HadError || myParserErrorListener.HadError)
         {
             Console.WriteLine("Validation FAILED.");
             // Don't run the visitor if the syntax is bad

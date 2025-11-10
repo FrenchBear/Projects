@@ -164,23 +164,24 @@ instruction_or_comment
     
 instruction
     : number
-	| inv Bang                                  // Trick to allow a standalone Inv while keeping grammar simple
-	| atomic_instruction
-	| atomic_instruction_invertible
-    | atomic_instruction_inverted
-    | fix_instruction                           // single number or indirect
-    | flag_instruction                          // invertible; single number or indirect
-    | op_instruction                            // 00..40 or indirect
-    | pgm_instruction                           // 00..99 or indirect
-	| memory_instruction
-    | label_instruction
-	| branch_instruction
-	| conditional_instruction
+	| inv Bang                                  // Trick to allow a standalone Inv while keeping grammar simple, just INV!
+	| instruction_atomic_simple
+	| instruction_atomic_invertible
+    | instruction_atomic_inverted
+    | instruction_fix                           // single number or indirect
+    | instruction_setflag                       // invertible; single number or indirect
+    | instruction_op                            // 00..40 or indirect
+    | instruction_pgm                           // 00..99 or indirect
+	| instruction_memory
+    | instruction_label
+	| instruction_branch
+	| instruction_conditional
     ;
     
+// Prefix for invertible instructions
 inv: I22_invert WS?;
 
-atomic_instruction 
+instruction_atomic_simple 
 	: I11_a 
     | I12_b 
     | I13_c 
@@ -222,7 +223,7 @@ atomic_instruction
 	| I92_return
     ;
 
-atomic_instruction_invertible
+instruction_atomic_invertible
 	: inv? I23_ln
 	| inv? I28_log
 	| inv? I37_polar_to_rectangular
@@ -242,19 +243,19 @@ atomic_instruction_invertible
     | inv I71_subroutine            // Normally I92_return, but the split format is also valid
     ;
 
-atomic_instruction_inverted
+instruction_atomic_inverted
 	: I123_e_power_x
 	| I128_10_power_x
     ;
 
 // INV Fix is a atomic_instruction_invertible without argument
-fix_instruction: I58_fix WS? single_digit_or_indirect;
+instruction_fix: I58_fix WS? single_digit_or_indirect;
 
-flag_instruction: inv? I86_set_flag WS? single_digit_or_indirect;
+instruction_setflag: inv? I86_set_flag WS? single_digit_or_indirect;
 
 single_digit_or_indirect: single_digit | indirect_memory ;
 
-op_instruction
+instruction_op
     : I69_operation WS? op_number_or_indirect
 	| I84_operation_indirect WS? indmemory
     ;
@@ -263,14 +264,14 @@ op_number_or_indirect: op_number | indirect_memory ;
 
 indirect_memory: I40_indirect WS? indmemory;
 
-pgm_instruction
+instruction_pgm
     : I36_program WS? pgm_number_or_indirect
 	| I62_program_indirect WS? indmemory
     ;
 
 pgm_number_or_indirect: pgm_number | indirect_memory ;
 
-memory_instruction
+instruction_memory
     : I42_store WS? memory_or_indirect
 	| I43_recall WS? memory_or_indirect
 	| I48_exchange WS? memory_or_indirect
@@ -286,9 +287,9 @@ memory_instruction
 
 memory_or_indirect: memory | indirect_memory ;
 
-label_instruction: I76_label WS? ( key_label | numeric_key_label );
+instruction_label: I76_label WS? ( key_label | numeric_key_label );
 
-branch_instruction
+instruction_branch
     : I61_goto WS? address_or_label_or_indirect
 	| I83_goto_indirect WS? indmemory
 	| I71_subroutine WS? address_or_label_or_indirect
@@ -330,7 +331,7 @@ key_label
 	| I96_write | I97_dsz | I98_advance | I99_print | I90_list
     ;
 
-conditional_instruction
+instruction_conditional
     : x_equals_t_statement
 	| x_greater_or_equal_than_t_statement
 	| decrement_and_skip_on_zero_statement
