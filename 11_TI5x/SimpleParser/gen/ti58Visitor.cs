@@ -80,12 +80,6 @@ public interface Iti58Visitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitNumeric_key_label([NotNull] ti58Parser.Numeric_key_labelContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="ti58Parser.flag_number"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitFlag_number([NotNull] ti58Parser.Flag_numberContext context);
-	/// <summary>
 	/// Visit a parse tree produced by <see cref="ti58Parser.op_number"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -146,23 +140,17 @@ public interface Iti58Visitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitFix_instruction([NotNull] ti58Parser.Fix_instructionContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="ti58Parser.single_digit_or_indirect"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitSingle_digit_or_indirect([NotNull] ti58Parser.Single_digit_or_indirectContext context);
-	/// <summary>
 	/// Visit a parse tree produced by <see cref="ti58Parser.flag_instruction"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitFlag_instruction([NotNull] ti58Parser.Flag_instructionContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="ti58Parser.flag_or_indirect"/>.
+	/// Visit a parse tree produced by <see cref="ti58Parser.single_digit_or_indirect"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitFlag_or_indirect([NotNull] ti58Parser.Flag_or_indirectContext context);
+	Result VisitSingle_digit_or_indirect([NotNull] ti58Parser.Single_digit_or_indirectContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="ti58Parser.op_instruction"/>.
 	/// </summary>

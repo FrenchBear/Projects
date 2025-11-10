@@ -111,16 +111,6 @@ public interface Iti58Listener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitNumeric_key_label([NotNull] ti58Parser.Numeric_key_labelContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.flag_number"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterFlag_number([NotNull] ti58Parser.Flag_numberContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.flag_number"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitFlag_number([NotNull] ti58Parser.Flag_numberContext context);
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="ti58Parser.op_number"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -221,16 +211,6 @@ public interface Iti58Listener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitFix_instruction([NotNull] ti58Parser.Fix_instructionContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.single_digit_or_indirect"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterSingle_digit_or_indirect([NotNull] ti58Parser.Single_digit_or_indirectContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.single_digit_or_indirect"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitSingle_digit_or_indirect([NotNull] ti58Parser.Single_digit_or_indirectContext context);
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="ti58Parser.flag_instruction"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -241,15 +221,15 @@ public interface Iti58Listener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitFlag_instruction([NotNull] ti58Parser.Flag_instructionContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="ti58Parser.flag_or_indirect"/>.
+	/// Enter a parse tree produced by <see cref="ti58Parser.single_digit_or_indirect"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterFlag_or_indirect([NotNull] ti58Parser.Flag_or_indirectContext context);
+	void EnterSingle_digit_or_indirect([NotNull] ti58Parser.Single_digit_or_indirectContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="ti58Parser.flag_or_indirect"/>.
+	/// Exit a parse tree produced by <see cref="ti58Parser.single_digit_or_indirect"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitFlag_or_indirect([NotNull] ti58Parser.Flag_or_indirectContext context);
+	void ExitSingle_digit_or_indirect([NotNull] ti58Parser.Single_digit_or_indirectContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="ti58Parser.op_instruction"/>.
 	/// </summary>

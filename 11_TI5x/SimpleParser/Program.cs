@@ -31,7 +31,7 @@ public class Program
         string input = File.ReadAllText(filePath);
         Console.WriteLine($"Parsing file: {filePath}...");
 
-        input = "# Test\nINV! CLS\n";
+        input = "# Comment\n3.1416\nCLR\ne^x\nSin\nINVSin\nINV     Cos\n";
 
         // 2. The ANTLR parsing pipeline
         var inputStream = new AntlrInputStream(input);
@@ -50,7 +50,7 @@ public class Program
         //    It's case-sensitive! Find it at the top of ti58.g4.
         IParseTree tree = parser.startRule();
 
-        // 5. Check for validation (Goal 1)
+        // Check for validation
         if (errorListener.HadError)
         {
             Console.WriteLine("Validation FAILED.");
@@ -58,15 +58,17 @@ public class Program
             return;
         }
         else
-        {
             Console.WriteLine("Validation SUCCESSFUL.");
-        }
 
-        // 6. Run the visitor (Goal 2)
-        Console.WriteLine("\nRunning visitor on the parse tree...");
-        var visitor = new MyTi58Visitor(parser);
-        visitor.Visit(tree);
+        // Colorization visitor (only analyzing terminals)
+        Console.WriteLine("\nRunning colorization visitor on the parse tree...");
+        var colorVisitor = new MyTi58VisitorBaseColorize(parser);
+        colorVisitor.Visit(tree);
+        Console.WriteLine("\nColorization visitor finished.\n");
 
-        Console.WriteLine("\nVisitor finished.");
+        // AST Visitor
+        var astVisitor = new MyTi58VisitorBaseAST(parser);
+        astVisitor.Visit(tree);
+        astVisitor.PrintAST();
     }
 }

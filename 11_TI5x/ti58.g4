@@ -15,6 +15,7 @@
 //
 // 2025-11-08   PV      First version
 // 2025-11-09   PV      Version 2, flatten model
+// 2025-11-10   PV      Added missing invert instructions (INV Write, INV List, INV ^), 10 flags and not 7
 
 grammar ti58;
 
@@ -139,15 +140,13 @@ I128_10_power_x: '10^x';
 // Can't define these as lexical elements since they overlap and create conflicts
 d: '0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9';
 number: '-'? d+ ('.' d+)? ('E' ('+'|'-')? d+)?;             // Generalisation allowed by this language
-single_digit:   '0'? d;
+single_digit:   '0'? d;                                     // Fix or Flag
 memory:         d d?;                                       // Register number
 indmemory:      d d?;                                       // Indirect Register number
 pgm_number:     d d?;
 address_label:  (d d d)|('0' d WS d d);                     // The version nn<space>nn is for T59 programs
 numeric_key_label: ('1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9') d; // 10..99, an extension as a substitute to keys labels (25=CLR)
-flag_number:    '0'? ('0'|'1'|'2'|'3'|'4'|'5'|'6'|'7');
 op_number:      (('0'|'1'|'2'|'3') d) | ('4' '0');          // TI-58C has Op 40 (printer detection)
-
 
 startRule
     : program EOF
@@ -165,14 +164,14 @@ instruction_or_comment
     
 instruction
     : number
-	| inv Bang        // Trick to allow a standalone Inv while keeping grammar simple
+	| inv Bang                                  // Trick to allow a standalone Inv while keeping grammar simple
 	| atomic_instruction
 	| atomic_instruction_invertible
     | atomic_instruction_inverted
-    | fix_instruction
-    | flag_instruction
-    | op_instruction
-    | pgm_instruction
+    | fix_instruction                           // single number or indirect
+    | flag_instruction                          // invertible; single number or indirect
+    | op_instruction                            // 00..40 or indirect
+    | pgm_instruction                           // 00..99 or indirect
 	| memory_instruction
     | memory_instruction_invertible
     | memory_instruction_indirect
@@ -202,7 +201,6 @@ atomic_instruction
 	| I33_square
 	| I34_square_root
 	| I35_reciprocal
-    | I45_power
     | I47_clear_memory
 	| I53_left_parenthesis
 	| I54_right_parenthesis
@@ -222,10 +220,8 @@ atomic_instruction
     | I93_dot
 	| I94_change_sign
 	| I95_equals
-	| I96_write
 	| I98_advance
 	| I99_print
-	| I90_list
 	| I92_return
     ;
 
@@ -236,6 +232,7 @@ atomic_instruction_invertible
 	| inv? I38_sin
 	| inv? I39_cos
 	| inv? I30_tan
+    | inv? I45_power
     | inv? I52_exponent
 	| inv? I57_engineering
 	| inv? I58_fix
@@ -243,21 +240,22 @@ atomic_instruction_invertible
 	| inv? I78_sigma_plus
 	| inv? I79_average
 	| inv? I88_dms
+	| inv? I96_write
+	| inv? I90_list
+    | inv I71_subroutine            // Normally I92_return, but the split format is also valid
     ;
 
 atomic_instruction_inverted
-    : inv I71_subroutine        // Normally I92_return, but the split format is also valid
-	| I123_e_power_x
+	: I123_e_power_x
 	| I128_10_power_x
     ;
 
+// INV Fix is a atomic_instruction_invertible without argument
 fix_instruction: I58_fix WS? single_digit_or_indirect;
 
+flag_instruction: inv? I86_set_flag WS? single_digit_or_indirect;
+
 single_digit_or_indirect: single_digit | indirect_memory ;
-
-flag_instruction: inv? I86_set_flag WS? flag_or_indirect;
-
-flag_or_indirect: flag_number | indirect_memory ;
 
 op_instruction
     : I69_operation WS? op_number_or_indirect
@@ -361,4 +359,4 @@ x_greater_or_equal_than_t_statement: inv? I77_x_greater_or_equal_than_t WS? addr
 decrement_and_skip_on_zero_statement: inv? I97_dsz WS? memory_or_indirect WS address_or_label_or_indirect;
 
 // If flg
-test_flag_statement: inv? I87_if_flag WS? flag_or_indirect WS? address_or_label_or_indirect;
+test_flag_statement: inv? I87_if_flag WS? single_digit_or_indirect WS? address_or_label_or_indirect;
