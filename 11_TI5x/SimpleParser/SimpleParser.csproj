@@ -5,7 +5,7 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<RootNamespace>SimpleParser</RootNamespace>
 		<Nullable>enable</Nullable>
-		<WarningLevel>1</WarningLevel>
+		<NoWarn>$(NoWarn);CS3021</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>

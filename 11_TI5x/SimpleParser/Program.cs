@@ -29,7 +29,7 @@ public class Program
         //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master LIbrary\all.t59";
         //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\indirect.t59";
 
-#pragma warning disable IDE0059 // Unnecessary assignment of a value
+        //#pragma warning disable IDE0059 // Unnecessary assignment of a value
         string input = File.ReadAllText(filePath);
         Console.WriteLine($"Parsing file: {filePath}...");
 

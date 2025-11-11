@@ -51,11 +51,9 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
     public readonly ASTProgram program = new([]);
     public readonly MyTi58VisitorBaseColorize colorVisitor = new(parser);
 
-    // Groups top level numbers
-    // Replaces addresses 0n nn in nnn
-    // Standardizes some mnemonics, for instance replace STA or SIG+ by Σ+
     internal void PostProcessAST()
     {
+        // Standardization of instructions: replaces STA or SIG+ by Σ+
         foreach (var sta in program.Statements)
         {
             // Normalize instruction names and keys labels
@@ -69,62 +67,18 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
                                 inst.AstTokens[i] = inst.AstTokens[i] with { Text = lsi[0] };
                     }
         }
+
+        // ToDo: Group top level numbers
+
+        // ToDo: Group digits in registers (direct and indirect), op, pgm, ... (flags and Dsz use 1 digit by default)
+
+        // ToDo: Replace addresses "0n nn" by "nnn"
+
+        // ToDo: Line comment processing so they can be printed after an instruction in case they're behind an instruction in the code
+        // (and maybe align comments Rust or Go style)
+
+        // ToDo: build a list of labels and a list of statements start instruction to validate direct address and labels
     }
-
-    //// Dev Helper
-    //internal void PrintASTDebug()
-    //{
-    //    Console.WriteLine("\nAST Tree");
-    //    foreach (ASTStatementBase sta in program.statements)
-    //    {
-    //        switch (sta)
-    //        {
-    //            case ASTComment(var astTokens):
-    //                Console.WriteLine($"Comment: {astTokens[0].text}");
-    //                break;
-
-    //            case ASTInterStatementWhiteSpace(_):
-    //                //Console.WriteLine("Inter-statement WhiteSpace");
-    //                break;
-
-    //            case ASTNumber(_, var opCodes, var mnemonic):
-    //                Console.WriteLine($"Number: {string.Join(" ", opCodes.Select(b => b.ToString("D2")))}: {mnemonic}");
-    //                break;
-
-    //            // Before ASTInstructionArg
-    //            case ASTInstructionArgBranch(_, var opCodes, var inverted, var mnemonic, YesNoImplicit argIndirect, byte argValue, YesNoImplicit targetIndirect, string targetMnemonic, int targetValue):
-    //                Console.Write($"InstructionArgBranch: {string.Join(" ", opCodes.Select(b => b.ToString("D2")))}: ");
-    //                Console.WriteLine($"{mnemonic}\tinverted: {inverted}  argIndirect: {argIndirect}  argValue: {argValue}  targetIndirect: {targetIndirect}  targetMnemonic: «{targetMnemonic}»  targetValue: {targetValue}");
-    //                break;
-
-    //            // Need to be placed before case ASTInstructionAtomic since ASTInstructionArg inherits from ASTInstructionAtomic
-    //            case ASTInstructionArg(_, var opCodes, var inverted, var mnemonic, YesNoImplicit argIndirect, byte argValue):
-    //                Console.Write($"InstructionArg: {string.Join(" ", opCodes.Select(b => b.ToString("D2")))}: ");
-    //                Console.WriteLine($"{mnemonic}\tinverted: {inverted}  argIndirect: {argIndirect}  argValue: {argValue}");
-    //                break;
-
-    //            // Same thing here
-    //            case ASTInstructionBranch(_, var opCodes, var inverted, var mnemonic, YesNoImplicit targetIndirect, string targetMnemonic, int targetValue):
-    //                Console.Write($"InstructionBranch: {string.Join(" ", opCodes.Select(b => b.ToString("D2")))}: ");
-    //                Console.WriteLine($"{mnemonic}\tinverted: {inverted}  targetIndirect: {targetIndirect}  targetMnemonic: «{targetMnemonic}»  targetValue: {targetValue}");
-    //                break;
-
-    //            case ASTInstructionAtomic(_, var opCodes, var inverted, var mnemonic):
-    //                Console.Write($"AtomicInstruction: {string.Join(" ", opCodes.Select(b => b.ToString("D2")))}: ");
-    //                Console.WriteLine($"{mnemonic}\tinverted: {inverted}");
-    //                break;
-
-    //            case ASTInstructionLabel(_, var opCodes, _, var mnemonic, var labelMnemonic, byte labelOpCode):
-    //                Console.Write($"LabelInstruction: {string.Join(" ", opCodes.Select(b => b.ToString("D2")))}: ");
-    //                Console.WriteLine($"{mnemonic}\tLabelMnemonic: «{labelMnemonic}» labelOpCode: {labelOpCode}");
-    //                break;
-
-    //            default:
-    //                Console.WriteLine("Other");
-    //                break;
-    //        }
-    //    }
-    //}
 
     internal void PrintFormattedAST()
     {
