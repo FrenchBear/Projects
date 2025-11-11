@@ -142,14 +142,14 @@ I128_10_power_x: '10^x';
 
 // Can't define these as lexical elements since they overlap and create conflicts
 d: '0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9';
-number: '-'? d+ ('.' d+)? ('E' ('+'|'-')? d+)?;             // Generalisation allowed by this language
-single_digit:   '0'? d;                                     // Fix or Flag
-memory:         d d?;                                       // Register number
-indmemory:      d d?;                                       // Indirect Register number
+number: '-'? ((d+ ('.' d+)?)|('.' d+)) ('E' ('+'|'-')? d+)?;    // Generalisation allowed
+single_digit:   '0'? d;                                         // Fix or Flag
+memory:         d d?;                                           // Register number
+indmemory:      d d?;                                           // Indirect Register number
 pgm_number:     d d?;
-address_label:  (d d d)|('0' d WS d d);                     // The version nn<space>nn is for T59 programs
-numeric_key_label: ('1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9') d; // 10..99, an extension as a substitute to keys labels (25=CLR)
-op_number:      (('0'|'1'|'2'|'3') d) | ('4' '0');          // TI-58C has Op 40 (printer detection)
+address_label:  (d d d)|('0' d WS d d);                         // The version nn<space>nn is for T59 programs
+numeric_key_label: ('1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9') d;     // 10..99, an extension as a substitute to keys labels (25=CLR)
+op_number:      (('0'|'1'|'2'|'3') d) | ('4' '0');              // TI-58C has Op 40 (printer detection)
 
 startRule
     : program EOF
@@ -167,19 +167,21 @@ instruction_or_comment
     
 instruction
     : number
-	| inv Bang                                  // Trick to allow a standalone Inv while keeping grammar simple, just INV!
+    | instruction_invert_isolated
 	| instruction_atomic_simple
 	| instruction_atomic_invertible
     | instruction_atomic_inverted
-    | instruction_fix                           // single number or indirect
-    | instruction_setflag                       // invertible; single number or indirect
-    | instruction_op                            // 00..40 or indirect
-    | instruction_pgm                           // 00..99 or indirect
+    | instruction_fix                       // single number or indirect
+    | instruction_setflag                   // invertible; single number or indirect
+    | instruction_op                        // 00..40 or indirect
+    | instruction_pgm                       // 00..99 or indirect
 	| instruction_memory
     | instruction_label
 	| instruction_branch
 	| instruction_conditional
     ;
+
+instruction_invert_isolated: inv Bang;      // Trick to allow a standalone Inv while keeping grammar simple, just INV!
     
 // Prefix for invertible instructions
 inv: I22_invert WS?;

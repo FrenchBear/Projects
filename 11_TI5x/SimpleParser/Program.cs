@@ -25,12 +25,14 @@ public class Program
         }
         */
 
-        const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\all.t59";
+        const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master LIbrary\ML-25.t59";
+        //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master LIbrary\all.t59";
+        //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\indirect.t59";
 
         string input = File.ReadAllText(filePath);
         Console.WriteLine($"Parsing file: {filePath}...");
 
-        input = "DSZ 40 CLR";
+        input = "1234\n1.414\n.333\nLBL A\n-6.02e23\n1E10\n1E+10\n-1234567890e-79";
 
         // 2. The ANTLR parsing pipeline
         var inputStream = new AntlrInputStream(input);
@@ -62,13 +64,11 @@ public class Program
             return;
         }
         else
-            Console.WriteLine("Validation SUCCESSFUL.");
+            Console.WriteLine("Validation successful.\n");
 
         // Colorization visitor (only analyzing terminals)
-        Console.WriteLine("\nRunning colorization visitor on the parse tree...");
         var colorVisitor = new MyTi58VisitorBaseColorize(parser);
         colorVisitor.Visit(tree);
-        Console.WriteLine("\nColorization visitor finished.\n");
 
         // AST Visitor
         var astVisitor = new MyTi58VisitorBaseAST(parser);

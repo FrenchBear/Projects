@@ -110,6 +110,12 @@ public interface Iti58Visitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitInstruction([NotNull] ti58Parser.InstructionContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="ti58Parser.instruction_invert_isolated"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitInstruction_invert_isolated([NotNull] ti58Parser.Instruction_invert_isolatedContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="ti58Parser.inv"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

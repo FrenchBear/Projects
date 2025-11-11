@@ -161,6 +161,16 @@ public interface Iti58Listener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitInstruction([NotNull] ti58Parser.InstructionContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.instruction_invert_isolated"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterInstruction_invert_isolated([NotNull] ti58Parser.Instruction_invert_isolatedContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.instruction_invert_isolated"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitInstruction_invert_isolated([NotNull] ti58Parser.Instruction_invert_isolatedContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="ti58Parser.inv"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

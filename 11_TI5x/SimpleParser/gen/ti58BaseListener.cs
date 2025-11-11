@@ -192,6 +192,18 @@ public partial class ti58BaseListener : Iti58Listener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitInstruction([NotNull] ti58Parser.InstructionContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.instruction_invert_isolated"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterInstruction_invert_isolated([NotNull] ti58Parser.Instruction_invert_isolatedContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.instruction_invert_isolated"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitInstruction_invert_isolated([NotNull] ti58Parser.Instruction_invert_isolatedContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="ti58Parser.inv"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>

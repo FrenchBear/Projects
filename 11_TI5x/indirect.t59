@@ -1,0 +1,22 @@
+STO IND 12
+RCL IND 12
+EXC Ind 12
+SUM IND 12
+INV SUM IND 12
+PRD IND 12
+INV PRD IND 12
+GTO IND 12
+Pgm Ind 12
+Op Ind 12
+SBR Ind 12
+Fix Ind 12
+x=t Ind 12
+x≥t Ind 12
+STF Ind 12
+IFF Ind 12 123
+IFF Ind 12 Ind 13
+Dsz 12 13
+Dsz Ind 12 123
+Dsz Ind 12 Ind 13
+Dsz 12 Ind 13
+INV SBR

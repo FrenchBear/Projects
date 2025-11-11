@@ -1,4 +1,4 @@
-// Simple visitor on terminals that colorizes a program
+﻿// Simple visitor on terminals that colorizes a program
 // Each terminal is processed independently, there is no statement context
 // Terminal is colorized either based on its type (ex: ti58Lexer.LineComment)
 // or on its parent (direct or indirect) class (ex: ti58Parser.RULE_indmemory)
@@ -22,7 +22,7 @@ namespace SimpleParser;
 // The 'object' type means your visit methods can return any type.
 public class MyTi58VisitorBaseColorize: ti58BaseVisitor<object>
 {
-    enum SyntaxCategories
+    public enum SyntaxCategories
     {
         WhiteSpace,
         Comment,
@@ -40,7 +40,7 @@ public class MyTi58VisitorBaseColorize: ti58BaseVisitor<object>
         Console.ForegroundColor = cat switch
         {
             SyntaxCategories.Comment => ConsoleColor.Green,
-            SyntaxCategories.Instruction => ConsoleColor.Blue,
+            SyntaxCategories.Instruction => ConsoleColor.Cyan,
             SyntaxCategories.KeyLabel => ConsoleColor.DarkYellow,
             SyntaxCategories.Number => ConsoleColor.Gray,
             SyntaxCategories.MemoryOrNumber => ConsoleColor.Red,
@@ -49,7 +49,7 @@ public class MyTi58VisitorBaseColorize: ti58BaseVisitor<object>
             _ => ConsoleColor.White,
         };
         Console.Write(node.GetText());
-        Console.ForegroundColor = ConsoleColor.White;
+        Console.ForegroundColor = ConsoleColor.Gray;
     }
 
     private readonly ti58Parser _parser;

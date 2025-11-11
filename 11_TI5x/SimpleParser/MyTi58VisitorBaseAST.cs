@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SimpleParser;
 
@@ -53,7 +54,7 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
     }
 
     // Helper
-    internal void PrintAST()
+    internal void PrintASTDebug()
     {
         Console.WriteLine("\nAST Tree");
         foreach (ASTStatementBase sta in program.statements)
@@ -109,6 +110,65 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
         }
     }
 
+    internal void PrintAST()
+    {
+        var colorVisitor = new MyTi58VisitorBaseColorize(_parser);
+
+        Console.WriteLine();
+        int cp = 0;
+        foreach (ASTStatementBase sta in program.statements)
+        {
+            switch (sta)
+            {
+                case ASTComment(var c1):
+                    Console.WriteLine(c1.First().GetText());
+                    break;
+
+                case ASTWhiteSpace(_):
+                    //Console.WriteLine("Inter-statement WhiteSpace");
+                    break;
+
+                case ASTInstruction(List<ITerminalNode> nodes, _, var opCodes, var inverted, var mnemonic):
+                    //mnemonic = mnemonic.Replace("\r\n", " ").Replace("\n", " ");
+                    //while (mnemonic.Contains("  "))
+                    //    mnemonic = mnemonic.Replace("  ", " ");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Write($"{cp:D3}: ");
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    
+                    Console.Write($"{string.Join(" ", opCodes.Take(5).Select(b => b.ToString("D2"))),-15} ");
+                    if (mnemonic.StartsWith("LBL", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.Write("■ ");
+                        Console.ForegroundColor = ConsoleColor.Gray;
+                    } else
+                        Console.Write("  ");
+
+                    foreach (ITerminalNode node in nodes)
+                        if (node.Symbol.Type == ti58Lexer.WS)
+                            Console.Write(" ");
+                        else
+                            colorVisitor.VisitTerminal(node);
+                    Console.WriteLine();
+
+                    while (opCodes.Count>5)
+                    {
+                        cp += 5;
+                        opCodes.RemoveRange(0, 5);
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.Write($"{cp:D3}: ");
+                        Console.ForegroundColor = ConsoleColor.Gray;
+                        Console.WriteLine($"{string.Join(" ", opCodes.Take(5).Select(b => b.ToString("D2"))),-15} ");
+                    }
+
+                    cp += opCodes.Count();
+                    break;
+            }
+        }
+    }
+
+
 
     // This method is called for every single token in the tree
     // We only process comments and top-level white space which are not handled as instructions
@@ -132,7 +192,6 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
             goto exit;
         }
 
-
     exit:
         return base.VisitTerminal(node);
     }
@@ -141,13 +200,29 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
     {
         var tn = GetTerminalNodes(context);
         var text = context.GetText();
-        // Will build list of opcodes later
-        var num = new ASTNumber(tn, context, new(), text);
+        List<byte> opCodes = new();
+        foreach (var c in text)
+        {
+            if (c >= '0' && c <= '9')
+                opCodes.Add((byte)(c - '0'));
+            else if (c == '-')
+                opCodes.Add(94);
+            else if (c == '.')
+                opCodes.Add(93);
+            else if (c == 'e' || c == 'E')
+                opCodes.Add(52);
+            else if (c == '+')
+            { }
+            else
+                Debugger.Break();
+        }
+
+        var num = new ASTNumber(tn, context, opCodes, text);
         program.statements.Add(num);
 
-        // Don't think we need to analyze deeper
+
+
         return null;
-        //return base.VisitNumber(context);
     }
 
     public override object VisitInstruction_atomic_simple([NotNull] ti58Parser.Instruction_atomic_simpleContext context)
@@ -157,6 +232,9 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
         => AtomicInstruction(context);
 
     public override object VisitInstruction_atomic_inverted([NotNull] ti58Parser.Instruction_atomic_invertedContext context)
+        => AtomicInstruction(context);
+
+    public override object VisitInstruction_invert_isolated([NotNull] ti58Parser.Instruction_invert_isolatedContext context)
         => AtomicInstruction(context);
 
     // Skip optional WS if present
@@ -195,6 +273,15 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
             opCodes.Add(22);
             opCodes.Add(28);
         }
+        else if (symbolicName == "I71_subroutine" && opCodes.Count > 0)
+        {
+            // INV SBR
+            opCodes[0] = 92;
+        }
+        else if(symbolicName=="Bang")
+        {
+            // Nop
+        }
         else
         {
             Debug.Assert(symbolicName.StartsWith('I') && symbolicName[3] == '_');
@@ -232,7 +319,8 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
             MoveToNextSymbol(tn, ref ixInstruction);
         }
 
-        string symbolicName = _parser.Vocabulary.GetSymbolicName(tn[ixInstruction].Symbol.Type);
+        int mainType = tn[ixInstruction].Symbol.Type;
+        string symbolicName = _parser.Vocabulary.GetSymbolicName(mainType);
         Debug.Assert(symbolicName.StartsWith('I') && symbolicName[3] == '_');
         opCodes.Add(byte.Parse(symbolicName[1..3]));
         if (symbolicName.Contains("indirect"))
@@ -243,7 +331,41 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
         // Ind prefix?
         if (tn[ixInstruction].Symbol.Type == ti58Lexer.I40_indirect)
         {
-            // We don't add Ind prefix twice in case we have something like SM* Ind 40, just consider it's SUM Ind 40 or SM* 40
+            // Merged indirect operations (IND GTO is handled in InstructionBranch)
+            var l = opCodes.Count - 1;
+            switch (opCodes[l])
+            {
+                case 42:        // STO
+                    opCodes[l] = 72;
+                    argIndirect = YesNoImplicit.Implicit;
+                    break;
+                case 43:        // RCL
+                    opCodes[l] = 73;
+                    argIndirect = YesNoImplicit.Implicit;
+                    break;
+                case 44:        // SUM
+                    opCodes[l] = 74;
+                    argIndirect = YesNoImplicit.Implicit;
+                    break;
+                case 48:        // EXC
+                    opCodes[l] = 63;
+                    argIndirect = YesNoImplicit.Implicit;
+                    break;
+                case 49:        // PRD
+                    opCodes[l] = 64;
+                    argIndirect = YesNoImplicit.Implicit;
+                    break;
+                case 36:        // PGM
+                    opCodes[l] = 62;
+                    argIndirect = YesNoImplicit.Implicit;
+                    break;
+                case 69:        // Op
+                    opCodes[l] = 84;
+                    argIndirect = YesNoImplicit.Implicit;
+                    break;
+            }
+
+            // For non-merged instruction, add expliclty 40
             if (argIndirect == YesNoImplicit.No)
             {
                 argIndirect = YesNoImplicit.Yes;
@@ -342,7 +464,14 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
         // Ind prefix?
         if (tn[ixInstruction].Symbol.Type == ti58Lexer.I40_indirect)
         {
-            // We don't add Ind prefix twice in case we have something like SM* Ind 40, just consider it's SUM Ind 40 or SM* 40
+            // Merged IND GTO
+            var l = opCodes.Count - 1;
+            if (opCodes[l] == 61)
+            {
+                opCodes[l] = 83;
+                targetIndirect = YesNoImplicit.Implicit;
+            }
+
             if (targetIndirect == YesNoImplicit.No)
             {
                 targetIndirect = YesNoImplicit.Yes;
