@@ -353,7 +353,9 @@ instruction_x_greater_or_equal_than_t
     | inv? I77_x_greater_or_equal_than_t_indextra WS? indmemory
     ;
 
-// Dsz (note that while officially only memories from 0 to 9 are supported, in fact all 99 memories are supported)
+// Dsz 
+// While officially only memories from 0 to 9 are supported, in fact all 99 memories are supported, with the exeption of
+// register 40: Opcodes 97 40 rr means Dsz Ind rr
 instruction_decrement_and_skip_on_zero: inv? I97_dsz WS? memory_or_indirect WS address_or_label_or_indirect;
 
 // If flg

@@ -25,17 +25,12 @@ public class Program
         }
         */
 
-        //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\sum.t59";
-        const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master Library\all.T59";
+        const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\all.t59";
 
         string input = File.ReadAllText(filePath);
         Console.WriteLine($"Parsing file: {filePath}...");
 
-        input = "GTO 123 GTO 25 GTO CLR GTO Ind 12 GO* 12\nSBR 123 SBR 25 SBR CLR SBR Ind 12\n" +
-            "x=t CLR x=t 25 x=t 421 x=t IND 12 EQ 111 EQ* 12\nINVx=t CLR Inv x=t 25 Inv x=t 421 INV  x=t IND 12 INVEQ 111 INV EQ* 12\n" +
-            "x≥t CLR x≥t 25 x≥t 421 x≥t IND 12 GE 111 GE* 12\nINVx≥t CLR inv x≥t 25 inv  x≥t 421 INV x≥t IND 12 INVGE 111 inv GE* 12\n";
-
-        input = "GE* 12";
+        input = "DSZ 40 CLR";
 
         // 2. The ANTLR parsing pipeline
         var inputStream = new AntlrInputStream(input);

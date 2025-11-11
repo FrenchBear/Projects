@@ -72,6 +72,13 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
                     Console.WriteLine($"Number: {string.Join(" ", opCodes.Select(b => b.ToString("D2")))}: {mnemonic}");
                     break;
 
+                // Before ASTInstructionArg
+                case ASTInstructionArgBranch(_, _, var opCodes, var inverted, var mnemonic, YesNoImplicit argIndirect, byte argValue, YesNoImplicit targetIndirect, string targetMnemonic, int targetValue):
+                    Console.Write($"InstructionArgBranch: {string.Join(" ", opCodes.Select(b => b.ToString("D2")))}: ");
+                    Console.WriteLine($"{mnemonic}\tinverted: {inverted}  argIndirect: {argIndirect}  argValue: {argValue}  targetIndirect: {targetIndirect}  targetMnemonic: «{targetMnemonic}»  targetValue: {targetValue}");
+                    break;
+
+
                 // Need to be placed before case ASTInstructionAtomic since ASTInstructionArg inherits from ASTInstructionAtomic
                 case ASTInstructionArg(_, _, var opCodes, var inverted, var mnemonic, YesNoImplicit argIndirect, byte argValue):
                     Console.Write($"InstructionArg: {string.Join(" ", opCodes.Select(b => b.ToString("D2")))}: ");
@@ -245,7 +252,9 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
             MoveToNextSymbol(tn, ref ixInstruction);
         }
 
-        byte argValue = byte.Parse(tn[ixInstruction].GetText());
+        byte argValue = 0;
+        foreach (var d in tn[ixInstruction..])
+            argValue = (byte)(10 * argValue + byte.Parse(d.GetText()));
         opCodes.Add(argValue);
 
         var aa = new ASTInstructionArg(tn, context, opCodes, inverted, text, argIndirect, argValue);
@@ -371,7 +380,7 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
                     break;
                 case 3:
                 case 4:
-                    targetMnemonic = $"{targetValue / 100:D2} {targetValue % 100:D2}";
+                    targetMnemonic = $"{targetValue:D3}";
                     opCodes.Add((byte)(targetValue / 100));
                     opCodes.Add((byte)(targetValue % 100));
                     break;
@@ -379,6 +388,123 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
         }
 
         var aa = new ASTInstructionBranch(tn, context, opCodes, inverted, text, targetIndirect, targetMnemonic, targetValue);
+        program.statements.Add(aa);
+
+        return null;
+    }
+
+
+    public override object VisitInstruction_test_flag([NotNull] ti58Parser.Instruction_test_flagContext context)
+        => InstructionArgBranch(context);
+
+    public override object VisitInstruction_decrement_and_skip_on_zero([NotNull] ti58Parser.Instruction_decrement_and_skip_on_zeroContext context)
+        => InstructionArgBranch(context);
+
+    object InstructionArgBranch(ParserRuleContext context)
+    {
+        var tn = GetTerminalNodes(context);
+        var text = context.GetText();
+
+        int ixInstruction = 0;
+        YesNoImplicit inverted = YesNoImplicit.No;
+        YesNoImplicit argIndirect = YesNoImplicit.No;
+        List<byte> opCodes = new();
+
+        // INV prefix?
+        if (tn[ixInstruction].Symbol.Type == ti58Lexer.I22_invert)
+        {
+            inverted = YesNoImplicit.Yes;
+            opCodes.Add(22);
+            MoveToNextSymbol(tn, ref ixInstruction);
+        }
+
+        string symbolicName = _parser.Vocabulary.GetSymbolicName(tn[ixInstruction].Symbol.Type);
+        Debug.Assert(symbolicName.StartsWith('I') && symbolicName[3] == '_');
+        opCodes.Add(byte.Parse(symbolicName[1..3]));
+        if (symbolicName.Contains("indirect"))
+            argIndirect = YesNoImplicit.Implicit;
+
+        MoveToNextSymbol(tn, ref ixInstruction);
+
+        // Ind prefix?
+        if (tn[ixInstruction].Symbol.Type == ti58Lexer.I40_indirect)
+        {
+            // We don't add Ind prefix twice in case we have something like SM* Ind 40, just consider it's SUM Ind 40 or SM* 40
+            if (argIndirect == YesNoImplicit.No)
+            {
+                argIndirect = YesNoImplicit.Yes;
+                opCodes.Add(40);
+            }
+            MoveToNextSymbol(tn, ref ixInstruction);
+        }
+
+        byte argValue = 0;
+        for (; ; )
+        {
+            var txt = tn[ixInstruction].GetText();
+            if (!byte.TryParse(txt, out byte b))
+                break;
+            argValue = (byte)(10 * argValue + b);
+            ixInstruction++;
+        }
+        Debug.Assert(argValue != 40);       // Temp for dev; Dsz 40 should be rejected as invalid, since it means Dsz Ind
+        opCodes.Add(argValue);
+        MoveToNextSymbol(tn, ref ixInstruction);
+
+        // Target ---------------------------------
+        YesNoImplicit targetIndirect = YesNoImplicit.No;
+
+        // Ind prefix?
+        if (tn[ixInstruction].Symbol.Type == ti58Lexer.I40_indirect)
+        {
+            // We don't add Ind prefix twice in case we have something like SM* Ind 40, just consider it's SUM Ind 40 or SM* 40
+            if (targetIndirect == YesNoImplicit.No)
+            {
+                targetIndirect = YesNoImplicit.Yes;
+                opCodes.Add(40);
+            }
+            MoveToNextSymbol(tn, ref ixInstruction);
+        }
+
+        // Determine if target is a label, a numeric label or an address
+        symbolicName = _parser.Vocabulary.GetSymbolicName(tn[ixInstruction].Symbol.Type);
+        string targetMnemonic = "?";
+        int targetValue = 0;           // byte is not enough since addresses are 0..999
+        if (symbolicName != null)
+        {   // Instruction label
+            targetMnemonic = tn[ixInstruction].GetText();
+            Debug.Assert(symbolicName.StartsWith('I') && symbolicName[3] == '_');
+
+            targetValue = byte.Parse(symbolicName[1..3]);
+            opCodes.Add((byte)targetValue);
+        }
+        else
+        {
+            int digitsCount = 0;
+            foreach (var d in tn[ixInstruction..])
+                if (d.Symbol.Type != ti58Lexer.WS)
+                {
+                    digitsCount++;
+                    targetValue = 10 * targetValue + byte.Parse(d.GetText());
+                }
+            switch (digitsCount)
+            {
+                case 2:
+                    targetMnemonic = $"{targetValue:D2}";
+                    opCodes.Add((byte)targetValue);
+                    break;
+                case 3:
+                case 4:
+                    targetMnemonic = $"{targetValue:D3}";
+                    opCodes.Add((byte)(targetValue / 100));
+                    opCodes.Add((byte)(targetValue % 100));
+                    break;
+            }
+        }
+
+
+
+        var aa = new ASTInstructionArgBranch(tn, context, opCodes, inverted, text, argIndirect, argValue, targetIndirect, targetMnemonic, targetValue);
         program.statements.Add(aa);
 
         return null;
