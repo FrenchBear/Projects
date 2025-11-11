@@ -24,6 +24,7 @@ public class MyTi58VisitorBaseColorize: ti58BaseVisitor<object>
 {
     public enum SyntaxCategory
     {
+        EOF,
         InterInstructionWhiteSpace,
         WhiteSpace,
         Comment,
@@ -37,8 +38,13 @@ public class MyTi58VisitorBaseColorize: ti58BaseVisitor<object>
     }
 
 
-    private void Colorize(string text, SyntaxCategory cat)
+    public void Colorize(ASTToken token)
+        => Colorize(token.text, token.cat);
+
+    public void Colorize(string text, SyntaxCategory cat)
     {
+        if (cat==SyntaxCategory.EOF) return;
+
         Console.ForegroundColor = cat switch
         {
             SyntaxCategory.Comment => ConsoleColor.Green,
@@ -67,10 +73,11 @@ public class MyTi58VisitorBaseColorize: ti58BaseVisitor<object>
         var sc = GetTerminalSyntaxCategory(node);
         var text = node.GetText();
 
-        if (sc == SyntaxCategory.InterInstructionWhiteSpace)
-            Console.WriteLine();
-        else
-            Colorize(text, sc);
+        //if (sc == SyntaxCategory.InterInstructionWhiteSpace)
+        //    Console.WriteLine();
+        //else
+        // Print exactly as is, just with color
+        Colorize(text, sc);
 
         return base.VisitTerminal(node);
     }
@@ -95,7 +102,7 @@ public class MyTi58VisitorBaseColorize: ti58BaseVisitor<object>
             return SyntaxCategory.Comment;
 
         if (tokenType == ti58Lexer.Eof)
-            return SyntaxCategory.InterInstructionWhiteSpace;     // Maybe None?
+            return SyntaxCategory.EOF;
 
         if (tokenType == ti58Lexer.Bang)
             return SyntaxCategory.Instruction;

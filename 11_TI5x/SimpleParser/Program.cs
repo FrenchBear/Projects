@@ -34,7 +34,7 @@ public class Program
 
         //input = "1234\n1.414\n.333\nLBL A\n-6.02e23\n1E10\n1E+10\n-1234567890e-79";
         //input = "1 . 6 +/- EE 1 9 +/-";
-        input = "Lbl STA SIG+ GTO Σ+";
+        input = "# Test program\nLbl STA SIG+ GTO Σ+";
 
         // 2. The ANTLR parsing pipeline
         var inputStream = new AntlrInputStream(input);
@@ -71,6 +71,7 @@ public class Program
         // Colorization visitor (only analyzing terminals)
         var colorVisitor = new MyTi58VisitorBaseColorize(parser);
         colorVisitor.Visit(tree);
+        Console.WriteLine();
 
         // AST Visitor
         var astVisitor = new MyTi58VisitorBaseAST(parser);
