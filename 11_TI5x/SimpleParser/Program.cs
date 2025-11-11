@@ -32,7 +32,9 @@ public class Program
         string input = File.ReadAllText(filePath);
         Console.WriteLine($"Parsing file: {filePath}...");
 
-        input = "1234\n1.414\n.333\nLBL A\n-6.02e23\n1E10\n1E+10\n-1234567890e-79";
+        //input = "1234\n1.414\n.333\nLBL A\n-6.02e23\n1E10\n1E+10\n-1234567890e-79";
+        //input = "1 . 6 +/- EE 1 9 +/-";
+        input = "Lbl STA SIG+ GTO Σ+";
 
         // 2. The ANTLR parsing pipeline
         var inputStream = new AntlrInputStream(input);
@@ -73,6 +75,7 @@ public class Program
         // AST Visitor
         var astVisitor = new MyTi58VisitorBaseAST(parser);
         astVisitor.Visit(tree);
-        astVisitor.PrintAST();
+        astVisitor.PostProcessAST();
+        astVisitor.PrintFormattedAST();
     }
 }

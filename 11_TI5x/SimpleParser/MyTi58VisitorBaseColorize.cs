@@ -22,33 +22,35 @@ namespace SimpleParser;
 // The 'object' type means your visit methods can return any type.
 public class MyTi58VisitorBaseColorize: ti58BaseVisitor<object>
 {
-    public enum SyntaxCategories
+    public enum SyntaxCategory
     {
+        InterInstructionWhiteSpace,
         WhiteSpace,
         Comment,
         Instruction,
         KeyLabel,
         Number,
-        MemoryOrNumber,
+        DirectMemoryOrNumber,
         IndirectMemory,
         AddressLabel,
+        Unknown,
     }
 
 
-    private void Colorize(ITerminalNode node, SyntaxCategories cat)
+    private void Colorize(string text, SyntaxCategory cat)
     {
         Console.ForegroundColor = cat switch
         {
-            SyntaxCategories.Comment => ConsoleColor.Green,
-            SyntaxCategories.Instruction => ConsoleColor.Cyan,
-            SyntaxCategories.KeyLabel => ConsoleColor.DarkYellow,
-            SyntaxCategories.Number => ConsoleColor.Gray,
-            SyntaxCategories.MemoryOrNumber => ConsoleColor.Red,
-            SyntaxCategories.IndirectMemory => ConsoleColor.Magenta,
-            SyntaxCategories.AddressLabel => ConsoleColor.Yellow,
+            SyntaxCategory.Comment => ConsoleColor.Green,
+            SyntaxCategory.Instruction => ConsoleColor.Cyan,
+            SyntaxCategory.KeyLabel => ConsoleColor.DarkYellow,
+            SyntaxCategory.Number => ConsoleColor.Gray,
+            SyntaxCategory.DirectMemoryOrNumber => ConsoleColor.Red,
+            SyntaxCategory.IndirectMemory => ConsoleColor.Magenta,
+            SyntaxCategory.AddressLabel => ConsoleColor.Yellow,
             _ => ConsoleColor.White,
         };
-        Console.Write(node.GetText());
+        Console.Write(text);
         Console.ForegroundColor = ConsoleColor.Gray;
     }
 
@@ -62,6 +64,19 @@ public class MyTi58VisitorBaseColorize: ti58BaseVisitor<object>
     // This method is called for every single token in the tree.
     public override object VisitTerminal(ITerminalNode node)
     {
+        var sc = GetTerminalSyntaxCategory(node);
+        var text = node.GetText();
+
+        if (sc == SyntaxCategory.InterInstructionWhiteSpace)
+            Console.WriteLine();
+        else
+            Colorize(text, sc);
+
+        return base.VisitTerminal(node);
+    }
+
+    public SyntaxCategory GetTerminalSyntaxCategory(ITerminalNode node)
+    {
         int tokenType = node.Symbol.Type;
 
         // First we handle white space, comments and numbers that can be determined
@@ -71,31 +86,22 @@ public class MyTi58VisitorBaseColorize: ti58BaseVisitor<object>
             // Just a test to separate WS between instructions and WS in instructions
             // We don't attempt to normalize WS in structions or remove \n in instructions
             if (node.Parent is ParserRuleContext ruleContext && ruleContext.RuleIndex == ti58Parser.RULE_program)
-                Console.WriteLine();
+                return SyntaxCategory.InterInstructionWhiteSpace;
             else
-                Colorize(node, SyntaxCategories.WhiteSpace);
-            goto Exit;
+                return SyntaxCategory.WhiteSpace;
         }
+
         if (tokenType == ti58Lexer.LineComment)
-        {
-            Colorize(node, SyntaxCategories.Comment);
-            goto Exit;
-        }
+            return SyntaxCategory.Comment;
+
         if (tokenType == ti58Lexer.Eof)
-        {
-            Console.WriteLine();
-            goto Exit;
-        }
+            return SyntaxCategory.InterInstructionWhiteSpace;     // Maybe None?
+
         if (tokenType == ti58Lexer.Bang)
-        {
-            Colorize(node, SyntaxCategories.Instruction);
-            goto Exit;
-        }
+            return SyntaxCategory.Instruction;
+
         if (tokenType == ti58Lexer.I40_indirect)
-        {
-            Colorize(node, SyntaxCategories.IndirectMemory);
-            goto Exit;
-        }
+            return SyntaxCategory.IndirectMemory;
 
         // Build a list of parent types (rules) so later we can easily check whether
         // a terminal descend from a specific rule
@@ -117,45 +123,27 @@ public class MyTi58VisitorBaseColorize: ti58BaseVisitor<object>
         }
 
         if (hierarchyInt.Contains(ti58Parser.RULE_number))
-        {
-            Colorize(node, SyntaxCategories.Number);
-            goto Exit;
-        }
+            return SyntaxCategory.Number;
 
         if (hierarchyInt.Contains(ti58Parser.RULE_memory) || hierarchyInt.Contains(ti58Parser.RULE_op_number) || hierarchyInt.Contains(ti58Parser.RULE_pgm_number) || hierarchyInt.Contains(ti58Parser.RULE_single_digit))
-        {
-            Colorize(node, SyntaxCategories.MemoryOrNumber);
-            goto Exit;
-        }
+            return SyntaxCategory.DirectMemoryOrNumber;
 
         if (hierarchyInt.Contains(ti58Parser.RULE_indmemory))
-        {
-            Colorize(node, SyntaxCategories.IndirectMemory);
-            goto Exit;
-        }
+            return SyntaxCategory.IndirectMemory;
 
         // Detect Key label before label
         if (hierarchyInt.Contains(ti58Parser.RULE_key_label) || hierarchyInt.Contains(ti58Parser.RULE_numeric_key_label))
-        {
-            Colorize(node, SyntaxCategories.KeyLabel);
-            goto Exit;
-        }
+            return SyntaxCategory.KeyLabel;
 
         if (hierarchyInt.Contains(ti58Parser.RULE_address_label))
-        {
-            Colorize(node, SyntaxCategories.AddressLabel);
-            goto Exit;
-        }
+            return SyntaxCategory.AddressLabel;
 
-    // If there is no match, print all info for easy debugging
-    Trace:
         // Get the symbolic name from the parser's vocabulary
         string symbolicName = _parser.Vocabulary.GetSymbolicName(tokenType);
         if (symbolicName != null && symbolicName.StartsWith('I'))
-        {
-            Colorize(node, SyntaxCategories.Instruction);
-            goto Exit;
-        }
+            return SyntaxCategory.Instruction;
+
+        // If there is no match, print all info for easy debugging
 
         // Create a list to hold the rule names
         var hierarchy = new List<string>();
@@ -172,12 +160,9 @@ public class MyTi58VisitorBaseColorize: ti58BaseVisitor<object>
         // The list is "child-to-root", so reverse it to "root-to-child"
         hierarchy.Reverse();
 
-
         // Print the symbon lame and the hierarchy
-        Console.WriteLine($"  -> Visiting: {node.GetText()} (Type: {symbolicName})");
-        Console.WriteLine($"     Hierarchy: {string.Join(" / ", hierarchy)}");
-
-    Exit:
-        return base.VisitTerminal(node);
+        Console.WriteLine($"*** Can't determine Terminal SyntaxCategory: {node.GetText()} (Type: {symbolicName})  Hierarchy: {string.Join(" / ", hierarchy)}");
+        return SyntaxCategory.Unknown;
     }
+
 }

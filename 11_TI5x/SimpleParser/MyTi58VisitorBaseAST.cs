@@ -29,15 +29,15 @@ public record ASTProgram(List<ASTStatementBase> statements);
 public abstract record ASTStatementBase(List<ITerminalNode> nodes);
 public record ASTWhiteSpace(List<ITerminalNode> nodes): ASTStatementBase(nodes);
 public record ASTComment(List<ITerminalNode> nodes): ASTStatementBase(nodes);
-public abstract record ASTInstruction(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes, YesNoImplicit inverted, string text): ASTStatementBase(nodes);
-public record ASTNumber(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes, string text): ASTInstruction(nodes, ruleContext, opCodes, YesNoImplicit.No, text);
-public record ASTInstructionAtomic(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes, YesNoImplicit inverted, string text): ASTInstruction(nodes, ruleContext, opCodes, inverted, text);
-public record ASTInstructionArg(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes, YesNoImplicit inverted, string text, YesNoImplicit argIndirect, byte argValue): ASTInstructionAtomic(nodes, ruleContext, opCodes, inverted, text);
-public record ASTInstructionLabel(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes, YesNoImplicit inverted, string text, string labelMnemonic, byte labelOpCode): ASTInstruction(nodes, ruleContext, opCodes, inverted, text);
+public abstract record ASTInstruction(List<ITerminalNode> nodes, List<byte> opCodes, YesNoImplicit inverted, string text): ASTStatementBase(nodes);
+public record ASTNumber(List<ITerminalNode> nodes, List<byte> opCodes, string text): ASTInstruction(nodes, opCodes, YesNoImplicit.No, text);
+public record ASTInstructionAtomic(List<ITerminalNode> nodes, List<byte> opCodes, YesNoImplicit inverted, string text): ASTInstruction(nodes, opCodes, inverted, text);
+public record ASTInstructionArg(List<ITerminalNode> nodes, List<byte> opCodes, YesNoImplicit inverted, string text, YesNoImplicit argIndirect, byte argValue): ASTInstructionAtomic(nodes, opCodes, inverted, text);
+public record ASTInstructionLabel(List<ITerminalNode> nodes, List<byte> opCodes, YesNoImplicit inverted, string text, string labelMnemonic, byte labelOpCode): ASTInstruction(nodes, opCodes, inverted, text);
 // Branch includes GTO, GT*, SBR, [INV] x=t, [INV] x≥t
-public record ASTInstructionBranch(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes, YesNoImplicit inverted, string text, YesNoImplicit targetIndirect, string targetMnemonic, int targetValue): ASTInstructionAtomic(nodes, ruleContext, opCodes, inverted, text);
+public record ASTInstructionBranch(List<ITerminalNode> nodes, List<byte> opCodes, YesNoImplicit inverted, string text, YesNoImplicit targetIndirect, string targetMnemonic, int targetValue): ASTInstructionAtomic(nodes, opCodes, inverted, text);
 // ArgBranch includes If Flag, Dsz
-public record ASTInstructionArgBranch(List<ITerminalNode> nodes, ParserRuleContext ruleContext, List<byte> opCodes, YesNoImplicit inverted, string text, YesNoImplicit argIndirect, byte argValue, YesNoImplicit targetIndirect, string targetMnemonic, int targetValue): ASTInstructionArg(nodes, ruleContext, opCodes, inverted, text, argIndirect, argValue);
+public record ASTInstructionArgBranch(List<ITerminalNode> nodes, List<byte> opCodes, YesNoImplicit inverted, string text, YesNoImplicit argIndirect, byte argValue, YesNoImplicit targetIndirect, string targetMnemonic, int targetValue): ASTInstructionArg(nodes, opCodes, inverted, text, argIndirect, argValue);
 
 
 // Inherit from the generated base visitor.
@@ -53,7 +53,15 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
         program = new(new());
     }
 
-    // Helper
+    // Groups top level numbers
+    // Replaces addresses 0n nn in nnn
+    // Standardizes some mnemonics, for instance replace STA or SIG+ by Σ+
+    internal void PostProcessAST()
+    {
+    }
+
+
+    // Dev Helper
     internal void PrintASTDebug()
     {
         Console.WriteLine("\nAST Tree");
@@ -69,36 +77,36 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
                     //Console.WriteLine("Inter-statement WhiteSpace");
                     break;
 
-                case ASTNumber(_, _, var opCodes, var mnemonic):
+                case ASTNumber(_, var opCodes, var mnemonic):
                     Console.WriteLine($"Number: {string.Join(" ", opCodes.Select(b => b.ToString("D2")))}: {mnemonic}");
                     break;
 
                 // Before ASTInstructionArg
-                case ASTInstructionArgBranch(_, _, var opCodes, var inverted, var mnemonic, YesNoImplicit argIndirect, byte argValue, YesNoImplicit targetIndirect, string targetMnemonic, int targetValue):
+                case ASTInstructionArgBranch(_, var opCodes, var inverted, var mnemonic, YesNoImplicit argIndirect, byte argValue, YesNoImplicit targetIndirect, string targetMnemonic, int targetValue):
                     Console.Write($"InstructionArgBranch: {string.Join(" ", opCodes.Select(b => b.ToString("D2")))}: ");
                     Console.WriteLine($"{mnemonic}\tinverted: {inverted}  argIndirect: {argIndirect}  argValue: {argValue}  targetIndirect: {targetIndirect}  targetMnemonic: «{targetMnemonic}»  targetValue: {targetValue}");
                     break;
 
 
                 // Need to be placed before case ASTInstructionAtomic since ASTInstructionArg inherits from ASTInstructionAtomic
-                case ASTInstructionArg(_, _, var opCodes, var inverted, var mnemonic, YesNoImplicit argIndirect, byte argValue):
+                case ASTInstructionArg(_, var opCodes, var inverted, var mnemonic, YesNoImplicit argIndirect, byte argValue):
                     Console.Write($"InstructionArg: {string.Join(" ", opCodes.Select(b => b.ToString("D2")))}: ");
                     Console.WriteLine($"{mnemonic}\tinverted: {inverted}  argIndirect: {argIndirect}  argValue: {argValue}");
                     break;
 
                 // Same thing here
-                case ASTInstructionBranch(_, _, var opCodes, var inverted, var mnemonic, YesNoImplicit targetIndirect, string targetMnemonic, int targetValue):
+                case ASTInstructionBranch(_, var opCodes, var inverted, var mnemonic, YesNoImplicit targetIndirect, string targetMnemonic, int targetValue):
                     Console.Write($"InstructionBranch: {string.Join(" ", opCodes.Select(b => b.ToString("D2")))}: ");
                     Console.WriteLine($"{mnemonic}\tinverted: {inverted}  targetIndirect: {targetIndirect}  targetMnemonic: «{targetMnemonic}»  targetValue: {targetValue}");
                     break;
 
 
-                case ASTInstructionAtomic(_, _, var opCodes, var inverted, var mnemonic):
+                case ASTInstructionAtomic(_, var opCodes, var inverted, var mnemonic):
                     Console.Write($"AtomicInstruction: {string.Join(" ", opCodes.Select(b => b.ToString("D2")))}: ");
                     Console.WriteLine($"{mnemonic}\tinverted: {inverted}");
                     break;
 
-                case ASTInstructionLabel(_, _, var opCodes, _, var mnemonic, var labelMnemonic, byte labelOpCode):
+                case ASTInstructionLabel(_, var opCodes, _, var mnemonic, var labelMnemonic, byte labelOpCode):
                     Console.Write($"LabelInstruction: {string.Join(" ", opCodes.Select(b => b.ToString("D2")))}: ");
                     Console.WriteLine($"{mnemonic}\tLabelMnemonic: «{labelMnemonic}» labelOpCode: {labelOpCode}");
                     break;
@@ -110,7 +118,7 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
         }
     }
 
-    internal void PrintAST()
+    internal void PrintFormattedAST()
     {
         var colorVisitor = new MyTi58VisitorBaseColorize(_parser);
 
@@ -128,31 +136,29 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
                     //Console.WriteLine("Inter-statement WhiteSpace");
                     break;
 
-                case ASTInstruction(List<ITerminalNode> nodes, _, var opCodes, var inverted, var mnemonic):
-                    //mnemonic = mnemonic.Replace("\r\n", " ").Replace("\n", " ");
-                    //while (mnemonic.Contains("  "))
-                    //    mnemonic = mnemonic.Replace("  ", " ");
+                case ASTInstruction(List<ITerminalNode> nodes, var opCodes, var inverted, var mnemonic):
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.Write($"{cp:D3}: ");
                     Console.ForegroundColor = ConsoleColor.Gray;
-                    
+
                     Console.Write($"{string.Join(" ", opCodes.Take(5).Select(b => b.ToString("D2"))),-15} ");
                     if (mnemonic.StartsWith("LBL", StringComparison.InvariantCultureIgnoreCase))
                     {
                         Console.ForegroundColor = ConsoleColor.White;
                         Console.Write("■ ");
                         Console.ForegroundColor = ConsoleColor.Gray;
-                    } else
+                    }
+                    else
                         Console.Write("  ");
 
                     foreach (ITerminalNode node in nodes)
                         if (node.Symbol.Type == ti58Lexer.WS)
-                            Console.Write(" ");
+                            Console.Write(" ");     // Normalize existing white spaces to a single space
                         else
                             colorVisitor.VisitTerminal(node);
                     Console.WriteLine();
 
-                    while (opCodes.Count>5)
+                    while (opCodes.Count > 5)
                     {
                         cp += 5;
                         opCodes.RemoveRange(0, 5);
@@ -217,7 +223,7 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
                 Debugger.Break();
         }
 
-        var num = new ASTNumber(tn, context, opCodes, text);
+        var num = new ASTNumber(tn, opCodes, text);
         program.statements.Add(num);
 
 
@@ -278,7 +284,7 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
             // INV SBR
             opCodes[0] = 92;
         }
-        else if(symbolicName=="Bang")
+        else if (symbolicName == "Bang")
         {
             // Nop
         }
@@ -288,7 +294,7 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
             opCodes.Add(byte.Parse(symbolicName[1..3]));
         }
 
-        var ai = new ASTInstructionAtomic(tn, context, opCodes, inverted, text);
+        var ai = new ASTInstructionAtomic(tn, opCodes, inverted, text);
         program.statements.Add(ai);
 
         return null;
@@ -379,7 +385,7 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
             argValue = (byte)(10 * argValue + byte.Parse(d.GetText()));
         opCodes.Add(argValue);
 
-        var aa = new ASTInstructionArg(tn, context, opCodes, inverted, text, argIndirect, argValue);
+        var aa = new ASTInstructionArg(tn, opCodes, inverted, text, argIndirect, argValue);
         program.statements.Add(aa);
 
         return null;
@@ -415,7 +421,7 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
         }
         opCodes.Add(labelOpCode);
 
-        var ls = new ASTInstructionLabel(tn, context, opCodes, YesNoImplicit.No, text, labelMnemonic, labelOpCode);
+        var ls = new ASTInstructionLabel(tn, opCodes, YesNoImplicit.No, text, labelMnemonic, labelOpCode);
         program.statements.Add(ls);
 
         return null;
@@ -516,7 +522,7 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
             }
         }
 
-        var aa = new ASTInstructionBranch(tn, context, opCodes, inverted, text, targetIndirect, targetMnemonic, targetValue);
+        var aa = new ASTInstructionBranch(tn, opCodes, inverted, text, targetIndirect, targetMnemonic, targetValue);
         program.statements.Add(aa);
 
         return null;
@@ -633,7 +639,7 @@ public class MyTi58VisitorBaseAST: ti58BaseVisitor<object>
 
 
 
-        var aa = new ASTInstructionArgBranch(tn, context, opCodes, inverted, text, argIndirect, argValue, targetIndirect, targetMnemonic, targetValue);
+        var aa = new ASTInstructionArgBranch(tn, opCodes, inverted, text, argIndirect, argValue, targetIndirect, targetMnemonic, targetValue);
         program.statements.Add(aa);
 
         return null;
