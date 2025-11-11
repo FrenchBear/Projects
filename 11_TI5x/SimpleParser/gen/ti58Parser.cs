@@ -88,7 +88,7 @@ public partial class ti58Parser : Parser {
 	private static readonly string[] _LiteralNames = {
 		null, "'0'", "'1'", "'2'", "'3'", "'4'", "'5'", "'6'", "'7'", "'8'", "'9'", 
 		null, null, "'!'", "'A'", "'B'", "'C'", "'D'", "'E'", "'A''", "'B''", 
-		"'C''", "'D''", "'E''", "'2nd'", "'Inv'", "'lnx'", "'CE'", "'CLR'", "'2nd''", 
+		"'C''", "'D''", "'E''", "'2nd'", "'INV'", "'lnx'", "'CE'", "'CLR'", "'2nd''", 
 		"'INV''", "'log'", "'CP'", "'CLR''", "'LRN'", null, null, null, "'1/x'", 
 		"'Pgm'", null, "'sin'", "'cos'", "'tan'", "'SST'", "'STO'", "'RCL'", "'SUM'", 
 		null, "'Ins'", "'CMs'", "'Exc'", "'Prd'", "'Ind'", "'BST'", "'EE'", "'('", 

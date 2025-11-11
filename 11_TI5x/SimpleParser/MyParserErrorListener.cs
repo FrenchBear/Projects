@@ -7,7 +7,7 @@ namespace SimpleParser;
 public class MyParserErrorListener: BaseErrorListener
 {
     // Public property to check if an error occurred
-    public bool HadError { get; private set; } = false;
+    public bool HadError { get; private set; }
 
     // Override the SyntaxError method
     public override void SyntaxError(TextWriter output, IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e)
@@ -20,10 +20,9 @@ public class MyParserErrorListener: BaseErrorListener
     }
 }
 
-
-public class MyLexerErrorListener: Antlr4.Runtime.IAntlrErrorListener<int>
+public class MyLexerErrorListener: IAntlrErrorListener<int>
 {
-    public bool HadError { get; private set; } = false;
+    public bool HadError { get; private set; }
 
     public void SyntaxError(TextWriter output, IRecognizer recognizer, int offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e)
     {

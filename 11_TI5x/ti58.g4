@@ -45,7 +45,7 @@ I19_d_prime: 'D\'';
 I10_e_prime: 'E\'';
 
 I21_2nd: '2nd';
-I22_invert: 'Inv';
+I22_invert: 'INV';
 I23_ln: 'lnx';
 I24_correct_entry: 'CE';
 I25_clear: 'CLR';
@@ -120,7 +120,7 @@ I85_add: '+';
 I86_set_flag: 'STF';
 I87_if_flag: 'IFF';
 I88_dms: 'DMS' | 'D.MS';
-I89_pi: 'π' | 'PI' | '\u03C0';
+I89_pi: 'π' | 'PI';
 I80_grades: 'Grad' | 'GRD';
 
 I91_run_stop: 'R/S';

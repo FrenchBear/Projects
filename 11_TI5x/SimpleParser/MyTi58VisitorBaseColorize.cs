@@ -10,17 +10,15 @@
 // 2025-11-10   PV
 
 using Antlr4.Runtime;
-using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace SimpleParser;
 
 // Inherit from the generated base visitor.
 // The 'object' type means your visit methods can return any type.
-public class MyTi58VisitorBaseColorize: ti58BaseVisitor<object>
+public class MyTi58VisitorBaseColorize(ti58Parser parser): ti58BaseVisitor<object>
 {
     public enum SyntaxCategory
     {
@@ -37,14 +35,15 @@ public class MyTi58VisitorBaseColorize: ti58BaseVisitor<object>
         Unknown,
     }
 
+    public static void Colorize(ASTToken token)
+        => Colorize(token.Text, token.Cat);
 
-    public void Colorize(ASTToken token)
-        => Colorize(token.text, token.cat);
-
-    public void Colorize(string text, SyntaxCategory cat)
+    public static void Colorize(string text, SyntaxCategory cat)
     {
-        if (cat==SyntaxCategory.EOF) return;
+        if (cat == SyntaxCategory.EOF)
+            return;
 
+#pragma warning disable IDE0072 // Add missing cases
         Console.ForegroundColor = cat switch
         {
             SyntaxCategory.Comment => ConsoleColor.Green,
@@ -58,13 +57,6 @@ public class MyTi58VisitorBaseColorize: ti58BaseVisitor<object>
         };
         Console.Write(text);
         Console.ForegroundColor = ConsoleColor.Gray;
-    }
-
-    private readonly ti58Parser _parser;
-
-    public MyTi58VisitorBaseColorize(ti58Parser parser)
-    {
-        _parser = parser;
     }
 
     // This method is called for every single token in the tree.
@@ -92,6 +84,7 @@ public class MyTi58VisitorBaseColorize: ti58BaseVisitor<object>
         {
             // Just a test to separate WS between instructions and WS in instructions
             // We don't attempt to normalize WS in structions or remove \n in instructions
+#pragma warning disable IDE0046 // Convert to conditional expression
             if (node.Parent is ParserRuleContext ruleContext && ruleContext.RuleIndex == ti58Parser.RULE_program)
                 return SyntaxCategory.InterInstructionWhiteSpace;
             else
@@ -146,7 +139,7 @@ public class MyTi58VisitorBaseColorize: ti58BaseVisitor<object>
             return SyntaxCategory.AddressLabel;
 
         // Get the symbolic name from the parser's vocabulary
-        string symbolicName = _parser.Vocabulary.GetSymbolicName(tokenType);
+        string symbolicName = parser.Vocabulary.GetSymbolicName(tokenType);
         if (symbolicName != null && symbolicName.StartsWith('I'))
             return SyntaxCategory.Instruction;
 
@@ -159,7 +152,7 @@ public class MyTi58VisitorBaseColorize: ti58BaseVisitor<object>
         {
             if (current is ParserRuleContext ruleContext)
             {
-                string ruleName = _parser.RuleNames[ruleContext.RuleIndex];
+                string ruleName = parser.RuleNames[ruleContext.RuleIndex];
                 hierarchy.Add(ruleName);
             }
             current = current.Parent;

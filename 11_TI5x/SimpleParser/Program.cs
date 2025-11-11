@@ -25,23 +25,23 @@ public class Program
         }
         */
 
-        const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master LIbrary\ML-25.t59";
+        const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master LIbrary\ML-02.t59";
         //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master LIbrary\all.t59";
         //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\indirect.t59";
 
+#pragma warning disable IDE0059 // Unnecessary assignment of a value
         string input = File.ReadAllText(filePath);
         Console.WriteLine($"Parsing file: {filePath}...");
 
         //input = "1234\n1.414\n.333\nLBL A\n-6.02e23\n1E10\n1E+10\n-1234567890e-79";
         //input = "1 . 6 +/- EE 1 9 +/-";
-        input = "# Test program\nLbl STA SIG+ GTO Σ+";
+        //input = "# Test program\nLbl STA invsig+ Clr GTO Σ+\nIFF Ind 12 123 Dsz 3 01 23\nLNX";
 
         // 2. The ANTLR parsing pipeline
         var inputStream = new AntlrInputStream(input);
         var lexer = new ti58Lexer(inputStream);
         var tokenStream = new CommonTokenStream(lexer);
         var parser = new ti58Parser(tokenStream);
-
 
         // 3. Set up our custom error listener for validation
         var myParserErrorListener = new MyParserErrorListener();
