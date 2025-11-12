@@ -22,7 +22,7 @@ public class MyTi58VisitorBaseColorize(ti58Parser parser): ti58BaseVisitor<objec
 {
     public enum SyntaxCategory
     {
-        EOF,
+        Eof,
         InterInstructionWhiteSpace,
         WhiteSpace,
         Comment,
@@ -40,7 +40,7 @@ public class MyTi58VisitorBaseColorize(ti58Parser parser): ti58BaseVisitor<objec
 
     public static void Colorize(string text, SyntaxCategory cat)
     {
-        if (cat == SyntaxCategory.EOF)
+        if (cat == SyntaxCategory.Eof)
             return;
 
 #pragma warning disable IDE0072 // Add missing cases
@@ -80,28 +80,23 @@ public class MyTi58VisitorBaseColorize(ti58Parser parser): ti58BaseVisitor<objec
 
         // First we handle white space, comments and numbers that can be determined
         // directly from type without looking at parents rules
-        if (tokenType == ti58Lexer.WS)
+        switch (tokenType)
         {
             // Just a test to separate WS between instructions and WS in instructions
-            // We don't attempt to normalize WS in structions or remove \n in instructions
-#pragma warning disable IDE0046 // Convert to conditional expression
-            if (node.Parent is ParserRuleContext ruleContext && ruleContext.RuleIndex == ti58Parser.RULE_program)
+            // We don't attempt to normalize WS in instructions or remove \n in instructions
+            case ti58Lexer.WS when node.Parent is ParserRuleContext { RuleIndex: ti58Parser.RULE_program }:
                 return SyntaxCategory.InterInstructionWhiteSpace;
-            else
+            case ti58Lexer.WS:
                 return SyntaxCategory.WhiteSpace;
+            case ti58Lexer.LineComment:
+                return SyntaxCategory.Comment;
+            case ti58Lexer.Eof:
+                return SyntaxCategory.Eof;
+            case ti58Lexer.Bang:
+                return SyntaxCategory.Instruction;
+            case ti58Lexer.I40_indirect:
+                return SyntaxCategory.IndirectMemory;
         }
-
-        if (tokenType == ti58Lexer.LineComment)
-            return SyntaxCategory.Comment;
-
-        if (tokenType == ti58Lexer.Eof)
-            return SyntaxCategory.EOF;
-
-        if (tokenType == ti58Lexer.Bang)
-            return SyntaxCategory.Instruction;
-
-        if (tokenType == ti58Lexer.I40_indirect)
-            return SyntaxCategory.IndirectMemory;
 
         // Build a list of parent types (rules) so later we can easily check whether
         // a terminal descend from a specific rule
@@ -160,7 +155,7 @@ public class MyTi58VisitorBaseColorize(ti58Parser parser): ti58BaseVisitor<objec
         // The list is "child-to-root", so reverse it to "root-to-child"
         hierarchy.Reverse();
 
-        // Print the symbon lame and the hierarchy
+        // Print the symbol name and the hierarchy
         Console.WriteLine($"*** Can't determine Terminal SyntaxCategory: {node.GetText()} (Type: {symbolicName})  Hierarchy: {string.Join(" / ", hierarchy)}");
         return SyntaxCategory.Unknown;
     }

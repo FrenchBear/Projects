@@ -5,7 +5,7 @@ using Antlr4.Runtime.Tree;
 
 namespace SimpleParser;
 
-public class Program
+public static class Program
 {
     public static void Main(string[] args)
     {
@@ -25,8 +25,8 @@ public class Program
         }
         */
 
-        const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master LIbrary\ML-02.t59";
-        //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master LIbrary\all.t59";
+        const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master Library\ML-02.t59";
+        //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master Library\all.t59";
         //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\indirect.t59";
 
         //#pragma warning disable IDE0059 // Unnecessary assignment of a value
@@ -35,7 +35,7 @@ public class Program
 
         //input = "1234\n1.414\n.333\nLBL A\n-6.02e23\n1E10\n1E+10\n-1234567890e-79";
         //input = "1 . 6 +/- EE 1 9 +/-";
-        //input = "# Test program\nLbl STA invsig+ Clr GTO Σ+\nIFF Ind 12 123 Dsz 3 01 23\nLNX";
+        //input = "# Test program\nLbl STA inv sig+ Clr GTO Σ+\nIFF Ind 12 123 Dsz 3 01 23\nLNX";
 
         // 2. The ANTLR parsing pipeline
         var inputStream = new AntlrInputStream(input);

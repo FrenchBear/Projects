@@ -7,7 +7,7 @@ namespace SimpleParser;
 
 internal static class StandardInstructions
 {
-    internal static List<List<string>> Sill = [
+    internal static readonly List<List<string>> Sill = [
         ["A"],
         ["B"],
         ["C"],

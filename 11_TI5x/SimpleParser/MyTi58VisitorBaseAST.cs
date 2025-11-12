@@ -34,15 +34,15 @@ public record ASTProgram(List<ASTStatementBase> Statements);
 public abstract record ASTStatementBase(List<ASTToken> AstTokens);
 public record ASTInterStatementWhiteSpace(List<ASTToken> AstTokens): ASTStatementBase(AstTokens);
 public record ASTComment(List<ASTToken> AstTokens): ASTStatementBase(AstTokens);
-public abstract record ASTInstruction(List<ASTToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted, string Text): ASTStatementBase(AstTokens);
-public record ASTNumber(List<ASTToken> AstTokens, List<byte> OpCodes, string Text): ASTInstruction(AstTokens, OpCodes, YesNoImplicit.No, Text);
-public record ASTInstructionAtomic(List<ASTToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted, string Text): ASTInstruction(AstTokens, OpCodes, Inverted, Text);
-public record ASTInstructionArg(List<ASTToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted, string Text, YesNoImplicit ArgIndirect, byte ArgValue): ASTInstructionAtomic(AstTokens, OpCodes, Inverted, Text);
-public record ASTInstructionLabel(List<ASTToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted, string Text, string LabelMnemonic, byte LabelOpCode): ASTInstruction(AstTokens, OpCodes, Inverted, Text);
+public abstract record ASTInstruction(List<ASTToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted): ASTStatementBase(AstTokens);
+public record ASTNumber(List<ASTToken> AstTokens, List<byte> OpCodes): ASTInstruction(AstTokens, OpCodes, YesNoImplicit.No);
+public record ASTInstructionAtomic(List<ASTToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted): ASTInstruction(AstTokens, OpCodes, Inverted);
+public record ASTInstructionArg(List<ASTToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted, YesNoImplicit ArgIndirect, byte ArgValue): ASTInstructionAtomic(AstTokens, OpCodes, Inverted);
+public record ASTInstructionLabel(List<ASTToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted, string LabelMnemonic, byte LabelOpCode): ASTInstruction(AstTokens, OpCodes, Inverted);
 // Branch includes GTO, GT*, SBR, [INV] x=t, [INV] x≥t
-public record ASTInstructionBranch(List<ASTToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted, string Text, YesNoImplicit TargetIndirect, string TargetMnemonic, int TargetValue): ASTInstructionAtomic(AstTokens, OpCodes, Inverted, Text);
+public record ASTInstructionBranch(List<ASTToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted, YesNoImplicit TargetIndirect, string TargetMnemonic, int TargetValue): ASTInstructionAtomic(AstTokens, OpCodes, Inverted);
 // ArgBranch includes If Flag, Dsz
-public record ASTInstructionArgBranch(List<ASTToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted, string Text, YesNoImplicit ArgIndirect, byte ArgValue, YesNoImplicit TargetIndirect, string TargetMnemonic, int TargetValue): ASTInstructionArg(AstTokens, OpCodes, Inverted, Text, ArgIndirect, ArgValue);
+public record ASTInstructionArgBranch(List<ASTToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted, YesNoImplicit ArgIndirect, byte ArgValue, YesNoImplicit TargetIndirect, string TargetMnemonic, int TargetValue): ASTInstructionArg(AstTokens, OpCodes, Inverted, ArgIndirect, ArgValue);
 
 // Inherit from the generated base visitor.
 // The 'object' type means your visit methods can return any type.
@@ -57,7 +57,7 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
         foreach (var sta in program.Statements)
         {
             // Normalize instruction names and keys labels
-            if (sta is ASTInstruction(List<ASTToken> astTokens, List<byte> opCodes, YesNoImplicit inverted, string text) inst)
+            if (sta is ASTInstruction(List<ASTToken> astTokens, _, _) inst)
                 for (var i = 0; i < astTokens.Count; i++)
                     if (inst.AstTokens[i].Cat is SyntaxCategory.Instruction or SyntaxCategory.KeyLabel)
                     {
@@ -99,13 +99,13 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
                     //Console.WriteLine("Inter-statement WhiteSpace");
                     break;
 
-                case ASTInstruction(var astTokens, var opCodes, var inverted, var mnemonic):
+                case ASTInstruction(var astTokens, var opCodes, _):
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.Write($"{cp:D3}: ");
                     Console.ForegroundColor = ConsoleColor.Gray;
 
                     Console.Write($"{string.Join(" ", opCodes.Take(5).Select(b => b.ToString("D2"))),-15} ");
-                    if (mnemonic.StartsWith("LBL", StringComparison.InvariantCultureIgnoreCase))
+                    if (astTokens[0].Text.StartsWith("LBL", StringComparison.InvariantCultureIgnoreCase))
                     {
                         Console.ForegroundColor = ConsoleColor.White;
                         Console.Write("■ ");
@@ -152,21 +152,19 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
             };
             var com = new ASTComment(at);
             program.Statements.Add(com);
-            goto exit;
         }
-
-        // White space is only processed if top level
-        if (node.Parent is ParserRuleContext ruleContext && ruleContext.RuleIndex == ti58Parser.RULE_program)
+        //else if (node.Parent is ParserRuleContext ruleContext && ruleContext.RuleIndex == ti58Parser.RULE_program)
+        else if (node.Parent is ParserRuleContext { RuleIndex: ti58Parser.RULE_program })
         {
+            // White space is only processed if top level
+
             var at = new List<ASTToken> {
                 new(node.GetText(), SyntaxCategory.WhiteSpace)
             };
             var ws = new ASTInterStatementWhiteSpace(at);
             program.Statements.Add(ws);
-            goto exit;
         }
 
-    exit:
         return base.VisitTerminal(node);
     }
 
@@ -185,9 +183,7 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
                 opCodes.Add(93);
             else if (c is 'e' or 'E')
                 opCodes.Add(52);
-            else if (c == '+')
-            { }
-            else
+            else if (c != '+')
                 Debugger.Break();
         }
 
@@ -195,7 +191,7 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
         foreach (var tn in ltn)
             at.Add(new ASTToken(tn.GetText(), colorVisitor.GetTerminalSyntaxCategory(tn)));
 
-        var num = new ASTNumber(at, opCodes, text);
+        var num = new ASTNumber(at, opCodes);
         program.Statements.Add(num);
 
         return null!;
@@ -224,7 +220,7 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
     object AtomicInstruction(ParserRuleContext context)
     {
         var ltn = GetTerminalNodes(context);
-        var text = context.GetText();
+        //var text = context.GetText();
 
         int ixInstruction = 0;
         YesNoImplicit inverted = YesNoImplicit.No;
@@ -268,7 +264,7 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
         foreach (var tn in ltn)
             at.Add(new ASTToken(tn.GetText(), colorVisitor.GetTerminalSyntaxCategory(tn)));
 
-        var ai = new ASTInstructionAtomic(at, opCodes, inverted, text);
+        var ai = new ASTInstructionAtomic(at, opCodes, inverted);
         program.Statements.Add(ai);
 
         return null!;
@@ -283,7 +279,6 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
     object InstructionArg(ParserRuleContext context)
     {
         var ltn = GetTerminalNodes(context);
-        var text = context.GetText();
 
         int ixInstruction = 0;
         YesNoImplicit inverted = YesNoImplicit.No;
@@ -344,7 +339,7 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
                     break;
             }
 
-            // For non-merged instruction, add expliclty 40
+            // For non-merged instruction, add explicitly 40
             if (argIndirect == YesNoImplicit.No)
             {
                 argIndirect = YesNoImplicit.Yes;
@@ -362,7 +357,7 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
         foreach (var tn in ltn)
             at.Add(new ASTToken(tn.GetText(), colorVisitor.GetTerminalSyntaxCategory(tn)));
 
-        var aa = new ASTInstructionArg(at, opCodes, inverted, text, argIndirect, argValue);
+        var aa = new ASTInstructionArg(at, opCodes, inverted, argIndirect, argValue);
         program.Statements.Add(aa);
 
         return null!;
@@ -371,7 +366,6 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
     public override object VisitInstruction_label([NotNull] ti58Parser.Instruction_labelContext context)
     {
         var ltn = GetTerminalNodes(context);
-        var text = context.GetText();
 
         int ixInstruction = 0;
         List<byte> opCodes = [];
@@ -401,7 +395,7 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
         foreach (var tn in ltn)
             at.Add(new ASTToken(tn.GetText(), colorVisitor.GetTerminalSyntaxCategory(tn)));
 
-        var ls = new ASTInstructionLabel(at, opCodes, YesNoImplicit.No, text, labelMnemonic, labelOpCode);
+        var ls = new ASTInstructionLabel(at, opCodes, YesNoImplicit.No, labelMnemonic, labelOpCode);
         program.Statements.Add(ls);
 
         return null!;
@@ -417,7 +411,6 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
     object InstructionBranch(ParserRuleContext context)
     {
         var ltn = GetTerminalNodes(context);
-        var text = context.GetText();
 
         int ixInstruction = 0;
         YesNoImplicit inverted = YesNoImplicit.No;
@@ -504,7 +497,7 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
         foreach (var tn in ltn)
             at.Add(new ASTToken(tn.GetText(), colorVisitor.GetTerminalSyntaxCategory(tn)));
 
-        var aa = new ASTInstructionBranch(at, opCodes, inverted, text, targetIndirect, targetMnemonic, targetValue);
+        var aa = new ASTInstructionBranch(at, opCodes, inverted, targetIndirect, targetMnemonic, targetValue);
         program.Statements.Add(aa);
 
         return null!;
@@ -519,7 +512,6 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
     object InstructionArgBranch(ParserRuleContext context)
     {
         var ltn = GetTerminalNodes(context);
-        var text = context.GetText();
 
         int ixInstruction = 0;
         YesNoImplicit inverted = YesNoImplicit.No;
@@ -573,12 +565,8 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
         // Ind prefix?
         if (ltn[ixInstruction].Symbol.Type == ti58Lexer.I40_indirect)
         {
-            // We don't add Ind prefix twice in case we have something like SM* Ind 40, just consider it's SUM Ind 40 or SM* 40
-            if (targetIndirect == YesNoImplicit.No)
-            {
-                targetIndirect = YesNoImplicit.Yes;
-                opCodes.Add(40);
-            }
+            targetIndirect = YesNoImplicit.Yes;
+            opCodes.Add(40);
             MoveToNextSymbol(ltn, ref ixInstruction);
         }
 
@@ -622,7 +610,7 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
         foreach (var tn in ltn)
             at.Add(new ASTToken(tn.GetText(), colorVisitor.GetTerminalSyntaxCategory(tn)));
 
-        var aa = new ASTInstructionArgBranch(at, opCodes, inverted, text, argIndirect, argValue, targetIndirect, targetMnemonic, targetValue);
+        var aa = new ASTInstructionArgBranch(at, opCodes, inverted, argIndirect, argValue, targetIndirect, targetMnemonic, targetValue);
         program.Statements.Add(aa);
 
         return null!;
