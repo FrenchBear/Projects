@@ -42,6 +42,7 @@ public static class Program
         //input = "GTO IND 25";
         //input = "STO IND 25";
         //input = "123 45 6\n12 . 34 +/- EE +/- 12";
+        //input = "LBL A 1234567890 LBL B";
 
         // 2. The ANTLR parsing pipeline
         var inputStream = new AntlrInputStream(input);
@@ -79,10 +80,13 @@ public static class Program
         colorVisitor.Visit(tree);
         Console.WriteLine();
 
-        // Ast Visitor
+        // Build Ast, print clean listing and table of labels
         var astVisitor = new MyTi58VisitorBaseAst(parser);
         astVisitor.Visit(tree);
         astVisitor.PostProcessAst();
         astVisitor.PrintFormattedAst();
+
+        Console.WriteLine("\nLabels");
+        astVisitor.PrintFormattedAst(true);
     }
 }
