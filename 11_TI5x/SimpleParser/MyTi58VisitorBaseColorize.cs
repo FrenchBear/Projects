@@ -31,7 +31,7 @@ public class MyTi58VisitorBaseColorize(ti58Parser parser): ti58BaseVisitor<objec
         Number,
         DirectMemoryOrNumber,
         IndirectMemory,
-        AddressLabel,
+        DirectAddress,
         Unknown,
     }
 
@@ -52,7 +52,7 @@ public class MyTi58VisitorBaseColorize(ti58Parser parser): ti58BaseVisitor<objec
             SyntaxCategory.Number => ConsoleColor.Gray,
             SyntaxCategory.DirectMemoryOrNumber => ConsoleColor.Red,
             SyntaxCategory.IndirectMemory => ConsoleColor.Magenta,
-            SyntaxCategory.AddressLabel => ConsoleColor.Yellow,
+            SyntaxCategory.DirectAddress => ConsoleColor.Yellow,
             _ => ConsoleColor.White,
         };
         Console.Write(text);
@@ -131,7 +131,7 @@ public class MyTi58VisitorBaseColorize(ti58Parser parser): ti58BaseVisitor<objec
             return SyntaxCategory.KeyLabel;
 
         if (hierarchyInt.Contains(ti58Parser.RULE_address_label))
-            return SyntaxCategory.AddressLabel;
+            return SyntaxCategory.DirectAddress;
 
         // Get the symbolic name from the parser's vocabulary
         string symbolicName = parser.Vocabulary.GetSymbolicName(tokenType);

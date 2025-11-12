@@ -25,6 +25,8 @@ public record AstToken(string Text, SyntaxCategory Cat);
 public abstract record AstStatementBase(List<AstToken> AstTokens);
 public record AstInterStatementWhiteSpace(List<AstToken> AstTokens): AstStatementBase(AstTokens);
 public record AstComment(List<AstToken> AstTokens): AstStatementBase(AstTokens);
+
+// ToDo: Maybe add instruction mnemonic or opcode, it will enable much easier instruction recognition for specific processing (and matching)
 public abstract record AstInstruction(List<AstToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted): AstStatementBase(AstTokens);
 public record AstNumber(List<AstToken> AstTokens, List<byte> OpCodes): AstInstruction(AstTokens, OpCodes, YesNoImplicit.No);
 public record AstInstructionAtomic(List<AstToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted): AstInstruction(AstTokens, OpCodes, Inverted);
@@ -63,7 +65,7 @@ public class MyTi58VisitorBaseAst(ti58Parser parser): ti58BaseVisitor<object>
             {
                 // Merge DirectMemoryOrNumber and IndirectMemory texts
                 for (var i = 0; i < astTokens.Count; i++)
-                    while (i < astTokens.Count - 1 && (astTokens[i].Cat == SyntaxCategory.DirectMemoryOrNumber || astTokens[i].Cat == SyntaxCategory.IndirectMemory) && astTokens[i].Cat == astTokens[i + 1].Cat)
+                    while (i < astTokens.Count - 1 && (astTokens[i].Cat == SyntaxCategory.DirectMemoryOrNumber || astTokens[i].Cat == SyntaxCategory.IndirectMemory || astTokens[i].Cat == SyntaxCategory.DirectAddress) && astTokens[i].Cat == astTokens[i + 1].Cat)
                     {
                         astTokens[i] = astTokens[i] with { Text = astTokens[i].Text + astTokens[i + 1].Text };
                         astTokens.RemoveAt(i + 1);
@@ -78,13 +80,22 @@ public class MyTi58VisitorBaseAst(ti58Parser parser): ti58BaseVisitor<object>
                     if ((astTokens[i].Cat == SyntaxCategory.DirectMemoryOrNumber && !FlgDsz) || astTokens[i].Cat == SyntaxCategory.IndirectMemory)
                         if (astTokens[i].Text.Length == 1)
                             astTokens[i] = astTokens[i] with { Text = "0" + astTokens[i].Text };
+                    if (astTokens[i].Cat == SyntaxCategory.DirectAddress)
+                    {
+                        string t = astTokens[i].Text;
+                        if (t.Length == 4)
+                        {
+                            Debug.Assert(t[0] == '0');
+                            astTokens[i] = astTokens[i] with { Text = t[1..] };
+                        }
+                        else
+                            Debug.Assert(t.Length == 3);
+                    }
                 }
             }
         }
 
         // ToDo: Group top level numbers
-
-        // ToDo: Replace addresses "0n nn" by "nnn"
 
         // ToDo: Line comment processing so they can be printed after an instruction in case they're behind an instruction in the code
         // (and maybe align comments Rust or Go style)
@@ -225,14 +236,6 @@ public class MyTi58VisitorBaseAst(ti58Parser parser): ti58BaseVisitor<object>
     public override object VisitInstruction_invert_isolated([NotNull] ti58Parser.Instruction_invert_isolatedContext context)
         => AtomicInstruction(context);
 
-    // Skip optional WS if present
-    static void MoveToNextSymbol(List<ITerminalNode> tn, ref int ix)
-    {
-        ix++;
-        if (tn[ix].Symbol.Type == ti58Lexer.WS)
-            ix++;
-    }
-
     object AtomicInstruction(ParserRuleContext context)
     {
         var ltn = GetTerminalNodes(context);
@@ -247,7 +250,7 @@ public class MyTi58VisitorBaseAst(ti58Parser parser): ti58BaseVisitor<object>
         {
             inverted = YesNoImplicit.Yes;
             opCodes.Add(22);
-            MoveToNextSymbol(ltn, ref ixInstruction);
+            ixInstruction++;
         }
 
         string symbolicName = parser.Vocabulary.GetSymbolicName(ltn[ixInstruction].Symbol.Type);
@@ -306,7 +309,7 @@ public class MyTi58VisitorBaseAst(ti58Parser parser): ti58BaseVisitor<object>
         {
             inverted = YesNoImplicit.Yes;
             opCodes.Add(22);
-            MoveToNextSymbol(ltn, ref ixInstruction);
+            ixInstruction++;
         }
 
         int mainType = ltn[ixInstruction].Symbol.Type;
@@ -315,8 +318,7 @@ public class MyTi58VisitorBaseAst(ti58Parser parser): ti58BaseVisitor<object>
         opCodes.Add(byte.Parse(symbolicName[1..3]));
         if (symbolicName.Contains("indirect"))
             argIndirect = YesNoImplicit.Implicit;
-
-        MoveToNextSymbol(ltn, ref ixInstruction);
+        ixInstruction++;
 
         // Ind prefix?
         if (ltn[ixInstruction].Symbol.Type == ti58Lexer.I40_indirect)
@@ -361,7 +363,7 @@ public class MyTi58VisitorBaseAst(ti58Parser parser): ti58BaseVisitor<object>
                 argIndirect = YesNoImplicit.Yes;
                 opCodes.Add(40);
             }
-            MoveToNextSymbol(ltn, ref ixInstruction);
+            ixInstruction++;
         }
 
         byte argValue = 0;
@@ -388,7 +390,7 @@ public class MyTi58VisitorBaseAst(ti58Parser parser): ti58BaseVisitor<object>
 
         Debug.Assert(ltn[ixInstruction].Symbol.Type == ti58Lexer.I76_label);
         opCodes.Add(76);
-        MoveToNextSymbol(ltn, ref ixInstruction);
+        ixInstruction++;
 
         string symbolicName = parser.Vocabulary.GetSymbolicName(ltn[ixInstruction].Symbol.Type);
         string labelMnemonic;
@@ -438,7 +440,7 @@ public class MyTi58VisitorBaseAst(ti58Parser parser): ti58BaseVisitor<object>
         {
             inverted = YesNoImplicit.Yes;
             opCodes.Add(22);
-            MoveToNextSymbol(ltn, ref ixInstruction);
+            ixInstruction++;
         }
 
         string symbolicName = parser.Vocabulary.GetSymbolicName(ltn[ixInstruction].Symbol.Type);
@@ -451,8 +453,7 @@ public class MyTi58VisitorBaseAst(ti58Parser parser): ti58BaseVisitor<object>
             targetIndirect = YesNoImplicit.Yes;
             opCodes.Add(40);
         }
-
-        MoveToNextSymbol(ltn, ref ixInstruction);
+        ixInstruction++;
 
         // Ind prefix?
         if (ltn[ixInstruction].Symbol.Type == ti58Lexer.I40_indirect)
@@ -470,7 +471,7 @@ public class MyTi58VisitorBaseAst(ti58Parser parser): ti58BaseVisitor<object>
                 targetIndirect = YesNoImplicit.Yes;
                 opCodes.Add(40);
             }
-            MoveToNextSymbol(ltn, ref ixInstruction);
+            ixInstruction++;
         }
 
         // Determine if target is a label, a numeric label or an address
@@ -481,33 +482,40 @@ public class MyTi58VisitorBaseAst(ti58Parser parser): ti58BaseVisitor<object>
         {   // Instruction label
             targetMnemonic = ltn[ixInstruction].GetText();
             Debug.Assert(symbolicName.StartsWith('I') && symbolicName[3] == '_');
-
             targetValue = byte.Parse(symbolicName[1..3]);
             opCodes.Add((byte)targetValue);
+            ixInstruction++;
         }
         else
         {
-            int digitsCount = 0;
-            foreach (var d in ltn[ixInstruction..])
-                if (d.Symbol.Type != ti58Lexer.WS)
-                {
-                    digitsCount++;
-                    targetValue = 10 * targetValue + byte.Parse(d.GetText());
-                }
-            switch (digitsCount)
+            var cat = ColorVisitor.GetTerminalSyntaxCategory(ltn[ixInstruction]);
+            for (; ; )
             {
-                case 2:
-                    targetMnemonic = $"{targetValue:D2}";
-                    opCodes.Add((byte)targetValue);
+                targetValue = (byte)(10 * targetValue + byte.Parse(ltn[ixInstruction].GetText()));
+                ixInstruction++;
+                if (ixInstruction == ltn.Count)
                     break;
-                case 3:
-                case 4:
+            }
+
+            switch (cat)
+            {
+                case SyntaxCategory.DirectAddress:
                     targetMnemonic = $"{targetValue:D3}";
                     opCodes.Add((byte)(targetValue / 100));
                     opCodes.Add((byte)(targetValue % 100));
                     break;
+                case SyntaxCategory.KeyLabel:
+                case SyntaxCategory.IndirectMemory:
+                    targetMnemonic = $"{targetValue:D2}";
+                    opCodes.Add((byte)targetValue);
+                    break;
+                default:
+                    Console.WriteLine($"Invalid terminal category: {cat}");
+                    Debugger.Break();
+                    break;
             }
         }
+        Debug.Assert(ixInstruction == ltn.Count);
 
         var at = new List<AstToken>();
         foreach (var tn in ltn)
@@ -548,7 +556,7 @@ public class MyTi58VisitorBaseAst(ti58Parser parser): ti58BaseVisitor<object>
         {
             inverted = YesNoImplicit.Yes;
             opCodes.Add(22);
-            MoveToNextSymbol(ltn, ref ixInstruction);
+            ixInstruction++;
         }
 
         string symbolicName = parser.Vocabulary.GetSymbolicName(ltn[ixInstruction].Symbol.Type);
@@ -556,8 +564,7 @@ public class MyTi58VisitorBaseAst(ti58Parser parser): ti58BaseVisitor<object>
         opCodes.Add(byte.Parse(symbolicName[1..3]));
         if (symbolicName.Contains("indirect"))
             argIndirect = YesNoImplicit.Implicit;
-
-        MoveToNextSymbol(ltn, ref ixInstruction);
+        ixInstruction++;
 
         // Ind prefix?
         if (ltn[ixInstruction].Symbol.Type == ti58Lexer.I40_indirect)
@@ -568,11 +575,12 @@ public class MyTi58VisitorBaseAst(ti58Parser parser): ti58BaseVisitor<object>
                 argIndirect = YesNoImplicit.Yes;
                 opCodes.Add(40);
             }
-            MoveToNextSymbol(ltn, ref ixInstruction);
+            ixInstruction++;
         }
 
         byte argValue = 0;
-        for (; ; )
+        var cat = ColorVisitor.GetTerminalSyntaxCategory(ltn[ixInstruction]);
+        while (ColorVisitor.GetTerminalSyntaxCategory(ltn[ixInstruction]) == cat)
         {
             var txt = ltn[ixInstruction].GetText();
             if (!byte.TryParse(txt, out byte b))
@@ -582,7 +590,7 @@ public class MyTi58VisitorBaseAst(ti58Parser parser): ti58BaseVisitor<object>
         }
         Debug.Assert(argValue != 40);       // Temp for dev; Dsz 40 should be rejected as invalid, since it means Dsz Ind
         opCodes.Add(argValue);
-        MoveToNextSymbol(ltn, ref ixInstruction);
+        // Don't move to next terminal, at the end of previous decoding loop we already point to next terminal
 
         // Target ---------------------------------
         YesNoImplicit targetIndirect = YesNoImplicit.No;
@@ -592,7 +600,7 @@ public class MyTi58VisitorBaseAst(ti58Parser parser): ti58BaseVisitor<object>
         {
             targetIndirect = YesNoImplicit.Yes;
             opCodes.Add(40);
-            MoveToNextSymbol(ltn, ref ixInstruction);
+            ixInstruction++;
         }
 
         // Determine if target is a label, a numeric label or an address
@@ -603,33 +611,40 @@ public class MyTi58VisitorBaseAst(ti58Parser parser): ti58BaseVisitor<object>
         {   // Instruction label
             targetMnemonic = ltn[ixInstruction].GetText();
             Debug.Assert(symbolicName.StartsWith('I') && symbolicName[3] == '_');
-
             targetValue = byte.Parse(symbolicName[1..3]);
             opCodes.Add((byte)targetValue);
+            ixInstruction++;
         }
         else
         {
-            int digitsCount = 0;
-            foreach (var d in ltn[ixInstruction..])
-                if (d.Symbol.Type != ti58Lexer.WS)
-                {
-                    digitsCount++;
-                    targetValue = 10 * targetValue + byte.Parse(d.GetText());
-                }
-            switch (digitsCount)
+            cat = ColorVisitor.GetTerminalSyntaxCategory(ltn[ixInstruction]);
+            for (; ; )
             {
-                case 2:
-                    targetMnemonic = $"{targetValue:D2}";
-                    opCodes.Add((byte)targetValue);
+                targetValue = (byte)(10 * targetValue + byte.Parse(ltn[ixInstruction].GetText()));
+                ixInstruction++;
+                if (ixInstruction == ltn.Count)
                     break;
-                case 3:
-                case 4:
+            }
+
+            switch (cat)
+            {
+                case SyntaxCategory.DirectAddress:
                     targetMnemonic = $"{targetValue:D3}";
                     opCodes.Add((byte)(targetValue / 100));
                     opCodes.Add((byte)(targetValue % 100));
                     break;
+                case SyntaxCategory.IndirectMemory:
+                case SyntaxCategory.KeyLabel:
+                    targetMnemonic = $"{targetValue:D2}";
+                    opCodes.Add((byte)targetValue);
+                    break;
+                default:
+                    Console.WriteLine($"Invalid terminal category: {cat}");
+                    Debugger.Break();
+                    break;
             }
         }
+        Debug.Assert(ixInstruction == ltn.Count);
 
         var at = new List<AstToken>();
         foreach (var tn in ltn)
@@ -650,7 +665,10 @@ public class MyTi58VisitorBaseAst(ti58Parser parser): ti58BaseVisitor<object>
             if (child is ParserRuleContext ps)
                 tn.AddRange(GetTerminalNodes(ps));
             else if (child is ITerminalNode term)
-                tn.Add(term);
+            {
+                if (term.Symbol.Type != ti58Lexer.WS)
+                    tn.Add(term);
+            }
             else
                 Debugger.Break();
         }
