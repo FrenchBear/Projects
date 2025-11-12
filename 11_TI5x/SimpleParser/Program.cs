@@ -36,6 +36,7 @@ public static class Program
         //input = "1234\n1.414\n.333\nLBL A\n-6.02e23\n1E10\n1E+10\n-1234567890e-79";
         //input = "1 . 6 +/- EE 1 9 +/-";
         //input = "# Test program\nLbl STA inv sig+ Clr GTO Σ+\nIFF Ind 12 123 Dsz 3 01 23\nLNX";
+        input = "STO 12 SUM IND 25 RCL 3 RC* 5\nSTF 3 INV STF 7 STF IND 7 IFF 3 CLR INV IFF 7 IND 2\nDsz 3 |x| Lbl STA INV DSZ Ind 7 421\nGTO 001 GTO 12 GTO 123 GTO 01 23 GO* 7";
 
         // 2. The ANTLR parsing pipeline
         var inputStream = new AntlrInputStream(input);
@@ -73,10 +74,10 @@ public static class Program
         colorVisitor.Visit(tree);
         Console.WriteLine();
 
-        // AST Visitor
-        var astVisitor = new MyTi58VisitorBaseAST(parser);
+        // Ast Visitor
+        var astVisitor = new MyTi58VisitorBaseAst(parser);
         astVisitor.Visit(tree);
-        astVisitor.PostProcessAST();
-        astVisitor.PrintFormattedAST();
+        astVisitor.PostProcessAst();
+        astVisitor.PrintFormattedAst();
     }
 }

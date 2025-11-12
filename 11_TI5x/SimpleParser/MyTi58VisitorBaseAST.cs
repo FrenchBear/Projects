@@ -1,5 +1,5 @@
-﻿// Visitor used to build an AST tree from antlr4 rules/tokens tree
-// An AST is a more high level representation with a hierarchy of data objects holding properties
+﻿// Visitor used to build an Ast tree from antlr4 rules/tokens tree
+// An Ast is a more high level representation with a hierarchy of data objects holding properties
 // ideal for matching
 //
 // 2025-11-10   PV
@@ -16,95 +16,112 @@ using static SimpleParser.StandardInstructions;
 
 namespace SimpleParser;
 
-public enum YesNoImplicit
-{
-    No,
-    Yes,
-    Implicit
-}
+public enum YesNoImplicit { No, Yes, Implicit }
 
-public record ASTToken(string Text, SyntaxCategory Cat);
-//{
-//    public string Text { get; set; } = text;
-//    public SyntaxCategory Cat { get; set; } = cat;
-//}
+public record AstProgram(List<AstStatementBase> Statements);
 
-public record ASTProgram(List<ASTStatementBase> Statements);
+public record AstToken(string Text, SyntaxCategory Cat);
 
-public abstract record ASTStatementBase(List<ASTToken> AstTokens);
-public record ASTInterStatementWhiteSpace(List<ASTToken> AstTokens): ASTStatementBase(AstTokens);
-public record ASTComment(List<ASTToken> AstTokens): ASTStatementBase(AstTokens);
-public abstract record ASTInstruction(List<ASTToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted): ASTStatementBase(AstTokens);
-public record ASTNumber(List<ASTToken> AstTokens, List<byte> OpCodes): ASTInstruction(AstTokens, OpCodes, YesNoImplicit.No);
-public record ASTInstructionAtomic(List<ASTToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted): ASTInstruction(AstTokens, OpCodes, Inverted);
-public record ASTInstructionArg(List<ASTToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted, YesNoImplicit ArgIndirect, byte ArgValue): ASTInstructionAtomic(AstTokens, OpCodes, Inverted);
-public record ASTInstructionLabel(List<ASTToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted, string LabelMnemonic, byte LabelOpCode): ASTInstruction(AstTokens, OpCodes, Inverted);
+public abstract record AstStatementBase(List<AstToken> AstTokens);
+public record AstInterStatementWhiteSpace(List<AstToken> AstTokens): AstStatementBase(AstTokens);
+public record AstComment(List<AstToken> AstTokens): AstStatementBase(AstTokens);
+public abstract record AstInstruction(List<AstToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted): AstStatementBase(AstTokens);
+public record AstNumber(List<AstToken> AstTokens, List<byte> OpCodes): AstInstruction(AstTokens, OpCodes, YesNoImplicit.No);
+public record AstInstructionAtomic(List<AstToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted): AstInstruction(AstTokens, OpCodes, Inverted);
+public record AstInstructionArg(List<AstToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted, YesNoImplicit ArgIndirect, byte ArgValue): AstInstructionAtomic(AstTokens, OpCodes, Inverted);
+public record AstInstructionLabel(List<AstToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted, string LabelMnemonic, byte LabelOpCode): AstInstruction(AstTokens, OpCodes, Inverted);
 // Branch includes GTO, GT*, SBR, [INV] x=t, [INV] x≥t
-public record ASTInstructionBranch(List<ASTToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted, YesNoImplicit TargetIndirect, string TargetMnemonic, int TargetValue): ASTInstructionAtomic(AstTokens, OpCodes, Inverted);
+public record AstInstructionBranch(List<AstToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted, YesNoImplicit TargetIndirect, string TargetMnemonic, int TargetValue): AstInstructionAtomic(AstTokens, OpCodes, Inverted);
 // ArgBranch includes If Flag, Dsz
-public record ASTInstructionArgBranch(List<ASTToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted, YesNoImplicit ArgIndirect, byte ArgValue, YesNoImplicit TargetIndirect, string TargetMnemonic, int TargetValue): ASTInstructionArg(AstTokens, OpCodes, Inverted, ArgIndirect, ArgValue);
+public record AstInstructionArgBranch(List<AstToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted, YesNoImplicit ArgIndirect, byte ArgValue, YesNoImplicit TargetIndirect, string TargetMnemonic, int TargetValue): AstInstructionArg(AstTokens, OpCodes, Inverted, ArgIndirect, ArgValue);
 
 // Inherit from the generated base visitor.
 // The 'object' type means your visit methods can return any type.
-public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
+public class MyTi58VisitorBaseAst(ti58Parser parser): ti58BaseVisitor<object>
 {
-    public readonly ASTProgram program = new([]);
-    public readonly MyTi58VisitorBaseColorize colorVisitor = new(parser);
+    private readonly AstProgram Program = new([]);
+    private readonly MyTi58VisitorBaseColorize ColorVisitor = new(parser);
 
-    internal void PostProcessAST()
+    internal void PostProcessAst()
     {
         // Standardization of instructions: replaces STA or SIG+ by Σ+
-        foreach (var sta in program.Statements)
+        foreach (var sta in Program.Statements)
         {
             // Normalize instruction names and keys labels
-            if (sta is ASTInstruction(List<ASTToken> astTokens, _, _) inst)
+            if (sta is AstInstruction(List<AstToken> astTokens, _, _) inst)
                 for (var i = 0; i < astTokens.Count; i++)
-                    if (inst.AstTokens[i].Cat is SyntaxCategory.Instruction or SyntaxCategory.KeyLabel)
-                    {
-                        string txt = inst.AstTokens[i].Text;
+                    if (astTokens[i].Cat is SyntaxCategory.Instruction or SyntaxCategory.KeyLabel)
                         foreach (var lsi in Sill)
-                            if ((string.Equals(txt, lsi[0], StringComparison.CurrentCultureIgnoreCase) && txt != lsi[0]) || lsi[1..].Any(af => string.Equals(txt, af, StringComparison.CurrentCultureIgnoreCase)))
-                                inst.AstTokens[i] = inst.AstTokens[i] with { Text = lsi[0] };
+                            if ((string.Equals(astTokens[i].Text, lsi[0], StringComparison.CurrentCultureIgnoreCase) && astTokens[i].Text != lsi[0]) || lsi[1..].Any(af => string.Equals(astTokens[i].Text, af, StringComparison.CurrentCultureIgnoreCase)))
+                                astTokens[i] = astTokens[i] with { Text = lsi[0] };
+        }
+
+        // ToDo: Group digits in registers (direct and indirect), op, pgm, ... (flags and Dsz use 1 digit by default)
+        foreach (var sta in Program.Statements)
+        {
+            if (sta is AstInstruction(List<AstToken> astTokens, _, _) inst)
+            {
+                // Merge DirectMemoryOrNumber and IndirectMemory texts
+                for (var i = 0; i < astTokens.Count; i++)
+                    while (i < astTokens.Count - 1 && (astTokens[i].Cat == SyntaxCategory.DirectMemoryOrNumber || astTokens[i].Cat == SyntaxCategory.IndirectMemory) && astTokens[i].Cat == astTokens[i + 1].Cat)
+                    {
+                        astTokens[i] = astTokens[i] with { Text = astTokens[i].Text + astTokens[i + 1].Text };
+                        astTokens.RemoveAt(i + 1);
                     }
+
+                // For now ensure len=2 (should be disabled for DirectMemoryOrNumber after [INV] Stf, [INV] Iff or [INV] Dsz
+                var FlgDsz = false;
+                for (var i = 0; i < astTokens.Count; i++)
+                {
+                    if (astTokens[i].Cat == SyntaxCategory.Instruction && (astTokens[i].Text == "STF" || astTokens[i].Text == "IFF" || astTokens[i].Text == "Dsz"))
+                        FlgDsz = true;
+                    if ((astTokens[i].Cat == SyntaxCategory.DirectMemoryOrNumber && !FlgDsz) || astTokens[i].Cat == SyntaxCategory.IndirectMemory)
+                        if (astTokens[i].Text.Length == 1)
+                            astTokens[i] = astTokens[i] with { Text = "0" + astTokens[i].Text };
+                }
+            }
         }
 
         // ToDo: Group top level numbers
-
-        // ToDo: Group digits in registers (direct and indirect), op, pgm, ... (flags and Dsz use 1 digit by default)
 
         // ToDo: Replace addresses "0n nn" by "nnn"
 
         // ToDo: Line comment processing so they can be printed after an instruction in case they're behind an instruction in the code
         // (and maybe align comments Rust or Go style)
 
-        // ToDo: build a list of labels and a list of statements start instruction to validate direct address and labels
+        // ToDo: Build a list of labels and a list of statements start instruction to validate direct address and labels
+
+        // ToDo: Error detection (ex: two consecutive operators, ...)
     }
 
-    internal void PrintFormattedAST()
+    internal void PrintFormattedAst()
     {
+        // Number of max opcodes per line in reformatted listing
+        const int OpCols = 6;
+
         Console.WriteLine();
         int cp = 0;
-        foreach (ASTStatementBase sta in program.Statements)
+        foreach (AstStatementBase sta in Program.Statements)
         {
             switch (sta)
             {
                 // Should do a better formatting, if comment is at the end of a source line, it should
                 // be printed at the correct location, not on following line...
-                case ASTComment(var astTokens):
+                case AstComment(var astTokens):
                     Colorize(astTokens[0]);
                     Console.WriteLine();
                     break;
 
-                case ASTInterStatementWhiteSpace(_):
+                case AstInterStatementWhiteSpace(_):
                     //Console.WriteLine("Inter-statement WhiteSpace");
                     break;
 
-                case ASTInstruction(var astTokens, var opCodes, _):
+                case AstInstruction(var astTokens, var opCodes, _):
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.Write($"{cp:D3}: ");
                     Console.ForegroundColor = ConsoleColor.Gray;
 
-                    Console.Write($"{string.Join(" ", opCodes.Take(5).Select(b => b.ToString("D2"))),-15} ");
+                    Console.Write($"{string.Join(" ", opCodes.Take(OpCols).Select(b => b.ToString("D2"))),-3 * OpCols} ");
                     if (astTokens[0].Text.StartsWith("LBL", StringComparison.InvariantCultureIgnoreCase))
                     {
                         Console.ForegroundColor = ConsoleColor.White;
@@ -114,7 +131,7 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
                     else
                         Console.Write("  ");
 
-                    foreach (ASTToken token in astTokens)
+                    foreach (AstToken token in astTokens)
                         if (token.Cat != SyntaxCategory.WhiteSpace)
                             //    Console.Write(" ");     // Normalize existing white spaces to a single space
                             //                            // Should do a better reformatting in the future, add missing spaces
@@ -122,14 +139,14 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
                             Colorize("‹" + token.Text + "› ", token.Cat);
                     Console.WriteLine();
 
-                    while (opCodes.Count > 5)
+                    while (opCodes.Count > OpCols)
                     {
                         cp += 5;
-                        opCodes.RemoveRange(0, 5);
+                        opCodes.RemoveRange(0, OpCols);
                         Console.ForegroundColor = ConsoleColor.White;
                         Console.Write($"{cp:D3}: ");
                         Console.ForegroundColor = ConsoleColor.Gray;
-                        Console.WriteLine($"{string.Join(" ", opCodes.Take(5).Select(b => b.ToString("D2"))),-15} ");
+                        Console.WriteLine($"{string.Join(" ", opCodes.Take(OpCols).Select(b => b.ToString("D2"))),-3 * OpCols} ");
                     }
 
                     cp += opCodes.Count;
@@ -147,22 +164,21 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
 
         if (tokenType == ti58Lexer.LineComment)
         {
-            var at = new List<ASTToken> {
+            var at = new List<AstToken> {
                 new(node.GetText(), SyntaxCategory.Comment)
             };
-            var com = new ASTComment(at);
-            program.Statements.Add(com);
+            var com = new AstComment(at);
+            Program.Statements.Add(com);
         }
         //else if (node.Parent is ParserRuleContext ruleContext && ruleContext.RuleIndex == ti58Parser.RULE_program)
         else if (node.Parent is ParserRuleContext { RuleIndex: ti58Parser.RULE_program })
         {
             // White space is only processed if top level
-
-            var at = new List<ASTToken> {
+            var at = new List<AstToken> {
                 new(node.GetText(), SyntaxCategory.WhiteSpace)
             };
-            var ws = new ASTInterStatementWhiteSpace(at);
-            program.Statements.Add(ws);
+            var ws = new AstInterStatementWhiteSpace(at);
+            Program.Statements.Add(ws);
         }
 
         return base.VisitTerminal(node);
@@ -187,12 +203,12 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
                 Debugger.Break();
         }
 
-        var at = new List<ASTToken>();
+        var at = new List<AstToken>();
         foreach (var tn in ltn)
-            at.Add(new ASTToken(tn.GetText(), colorVisitor.GetTerminalSyntaxCategory(tn)));
+            at.Add(new AstToken(tn.GetText(), ColorVisitor.GetTerminalSyntaxCategory(tn)));
 
-        var num = new ASTNumber(at, opCodes);
-        program.Statements.Add(num);
+        var num = new AstNumber(at, opCodes);
+        Program.Statements.Add(num);
 
         return null!;
     }
@@ -260,12 +276,12 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
             opCodes.Add(byte.Parse(symbolicName[1..3]));
         }
 
-        var at = new List<ASTToken>();
+        var at = new List<AstToken>();
         foreach (var tn in ltn)
-            at.Add(new ASTToken(tn.GetText(), colorVisitor.GetTerminalSyntaxCategory(tn)));
+            at.Add(new AstToken(tn.GetText(), ColorVisitor.GetTerminalSyntaxCategory(tn)));
 
-        var ai = new ASTInstructionAtomic(at, opCodes, inverted);
-        program.Statements.Add(ai);
+        var ai = new AstInstructionAtomic(at, opCodes, inverted);
+        Program.Statements.Add(ai);
 
         return null!;
     }
@@ -353,12 +369,12 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
             argValue = (byte)(10 * argValue + byte.Parse(d.GetText()));
         opCodes.Add(argValue);
 
-        var at = new List<ASTToken>();
+        var at = new List<AstToken>();
         foreach (var tn in ltn)
-            at.Add(new ASTToken(tn.GetText(), colorVisitor.GetTerminalSyntaxCategory(tn)));
+            at.Add(new AstToken(tn.GetText(), ColorVisitor.GetTerminalSyntaxCategory(tn)));
 
-        var aa = new ASTInstructionArg(at, opCodes, inverted, argIndirect, argValue);
-        program.Statements.Add(aa);
+        var aa = new AstInstructionArg(at, opCodes, inverted, argIndirect, argValue);
+        Program.Statements.Add(aa);
 
         return null!;
     }
@@ -391,12 +407,12 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
         }
         opCodes.Add(labelOpCode);
 
-        var at = new List<ASTToken>();
+        var at = new List<AstToken>();
         foreach (var tn in ltn)
-            at.Add(new ASTToken(tn.GetText(), colorVisitor.GetTerminalSyntaxCategory(tn)));
+            at.Add(new AstToken(tn.GetText(), ColorVisitor.GetTerminalSyntaxCategory(tn)));
 
-        var ls = new ASTInstructionLabel(at, opCodes, YesNoImplicit.No, labelMnemonic, labelOpCode);
-        program.Statements.Add(ls);
+        var ls = new AstInstructionLabel(at, opCodes, YesNoImplicit.No, labelMnemonic, labelOpCode);
+        Program.Statements.Add(ls);
 
         return null!;
     }
@@ -493,12 +509,12 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
             }
         }
 
-        var at = new List<ASTToken>();
+        var at = new List<AstToken>();
         foreach (var tn in ltn)
-            at.Add(new ASTToken(tn.GetText(), colorVisitor.GetTerminalSyntaxCategory(tn)));
+            at.Add(new AstToken(tn.GetText(), ColorVisitor.GetTerminalSyntaxCategory(tn)));
 
-        var aa = new ASTInstructionBranch(at, opCodes, inverted, targetIndirect, targetMnemonic, targetValue);
-        program.Statements.Add(aa);
+        var aa = new AstInstructionBranch(at, opCodes, inverted, targetIndirect, targetMnemonic, targetValue);
+        Program.Statements.Add(aa);
 
         return null!;
     }
@@ -512,6 +528,15 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
     object InstructionArgBranch(ParserRuleContext context)
     {
         var ltn = GetTerminalNodes(context);
+
+        if (ltn.Count == 11)
+        {
+            Console.WriteLine();
+            foreach (var s in ltn)
+            {
+                Console.WriteLine($"{s.GetText()}\t{s.Symbol.Type} {ColorVisitor.GetTerminalSyntaxCategory(s)}");
+            }
+        }
 
         int ixInstruction = 0;
         YesNoImplicit inverted = YesNoImplicit.No;
@@ -537,7 +562,7 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
         // Ind prefix?
         if (ltn[ixInstruction].Symbol.Type == ti58Lexer.I40_indirect)
         {
-            // We don't add Ind prefix twice in case we have something like SM* Ind 40, just consider it's SUM Ind 40 or SM* 40
+            // We don't add Ind prefix twice in case we have something like SM* Ind 40, just consider it is SUM Ind 40 or SM* 40
             if (argIndirect == YesNoImplicit.No)
             {
                 argIndirect = YesNoImplicit.Yes;
@@ -606,12 +631,12 @@ public class MyTi58VisitorBaseAST(ti58Parser parser): ti58BaseVisitor<object>
             }
         }
 
-        var at = new List<ASTToken>();
+        var at = new List<AstToken>();
         foreach (var tn in ltn)
-            at.Add(new ASTToken(tn.GetText(), colorVisitor.GetTerminalSyntaxCategory(tn)));
+            at.Add(new AstToken(tn.GetText(), ColorVisitor.GetTerminalSyntaxCategory(tn)));
 
-        var aa = new ASTInstructionArgBranch(at, opCodes, inverted, argIndirect, argValue, targetIndirect, targetMnemonic, targetValue);
-        program.Statements.Add(aa);
+        var aa = new AstInstructionArgBranch(at, opCodes, inverted, argIndirect, argValue, targetIndirect, targetMnemonic, targetValue);
+        Program.Statements.Add(aa);
 
         return null!;
     }

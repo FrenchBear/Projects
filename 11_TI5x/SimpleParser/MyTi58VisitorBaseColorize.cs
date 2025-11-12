@@ -35,7 +35,7 @@ public class MyTi58VisitorBaseColorize(ti58Parser parser): ti58BaseVisitor<objec
         Unknown,
     }
 
-    public static void Colorize(ASTToken token)
+    public static void Colorize(AstToken token)
         => Colorize(token.Text, token.Cat);
 
     public static void Colorize(string text, SyntaxCategory cat)
