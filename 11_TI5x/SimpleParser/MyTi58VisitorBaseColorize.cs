@@ -95,7 +95,7 @@ public class MyTi58VisitorBaseColorize(ti58Parser parser): ti58BaseVisitor<objec
             case ti58Lexer.Bang:
                 return SyntaxCategory.Instruction;
             case ti58Lexer.I40_indirect:
-                return SyntaxCategory.IndirectMemory;
+                return SyntaxCategory.Instruction;      // Considering it's IndirectMemory doesn't work during AST build when grouping tokens
         }
 
         // Build a list of parent types (rules) so later we can easily check whether

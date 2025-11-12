@@ -25,7 +25,8 @@ public static class Program
         }
         */
 
-        const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master Library\ML-02.t59";
+        const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master Library\ML-02.t59";         // Long program
+        //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master Library\ML-25.t59";       // Program with numeric ocnstants
         //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master Library\all.t59";
         //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\indirect.t59";
 
@@ -36,7 +37,11 @@ public static class Program
         //input = "1234\n1.414\n.333\nLBL A\n-6.02e23\n1E10\n1E+10\n-1234567890e-79";
         //input = "1 . 6 +/- EE 1 9 +/-";
         //input = "# Test program\nLbl STA inv sig+ Clr GTO Σ+\nIFF Ind 12 123 Dsz 3 01 23\nLNX";
-        //input = "STO 12 SUM IND 25 RCL 3 RC* 5\nSTF 3 INV STF 7 STF IND 7 IFF 3 CLR INV IFF 7 IND 2\nDsz 3 |x| Lbl STA INV DSZ Ind 7 421\nGTO 001 GTO 12 GTO 123 GTO 01 23 GO* 7";
+        //input = "STO 12 SUM IND 25 RCL 3 RC* 5\nSTF 3 INV STF 7 STF IND 7 IFF 3 CLR INV IFF 7 IND 2\nDsz 3 |x| Lbl STA INV DSZ Ind 7 421\nGTO 001 GTO 12 GTO 123 GTO 01 23 GO* 7\nINV SBR RTN INV!";
+        //input = "123.45 + 5e-12 =";
+        //input = "SUM IND 25 SBR 25 SBR CLR GTO 25 GTO IND 25 GO* 25 SBR IND 25 SBR 250";
+        //input = "GTO IND 25";
+        //input = "STO IND 25";
 
         // 2. The ANTLR parsing pipeline
         var inputStream = new AntlrInputStream(input);
