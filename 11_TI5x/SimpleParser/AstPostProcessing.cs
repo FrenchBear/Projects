@@ -17,22 +17,30 @@ public partial class MyTi58VisitorBaseAst
 {
     internal void PostProcessAst()
     {
-        // Standardization of instructions: replaces STA or SIG+ by Σ+
+        StandardizeInstructions();
+        GroupDigits();
+        GroupNumbers();
+    }
+
+    private void StandardizeInstructions()
+    {
+        // Standardization of instructions: replaces STA or SIG+ by Σ+, Sto by STO...
+        // Use the first symbol in lists of synonyms in StandardInstructions.Sill as standard representation
         foreach (var sta in Program.Statements)
-        {
-            // Normalize instruction names and keys labels
             if (sta is AstInstruction(List<AstToken> astTokens, _, _) inst)
                 for (var i = 0; i < astTokens.Count; i++)
                     if (astTokens[i].Cat is SyntaxCategory.Instruction or SyntaxCategory.KeyLabel)
                         foreach (var lsi in Sill)
                             if ((string.Equals(astTokens[i].Text, lsi[0], StringComparison.CurrentCultureIgnoreCase) && astTokens[i].Text != lsi[0]) || lsi[1..].Any(af => string.Equals(astTokens[i].Text, af, StringComparison.CurrentCultureIgnoreCase)))
                                 astTokens[i] = astTokens[i] with { Text = lsi[0] };
-        }
+    }
 
+    private void GroupDigits()
+    {
         // Group digits in registers (direct and indirect), op, pgm, ... (flags and Dsz use 1 digit by default)
         foreach (var sta in Program.Statements)
         {
-            if (sta is AstInstruction(List<AstToken> astTokens, _, _) inst)
+            if (sta is AstInstruction(List<AstToken> astTokens, _, _))
             {
                 // Merge DirectMemoryOrNumber, IndirectMemory, numeric KeyLabel and DirectAddresses
                 for (var i = 0; i < astTokens.Count; i++)
@@ -65,7 +73,22 @@ public partial class MyTi58VisitorBaseAst
                 }
             }
         }
+    }
 
+    private struct NumberContext
+    {
+        public bool dotFound;
+        public bool eeFound;
+        public int mantissaDigits;
+        public int exponentDigits;
+        public bool mantissaSignFound;
+        public bool exponentSignFound;
+        public int ixEE;
+        public int ixExisting;
+    }
+
+    private void GroupNumbers()
+    {
         // Group top level numbers
         // ToDo: . also starts grouping
         for (int i = 0; i < Program.Statements.Count; i++)
@@ -76,7 +99,7 @@ public partial class MyTi58VisitorBaseAst
                 {
                     if (Program.Statements[j] is AstInterStatementWhiteSpace(_))
                         continue;
-                    if (Program.Statements[j] is AstNumber(_, _) next_num)
+                    if (Program.Statements[j] is AstNumber(_, _))
                         return Program.Statements[j];
                     if (Program.Statements[j] is AstInstructionAtomic(_, _, _) next_inst)
                     {
@@ -99,46 +122,39 @@ public partial class MyTi58VisitorBaseAst
             // Also note that if it starts with a dot, we need to change statement from AstInstruction to AstNumber... But a valid next statement
             // is guaranteed to be a number: . . is stupid, . +/- ok but unelikely, and . EE barely Ok
             // There are several esamples in ML-25.t59
-            if (Program.Statements[i] is AstNumber(List<AstToken> tokens, List<byte> opCodes) num)
+            var nc = new NumberContext();
+            if (Program.Statements[i] is AstNumber(List<AstToken> tokens, List<byte> opCodes))
             {
                 // Analyse current number state
-                var dotFound = false;
-                var eeFound = false;
-                var mantissaDigits = 0;
-                var exponentDigits = 0;
-                var mantissaSignFound = false;
-                var exponentSignFound = false;
-                int ixEE = 0;
-                int ixExisting = 0;
-                for (; ixExisting < opCodes.Count; ixExisting++)
+                for (; nc.ixExisting < opCodes.Count; nc.ixExisting++)
                 {
-                    var opCode = opCodes[ixExisting];
+                    var opCode = opCodes[nc.ixExisting];
 
                     if (opCode is >= 0 and <= 9)
                     {
-                        if (eeFound)
-                            exponentDigits++;
+                        if (nc.eeFound)
+                            nc.exponentDigits++;
                         else
-                            mantissaDigits++;
+                            nc.mantissaDigits++;
                         continue;
                     }
                     if (opCode == 93)
                     {
-                        dotFound = true;
+                        nc.dotFound = true;
                         continue;
                     }
                     if (opCode == 52)
                     {
-                        eeFound = true;
-                        ixEE = ixExisting;
+                        nc.eeFound = true;
+                        nc.ixEE = nc.ixExisting;
                         continue;
                     }
                     if (opCode == 94)
                     {
-                        if (eeFound)
-                            exponentSignFound = true;
+                        if (nc.eeFound)
+                            nc.exponentSignFound = true;
                         else
-                            mantissaSignFound = true;
+                            nc.mantissaSignFound = true;
                         continue;
                     }
                     // Unreachable
@@ -160,48 +176,48 @@ public partial class MyTi58VisitorBaseAst
 
                         if (opCode is >= 0 and <= 9)
                         {
-                            if (eeFound)
+                            if (nc.eeFound)
                             {
-                                exponentDigits++;
-                                if (exponentDigits > 2)
+                                nc.exponentDigits++;
+                                if (nc.exponentDigits > 2)
                                     goto ContinueNextMainStatement;
                             }
                             else
                             {
-                                mantissaDigits++;
-                                if (exponentDigits > 2)
+                                nc.mantissaDigits++;
+                                if (nc.exponentDigits > 2)
                                     goto ContinueNextMainStatement;
                             }
                             continue;
                         }
                         if (opCode == 93)   // .
                         {
-                            if (dotFound)
+                            if (nc.dotFound)
                                 goto ContinueNextMainStatement;
-                            dotFound = true;
+                            nc.dotFound = true;
                             continue;
                         }
                         if (opCode == 52)   // EE
                         {
-                            if (eeFound)
+                            if (nc.eeFound)
                                 goto ContinueNextMainStatement;
-                            eeFound = true;
-                            ixEE = ixExisting + j;
+                            nc.eeFound = true;
+                            nc.ixEE = nc.ixExisting + j;
                             continue;
                         }
                         if (opCode == 94)   // +/-
                         {
-                            if (eeFound)
+                            if (nc.eeFound)
                             {
-                                if (exponentSignFound)
+                                if (nc.exponentSignFound)
                                     goto ContinueNextMainStatement;
-                                exponentSignFound = true;
+                                nc.exponentSignFound = true;
                             }
                             else
                             {
-                                if (mantissaSignFound)
+                                if (nc.mantissaSignFound)
                                     goto ContinueNextMainStatement;
-                                mantissaSignFound = true;
+                                nc.mantissaSignFound = true;
                             }
                             continue;
                         }
@@ -214,7 +230,7 @@ public partial class MyTi58VisitorBaseAst
                     {
                         opCodes.Add(next_opCodes[j]);
                         tokens.Add(next_tokens[j]);
-                        ixExisting++;
+                        nc.ixExisting++;
                     }
 
                     // Don't need next program Number (and also remove inter-statement white space
@@ -250,30 +266,30 @@ public partial class MyTi58VisitorBaseAst
                     switch (nop)
                     {
                         case 93:    // .
-                            if (dotFound)
+                            if (nc.dotFound)
                                 goto ContinueNextMainStatement;
-                            dotFound = true;
+                            nc.dotFound = true;
                             break;
 
                         case 94:    // +/-
-                            if (eeFound)
+                            if (nc.eeFound)
                             {
-                                if (mantissaSignFound)
+                                if (nc.mantissaSignFound)
                                     goto ContinueNextMainStatement;
-                                mantissaSignFound = true;
+                                nc.mantissaSignFound = true;
                             }
                             else
                             {
-                                if (exponentSignFound)
+                                if (nc.exponentSignFound)
                                     goto ContinueNextMainStatement;
-                                exponentSignFound = true;
+                                nc.exponentSignFound = true;
                             }
                             break;
 
                         case 52:    // EE
-                            if (eeFound)
+                            if (nc.eeFound)
                                 goto ContinueNextMainStatement;
-                            eeFound = true;
+                            nc.eeFound = true;
                             break;
 
                         default:
@@ -317,9 +333,5 @@ public partial class MyTi58VisitorBaseAst
 
         // ToDo: Line comment processing so they can be printed after an instruction in case they're behind an instruction in the code
         // (and maybe align comments Rust or Go style)
-
-        // ToDo: Build a list of labels and a list of statements start instruction to validate direct address and labels
-
-        // ToDo: Error detection (ex: two consecutive operators, ...)
     }
 }

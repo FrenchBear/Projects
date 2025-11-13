@@ -3,6 +3,8 @@
 // An Ast is a more high level, simpled representation with a hierarchy of data objects holding
 // properties ideal for matching, while a parser tree is very detailed
 //
+// ToDo: Add statement address in AstInstruction (an internal property so it can be mutated)
+//
 // 2025-11-10   PV
 
 using Antlr4.Runtime;

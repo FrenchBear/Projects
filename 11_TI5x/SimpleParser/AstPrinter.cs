@@ -2,6 +2,11 @@
 // Example of Ast use after build and post-processing: print a clean listing of instructions
 // reformatted and with instruction addresses and opCodes
 //
+// ToDo: Build a list of labels and a list of statements start instruction to validate GTO/SBR/tests to direct address and labels,
+// or duplicate labels, or invalid labels (Lbl Ind/Lbl 40, can't be used, Ind interpretation has priority)
+// ToDo: Error detection (ex: two consecutive operators, operator after opening parenthesis, ...)
+
+//
 // 2025-11-12   PV
 
 using System;
