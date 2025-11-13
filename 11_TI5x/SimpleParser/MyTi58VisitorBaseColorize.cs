@@ -22,6 +22,7 @@ public class MyTi58VisitorBaseColorize(ti58Parser parser): ti58BaseVisitor<objec
 {
     public enum SyntaxCategory
     {
+        ProgramSeparator,
         Eof,
         InterInstructionWhiteSpace,
         WhiteSpace,
@@ -42,6 +43,16 @@ public class MyTi58VisitorBaseColorize(ti58Parser parser): ti58BaseVisitor<objec
     {
         if (cat == SyntaxCategory.Eof)
             return;
+        if (cat == SyntaxCategory.ProgramSeparator)
+        {
+            var bc = Console.BackgroundColor;
+            Console.BackgroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.Write(text);
+            Console.BackgroundColor = bc;
+            Console.ForegroundColor = ConsoleColor.Gray;
+            return;
+        }
 
 #pragma warning disable IDE0072 // Add missing cases
         Console.ForegroundColor = cat switch
@@ -84,6 +95,8 @@ public class MyTi58VisitorBaseColorize(ti58Parser parser): ti58BaseVisitor<objec
         {
             // Just a test to separate WS between instructions and WS in instructions
             // We don't attempt to normalize WS in instructions or remove \n in instructions
+            case ti58Lexer.Program_separator:
+                return SyntaxCategory.ProgramSeparator;
             case ti58Lexer.WS when node.Parent is ParserRuleContext { RuleIndex: ti58Parser.RULE_program }:
                 return SyntaxCategory.InterInstructionWhiteSpace;
             case ti58Lexer.WS:

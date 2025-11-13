@@ -17,6 +17,7 @@
 // 2025-11-09   PV      Version 2, flatten model
 // 2025-11-10   PV      Added missing invert instructions (INV Write, INV List, INV ^), 10 flags and not 7
 // 2025-11-11   PV      Renamed rules for consistency; Ind can't be a Key label (otherwise GTO Ind xx is misinterpreted); x≥t ant x>=t are two distinct variants!; Added EQ* and GE*
+// 2025-11-13   PV      Added END statement to allow multiple grograms in the same source text
 
 grammar ti58;
 
@@ -32,6 +33,8 @@ WS: [ \r\n\t]+;
 LineComment: '#' ~[\r\n]*;
 
 Bang: '!';
+
+Program_separator: 'END' ;
 
 I11_a: 'A';
 I12_b: 'B';
@@ -152,9 +155,11 @@ numeric_key_label: ('1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9') d;     // 10..99, an ex
 op_number:      (('0'|'1'|'2'|'3') d) | ('4' '0');              // TI-58C has Op 40 (printer detection)
 
 startRule
-    : program EOF
+    : programs EOF
     | WS EOF    // Allow empty program without allowing empty statement
     ;
+
+programs: program (Program_separator program)* ;
 
 program
     : WS? instruction_or_comment (WS instruction_or_comment)* WS?

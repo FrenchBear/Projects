@@ -11,18 +11,21 @@ using System.Linq;
 using static SimpleParser.MyTi58VisitorBaseColorize;
 using static SimpleParser.StandardInstructions;
 
+#pragma warning disable CA1822 // Mark members as static
+
 namespace SimpleParser;
 
-public partial class MyTi58VisitorBaseAst
+public class AstPostProcessor
 {
-    internal void PostProcessAst()
+    internal void PostProcessAst(AstProgram program)
     {
-        StandardizeInstructions();
-        GroupDigits();
-        GroupNumbers();
+        StandardizeInstructions(program);
+        GroupDigits(program);
+        GroupNumbers(program);
+        BuildInstructionAddresses(program);
     }
 
-    private void StandardizeInstructions()
+    private void StandardizeInstructions(AstProgram Program)
     {
         // Standardization of instructions: replaces STA or SIG+ by Σ+, Sto by STO...
         // Use the first symbol in lists of synonyms in StandardInstructions.Sill as standard representation
@@ -35,7 +38,7 @@ public partial class MyTi58VisitorBaseAst
                                 astTokens[i] = astTokens[i] with { Text = lsi[0] };
     }
 
-    private void GroupDigits()
+    private void GroupDigits(AstProgram Program)
     {
         // Group digits in registers (direct and indirect), op, pgm, ... (flags and Dsz use 1 digit by default)
         foreach (var sta in Program.Statements)
@@ -87,7 +90,7 @@ public partial class MyTi58VisitorBaseAst
         public int ixExisting;
     }
 
-    private void GroupNumbers()
+    private void GroupNumbers(AstProgram Program)
     {
         // Group top level numbers
         // ToDo: . also starts grouping
@@ -333,5 +336,24 @@ public partial class MyTi58VisitorBaseAst
 
         // ToDo: Line comment processing so they can be printed after an instruction in case they're behind an instruction in the code
         // (and maybe align comments Rust or Go style)
+    }
+
+    private void BuildInstructionAddresses(AstProgram program)
+    {
+        int address = 0;
+        foreach (var sta in program.Statements)
+            if (sta is AstInstruction(_, _, _) inst)
+            {
+                inst.Address = address;
+                address += inst.OpCodes.Count;
+            }
+            else if (sta is AstNumber(_, _) num)
+            {
+                num.Address = address;
+                address += num.OpCodes.Count;
+            }
+
+        // Keep the whole number of OpCodes
+        program.ProgramSize = address;
     }
 }

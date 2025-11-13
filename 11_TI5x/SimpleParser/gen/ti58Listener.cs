@@ -131,6 +131,16 @@ public interface Iti58Listener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitStartRule([NotNull] ti58Parser.StartRuleContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.programs"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterPrograms([NotNull] ti58Parser.ProgramsContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.programs"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitPrograms([NotNull] ti58Parser.ProgramsContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="ti58Parser.program"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

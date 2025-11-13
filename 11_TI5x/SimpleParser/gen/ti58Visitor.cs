@@ -92,6 +92,12 @@ public interface Iti58Visitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitStartRule([NotNull] ti58Parser.StartRuleContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="ti58Parser.programs"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitPrograms([NotNull] ti58Parser.ProgramsContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="ti58Parser.program"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

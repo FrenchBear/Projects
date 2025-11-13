@@ -13,7 +13,6 @@ using Antlr4.Runtime.Tree;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using static SimpleParser.MyTi58VisitorBaseColorize;
 
 namespace SimpleParser;
@@ -23,7 +22,11 @@ namespace SimpleParser;
 
 public enum YesNoImplicit { No, Yes, Implicit }
 
-public record AstProgram(List<AstStatementBase> Statements);
+public class AstProgram
+{
+    public List<AstStatementBase> Statements = [];
+    public int ProgramSize;     // Number of OpCodes
+}
 
 public record AstToken(string Text, SyntaxCategory Cat);
 
@@ -32,6 +35,8 @@ public record AstInterStatementWhiteSpace(List<AstToken> AstTokens): AstStatemen
 public record AstComment(List<AstToken> AstTokens): AstStatementBase(AstTokens);
 public record AstNumber(List<AstToken> AstTokens, List<byte> OpCodes): AstStatementBase(AstTokens)
 {
+    public int Address { get; set; }
+
     public string GetMnemonic()
     {
         string mnemonic = "";
@@ -58,6 +63,9 @@ public record AstNumber(List<AstToken> AstTokens, List<byte> OpCodes): AstStatem
 
 public abstract record AstInstruction(List<AstToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted): AstStatementBase(AstTokens)
 {
+    public int Address { get; set; }
+
+    /* Unused
     public string GetMnemonic()
     {
         int start = 0;
@@ -71,9 +79,9 @@ public abstract record AstInstruction(List<AstToken> AstTokens, List<byte> OpCod
         Debugger.Break();       // ToDo: for devtest, remove
         return "???";
     }
+    */
 
-    // Return instruction opcode, ignoring potential 22 (INV) prefix
-    // ToDo: Test with RTN and e^x
+    // Return instruction opcode, skipping potential 22 (INV) prefix
     public byte GetOpCode() => Inverted == YesNoImplicit.Yes ? OpCodes[1] : OpCodes[0];
 }
 
@@ -88,11 +96,21 @@ public record AstInstructionArgBranch(List<AstToken> AstTokens, List<byte> OpCod
 // ---------------------------------------------------------------------
 
 // Inherit from the generated base visitor.
-// The 'object' type means your visit methods can return any type.
-public partial class MyTi58VisitorBaseAst(ti58Parser parser): ti58BaseVisitor<object>
+public class MyTi58VisitorAstBuilder(ti58Parser parser): ti58BaseVisitor<object>
 {
-    private readonly AstProgram Program = new([]);
     private readonly MyTi58VisitorBaseColorize ColorVisitor = new(parser);
+
+    private readonly List<AstProgram> Programs = [new()];     // Build a list containing a single program containing en empty list of statements
+
+    // Program just reference the latest program (the obe being built)
+    private AstProgram Program => Programs[^1];
+
+    // Main method, visiting tree and returning a list of programs
+    internal List<AstProgram> BuildPrograms(IParseTree tree)
+    {
+        Visit(tree);
+        return Programs;
+    }
 
     // This method is called for every single token in the tree
     // We only process comments and top-level white space which are not handled as instructions
@@ -101,7 +119,11 @@ public partial class MyTi58VisitorBaseAst(ti58Parser parser): ti58BaseVisitor<ob
         // Get the token's integer type
         int tokenType = node.Symbol.Type;
 
-        if (tokenType == ti58Lexer.LineComment)
+        if (tokenType == ti58Lexer.Program_separator)
+        {
+            Programs.Add(new());
+        }
+        else if (tokenType == ti58Lexer.LineComment)
         {
             var at = new List<AstToken> {
                 new(node.GetText(), SyntaxCategory.Comment)

@@ -156,6 +156,18 @@ public partial class ti58BaseListener : Iti58Listener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitStartRule([NotNull] ti58Parser.StartRuleContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ti58Parser.programs"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterPrograms([NotNull] ti58Parser.ProgramsContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ti58Parser.programs"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitPrograms([NotNull] ti58Parser.ProgramsContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="ti58Parser.program"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>

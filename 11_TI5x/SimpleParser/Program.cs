@@ -25,8 +25,8 @@ public static class Program
         }
         */
 
-        //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master Library\ML-02.t59";         // Long program
-        const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master Library\ML-25.t59";       // Program with numeric ocnstants
+        const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master Library\ML-02.t59";         // Long program
+        //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master Library\ML-25.t59";       // Program with numeric ocnstants
         //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master Library\all.t59";
         //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\indirect.t59";
 
@@ -43,6 +43,7 @@ public static class Program
         //input = "STO IND 25";
         //input = "123 45 6\n12 . 34 +/- EE +/- 12";
         //input = "LBL A 1234567890 LBL B";
+        //input = "STO 12 RTN END SIG+ INV Dsz 03 123 END Nop";
 
         // 2. The ANTLR parsing pipeline
         var inputStream = new AntlrInputStream(input);
@@ -81,12 +82,22 @@ public static class Program
         Console.WriteLine();
 
         // Build Ast, print clean listing and table of labels
-        var astVisitor = new MyTi58VisitorBaseAst(parser);
-        astVisitor.Visit(tree);
-        astVisitor.PostProcessAst();
-        astVisitor.PrintFormattedAst();
+        var astVisitor = new MyTi58VisitorAstBuilder(parser);
+        var programs = astVisitor.BuildPrograms(tree);
 
-        Console.WriteLine("\nLabels");
-        astVisitor.PrintFormattedAst(true);
+        // Post_processing
+        var astPostProcessor = new AstPostProcessor();
+        foreach (var program in programs)
+            astPostProcessor.PostProcessAst(program);
+
+        // Printing
+        var astPrinter = new AstPrinter();
+        foreach (var program in programs)
+        {
+            Console.WriteLine("\n--------\nDetailed listing");
+            astPrinter.PrintFormattedAst(program);
+            Console.WriteLine("\nLabels");
+            astPrinter.PrintFormattedAst(program, true);
+        }
     }
 }
