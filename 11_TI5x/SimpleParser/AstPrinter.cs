@@ -32,6 +32,9 @@ public class AstPrinter
             switch (sta)
             {
                 // ToDo: if comment is at the end of a source line, it should be printed at the correct location, not on following line...
+                // Probably needs to store move info in AstInstruction/AstNumber, and parser or AstBuilder update
+                // Maybe AstBuilder can detect that instruction and comment are on the same line so it can add info to instruction or comment
+                // Note that comments on successive numbers may be grouped/merged with first number
                 case AstComment(var astTokens):
                     Colorize(astTokens[0]);
                     Console.WriteLine();
