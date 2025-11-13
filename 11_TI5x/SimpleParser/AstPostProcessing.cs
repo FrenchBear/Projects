@@ -3,6 +3,8 @@
 // - Instruction normalisation: Sto -> STO, STO IND -> ST*, ABS -> |x|...
 // - Digits grouping in memory, addresses (because of grammar, STO 02 contains two tokens DirectMemoryOrNumber 0 and 2)
 // - An extension, well-formed sequences of numbers are printed on one line (6 . 0 2 EE 2 3 +/-  -->  6.02E-23)
+//
+// 2025-11-13   PV      Deep refactoring
 
 using System;
 using System.Collections.Generic;
@@ -11,7 +13,10 @@ using System.Linq;
 using static SimpleParser.MyTi58VisitorBaseColorize;
 using static SimpleParser.StandardInstructions;
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable CA1822 // Mark members as static
+#pragma warning disable IDE0062 // Make local function 'static'
+#pragma warning disable IDE0046 // Convert to conditional expression
 
 namespace SimpleParser;
 
@@ -25,10 +30,10 @@ public class AstPostProcessor
         BuildInstructionAddresses(program);
     }
 
+    // Standardization of instructions: replaces STA or SIG+ by Σ+, Sto by STO...
+    // Use the first symbol in lists of synonyms in StandardInstructions.Sill as standard representation
     private void StandardizeInstructions(AstProgram Program)
     {
-        // Standardization of instructions: replaces STA or SIG+ by Σ+, Sto by STO...
-        // Use the first symbol in lists of synonyms in StandardInstructions.Sill as standard representation
         foreach (var sta in Program.Statements)
             if (sta is AstInstruction(List<AstToken> astTokens, _, _) inst)
                 for (var i = 0; i < astTokens.Count; i++)
@@ -38,9 +43,10 @@ public class AstPostProcessor
                                 astTokens[i] = astTokens[i] with { Text = lsi[0] };
     }
 
+    // Group digits in registers (direct and indirect), Pp, Pgm, ... (flags and Dsz use 1 digit by default)
+    // since parser breaks down each digit in its own separate token
     private void GroupDigits(AstProgram Program)
     {
-        // Group digits in registers (direct and indirect), op, pgm, ... (flags and Dsz use 1 digit by default)
         foreach (var sta in Program.Statements)
         {
             if (sta is AstInstruction(List<AstToken> astTokens, _, _))
@@ -78,6 +84,9 @@ public class AstPostProcessor
         }
     }
 
+    // ----------------
+
+    // Stores info about current number to detect if following tokens can be merged with it
     private struct NumberContext
     {
         public bool dotFound;
@@ -90,32 +99,151 @@ public class AstPostProcessor
         public int ixExisting;
     }
 
-    private void GroupNumbers(AstProgram Program)
+    // GroupNumbers helper, returns AstNumber or AstInstructionAtomic[dot, EE, +/-] at index startIndex+1 ignoring
+    // AstInterStatementWhiteSpace and AstComment
+    // Returns null if it's not a match
+    private AstStatementBase? GetNextCompatibleStatement(AstProgram program, int startIndex)
+    {
+        for (int j = startIndex + 1; j < program.Statements.Count; j++)
+        {
+            if (program.Statements[j] is AstInterStatementWhiteSpace(_) or AstComment(_))
+                continue;
+            if (program.Statements[j] is AstNumber(_, _))
+                return program.Statements[j];
+            if (program.Statements[j] is AstInstructionAtomic(_, _, _) next_inst)
+            {
+                var nop = next_inst.OpCodes[0];
+                if (nop is 93 or 94 or 52)      // . +/- or EE   Note that we can't test mnemonic because "INV EE" has a mnemonic EE but is not valid
+                    return next_inst;
+                return null;
+            }
+            return null;
+        }
+        return null;
+    }
+
+    // GroupNumbers helper, analyzes the number represented by the list of opCodes, updating nc
+    // Return true if opCodes are compatible with provided NumberContext, false otherwise
+    bool AnalyzeNumber(List<byte> opCodes, ref NumberContext nc)
+    {
+        // Check that the whole stuff can be added
+        for (int j = 0; j < opCodes.Count; j++)
+        {
+            var opCode = opCodes[j];
+
+            if (opCode is >= 0 and <= 9)
+            {
+                if (nc.eeFound)
+                {
+                    nc.exponentDigits++;
+                    if (nc.exponentDigits > 2)
+                        return false;
+                }
+                else
+                {
+                    nc.mantissaDigits++;
+                    if (nc.exponentDigits > 2)
+                        return false;
+                }
+                continue;
+            }
+            if (opCode == 93)   // .
+            {
+                if (nc.dotFound)
+                    return false;
+                nc.dotFound = true;
+                continue;
+            }
+            if (opCode == 52)   // EE
+            {
+                if (nc.eeFound)
+                    return false;
+                nc.eeFound = true;
+                nc.ixEE = nc.ixExisting + j;
+                continue;
+            }
+            if (opCode == 94)   // +/-
+            {
+                if (nc.eeFound)
+                {
+                    if (nc.exponentSignFound)
+                        return false;
+                    nc.exponentSignFound = true;
+                }
+                else
+                {
+                    if (nc.mantissaSignFound)
+                        return false;
+                    nc.mantissaSignFound = true;
+                }
+                continue;
+            }
+            // Unreachable
+            Debugger.Break();
+        }
+
+        return true;
+    }
+
+    // // GroupNumbers helper; delete next AstNumber (is checkForNumber is true) or AstInstruction
+    // Also remove inter-statement white space (tough all these may be removed at some point)
+    // Ignoring comments.
+    // By design, the code is guaranteed to find the statement we want to delete, or we have a logic problem
+
+    void EraseNextAstNumberOrInstruction(AstProgram program, int startIndex, bool checkForNumber)
+    {
+        bool preserveISWS = false;
+        int j = startIndex + 1;
+        for (; ; )
+        {
+            if (program.Statements[j] is AstInterStatementWhiteSpace(_))
+            {
+                if (!preserveISWS)
+                    program.Statements.RemoveAt(j);
+                else
+                    preserveISWS = false;
+                continue;
+            }
+
+            // Don't remember if AstComment are surrounded by AstInterStatementWhiteSpace...
+            // Right now, I keep a ISWS after a comment, should be tested...
+            if (program.Statements[j] is AstComment(_))
+            {
+                preserveISWS = true;
+                j++;
+                continue;
+            }
+
+            if (checkForNumber)
+            {
+                if (program.Statements[j] is AstNumber(_, _))
+                {
+                    program.Statements.RemoveAt(j);
+                    return;
+                }
+            }
+            else
+            {
+                if (program.Statements[j] is AstInstruction(_, _, _))
+                {
+                    program.Statements.RemoveAt(j);
+                    return;
+                }
+            }
+        }
+        // Should not happen
+        Debugger.Break();
+    }
+
+    // Group a well-formed sequence of numbers  and instructions into a single number, preserving
+    // original tokens order
+    // for instance converts sequence "1 . 6 +/- EE +/- 1 9" into single number "-1.6e-19"
+    private void GroupNumbers(AstProgram program)
     {
         // Group top level numbers
         // ToDo: . also starts grouping
-        for (int i = 0; i < Program.Statements.Count; i++)
+        for (int i = 0; i < program.Statements.Count; i++)
         {
-            AstStatementBase? GetNextStatement()
-            {
-                for (int j = i + 1; j < Program.Statements.Count; j++)
-                {
-                    if (Program.Statements[j] is AstInterStatementWhiteSpace(_))
-                        continue;
-                    if (Program.Statements[j] is AstNumber(_, _))
-                        return Program.Statements[j];
-                    if (Program.Statements[j] is AstInstructionAtomic(_, _, _) next_inst)
-                    {
-                        var nop = next_inst.OpCodes[0];
-#pragma warning disable IDE0046 // Convert to conditional expression
-                        if (nop is 93 or 94 or 52)      // . +/- or EE   Note that we can't test mnemonic because "INV EE" has a mnemonic EE but is not valid
-                            return next_inst;
-                        return null;
-                    }
-                    return null;
-                }
-                return null;
-            }
 
             // First, determine if this can start a sequence
             // Probably need to be extracted to a separate function, it's too long
@@ -125,108 +253,23 @@ public class AstPostProcessor
             // Also note that if it starts with a dot, we need to change statement from AstInstruction to AstNumber... But a valid next statement
             // is guaranteed to be a number: . . is stupid, . +/- ok but unelikely, and . EE barely Ok
             // There are several esamples in ML-25.t59
-            var nc = new NumberContext();
-            if (Program.Statements[i] is AstNumber(List<AstToken> tokens, List<byte> opCodes))
+            NumberContext nc = new();
+            if (program.Statements[i] is AstNumber(List<AstToken> tokens, List<byte> opCodes))
             {
-                // Analyse current number state
-                for (; nc.ixExisting < opCodes.Count; nc.ixExisting++)
-                {
-                    var opCode = opCodes[nc.ixExisting];
-
-                    if (opCode is >= 0 and <= 9)
-                    {
-                        if (nc.eeFound)
-                            nc.exponentDigits++;
-                        else
-                            nc.mantissaDigits++;
-                        continue;
-                    }
-                    if (opCode == 93)
-                    {
-                        nc.dotFound = true;
-                        continue;
-                    }
-                    if (opCode == 52)
-                    {
-                        nc.eeFound = true;
-                        nc.ixEE = nc.ixExisting;
-                        continue;
-                    }
-                    if (opCode == 94)
-                    {
-                        if (nc.eeFound)
-                            nc.exponentSignFound = true;
-                        else
-                            nc.mantissaSignFound = true;
-                        continue;
-                    }
-                    // Unreachable
-                    Debugger.Break();
-                }
+                var isOk = AnalyzeNumber(opCodes, ref nc);
+                Debug.Assert(isOk);
 
             AnalyzeNextStatement:
-                var next_st = GetNextStatement();
-
+                var next_st = GetNextCompatibleStatement(program, i);
                 if (next_st == null)
                     continue;
 
                 if (next_st is AstNumber(List<AstToken> next_tokens, List<byte> next_opCodes))
                 {
                     // Check that the whole stuff can be added
-                    for (int j = 0; j < next_opCodes.Count; j++)
-                    {
-                        var opCode = next_opCodes[j];
-
-                        if (opCode is >= 0 and <= 9)
-                        {
-                            if (nc.eeFound)
-                            {
-                                nc.exponentDigits++;
-                                if (nc.exponentDigits > 2)
-                                    goto ContinueNextMainStatement;
-                            }
-                            else
-                            {
-                                nc.mantissaDigits++;
-                                if (nc.exponentDigits > 2)
-                                    goto ContinueNextMainStatement;
-                            }
-                            continue;
-                        }
-                        if (opCode == 93)   // .
-                        {
-                            if (nc.dotFound)
-                                goto ContinueNextMainStatement;
-                            nc.dotFound = true;
-                            continue;
-                        }
-                        if (opCode == 52)   // EE
-                        {
-                            if (nc.eeFound)
-                                goto ContinueNextMainStatement;
-                            nc.eeFound = true;
-                            nc.ixEE = nc.ixExisting + j;
-                            continue;
-                        }
-                        if (opCode == 94)   // +/-
-                        {
-                            if (nc.eeFound)
-                            {
-                                if (nc.exponentSignFound)
-                                    goto ContinueNextMainStatement;
-                                nc.exponentSignFound = true;
-                            }
-                            else
-                            {
-                                if (nc.mantissaSignFound)
-                                    goto ContinueNextMainStatement;
-                                nc.mantissaSignFound = true;
-                            }
-                            continue;
-                        }
-                        // Unreachable
-                        Debugger.Break();
-                    }
+                    isOk = AnalyzeNumber(next_opCodes, ref nc);
+                    if (!isOk)
+                        continue;
 
                     // Good, if we're there, next number can be merged
                     for (int j = 0; j < next_opCodes.Count; j++)
@@ -236,23 +279,7 @@ public class AstPostProcessor
                         nc.ixExisting++;
                     }
 
-                    // Don't need next program Number (and also remove inter-statement white space
-                    // Should be more compact...
-                    if (i + 1 == Program.Statements.Count)
-                        goto ContinueNextMainStatement; // Actually, end of the loop
-
-                    if (Program.Statements[i + 1] is AstInterStatementWhiteSpace(_))
-                        Program.Statements.RemoveAt(i + 1);
-                    else
-                        Debugger.Break();
-
-                    if (i + 1 == Program.Statements.Count)
-                        goto ContinueNextMainStatement;
-
-                    if (Program.Statements[i + 1] is AstNumber(_, _))
-                        Program.Statements.RemoveAt(i + 1);
-                    else
-                        Debugger.Break();
+                    EraseNextAstNumberOrInstruction(program, i, true);
 
                     // Restart in case there's also something mergeable just after
                     goto AnalyzeNextStatement;
@@ -265,62 +292,17 @@ public class AstPostProcessor
                     Debug.Assert(ni_tokens.Count == 1);
                     Debug.Assert(ni_opCodes.Count == 1);
 
-                    // Check if the statement can be merged:
-                    switch (nop)
-                    {
-                        case 93:    // .
-                            if (nc.dotFound)
-                                goto ContinueNextMainStatement;
-                            nc.dotFound = true;
-                            break;
-
-                        case 94:    // +/-
-                            if (nc.eeFound)
-                            {
-                                if (nc.mantissaSignFound)
-                                    goto ContinueNextMainStatement;
-                                nc.mantissaSignFound = true;
-                            }
-                            else
-                            {
-                                if (nc.exponentSignFound)
-                                    goto ContinueNextMainStatement;
-                                nc.exponentSignFound = true;
-                            }
-                            break;
-
-                        case 52:    // EE
-                            if (nc.eeFound)
-                                goto ContinueNextMainStatement;
-                            nc.eeFound = true;
-                            break;
-
-                        default:
-                            Debugger.Break();       // Unreachable
-                            break;
-                    }
+                    // Check if the statement can be merged
+                    isOk = AnalyzeNumber(ni_opCodes, ref nc);
+                    if (!isOk)
+                        continue;
 
                     // Ok, we can merge
                     opCodes.Add(nop);
                     tokens.Add(ni_tokens[0]);
 
                     // Don't need next program Number (and also remove inter-statement white space
-                    // Should be more compact...
-                    if (i + 1 == Program.Statements.Count)
-                        goto ContinueNextMainStatement; // Actually, end of the loop
-
-                    if (Program.Statements[i + 1] is AstInterStatementWhiteSpace(_))
-                        Program.Statements.RemoveAt(i + 1);
-                    else
-                        Debugger.Break();
-
-                    if (i + 1 == Program.Statements.Count)
-                        goto ContinueNextMainStatement;
-
-                    if (Program.Statements[i + 1] is AstInstruction(_, _, _))
-                        Program.Statements.RemoveAt(i + 1);
-                    else
-                        Debugger.Break();
+                    EraseNextAstNumberOrInstruction(program, i, false);
 
                     // Restart in case there's also something mergeable just after
                     goto AnalyzeNextStatement;
@@ -328,14 +310,8 @@ public class AstPostProcessor
 
                 // unreachable:
                 Debugger.Break();
-
-            ContinueNextMainStatement:
-                ;
             }
         }
-
-        // ToDo: Line comment processing so they can be printed after an instruction in case they're behind an instruction in the code
-        // (and maybe align comments Rust or Go style)
     }
 
     private void BuildInstructionAddresses(AstProgram program)
