@@ -19,15 +19,15 @@ namespace SimpleParser;
 
 public class AstPrinter
 {
-    // Could be made static, but for consitency of main program, better keep this as an instance method
-    internal void PrintFormattedAst(AstProgram Program, bool OnlyLabelsAndComments = false)
+    // Could be made static, but for consistency of main program, better keep this as an instance method
+    internal void PrintFormattedAst(AstProgram program, bool onlyLabelsAndComments = false)
     {
         // Number of max opcodes per line in reformatted listing
-        const int OpCols = 6;
+        const int opCols = 6;
 
         Console.WriteLine();
 
-        foreach (AstStatementBase sta in Program.Statements)
+        foreach (AstStatementBase sta in program.Statements)
         {
             switch (sta)
             {
@@ -43,32 +43,32 @@ public class AstPrinter
                 case AstInterStatementWhiteSpace(_):
                     break;
 
-                case AstNumber(var astTokens, var opCodes) num:
+                case AstNumber(_, var opCodes) num:
                     int skip = 0;
-                    if (!OnlyLabelsAndComments)
+                    if (!onlyLabelsAndComments)
                     {
                         int cp = num.Address;
                         Console.ForegroundColor = ConsoleColor.White;
                         Console.Write($"{cp:D3}: ");
                         Console.ForegroundColor = ConsoleColor.Gray;
-                        Console.Write($"{string.Join(" ", opCodes.Take(OpCols).Select(b => b.ToString("D2"))),-3 * OpCols}   ");
+                        Console.Write($"{string.Join(" ", opCodes.Take(opCols).Select(b => b.ToString("D2"))),-3 * opCols}   ");
                         Console.ForegroundColor = ConsoleColor.White;
                         Console.WriteLine(num.GetMnemonic());
 
-                        while (opCodes.Count - skip > OpCols)
+                        while (opCodes.Count - skip > opCols)
                         {
-                            cp += OpCols;
-                            skip += OpCols;
+                            cp += opCols;
+                            skip += opCols;
                             Console.ForegroundColor = ConsoleColor.White;
                             Console.Write($"{cp:D3}: ");
                             Console.ForegroundColor = ConsoleColor.Gray;
-                            Console.WriteLine($"{string.Join(" ", opCodes.Skip(skip).Take(OpCols).Select(b => b.ToString("D2"))),-3 * OpCols} ");
+                            Console.WriteLine($"{string.Join(" ", opCodes.Skip(skip).Take(opCols).Select(b => b.ToString("D2"))),-3 * opCols} ");
                         }
                     }
                     break;
 
                 case AstInstruction(var astTokens, var opCodes, _) inst:
-                    bool doPrint = !OnlyLabelsAndComments || (opCodes[0] == 76);
+                    bool doPrint = !onlyLabelsAndComments || (opCodes[0] == 76);
                     if (doPrint)
                     {
                         int cp = inst.Address;
@@ -76,7 +76,7 @@ public class AstPrinter
                         Console.Write($"{cp:D3}: ");
                         Console.ForegroundColor = ConsoleColor.Gray;
 
-                        Console.Write($"{string.Join(" ", opCodes.Take(OpCols).Select(b => b.ToString("D2"))),-3 * OpCols} ");
+                        Console.Write($"{string.Join(" ", opCodes.Take(opCols).Select(b => b.ToString("D2"))),-3 * opCols} ");
                         if (astTokens[0].Text.StartsWith("LBL", StringComparison.InvariantCultureIgnoreCase))
                         {
                             Console.ForegroundColor = ConsoleColor.White;
@@ -86,26 +86,22 @@ public class AstPrinter
                         else
                             Console.Write("  ");
 
-                        int len = 0;
                         foreach (AstToken token in astTokens)
                             if (token.Cat != SyntaxCategory.WhiteSpace)
                             {
-                                //len += 3 + token.Text.Length;
-                                //Colorize("‹" + token.Text + "› ", token.Cat);
-                                len += 1 + token.Text.Length;
                                 Colorize(token.Text, token.Cat);
                                 Console.Write(" ");
                             }
                         Console.WriteLine();
 
-                        while (opCodes.Count > OpCols)
+                        while (opCodes.Count > opCols)
                         {
-                            cp += OpCols;
-                            opCodes.RemoveRange(0, OpCols);
+                            cp += opCols;
+                            opCodes.RemoveRange(0, opCols);
                             Console.ForegroundColor = ConsoleColor.White;
                             Console.Write($"{cp:D3}: ");
                             Console.ForegroundColor = ConsoleColor.Gray;
-                            Console.WriteLine($"{string.Join(" ", opCodes.Take(OpCols).Select(b => b.ToString("D2"))),-3 * OpCols} ");
+                            Console.WriteLine($"{string.Join(" ", opCodes.Take(opCols).Select(b => b.ToString("D2"))),-3 * opCols} ");
                         }
                     }
                     break;

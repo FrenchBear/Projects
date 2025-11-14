@@ -24,7 +24,7 @@ public enum YesNoImplicit { No, Yes, Implicit }
 
 public class AstProgram
 {
-    public List<AstStatementBase> Statements = [];
+    public readonly List<AstStatementBase> Statements = [];
     public int ProgramSize;     // Number of OpCodes
 }
 
@@ -43,7 +43,7 @@ public record AstNumber(List<AstToken> AstTokens, List<byte> OpCodes): AstStatem
         var ixSign = 0;
         foreach (var opCode in OpCodes)
         {
-            if (opCode is >= 0 and <= 9)
+            if (opCode <= 9)    // ≥0 implicit!
                 mnemonic += (char)(opCode + '0');
             else if (opCode == 93)
                 mnemonic += '.';
@@ -82,7 +82,8 @@ public abstract record AstInstruction(List<AstToken> AstTokens, List<byte> OpCod
     */
 
     // Return instruction opcode, skipping potential 22 (INV) prefix
-    public byte GetOpCode() => Inverted == YesNoImplicit.Yes ? OpCodes[1] : OpCodes[0];
+    // Also unused for now
+    // public byte GetOpCode() => Inverted == YesNoImplicit.Yes ? OpCodes[1] : OpCodes[0];
 }
 
 public record AstInstructionAtomic(List<AstToken> AstTokens, List<byte> OpCodes, YesNoImplicit Inverted): AstInstruction(AstTokens, OpCodes, Inverted);
