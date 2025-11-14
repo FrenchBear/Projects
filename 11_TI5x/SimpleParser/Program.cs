@@ -27,8 +27,8 @@ public static class Program
 
         //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master Library\ML-02.t59";         // Long program
         //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master Library\ML-25.t59";       // Program with numeric constants
-        const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master Library\ML-01.t59";
-        //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master Library\all.t59";
+        //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master Library\ML-01.t59";
+        const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master Library\all.t59";
         //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\indirect.t59";
 
         //#pragma warning disable IDE0059 // Unnecessary assignment of a value
