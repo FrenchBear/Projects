@@ -26,7 +26,8 @@ public static class Program
         */
 
         //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master Library\ML-02.t59";         // Long program
-        const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master Library\ML-25.t59";       // Program with numeric constants
+        //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master Library\ML-25.t59";       // Program with numeric constants
+        const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master Library\ML-01.t59";
         //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\Master Library\all.t59";
         //const string filePath = @"C:\Development\GitHub\Projects\11_TI5x\indirect.t59";
 
@@ -44,6 +45,7 @@ public static class Program
         //input = "123 45 6\n12 . 34 +/- EE +/- 12";
         //input = "LBL A 1234567890 LBL B";
         //input = "STO 12 RTN END SIG+ INV Dsz 03 123 END Nop";
+        //input = ". +/- 5";
 
         // 2. The ANTLR parsing pipeline
         var inputStream = new AntlrInputStream(input);

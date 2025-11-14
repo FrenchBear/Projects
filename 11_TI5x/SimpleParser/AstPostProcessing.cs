@@ -97,6 +97,7 @@ public class AstPostProcessor
         public bool ExponentSignFound;
         public int IxEe;
         public int IxExisting;
+        public bool isNumber;
     }
 
     // GroupNumbers helper, returns AstNumber or AstInstructionAtomic[dot, EE, +/-] at index startIndex+1 ignoring
@@ -241,7 +242,6 @@ public class AstPostProcessor
         // ToDo: . also starts grouping
         for (int i = 0; i < program.Statements.Count; i++)
         {
-
             // First, determine if this can start a sequence
             // Probably need to be extracted to a separate function, it's too long
 
@@ -251,63 +251,99 @@ public class AstPostProcessor
             // is guaranteed to be a number: . . is stupid, . +/- ok but unlikely, and . EE barely Ok
             // There are several examples in ML-25.t59
             NumberContext nc = new();
-            if (program.Statements[i] is AstNumber(List<AstToken> tokens, List<byte> opCodes))
+            List<byte> opCodes = [];
+            List<AstToken> tokens = [];
+            bool isOk = false;
+            if (program.Statements[i] is AstNumber(List<AstToken> numTokens, List<byte> numOpCodes))
             {
-                var isOk = AnalyzeNumber(opCodes, ref nc);
+                isOk = AnalyzeNumber(numOpCodes, ref nc);
+                nc.isNumber = true;
                 Debug.Assert(isOk);
+                opCodes = numOpCodes;
+                tokens = numTokens;
+                isOk = true;
+            }
+            else if (program.Statements[i] is AstInstructionAtomic(List<AstToken> instTokens, List<byte> instOpCodes, _) && instOpCodes[0] == 93)    // .
+            {
+                nc.DotFound = true;
+                nc.isNumber = false;        // starting instruction is not a number, if next instructions is compatible, we should convert this instruction to a number
+                opCodes = instOpCodes;
+                tokens = instTokens;
+                isOk = true;             // Not ready yet!
+            }
+
+            if (!isOk)
+                continue;
 
             AnalyzeNextStatement:
-                var nextStat = GetNextCompatibleStatement(program, i);
-                if (nextStat == null)
+            var nextStat = GetNextCompatibleStatement(program, i);
+            if (nextStat == null)
+                continue;
+
+            if (nextStat is AstNumber(List<AstToken> nextNumberTokens, List<byte> nextNumberOpCodes))
+            {
+                // Check that the whole stuff can be added
+                isOk = AnalyzeNumber(nextNumberOpCodes, ref nc);
+                if (!isOk)
                     continue;
 
-                if (nextStat is AstNumber(List<AstToken> nextNumberTokens, List<byte> nextNumberOpCodes))
+                // Good, if we're there, next number can be merged
+
+                // Should we convert previous statement to a number?
+                if (!nc.isNumber)
                 {
-                    // Check that the whole stuff can be added
-                    isOk = AnalyzeNumber(nextNumberOpCodes, ref nc);
-                    if (!isOk)
-                        continue;
-
-                    // Good, if we're there, next number can be merged
-                    for (int j = 0; j < nextNumberOpCodes.Count; j++)
-                    {
-                        opCodes.Add(nextNumberOpCodes[j]);
-                        tokens.Add(nextNumberTokens[j]);
-                        nc.IxExisting++;
-                    }
-
-                    EraseNextAstNumberOrInstruction(program, i, true);
-
-                    // Restart in case there's also something mergeable just after
-                    goto AnalyzeNextStatement;
+                    program.Statements.Insert(i, new AstNumber(tokens, opCodes));
+                    program.Statements.RemoveAt(i+1);
                 }
 
-                if (nextStat is AstInstruction(List<AstToken> nextInstTokens, List<byte> nextInstOpCodes, _))
+                // Append tokens and OpCodes
+                for (int j = 0; j < nextNumberOpCodes.Count; j++)
                 {
-                    var nop = nextInstOpCodes[0];
-
-                    Debug.Assert(nextInstTokens.Count == 1);
-                    Debug.Assert(nextInstOpCodes.Count == 1);
-
-                    // Check if the statement can be merged
-                    isOk = AnalyzeNumber(nextInstOpCodes, ref nc);
-                    if (!isOk)
-                        continue;
-
-                    // Ok, we can merge
-                    opCodes.Add(nop);
-                    tokens.Add(nextInstTokens[0]);
-
-                    // Don't need next program Number (and also remove inter-statement white space
-                    EraseNextAstNumberOrInstruction(program, i, false);
-
-                    // Restart in case there's also something mergeable just after
-                    goto AnalyzeNextStatement;
+                    tokens.Add(nextNumberTokens[j]);
+                    opCodes.Add(nextNumberOpCodes[j]);
+                    nc.IxExisting++;
                 }
 
-                // unreachable:
-                Debugger.Break();
+                EraseNextAstNumberOrInstruction(program, i, true);
+
+                // Restart in case there's also something mergeable just after
+                goto AnalyzeNextStatement;
             }
+
+            if (nextStat is AstInstruction(List<AstToken> nextInstTokens, List<byte> nextInstOpCodes, _))
+            {
+                var nop = nextInstOpCodes[0];
+
+                Debug.Assert(nextInstTokens.Count == 1);
+                Debug.Assert(nextInstOpCodes.Count == 1);
+
+                // Check if the statement can be merged
+                isOk = AnalyzeNumber(nextInstOpCodes, ref nc);
+                if (!isOk)
+                    continue;
+
+                // Ok, we can merge
+
+                // Should we convert previous statement to a number?
+                if (!nc.isNumber)
+                {
+                    program.Statements.Insert(i, new AstNumber(tokens, opCodes));
+                    program.Statements.RemoveAt(i + 1);
+                }
+
+                // Append tokens and OpCodes
+                opCodes.Add(nop);
+                tokens.Add(nextInstTokens[0]);
+
+                // Don't need next program Number (and also remove inter-statement white space
+                EraseNextAstNumberOrInstruction(program, i, false);
+
+                // Restart in case there's also something mergeable just after
+                goto AnalyzeNextStatement;
+            }
+
+            // unreachable:
+            Debugger.Break();
         }
     }
 
