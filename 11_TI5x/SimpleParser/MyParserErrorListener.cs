@@ -1,3 +1,8 @@
+// MyParserErrorListener
+// Classes to manage errors for lexer and parser during analysis
+//
+// 2025-11-10   PV
+
 using Antlr4.Runtime;
 using System.IO;
 

@@ -1,7 +1,7 @@
 // Parser for TI58/TI59 programming language for Antlr
 // 2025-11-08   PV      First version
 
-grammar ti58;
+grammar ti58v1;
 
 options {
     caseInsensitive = true;

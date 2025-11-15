@@ -1,0 +1,10 @@
+Mergeable	Merged
+
+42 STO		72 ST*
+43 RCL		73 RC*
+44 SUM		74 SM*
+36 Pgm		62 PG*
+48 Exc		63 EX*
+49 Prd		64 PD*
+61 GTO		83 GO*
+69 Op		84 OP*

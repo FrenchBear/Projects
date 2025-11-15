@@ -1,4 +1,11 @@
-﻿// Simple visitor on terminals that colorizes a program
+﻿// MyTi58VisitorBaseColorize
+//
+// Simple visitor on grammar terminals that colorizes a program
+//
+// This colorization process respects original formatting, output layout is
+// identical to source layout, with some color added. No reformatting or
+// standardization is attempted
+//
 // Each terminal is processed independently, there is no statement context
 // Terminal is colorized either based on its type (ex: ti58Lexer.LineComment)
 // or on its parent (direct or indirect) class (ex: ti58Parser.RULE_indmemory)
@@ -6,6 +13,7 @@
 // Order is important, for instance check for parent rule RULE_address_label
 // before checking for instruction to format CLR in Lbl CLR differently from
 // instruction CLR
+//
 //
 // 2025-11-10   PV
 
@@ -66,8 +74,18 @@ public class MyTi58VisitorBaseColorize(ti58Parser parser): ti58BaseVisitor<objec
             SyntaxCategory.DirectAddress => ConsoleColor.Yellow,
             _ => ConsoleColor.White,
         };
+        // Use bold for labels
+        bool isLabel = false;
+        if (cat == SyntaxCategory.Instruction &&
+            string.Equals(text, "Lbl", StringComparison.CurrentCultureIgnoreCase))
+        {
+            Console.Write("\x1b[1m");
+            isLabel = true;
+        }
         Console.Write(text);
-        Console.ForegroundColor = ConsoleColor.Gray;
+        Console.Write("\x1b[0m");
+        if (isLabel)
+            Console.ForegroundColor = ConsoleColor.Gray;
     }
 
     // This method is called for every single token in the tree.

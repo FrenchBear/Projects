@@ -17,7 +17,7 @@
 // 2025-11-09   PV      Version 2, flatten model
 // 2025-11-10   PV      Added missing invert instructions (INV Write, INV List, INV ^), 10 flags and not 7
 
-grammar ti58;
+grammar ti58v2;
 
 options {
     caseInsensitive = true;

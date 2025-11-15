@@ -107,7 +107,7 @@ public class AstPostProcessor
     {
         for (int j = startIndex + 1; j < program.Statements.Count; j++)
         {
-            if (program.Statements[j] is AstInterStatementWhiteSpace(_) or AstComment(_))
+            if (program.Statements[j] is /* AstInterStatementWhiteSpace(_) or */ AstComment(_))
                 continue;
             if (program.Statements[j] is AstNumber(_, _))
                 return program.Statements[j];
@@ -192,24 +192,24 @@ public class AstPostProcessor
 
     void EraseNextAstNumberOrInstruction(AstProgram program, int startIndex, bool checkForNumber)
     {
-        bool preserveISWS = false;
+        //bool preserveISWS = false;
         int j = startIndex + 1;
         for (; ; )
         {
-            if (program.Statements[j] is AstInterStatementWhiteSpace(_))
-            {
-                if (!preserveISWS)
-                    program.Statements.RemoveAt(j);
-                else
-                    preserveISWS = false;
-                continue;
-            }
+            //if (program.Statements[j] is AstInterStatementWhiteSpace(_))
+            //{
+            //    if (!preserveISWS)
+            //        program.Statements.RemoveAt(j);
+            //    else
+            //        preserveISWS = false;
+            //    continue;
+            //}
 
             // Don't remember if AstComment are surrounded by AstInterStatementWhiteSpace...
             // Right now, I keep a ISWS after a comment, should be tested...
             if (program.Statements[j] is AstComment(_))
             {
-                preserveISWS = true;
+                //preserveISWS = true;
                 j++;
                 continue;
             }
@@ -293,7 +293,7 @@ public class AstPostProcessor
                 if (!nc.isNumber)
                 {
                     program.Statements.Insert(i, new AstNumber(tokens, opCodes));
-                    program.Statements.RemoveAt(i+1);
+                    program.Statements.RemoveAt(i + 1);
                 }
 
                 // Append tokens and OpCodes

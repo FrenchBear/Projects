@@ -40,8 +40,8 @@ public class AstPrinter
                     Console.WriteLine();
                     break;
 
-                case AstInterStatementWhiteSpace(_):
-                    break;
+                //case AstInterStatementWhiteSpace(_):
+                //    break;
 
                 case AstNumber(_, var opCodes) num:
                     int skip = 0;

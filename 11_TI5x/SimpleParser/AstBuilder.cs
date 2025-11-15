@@ -3,9 +3,8 @@
 // An Ast is a more high level, simpled representation with a hierarchy of data objects holding
 // properties ideal for matching, while a parser tree is very detailed
 //
-// ToDo: Add statement address in AstInstruction (an internal property so it can be mutated)
-//
 // 2025-11-10   PV
+// 2025-11-15   PV      Do not include AstInterStatementWhiteSpace in AST, seems to be Ok
 
 using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
@@ -31,7 +30,7 @@ public class AstProgram
 public record AstToken(string Text, SyntaxCategory Cat);
 
 public abstract record AstStatementBase(List<AstToken> AstTokens);
-public record AstInterStatementWhiteSpace(List<AstToken> AstTokens): AstStatementBase(AstTokens);
+//public record AstInterStatementWhiteSpace(List<AstToken> AstTokens): AstStatementBase(AstTokens);
 public record AstComment(List<AstToken> AstTokens): AstStatementBase(AstTokens);
 public record AstNumber(List<AstToken> AstTokens, List<byte> OpCodes): AstStatementBase(AstTokens)
 {
@@ -132,16 +131,19 @@ public class MyTi58VisitorAstBuilder(ti58Parser parser): ti58BaseVisitor<object>
             var com = new AstComment(at);
             Program.Statements.Add(com);
         }
-        //else if (node.Parent is ParserRuleContext ruleContext && ruleContext.RuleIndex == ti58Parser.RULE_program)
-        else if (node.Parent is ParserRuleContext { RuleIndex: ti58Parser.RULE_program })
-        {
-            // White space is only processed if top level
-            var at = new List<AstToken> {
-                new(node.GetText(), SyntaxCategory.WhiteSpace)
-            };
-            var ws = new AstInterStatementWhiteSpace(at);
-            Program.Statements.Add(ws);
-        }
+
+        // Experiment: DO NOT add InterStatementWhileSpace in the AST
+        //else if (node.Parent is ParserRuleContext { RuleIndex: ti58Parser.RULE_program })
+        //{
+        //    // White space is only processed if top level
+        //    var at = new List<AstToken> {
+        //        new(node.GetText(), SyntaxCategory.WhiteSpace)
+        //    };
+
+        //    
+        //    var ws = new AstInterStatementWhiteSpace(at);
+        //    Program.Statements.Add(ws);
+        //}
 
         return base.VisitTerminal(node);
     }
