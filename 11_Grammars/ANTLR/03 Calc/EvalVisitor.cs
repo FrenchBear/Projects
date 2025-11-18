@@ -1,13 +1,7 @@
-// Simple visitor on terminals that colorizes a program
-// Each terminal is processed independently, there is no statement context
-// Terminal is colorized either based on its type (ex: piLexer.LineComment)
-// or on its parent (direct or indirect) class (ex: piParser.RULE_indmemory)
-// or on 1st letter of symbolic name such as 'I' for an instruction
-// Order is important, for instance check for parent rule RULE_address_label
-// before checking for instruction to format CLR in Lbl CLR differently from
-// instruction CLR
+// Simple visitor for calculator
 //
-// 2025-11-10   PV
+// 2025-11-17   PV
+// 2025-11-19   PV      Added clear statement
 
 using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
@@ -37,6 +31,12 @@ public class EvalVisitor: LabeledExprBaseVisitor<object>
         var value = Visit(context.expr());
         Console.WriteLine(value);
         //return $"PrintExpr returned {value}";   // Dummy value
+        return 0;
+    }
+
+    public override object VisitClear(LabeledExprParser.ClearContext context)
+    {
+        Memory.Clear();
         return 0;
     }
 

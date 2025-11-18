@@ -90,6 +90,20 @@ public partial class LabeledExprBaseListener : ILabeledExprListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitBlank([NotNull] LabeledExprParser.BlankContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by the <c>clear</c>
+	/// labeled alternative in <see cref="LabeledExprParser.stat"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterClear([NotNull] LabeledExprParser.ClearContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>clear</c>
+	/// labeled alternative in <see cref="LabeledExprParser.stat"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitClear([NotNull] LabeledExprParser.ClearContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by the <c>parens</c>
 	/// labeled alternative in <see cref="LabeledExprParser.expr"/>.
 	/// <para>The default implementation does nothing.</para>

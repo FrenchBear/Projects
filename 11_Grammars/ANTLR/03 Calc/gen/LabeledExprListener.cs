@@ -77,6 +77,18 @@ public interface ILabeledExprListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitBlank([NotNull] LabeledExprParser.BlankContext context);
 	/// <summary>
+	/// Enter a parse tree produced by the <c>clear</c>
+	/// labeled alternative in <see cref="LabeledExprParser.stat"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterClear([NotNull] LabeledExprParser.ClearContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>clear</c>
+	/// labeled alternative in <see cref="LabeledExprParser.stat"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitClear([NotNull] LabeledExprParser.ClearContext context);
+	/// <summary>
 	/// Enter a parse tree produced by the <c>parens</c>
 	/// labeled alternative in <see cref="LabeledExprParser.expr"/>.
 	/// </summary>

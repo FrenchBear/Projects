@@ -36,8 +36,8 @@ public partial class LabeledExprParser : Parser {
 	protected static DFA[] decisionToDFA;
 	protected static PredictionContextCache sharedContextCache = new PredictionContextCache();
 	public const int
-		T__0=1, T__1=2, T__2=3, MUL=4, DIV=5, ADD=6, SUB=7, ID=8, INT=9, NEWLINE=10, 
-		WS=11;
+		T__0=1, T__1=2, T__2=3, T__3=4, MUL=5, DIV=6, ADD=7, SUB=8, ID=9, INT=10, 
+		NEWLINE=11, WS=12;
 	public const int
 		RULE_prog = 0, RULE_stat = 1, RULE_expr = 2;
 	public static readonly string[] ruleNames = {
@@ -45,11 +45,11 @@ public partial class LabeledExprParser : Parser {
 	};
 
 	private static readonly string[] _LiteralNames = {
-		null, "'='", "'('", "')'", "'*'", "'/'", "'+'", "'-'"
+		null, "'='", "'clear'", "'('", "')'", "'*'", "'/'", "'+'", "'-'"
 	};
 	private static readonly string[] _SymbolicNames = {
-		null, null, null, null, "MUL", "DIV", "ADD", "SUB", "ID", "INT", "NEWLINE", 
-		"WS"
+		null, null, null, null, null, "MUL", "DIV", "ADD", "SUB", "ID", "INT", 
+		"NEWLINE", "WS"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
@@ -134,7 +134,7 @@ public partial class LabeledExprParser : Parser {
 				State = 9;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & 1796L) != 0) );
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & 3596L) != 0) );
 			}
 		}
 		catch (RecognitionException re) {
@@ -177,6 +177,26 @@ public partial class LabeledExprParser : Parser {
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			ILabeledExprVisitor<TResult> typedVisitor = visitor as ILabeledExprVisitor<TResult>;
 			if (typedVisitor != null) return typedVisitor.VisitBlank(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+	public partial class ClearContext : StatContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode NEWLINE() { return GetToken(LabeledExprParser.NEWLINE, 0); }
+		public ClearContext(StatContext context) { CopyFrom(context); }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			ILabeledExprListener typedListener = listener as ILabeledExprListener;
+			if (typedListener != null) typedListener.EnterClear(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			ILabeledExprListener typedListener = listener as ILabeledExprListener;
+			if (typedListener != null) typedListener.ExitClear(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			ILabeledExprVisitor<TResult> typedVisitor = visitor as ILabeledExprVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitClear(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
@@ -233,7 +253,7 @@ public partial class LabeledExprParser : Parser {
 		StatContext _localctx = new StatContext(Context, State);
 		EnterRule(_localctx, 2, RULE_stat);
 		try {
-			State = 20;
+			State = 22;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,1,Context) ) {
 			case 1:
@@ -265,6 +285,16 @@ public partial class LabeledExprParser : Parser {
 				EnterOuterAlt(_localctx, 3);
 				{
 				State = 19;
+				Match(NEWLINE);
+				}
+				break;
+			case 4:
+				_localctx = new ClearContext(_localctx);
+				EnterOuterAlt(_localctx, 4);
+				{
+				State = 20;
+				Match(T__1);
+				State = 21;
 				Match(NEWLINE);
 				}
 				break;
@@ -429,7 +459,7 @@ public partial class LabeledExprParser : Parser {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 29;
+			State = 31;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case INT:
@@ -438,7 +468,7 @@ public partial class LabeledExprParser : Parser {
 				Context = _localctx;
 				_prevctx = _localctx;
 
-				State = 23;
+				State = 25;
 				Match(INT);
 				}
 				break;
@@ -447,28 +477,28 @@ public partial class LabeledExprParser : Parser {
 				_localctx = new IdContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 24;
+				State = 26;
 				Match(ID);
 				}
 				break;
-			case T__1:
+			case T__2:
 				{
 				_localctx = new ParensContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 25;
-				Match(T__1);
-				State = 26;
-				expr(0);
 				State = 27;
 				Match(T__2);
+				State = 28;
+				expr(0);
+				State = 29;
+				Match(T__3);
 				}
 				break;
 			default:
 				throw new NoViableAltException(this);
 			}
 			Context.Stop = TokenStream.LT(-1);
-			State = 39;
+			State = 41;
 			ErrorHandler.Sync(this);
 			_alt = Interpreter.AdaptivePredict(TokenStream,4,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
@@ -477,16 +507,16 @@ public partial class LabeledExprParser : Parser {
 						TriggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					State = 37;
+					State = 39;
 					ErrorHandler.Sync(this);
 					switch ( Interpreter.AdaptivePredict(TokenStream,3,Context) ) {
 					case 1:
 						{
 						_localctx = new MulDivContext(new ExprContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expr);
-						State = 31;
+						State = 33;
 						if (!(Precpred(Context, 5))) throw new FailedPredicateException(this, "Precpred(Context, 5)");
-						State = 32;
+						State = 34;
 						((MulDivContext)_localctx).op = TokenStream.LT(1);
 						_la = TokenStream.LA(1);
 						if ( !(_la==MUL || _la==DIV) ) {
@@ -496,7 +526,7 @@ public partial class LabeledExprParser : Parser {
 							ErrorHandler.ReportMatch(this);
 						    Consume();
 						}
-						State = 33;
+						State = 35;
 						expr(6);
 						}
 						break;
@@ -504,9 +534,9 @@ public partial class LabeledExprParser : Parser {
 						{
 						_localctx = new AddSubContext(new ExprContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expr);
-						State = 34;
+						State = 36;
 						if (!(Precpred(Context, 4))) throw new FailedPredicateException(this, "Precpred(Context, 4)");
-						State = 35;
+						State = 37;
 						((AddSubContext)_localctx).op = TokenStream.LT(1);
 						_la = TokenStream.LA(1);
 						if ( !(_la==ADD || _la==SUB) ) {
@@ -516,14 +546,14 @@ public partial class LabeledExprParser : Parser {
 							ErrorHandler.ReportMatch(this);
 						    Consume();
 						}
-						State = 36;
+						State = 38;
 						expr(5);
 						}
 						break;
 					}
 					} 
 				}
-				State = 41;
+				State = 43;
 				ErrorHandler.Sync(this);
 				_alt = Interpreter.AdaptivePredict(TokenStream,4,Context);
 			}
@@ -555,19 +585,20 @@ public partial class LabeledExprParser : Parser {
 	}
 
 	private static int[] _serializedATN = {
-		4,1,11,43,2,0,7,0,2,1,7,1,2,2,7,2,1,0,4,0,8,8,0,11,0,12,0,9,1,1,1,1,1,
-		1,1,1,1,1,1,1,1,1,1,1,1,1,3,1,21,8,1,1,2,1,2,1,2,1,2,1,2,1,2,1,2,3,2,30,
-		8,2,1,2,1,2,1,2,1,2,1,2,1,2,5,2,38,8,2,10,2,12,2,41,9,2,1,2,0,1,4,3,0,
-		2,4,0,2,1,0,4,5,1,0,6,7,46,0,7,1,0,0,0,2,20,1,0,0,0,4,29,1,0,0,0,6,8,3,
-		2,1,0,7,6,1,0,0,0,8,9,1,0,0,0,9,7,1,0,0,0,9,10,1,0,0,0,10,1,1,0,0,0,11,
-		12,3,4,2,0,12,13,5,10,0,0,13,21,1,0,0,0,14,15,5,8,0,0,15,16,5,1,0,0,16,
-		17,3,4,2,0,17,18,5,10,0,0,18,21,1,0,0,0,19,21,5,10,0,0,20,11,1,0,0,0,20,
-		14,1,0,0,0,20,19,1,0,0,0,21,3,1,0,0,0,22,23,6,2,-1,0,23,30,5,9,0,0,24,
-		30,5,8,0,0,25,26,5,2,0,0,26,27,3,4,2,0,27,28,5,3,0,0,28,30,1,0,0,0,29,
-		22,1,0,0,0,29,24,1,0,0,0,29,25,1,0,0,0,30,39,1,0,0,0,31,32,10,5,0,0,32,
-		33,7,0,0,0,33,38,3,4,2,6,34,35,10,4,0,0,35,36,7,1,0,0,36,38,3,4,2,5,37,
-		31,1,0,0,0,37,34,1,0,0,0,38,41,1,0,0,0,39,37,1,0,0,0,39,40,1,0,0,0,40,
-		5,1,0,0,0,41,39,1,0,0,0,5,9,20,29,37,39
+		4,1,12,45,2,0,7,0,2,1,7,1,2,2,7,2,1,0,4,0,8,8,0,11,0,12,0,9,1,1,1,1,1,
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1,23,8,1,1,2,1,2,1,2,1,2,1,2,1,2,1,
+		2,3,2,32,8,2,1,2,1,2,1,2,1,2,1,2,1,2,5,2,40,8,2,10,2,12,2,43,9,2,1,2,0,
+		1,4,3,0,2,4,0,2,1,0,5,6,1,0,7,8,49,0,7,1,0,0,0,2,22,1,0,0,0,4,31,1,0,0,
+		0,6,8,3,2,1,0,7,6,1,0,0,0,8,9,1,0,0,0,9,7,1,0,0,0,9,10,1,0,0,0,10,1,1,
+		0,0,0,11,12,3,4,2,0,12,13,5,11,0,0,13,23,1,0,0,0,14,15,5,9,0,0,15,16,5,
+		1,0,0,16,17,3,4,2,0,17,18,5,11,0,0,18,23,1,0,0,0,19,23,5,11,0,0,20,21,
+		5,2,0,0,21,23,5,11,0,0,22,11,1,0,0,0,22,14,1,0,0,0,22,19,1,0,0,0,22,20,
+		1,0,0,0,23,3,1,0,0,0,24,25,6,2,-1,0,25,32,5,10,0,0,26,32,5,9,0,0,27,28,
+		5,3,0,0,28,29,3,4,2,0,29,30,5,4,0,0,30,32,1,0,0,0,31,24,1,0,0,0,31,26,
+		1,0,0,0,31,27,1,0,0,0,32,41,1,0,0,0,33,34,10,5,0,0,34,35,7,0,0,0,35,40,
+		3,4,2,6,36,37,10,4,0,0,37,38,7,1,0,0,38,40,3,4,2,5,39,33,1,0,0,0,39,36,
+		1,0,0,0,40,43,1,0,0,0,41,39,1,0,0,0,41,42,1,0,0,0,42,5,1,0,0,0,43,41,1,
+		0,0,0,5,9,22,31,39,41
 	};
 
 	public static readonly ATN _ATN =
