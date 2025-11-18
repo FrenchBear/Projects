@@ -13,44 +13,43 @@ statement:
 	| di_statement
     | d_statement
     | lai_statement
-//    | doi_lai_statement
+    | doi_lai_statement
 	| label_statement
     | inv_statement         // Must be last
-    | token_error
+    | unknown_statement
     ;
 
 number_statement: NUMBER;
 
 atomic_statement: 
-    inv=I22_invert? I38_sin
-    | inv=I22_invert? I39_cos
-    | inv=I22_invert? I30_tan
-    | I25_clear
-    | I24_correct_entry
-    ;
-
-d_statement:
-    I72_store_indirect DD2
-    | I73_recall_indirect DD2
-    | inv=I22_invert? I74_sum_indirect DD2
-    | I82_hir DD2
+    inv=I22_invert? sta=(I38_sin|I39_cos|I30_tan)
+    | sta=I25_clear
+    | sta=I24_correct_entry
     ;
 
 di_statement: 
-    I42_store INDIRECT1? DD1
-    | I43_recall INDIRECT1? DD1
-    | inv=I22_invert? I44_sum INDIRECT1? DD1
+    sta=(I42_store|I43_recall) ind=INDIRECT1? (DD1|INVALID1)
+    | inv=I22_invert? sta=I44_sum ind=INDIRECT1? (DD1|INVALID1)
+    ;
+
+d_statement:
+    sta=(I62_program_indirect|I63_exchange_indirect|I72_store_indirect|I73_recall_indirect|I82_hir) (DD2|INVALID2)
+    | inv=I22_invert? sta=(I64_product_indirect|I67_x_equals_t_indextra|I74_sum_indirect|I77_x_greater_or_equal_than_t_indextra) (DD2|INVALID2)
     ;
 
 lai_statement:
-    I61_goto ((INDIRECT3? DD3) | ADD3a | ADD3b | MNEMONIC3)
-    | inv=I22_invert? I67_x_equals_t ((INDIRECT3 DD3) | ADD3a | ADD3b | MNEMONIC3 | DD3)
+    sta=I61_goto (MNEMONIC3|ADD3b|ADD3a|DD3|(INDIRECT3 (DD3|INVALID3))|INVALID3)
+    | inv=I22_invert? sta=I67_x_equals_t (MNEMONIC3|ADD3b|ADD3a|DD3|(INDIRECT3 (DD3|INVALID3))|INVALID3)
     ;
 
-//doi_lai_statement:
+doi_lai_statement:
+    inv=I22_invert? sta=(I87_if_flag|I97_dsz) (DD4a|(INDIRECT4a DD4a)) (MNEMONIC4|ADD4b|ADD4a|DD4b|(INDIRECT4b (DD4b|INVALID4b))|INVALID4b)
+    | inv=I22_invert? sta=(I87_if_flag|I97_dsz) INDIRECT4a INVALID4a
+    | inv=I22_invert? sta=(I87_if_flag|I97_dsz) INVALID4a
+    ;
 
-label_statement: I76_label tag = (DD5 | MNEMONIC5);
+label_statement: sta=I76_label (DD5|MNEMONIC5|INVALID5);
 
-inv_statement: I22_invert;
+inv_statement: sta=I22_invert;
 
-token_error: INVALID_TOKEN;
+unknown_statement: INVALID_TOKEN;

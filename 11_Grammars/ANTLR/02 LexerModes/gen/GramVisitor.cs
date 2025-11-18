@@ -56,23 +56,29 @@ public interface IGramVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitAtomic_statement([NotNull] GramParser.Atomic_statementContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="GramParser.d_statement"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitD_statement([NotNull] GramParser.D_statementContext context);
-	/// <summary>
 	/// Visit a parse tree produced by <see cref="GramParser.di_statement"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitDi_statement([NotNull] GramParser.Di_statementContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="GramParser.d_statement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitD_statement([NotNull] GramParser.D_statementContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="GramParser.lai_statement"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitLai_statement([NotNull] GramParser.Lai_statementContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="GramParser.doi_lai_statement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitDoi_lai_statement([NotNull] GramParser.Doi_lai_statementContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="GramParser.label_statement"/>.
 	/// </summary>
@@ -86,9 +92,9 @@ public interface IGramVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitInv_statement([NotNull] GramParser.Inv_statementContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="GramParser.token_error"/>.
+	/// Visit a parse tree produced by <see cref="GramParser.unknown_statement"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitToken_error([NotNull] GramParser.Token_errorContext context);
+	Result VisitUnknown_statement([NotNull] GramParser.Unknown_statementContext context);
 }

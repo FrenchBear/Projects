@@ -84,18 +84,6 @@ public partial class GramBaseListener : IGramListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitAtomic_statement([NotNull] GramParser.Atomic_statementContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="GramParser.d_statement"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterD_statement([NotNull] GramParser.D_statementContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="GramParser.d_statement"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitD_statement([NotNull] GramParser.D_statementContext context) { }
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="GramParser.di_statement"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -108,6 +96,18 @@ public partial class GramBaseListener : IGramListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitDi_statement([NotNull] GramParser.Di_statementContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="GramParser.d_statement"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterD_statement([NotNull] GramParser.D_statementContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GramParser.d_statement"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitD_statement([NotNull] GramParser.D_statementContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="GramParser.lai_statement"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -119,6 +119,18 @@ public partial class GramBaseListener : IGramListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitLai_statement([NotNull] GramParser.Lai_statementContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="GramParser.doi_lai_statement"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterDoi_lai_statement([NotNull] GramParser.Doi_lai_statementContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GramParser.doi_lai_statement"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitDoi_lai_statement([NotNull] GramParser.Doi_lai_statementContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="GramParser.label_statement"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -144,17 +156,17 @@ public partial class GramBaseListener : IGramListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitInv_statement([NotNull] GramParser.Inv_statementContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="GramParser.token_error"/>.
+	/// Enter a parse tree produced by <see cref="GramParser.unknown_statement"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterToken_error([NotNull] GramParser.Token_errorContext context) { }
+	public virtual void EnterUnknown_statement([NotNull] GramParser.Unknown_statementContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="GramParser.token_error"/>.
+	/// Exit a parse tree produced by <see cref="GramParser.unknown_statement"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitToken_error([NotNull] GramParser.Token_errorContext context) { }
+	public virtual void ExitUnknown_statement([NotNull] GramParser.Unknown_statementContext context) { }
 
 	/// <inheritdoc/>
 	/// <remarks>The default implementation does nothing.</remarks>
