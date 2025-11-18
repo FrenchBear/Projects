@@ -7,8 +7,17 @@ public static class Program
 {
     public static void Main(string[] args)
     {
-        // Define an input that uses both of your statement types
-        string inputText = "STO 42 LBL 99 STO 5";
+        //string inputText = "STO 42 LBL 99 STO Ind 5 CLR";
+        //string inputText = "LBL 99 Lbl STO CLR CE STO 12 STO IND 42 RCL 5";
+        //string inputText = "cos INV Sin INV CLR";
+        string inputText = @"1 12 123 1234
+CLS
+STO 12 RCL IND 4 SUM 7 INV SUM 8 SUM IND 9 INV SUM IND 10 
+INV CLR inv tan 
+HIR 40 SM* 4 INV SM* 12
+GTO 25 GTO CLR GTO IND 33 GTO 123 GTO 02 45 INV x=t Ind 12";
+
+        //inputText = "CLS STO Z";
 
         Console.WriteLine("--- Parsing Input ---");
         Console.WriteLine(inputText);

@@ -51,23 +51,83 @@ public interface IGramListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitStatement([NotNull] GramParser.StatementContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="GramParser.storage_statement"/>.
+	/// Enter a parse tree produced by <see cref="GramParser.number_statement"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterStorage_statement([NotNull] GramParser.Storage_statementContext context);
+	void EnterNumber_statement([NotNull] GramParser.Number_statementContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="GramParser.storage_statement"/>.
+	/// Exit a parse tree produced by <see cref="GramParser.number_statement"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitStorage_statement([NotNull] GramParser.Storage_statementContext context);
+	void ExitNumber_statement([NotNull] GramParser.Number_statementContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="GramParser.other_statement"/>.
+	/// Enter a parse tree produced by <see cref="GramParser.atomic_statement"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterOther_statement([NotNull] GramParser.Other_statementContext context);
+	void EnterAtomic_statement([NotNull] GramParser.Atomic_statementContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="GramParser.other_statement"/>.
+	/// Exit a parse tree produced by <see cref="GramParser.atomic_statement"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitOther_statement([NotNull] GramParser.Other_statementContext context);
+	void ExitAtomic_statement([NotNull] GramParser.Atomic_statementContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="GramParser.d_statement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterD_statement([NotNull] GramParser.D_statementContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GramParser.d_statement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitD_statement([NotNull] GramParser.D_statementContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="GramParser.di_statement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterDi_statement([NotNull] GramParser.Di_statementContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GramParser.di_statement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitDi_statement([NotNull] GramParser.Di_statementContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="GramParser.lai_statement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterLai_statement([NotNull] GramParser.Lai_statementContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GramParser.lai_statement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitLai_statement([NotNull] GramParser.Lai_statementContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="GramParser.label_statement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterLabel_statement([NotNull] GramParser.Label_statementContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GramParser.label_statement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitLabel_statement([NotNull] GramParser.Label_statementContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="GramParser.inv_statement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterInv_statement([NotNull] GramParser.Inv_statementContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GramParser.inv_statement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitInv_statement([NotNull] GramParser.Inv_statementContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="GramParser.token_error"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterToken_error([NotNull] GramParser.Token_errorContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GramParser.token_error"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitToken_error([NotNull] GramParser.Token_errorContext context);
 }
