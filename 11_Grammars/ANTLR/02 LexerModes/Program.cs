@@ -33,6 +33,8 @@ GTO 25 GTO CLR GTO IND 33 GTO 123 GTO 02 45 INV x=t Ind 12";
 Iff Ind 10 CLR Iff Ind 11 123 Iff Ind 12 01 23 Iff Ind 22 11 23 Iff Ind 13 25 Iff Ind 14 Ind 12
 DSZ Z CLR DSZ Ind Z CLR DSZ 3 Z CLR DSZ 3 Ind Z CLR";
 
+        input = @"Sto Ind Ind CLR Nop";
+
         Console.WriteLine("--- Parsing Input ---");
         Console.WriteLine(input);
 

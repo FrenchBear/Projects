@@ -51,6 +51,7 @@ public static class Program
         //input = "LBL A 1234567890 LBL B";
         //input = "STO 12 RTN END SIG+ INV Dsz 03 123 END Nop";
         //input = ". +/- 5";
+        input = "STO Ind Ind 12";
 
         // 2. The ANTLR parsing pipeline
         var inputStream = new AntlrInputStream(input);

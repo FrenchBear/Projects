@@ -1,5 +1,7 @@
+using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Reflection.Emit;
@@ -9,7 +11,7 @@ using static Antlr4.Runtime.Atn.SemanticContext;
 
 namespace LexerModes;
 
-public class MyGramVisitor: GramBaseVisitor<string>
+public class MyGramVisitor: GramBaseVisitor<string> 
 {
     private readonly StringBuilder _results = new();
 
@@ -37,6 +39,9 @@ public class MyGramVisitor: GramBaseVisitor<string>
 
     public override string VisitDi_statement(GramParser.Di_statementContext context)
     {
+        bool containsErr = ContainsErrorNode(context.children);
+        var zzz = containsErr ? "$$$ " : "";
+
         string inv = context.inv?.Text ?? "";
         string sta = context.sta.Text;
         string ind = context.ind?.Text ?? "";
@@ -44,8 +49,25 @@ public class MyGramVisitor: GramBaseVisitor<string>
         string target = err ? $"«{context.INVALID1().GetText()}»" : context.DD1()?.GetText();
 
         string errs = err ? "ERR: " : "";
-        _results.AppendLine($"[{errs}DD or ind DD] {inv} {sta} {ind} {target}");
-        return base.VisitDi_statement(context);
+        _results.AppendLine($"[{zzz}{errs}DD or ind DD] {inv} {sta} {ind} {target}");
+        var res = base.VisitDi_statement(context);
+        return res;
+    }
+
+    private static bool ContainsErrorNode(IList<IParseTree> contextChildren)
+    {
+        foreach (var ch in contextChildren)
+        {
+            if (ch is IErrorNode)
+                return true;
+            if (ch is ParserRuleContext ruleContext)
+            {
+                if (ContainsErrorNode(ruleContext.children))
+                    return true;
+            }
+        }
+
+        return false;
     }
 
     public override string VisitD_statement(GramParser.D_statementContext context)
@@ -181,5 +203,12 @@ public class MyGramVisitor: GramBaseVisitor<string>
         var err = $"«{context.GetText()}»";
         _results.AppendLine($"[ERR: Unknown statement]: {err}");
         return base.VisitUnknown_statement(context);
+    }
+
+    public override string VisitErrorNode(IErrorNode node)
+    {
+        _results.AppendLine($"[ErrorNode] {node.GetText()}");
+        var res = base.VisitErrorNode(node);
+        return res;
     }
 }
