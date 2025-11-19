@@ -12,7 +12,7 @@ using Antlr4.Runtime.Tree;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using static SimpleParser.MyT59VisitorBaseColorize;
+using static SimpleParser.MyT59ColorizeVisitor;
 
 namespace SimpleParser;
 
@@ -98,7 +98,7 @@ public record AstInstructionArgBranch(List<AstToken> AstTokens, List<byte> OpCod
 // Inherit from the generated base visitor.
 public class MyTi58VisitorAstBuilder(t59Parser parser): t59BaseVisitor<object>
 {
-    private readonly MyT59VisitorBaseColorize ColorVisitor = new(parser);
+    private readonly MyT59ColorizeVisitor ColorVisitor = new(parser);
 
     private readonly List<AstProgram> Programs = [new()];     // Build a list containing a single program containing en empty list of statements
 
@@ -131,8 +131,12 @@ public class MyTi58VisitorAstBuilder(t59Parser parser): t59BaseVisitor<object>
             var com = new AstComment(at);
             Program.Statements.Add(com);
         }
+        else if (tokenType == t59Lexer.INVALID_TOKEN)
+        {
+            Console.WriteLine($"Invalid token, skipped: {node.GetText()}");
+        }
 
-        // Experiment: DO NOT add InterStatementWhileSpace in the AST
+        // DO NOT add InterStatementWhileSpace in the AST
         //else if (node.Parent is ParserRuleContext { RuleIndex: t59Parser.RULE_program })
         //{
         //    // White space is only processed if top level
@@ -253,100 +257,108 @@ public class MyTi58VisitorAstBuilder(t59Parser parser): t59BaseVisitor<object>
 
     object InstructionArg(ParserRuleContext context)
     {
-        var ltn = GetTerminalNodes(context);
-
-        var at = new List<AstToken>();
-        foreach (var tn in ltn)
-            at.Add(new AstToken(tn.GetText(), ColorVisitor.GetTerminalSyntaxCategory(tn)));
-
-        int ixInstruction = 0;
-        YesNoImplicit inverted = YesNoImplicit.No;
-        YesNoImplicit argIndirect = YesNoImplicit.No;
-        List<byte> opCodes = [];
-
-        // INV prefix?
-        if (ltn[ixInstruction].Symbol.Type == t59Lexer.I22_invert)
+        try
         {
-            inverted = YesNoImplicit.Yes;
-            opCodes.Add(22);
-            ixInstruction++;
-        }
+            var ltn = GetTerminalNodes(context);
 
-        int mainType = ltn[ixInstruction].Symbol.Type;
-        string symbolicName = parser.Vocabulary.GetSymbolicName(mainType);
-        Debug.Assert(symbolicName.StartsWith('I') && symbolicName[3] == '_');
-        opCodes.Add(byte.Parse(symbolicName[1..3]));
-        if (symbolicName.Contains("indirect"))
-            argIndirect = YesNoImplicit.Implicit;
-        ixInstruction++;
+            var at = new List<AstToken>();
+            foreach (var tn in ltn)
+                at.Add(new AstToken(tn.GetText(), ColorVisitor.GetTerminalSyntaxCategory(tn)));
 
-        // Ind prefix?
-        if (ltn[ixInstruction].Symbol.Type == t59Lexer.I40_indirect)
-        {
-            // Merged indirect operations (GTO IND, SBR IND... is handled in InstructionBranch)
-            var l = opCodes.Count - 1;
-            string mergedToken = "";
-            switch (opCodes[l])
+            int ixInstruction = 0;
+            YesNoImplicit inverted = YesNoImplicit.No;
+            YesNoImplicit argIndirect = YesNoImplicit.No;
+            List<byte> opCodes = [];
+
+            // INV prefix?
+            if (ltn[ixInstruction].Symbol.Type == t59Lexer.I22_invert)
             {
-                case 42:        // STO
-                    opCodes[l] = 72;
-                    argIndirect = YesNoImplicit.Implicit;
-                    mergedToken = "ST*";
-                    break;
-                case 43:        // RCL
-                    opCodes[l] = 73;
-                    argIndirect = YesNoImplicit.Implicit;
-                    mergedToken = "RC*";
-                    break;
-                case 44:        // SUM
-                    opCodes[l] = 74;
-                    argIndirect = YesNoImplicit.Implicit;
-                    mergedToken = "SM*";
-                    break;
-                case 48:        // EXC
-                    opCodes[l] = 63;
-                    argIndirect = YesNoImplicit.Implicit;
-                    mergedToken = "EX*";
-                    break;
-                case 49:        // PRD
-                    opCodes[l] = 64;
-                    argIndirect = YesNoImplicit.Implicit;
-                    mergedToken = "PD*";
-                    break;
-                case 36:        // PGM
-                    opCodes[l] = 62;
-                    argIndirect = YesNoImplicit.Implicit;
-                    mergedToken = "PG*";
-                    break;
-                case 69:        // Op
-                    opCodes[l] = 84;
-                    argIndirect = YesNoImplicit.Implicit;
-                    mergedToken = "OP*";
-                    break;
-                default:        // General case, add Ind opcode 40
-                    argIndirect = YesNoImplicit.Yes;
-                    opCodes.Add(40);
-                    break;
-            }
-
-            // For merged indirect operations, don't keep Ind in the list of terminals
-            if (!string.IsNullOrEmpty(mergedToken))
-            {
-                ltn.RemoveAt(ixInstruction);
-                at.RemoveAt(ixInstruction);      // Remove AstToken Ind
-                at[ixInstruction - 1] = new(mergedToken, SyntaxCategory.Instruction);   // Replace direct statement
-            }
-            else
+                inverted = YesNoImplicit.Yes;
+                opCodes.Add(22);
                 ixInstruction++;
+            }
+
+            int mainType = ltn[ixInstruction].Symbol.Type;
+            string symbolicName = parser.Vocabulary.GetSymbolicName(mainType);
+            Debug.Assert(symbolicName.StartsWith('I') && symbolicName[3] == '_');
+            opCodes.Add(byte.Parse(symbolicName[1..3]));
+            if (symbolicName.Contains("indirect"))
+                argIndirect = YesNoImplicit.Implicit;
+            ixInstruction++;
+
+            // Ind prefix?
+            if (ltn[ixInstruction].Symbol.Type == t59Lexer.I40_indirect)
+            {
+                // Merged indirect operations (GTO IND, SBR IND... is handled in InstructionBranch)
+                var l = opCodes.Count - 1;
+                string mergedToken = "";
+                switch (opCodes[l])
+                {
+                    case 42:        // STO
+                        opCodes[l] = 72;
+                        argIndirect = YesNoImplicit.Implicit;
+                        mergedToken = "ST*";
+                        break;
+                    case 43:        // RCL
+                        opCodes[l] = 73;
+                        argIndirect = YesNoImplicit.Implicit;
+                        mergedToken = "RC*";
+                        break;
+                    case 44:        // SUM
+                        opCodes[l] = 74;
+                        argIndirect = YesNoImplicit.Implicit;
+                        mergedToken = "SM*";
+                        break;
+                    case 48:        // EXC
+                        opCodes[l] = 63;
+                        argIndirect = YesNoImplicit.Implicit;
+                        mergedToken = "EX*";
+                        break;
+                    case 49:        // PRD
+                        opCodes[l] = 64;
+                        argIndirect = YesNoImplicit.Implicit;
+                        mergedToken = "PD*";
+                        break;
+                    case 36:        // PGM
+                        opCodes[l] = 62;
+                        argIndirect = YesNoImplicit.Implicit;
+                        mergedToken = "PG*";
+                        break;
+                    case 69:        // Op
+                        opCodes[l] = 84;
+                        argIndirect = YesNoImplicit.Implicit;
+                        mergedToken = "OP*";
+                        break;
+                    default:        // General case, add Ind opcode 40
+                        argIndirect = YesNoImplicit.Yes;
+                        opCodes.Add(40);
+                        break;
+                }
+
+                // For merged indirect operations, don't keep Ind in the list of terminals
+                if (!string.IsNullOrEmpty(mergedToken))
+                {
+                    ltn.RemoveAt(ixInstruction);
+                    at.RemoveAt(ixInstruction);      // Remove AstToken Ind
+                    at[ixInstruction - 1] = new(mergedToken, SyntaxCategory.Instruction);   // Replace direct statement
+                }
+                else
+                    ixInstruction++;
+            }
+
+            byte argValue = 0;
+            foreach (var d in ltn[ixInstruction..])
+                argValue = (byte)(10 * argValue + byte.Parse(d.GetText()));
+            opCodes.Add(argValue);
+
+            var aa = new AstInstructionArg(at, opCodes, inverted, argIndirect, argValue);
+            Program.Statements.Add(aa);
+
         }
-
-        byte argValue = 0;
-        foreach (var d in ltn[ixInstruction..])
-            argValue = (byte)(10 * argValue + byte.Parse(d.GetText()));
-        opCodes.Add(argValue);
-
-        var aa = new AstInstructionArg(at, opCodes, inverted, argIndirect, argValue);
-        Program.Statements.Add(aa);
+        catch (Exception e)
+        {
+            Console.WriteLine("*** Error processing InstructionArg, ignoring it");
+        }
 
         return null!;
     }

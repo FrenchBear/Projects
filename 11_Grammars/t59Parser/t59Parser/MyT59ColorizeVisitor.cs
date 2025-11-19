@@ -26,7 +26,7 @@ namespace SimpleParser;
 
 // Inherit from the generated base visitor.
 // The 'object' type means your visit methods can return any type.
-public class MyT59VisitorBaseColorize(t59Parser parser): t59BaseVisitor<object>
+public class MyT59ColorizeVisitor(t59Parser parser): t59BaseVisitor<object>
 {
     public enum SyntaxCategory
     {
@@ -59,6 +59,11 @@ public class MyT59VisitorBaseColorize(t59Parser parser): t59BaseVisitor<object>
             Console.Write(text);
             Console.BackgroundColor = bc;
             Console.ForegroundColor = ConsoleColor.Gray;
+            return;
+        }
+        if (cat == SyntaxCategory.Unknown)
+        {
+            Console.Write($"\x1b[7m{text}\u001b[0m");
             return;
         }
 
@@ -127,6 +132,8 @@ public class MyT59VisitorBaseColorize(t59Parser parser): t59BaseVisitor<object>
                 return SyntaxCategory.Instruction;
             case t59Lexer.I40_indirect:
                 return SyntaxCategory.Instruction;      // Considering it's IndirectMemory doesn't work during AST build when grouping tokens
+            case t59Lexer.INVALID_TOKEN:
+                return SyntaxCategory.Unknown;
         }
 
         // Build a list of parent types (rules) so later we can easily check whether

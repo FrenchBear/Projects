@@ -51,7 +51,7 @@ public static class Program
         //input = "LBL A 1234567890 LBL B";
         //input = "STO 12 RTN END SIG+ INV Dsz 03 123 END Nop";
         //input = ". +/- 5";
-        input = "STO Ind Ind 12";
+        input = "STO ZAP CLR";
 
         // 2. The ANTLR parsing pipeline
         var inputStream = new AntlrInputStream(input);
@@ -74,6 +74,7 @@ public static class Program
         //    It's case-sensitive! Find it at the top of t59.g4.
         IParseTree tree = parser.startRule();
 
+        /*
         // Check for validation
         if (myLexerErrorListener.HadError || myParserErrorListener.HadError)
         {
@@ -83,9 +84,10 @@ public static class Program
         }
         else
             Console.WriteLine("Validation successful.\n");
+        */
 
         // Colorization visitor (only analyzing terminals)
-        var colorVisitor = new MyT59VisitorBaseColorize(parser);
+        var colorVisitor = new MyT59ColorizeVisitor(parser);
         colorVisitor.Visit(tree);
         Console.WriteLine();
 

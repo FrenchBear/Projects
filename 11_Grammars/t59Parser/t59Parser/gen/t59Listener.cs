@@ -410,4 +410,14 @@ public interface It59Listener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitInstruction_test_flag([NotNull] t59Parser.Instruction_test_flagContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="t59Parser.instruction_invalid"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterInstruction_invalid([NotNull] t59Parser.Instruction_invalidContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="t59Parser.instruction_invalid"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitInstruction_invalid([NotNull] t59Parser.Instruction_invalidContext context);
 }

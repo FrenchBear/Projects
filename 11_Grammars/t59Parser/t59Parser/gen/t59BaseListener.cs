@@ -491,6 +491,18 @@ public partial class t59BaseListener : It59Listener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitInstruction_test_flag([NotNull] t59Parser.Instruction_test_flagContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="t59Parser.instruction_invalid"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterInstruction_invalid([NotNull] t59Parser.Instruction_invalidContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="t59Parser.instruction_invalid"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitInstruction_invalid([NotNull] t59Parser.Instruction_invalidContext context) { }
 
 	/// <inheritdoc/>
 	/// <remarks>The default implementation does nothing.</remarks>

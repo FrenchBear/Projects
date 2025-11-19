@@ -106,6 +106,7 @@ I99_print=105
 I90_list=106
 I123_e_power_x=107
 I128_10_power_x=108
+INVALID_TOKEN=109
 '0'=1
 '1'=2
 '2'=3

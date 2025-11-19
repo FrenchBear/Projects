@@ -1,3 +1,8 @@
+// Second variant of T59 grammar - lexer
+// Use lexer modes
+//
+// 2025-11-18   PV
+
 lexer grammar Vocab;
 
 options {

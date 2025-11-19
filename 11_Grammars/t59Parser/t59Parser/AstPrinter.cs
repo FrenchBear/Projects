@@ -11,7 +11,7 @@
 
 using System;
 using System.Linq;
-using static SimpleParser.MyT59VisitorBaseColorize;
+using static SimpleParser.MyT59ColorizeVisitor;
 
 #pragma warning disable CA1822 // Mark members as static
 

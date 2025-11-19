@@ -13,11 +13,18 @@
 // Some mnemonics are not valid instructions (SST, LRN, Ins...) but are accepted
 // as labels (Lbl SST, Lbl LRN, Lbl Ins...)
 //
+// INVALID_TOKEN catches invalid top level instructions sur as ZAP, but can't be used inside a parser rule as a catch-all element since
+// it accumulates as many characters as possible, so it has priority over D D in STO 12 for instance.
+// Reducing it to one character doesn't work since it will recognize only one character at a time, so ZAP will be tokenized as Z INVALID_TOKEN,
+// but then AP is not a separated invalid instructions since spaces are required between instructions, so we need a different catch-all mechanism
+// inside parser rules: without a catch-all, visiting terminals won't see ZAP in STO ZAP, so we can't colorize it as wrong.
+//
 // 2025-11-08   PV      First version
 // 2025-11-09   PV      Version 2, flatten model
 // 2025-11-10   PV      Added missing invert instructions (INV Write, INV List, INV ^), 10 flags and not 7
 // 2025-11-11   PV      Renamed rules for consistency; Ind can't be a Key label (otherwise GTO Ind xx is misinterpreted); x≥t ant x>=t are two distinct variants!; Added EQ* and GE*
 // 2025-11-13   PV      Added END statement to allow multiple grograms in the same source text
+// 2025-11-19   PV      This grammar does work with well-formed programs, but not with invalid instructions or invalid statements
 
 grammar t59;
 
@@ -154,6 +161,10 @@ address_label:  (d d d)|('0' d WS d d);                         // The version n
 numeric_key_label: ('1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9') d;     // 10..99, an extension as a substitute to keys labels (25=CLR)
 op_number:      (('0'|'1'|'2'|'3') d) | ('4' '0');              // TI-58C has Op 40 (printer detection)
 
+INVALID_TOKEN: ~[ \t\r\n]+;
+
+// ----------------------------------
+
 startRule
     : programs EOF
     | WS EOF    // Allow empty program without allowing empty statement
@@ -184,6 +195,7 @@ instruction
     | instruction_label
 	| instruction_branch
 	| instruction_conditional
+    | instruction_invalid
     ;
 
 instruction_invert_isolated: inv Bang;      // Trick to allow a standalone Inv while keeping grammar simple, just INV!
@@ -295,7 +307,7 @@ instruction_memory
 	| inv? I64_product_indirect WS? indmemory
     ;
 
-memory_or_indirect: memory | indirect_memory ;
+memory_or_indirect: memory | indirect_memory;
 
 instruction_label: I76_label WS? ( key_label | numeric_key_label );
 
@@ -367,3 +379,5 @@ instruction_decrement_and_skip_on_zero: inv? I97_dsz WS? memory_or_indirect WS a
 
 // If flg
 instruction_test_flag: inv? I87_if_flag WS? single_digit_or_indirect WS? address_or_label_or_indirect;
+
+instruction_invalid: INVALID_TOKEN ;

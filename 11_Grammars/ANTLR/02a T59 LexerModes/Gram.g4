@@ -1,3 +1,8 @@
+// Second variant of T59 grammar - parser
+// Use lexer modes
+//
+// 2025-11-18   PV
+
 grammar Gram;
 
 options {

@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using static SimpleParser.MyT59VisitorBaseColorize;
+using static SimpleParser.MyT59ColorizeVisitor;
 using static SimpleParser.StandardInstructions;
 
 #pragma warning disable IDE0079 // Remove unnecessary suppression

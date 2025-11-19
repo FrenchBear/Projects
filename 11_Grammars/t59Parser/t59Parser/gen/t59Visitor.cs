@@ -259,4 +259,10 @@ public interface It59Visitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitInstruction_test_flag([NotNull] t59Parser.Instruction_test_flagContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="t59Parser.instruction_invalid"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitInstruction_invalid([NotNull] t59Parser.Instruction_invalidContext context);
 }
