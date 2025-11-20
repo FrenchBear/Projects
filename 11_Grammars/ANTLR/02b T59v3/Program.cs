@@ -1,3 +1,8 @@
+// Third variant of T59 grammar - parser
+// Don't use lexer modes
+//
+// 2025-11-19   PV
+
 using Antlr4.Runtime;
 using System;
 

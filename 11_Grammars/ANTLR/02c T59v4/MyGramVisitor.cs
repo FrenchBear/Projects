@@ -1,7 +1,7 @@
-// Third variant of T59 grammar - parser
-// Don't use lexer modes
+// Fourth variant of T59 grammar - parser
+// Don't use INVALID_TOKEN anymore
 //
-// 2025-11-19   PV
+// 2025-11-20   PV
 
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
