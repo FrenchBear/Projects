@@ -46,6 +46,13 @@ internal class SourcePainter
     }
 
     // Beware, ANTLR line index starts at 1
+
+    /// <summary>
+    /// Apply SyntaxCategory cat to character at specified (line, column)
+    /// </summary>
+    /// <param name="line">1..n</param>
+    /// <param name="charPositionInLine">0..len-1</param>
+    /// <param name="cat">SyntaxCategory of the character</param>
     public void Paint(int line, int charPositionInLine, SyntaxCategory cat)
     {
         if (charPositionInLine<Cats[line-1].Length)
@@ -58,10 +65,20 @@ internal class SourcePainter
         {
             for (int j = 0; j < Lines[i].Length; j++)
             {
-                if (Cats[i][j] == SyntaxCategory.LexerError)
-                    Console.ForegroundColor= ConsoleColor.Red;
-                else if (Cats[i][j] == SyntaxCategory.ParserError)
-                    Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.ForegroundColor = Cats[i][j] switch
+                {
+                    SyntaxCategory.LexerError => ConsoleColor.Red,
+                    SyntaxCategory.ParserError => ConsoleColor.Red,
+                    SyntaxCategory.Unknown => ConsoleColor.DarkRed,
+                    SyntaxCategory.Comment => ConsoleColor.Green,
+                    SyntaxCategory.Instruction => ConsoleColor.Cyan,
+                    SyntaxCategory.Label => ConsoleColor.DarkYellow,
+                    SyntaxCategory.Number => ConsoleColor.White,
+                    SyntaxCategory.DirectMemoryOrNumber => ConsoleColor.Magenta,
+                    SyntaxCategory.IndirectMemory => ConsoleColor.DarkMagenta,
+                    SyntaxCategory.DirectAddress => ConsoleColor.Yellow,
+                    _ => Console.ForegroundColor
+                };
 
                 Console.Write(Lines[i][j]);
                 

@@ -78,12 +78,12 @@ Sto Ind Z CLR";
         var paintingVisitor = new MyPaintingVisitor();
         paintingVisitor.VisitTerminals(parser, tree, sp);
 
+        Console.WriteLine("--- Painter output ---");
+        sp.Print();
+
         /*
         var gramVisitor = new MyGramVisitor();
         string result = gramVisitor.Visit(tree);
-
-        Console.WriteLine("--- Painter output ---");
-        sp.Print();
 
         Console.WriteLine("\n--- Visitor Output ---");
         Console.WriteLine(result);

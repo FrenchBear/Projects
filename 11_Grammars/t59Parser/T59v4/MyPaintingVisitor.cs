@@ -19,109 +19,70 @@ namespace T59v4;
 
 internal class MyPaintingVisitor: GramBaseVisitor<string>
 {
-    private SourcePainter sp;
-    private GramParser parser;
+    private SourcePainter Sp;
+    private GramParser Parser;
 
-    //public override string VisitProgram(GramParser.ProgramContext context)
-    //{
-    //    return base.VisitProgram(context);
-    //}
-
-    public void VisitTerminals(GramParser parser, GramParser.ProgramContext tree, SourcePainter sourcePainter)
+    public void VisitTerminals(GramParser parser, GramParser.ProgramContext tree, SourcePainter sp)
     {
-        this.sp = sp;
-        this.parser = parser;
+        Sp = sp;
+        Parser = parser;
         base.Visit(tree);
     }
 
     public override string VisitTerminal(ITerminalNode node)
     {
-        //var sc = GetTerminalSyntaxCategory(node);
-
         var txt = node.GetText();
-        int tokenType = node.Symbol.Type;
-        string symbolicName = parser.Vocabulary.GetSymbolicName(tokenType);
         var sc = GetTerminalSyntaxCategory(node);
-
-        Console.WriteLine($"{txt}: {symbolicName} -> {sc}");
+        //Console.WriteLine($"{txt}: -> {sc}");
+        for (int i=0 ; i<txt.Length;i++)
+            Sp.Paint(node.Symbol.Line, node.Symbol.Column + i, sc);
         return null;
     }
 
-    public string GetTerminalSyntaxCategory(ITerminalNode node)
+    public SyntaxCategory GetTerminalSyntaxCategory(ITerminalNode node)
     {
-        int tokenType = node.Symbol.Type;
+        string tokenName = Parser.Vocabulary.GetSymbolicName(node.Symbol.Type);
+        string parentName = node.Parent is ParserRuleContext ruleContext ? parentName = Parser.RuleNames[ruleContext.RuleIndex] : parentName = "???";
 
         // Simplification, everything van be determined from token name or parent rule name
         // NUM:   Number
         // D1|D2|A3|A4: parent=number_statement ? Number
         // D2:    parent=(bd_statement|lbl_statement) ? Label
         // D1|D2: parent=d_statement ? DirectMemoryOrNumber : parent *i_statement ? IndMemory : Err
-        // A3|A4: parent=bd_statement ? DirectAddress : Number
+        // A3|A4: parent=bd_statement ? DirectAddress
         // I*:    parent=mnemonic ? Label : instruction
 
-        /*
-        // First we handle white space, comments and numbers that can be determined
-        // directly from type without looking at parents rules
-        switch (tokenType)
-        {
-            // Just a test to separate WS between instructions and WS in instructions
-            // We don't attempt to normalize WS in instructions or remove \n in instructions
-            //case Vocab.Program_separator:
-            //    return SyntaxCategory.ProgramSeparator;
-            case Vocab.WS when node.Parent is ParserRuleContext { RuleIndex: GramParser.RULE_program }:
-                return SyntaxCategory.InterInstructionWhiteSpace;
-            case Vocab.WS:
-                return SyntaxCategory.WhiteSpace;
-            //case Vocab.LineComment:
-            //    return SyntaxCategory.Comment;
-            case Vocab.Eof:
-                return SyntaxCategory.Eof;
-            case Vocab.I40_indirect:
-                return SyntaxCategory.Instruction;      // Considering it's IndirectMemory doesn't work during AST build when grouping tokens
-        }
-
-        // Build a list of parent types (rules) so later we can easily check whether
-        // a terminal descend from a specific rule
-        // [0]=Parent, [1]=PArent's parent...
-        // Anonymous lexer tokens are not included in the list (so I gave a name Bang to "!" to include it)
-        var hierarchyInt = new List<int>();
-        IParseTree current = node.Parent;
-        while (current != null)
-        {
-            // We only care about RuleContexts (parser rules), not other nodes
-            if (current is ParserRuleContext ruleContext)
-            {
-                // Stop at RULE_instruction or RULE_comment
-                if (ruleContext.RuleIndex == GramParser.RULE_statement)
-                    break;
-                hierarchyInt.Add(ruleContext.RuleIndex);
-            }
-            current = current.Parent;
-        }
-
-        if (hierarchyInt.Contains(GramParser.RULE_number_statement))
+        if (tokenName == "NUM")
             return SyntaxCategory.Number;
+        if (parentName == "number_statement")
+            return SyntaxCategory.Number;
+        if (tokenName == "D2" && (parentName == "bd_statement" || parentName == "lbl_statement"))
+            return SyntaxCategory.Label;
+        if (tokenName == "D1" || tokenName== "D2")
+            if (parentName.EndsWith("d_statement"))
+                return SyntaxCategory.DirectMemoryOrNumber;
+            else if (parentName.EndsWith("i_statement"))
+                return SyntaxCategory.IndirectMemory;
+            else
+                Debugger.Break();
+        if (tokenName=="A3" || tokenName=="A4")
+            if (parentName == "bd_statement")
+                return SyntaxCategory.DirectAddress;
+        if (tokenName.StartsWith('I'))
+            if (parentName == "mnemonic")
+                return SyntaxCategory.Label;
+            else
+                return SyntaxCategory.Instruction;
 
-        if (hierarchyInt.Contains(GramParser.RULE_d_statement))
-            return SyntaxCategory.DirectMemoryOrNumber;
+        if (tokenName == "EOF")
+            return SyntaxCategory.Eof;
+        
+        Debugger.Break();
+        return SyntaxCategory.Unknown;
+    }
 
-        if (hierarchyInt.Contains(GramParser.RULE_indmemory))
-            return SyntaxCategory.IndirectMemory;
-
-        // Detect Key label before label
-        if (hierarchyInt.Contains(GramParser.RULE_key_label) || hierarchyInt.Contains(GramParser.RULE_numeric_key_label))
-            return SyntaxCategory.KeyLabel;
-
-        if (hierarchyInt.Contains(GramParser.RULE_address_label))
-            return SyntaxCategory.DirectAddress;
-
-        // Get the symbolic name from the parser's vocabulary
-        string symbolicName = parser.Vocabulary.GetSymbolicName(tokenType);
-        if (symbolicName != null && symbolicName.StartsWith('I'))
-            return SyntaxCategory.Instruction;
-        */
-        // If there is no match, print all info for easy debugging
-
+    public string GetTerminalHierarchy(ITerminalNode node)
+    {
         // Create a list to hold the rule names
         var hierarchy = new List<string>();
         IParseTree current = node.Parent;
@@ -129,7 +90,7 @@ internal class MyPaintingVisitor: GramBaseVisitor<string>
         {
             if (current is ParserRuleContext ruleContext)
             {
-                string ruleName = parser.RuleNames[ruleContext.RuleIndex];
+                string ruleName = Parser.RuleNames[ruleContext.RuleIndex];
                 hierarchy.Add(ruleName);
             }
             current = current.Parent;
@@ -138,10 +99,6 @@ internal class MyPaintingVisitor: GramBaseVisitor<string>
         //hierarchy.Reverse();
 
         return string.Join(" / ", hierarchy);
-
-        // Print the symbol name and the hierarchy
-        //Console.WriteLine($"*** Can't determine Terminal SyntaxCategory: {node.GetText()} (Type: {symbolicName})  Hierarchy: {string.Join(" / ", hierarchy)}");
-        //return SyntaxCategory.Unknown;
     }
-    
+
 }
