@@ -84,6 +84,18 @@ public partial class GramBaseListener : IGramListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitStatement([NotNull] GramParser.StatementContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="GramParser.a4"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterA4([NotNull] GramParser.A4Context context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GramParser.a4"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitA4([NotNull] GramParser.A4Context context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="GramParser.number_statement"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>

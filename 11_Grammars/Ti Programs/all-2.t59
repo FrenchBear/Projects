@@ -33,7 +33,7 @@ OP 17 OP Ind 27 OP* 37
 Deg Rad Grad
 SBR 123 SBR 25 SBR CLR SBR Ind 12
 INV SBR RTN
-Lbl 25 Lbl CLR Lbl LRN
+Lbl 25 Lbl CLR Lbl CLR'
 x≥t CLR x≥t 25 x≥t 421 x≥t IND 12 GE 111 GE* 12
 INVx≥t CLR inv x≥t 25 inv  x≥t 421 INV x≥t IND 12 INVGE 111 inv GE* 12
 Σ+ INV SIG+

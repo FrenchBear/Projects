@@ -71,6 +71,16 @@ public interface IGramListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitStatement([NotNull] GramParser.StatementContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="GramParser.a4"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterA4([NotNull] GramParser.A4Context context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GramParser.a4"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitA4([NotNull] GramParser.A4Context context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="GramParser.number_statement"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

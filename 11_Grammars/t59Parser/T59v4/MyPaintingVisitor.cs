@@ -37,7 +37,7 @@ internal class MyPaintingVisitor: GramBaseVisitor<string>
         // Console.WriteLine($"{txt}: -> {GetTerminalHierarchy(node)}");
 
         var sc = GetTerminalSyntaxCategory(node);
-        for (int i=0 ; i<txt.Length;i++)
+        for (int i = 0; i < txt.Length; i++)
             Sp.Paint(node.Symbol.Line, node.Symbol.Column + i, sc);
         return null;
     }
@@ -71,12 +71,14 @@ internal class MyPaintingVisitor: GramBaseVisitor<string>
             return SyntaxCategory.Number;
         if (tokenName == "D2" && (parentName == "ad_statement" || parentName == "label_statement"))
             return SyntaxCategory.Label;
-        if (tokenName == "D1" || tokenName== "D2")
+        if (tokenName == "D1" || tokenName == "D2")
             if (parentName.EndsWith("d_statement"))
                 return SyntaxCategory.DirectMemoryOrNumber;
             else if (parentName.EndsWith("i_statement"))
                 return SyntaxCategory.IndirectMemory;
-        if (tokenName=="A3" || tokenName=="A4")
+            else if (parentName == "a4")
+                return SyntaxCategory.Label;
+        if (tokenName == "A3" || tokenName == "A4")
             if (parentName == "ad_statement")
                 return SyntaxCategory.DirectAddress;
         if (tokenName.StartsWith('I'))
@@ -84,7 +86,7 @@ internal class MyPaintingVisitor: GramBaseVisitor<string>
                 return SyntaxCategory.Label;
             else
                 return SyntaxCategory.Instruction;
-        
+
         Debugger.Break();
         return SyntaxCategory.Unknown;
     }

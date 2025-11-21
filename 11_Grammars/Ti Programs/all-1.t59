@@ -162,11 +162,17 @@ R/S
 +/-
 =
 Wrt
+
 DSZ 5 +
 DSZ 5 22
 DSZ 5 123
 DSZ 5 04 32
 DSZ 5 Ind 12
+DSZ 15 +
+DSZ 15 22
+DSZ 15 123
+DSZ 15 04 32
+DSZ 15 Ind 12
 DSZ Ind 0 Nop
 DSZ IND 0 25
 DSZ Ind 0 421
@@ -177,11 +183,17 @@ INV Dsz 5 22
 INV Dsz 5 123
 INV Dsz 5 01 23
 INV Dsz 5 Ind 12
+INV Dsz 25 STO
+INV Dsz 25 22
+INV Dsz 25 123
+INV Dsz 25 01 23
+INV Dsz 25 Ind 12
 INV Dsz Ind 0 lnx
 INV Dsz IND 0 25
 INV Dsz Ind 0 421
 INV Dsz Ind 0 04 21
 INV Dsz Ind 0 Ind 3
+
 Adv
 Prt
 List

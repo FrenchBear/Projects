@@ -58,10 +58,10 @@ Sto Ind Z CLR";
         input = @"Hir Ind 09";
         //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\all-1.t59");
         //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\all-2.t59");
-        input = "Lbl A Sto 0 CLR @Loop: 1 + Dsz 0 @LOOP R/S";
-        //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\Master Library\ML-01-!ALL.t59");
-        input = @"DSZ 01 00 15";
-        input = @"DSZ 05 25";
+        //input = "Lbl A Sto 0 CLR @Loop: 1 + Dsz 0 @LOOP R/S";
+        input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\Master Library\ML-01-!ALL.t59");
+        //input = @"DSZ 01 00 15";
+        //input = @"DSZ 05 12 25";
 
         //Console.WriteLine("--- Parsing Input ---");
         //Console.WriteLine(input);

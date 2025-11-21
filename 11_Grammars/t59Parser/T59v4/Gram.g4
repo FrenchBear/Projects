@@ -36,8 +36,11 @@ statement:
 //    | invalid_statement
     ;
 
+// Attempt to solve DSZ 05 25 issue if A4 is processed by lexer: 02 25 is recognized as A4, which breaks DSZ/IFF recognition
+a4: D2 D2;
+
 // These two rules xan't be defined in Vocab.g4
-number_statement: NUM|D1|D2|A3|A4;
+number_statement: NUM|D1|D2|A3|a4;
 
 // According to TI doc V-56, 72 variants available, but 82 here: I accept merged indirect statements codes and HIR (82)
 mnemonic: I11_a|I12_b|I13_c|I14_d|I15_e|I16_a_prime|I17_b_prime|I18_c_prime|I19_d_prime|I10_e_prime|I22_invert|I23_ln|I24_correct_entry|I25_clear|I27_2nd_invert|I28_log|I29_clear_program|I20_2nd_clear|I32_exchange_x_and_t|I33_square|I34_square_root|I35_reciprocal|I36_program|I37_polar_to_rectangular|I38_sin|I39_cos|I30_tan|I42_store|I43_recall|I44_sum|I45_power|I47_clear_memory|I48_exchange|I49_product|I52_exponent|I53_left_parenthesis|I54_right_parenthesis|I55_divide|I57_engineering|I58_fix|I59_integer|I50_absolute|I61_goto|I62_program_indirect|I63_exchange_indirect|I64_product_indirect|I65_multiply|I66_pause|I67_x_equals_t|I68_nop|I69_operation|I60_degrees|I71_subroutine|I72_store_indirect|I73_recall_indirect|I74_sum_indirect|I75_subtract|I76_label|I77_x_greater_or_equal_than_t|I78_sigma_plus|I79_average|I70_radians|I81_reset|I82_hir|I83_goto_indirect|I84_operation_indirect|I85_add|I86_set_flag|I87_if_flag|I88_dms|I89_pi|I80_grades|I91_run_stop|I92_return|I93_dot|I94_change_sign|I95_equals|I96_write|I97_dsz|I98_advance|I99_print|I90_list;
@@ -60,7 +63,7 @@ i_statement:
     | inv=I22_invert? sta=(I44_sum|I49_product|I86_set_flag) ind=I40_indirect t=(D1|D2)   // Invertible statements that use Ind
     ;
 
-ad_statement: mnemonic|t=(D2|A3|A4|TAG);
+ad_statement: mnemonic|a4|t=(D2|A3|TAG);
 ai_statement: I40_indirect t=(D1|D2);
 bd_statement:
     sta=(I61_goto|I71_subroutine) ad_statement      // SBR is here, but INV SBR is an atomic statement

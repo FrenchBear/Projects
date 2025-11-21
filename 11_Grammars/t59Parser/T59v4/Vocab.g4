@@ -126,7 +126,7 @@ I128_10_power_x: '10^x';
 D1: [0-9];
 D2: [0-9][0-9];
 A3: [0-9][0-9][0-9];
-A4: '0'[0-9] [ \t\r\n]* [0-9][0-9];
+//A4: '0'[0-9] [ \t\r\n]* [0-9][0-9];       // Moved to parser to avoid DSZ 05 25 issue, using dynamic recognition
 NUM: '-'? (([0-9]+ ('.' [0-9]*)?) | ('.' [0-9]+)) ('E' ('+'|'-')? [0-9]+)? ;            // Standard scientific number
 
 // Extra labels (case insensitive, so includes a-z)

@@ -56,6 +56,12 @@ public interface IGramVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitStatement([NotNull] GramParser.StatementContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="GramParser.a4"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitA4([NotNull] GramParser.A4Context context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="GramParser.number_statement"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
