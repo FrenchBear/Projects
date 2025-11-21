@@ -12,15 +12,12 @@ using System.Threading.Tasks;
 
 namespace T59v4;
 
-public enum SyntaxCategory : byte
+public enum SyntaxCategory: byte
 {
     Unknown = 0,
     LexerError,
-    ParserError,
     ProgramSeparator,
     Eof,
-    InterInstructionWhiteSpace,
-    WhiteSpace,
     Comment,
     Instruction,
     Label,
@@ -55,7 +52,7 @@ internal class SourcePainter
     /// <param name="cat">SyntaxCategory of the character</param>
     public void Paint(int line, int charPositionInLine, SyntaxCategory cat)
     {
-        if (charPositionInLine<Cats[line-1].Length)
+        if (charPositionInLine < Cats[line - 1].Length)
             Cats[line - 1][charPositionInLine] = cat;
     }
 
@@ -65,24 +62,50 @@ internal class SourcePainter
         {
             for (int j = 0; j < Lines[i].Length; j++)
             {
-                Console.ForegroundColor = Cats[i][j] switch
+                // White space is not formatted at all
+                if (char.IsWhiteSpace(Lines[i][j]))
                 {
-                    SyntaxCategory.LexerError => ConsoleColor.Red,
-                    SyntaxCategory.ParserError => ConsoleColor.Red,
-                    SyntaxCategory.Unknown => ConsoleColor.DarkRed,
-                    SyntaxCategory.Comment => ConsoleColor.Green,
-                    SyntaxCategory.Instruction => ConsoleColor.Cyan,
-                    SyntaxCategory.Label => ConsoleColor.DarkYellow,
-                    SyntaxCategory.Number => ConsoleColor.White,
-                    SyntaxCategory.DirectMemoryOrNumber => ConsoleColor.Magenta,
-                    SyntaxCategory.IndirectMemory => ConsoleColor.DarkMagenta,
-                    SyntaxCategory.DirectAddress => ConsoleColor.Yellow,
-                    _ => Console.ForegroundColor
-                };
+                    Console.Write(Lines[i][j]);
+                    continue;
+                }
+
+                switch (Cats[i][j])
+                {
+                    case SyntaxCategory.Comment:
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        break;
+                    case SyntaxCategory.LexerError:
+                    case SyntaxCategory.Unknown:
+                        Console.BackgroundColor = ConsoleColor.Red;
+                        Console.ForegroundColor = ConsoleColor.Black;
+                        break;
+                    case SyntaxCategory.Instruction:
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                        break;
+                    case SyntaxCategory.Label:
+                        Console.ForegroundColor = ConsoleColor.DarkYellow;
+                        break;
+                    case SyntaxCategory.Number:
+                        Console.ForegroundColor = ConsoleColor.Gray;
+                        break;
+                    case SyntaxCategory.DirectMemoryOrNumber:
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        break;
+                    case SyntaxCategory.IndirectMemory:
+                        Console.ForegroundColor = ConsoleColor.Magenta;
+                        break;
+                    case SyntaxCategory.DirectAddress:
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        break;
+                    default:
+                        Console.ForegroundColor = ConsoleColor.White;
+                        break;
+                }
 
                 Console.Write(Lines[i][j]);
-                
+
                 Console.ForegroundColor = ConsoleColor.Gray;
+                Console.BackgroundColor = ConsoleColor.Black;
             }
 
             Console.WriteLine();

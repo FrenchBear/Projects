@@ -54,6 +54,8 @@ Sto Ind Z CLR";
         input = @"DSZ 1 CLR Dsz 2 25 DSZ 3 125 DSZ 4 01 25 DSZ 11 Ind 12";
         input = @"DSZ 11 25 Dsz 11 Ind 25 Dsz Ind 11 25 Dsz Ind 11 Ind 25";
 
+        input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\all.t59");
+
         //Console.WriteLine("--- Parsing Input ---");
         //Console.WriteLine(input);
 

@@ -32,11 +32,23 @@ using IToken = Antlr4.Runtime.IToken;
 [System.CLSCompliant(false)]
 public interface IGramVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="GramParser.startRule"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitStartRule([NotNull] GramParser.StartRuleContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="GramParser.program"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitProgram([NotNull] GramParser.ProgramContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="GramParser.instruction_or_comment"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitInstruction_or_comment([NotNull] GramParser.Instruction_or_commentContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="GramParser.statement"/>.
 	/// </summary>

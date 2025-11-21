@@ -1,3 +1,16 @@
+// All statements
+
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+
 A
 B
 C
@@ -139,8 +152,6 @@ Grad
 
 R/S
 +/-
--3.1415926
-6.02e23
 =
 Wrt
 DSZ 5 +
@@ -166,3 +177,9 @@ INV Dsz Ind 0 Ind 3
 Adv
 Prt
 List
+
+-3.1415926
+6.02e23
+
+INV
+

@@ -52,6 +52,12 @@ internal class MyPaintingVisitor: GramBaseVisitor<string>
         // A3|A4: parent=bd_statement ? DirectAddress
         // I*:    parent=mnemonic ? Label : instruction
 
+        if (tokenName == "PROGRAM_SEPARATOR")
+            return SyntaxCategory.ProgramSeparator;
+        if (tokenName == "EOF")
+            return SyntaxCategory.Eof;
+        if (tokenName == "LINE_COMMENT")
+            return SyntaxCategory.Comment;
         if (tokenName == "NUM")
             return SyntaxCategory.Number;
         if (parentName == "number_statement")
@@ -66,16 +72,13 @@ internal class MyPaintingVisitor: GramBaseVisitor<string>
             else
                 Debugger.Break();
         if (tokenName=="A3" || tokenName=="A4")
-            if (parentName == "bd_statement")
+            if (parentName == "ad_statement")
                 return SyntaxCategory.DirectAddress;
         if (tokenName.StartsWith('I'))
             if (parentName == "mnemonic")
                 return SyntaxCategory.Label;
             else
                 return SyntaxCategory.Instruction;
-
-        if (tokenName == "EOF")
-            return SyntaxCategory.Eof;
         
         Debugger.Break();
         return SyntaxCategory.Unknown;
