@@ -57,7 +57,7 @@ public partial class GramLexer : Lexer {
 	}
 
 	private static readonly string[] _LiteralNames = {
-		null, "'LBL'"
+		null, "':'"
 	};
 	private static readonly string[] _SymbolicNames = {
 	};
@@ -89,8 +89,8 @@ public partial class GramLexer : Lexer {
 		}
 	}
 	private static int[] _serializedATN = {
-		4,0,1,7,6,-1,2,0,7,0,1,0,1,0,1,0,1,0,0,0,1,1,1,1,0,0,6,0,1,1,0,0,0,1,3,
-		1,0,0,0,3,4,5,76,0,0,4,5,5,66,0,0,5,6,5,76,0,0,6,2,1,0,0,0,1,0,0
+		4,0,1,5,6,-1,2,0,7,0,1,0,1,0,0,0,1,1,1,1,0,0,4,0,1,1,0,0,0,1,3,1,0,0,0,
+		3,4,5,58,0,0,4,2,1,0,0,0,1,0,0
 	};
 
 	public static readonly ATN _ATN =

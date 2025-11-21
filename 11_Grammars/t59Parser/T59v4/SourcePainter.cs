@@ -14,14 +14,16 @@ namespace T59v4;
 
 public enum SyntaxCategory: byte
 {
-    Unknown = 0,
+    Unknown = 0,        // Default, if not painted
+    Uninitialized,      // For internal use
     LexerError,
     ProgramSeparator,
     Eof,
     Comment,
+    Number,
+    Tag,
     Instruction,
     Label,
-    Number,
     DirectMemoryOrNumber,
     IndirectMemory,
     DirectAddress,
@@ -58,57 +60,108 @@ internal class SourcePainter
 
     public void Print()
     {
+        SyntaxCategory at = SyntaxCategory.Uninitialized;
+        var sbc = new StringBuilder();      // For characters
+        var sbs = new StringBuilder();      // For spaces
         for (int i = 0; i < Lines.Length; i++)
         {
-            for (int j = 0; j < Lines[i].Length; j++)
+            for (int j = 0; j <= Lines[i].Length; j++)
             {
-                // White space is not formatted at all
-                if (char.IsWhiteSpace(Lines[i][j]))
+                var c = j== Lines[i].Length ? '\n' : Lines[i][j];
+
+                // Spaces are accumulated in a separate buffer since we only print them
+                // with attributes only if char before and char after have the same attribute
+                if (c==' ' || c=='\t')
                 {
-                    Console.Write(Lines[i][j]);
+                    sbs.Append(c);
                     continue;
                 }
 
-                switch (Cats[i][j])
+                // c is not a space
+                // If current attribute is the same as current buffer (or not assigned yet), we accumulate
+                var a = c=='\n' ? SyntaxCategory.Eof : Cats[i][j];      // Trick to force printing and reset to 'no background' before printing newline visually better
+                if (at == SyntaxCategory.Uninitialized || at==a)
                 {
-                    case SyntaxCategory.Comment:
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        break;
-                    case SyntaxCategory.LexerError:
-                    case SyntaxCategory.Unknown:
-                        Console.BackgroundColor = ConsoleColor.Red;
-                        Console.ForegroundColor = ConsoleColor.Black;
-                        break;
-                    case SyntaxCategory.Instruction:
-                        Console.ForegroundColor = ConsoleColor.Cyan;
-                        break;
-                    case SyntaxCategory.Label:
-                        Console.ForegroundColor = ConsoleColor.DarkYellow;
-                        break;
-                    case SyntaxCategory.Number:
-                        Console.ForegroundColor = ConsoleColor.Gray;
-                        break;
-                    case SyntaxCategory.DirectMemoryOrNumber:
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        break;
-                    case SyntaxCategory.IndirectMemory:
-                        Console.ForegroundColor = ConsoleColor.Magenta;
-                        break;
-                    case SyntaxCategory.DirectAddress:
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        break;
-                    default:
-                        Console.ForegroundColor = ConsoleColor.White;
-                        break;
+                    // If we have accumulated spaces, merge them
+                    if (sbs.Length > 0)
+                    {
+                        sbc.Append(sbs);
+                        sbs.Clear();
+                    }
+                    at = a;
+                    sbc.Append(c);
+                    continue;
                 }
 
-                Console.Write(Lines[i][j]);
+                // at!=a -> time to print
 
-                Console.ForegroundColor = ConsoleColor.Gray;
-                Console.BackgroundColor = ConsoleColor.Black;
+                // First accumulated string with at attribute
+                SetColorMode(at);
+                Console.Write(sbc.ToString());
+                sbc.Clear();
+                ResetColorMode();
+                // Then spaces
+                if (sbs.Length > 0)
+                {
+                    Console.Write(sbs.ToString());
+                    sbs.Clear();
+                }
+
+                // Start new accumulation
+                at = a;
+                sbc.Append(c);
             }
-
-            Console.WriteLine();
         }
+        // reliquary
+        SetColorMode(at);
+        Console.Write(sbc.ToString());
+        ResetColorMode();
+        if (sbs.Length > 0)
+            Console.Write(sbs.ToString());
+    }
+
+    private void SetColorMode(SyntaxCategory sc)
+    {
+        switch (sc)
+        {
+            case SyntaxCategory.Comment:
+                Console.ForegroundColor = ConsoleColor.Green;
+                break;
+            case SyntaxCategory.LexerError:
+            case SyntaxCategory.Unknown:
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.BackgroundColor = ConsoleColor.Red;
+                break;
+            case SyntaxCategory.Instruction:
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                break;
+            case SyntaxCategory.Number:
+                Console.ForegroundColor = ConsoleColor.Gray;
+                break;
+            case SyntaxCategory.DirectMemoryOrNumber:
+                Console.ForegroundColor = ConsoleColor.Red;
+                break;
+            case SyntaxCategory.IndirectMemory:
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                break;
+            case SyntaxCategory.Tag:
+                Console.ForegroundColor = ConsoleColor.Blue;
+                break;
+            case SyntaxCategory.Label:
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                break;
+            case SyntaxCategory.DirectAddress:
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                break;
+            default:
+                Console.ForegroundColor = ConsoleColor.White;
+                break;
+        }
+    }
+
+    private void ResetColorMode()
+    {
+        Console.ForegroundColor = ConsoleColor.Gray;
+        Console.BackgroundColor = ConsoleColor.Black;
     }
 }

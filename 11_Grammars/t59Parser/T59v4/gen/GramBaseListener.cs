@@ -36,18 +36,6 @@ using ParserRuleContext = Antlr4.Runtime.ParserRuleContext;
 [System.CLSCompliant(false)]
 public partial class GramBaseListener : IGramListener {
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="GramParser.startRule"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterStartRule([NotNull] GramParser.StartRuleContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="GramParser.startRule"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitStartRule([NotNull] GramParser.StartRuleContext context) { }
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="GramParser.program"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -60,17 +48,29 @@ public partial class GramBaseListener : IGramListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitProgram([NotNull] GramParser.ProgramContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="GramParser.instruction_or_comment"/>.
+	/// Enter a parse tree produced by <see cref="GramParser.statement_or_comment"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterInstruction_or_comment([NotNull] GramParser.Instruction_or_commentContext context) { }
+	public virtual void EnterStatement_or_comment([NotNull] GramParser.Statement_or_commentContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="GramParser.instruction_or_comment"/>.
+	/// Exit a parse tree produced by <see cref="GramParser.statement_or_comment"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitInstruction_or_comment([NotNull] GramParser.Instruction_or_commentContext context) { }
+	public virtual void ExitStatement_or_comment([NotNull] GramParser.Statement_or_commentContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="GramParser.tag_declaration"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterTag_declaration([NotNull] GramParser.Tag_declarationContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GramParser.tag_declaration"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitTag_declaration([NotNull] GramParser.Tag_declarationContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="GramParser.statement"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -191,18 +191,6 @@ public partial class GramBaseListener : IGramListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitBi_statement([NotNull] GramParser.Bi_statementContext context) { }
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="GramParser.doi_lai_statement"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterDoi_lai_statement([NotNull] GramParser.Doi_lai_statementContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="GramParser.doi_lai_statement"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitDoi_lai_statement([NotNull] GramParser.Doi_lai_statementContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="GramParser.t_statement"/>.
 	/// <para>The default implementation does nothing.</para>

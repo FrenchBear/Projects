@@ -10,7 +10,7 @@ using System.IO;
 
 namespace T59v4;
 
-internal class MyLexerErrorListener(SourcePainter sp): IAntlrErrorListener<int>
+internal class MyLexerErrorListener(SourcePainter sp, bool showErrors): IAntlrErrorListener<int>
 {
     public bool HadError { get; private set; }
 
@@ -18,8 +18,9 @@ internal class MyLexerErrorListener(SourcePainter sp): IAntlrErrorListener<int>
     {
         HadError = true;
 
-        // You can also log the error to the console if you want
-        //Console.Error.WriteLine($"*** Lexer Error: line {line}:{charPositionInLine} -> {msg}");
+        // Print error to the console
+        if (showErrors)
+            Console.Error.WriteLine($"*** Lexer Error: line {line}:{charPositionInLine} -> {msg}");
 
         //sp.Paint(line, charPositionInLine, SyntaxCategory.LexerError);
 
@@ -57,7 +58,7 @@ internal class MyLexerErrorListener(SourcePainter sp): IAntlrErrorListener<int>
     }
 }
 
-internal class MyParserErrorListener(SourcePainter sp): BaseErrorListener
+internal class MyParserErrorListener(SourcePainter sp, bool showErrors): BaseErrorListener
 {
     // Public property to check if an error occurred
     public bool HadError { get; private set; }
@@ -68,8 +69,9 @@ internal class MyParserErrorListener(SourcePainter sp): BaseErrorListener
         // Set the flag to true
         HadError = true;
 
-        // You can also log the error to the console if you want
-        //Console.Error.WriteLine($"*** Parser Error: line {line}:{charPositionInLine} os=«{offendingSymbol.Text}» -> {msg} / {e}");
+        // Print error to the console
+        if (showErrors)
+            Console.Error.WriteLine($"*** Parser Error: line {line}:{charPositionInLine} os=«{offendingSymbol.Text}» -> {msg} / {e}");
 
         // Painting this error is completely useless since the error is reported at the following token, not the one actually in error
         // Since parsing will restart at this point, this statement may be correct.

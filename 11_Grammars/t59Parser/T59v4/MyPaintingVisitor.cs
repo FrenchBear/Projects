@@ -32,8 +32,11 @@ internal class MyPaintingVisitor: GramBaseVisitor<string>
     public override string VisitTerminal(ITerminalNode node)
     {
         var txt = node.GetText();
+
+        // Debug
+        // Console.WriteLine($"{txt}: -> {GetTerminalHierarchy(node)}");
+
         var sc = GetTerminalSyntaxCategory(node);
-        //Console.WriteLine($"{txt}: -> {sc}");
         for (int i=0 ; i<txt.Length;i++)
             Sp.Paint(node.Symbol.Line, node.Symbol.Column + i, sc);
         return null;
@@ -58,19 +61,21 @@ internal class MyPaintingVisitor: GramBaseVisitor<string>
             return SyntaxCategory.Eof;
         if (tokenName == "LINE_COMMENT")
             return SyntaxCategory.Comment;
+        if (tokenName == "TAG")
+            return SyntaxCategory.Tag;
+        if (tokenName == "COLON")
+            return SyntaxCategory.ProgramSeparator;
         if (tokenName == "NUM")
             return SyntaxCategory.Number;
         if (parentName == "number_statement")
             return SyntaxCategory.Number;
-        if (tokenName == "D2" && (parentName == "bd_statement" || parentName == "lbl_statement"))
+        if (tokenName == "D2" && (parentName == "ad_statement" || parentName == "label_statement"))
             return SyntaxCategory.Label;
         if (tokenName == "D1" || tokenName== "D2")
             if (parentName.EndsWith("d_statement"))
                 return SyntaxCategory.DirectMemoryOrNumber;
             else if (parentName.EndsWith("i_statement"))
                 return SyntaxCategory.IndirectMemory;
-            else
-                Debugger.Break();
         if (tokenName=="A3" || tokenName=="A4")
             if (parentName == "ad_statement")
                 return SyntaxCategory.DirectAddress;
@@ -84,6 +89,7 @@ internal class MyPaintingVisitor: GramBaseVisitor<string>
         return SyntaxCategory.Unknown;
     }
 
+    // Debug helper
     public string GetTerminalHierarchy(ITerminalNode node)
     {
         // Create a list to hold the rule names

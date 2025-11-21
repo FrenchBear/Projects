@@ -93,7 +93,9 @@ GO* 8
 ×
 Pause
 X=T +
+X=T 12
 X=T 123
+X=T 01 23
 X=T Ind 12
 Nop
 OP 09
@@ -102,47 +104,53 @@ OP* 33
 Deg
 
 SBR CLR
+SBR 25
 SBR 240
+SBR 02 40
 SBR Ind 07
 -
 Lbl SIG+
+Lbl Lbl
+X>=T |x|
 X>=T 12
 GE 123
+GE 01 23
 GE IND 04
 Σ+
 SIG+
 INV Σ+
+INV STA
 AVG
 INV AVG
 INV x̄
 Rad
 
 RST
-HIR 82
+HIR 40
 +
 STF 2
 STF Ind 12
 INV STF 2
 INV STF Ind 12
-IFF 5 +
 IFF 5 STO
 IFF 5 22
 IFF 5 123
+IFF 5 01 23
 IFF 5 Ind 12
-IFF Ind 0 +
-IFF IND 0 25
 IFF Ind 0 Exc
+IFF IND 0 25
 IFF Ind 0 421
+IFF Ind 0 04 21
 IFF Ind 0 Ind 3
 INV IFF 5 +
-INV IFF 5 STO
 INV IFF 5 22
 INV IFF 5 123
 INV IFF 5 Ind 12
-INV IFF Ind 0 +
-INV IFF IND 0 25
+INV IFF Ind 0 Σ+
+INV IFF IND 0 35
 INV IFF Ind 0 Exc
 INV IFF Ind 0 421
+INV IFF Ind 0 04 21
 INV IFF Ind 0 Ind 3
 DMS
 D.MS
@@ -155,24 +163,24 @@ R/S
 =
 Wrt
 DSZ 5 +
-DSZ 5 STO
 DSZ 5 22
 DSZ 5 123
+DSZ 5 04 32
 DSZ 5 Ind 12
-DSZ Ind 0 +
+DSZ Ind 0 Nop
 DSZ IND 0 25
-DSZ Ind 0 Exc
 DSZ Ind 0 421
+DSZ Ind 0 04 21
 DSZ Ind 0 Ind 3
-INV Dsz 5 +
 INV Dsz 5 STO
 INV Dsz 5 22
 INV Dsz 5 123
+INV Dsz 5 01 23
 INV Dsz 5 Ind 12
-INV Dsz Ind 0 +
+INV Dsz Ind 0 lnx
 INV Dsz IND 0 25
-INV Dsz Ind 0 Exc
 INV Dsz Ind 0 421
+INV Dsz Ind 0 04 21
 INV Dsz Ind 0 Ind 3
 Adv
 Prt
@@ -183,3 +191,8 @@ List
 
 INV
 
+END
+
+// Another program, with an error
+
+HIR IND 12

@@ -32,23 +32,23 @@ using IToken = Antlr4.Runtime.IToken;
 [System.CLSCompliant(false)]
 public interface IGramVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="GramParser.startRule"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitStartRule([NotNull] GramParser.StartRuleContext context);
-	/// <summary>
 	/// Visit a parse tree produced by <see cref="GramParser.program"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitProgram([NotNull] GramParser.ProgramContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="GramParser.instruction_or_comment"/>.
+	/// Visit a parse tree produced by <see cref="GramParser.statement_or_comment"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitInstruction_or_comment([NotNull] GramParser.Instruction_or_commentContext context);
+	Result VisitStatement_or_comment([NotNull] GramParser.Statement_or_commentContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="GramParser.tag_declaration"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitTag_declaration([NotNull] GramParser.Tag_declarationContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="GramParser.statement"/>.
 	/// </summary>
@@ -109,12 +109,6 @@ public interface IGramVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitBi_statement([NotNull] GramParser.Bi_statementContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="GramParser.doi_lai_statement"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitDoi_lai_statement([NotNull] GramParser.Doi_lai_statementContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="GramParser.t_statement"/>.
 	/// </summary>

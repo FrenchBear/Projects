@@ -128,3 +128,9 @@ D2: [0-9][0-9];
 A3: [0-9][0-9][0-9];
 A4: '0'[0-9] [ \t\r\n]* [0-9][0-9];
 NUM: '-'? (([0-9]+ ('.' [0-9]*)?) | ('.' [0-9]+)) ('E' ('+'|'-')? [0-9]+)? ;            // Standard scientific number
+
+// Extra labels (case insensitive, so includes a-z)
+TAG: '@' [A-Z_][A-Z0-9_]*;
+COLON: ':';
+
+//INVALID_TOKEN: ~[ \t\r\n]+ ;

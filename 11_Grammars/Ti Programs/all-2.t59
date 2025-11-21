@@ -1,9 +1,9 @@
-# Test all instructions
+// Test all instructions
 
 1.4142136 6.03e23 -1.6e-19 2025 421 99
 
 A B C D E
-INV!
+INV
 A' B' C' D' E'
 lnx INV lnx e^x
 log INV log 10^x

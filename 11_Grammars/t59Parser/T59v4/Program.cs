@@ -53,8 +53,15 @@ Sto Ind Z CLR";
         input = @"Lbl CLR Lbl 25";
         input = @"DSZ 1 CLR Dsz 2 25 DSZ 3 125 DSZ 4 01 25 DSZ 11 Ind 12";
         input = @"DSZ 11 25 Dsz 11 Ind 25 Dsz Ind 11 25 Dsz Ind 11 Ind 25";
-
-        input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\all.t59");
+        input = @"Lbl CLR Lbl 25";
+        input = "Fix 4 Fix 04 Fix Ind 12 INV Fix CLR";
+        input = @"Hir Ind 09";
+        //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\all-1.t59");
+        //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\all-2.t59");
+        input = "Lbl A Sto 0 CLR @Loop: 1 + Dsz 0 @LOOP R/S";
+        //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\Master Library\ML-01-!ALL.t59");
+        input = @"DSZ 01 00 15";
+        input = @"DSZ 05 25";
 
         //Console.WriteLine("--- Parsing Input ---");
         //Console.WriteLine(input);
@@ -68,10 +75,11 @@ Sto Ind Z CLR";
         var sp = new SourcePainter(input);
 
         // Set up custom error listener for validation
-        var myLexerErrorListener = new MyLexerErrorListener(sp);
+        bool showErrors = true;
+        var myLexerErrorListener = new MyLexerErrorListener(sp, showErrors);
         lexer.RemoveErrorListeners();       // Remove default console error listener
         lexer.AddErrorListener(myLexerErrorListener);
-        var myParserErrorListener = new MyParserErrorListener(sp);
+        var myParserErrorListener = new MyParserErrorListener(sp, showErrors);
         parser.RemoveErrorListeners(); 
         parser.AddErrorListener(myParserErrorListener);
 

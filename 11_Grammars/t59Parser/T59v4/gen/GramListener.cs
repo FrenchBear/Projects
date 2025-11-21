@@ -31,16 +31,6 @@ using IToken = Antlr4.Runtime.IToken;
 [System.CLSCompliant(false)]
 public interface IGramListener : IParseTreeListener {
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="GramParser.startRule"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterStartRule([NotNull] GramParser.StartRuleContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="GramParser.startRule"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitStartRule([NotNull] GramParser.StartRuleContext context);
-	/// <summary>
 	/// Enter a parse tree produced by <see cref="GramParser.program"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -51,15 +41,25 @@ public interface IGramListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitProgram([NotNull] GramParser.ProgramContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="GramParser.instruction_or_comment"/>.
+	/// Enter a parse tree produced by <see cref="GramParser.statement_or_comment"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterInstruction_or_comment([NotNull] GramParser.Instruction_or_commentContext context);
+	void EnterStatement_or_comment([NotNull] GramParser.Statement_or_commentContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="GramParser.instruction_or_comment"/>.
+	/// Exit a parse tree produced by <see cref="GramParser.statement_or_comment"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitInstruction_or_comment([NotNull] GramParser.Instruction_or_commentContext context);
+	void ExitStatement_or_comment([NotNull] GramParser.Statement_or_commentContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="GramParser.tag_declaration"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterTag_declaration([NotNull] GramParser.Tag_declarationContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GramParser.tag_declaration"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitTag_declaration([NotNull] GramParser.Tag_declarationContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="GramParser.statement"/>.
 	/// </summary>
@@ -160,16 +160,6 @@ public interface IGramListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitBi_statement([NotNull] GramParser.Bi_statementContext context);
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="GramParser.doi_lai_statement"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterDoi_lai_statement([NotNull] GramParser.Doi_lai_statementContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="GramParser.doi_lai_statement"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitDoi_lai_statement([NotNull] GramParser.Doi_lai_statementContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="GramParser.t_statement"/>.
 	/// </summary>
