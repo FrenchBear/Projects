@@ -29,19 +29,25 @@ public enum SyntaxCategory: byte
     DirectAddress,
 }
 
+public record struct Paint
+{
+    public SyntaxCategory cat;
+    public bool ParserError;
+}
+
 internal class SourcePainter
 {
     private readonly string[] Lines;
-    private readonly SyntaxCategory[][] Cats;
+    private readonly Paint[][] Cats;
 
     public SourcePainter(string s)
     {
         s = s.Replace("\r\n", "\n").Replace("\r", "\n");
         Lines = s.Split("\n");
 
-        Cats = new SyntaxCategory[Lines.Length][];
+        Cats = new Paint[Lines.Length][];
         for (int i = 0; i < Lines.Length; i++)
-            Cats[i] = new SyntaxCategory[Lines[i].Length];
+            Cats[i] = new Paint[Lines[i].Length];
     }
 
     // Beware, ANTLR line index starts at 1
@@ -55,7 +61,7 @@ internal class SourcePainter
     public void Paint(int line, int charPositionInLine, SyntaxCategory cat)
     {
         if (charPositionInLine < Cats[line - 1].Length)
-            Cats[line - 1][charPositionInLine] = cat;
+            Cats[line - 1][charPositionInLine].cat = cat;
     }
 
     public void Print()
@@ -79,7 +85,7 @@ internal class SourcePainter
 
                 // c is not a space
                 // If current attribute is the same as current buffer (or not assigned yet), we accumulate
-                var a = c=='\n' ? SyntaxCategory.Eof : Cats[i][j];      // Trick to force printing and reset to 'no background' before printing newline visually better
+                var a = c=='\n' ? SyntaxCategory.Eof : Cats[i][j].cat;      // Trick to force printing and reset to 'no background' before printing newline visually better
                 if (at == SyntaxCategory.Uninitialized || at==a)
                 {
                     // If we have accumulated spaces, merge them

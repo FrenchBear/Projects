@@ -36,6 +36,18 @@ using ParserRuleContext = Antlr4.Runtime.ParserRuleContext;
 [System.CLSCompliant(false)]
 public partial class GramBaseListener : IGramListener {
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="GramParser.programs"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterPrograms([NotNull] GramParser.ProgramsContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GramParser.programs"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitPrograms([NotNull] GramParser.ProgramsContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="GramParser.program"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -311,6 +323,18 @@ public partial class GramBaseListener : IGramListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitInv_statement([NotNull] GramParser.Inv_statementContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="GramParser.invalid_statement"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterInvalid_statement([NotNull] GramParser.Invalid_statementContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GramParser.invalid_statement"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitInvalid_statement([NotNull] GramParser.Invalid_statementContext context) { }
 
 	/// <inheritdoc/>
 	/// <remarks>The default implementation does nothing.</remarks>

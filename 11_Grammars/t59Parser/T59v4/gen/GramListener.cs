@@ -31,6 +31,16 @@ using IToken = Antlr4.Runtime.IToken;
 [System.CLSCompliant(false)]
 public interface IGramListener : IParseTreeListener {
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="GramParser.programs"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterPrograms([NotNull] GramParser.ProgramsContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GramParser.programs"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitPrograms([NotNull] GramParser.ProgramsContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="GramParser.program"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -260,4 +270,14 @@ public interface IGramListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitInv_statement([NotNull] GramParser.Inv_statementContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="GramParser.invalid_statement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterInvalid_statement([NotNull] GramParser.Invalid_statementContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="GramParser.invalid_statement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitInvalid_statement([NotNull] GramParser.Invalid_statementContext context);
 }

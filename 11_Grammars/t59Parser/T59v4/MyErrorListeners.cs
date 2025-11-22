@@ -80,8 +80,7 @@ internal class MyParserErrorListener(SourcePainter sp, bool showErrors): BaseErr
         // but this is not really helpful for painting
 
         //for (int i = 0; i <= offendingSymbol.StopIndex - offendingSymbol.StartIndex; i++)
-        //    sp.Paint(line, charPositionInLine + i, SyntaxCategory.ParserError);
-
+        //    sp.PaintParserError(line, charPositionInLine + i);
     }
 }
 

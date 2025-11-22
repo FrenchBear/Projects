@@ -10,13 +10,14 @@ options {
 	caseInsensitive = true;
 }
 
+programs: program (PROGRAM_SEPARATOR program)* EOF;
+
 program
     : statement_or_comment* EOF
     ;
 
 statement_or_comment
     : statement
-    | PROGRAM_SEPARATOR
     | LINE_COMMENT
     | tag_declaration
     ;
@@ -33,7 +34,7 @@ statement:
     | t_statement           // 4 variants of test and branch
 	| label_statement
     | inv_statement         // Must be last
-//    | invalid_statement
+    | invalid_statement
     ;
 
 // Attempt to solve DSZ 05 25 issue if A4 is processed by lexer: 02 25 is recognized as A4, which breaks DSZ/IFF recognition
@@ -87,4 +88,4 @@ label_statement: sta=I76_label (D1|D2|mnemonic);
 
 inv_statement: sta=I22_invert;
 
-//invalid_statement: INVALID_TOKEN;
+invalid_statement: I40_indirect | COLON;

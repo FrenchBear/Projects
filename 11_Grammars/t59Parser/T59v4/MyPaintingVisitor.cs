@@ -22,7 +22,7 @@ internal class MyPaintingVisitor: GramBaseVisitor<string>
     private SourcePainter Sp;
     private GramParser Parser;
 
-    public void VisitTerminals(GramParser parser, GramParser.ProgramContext tree, SourcePainter sp)
+    public void VisitTerminals(GramParser parser, GramParser.ProgramsContext tree, SourcePainter sp)
     {
         Sp = sp;
         Parser = parser;
