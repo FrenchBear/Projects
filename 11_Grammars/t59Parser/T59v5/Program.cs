@@ -5,8 +5,9 @@
 
 using Antlr4.Runtime;
 using System;
+using System.Collections.Generic;
 
-namespace T59v4;
+namespace T59v5;
 
 public static class Program
 {
@@ -66,8 +67,7 @@ Sto Ind Z CLR";
         //input = @"1.2 1..2 1...2 1....2";
         //input = @"CLSINTOP4";
         //input = @"Sto Ind ind : : 12 CLR";
-        //input = @"STO 12 END CLR";
-        input = @"STO 12 STO CLR STO IND + STO INV 12";
+        //input = @"STO 12 END CLR ZYP GTO 123 GTO STO NOP";
 
         //Console.WriteLine("--- Parsing Input ---");
         //Console.WriteLine(input);
@@ -85,24 +85,14 @@ Sto Ind Z CLR";
         var myLexerErrorListener = new MyLexerErrorListener(sp, showErrors);
         lexer.RemoveErrorListeners();       // Remove default console error listener
         lexer.AddErrorListener(myLexerErrorListener);
-        var myParserErrorListener = new MyParserErrorListener(sp, showErrors);
-        parser.RemoveErrorListeners(); 
-        parser.AddErrorListener(myParserErrorListener);
 
-        var tree = parser.programs();
+        Console.WriteLine("=== Tokens ===");
 
-        var paintingVisitor = new MyPaintingVisitor();
-        paintingVisitor.VisitTerminals(parser, tree, sp);
+        var l1t = new L1Tokenizer(lexer);
+        foreach (L1Token t1 in l1t.EnumerateAllTokens())
+        {
+            Console.WriteLine(t1.AsString());
+        }
 
-        Console.WriteLine("--- Painter output ---");
-        sp.Print();
-
-        /*
-        var gramVisitor = new MyGramVisitor();
-        string result = gramVisitor.Visit(tree);
-
-        Console.WriteLine("\n--- Visitor Output ---");
-        Console.WriteLine(result);
-        */
-    }
+   }
 }

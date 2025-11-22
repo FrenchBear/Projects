@@ -15,7 +15,7 @@ using System.Text;
 using System.Xml.Linq;
 using static Antlr4.Runtime.Atn.SemanticContext;
 
-namespace T59v4;
+namespace T59v5;
 
 internal class MyPaintingVisitor: GramBaseVisitor<string>
 {
@@ -36,7 +36,7 @@ internal class MyPaintingVisitor: GramBaseVisitor<string>
         // Debug
         Console.WriteLine($"{txt}: Node Error -> {GetTerminalHierarchy(node)}");
 
-        var sc = SyntaxCategory.LexerError;
+        var sc = SyntaxCategory.Invalid;
         for (int i = 0; i < txt.Length; i++)
             Sp.Paint(node.Symbol.Line, node.Symbol.Column + i, sc);
         return null;
@@ -69,14 +69,14 @@ internal class MyPaintingVisitor: GramBaseVisitor<string>
         // I*:    parent=mnemonic ? Label : instruction
 
         if (parentName == "invalid_statement")
-            return SyntaxCategory.LexerError;
+            return SyntaxCategory.Invalid;
 
         if (tokenName == "PROGRAM_SEPARATOR")
             return SyntaxCategory.ProgramSeparator;
         if (tokenName == "EOF")
             return SyntaxCategory.Eof;
         if (tokenName == "LINE_COMMENT")
-            return SyntaxCategory.Comment;
+            return SyntaxCategory.LineComment;
         if (tokenName == "TAG")
             return SyntaxCategory.Tag;
         if (tokenName == "COLON")

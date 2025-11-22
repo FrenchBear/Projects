@@ -5,28 +5,25 @@
 // 2025-11-10   PV
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace T59v4;
+namespace T59v5;
 
 public enum SyntaxCategory: byte
 {
-    Unknown = 0,        // Default, if not painted
-    Uninitialized,      // For internal use
-    LexerError,
-    ProgramSeparator,
-    Eof,
-    Comment,
-    Number,
-    Tag,
-    Instruction,
-    Label,
-    DirectMemoryOrNumber,
-    IndirectMemory,
-    DirectAddress,
+    Unknown = 0,            // Default, if not painted
+    Uninitialized,          // For internal use
+    Invalid,                // L1InvalidToken (ex: ZYP). Incorrect/incomplete statements will be stored in a L2InvalidStatement, and its individual tokens may still keey their categegory
+    ProgramSeparator,       // END
+    Eof,                    // Eof
+    LineComment,            // souble slash and following text up to EOL
+    Number,                 // Number
+    Tag,                    // @xxx (and also :)
+    Instruction,            // Any valid instruction
+    Label,                  // Either instruction or D2 with D2 value>=10
+    DirectMemoryOrNumber,   // D1|D2 in direct statements
+    IndirectMemory,         // D1|D2 in indirect statements
+    DirectAddress,          // A3 (123) or D2 D2 with 1st D2 <10> (01 23)
 }
 
 public record struct Paint
@@ -136,10 +133,10 @@ internal class SourcePainter
     {
         switch (p.cat)
         {
-            case SyntaxCategory.Comment:
+            case SyntaxCategory.LineComment:
                 Console.ForegroundColor = ConsoleColor.Green;
                 break;
-            case SyntaxCategory.LexerError:
+            case SyntaxCategory.Invalid:
                 Console.ForegroundColor = ConsoleColor.Black;
                 Console.BackgroundColor = ConsoleColor.Red;
                 break;
