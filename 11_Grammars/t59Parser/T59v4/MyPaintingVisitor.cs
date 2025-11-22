@@ -55,6 +55,9 @@ internal class MyPaintingVisitor: GramBaseVisitor<string>
         // A3|A4: parent=bd_statement ? DirectAddress
         // I*:    parent=mnemonic ? Label : instruction
 
+        if (parentName == "invalid_statement")
+            return SyntaxCategory.LexerError;
+
         if (tokenName == "PROGRAM_SEPARATOR")
             return SyntaxCategory.ProgramSeparator;
         if (tokenName == "EOF")

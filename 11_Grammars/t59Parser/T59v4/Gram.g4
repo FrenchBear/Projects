@@ -13,7 +13,7 @@ options {
 programs: program (PROGRAM_SEPARATOR program)* EOF;
 
 program
-    : statement_or_comment* EOF
+    : statement_or_comment*
     ;
 
 statement_or_comment

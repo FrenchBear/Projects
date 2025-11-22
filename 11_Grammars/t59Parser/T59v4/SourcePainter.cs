@@ -64,9 +64,15 @@ internal class SourcePainter
             Cats[line - 1][charPositionInLine].cat = cat;
     }
 
+    public void PaintParserError(int line, int charPositionInLine)
+    {
+        if (charPositionInLine < Cats[line - 1].Length)
+            Cats[line - 1][charPositionInLine].ParserError = true;
+    }
+
     public void Print()
     {
-        SyntaxCategory at = SyntaxCategory.Uninitialized;
+        Paint at = new Paint { cat = SyntaxCategory.Uninitialized, ParserError = false };
         var sbc = new StringBuilder();      // For characters
         var sbs = new StringBuilder();      // For spaces
         for (int i = 0; i < Lines.Length; i++)
@@ -85,8 +91,8 @@ internal class SourcePainter
 
                 // c is not a space
                 // If current attribute is the same as current buffer (or not assigned yet), we accumulate
-                var a = c=='\n' ? SyntaxCategory.Eof : Cats[i][j].cat;      // Trick to force printing and reset to 'no background' before printing newline visually better
-                if (at == SyntaxCategory.Uninitialized || at==a)
+                var a = c=='\n' ? new Paint { cat = SyntaxCategory.Eof, ParserError = false } : Cats[i][j];      // Trick to force printing and reset to 'no background' before printing newline visually better
+                if (at.cat == SyntaxCategory.Uninitialized || at==a)
                 {
                     // If we have accumulated spaces, merge them
                     if (sbs.Length > 0)
@@ -126,9 +132,9 @@ internal class SourcePainter
             Console.Write(sbs.ToString());
     }
 
-    private void SetColorMode(SyntaxCategory sc)
+    private void SetColorMode(Paint p)
     {
-        switch (sc)
+        switch (p.cat)
         {
             case SyntaxCategory.Comment:
                 Console.ForegroundColor = ConsoleColor.Green;
@@ -163,10 +169,13 @@ internal class SourcePainter
                 Console.ForegroundColor = ConsoleColor.White;
                 break;
         }
+        if (p.ParserError)
+            Console.Write("\x1b[4m");
     }
 
     private void ResetColorMode()
     {
+        Console.Write("\x1b[0m");
         Console.ForegroundColor = ConsoleColor.Gray;
         Console.BackgroundColor = ConsoleColor.Black;
     }

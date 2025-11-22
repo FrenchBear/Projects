@@ -65,7 +65,8 @@ Sto Ind Z CLR";
         //input = @"-14-3.-11.-12-3.4ee2-34--12-421e12-e.e..21431-e114e-13.113.-e.ee14.4e.-3-134e-2413-3.2e3e434e1ee422-33324e33..23-333-211422-33-ee43-432-.3e43..-.-1.3e.e3.42323.42433343e2.ee4e-e3.e-43222-e4331e31.ee44344234.-44e.2321-1432--343e4ee-122431.2e-.3e-21-ee.442e3e-132313.2-2--.3.324-4.e1-e4343e22ee2e2-1233";
         //input = @"1.2 1..2 1...2 1....2";
         //input = @"CLSINTOP4";
-        input = @"Sto Ind ind : : 12 CLR";
+        //input = @"Sto Ind ind : : 12 CLR";
+        input = @"STO 12 END CLR";
 
         //Console.WriteLine("--- Parsing Input ---");
         //Console.WriteLine(input);

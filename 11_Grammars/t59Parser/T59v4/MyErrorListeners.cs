@@ -79,8 +79,8 @@ internal class MyParserErrorListener(SourcePainter sp, bool showErrors): BaseErr
         // In conclusion, MyParserErrorListener reports useful information in msg: "mismatched input 'Sin' expecting {'Ind', D1, D2}"
         // but this is not really helpful for painting
 
-        //for (int i = 0; i <= offendingSymbol.StopIndex - offendingSymbol.StartIndex; i++)
-        //    sp.PaintParserError(line, charPositionInLine + i);
+        for (int i = 0; i <= offendingSymbol.StopIndex - offendingSymbol.StartIndex; i++)
+            sp.PaintParserError(line, charPositionInLine + i);
     }
 }
 
