@@ -68,6 +68,8 @@ Sto Ind Z CLR";
         //input = @"CLSINTOP4";
         //input = @"Sto Ind ind : : 12 CLR";
         //input = @"STO 12 END CLR ZYP GTO 123 GTO STO NOP";
+        input = "CLR Inv Sin Inv CE STO 12 HIR 40 SUM Ind 25 ST* 42 INV Prd 12 Inv Prd Ind 33 GTO CLR GTO 25 GTO 123 GTO 01 23";
+        //input = "GTO 25";
 
         //Console.WriteLine("--- Parsing Input ---");
         //Console.WriteLine(input);
@@ -89,10 +91,11 @@ Sto Ind Z CLR";
         Console.WriteLine("=== Tokens ===");
 
         var l1t = new L1Tokenizer(lexer);
-        foreach (L1Token t1 in l1t.EnumerateAllTokens())
-        {
-            Console.WriteLine(t1.AsString());
-        }
+        //foreach (L1Token t1 in l1t.EnumerateL1Tokens())
+        //    Console.WriteLine(t1.AsString());
 
-   }
+        var l2p = new L2Parser(l1t);
+        foreach (L2StatementBase l2s in l2p.EnumerateL2Statements())
+            Console.WriteLine(l2s.AsString());
+    }
 }
