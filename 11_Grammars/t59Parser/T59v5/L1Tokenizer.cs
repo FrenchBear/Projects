@@ -109,7 +109,7 @@ sealed record TIKey
     public required string M { get; init; }  // Mnemonic (canonical version)
     public StatementSyntax S { get; init; }  // Syntax
     public bool I { get; init; }             // Invertible
-    public int MOp { get; init; }            // Indirect merged opcode, or 0 if instruction is not mergeable
+    public int MOp { get; init; }            // Indirect merged index in TIKeys, or 0 if instruction is not mergeable
 
     public override string ToString()
     {
@@ -163,20 +163,20 @@ internal sealed class L1Tokenizer(Vocab lexer)
         TIKeys.Add(Vocab.I33_square, new TIKey { Op = [33], M = "x²", S = StatementSyntax.a });
         TIKeys.Add(Vocab.I34_square_root, new TIKey { Op = [34], M = "√", S = StatementSyntax.a });
         TIKeys.Add(Vocab.I35_reciprocal, new TIKey { Op = [35], M = "1/x", S = StatementSyntax.a });
-        TIKeys.Add(Vocab.I36_program, new TIKey { Op = [36], M = "Pgm", S = StatementSyntax.di, MOp = 62 });
+        TIKeys.Add(Vocab.I36_program, new TIKey { Op = [36], M = "Pgm", S = StatementSyntax.di, MOp = Vocab.I62_program_indirect });
         TIKeys.Add(Vocab.I37_polar_to_rectangular, new TIKey { Op = [37], M = "P->R", S = StatementSyntax.a, I = true });
         TIKeys.Add(Vocab.I38_sin, new TIKey { Op = [38], M = "sin", S = StatementSyntax.a, I = true });
         TIKeys.Add(Vocab.I39_cos, new TIKey { Op = [39], M = "cos", S = StatementSyntax.a, I = true });
         TIKeys.Add(Vocab.I40_indirect, new TIKey { Op = [40], M = "Ind", S = StatementSyntax.p });
 
-        TIKeys.Add(Vocab.I42_store, new TIKey { Op = [42], M = "STO", S = StatementSyntax.di, MOp = 72 });
-        TIKeys.Add(Vocab.I43_recall, new TIKey { Op = [43], M = "RCL", S = StatementSyntax.di, MOp = 73 });
-        TIKeys.Add(Vocab.I44_sum, new TIKey { Op = [44], M = "SUM", S = StatementSyntax.di, I = true, MOp = 74 });
+        TIKeys.Add(Vocab.I42_store, new TIKey { Op = [42], M = "STO", S = StatementSyntax.di, MOp = Vocab.I72_store_indirect });
+        TIKeys.Add(Vocab.I43_recall, new TIKey { Op = [43], M = "RCL", S = StatementSyntax.di, MOp = Vocab.I73_recall_indirect });
+        TIKeys.Add(Vocab.I44_sum, new TIKey { Op = [44], M = "SUM", S = StatementSyntax.di, I = true, MOp = Vocab.I74_sum_indirect });
         TIKeys.Add(Vocab.I45_power, new TIKey { Op = [45], M = "yˣ", S = StatementSyntax.a, I = true });
 
         TIKeys.Add(Vocab.I47_clear_memory, new TIKey { Op = [47], M = "CMs", S = StatementSyntax.a });
-        TIKeys.Add(Vocab.I48_exchange, new TIKey { Op = [48], M = "Exc", S = StatementSyntax.di, MOp = 63 });
-        TIKeys.Add(Vocab.I49_product, new TIKey { Op = [49], M = "Prd", S = StatementSyntax.di, I = true, MOp = 64 });
+        TIKeys.Add(Vocab.I48_exchange, new TIKey { Op = [48], M = "Exc", S = StatementSyntax.di, MOp = Vocab.I63_exchange_indirect });
+        TIKeys.Add(Vocab.I49_product, new TIKey { Op = [49], M = "Prd", S = StatementSyntax.di, I = true, MOp = Vocab.I64_product_indirect });
         TIKeys.Add(Vocab.I50_absolute, new TIKey { Op = [50], M = "|x|", S = StatementSyntax.a });
 
         TIKeys.Add(Vocab.I52_exponent, new TIKey { Op = [52], M = "EE", S = StatementSyntax.a, I = true });
@@ -188,7 +188,7 @@ internal sealed class L1Tokenizer(Vocab lexer)
         TIKeys.Add(Vocab.I58_fix, new TIKey { Op = [58], M = "Fix", S = StatementSyntax.di, I = true });
         TIKeys.Add(Vocab.I59_integer, new TIKey { Op = [59], M = "Int", S = StatementSyntax.a, I = true });
         TIKeys.Add(Vocab.I60_degrees, new TIKey { Op = [60], M = "Deg", S = StatementSyntax.a });
-        TIKeys.Add(Vocab.I61_goto, new TIKey { Op = [61], M = "GTO", S = StatementSyntax.b, MOp = 83 });
+        TIKeys.Add(Vocab.I61_goto, new TIKey { Op = [61], M = "GTO", S = StatementSyntax.b, MOp = Vocab.I83_goto_indirect });
         TIKeys.Add(Vocab.I62_program_indirect, new TIKey { Op = [62], M = "PG*", S = StatementSyntax.i });
         TIKeys.Add(Vocab.I63_exchange_indirect, new TIKey { Op = [63], M = "EX*", S = StatementSyntax.i });
         TIKeys.Add(Vocab.I64_product_indirect, new TIKey { Op = [64], M = "PD*", S = StatementSyntax.i, I = true });
@@ -196,7 +196,7 @@ internal sealed class L1Tokenizer(Vocab lexer)
         TIKeys.Add(Vocab.I66_pause, new TIKey { Op = [66], M = "Pause", S = StatementSyntax.a });
         TIKeys.Add(Vocab.I67_x_equals_t, new TIKey { Op = [67], M = "x=t", S = StatementSyntax.b, I = true });
         TIKeys.Add(Vocab.I68_nop, new TIKey { Op = [68], M = "Nop", S = StatementSyntax.a });
-        TIKeys.Add(Vocab.I69_operation, new TIKey { Op = [69], M = "Op", S = StatementSyntax.di, MOp = 84 });
+        TIKeys.Add(Vocab.I69_operation, new TIKey { Op = [69], M = "Op", S = StatementSyntax.di, MOp = Vocab.I84_operation_indirect });
         TIKeys.Add(Vocab.I70_radians, new TIKey { Op = [70], M = "Rad", S = StatementSyntax.a });
         TIKeys.Add(Vocab.I71_subroutine, new TIKey { Op = [71], M = "SBR", S = StatementSyntax.b, I = true });
         TIKeys.Add(Vocab.I72_store_indirect, new TIKey { Op = [72], M = "ST*", S = StatementSyntax.i });

@@ -39,7 +39,7 @@ public static class Program
 
         //#pragma warning disable IDE0059 // Unnecessary assignment of a value
         string input = File.ReadAllText(filePath);
-        Console.WriteLine($"Parsing file: {filePath}...");
+        //Console.WriteLine($"Parsing file: {filePath}...");
 
         //input = "1234\n1.414\n.333\nLBL A\n-6.02e23\n1E10\n1E+10\n-1234567890e-79";
         //input = "1 . 6 +/- EE 1 9 +/-";
@@ -50,9 +50,10 @@ public static class Program
         //input = "STO IND 25";
         //input = "123 45 6\n12 . 34 +/- EE +/- 12";
         //input = "LBL A 1234567890 LBL B";
-        //input = "STO 12 RTN END SIG+ INV Dsz 03 123 END Nop";
+        input = "STO 12 RTN END SIG+ INV Dsz 03 123 END Nop";
         //input = ". +/- 5";
-        input = "STO ZAP CLR";
+        //input = "STO ZAP CLR";
+        //input = "STO 12";
 
         // 2. The ANTLR parsing pipeline
         var inputStream = new AntlrInputStream(input);

@@ -1,5 +1,7 @@
-// Fourth variant of T59 grammar - Parser
-// Don't use INVALID_TOKEN anymore
+// 5th variant of T59 grammar - Parser
+// Use my own parser to control parser recovery in case of error (invalid token, unexpected token) since
+// it seems impossible to do in a reliable way using ANTLR parser
+// I still use ANTLR4 lexer to generate initial flow of Vocab tokens/lexer tokens
 //
 // 2025-11-20   PV
 
@@ -52,7 +54,8 @@ Sto Ind Z CLR";
         //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\Master Library\ML-01.T59");
         //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\Master Library\ML-01-!ALL.t59");
         //input = "// Initial comment\nLbl CLR STO 12 @Loop3: STO IND 12 GTO CLR GTO 25 GTO 123 GTO 01 23 END ZYP 123456 GTO @Tag Sto Ind Ind 12 Nop Sto Sin e^x INV SBR";
-        input = "SBR 240 INV SBR STO IND 12 INV SUM IND 33";
+        //input = "SBR 240 INV SBR STO IND 12 INV SUM IND 33 OP 23 OP IND 23";
+        input = "1.414 * 6.02e-23";
 
         //Console.WriteLine("--- Parsing Input ---");
         //Console.WriteLine(input);

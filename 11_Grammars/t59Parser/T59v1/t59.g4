@@ -25,6 +25,7 @@
 // 2025-11-11   PV      Renamed rules for consistency; Ind can't be a Key label (otherwise GTO Ind xx is misinterpreted); x≥t ant x>=t are two distinct variants!; Added EQ* and GE*
 // 2025-11-13   PV      Added END statement to allow multiple grograms in the same source text
 // 2025-11-19   PV      This grammar does work with well-formed programs, but not with invalid instructions or invalid statements
+// 2025-11-24   PV      Reduced INVALID_TOKEN to a single char
 
 grammar t59;
 
@@ -161,7 +162,7 @@ address_label:  (d d d)|('0' d WS d d);                         // The version n
 numeric_key_label: ('1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9') d;     // 10..99, an extension as a substitute to keys labels (25=CLR)
 op_number:      (('0'|'1'|'2'|'3') d) | ('4' '0');              // TI-58C has Op 40 (printer detection)
 
-INVALID_TOKEN: ~[ \t\r\n]+;
+INVALID_TOKEN: ~[ \t\r\n];      // Can't use + otherwise it will absorb too much inside parser rules (ex: 12 is INVALID_TOKEN INVALID_TOKEN for STO 12)
 
 // ----------------------------------
 

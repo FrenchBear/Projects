@@ -7,6 +7,8 @@
 using Antlr4.Runtime;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Reflection.Emit;
 
 namespace T59v5;
 
@@ -63,48 +65,46 @@ internal sealed class L3Encoder(L2Parser L2P)
                     {
                         // Merge Vocab tokens (can't keep L1 tokens since they will be deleted)
                         List<IToken> l0tokens = [];
-                        l0tokens.AddRange(l2si.L1Tokens[0].Tokens);
-                        l0tokens.AddRange(l2si.L1Tokens[1].Tokens);
+                        l0tokens.AddRange(l2si.L1Tokens[ix].Tokens);
+                        l0tokens.AddRange(l2si.L1Tokens[ix + 1].Tokens);
 
                         var l1inst = new L1Instruction() { Tokens = l0tokens, Cat = SyntaxCategory.Instruction, Inst = L1Tokenizer.TIKeys[newTIKey] };
-                        l2si.L1Tokens.Clear();
-                        l2si.L1Tokens.Add(l1inst);
-                        l2si.OpCodes.RemoveAt(0);
-                        l2si.OpCodes[0] = 92;
+                        l2si.L1Tokens.RemoveAt(ix);
+                        l2si.L1Tokens[ix] = l1inst;
+                        l2si.OpCodes.RemoveAt(ix);
+                        l2si.OpCodes[ix] = l1inst.Inst.Op[0];
                     }
 
                     // Special case, merge INV SBR -> RTN
                     if (l2si.OpCodes is [22, 71])
                         MergeInstructions(0, Vocab.I92_return);
-                    //{
-                    //    // Merge Vocab tokens (can't keep L1 tokens since they will be deleted)
-                    //    List<IToken> l0tokens = [];
-                    //    l0tokens.AddRange(l2si.L1Tokens[0].Tokens);
-                    //    l0tokens.AddRange(l2si.L1Tokens[1].Tokens);
 
-                    //    var l1inst = new L1Instruction() { Tokens = l0tokens, Cat = SyntaxCategory.Instruction, Inst = L1Tokenizer.TIKeys[Vocab.I92_return] };
-                    //    l2si.L1Tokens.Clear();
-                    //    l2si.L1Tokens.Add(l1inst);
-                    //    l2si.OpCodes.RemoveAt(0);
-                    //    l2si.OpCodes[0] = 92;
-                    //}
-                    /*
-                    // Check if we have a mergeable instruction, skipping initial INV
+                    // Check if we have a mergeable instruction, skipping optional initial INV
                     int start = (l2si.L1Tokens[0] is L1Instruction { Inst.Op: [22] }) ? 1 : 0;
                     if (start + 1 < l2si.L1Tokens.Count && l2si.L1Tokens[start] is L1Instruction inst && l2si.L1Tokens[start + 1] is L1Instruction next)
                     {
                         if (inst.Inst.MOp > 0 && next.Inst.Op is [40])      // Meargeable opcode followed by IND?
-                        {
-                            var merged = new L1Instruction();
-                        }
+                            MergeInstructions(start, inst.Inst.MOp);
                     }
-                    */
 
                     yield return l2si;
                     break;
 
                 case L2Number l2n:
-                    // ToDo
+                    foreach (var l1t in l2n.L1Tokens)
+                        foreach (char c in string.Join("", l1t.Tokens.Select(t => t.Text)))
+                        {
+                            if (c is >= '0' and <= '9')
+                                l2n.OpCodes.Add((byte)(c - '0'));
+                            else if (c == '-')
+                                l2n.OpCodes.Add(94);
+                            else if (c == '.')
+                                l2n.OpCodes.Add(93);
+                            else if (c is 'e' or 'E')
+                                l2n.OpCodes.Add(52);
+                            else if (c != '+')
+                                Debugger.Break();
+                        }
                     yield return l2n;
                     break;
 
