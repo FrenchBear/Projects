@@ -4,6 +4,7 @@
 //
 // 2025-11-24   PV      First version
 
+using Antlr4.Runtime;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -56,6 +57,49 @@ internal sealed class L3Encoder(L2Parser L2P)
                         else
                             Debugger.Break();
                     }
+
+                    // Merge instructions at (ix, ix+1) in current l2si, preserving Vocab tokens
+                    void MergeInstructions(int ix, int newTIKey)
+                    {
+                        // Merge Vocab tokens (can't keep L1 tokens since they will be deleted)
+                        List<IToken> l0tokens = [];
+                        l0tokens.AddRange(l2si.L1Tokens[0].Tokens);
+                        l0tokens.AddRange(l2si.L1Tokens[1].Tokens);
+
+                        var l1inst = new L1Instruction() { Tokens = l0tokens, Cat = SyntaxCategory.Instruction, Inst = L1Tokenizer.TIKeys[newTIKey] };
+                        l2si.L1Tokens.Clear();
+                        l2si.L1Tokens.Add(l1inst);
+                        l2si.OpCodes.RemoveAt(0);
+                        l2si.OpCodes[0] = 92;
+                    }
+
+                    // Special case, merge INV SBR -> RTN
+                    if (l2si.OpCodes is [22, 71])
+                        MergeInstructions(0, Vocab.I92_return);
+                    //{
+                    //    // Merge Vocab tokens (can't keep L1 tokens since they will be deleted)
+                    //    List<IToken> l0tokens = [];
+                    //    l0tokens.AddRange(l2si.L1Tokens[0].Tokens);
+                    //    l0tokens.AddRange(l2si.L1Tokens[1].Tokens);
+
+                    //    var l1inst = new L1Instruction() { Tokens = l0tokens, Cat = SyntaxCategory.Instruction, Inst = L1Tokenizer.TIKeys[Vocab.I92_return] };
+                    //    l2si.L1Tokens.Clear();
+                    //    l2si.L1Tokens.Add(l1inst);
+                    //    l2si.OpCodes.RemoveAt(0);
+                    //    l2si.OpCodes[0] = 92;
+                    //}
+                    /*
+                    // Check if we have a mergeable instruction, skipping initial INV
+                    int start = (l2si.L1Tokens[0] is L1Instruction { Inst.Op: [22] }) ? 1 : 0;
+                    if (start + 1 < l2si.L1Tokens.Count && l2si.L1Tokens[start] is L1Instruction inst && l2si.L1Tokens[start + 1] is L1Instruction next)
+                    {
+                        if (inst.Inst.MOp > 0 && next.Inst.Op is [40])      // Meargeable opcode followed by IND?
+                        {
+                            var merged = new L1Instruction();
+                        }
+                    }
+                    */
+
                     yield return l2si;
                     break;
 

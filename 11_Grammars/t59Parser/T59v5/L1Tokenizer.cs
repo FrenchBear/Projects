@@ -109,7 +109,7 @@ sealed record TIKey
     public required string M { get; init; }  // Mnemonic (canonical version)
     public StatementSyntax S { get; init; }  // Syntax
     public bool I { get; init; }             // Invertible
-    public int MOp { get; init; }            // Indirect merged opcode
+    public int MOp { get; init; }            // Indirect merged opcode, or 0 if instruction is not mergeable
 
     public override string ToString()
     {
@@ -128,7 +128,7 @@ internal sealed class L1Tokenizer(Vocab lexer)
 {
     private readonly Vocab lexer = lexer;
 
-    private static readonly Dictionary<int, TIKey> TIKeys = [];
+    public static readonly Dictionary<int, TIKey> TIKeys = [];
 
     static L1Tokenizer()
     {
