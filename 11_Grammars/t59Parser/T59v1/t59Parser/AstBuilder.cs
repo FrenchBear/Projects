@@ -137,21 +137,11 @@ public class MyTi58VisitorAstBuilder(t59Parser parser): t59BaseVisitor<object>
         }
 
         // DO NOT add InterStatementWhileSpace in the AST
-        //else if (node.Parent is ParserRuleContext { RuleIndex: t59Parser.RULE_program })
-        //{
-        //    // White space is only processed if top level
-        //    var at = new List<AstToken> {
-        //        new(node.GetText(), SyntaxCategory.WhiteSpace)
-        //    };
-
-        //    
-        //    var ws = new AstInterStatementWhiteSpace(at);
-        //    Program.Statements.Add(ws);
-        //}
 
         return base.VisitTerminal(node);
     }
 
+    // Generate opcodes for a scientific number
     public override object VisitNumber([NotNull] t59Parser.NumberContext context)
     {
         var ltn = GetTerminalNodes(context);

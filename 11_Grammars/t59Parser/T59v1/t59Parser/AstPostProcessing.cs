@@ -43,7 +43,7 @@ public class AstPostProcessor
                                 astTokens[i] = astTokens[i] with { Text = lsi[0] };
     }
 
-    // Group digits in registers (direct and indirect), Pp, Pgm, ... (flags and Dsz use 1 digit by default)
+    // Group digits in registers (direct and indirect), Op, Pgm, ... (flags and Dsz use 1 digit by default)
     // since parser breaks down each digit in its own separate token
     private void GroupDigits(AstProgram program)
     {
@@ -196,15 +196,6 @@ public class AstPostProcessor
         int j = startIndex + 1;
         for (; ; )
         {
-            //if (program.Statements[j] is AstInterStatementWhiteSpace(_))
-            //{
-            //    if (!preserveISWS)
-            //        program.Statements.RemoveAt(j);
-            //    else
-            //        preserveISWS = false;
-            //    continue;
-            //}
-
             // Don't remember if AstComment are surrounded by AstInterStatementWhiteSpace...
             // Right now, I keep a ISWS after a comment, should be tested...
             if (program.Statements[j] is AstComment(_))
