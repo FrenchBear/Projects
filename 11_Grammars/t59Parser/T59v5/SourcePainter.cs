@@ -14,7 +14,7 @@ public enum SyntaxCategory: byte
     Unknown = 0,            // Default, if not painted
     Uninitialized,          // For internal use
     Invalid,                // L1InvalidToken (ex: ZYP). Incorrect/incomplete statements will be stored in a L2InvalidStatement, and its individual tokens may still keey their categegory
-    ProgramSeparator,       // END
+    PgmSeparator,       // END
     Eof,                    // Eof
     LineComment,            // souble slash and following text up to EOL
     Number,                 // Number
@@ -105,10 +105,10 @@ internal sealed class SourcePainter
                 // at!=a -> time to print
 
                 // First accumulated string with at attribute
-                SetColorMode(at);
+                Console.Write(Couleurs.GetColorMode(at.cat));
                 Console.Write(sbc.ToString());
                 sbc.Clear();
-                ResetColorMode();
+                Console.Write(Couleurs.GetDefaultColor());
                 // Then spaces
                 if (sbs.Length > 0)
                 {
@@ -122,61 +122,34 @@ internal sealed class SourcePainter
             }
         }
         // reliquary
-        SetColorMode(at);
+        Console.Write(Couleurs.GetColorMode(at.cat));
         Console.Write(sbc.ToString());
-        ResetColorMode();
+        Console.Write(Couleurs.GetDefaultColor());
         if (sbs.Length > 0)
             Console.Write(sbs.ToString());
     }
+}
 
-    private static void SetColorMode(Paint p)
-    {
-        switch (p.cat)
+public static class Couleurs
+{
+    private static string CC(int r, int g, int b) => "\x1b[38;2;" + $"{r};{g};{b}m";
+
+    public static string GetColorMode(SyntaxCategory sc)
+        => sc switch
         {
-            case SyntaxCategory.LineComment:
-                Console.ForegroundColor = ConsoleColor.Green;
-                break;
-            case SyntaxCategory.Invalid:
-                Console.ForegroundColor = ConsoleColor.Black;
-                Console.BackgroundColor = ConsoleColor.Red;
-                break;
-            case SyntaxCategory.Unknown:
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.BackgroundColor = ConsoleColor.Blue;
-                break;
-            case SyntaxCategory.Instruction:
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                break;
-            case SyntaxCategory.Number:
-                Console.ForegroundColor = ConsoleColor.Gray;
-                break;
-            case SyntaxCategory.DirectMemoryOrNumber:
-                Console.ForegroundColor = ConsoleColor.Red;
-                break;
-            case SyntaxCategory.IndirectMemory:
-                Console.ForegroundColor = ConsoleColor.Magenta;
-                break;
-            case SyntaxCategory.Tag:
-                Console.ForegroundColor = ConsoleColor.Blue;
-                break;
-            case SyntaxCategory.Label:
-                Console.ForegroundColor = ConsoleColor.DarkYellow;
-                break;
-            case SyntaxCategory.DirectAddress:
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                break;
-            default:
-                Console.ForegroundColor = ConsoleColor.White;
-                break;
-        }
-        if (p.ParserError)
-            Console.Write("\x1b[4m");
-    }
+            SyntaxCategory.LineComment => CC(64, 192, 64),
+            SyntaxCategory.Invalid => CC(255, 64, 64),
+            SyntaxCategory.Unknown => CC(255, 0, 0),
+            SyntaxCategory.Instruction => CC(128, 192, 255),
+            SyntaxCategory.Number => CC(192, 192, 192),
+            SyntaxCategory.DirectMemoryOrNumber => CC(255, 192, 255),
+            SyntaxCategory.IndirectMemory => CC(255, 128, 255),
+            //SyntaxCategory.Tag => CC(0, 128, 255),
+            SyntaxCategory.Tag => CC(255, 192, 128),
+            SyntaxCategory.Label => CC(255, 192, 0),
+            SyntaxCategory.DirectAddress => CC(255, 144, 0),
+            _ => CC(255, 255, 255)      // Uninitialized, PgmSeparator, Eof
+        };
 
-    private static void ResetColorMode()
-    {
-        Console.Write("\x1b[0m");
-        Console.ForegroundColor = ConsoleColor.Gray;
-        Console.BackgroundColor = ConsoleColor.Black;
-    }
+    public static string GetDefaultColor() => "\x1b[39m";
 }

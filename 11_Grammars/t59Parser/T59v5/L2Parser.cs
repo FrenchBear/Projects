@@ -58,6 +58,8 @@ sealed record L2InvalidStatement: L2StatementBase { }
 
 sealed record L2Instruction: L2StatementBase { }
 
+sealed record L2Tag: L2StatementBase { }
+
 sealed record L2Number: L2StatementBase { }
 
 // -----
@@ -76,6 +78,7 @@ internal sealed class L2Parser(L1Tokenizer L1T)
         expect_dib_i,
         expect_m,           // Expects mnemonic (L1Instruction excepted Ind)
         expect_a4_part_2,   // When expect_b finds a D2 starting with '0', valid follow-up is D2
+        expect_colon,       // After a tag at state 0, expects :
     }
 
     public IEnumerable<L2StatementBase> EnumerateL2Statements()
@@ -143,9 +146,7 @@ internal sealed class L2Parser(L1Tokenizer L1T)
                     // will be flushed at next L1Token that is accepted at state 0.
                     // In theory we should always get L1Eof or L1ProgramSeparator before the end of the flow, and these
                     // L1Token are valid in state 0
-                    if (token is L1InvalidToken
-                        or L1Tag
-                        or L1Colon)
+                    if (token is L1InvalidToken)
                     {
                         Context.Add(token);
                         continue;
@@ -173,6 +174,11 @@ internal sealed class L2Parser(L1Tokenizer L1T)
                         case L1LineComment l1lc:
                             yield return new L2LineComment(l1lc);
                             break;
+
+                        case L1Tag:
+                            Context.Add(token);
+                            state = L2ParserState.expect_colon;
+                            continue;
 
                         case L1Num:
                         case L1D2:
@@ -437,11 +443,41 @@ internal sealed class L2Parser(L1Tokenizer L1T)
                     break;
 
                 case L2ParserState.expect_m:
-                    if (IsLabelMnemonic(token))
+                    if (IsLabelMnemonic(token) || token is L1D2 ld2 && ld2.Tokens[0].Text != "40" && ld2.Tokens[0].Text[0] != '0')
                     {
                         Context.Add(token with { Cat = SyntaxCategory.Label });     // Need to recategorise token
                         var l2s = new L2Instruction();
                         l2s.L1Tokens.AddRange(Context);     // AddRange because of INV x=t for instance
+                        Context.Clear();
+                        yield return l2s;
+                        state = L2ParserState.zero;
+                    }
+                    //if (token is L1D2 ld2 && ld2.Tokens[0].Text != "40" && ld2.Tokens[0].Text[0] != '0')
+                    //{
+                    //    // Extension, numeric label 10..99 (except 40)
+                    //    Context.Add(token with { Cat = SyntaxCategory.Label });     // Need to categorise token
+                    //    var l2s = new L2Instruction();
+                    //    l2s.L1Tokens.AddRange(Context);     // AddRange because of INV x=t for instance
+                    //    Context.Clear();
+                    //    yield return l2s;
+                    //    state = L2ParserState.zero;
+                    //}
+                    else
+                    {
+                        // Flush incomplete context as an error
+                        foreach (var s in FlushContext(false))
+                            yield return s;
+                        state = L2ParserState.zero;
+                        goto RestartAnalysis;
+                    }
+                    break;
+
+                case L2ParserState.expect_colon:
+                    if (token is L1Colon)
+                    {
+                        Context.Add(token);
+                        var l2s = new L2Tag();
+                        l2s.L1Tokens.AddRange(Context);
                         Context.Clear();
                         yield return l2s;
                         state = L2ParserState.zero;

@@ -8,10 +8,10 @@
 //
 // 2025-11-22   PV
 
+using Antlr4.Runtime;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Antlr4.Runtime;
 
 namespace T59v5;
 
@@ -24,9 +24,18 @@ abstract record L1Token
 
     public virtual string AsString()
     {
-        var s = string.Join(", ", Tokens.Select(t => $"{t.Line}:{t.Column} {t.Text}"));
-        var c = Cat.ToString();
-        return $"{GetType().Name,-15}: {s,-15} {c}";
+        //var s = string.Join(", ", Tokens.Select(t => $"{t.Line}:{t.Column} {t.Text}"));
+        var s = string.Join(", ", Tokens.Select(t => t.Text));
+
+        string res = $"{GetType().Name,-15}: ";
+
+        res += Couleurs.GetColorMode(Cat);
+        res += s;
+        res += Couleurs.GetDefaultColor();
+        if (s.Length < 15)
+            res += new string(' ', 15 - s.Length);
+        res += " " + Cat.ToString();
+        return res;
     }
 }
 
@@ -44,9 +53,19 @@ sealed record L1Instruction: L1Token
         if (Cat == SyntaxCategory.Label)
             return base.AsString();
 
-        var s = string.Join(", ", Tokens.Select(t => $"{t.Line}:{t.Column} {t.Text}"));
-        var c = Cat.ToString();
-        return $"{GetType().Name,-15}: {s,-15} {c,-15} {Inst}";
+        //var s = string.Join(", ", Tokens.Select(t => $"{t.Line}:{t.Column} {t.Text}"));
+        var s = string.Join(", ", Tokens.Select(t => t.Text));
+
+        string res = $"{GetType().Name,-15}: ";
+        res += Couleurs.GetColorMode(Cat);
+        res += s;
+        res += Couleurs.GetDefaultColor();
+        if (s.Length < 15)
+            res += new string(' ', 15 - s.Length);
+        res += " " + Cat.ToString();
+        res += " " + Inst;
+
+        return res;
     }
 }
 sealed record L1D1: L1Token { }
@@ -246,7 +265,7 @@ internal sealed class L1Tokenizer(Vocab lexer)
                     break;
 
                 case Vocab.PROGRAM_SEPARATOR:
-                    var tps = new L1PgmSeparator { Tokens = [token], Cat = SyntaxCategory.ProgramSeparator };
+                    var tps = new L1PgmSeparator { Tokens = [token], Cat = SyntaxCategory.PgmSeparator };
                     yield return tps;
                     break;
 

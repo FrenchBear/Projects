@@ -45,7 +45,7 @@ I30_tan: 'tan';
 
 I32_exchange_x_and_t: 'x⇄t' | 'x↔t' | 'x≷t' | 'x<>t' | 'x/t' | 'x-t' | 'x~t';
 I33_square: 'x²' | 'x^2' | 'X2';
-I34_square_root: '√' | '√x' | 'SQRT';
+I34_square_root: '√' | '√x' | 'SQRT' | 'SQR';
 I35_reciprocal: '1/x';
 I36_program: 'Pgm';
 I37_polar_to_rectangular: 'P->R' | 'P/R' | 'P-R';

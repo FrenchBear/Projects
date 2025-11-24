@@ -47,7 +47,11 @@ GTO 7 GTO Z GTO Ind Z GTO 43 21 GTO IND IND 25 GTO IND IND IND 25
 
 Sto Ind Z CLR";
 
-        input = @"Fix 4 INV Fix SBR 240 INV SBR";
+        //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\all-1.t59");
+        //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\all-2.t59");
+        //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\Master Library\ML-01.T59");
+        //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\Master Library\ML-01-!ALL.t59");
+        input = "// Initial comment\nLbl CLR STO 12 @Loop3: STO IND 12 GTO CLR GTO 123 GTO 01 23 END ZYP 123456 GTO @Tag";
 
         //Console.WriteLine("--- Parsing Input ---");
         //Console.WriteLine(input);
