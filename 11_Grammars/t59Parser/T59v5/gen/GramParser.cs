@@ -36,26 +36,26 @@ public partial class GramParser : Parser {
 	protected static DFA[] decisionToDFA;
 	protected static PredictionContextCache sharedContextCache = new PredictionContextCache();
 	public const int
-		WS=1, LINE_COMMENT=2, PROGRAM_SEPARATOR=3, I11_a=4, I12_b=5, I13_c=6, 
-		I14_d=7, I15_e=8, I16_a_prime=9, I17_b_prime=10, I18_c_prime=11, I19_d_prime=12, 
-		I10_e_prime=13, I22_invert=14, I23_ln=15, I24_correct_entry=16, I25_clear=17, 
-		I27_2nd_invert=18, I28_log=19, I29_clear_program=20, I20_2nd_clear=21, 
-		I32_exchange_x_and_t=22, I33_square=23, I34_square_root=24, I35_reciprocal=25, 
-		I36_program=26, I37_polar_to_rectangular=27, I38_sin=28, I39_cos=29, I30_tan=30, 
-		I42_store=31, I43_recall=32, I44_sum=33, I45_power=34, I47_clear_memory=35, 
-		I48_exchange=36, I49_product=37, I40_indirect=38, I52_exponent=39, I53_left_parenthesis=40, 
-		I54_right_parenthesis=41, I55_divide=42, I57_engineering=43, I58_fix=44, 
-		I59_integer=45, I50_absolute=46, I61_goto=47, I62_program_indirect=48, 
-		I63_exchange_indirect=49, I64_product_indirect=50, I65_multiply=51, I66_pause=52, 
-		I67_x_equals_t=53, I67_x_equals_t_indextra=54, I68_nop=55, I69_operation=56, 
-		I60_degrees=57, I71_subroutine=58, I72_store_indirect=59, I73_recall_indirect=60, 
-		I74_sum_indirect=61, I75_subtract=62, I76_label=63, I77_x_greater_or_equal_than_t=64, 
-		I77_x_greater_or_equal_than_t_indextra=65, I78_sigma_plus=66, I79_average=67, 
-		I70_radians=68, I81_reset=69, I82_hir=70, I83_goto_indirect=71, I84_operation_indirect=72, 
-		I85_add=73, I86_set_flag=74, I87_if_flag=75, I88_dms=76, I89_pi=77, I80_grades=78, 
-		I91_run_stop=79, I92_return=80, I93_dot=81, I94_change_sign=82, I95_equals=83, 
-		I96_write=84, I97_dsz=85, I98_advance=86, I99_print=87, I90_list=88, I123_e_power_x=89, 
-		I128_10_power_x=90, D1=91, D2=92, A3=93, NUM=94, TAG=95, COLON=96, INVALID_CHAR=97;
+		WS=1, LINE_COMMENT=2, PROGRAM_SEPARATOR=3, I10_e_prime=4, I11_a=5, I12_b=6, 
+		I13_c=7, I14_d=8, I15_e=9, I16_a_prime=10, I17_b_prime=11, I18_c_prime=12, 
+		I19_d_prime=13, I20_2nd_clear=14, I22_invert=15, I23_ln=16, I24_correct_entry=17, 
+		I25_clear=18, I27_2nd_invert=19, I28_log=20, I29_clear_program=21, I30_tan=22, 
+		I32_exchange_x_and_t=23, I33_square=24, I34_square_root=25, I35_reciprocal=26, 
+		I36_program=27, I37_polar_to_rectangular=28, I38_sin=29, I39_cos=30, I40_indirect=31, 
+		I42_store=32, I43_recall=33, I44_sum=34, I45_power=35, I47_clear_memory=36, 
+		I48_exchange=37, I49_product=38, I50_absolute=39, I52_exponent=40, I53_left_parenthesis=41, 
+		I54_right_parenthesis=42, I55_divide=43, I57_engineering=44, I58_fix=45, 
+		I59_integer=46, I60_degrees=47, I61_goto=48, I62_program_indirect=49, 
+		I63_exchange_indirect=50, I64_product_indirect=51, I65_multiply=52, I66_pause=53, 
+		I67_x_equals_t=54, I68_nop=55, I69_operation=56, I70_radians=57, I71_subroutine=58, 
+		I72_store_indirect=59, I73_recall_indirect=60, I74_sum_indirect=61, I75_subtract=62, 
+		I76_label=63, I77_x_greater_or_equal_than_t=64, I78_sigma_plus=65, I79_average=66, 
+		I80_grades=67, I81_reset=68, I82_hir=69, I83_goto_indirect=70, I84_operation_indirect=71, 
+		I85_add=72, I86_set_flag=73, I87_if_flag=74, I88_dms=75, I89_pi=76, I90_list=77, 
+		I91_run_stop=78, I92_return=79, I93_dot=80, I94_change_sign=81, I95_equals=82, 
+		I96_write=83, I97_dsz=84, I98_advance=85, I99_print=86, I2223_e_power_x=87, 
+		I2228_10_power_x=88, I6740_x_equals_t_indirect=89, I7740_x_greater_or_equal_than_t_indirect=90, 
+		D1=91, D2=92, A3=93, NUM=94, TAG=95, COLON=96, INVALID_CHAR=97;
 	public const int
 		RULE_programs = 0, RULE_program = 1, RULE_statement_or_comment = 2, RULE_tag_declaration = 3, 
 		RULE_statement = 4, RULE_a4 = 5, RULE_number_statement = 6, RULE_mnemonic = 7, 
@@ -75,39 +75,39 @@ public partial class GramParser : Parser {
 	};
 
 	private static readonly string[] _LiteralNames = {
-		null, null, null, "'END'", "'A'", "'B'", "'C'", "'D'", "'E'", "'A''", 
-		"'B''", "'C''", "'D''", "'E''", "'INV'", "'lnx'", "'CE'", "'CLR'", "'INV''", 
-		"'log'", "'CP'", "'CLR''", null, null, null, "'1/x'", "'Pgm'", null, "'sin'", 
-		"'cos'", "'tan'", "'STO'", "'RCL'", "'SUM'", null, "'CMs'", "'Exc'", "'Prd'", 
-		"'Ind'", "'EE'", "'('", "')'", null, "'Eng'", "'Fix'", "'Int'", null, 
-		"'GTO'", "'PG*'", "'EX*'", "'PD*'", null, null, null, "'EQ*'", "'Nop'", 
-		"'Op'", "'Deg'", "'SBR'", "'ST*'", "'RC*'", "'SM*'", "'-'", "'Lbl'", null, 
-		"'GE*'", null, null, "'Rad'", "'RST'", "'HIR'", "'GO*'", "'Op*'", "'+'", 
-		"'STF'", "'IFF'", null, null, null, "'R/S'", "'RTN'", "'.'", "'+/-'", 
-		"'='", null, "'Dsz'", "'Adv'", "'Prt'", null, "'e^x'", "'10^x'", null, 
-		null, null, null, null, "':'"
+		null, null, null, "'END'", "'E''", "'A'", "'B'", "'C'", "'D'", "'E'", 
+		"'A''", "'B''", "'C''", "'D''", "'CLR''", "'INV'", "'lnx'", "'CE'", "'CLR'", 
+		"'INV''", "'log'", "'CP'", "'tan'", null, null, null, "'1/x'", "'Pgm'", 
+		null, "'sin'", "'cos'", "'Ind'", "'STO'", "'RCL'", "'SUM'", null, "'CMs'", 
+		"'Exc'", "'Prd'", null, "'EE'", "'('", "')'", null, "'Eng'", "'Fix'", 
+		"'Int'", "'Deg'", "'GTO'", "'PG*'", "'EX*'", "'PD*'", null, null, null, 
+		"'Nop'", "'Op'", "'Rad'", "'SBR'", "'ST*'", "'RC*'", "'SM*'", "'-'", "'Lbl'", 
+		null, null, null, null, "'RST'", "'HIR'", "'GO*'", "'Op*'", "'+'", "'STF'", 
+		"'IFF'", null, null, null, "'R/S'", "'RTN'", "'.'", "'+/-'", "'='", null, 
+		"'Dsz'", "'Adv'", "'Prt'", null, null, "'EQ*'", "'GE*'", null, null, null, 
+		null, null, "':'"
 	};
 	private static readonly string[] _SymbolicNames = {
-		null, "WS", "LINE_COMMENT", "PROGRAM_SEPARATOR", "I11_a", "I12_b", "I13_c", 
-		"I14_d", "I15_e", "I16_a_prime", "I17_b_prime", "I18_c_prime", "I19_d_prime", 
-		"I10_e_prime", "I22_invert", "I23_ln", "I24_correct_entry", "I25_clear", 
-		"I27_2nd_invert", "I28_log", "I29_clear_program", "I20_2nd_clear", "I32_exchange_x_and_t", 
-		"I33_square", "I34_square_root", "I35_reciprocal", "I36_program", "I37_polar_to_rectangular", 
-		"I38_sin", "I39_cos", "I30_tan", "I42_store", "I43_recall", "I44_sum", 
-		"I45_power", "I47_clear_memory", "I48_exchange", "I49_product", "I40_indirect", 
-		"I52_exponent", "I53_left_parenthesis", "I54_right_parenthesis", "I55_divide", 
-		"I57_engineering", "I58_fix", "I59_integer", "I50_absolute", "I61_goto", 
-		"I62_program_indirect", "I63_exchange_indirect", "I64_product_indirect", 
-		"I65_multiply", "I66_pause", "I67_x_equals_t", "I67_x_equals_t_indextra", 
-		"I68_nop", "I69_operation", "I60_degrees", "I71_subroutine", "I72_store_indirect", 
+		null, "WS", "LINE_COMMENT", "PROGRAM_SEPARATOR", "I10_e_prime", "I11_a", 
+		"I12_b", "I13_c", "I14_d", "I15_e", "I16_a_prime", "I17_b_prime", "I18_c_prime", 
+		"I19_d_prime", "I20_2nd_clear", "I22_invert", "I23_ln", "I24_correct_entry", 
+		"I25_clear", "I27_2nd_invert", "I28_log", "I29_clear_program", "I30_tan", 
+		"I32_exchange_x_and_t", "I33_square", "I34_square_root", "I35_reciprocal", 
+		"I36_program", "I37_polar_to_rectangular", "I38_sin", "I39_cos", "I40_indirect", 
+		"I42_store", "I43_recall", "I44_sum", "I45_power", "I47_clear_memory", 
+		"I48_exchange", "I49_product", "I50_absolute", "I52_exponent", "I53_left_parenthesis", 
+		"I54_right_parenthesis", "I55_divide", "I57_engineering", "I58_fix", "I59_integer", 
+		"I60_degrees", "I61_goto", "I62_program_indirect", "I63_exchange_indirect", 
+		"I64_product_indirect", "I65_multiply", "I66_pause", "I67_x_equals_t", 
+		"I68_nop", "I69_operation", "I70_radians", "I71_subroutine", "I72_store_indirect", 
 		"I73_recall_indirect", "I74_sum_indirect", "I75_subtract", "I76_label", 
-		"I77_x_greater_or_equal_than_t", "I77_x_greater_or_equal_than_t_indextra", 
-		"I78_sigma_plus", "I79_average", "I70_radians", "I81_reset", "I82_hir", 
-		"I83_goto_indirect", "I84_operation_indirect", "I85_add", "I86_set_flag", 
-		"I87_if_flag", "I88_dms", "I89_pi", "I80_grades", "I91_run_stop", "I92_return", 
-		"I93_dot", "I94_change_sign", "I95_equals", "I96_write", "I97_dsz", "I98_advance", 
-		"I99_print", "I90_list", "I123_e_power_x", "I128_10_power_x", "D1", "D2", 
-		"A3", "NUM", "TAG", "COLON", "INVALID_CHAR"
+		"I77_x_greater_or_equal_than_t", "I78_sigma_plus", "I79_average", "I80_grades", 
+		"I81_reset", "I82_hir", "I83_goto_indirect", "I84_operation_indirect", 
+		"I85_add", "I86_set_flag", "I87_if_flag", "I88_dms", "I89_pi", "I90_list", 
+		"I91_run_stop", "I92_return", "I93_dot", "I94_change_sign", "I95_equals", 
+		"I96_write", "I97_dsz", "I98_advance", "I99_print", "I2223_e_power_x", 
+		"I2228_10_power_x", "I6740_x_equals_t_indirect", "I7740_x_greater_or_equal_than_t_indirect", 
+		"D1", "D2", "A3", "NUM", "TAG", "COLON", "INVALID_CHAR"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
@@ -321,6 +321,7 @@ public partial class GramParser : Parser {
 			State = 69;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
+			case I10_e_prime:
 			case I11_a:
 			case I12_b:
 			case I13_c:
@@ -330,7 +331,7 @@ public partial class GramParser : Parser {
 			case I17_b_prime:
 			case I18_c_prime:
 			case I19_d_prime:
-			case I10_e_prime:
+			case I20_2nd_clear:
 			case I22_invert:
 			case I23_ln:
 			case I24_correct_entry:
@@ -338,7 +339,7 @@ public partial class GramParser : Parser {
 			case I27_2nd_invert:
 			case I28_log:
 			case I29_clear_program:
-			case I20_2nd_clear:
+			case I30_tan:
 			case I32_exchange_x_and_t:
 			case I33_square:
 			case I34_square_root:
@@ -347,7 +348,7 @@ public partial class GramParser : Parser {
 			case I37_polar_to_rectangular:
 			case I38_sin:
 			case I39_cos:
-			case I30_tan:
+			case I40_indirect:
 			case I42_store:
 			case I43_recall:
 			case I44_sum:
@@ -355,7 +356,7 @@ public partial class GramParser : Parser {
 			case I47_clear_memory:
 			case I48_exchange:
 			case I49_product:
-			case I40_indirect:
+			case I50_absolute:
 			case I52_exponent:
 			case I53_left_parenthesis:
 			case I54_right_parenthesis:
@@ -363,7 +364,7 @@ public partial class GramParser : Parser {
 			case I57_engineering:
 			case I58_fix:
 			case I59_integer:
-			case I50_absolute:
+			case I60_degrees:
 			case I61_goto:
 			case I62_program_indirect:
 			case I63_exchange_indirect:
@@ -371,10 +372,9 @@ public partial class GramParser : Parser {
 			case I65_multiply:
 			case I66_pause:
 			case I67_x_equals_t:
-			case I67_x_equals_t_indextra:
 			case I68_nop:
 			case I69_operation:
-			case I60_degrees:
+			case I70_radians:
 			case I71_subroutine:
 			case I72_store_indirect:
 			case I73_recall_indirect:
@@ -382,10 +382,9 @@ public partial class GramParser : Parser {
 			case I75_subtract:
 			case I76_label:
 			case I77_x_greater_or_equal_than_t:
-			case I77_x_greater_or_equal_than_t_indextra:
 			case I78_sigma_plus:
 			case I79_average:
-			case I70_radians:
+			case I80_grades:
 			case I81_reset:
 			case I82_hir:
 			case I83_goto_indirect:
@@ -395,7 +394,7 @@ public partial class GramParser : Parser {
 			case I87_if_flag:
 			case I88_dms:
 			case I89_pi:
-			case I80_grades:
+			case I90_list:
 			case I91_run_stop:
 			case I92_return:
 			case I93_dot:
@@ -405,9 +404,10 @@ public partial class GramParser : Parser {
 			case I97_dsz:
 			case I98_advance:
 			case I99_print:
-			case I90_list:
-			case I123_e_power_x:
-			case I128_10_power_x:
+			case I2223_e_power_x:
+			case I2228_10_power_x:
+			case I6740_x_equals_t_indirect:
+			case I7740_x_greater_or_equal_than_t_indirect:
 			case D1:
 			case D2:
 			case A3:
@@ -898,7 +898,7 @@ public partial class GramParser : Parser {
 			{
 			State = 96;
 			_la = TokenStream.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & -18014673387388944L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 33554429L) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & -2147483664L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 8388607L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
 			}
 			else {
@@ -924,8 +924,8 @@ public partial class GramParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I10_e_prime() { return GetToken(GramParser.I10_e_prime, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I11_a() { return GetToken(GramParser.I11_a, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I12_b() { return GetToken(GramParser.I12_b, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I123_e_power_x() { return GetToken(GramParser.I123_e_power_x, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I128_10_power_x() { return GetToken(GramParser.I128_10_power_x, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I2223_e_power_x() { return GetToken(GramParser.I2223_e_power_x, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I2228_10_power_x() { return GetToken(GramParser.I2228_10_power_x, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I13_c() { return GetToken(GramParser.I13_c, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I14_d() { return GetToken(GramParser.I14_d, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I15_e() { return GetToken(GramParser.I15_e, 0); }
@@ -1019,7 +1019,7 @@ public partial class GramParser : Parser {
 				State = 98;
 				_localctx.sta = TokenStream.LT(1);
 				_la = TokenStream.LA(1);
-				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 4798663502715109360L) != 0) || ((((_la - 68)) & ~0x3f) == 0 && ((1L << (_la - 68)) & 7142947L) != 0)) ) {
+				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 4805497551659630576L) != 0) || ((((_la - 67)) & ~0x3f) == 0 && ((1L << (_la - 67)) & 3996195L) != 0)) ) {
 					_localctx.sta = ErrorHandler.RecoverInline(this);
 				}
 				else {
@@ -1044,7 +1044,7 @@ public partial class GramParser : Parser {
 				State = 102;
 				_localctx.sta = TokenStream.LT(1);
 				_la = TokenStream.LA(1);
-				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 44549414617088L) != 0) || ((((_la - 66)) & ~0x3f) == 0 && ((1L << (_la - 66)) & 4457475L) != 0)) ) {
+				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 89096685944832L) != 0) || ((((_la - 65)) & ~0x3f) == 0 && ((1L << (_la - 65)) & 267267L) != 0)) ) {
 					_localctx.sta = ErrorHandler.RecoverInline(this);
 				}
 				else {
@@ -1136,7 +1136,7 @@ public partial class GramParser : Parser {
 				State = 107;
 				_localctx.sta = TokenStream.LT(1);
 				_la = TokenStream.LA(1);
-				if ( !(((((_la - 26)) & ~0x3f) == 0 && ((1L << (_la - 26)) & 17593260049505L) != 0)) ) {
+				if ( !(((((_la - 27)) & ~0x3f) == 0 && ((1L << (_la - 27)) & 4398583645281L) != 0)) ) {
 					_localctx.sta = ErrorHandler.RecoverInline(this);
 				}
 				else {
@@ -1174,7 +1174,7 @@ public partial class GramParser : Parser {
 				State = 112;
 				_localctx.sta = TokenStream.LT(1);
 				_la = TokenStream.LA(1);
-				if ( !(((((_la - 33)) & ~0x3f) == 0 && ((1L << (_la - 33)) & 2199023255569L) != 0)) ) {
+				if ( !(((((_la - 34)) & ~0x3f) == 0 && ((1L << (_la - 34)) & 549755813905L) != 0)) ) {
 					_localctx.sta = ErrorHandler.RecoverInline(this);
 				}
 				else {
@@ -1222,9 +1222,9 @@ public partial class GramParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode D1() { return GetToken(GramParser.D1, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode D2() { return GetToken(GramParser.D2, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I64_product_indirect() { return GetToken(GramParser.I64_product_indirect, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I67_x_equals_t_indextra() { return GetToken(GramParser.I67_x_equals_t_indextra, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I6740_x_equals_t_indirect() { return GetToken(GramParser.I6740_x_equals_t_indirect, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I74_sum_indirect() { return GetToken(GramParser.I74_sum_indirect, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I77_x_greater_or_equal_than_t_indextra() { return GetToken(GramParser.I77_x_greater_or_equal_than_t_indextra, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I7740_x_greater_or_equal_than_t_indirect() { return GetToken(GramParser.I7740_x_greater_or_equal_than_t_indirect, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I22_invert() { return GetToken(GramParser.I22_invert, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I40_indirect() { return GetToken(GramParser.I40_indirect, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode I36_program() { return GetToken(GramParser.I36_program, 0); }
@@ -1274,7 +1274,7 @@ public partial class GramParser : Parser {
 				State = 116;
 				_localctx.sta = TokenStream.LT(1);
 				_la = TokenStream.LA(1);
-				if ( !(((((_la - 48)) & ~0x3f) == 0 && ((1L << (_la - 48)) & 25171971L) != 0)) ) {
+				if ( !(((((_la - 49)) & ~0x3f) == 0 && ((1L << (_la - 49)) & 6294531L) != 0)) ) {
 					_localctx.sta = ErrorHandler.RecoverInline(this);
 				}
 				else {
@@ -1309,7 +1309,7 @@ public partial class GramParser : Parser {
 				State = 121;
 				_localctx.sta = TokenStream.LT(1);
 				_la = TokenStream.LA(1);
-				if ( !(((((_la - 50)) & ~0x3f) == 0 && ((1L << (_la - 50)) & 34833L) != 0)) ) {
+				if ( !(((((_la - 51)) & ~0x3f) == 0 && ((1L << (_la - 51)) & 824633721857L) != 0)) ) {
 					_localctx.sta = ErrorHandler.RecoverInline(this);
 				}
 				else {
@@ -1334,7 +1334,7 @@ public partial class GramParser : Parser {
 				State = 123;
 				_localctx.sta = TokenStream.LT(1);
 				_la = TokenStream.LA(1);
-				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 72075261453008896L) != 0)) ) {
+				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 72092928868089856L) != 0)) ) {
 					_localctx.sta = ErrorHandler.RecoverInline(this);
 				}
 				else {
@@ -1371,7 +1371,7 @@ public partial class GramParser : Parser {
 				State = 129;
 				_localctx.sta = TokenStream.LT(1);
 				_la = TokenStream.LA(1);
-				if ( !(((((_la - 33)) & ~0x3f) == 0 && ((1L << (_la - 33)) & 2199023255569L) != 0)) ) {
+				if ( !(((((_la - 34)) & ~0x3f) == 0 && ((1L << (_la - 34)) & 549755813905L) != 0)) ) {
 					_localctx.sta = ErrorHandler.RecoverInline(this);
 				}
 				else {
@@ -2336,6 +2336,7 @@ public partial class GramParser : Parser {
 				Match(D2);
 				}
 				break;
+			case I10_e_prime:
 			case I11_a:
 			case I12_b:
 			case I13_c:
@@ -2345,7 +2346,7 @@ public partial class GramParser : Parser {
 			case I17_b_prime:
 			case I18_c_prime:
 			case I19_d_prime:
-			case I10_e_prime:
+			case I20_2nd_clear:
 			case I22_invert:
 			case I23_ln:
 			case I24_correct_entry:
@@ -2353,7 +2354,7 @@ public partial class GramParser : Parser {
 			case I27_2nd_invert:
 			case I28_log:
 			case I29_clear_program:
-			case I20_2nd_clear:
+			case I30_tan:
 			case I32_exchange_x_and_t:
 			case I33_square:
 			case I34_square_root:
@@ -2362,7 +2363,6 @@ public partial class GramParser : Parser {
 			case I37_polar_to_rectangular:
 			case I38_sin:
 			case I39_cos:
-			case I30_tan:
 			case I42_store:
 			case I43_recall:
 			case I44_sum:
@@ -2370,6 +2370,7 @@ public partial class GramParser : Parser {
 			case I47_clear_memory:
 			case I48_exchange:
 			case I49_product:
+			case I50_absolute:
 			case I52_exponent:
 			case I53_left_parenthesis:
 			case I54_right_parenthesis:
@@ -2377,7 +2378,7 @@ public partial class GramParser : Parser {
 			case I57_engineering:
 			case I58_fix:
 			case I59_integer:
-			case I50_absolute:
+			case I60_degrees:
 			case I61_goto:
 			case I62_program_indirect:
 			case I63_exchange_indirect:
@@ -2387,7 +2388,7 @@ public partial class GramParser : Parser {
 			case I67_x_equals_t:
 			case I68_nop:
 			case I69_operation:
-			case I60_degrees:
+			case I70_radians:
 			case I71_subroutine:
 			case I72_store_indirect:
 			case I73_recall_indirect:
@@ -2397,7 +2398,7 @@ public partial class GramParser : Parser {
 			case I77_x_greater_or_equal_than_t:
 			case I78_sigma_plus:
 			case I79_average:
-			case I70_radians:
+			case I80_grades:
 			case I81_reset:
 			case I82_hir:
 			case I83_goto_indirect:
@@ -2407,7 +2408,7 @@ public partial class GramParser : Parser {
 			case I87_if_flag:
 			case I88_dms:
 			case I89_pi:
-			case I80_grades:
+			case I90_list:
 			case I91_run_stop:
 			case I92_return:
 			case I93_dot:
@@ -2417,7 +2418,6 @@ public partial class GramParser : Parser {
 			case I97_dsz:
 			case I98_advance:
 			case I99_print:
-			case I90_list:
 				{
 				State = 202;
 				mnemonic();
@@ -2560,64 +2560,63 @@ public partial class GramParser : Parser {
 		1,19,1,19,1,19,1,20,3,20,187,8,20,1,20,1,20,1,20,1,20,1,21,3,21,194,8,
 		21,1,21,1,21,1,21,1,21,1,22,1,22,1,22,1,22,3,22,204,8,22,1,23,1,23,1,24,
 		1,24,1,24,0,0,25,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,
-		40,42,44,46,48,0,14,4,0,4,37,39,53,55,64,66,88,15,0,4,13,16,18,20,25,35,
-		35,40,42,46,46,51,52,55,55,57,57,62,62,68,69,73,73,77,83,86,87,89,90,11,
-		0,15,15,19,19,27,30,34,34,39,39,43,43,45,45,66,67,76,76,84,84,88,88,6,
-		0,26,26,31,32,36,36,44,44,56,56,70,70,1,0,91,92,3,0,33,33,37,37,74,74,
-		3,0,48,49,59,60,71,72,4,0,50,50,54,54,61,61,65,65,5,0,26,26,31,32,36,36,
-		44,44,56,56,2,0,92,93,95,95,2,0,47,47,58,58,2,0,53,53,64,64,2,0,75,75,
-		85,85,2,0,38,38,96,96,226,0,50,1,0,0,0,2,63,1,0,0,0,4,69,1,0,0,0,6,71,
-		1,0,0,0,8,84,1,0,0,0,10,86,1,0,0,0,12,94,1,0,0,0,14,96,1,0,0,0,16,105,
-		1,0,0,0,18,114,1,0,0,0,20,132,1,0,0,0,22,137,1,0,0,0,24,139,1,0,0,0,26,
-		149,1,0,0,0,28,158,1,0,0,0,30,164,1,0,0,0,32,166,1,0,0,0,34,168,1,0,0,
-		0,36,172,1,0,0,0,38,179,1,0,0,0,40,186,1,0,0,0,42,193,1,0,0,0,44,199,1,
-		0,0,0,46,205,1,0,0,0,48,207,1,0,0,0,50,55,3,2,1,0,51,52,5,3,0,0,52,54,
-		3,2,1,0,53,51,1,0,0,0,54,57,1,0,0,0,55,53,1,0,0,0,55,56,1,0,0,0,56,58,
-		1,0,0,0,57,55,1,0,0,0,58,59,5,0,0,1,59,1,1,0,0,0,60,62,3,4,2,0,61,60,1,
-		0,0,0,62,65,1,0,0,0,63,61,1,0,0,0,63,64,1,0,0,0,64,3,1,0,0,0,65,63,1,0,
-		0,0,66,70,3,8,4,0,67,70,5,2,0,0,68,70,3,6,3,0,69,66,1,0,0,0,69,67,1,0,
-		0,0,69,68,1,0,0,0,70,5,1,0,0,0,71,72,5,95,0,0,72,73,5,96,0,0,73,7,1,0,
-		0,0,74,85,3,12,6,0,75,85,3,16,8,0,76,85,3,18,9,0,77,85,3,20,10,0,78,85,
-		3,26,13,0,79,85,3,28,14,0,80,85,3,30,15,0,81,85,3,44,22,0,82,85,3,46,23,
-		0,83,85,3,48,24,0,84,74,1,0,0,0,84,75,1,0,0,0,84,76,1,0,0,0,84,77,1,0,
-		0,0,84,78,1,0,0,0,84,79,1,0,0,0,84,80,1,0,0,0,84,81,1,0,0,0,84,82,1,0,
-		0,0,84,83,1,0,0,0,85,9,1,0,0,0,86,87,5,92,0,0,87,88,5,92,0,0,88,11,1,0,
-		0,0,89,95,5,94,0,0,90,95,5,91,0,0,91,95,5,92,0,0,92,95,5,93,0,0,93,95,
-		3,10,5,0,94,89,1,0,0,0,94,90,1,0,0,0,94,91,1,0,0,0,94,92,1,0,0,0,94,93,
-		1,0,0,0,95,13,1,0,0,0,96,97,7,0,0,0,97,15,1,0,0,0,98,106,7,1,0,0,99,101,
-		5,14,0,0,100,99,1,0,0,0,100,101,1,0,0,0,101,102,1,0,0,0,102,106,7,2,0,
-		0,103,104,5,14,0,0,104,106,5,44,0,0,105,98,1,0,0,0,105,100,1,0,0,0,105,
-		103,1,0,0,0,106,17,1,0,0,0,107,108,7,3,0,0,108,115,7,4,0,0,109,111,5,14,
-		0,0,110,109,1,0,0,0,110,111,1,0,0,0,111,112,1,0,0,0,112,113,7,5,0,0,113,
-		115,7,4,0,0,114,107,1,0,0,0,114,110,1,0,0,0,115,19,1,0,0,0,116,117,7,6,
-		0,0,117,133,7,4,0,0,118,120,5,14,0,0,119,118,1,0,0,0,119,120,1,0,0,0,120,
-		121,1,0,0,0,121,122,7,7,0,0,122,133,7,4,0,0,123,124,7,8,0,0,124,125,5,
-		38,0,0,125,133,7,4,0,0,126,128,5,14,0,0,127,126,1,0,0,0,127,128,1,0,0,
-		0,128,129,1,0,0,0,129,130,7,5,0,0,130,131,5,38,0,0,131,133,7,4,0,0,132,
-		116,1,0,0,0,132,119,1,0,0,0,132,123,1,0,0,0,132,127,1,0,0,0,133,21,1,0,
-		0,0,134,138,3,14,7,0,135,138,3,10,5,0,136,138,7,9,0,0,137,134,1,0,0,0,
-		137,135,1,0,0,0,137,136,1,0,0,0,138,23,1,0,0,0,139,140,5,38,0,0,140,141,
-		7,4,0,0,141,25,1,0,0,0,142,143,7,10,0,0,143,150,3,22,11,0,144,146,5,14,
-		0,0,145,144,1,0,0,0,145,146,1,0,0,0,146,147,1,0,0,0,147,148,7,11,0,0,148,
-		150,3,22,11,0,149,142,1,0,0,0,149,145,1,0,0,0,150,27,1,0,0,0,151,152,7,
-		10,0,0,152,159,3,24,12,0,153,155,5,14,0,0,154,153,1,0,0,0,154,155,1,0,
-		0,0,155,156,1,0,0,0,156,157,7,11,0,0,157,159,3,24,12,0,158,151,1,0,0,0,
-		158,154,1,0,0,0,159,29,1,0,0,0,160,165,3,36,18,0,161,165,3,38,19,0,162,
-		165,3,40,20,0,163,165,3,42,21,0,164,160,1,0,0,0,164,161,1,0,0,0,164,162,
-		1,0,0,0,164,163,1,0,0,0,165,31,1,0,0,0,166,167,7,4,0,0,167,33,1,0,0,0,
-		168,169,5,38,0,0,169,170,7,4,0,0,170,35,1,0,0,0,171,173,5,14,0,0,172,171,
-		1,0,0,0,172,173,1,0,0,0,173,174,1,0,0,0,174,175,7,12,0,0,175,176,3,32,
-		16,0,176,177,3,22,11,0,177,37,1,0,0,0,178,180,5,14,0,0,179,178,1,0,0,0,
-		179,180,1,0,0,0,180,181,1,0,0,0,181,182,7,12,0,0,182,183,3,32,16,0,183,
-		184,3,24,12,0,184,39,1,0,0,0,185,187,5,14,0,0,186,185,1,0,0,0,186,187,
-		1,0,0,0,187,188,1,0,0,0,188,189,7,12,0,0,189,190,3,34,17,0,190,191,3,22,
-		11,0,191,41,1,0,0,0,192,194,5,14,0,0,193,192,1,0,0,0,193,194,1,0,0,0,194,
-		195,1,0,0,0,195,196,7,12,0,0,196,197,3,34,17,0,197,198,3,24,12,0,198,43,
-		1,0,0,0,199,203,5,63,0,0,200,204,5,91,0,0,201,204,5,92,0,0,202,204,3,14,
-		7,0,203,200,1,0,0,0,203,201,1,0,0,0,203,202,1,0,0,0,204,45,1,0,0,0,205,
-		206,5,14,0,0,206,47,1,0,0,0,207,208,7,13,0,0,208,49,1,0,0,0,23,55,63,69,
-		84,94,100,105,110,114,119,127,132,137,145,149,154,158,164,172,179,186,
-		193,203
+		40,42,44,46,48,0,14,2,0,4,30,32,86,17,0,4,14,17,19,21,21,23,26,36,36,39,
+		39,41,43,47,47,52,53,55,55,57,57,62,62,67,68,72,72,76,76,78,82,85,88,12,
+		0,16,16,20,20,22,22,28,30,35,35,40,40,44,44,46,46,65,66,75,75,77,77,83,
+		83,6,0,27,27,32,33,37,37,45,45,56,56,69,69,1,0,91,92,3,0,34,34,38,38,73,
+		73,3,0,49,50,59,60,70,71,3,0,51,51,61,61,89,90,5,0,27,27,32,33,37,37,45,
+		45,56,56,2,0,92,93,95,95,2,0,48,48,58,58,2,0,54,54,64,64,2,0,74,74,84,
+		84,2,0,31,31,96,96,226,0,50,1,0,0,0,2,63,1,0,0,0,4,69,1,0,0,0,6,71,1,0,
+		0,0,8,84,1,0,0,0,10,86,1,0,0,0,12,94,1,0,0,0,14,96,1,0,0,0,16,105,1,0,
+		0,0,18,114,1,0,0,0,20,132,1,0,0,0,22,137,1,0,0,0,24,139,1,0,0,0,26,149,
+		1,0,0,0,28,158,1,0,0,0,30,164,1,0,0,0,32,166,1,0,0,0,34,168,1,0,0,0,36,
+		172,1,0,0,0,38,179,1,0,0,0,40,186,1,0,0,0,42,193,1,0,0,0,44,199,1,0,0,
+		0,46,205,1,0,0,0,48,207,1,0,0,0,50,55,3,2,1,0,51,52,5,3,0,0,52,54,3,2,
+		1,0,53,51,1,0,0,0,54,57,1,0,0,0,55,53,1,0,0,0,55,56,1,0,0,0,56,58,1,0,
+		0,0,57,55,1,0,0,0,58,59,5,0,0,1,59,1,1,0,0,0,60,62,3,4,2,0,61,60,1,0,0,
+		0,62,65,1,0,0,0,63,61,1,0,0,0,63,64,1,0,0,0,64,3,1,0,0,0,65,63,1,0,0,0,
+		66,70,3,8,4,0,67,70,5,2,0,0,68,70,3,6,3,0,69,66,1,0,0,0,69,67,1,0,0,0,
+		69,68,1,0,0,0,70,5,1,0,0,0,71,72,5,95,0,0,72,73,5,96,0,0,73,7,1,0,0,0,
+		74,85,3,12,6,0,75,85,3,16,8,0,76,85,3,18,9,0,77,85,3,20,10,0,78,85,3,26,
+		13,0,79,85,3,28,14,0,80,85,3,30,15,0,81,85,3,44,22,0,82,85,3,46,23,0,83,
+		85,3,48,24,0,84,74,1,0,0,0,84,75,1,0,0,0,84,76,1,0,0,0,84,77,1,0,0,0,84,
+		78,1,0,0,0,84,79,1,0,0,0,84,80,1,0,0,0,84,81,1,0,0,0,84,82,1,0,0,0,84,
+		83,1,0,0,0,85,9,1,0,0,0,86,87,5,92,0,0,87,88,5,92,0,0,88,11,1,0,0,0,89,
+		95,5,94,0,0,90,95,5,91,0,0,91,95,5,92,0,0,92,95,5,93,0,0,93,95,3,10,5,
+		0,94,89,1,0,0,0,94,90,1,0,0,0,94,91,1,0,0,0,94,92,1,0,0,0,94,93,1,0,0,
+		0,95,13,1,0,0,0,96,97,7,0,0,0,97,15,1,0,0,0,98,106,7,1,0,0,99,101,5,15,
+		0,0,100,99,1,0,0,0,100,101,1,0,0,0,101,102,1,0,0,0,102,106,7,2,0,0,103,
+		104,5,15,0,0,104,106,5,45,0,0,105,98,1,0,0,0,105,100,1,0,0,0,105,103,1,
+		0,0,0,106,17,1,0,0,0,107,108,7,3,0,0,108,115,7,4,0,0,109,111,5,15,0,0,
+		110,109,1,0,0,0,110,111,1,0,0,0,111,112,1,0,0,0,112,113,7,5,0,0,113,115,
+		7,4,0,0,114,107,1,0,0,0,114,110,1,0,0,0,115,19,1,0,0,0,116,117,7,6,0,0,
+		117,133,7,4,0,0,118,120,5,15,0,0,119,118,1,0,0,0,119,120,1,0,0,0,120,121,
+		1,0,0,0,121,122,7,7,0,0,122,133,7,4,0,0,123,124,7,8,0,0,124,125,5,31,0,
+		0,125,133,7,4,0,0,126,128,5,15,0,0,127,126,1,0,0,0,127,128,1,0,0,0,128,
+		129,1,0,0,0,129,130,7,5,0,0,130,131,5,31,0,0,131,133,7,4,0,0,132,116,1,
+		0,0,0,132,119,1,0,0,0,132,123,1,0,0,0,132,127,1,0,0,0,133,21,1,0,0,0,134,
+		138,3,14,7,0,135,138,3,10,5,0,136,138,7,9,0,0,137,134,1,0,0,0,137,135,
+		1,0,0,0,137,136,1,0,0,0,138,23,1,0,0,0,139,140,5,31,0,0,140,141,7,4,0,
+		0,141,25,1,0,0,0,142,143,7,10,0,0,143,150,3,22,11,0,144,146,5,15,0,0,145,
+		144,1,0,0,0,145,146,1,0,0,0,146,147,1,0,0,0,147,148,7,11,0,0,148,150,3,
+		22,11,0,149,142,1,0,0,0,149,145,1,0,0,0,150,27,1,0,0,0,151,152,7,10,0,
+		0,152,159,3,24,12,0,153,155,5,15,0,0,154,153,1,0,0,0,154,155,1,0,0,0,155,
+		156,1,0,0,0,156,157,7,11,0,0,157,159,3,24,12,0,158,151,1,0,0,0,158,154,
+		1,0,0,0,159,29,1,0,0,0,160,165,3,36,18,0,161,165,3,38,19,0,162,165,3,40,
+		20,0,163,165,3,42,21,0,164,160,1,0,0,0,164,161,1,0,0,0,164,162,1,0,0,0,
+		164,163,1,0,0,0,165,31,1,0,0,0,166,167,7,4,0,0,167,33,1,0,0,0,168,169,
+		5,31,0,0,169,170,7,4,0,0,170,35,1,0,0,0,171,173,5,15,0,0,172,171,1,0,0,
+		0,172,173,1,0,0,0,173,174,1,0,0,0,174,175,7,12,0,0,175,176,3,32,16,0,176,
+		177,3,22,11,0,177,37,1,0,0,0,178,180,5,15,0,0,179,178,1,0,0,0,179,180,
+		1,0,0,0,180,181,1,0,0,0,181,182,7,12,0,0,182,183,3,32,16,0,183,184,3,24,
+		12,0,184,39,1,0,0,0,185,187,5,15,0,0,186,185,1,0,0,0,186,187,1,0,0,0,187,
+		188,1,0,0,0,188,189,7,12,0,0,189,190,3,34,17,0,190,191,3,22,11,0,191,41,
+		1,0,0,0,192,194,5,15,0,0,193,192,1,0,0,0,193,194,1,0,0,0,194,195,1,0,0,
+		0,195,196,7,12,0,0,196,197,3,34,17,0,197,198,3,24,12,0,198,43,1,0,0,0,
+		199,203,5,63,0,0,200,204,5,91,0,0,201,204,5,92,0,0,202,204,3,14,7,0,203,
+		200,1,0,0,0,203,201,1,0,0,0,203,202,1,0,0,0,204,45,1,0,0,0,205,206,5,15,
+		0,0,206,47,1,0,0,0,207,208,7,13,0,0,208,49,1,0,0,0,23,55,63,69,84,94,100,
+		105,110,114,119,127,132,137,145,149,154,158,164,172,179,186,193,203
 	};
 
 	public static readonly ATN _ATN =

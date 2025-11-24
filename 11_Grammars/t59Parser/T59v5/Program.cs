@@ -47,31 +47,7 @@ GTO 7 GTO Z GTO Ind Z GTO 43 21 GTO IND IND 25 GTO IND IND IND 25
 
 Sto Ind Z CLR";
 
-        //input = @"Nop Sto 12 Sto Ind 12 HIR 7 ST* 8 Lbl CLR Lbl 25";
-        //input = @"1 12 123 01 23 1234";
-        //input = @"GTO CLR GTO 25 GTO 123 GTO 01 23 GTO IND 12";
-        //input = @"Lbl CLR Lbl 25";
-        //input = @"DSZ 1 CLR Dsz 2 25 DSZ 3 125 DSZ 4 01 25 DSZ 11 Ind 12";
-        //input = @"DSZ 11 25 Dsz 11 Ind 25 Dsz Ind 11 25 Dsz Ind 11 Ind 25";
-        //input = @"Lbl CLR Lbl 25";
-        //input = "Fix 4 Fix 04 Fix Ind 12 INV Fix CLR";
-        //input = @"Hir Ind 09";
-        //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\all-1.t59");
-        //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\all-2.t59");
-        //input = "Lbl A Sto 0 CLR @Loop: 1 + Dsz 0 @LOOP R/S";
-        //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\Master Library\ML-01.T59");
-        //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\Master Library\ML-01-!ALL.t59");
-        //input = @"DSZ 01 00 15";
-        //input = @"DSZ 05 12 25";
-        //input = @"-14-3.-11.-12-3.4ee2-34--12-421e12-e.e..21431-e114e-13.113.-e.ee14.4e.-3-134e-2413-3.2e3e434e1ee422-33324e33..23-333-211422-33-ee43-432-.3e43..-.-1.3e.e3.42323.42433343e2.ee4e-e3.e-43222-e4331e31.ee44344234.-44e.2321-1432--343e4ee-122431.2e-.3e-21-ee.442e3e-132313.2-2--.3.324-4.e1-e4343e22ee2e2-1233";
-        //input = @"1.2 1..2 1...2 1....2";
-        //input = @"CLSINTOP4";
-        //input = @"Sto Ind ind : : 12 CLR";
-        //input = @"STO 12 END CLR ZYP GTO 123 GTO STO NOP";
-        //input = @"CLR Inv Sin Inv CE STO 12 HIR 40 SUM Ind 25 ST* 42 INV Prd 12 Inv Prd Ind 33 GTO CLR GTO 25 GTO 123 GTO 01 23";
-        //input = @"Dsz 5 CLR Dsz 15 25 Dsz 25 123 Dsz 35 01 23 Dsz 45 @Loop1 Dsz 55 Ind 65 Dsz Ind 5 CLR Dsz Ind 15 25 Dsz 25 123 Dsz 35 01 23 Dsz Ind 45 @tag Dsz Ind 55 Ind 65 Inv Dsz 5 Fix";
-        //input = @"Inv Dsz Ind 55 Ind 65";
-        input = "Ind 12";
+        input = @"Fix 4 INV Fix SBR 240 INV SBR";
 
         //Console.WriteLine("--- Parsing Input ---");
         //Console.WriteLine(input);

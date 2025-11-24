@@ -44,9 +44,9 @@ sealed record L2Eof: L2StatementBase
     public L2Eof(L1Eof l1i) => AddL1Token(l1i);
 }
 
-sealed record L2ProgramSeparator: L2StatementBase
+sealed record L2PgmSeparator: L2StatementBase
 {
-    public L2ProgramSeparator(L1ProgramSeparator l1i) => AddL1Token(l1i);
+    public L2PgmSeparator(L1PgmSeparator l1i) => AddL1Token(l1i);
 }
 
 sealed record L2LineComment: L2StatementBase
@@ -85,18 +85,21 @@ internal sealed class L2Parser(L1Tokenizer L1T)
         L1Token? nextToken = null;
         var e = L1T.EnumerateL1Tokens().GetEnumerator();
 
+        bool IsContextInv()
+            => Context.Count > 0 && Context[0] is L1Instruction { Inst.Op: [22] };
+
         // If we have a non-empty context, then we must flush it as a L2InvalidStatement
         IEnumerable<L2StatementBase> FlushContext(bool keepOnlyIndStatement)
         {
             // Special case, if the context starts by Inv, then we emit a legitimate L2Statement for this prefix,
             // it can't be considered as an error
-            if (Context.Count > 0 && Context[0] is L1Instruction i && i.Inst.Op == 22)
+            if (IsContextInv())
             {
                 if (keepOnlyIndStatement && Context.Count == 1)
                     yield break;
 
                 var s = new L2Instruction();
-                s.L1Tokens.Add(i);
+                s.L1Tokens.Add(Context[0]);
                 yield return s;
                 Context.RemoveAt(0);
             }
@@ -160,8 +163,8 @@ internal sealed class L2Parser(L1Tokenizer L1T)
                             yield return new L2Eof(l1eof);
                             break;
 
-                        case L1ProgramSeparator l1ps:
-                            yield return new L2ProgramSeparator(l1ps);
+                        case L1PgmSeparator l1ps:
+                            yield return new L2PgmSeparator(l1ps);
                             break;
 
                         // For now, we consider a L1LineComment as a standalone statement, that can't be used
@@ -181,18 +184,29 @@ internal sealed class L2Parser(L1Tokenizer L1T)
 
                         case L1D1 l1d1:
                             var st = new L2Instruction();
-                            var l1inst = new L1Instruction() { Tokens = l1d1.Tokens, Cat = SyntaxCategory.Instruction, Inst = new TIKey { Op = int.Parse(l1d1.Tokens[0].Text), M = l1d1.Tokens[0].Text, S = StatementSyntax.a } };
+                            var l1inst = new L1Instruction() { Tokens = l1d1.Tokens, Cat = SyntaxCategory.Instruction, Inst = new TIKey { Op = [int.Parse(l1d1.Tokens[0].Text)], M = l1d1.Tokens[0].Text, S = StatementSyntax.a } };
                             st.L1Tokens.Add(l1inst);
                             yield return st;
                             break;
 
                         case L1Instruction l1i:
+                            // Special case: Fix or SBR following INV is atomic
+                            if (IsContextInv() && l1i.Inst.Op is [58] or [71])
+                            {
+                                Context.Add(l1i);
+                                var l2f = new L2Instruction();
+                                l2f.L1Tokens.AddRange(Context);
+                                Context.Clear();
+                                yield return l2f;
+                                break;
+                            }
+
                             switch (l1i.Inst.S)
                             {
                                 case StatementSyntax.a:
                                     // Special case, INV, we just add it to the context and continue at state 0, since it's potentially
                                     // part of next instruction
-                                    if (l1i.Inst.Op == 22)
+                                    if (l1i.Inst.Op is [22])
                                     {
                                         Context.Add(l1i);
                                         continue;
@@ -297,7 +311,7 @@ internal sealed class L2Parser(L1Tokenizer L1T)
                     break;
 
                 case L2ParserState.expect_di:
-                    if (token is L1Instruction { Inst.Op: 40 })
+                    if (token is L1Instruction { Inst.Op: [40] })
                     {
                         Context.Add(token);
                         state = L2ParserState.expect_i;
@@ -346,7 +360,7 @@ internal sealed class L2Parser(L1Tokenizer L1T)
                         }
                         break;
                     }
-                    else if (token is L1Instruction { Inst.Op: 40 })
+                    else if (token is L1Instruction { Inst.Op: [40] })
                     {
                         Context.Add(token);
                         state = L2ParserState.expect_i;
@@ -381,7 +395,7 @@ internal sealed class L2Parser(L1Tokenizer L1T)
                     break;
 
                 case L2ParserState.expect_dib:
-                    if (token is L1Instruction { Inst.Op: 40 })
+                    if (token is L1Instruction { Inst.Op: [40] })
                     {
                         Context.Add(token);
                         state = L2ParserState.expect_dib_i;
@@ -455,5 +469,5 @@ internal sealed class L2Parser(L1Tokenizer L1T)
     // Any instruction in TIKeys can be a mnemonic except Ind
     // Manual (V-56) tells that we should avoid R/S but it's still legitimate
     // I've tested mergeg codes, they are also Ok
-    private static bool IsLabelMnemonic(L1Token token) => token is L1Instruction l1inst && l1inst.Inst.Op != 40;
+    private static bool IsLabelMnemonic(L1Token token) => token is L1Instruction l1inst && l1inst.Inst.Op is not [40];
 }
