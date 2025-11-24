@@ -3,11 +3,6 @@
 //
 // 2025-11-21   PV      First version
 
-// ToDo:
-// - Extended instructions
-// - TAG as a statement
-// - Decide how to process individual numbers merge
-
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -27,15 +22,35 @@ abstract record L2StatementBase
     internal string AsString()
     {
         var sb = new StringBuilder();
+
+        var invalid = this is L2InvalidStatement;
+        if (invalid)
+            sb.Append(Couleurs.GetCategoryColor(SyntaxCategory.Invalid));
         sb.Append($"{GetType().Name,-18}: ");
         foreach (var (ix, l1t) in Enumerable.Index(L1Tokens))
         {
             if (ix != 0)
+            {
                 sb.Append("                    ");
-            sb.Append(l1t.AsString());
+            }
+            sb.Append(l1t.AsString(invalid));
             sb.Append('\n');
         }
+        if (invalid)
+            sb.Append(Couleurs.GetDefaultColor());
         return sb.ToString();
+    }
+
+    internal string AsStringWithOpcodes()
+    {
+        var s = AsString();
+
+        var op1 = this is L2Instruction l2i ? l2i.OpCodes
+                  : this is L2Number l2n ? l2n.OpCodes
+                  : null;
+        if (op1 != null && op1.Count > 0)
+            s += "OpCodes: " + string.Join(" ", op1.Select(o => o.ToString("D2"))) + "\n";
+        return s;
     }
 }
 
@@ -56,11 +71,17 @@ sealed record L2LineComment: L2StatementBase
 
 sealed record L2InvalidStatement: L2StatementBase { }
 
-sealed record L2Instruction: L2StatementBase { }
-
 sealed record L2Tag: L2StatementBase { }
 
-sealed record L2Number: L2StatementBase { }
+sealed record L2Instruction: L2StatementBase
+{
+    public List<byte> OpCodes { get; set; } = [];
+}
+
+sealed record L2Number: L2StatementBase
+{
+    public List<byte> OpCodes { get; set; } = [];
+}
 
 // -----
 
@@ -85,7 +106,7 @@ internal sealed class L2Parser(L1Tokenizer L1T)
     {
         List<L1Token> Context = [];
 
-        L1Token? nextToken = null;
+        //L1Token? nextToken = null;
         var e = L1T.EnumerateL1Tokens().GetEnumerator();
 
         bool IsContextInv()
@@ -121,18 +142,24 @@ internal sealed class L2Parser(L1Tokenizer L1T)
         L2ParserState state = L2ParserState.zero;
         for (; ; )
         {
-            L1Token token;
-            if (nextToken != null)
-            {
-                token = nextToken;
-                nextToken = null;
-            }
-            else
-            {
-                if (!e.MoveNext())
-                    break;
-                token = e.Current;
-            }
+            // Don't need peeking support, so a simple foreach should be enough
+
+            //L1Token token;
+            //if (nextToken != null)
+            //{
+            //    token = nextToken;
+            //    nextToken = null;
+            //}
+            //else
+            //{
+            //    if (!e.MoveNext())
+            //        break;
+            //    token = e.Current;
+            //}
+
+            if (!e.MoveNext())
+                break;
+            L1Token token = e.Current;
 
         // If at some point we get an unexpected token, we emit context as error and flush it, revert to state zero
         // and we restart analysis at unexpected token, not at next token
@@ -190,7 +217,7 @@ internal sealed class L2Parser(L1Tokenizer L1T)
 
                         case L1D1 l1d1:
                             var st = new L2Instruction();
-                            var l1inst = new L1Instruction() { Tokens = l1d1.Tokens, Cat = SyntaxCategory.Instruction, Inst = new TIKey { Op = [int.Parse(l1d1.Tokens[0].Text)], M = l1d1.Tokens[0].Text, S = StatementSyntax.a } };
+                            var l1inst = new L1Instruction() { Tokens = l1d1.Tokens, Cat = SyntaxCategory.Instruction, Inst = new TIKey { Op = [byte.Parse(l1d1.Tokens[0].Text)], M = l1d1.Tokens[0].Text, S = StatementSyntax.a } };
                             st.L1Tokens.Add(l1inst);
                             yield return st;
                             break;
@@ -443,7 +470,7 @@ internal sealed class L2Parser(L1Tokenizer L1T)
                     break;
 
                 case L2ParserState.expect_m:
-                    if (IsLabelMnemonic(token) || token is L1D2 ld2 && ld2.Tokens[0].Text != "40" && ld2.Tokens[0].Text[0] != '0')
+                    if (IsLabelMnemonic(token) || (token is L1D2 ld2 && ld2.Tokens[0].Text != "40" && ld2.Tokens[0].Text[0] != '0'))
                     {
                         Context.Add(token with { Cat = SyntaxCategory.Label });     // Need to recategorise token
                         var l2s = new L2Instruction();
@@ -452,16 +479,6 @@ internal sealed class L2Parser(L1Tokenizer L1T)
                         yield return l2s;
                         state = L2ParserState.zero;
                     }
-                    //if (token is L1D2 ld2 && ld2.Tokens[0].Text != "40" && ld2.Tokens[0].Text[0] != '0')
-                    //{
-                    //    // Extension, numeric label 10..99 (except 40)
-                    //    Context.Add(token with { Cat = SyntaxCategory.Label });     // Need to categorise token
-                    //    var l2s = new L2Instruction();
-                    //    l2s.L1Tokens.AddRange(Context);     // AddRange because of INV x=t for instance
-                    //    Context.Clear();
-                    //    yield return l2s;
-                    //    state = L2ParserState.zero;
-                    //}
                     else
                     {
                         // Flush incomplete context as an error

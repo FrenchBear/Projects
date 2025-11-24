@@ -105,7 +105,7 @@ internal sealed class SourcePainter
                 // at!=a -> time to print
 
                 // First accumulated string with at attribute
-                Console.Write(Couleurs.GetColorMode(at.cat));
+                Console.Write(Couleurs.GetCategoryColor(at.cat));
                 Console.Write(sbc.ToString());
                 sbc.Clear();
                 Console.Write(Couleurs.GetDefaultColor());
@@ -122,7 +122,7 @@ internal sealed class SourcePainter
             }
         }
         // reliquary
-        Console.Write(Couleurs.GetColorMode(at.cat));
+        Console.Write(Couleurs.GetCategoryColor(at.cat));
         Console.Write(sbc.ToString());
         Console.Write(Couleurs.GetDefaultColor());
         if (sbs.Length > 0)
@@ -134,7 +134,7 @@ public static class Couleurs
 {
     private static string CC(int r, int g, int b) => "\x1b[38;2;" + $"{r};{g};{b}m";
 
-    public static string GetColorMode(SyntaxCategory sc)
+    public static string GetCategoryColor(SyntaxCategory sc)
         => sc switch
         {
             SyntaxCategory.LineComment => CC(64, 192, 64),
@@ -144,7 +144,6 @@ public static class Couleurs
             SyntaxCategory.Number => CC(192, 192, 192),
             SyntaxCategory.DirectMemoryOrNumber => CC(255, 192, 255),
             SyntaxCategory.IndirectMemory => CC(255, 128, 255),
-            //SyntaxCategory.Tag => CC(0, 128, 255),
             SyntaxCategory.Tag => CC(255, 192, 128),
             SyntaxCategory.Label => CC(255, 192, 0),
             SyntaxCategory.DirectAddress => CC(255, 144, 0),

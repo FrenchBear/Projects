@@ -22,16 +22,18 @@ abstract record L1Token
     public required List<IToken> Tokens { get; set; }
     public SyntaxCategory Cat { get; set; }
 
-    public virtual string AsString()
+    public virtual string AsString(bool noColor = false)
     {
         //var s = string.Join(", ", Tokens.Select(t => $"{t.Line}:{t.Column} {t.Text}"));
         var s = string.Join(", ", Tokens.Select(t => t.Text));
 
         string res = $"{GetType().Name,-15}: ";
 
-        res += Couleurs.GetColorMode(Cat);
+        if (!noColor)
+            res += Couleurs.GetCategoryColor(Cat);
         res += s;
-        res += Couleurs.GetDefaultColor();
+        if (!noColor)
+            res += Couleurs.GetDefaultColor();
         if (s.Length < 15)
             res += new string(' ', 15 - s.Length);
         res += " " + Cat.ToString();
@@ -47,7 +49,7 @@ sealed record L1Instruction: L1Token
 {
     public required TIKey Inst { get; init; }
 
-    public override string AsString()
+    public override string AsString(bool noColor = false)
     {
         // For labels, don't need TInst details
         if (Cat == SyntaxCategory.Label)
@@ -57,9 +59,11 @@ sealed record L1Instruction: L1Token
         var s = string.Join(", ", Tokens.Select(t => t.Text));
 
         string res = $"{GetType().Name,-15}: ";
-        res += Couleurs.GetColorMode(Cat);
+        if (!noColor)
+            res += Couleurs.GetCategoryColor(Cat);
         res += s;
-        res += Couleurs.GetDefaultColor();
+        if (!noColor)
+            res += Couleurs.GetDefaultColor();
         if (s.Length < 15)
             res += new string(' ', 15 - s.Length);
         res += " " + Cat.ToString();
@@ -73,7 +77,7 @@ sealed record L1D2: L1Token { }
 sealed record L1A3: L1Token { }
 sealed record L1Num: L1Token
 {
-    public override string AsString()
+    public override string AsString(bool noColor = false)
     {
         var s = string.Join("", Tokens.Select(t => t.Text));
         var c = Cat.ToString();
@@ -101,7 +105,7 @@ enum StatementSyntax
 
 sealed record TIKey
 {
-    public required int[] Op { get; init; }  // Opcodes
+    public required byte[] Op { get; init; } // Opcodes
     public required string M { get; init; }  // Mnemonic (canonical version)
     public StatementSyntax S { get; init; }  // Syntax
     public bool I { get; init; }             // Invertible

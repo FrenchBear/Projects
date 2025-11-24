@@ -51,7 +51,7 @@ Sto Ind Z CLR";
         //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\all-2.t59");
         //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\Master Library\ML-01.T59");
         //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\Master Library\ML-01-!ALL.t59");
-        input = "// Initial comment\nLbl CLR STO 12 @Loop3: STO IND 12 GTO CLR GTO 123 GTO 01 23 END ZYP 123456 GTO @Tag";
+        input = "// Initial comment\nLbl CLR STO 12 @Loop3: STO IND 12 GTO CLR GTO 25 GTO 123 GTO 01 23 END ZYP 123456 GTO @Tag Sto Ind Ind 12 Nop Sto Sin e^x";
 
         //Console.WriteLine("--- Parsing Input ---");
         //Console.WriteLine(input);
@@ -74,8 +74,13 @@ Sto Ind Z CLR";
         //    Console.WriteLine(t1.AsString());
 
         var l2p = new L2Parser(l1t);
-        Console.WriteLine("=== L2 Statements ===");
-        foreach (L2StatementBase l2s in l2p.EnumerateL2Statements())
-            Console.WriteLine(l2s.AsString());
+        //Console.WriteLine("=== L2 Statements ===");
+        //foreach (L2StatementBase l2s in l2p.EnumerateL2Statements())
+        //    Console.WriteLine(l2s.AsString());
+
+        var l3e = new L3Encoder(l2p);
+        Console.WriteLine("=== L2 Statements with opcodes ===");
+        foreach (L2StatementBase l2e in l3e.EnumerateStatements())
+            Console.WriteLine(l2e.AsStringWithOpcodes());
     }
 }
