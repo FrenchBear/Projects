@@ -8,7 +8,6 @@ using Antlr4.Runtime;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection.Emit;
 
 namespace T59v5;
 
@@ -18,6 +17,7 @@ internal sealed class L3Encoder(L2Parser L2P)
     internal IEnumerable<L2StatementBase> EnumerateStatements()
     {
         var e = L2P.EnumerateL2Statements().GetEnumerator();
+        int pc = 0;     // Program counter
 
         for (; ; )
         {
@@ -42,6 +42,7 @@ internal sealed class L3Encoder(L2Parser L2P)
             switch (l2s)
             {
                 case L2Instruction l2si:
+                    l2si.PC = pc;
                     foreach (var l1t in l2s.L1Tokens)
                     {
                         if (l1t is L1Instruction l1i)
@@ -87,10 +88,14 @@ internal sealed class L3Encoder(L2Parser L2P)
                             MergeInstructions(start, inst.Inst.MOp);
                     }
 
+                    // Finally update pc
+                    pc += l2si.OpCodes.Count;
+
                     yield return l2si;
                     break;
 
                 case L2Number l2n:
+                    l2n.PC = pc;
                     foreach (var l1t in l2n.L1Tokens)
                         foreach (char c in string.Join("", l1t.Tokens.Select(t => t.Text)))
                         {
@@ -105,7 +110,14 @@ internal sealed class L3Encoder(L2Parser L2P)
                             else if (c != '+')
                                 Debugger.Break();
                         }
+                    pc += l2n.OpCodes.Count;
                     yield return l2n;
+                    break;
+
+                case L2Eof:
+                case L2PgmSeparator:
+                    pc = 0;
+                    yield return l2s;
                     break;
 
                 default:

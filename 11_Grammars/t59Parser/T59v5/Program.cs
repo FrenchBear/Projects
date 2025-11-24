@@ -5,8 +5,14 @@
 //
 // 2025-11-20   PV
 
+// ToDo:
+// Crate an class "T59Program" so L1Tokenizer can output a List<T59Program>, and from L2 and above, work on T59Program objects
+// instead of low-level enumerables
+
 using Antlr4.Runtime;
 using System;
+
+#pragma warning disable IDE0059 // Unnecessary assignment of a value
 
 namespace T59v5;
 
@@ -64,11 +70,9 @@ Sto Ind Z CLR";
         var inputStream = new AntlrInputStream(input);
         var lexer = new Vocab(inputStream);
 
-        var sp = new SourcePainter(input);
-
         // Set up custom error listener for validation
         bool showErrors = true;
-        var myLexerErrorListener = new MyLexerErrorListener(sp, showErrors);
+        var myLexerErrorListener = new MyLexerErrorListener(showErrors);
         lexer.RemoveErrorListeners();       // Remove default console error listener
         lexer.AddErrorListener(myLexerErrorListener);
 

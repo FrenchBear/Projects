@@ -7,9 +7,11 @@ using Antlr4.Runtime;
 using System.Collections.Generic;
 using System.IO;
 
+#pragma warning disable CS9113 // Parameter is unread.
+
 namespace T59v5;
 
-internal sealed class MyLexerErrorListener(SourcePainter sp, bool showErrors): IAntlrErrorListener<int>
+internal sealed class MyLexerErrorListener(bool showErrors): IAntlrErrorListener<int>
 {
     public bool HadError { get; private set; }
     public List<string> Errors = [];

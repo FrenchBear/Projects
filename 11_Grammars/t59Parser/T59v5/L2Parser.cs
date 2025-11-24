@@ -72,16 +72,15 @@ sealed record L2LineComment: L2StatementBase
 sealed record L2InvalidStatement: L2StatementBase { }
 
 sealed record L2Tag: L2StatementBase { }
-
-sealed record L2Instruction: L2StatementBase
+abstract record L2ActualInstruction: L2StatementBase
 {
+    public int PC { get; set; }
     public List<byte> OpCodes { get; set; } = [];
 }
 
-sealed record L2Number: L2StatementBase
-{
-    public List<byte> OpCodes { get; set; } = [];
-}
+sealed record L2Instruction: L2ActualInstruction { }
+
+sealed record L2Number: L2ActualInstruction { }
 
 // -----
 
