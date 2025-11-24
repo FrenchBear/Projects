@@ -3,6 +3,11 @@
 //
 // 2025-11-21   PV      First version
 
+// ToDo:
+// - Extended instructions
+// - TAG as a statement
+// - Decide how to process individual numbers merge
+
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -22,11 +27,11 @@ abstract record L2StatementBase
     internal string AsString()
     {
         var sb = new StringBuilder();
-        sb.Append($"{GetType().Name,-15}: ");
+        sb.Append($"{GetType().Name,-18}: ");
         foreach (var (ix, l1t) in Enumerable.Index(L1Tokens))
         {
             if (ix != 0)
-                sb.Append("                 ");
+                sb.Append("                    ");
             sb.Append(l1t.AsString());
             sb.Append('\n');
         }
@@ -34,30 +39,30 @@ abstract record L2StatementBase
     }
 }
 
-record L2Eof: L2StatementBase
+sealed record L2Eof: L2StatementBase
 {
     public L2Eof(L1Eof l1i) => AddL1Token(l1i);
 }
 
-record L2ProgramSeparator: L2StatementBase
+sealed record L2ProgramSeparator: L2StatementBase
 {
     public L2ProgramSeparator(L1ProgramSeparator l1i) => AddL1Token(l1i);
 }
 
-record L2LineComment: L2StatementBase
+sealed record L2LineComment: L2StatementBase
 {
     public L2LineComment(L1LineComment l1i) => AddL1Token(l1i);
 }
 
-record L2InvalidStatement: L2StatementBase
-{
-}
+sealed record L2InvalidStatement: L2StatementBase { }
 
-record L2Instruction: L2StatementBase { }
+sealed record L2Instruction: L2StatementBase { }
+
+sealed record L2Number: L2StatementBase { }
 
 // -----
 
-internal class L2Parser(L1Tokenizer L1T)
+internal sealed class L2Parser(L1Tokenizer L1T)
 {
     enum L2ParserState
     {
@@ -65,8 +70,10 @@ internal class L2Parser(L1Tokenizer L1T)
         expect_d,           // Expects D1 or D2, to be retagged as SyntaxCategory.DirectMemoryOrNumber
         expect_i,           // Expects D1 or D2, to be retagged as SyntaxCategory.IndirectMemory
         expect_di,          // If 'Ind' -> expect_i else -> expect_d
-        expect_b,           // Expects mnemonic (L1Instruction excepted Ind), A3, A2 (10-99), A2 (00-09) -> expect_a4_part_2 
+        expect_b,           // Expects mnemonic (L1Instruction excepted Ind), A3, A2 (10-99), A2 (00-09) -> expect_a4_part_2, Ind -> expect_i, L1TAG
         expect_dib,
+        expect_dib_d,
+        expect_dib_i,
         expect_m,           // Expects mnemonic (L1Instruction excepted Ind)
         expect_a4_part_2,   // When expect_b finds a D2 starting with '0', valid follow-up is D2
     }
@@ -134,10 +141,6 @@ internal class L2Parser(L1Tokenizer L1T)
                     // In theory we should always get L1Eof or L1ProgramSeparator before the end of the flow, and these
                     // L1Token are valid in state 0
                     if (token is L1InvalidToken
-                        or L1D1
-                        or L1D2
-                        or L1A3
-                        or L1Num
                         or L1Tag
                         or L1Colon)
                     {
@@ -166,6 +169,21 @@ internal class L2Parser(L1Tokenizer L1T)
                         // ToDo: Allow this at some point: STO  // guess where?\r\n  12
                         case L1LineComment l1lc:
                             yield return new L2LineComment(l1lc);
+                            break;
+
+                        case L1Num:
+                        case L1D2:
+                        case L1A3:
+                            var l2n = new L2Number();
+                            l2n.AddL1Token(token with { Cat = SyntaxCategory.Number });
+                            yield return l2n;
+                            break;
+
+                        case L1D1 l1d1:
+                            var st = new L2Instruction();
+                            var l1inst = new L1Instruction() { Tokens = l1d1.Tokens, Cat = SyntaxCategory.Instruction, Inst = new TIKey { Op = int.Parse(l1d1.Tokens[0].Text), M = l1d1.Tokens[0].Text, S = StatementSyntax.a } };
+                            st.L1Tokens.Add(l1inst);
+                            yield return st;
                             break;
 
                         case L1Instruction l1i:
@@ -215,6 +233,13 @@ internal class L2Parser(L1Tokenizer L1T)
                                 case StatementSyntax.m:
                                     Context.Add(l1i);
                                     state = L2ParserState.expect_m;
+                                    break;
+
+                                case StatementSyntax.p:
+                                    // Ind is not valid as a statement
+                                    Context.Add(token);
+                                    foreach (var s in FlushContext(false))
+                                        yield return s;
                                     break;
 
                                 default:
@@ -292,9 +317,9 @@ internal class L2Parser(L1Tokenizer L1T)
                         state = L2ParserState.zero;
                         break;
                     }
-                    if (token is L1A3)
+                    if (token is L1A3 or L1Tag)
                     {
-                        Context.Add(token);
+                        Context.Add(token);                 // Already categorized
                         var l2s = new L2Instruction();
                         l2s.L1Tokens.AddRange(Context);     // AddRange because of INV x=t for instance
                         Context.Clear();
@@ -320,6 +345,12 @@ internal class L2Parser(L1Tokenizer L1T)
                             state = L2ParserState.expect_a4_part_2;
                         }
                         break;
+                    }
+                    else if (token is L1Instruction { Inst.Op: 40 })
+                    {
+                        Context.Add(token);
+                        state = L2ParserState.expect_i;
+                        continue;
                     }
 
                     // We've exhausted valid possibilities, token it not accepted
@@ -349,8 +380,46 @@ internal class L2Parser(L1Tokenizer L1T)
                     }
                     break;
 
-                // ToDo later
                 case L2ParserState.expect_dib:
+                    if (token is L1Instruction { Inst.Op: 40 })
+                    {
+                        Context.Add(token);
+                        state = L2ParserState.expect_dib_i;
+                        break;
+                    }
+                    state = L2ParserState.expect_dib_d;
+                    goto RestartAnalysis;
+
+                case L2ParserState.expect_dib_d:
+                    if (token is L1D1 or L1D2)
+                    {
+                        Context.Add(token with { Cat = SyntaxCategory.DirectMemoryOrNumber });
+                        state = L2ParserState.expect_b;
+                    }
+                    else
+                    {
+                        // Flush incomplete context as an error
+                        foreach (var s in FlushContext(false))
+                            yield return s;
+                        state = L2ParserState.zero;
+                        goto RestartAnalysis;
+                    }
+                    break;
+
+                case L2ParserState.expect_dib_i:
+                    if (token is L1D1 or L1D2)
+                    {
+                        Context.Add(token with { Cat = SyntaxCategory.IndirectMemory });
+                        state = L2ParserState.expect_b;
+                    }
+                    else
+                    {
+                        // Flush incomplete context as an error
+                        foreach (var s in FlushContext(false))
+                            yield return s;
+                        state = L2ParserState.zero;
+                        goto RestartAnalysis;
+                    }
                     break;
 
                 case L2ParserState.expect_m:
@@ -387,5 +456,4 @@ internal class L2Parser(L1Tokenizer L1T)
     // Manual (V-56) tells that we should avoid R/S but it's still legitimate
     // I've tested mergeg codes, they are also Ok
     private static bool IsLabelMnemonic(L1Token token) => token is L1Instruction l1inst && l1inst.Inst.Op != 40;
-
 }

@@ -8,7 +8,6 @@
 //
 // 2025-11-22   PV
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -16,9 +15,11 @@ using Antlr4.Runtime;
 
 namespace T59v5;
 
+// ------------------
+
 abstract record L1Token
 {
-    public List<IToken> Tokens { get; set; }
+    public required List<IToken> Tokens { get; set; }
     public SyntaxCategory Cat { get; set; }
 
     public virtual string AsString()
@@ -35,7 +36,7 @@ sealed record L1LineComment: L1Token { }
 sealed record L1InvalidToken: L1Token { }
 sealed record L1Instruction: L1Token
 {
-    public TIKey Inst { get; set; }
+    public required TIKey Inst { get; init; }
 
     public override string AsString()
     {
@@ -43,14 +44,23 @@ sealed record L1Instruction: L1Token
         var c = Cat.ToString();
         return $"{GetType().Name,-15}: {s,-15} {c,-15} {Inst}";
     }
-
 }
 sealed record L1D1: L1Token { }
 sealed record L1D2: L1Token { }
 sealed record L1A3: L1Token { }
-sealed record L1Num: L1Token { }
+sealed record L1Num: L1Token
+{
+    public override string AsString()
+    {
+        var s = string.Join("", Tokens.Select(t => t.Text));
+        var c = Cat.ToString();
+        return $"{GetType().Name,-15}: {s,-15} {c,-15} {s}";
+    }
+}
 sealed record L1Tag: L1Token { }
 sealed record L1Colon: L1Token { }
+
+// ------------------
 
 enum StatementSyntax
 {
@@ -64,18 +74,22 @@ enum StatementSyntax
     p       // Special for Ind (prefix)
 }
 
+// ------------------
+
 sealed record TIKey
 {
-    public int Op { get; set; }             // Opcode
-    public string M { get; set; }           // Mnemonic (canonical version)
-    public StatementSyntax S { get; set; }  // Syntax
-    public bool I { get; set; }             // Invertible
-    public int MOp { get; set; }            // Indirect merged opcode
+    public int Op { get; init; }             // Opcode
+    public required string M { get; init; }  // Mnemonic (canonical version)
+    public StatementSyntax S { get; init; }  // Syntax
+    public bool I { get; init; }             // Invertible
+    public int MOp { get; init; }            // Indirect merged opcode
 }
 
-internal sealed class L1Tokenizer
+// ------------------
+
+internal sealed class L1Tokenizer(Vocab lexer)
 {
-    private readonly Vocab lexer;
+    private readonly Vocab lexer = lexer;
 
     private static readonly Dictionary<int, TIKey> TIKeys = [];
 
@@ -178,11 +192,6 @@ internal sealed class L1Tokenizer
         TIKeys.Add(Vocab.I99_print, new TIKey { Op = 99, M = "Prt", S = StatementSyntax.a });
     }
 
-    public L1Tokenizer(Vocab lexer)
-    {
-        this.lexer = lexer;
-    }
-
     public IEnumerable<L1Token> EnumerateL1Tokens()
     {
         IToken? nextToken = null;
@@ -198,13 +207,13 @@ internal sealed class L1Tokenizer
                 token = lexer.NextToken();
 
             string symbolicName = lexer.Vocabulary.GetSymbolicName(token.Type);
-            string typeName = symbolicName ?? lexer.Vocabulary.GetDisplayName(token.Type);
+            //string typeName = symbolicName ?? lexer.Vocabulary.GetDisplayName(token.Type);
             //Console.WriteLine($"Type: {typeName,-15} Text: '{token.Text}'");
 
             switch (token.Type)
             {
                 case TokenConstants.EOF:
-                    var teof = new L1Eof { Tokens = new List<IToken> { token }, Cat = SyntaxCategory.Eof };
+                    var teof = new L1Eof { Tokens = [token], Cat = SyntaxCategory.Eof };
                     yield return teof;
                     yield break;
 
@@ -213,47 +222,47 @@ internal sealed class L1Tokenizer
                     break;
 
                 case Vocab.LINE_COMMENT:
-                    var tlc = new L1LineComment { Tokens = new List<IToken> { token }, Cat = SyntaxCategory.LineComment };
+                    var tlc = new L1LineComment { Tokens = [token], Cat = SyntaxCategory.LineComment };
                     yield return tlc;
                     break;
 
                 case Vocab.PROGRAM_SEPARATOR:
-                    var tps = new L1ProgramSeparator { Tokens = new List<IToken> { token }, Cat = SyntaxCategory.ProgramSeparator };
+                    var tps = new L1ProgramSeparator { Tokens = [token], Cat = SyntaxCategory.ProgramSeparator };
                     yield return tps;
                     break;
 
                 case Vocab.D1:      // SyntaxCategory will be determined later
-                    var td1 = new L1D1 { Tokens = new List<IToken> { token }, Cat = SyntaxCategory.Unknown };
+                    var td1 = new L1D1 { Tokens = [token], Cat = SyntaxCategory.Unknown };
                     yield return td1;
                     break;
 
                 case Vocab.D2:      // SyntaxCategory will be determined later
-                    var td2 = new L1D2 { Tokens = new List<IToken> { token }, Cat = SyntaxCategory.Unknown };
+                    var td2 = new L1D2 { Tokens = [token], Cat = SyntaxCategory.Unknown };
                     yield return td2;
                     break;
 
                 case Vocab.A3:
-                    var ta3 = new L1A3 { Tokens = new List<IToken> { token }, Cat = SyntaxCategory.DirectAddress };
+                    var ta3 = new L1A3 { Tokens = [token], Cat = SyntaxCategory.DirectAddress };
                     yield return ta3;
                     break;
 
                 case Vocab.NUM:
-                    var tnum = new L1Num { Tokens = new List<IToken> { token }, Cat = SyntaxCategory.Number };
+                    var tnum = new L1Num { Tokens = [token], Cat = SyntaxCategory.Number };
                     yield return tnum;
                     break;
 
                 case Vocab.TAG:
-                    var ttag = new L1Tag { Tokens = new List<IToken> { token }, Cat = SyntaxCategory.Tag };
+                    var ttag = new L1Tag { Tokens = [token], Cat = SyntaxCategory.Tag };
                     yield return ttag;
                     break;
 
                 case Vocab.COLON:       // Category is not really clear, let's assume Tag for now
-                    var tco = new L1Colon() { Tokens = new List<IToken> { token }, Cat = SyntaxCategory.Tag };
+                    var tco = new L1Colon() { Tokens = [token], Cat = SyntaxCategory.Tag };
                     yield return tco;
                     break;
 
                 case Vocab.INVALID_CHAR:
-                    var tic = new L1InvalidToken() { Tokens = new List<IToken> { token }, Cat = SyntaxCategory.Invalid };
+                    var tic = new L1InvalidToken() { Tokens = [token], Cat = SyntaxCategory.Invalid };
                     for (; ; )
                     {
                         nextToken = lexer.NextToken();
@@ -267,7 +276,7 @@ internal sealed class L1Tokenizer
                 default:
                     Debug.Assert(symbolicName.StartsWith('I')); // Only instructions should remain
                     Debug.Assert(TIKeys.ContainsKey(token.Type));
-                    var ti = new L1Instruction() { Tokens = new List<IToken> { token }, Cat = SyntaxCategory.Instruction, Inst = TIKeys[token.Type] };
+                    var ti = new L1Instruction() { Tokens = [token], Cat = SyntaxCategory.Instruction, Inst = TIKeys[token.Type] };
                     yield return ti;
                     break;
             }

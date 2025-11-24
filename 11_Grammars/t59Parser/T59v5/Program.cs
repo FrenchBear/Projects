@@ -5,7 +5,6 @@
 
 using Antlr4.Runtime;
 using System;
-using System.Collections.Generic;
 
 namespace T59v5;
 
@@ -60,6 +59,7 @@ Sto Ind Z CLR";
         //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\all-1.t59");
         //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\all-2.t59");
         //input = "Lbl A Sto 0 CLR @Loop: 1 + Dsz 0 @LOOP R/S";
+        //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\Master Library\ML-01.T59");
         //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\Master Library\ML-01-!ALL.t59");
         //input = @"DSZ 01 00 15";
         //input = @"DSZ 05 12 25";
@@ -68,8 +68,10 @@ Sto Ind Z CLR";
         //input = @"CLSINTOP4";
         //input = @"Sto Ind ind : : 12 CLR";
         //input = @"STO 12 END CLR ZYP GTO 123 GTO STO NOP";
-        input = "CLR Inv Sin Inv CE STO 12 HIR 40 SUM Ind 25 ST* 42 INV Prd 12 Inv Prd Ind 33 GTO CLR GTO 25 GTO 123 GTO 01 23";
-        //input = "GTO 25";
+        //input = @"CLR Inv Sin Inv CE STO 12 HIR 40 SUM Ind 25 ST* 42 INV Prd 12 Inv Prd Ind 33 GTO CLR GTO 25 GTO 123 GTO 01 23";
+        //input = @"Dsz 5 CLR Dsz 15 25 Dsz 25 123 Dsz 35 01 23 Dsz 45 @Loop1 Dsz 55 Ind 65 Dsz Ind 5 CLR Dsz Ind 15 25 Dsz 25 123 Dsz 35 01 23 Dsz Ind 45 @tag Dsz Ind 55 Ind 65 Inv Dsz 5 Fix";
+        //input = @"Inv Dsz Ind 55 Ind 65";
+        input = "Ind 12";
 
         //Console.WriteLine("--- Parsing Input ---");
         //Console.WriteLine(input);
@@ -77,8 +79,6 @@ Sto Ind Z CLR";
         // Build antlr pipeline and parse input for rune program
         var inputStream = new AntlrInputStream(input);
         var lexer = new Vocab(inputStream);
-        var tokenStream = new CommonTokenStream(lexer);
-        var parser = new GramParser(tokenStream);
 
         var sp = new SourcePainter(input);
 
@@ -88,13 +88,13 @@ Sto Ind Z CLR";
         lexer.RemoveErrorListeners();       // Remove default console error listener
         lexer.AddErrorListener(myLexerErrorListener);
 
-        Console.WriteLine("=== Tokens ===");
-
         var l1t = new L1Tokenizer(lexer);
+        //Console.WriteLine("=== L1 Tokens ===");
         //foreach (L1Token t1 in l1t.EnumerateL1Tokens())
         //    Console.WriteLine(t1.AsString());
 
         var l2p = new L2Parser(l1t);
+        Console.WriteLine("=== L2 Statements ===");
         foreach (L2StatementBase l2s in l2p.EnumerateL2Statements())
             Console.WriteLine(l2s.AsString());
     }

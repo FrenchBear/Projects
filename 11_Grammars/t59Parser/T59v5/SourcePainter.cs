@@ -32,7 +32,7 @@ public record struct Paint
     public bool ParserError;
 }
 
-internal class SourcePainter
+internal sealed class SourcePainter
 {
     private readonly string[] Lines;
     private readonly Paint[][] Cats;
@@ -69,18 +69,18 @@ internal class SourcePainter
 
     public void Print()
     {
-        Paint at = new Paint { cat = SyntaxCategory.Uninitialized, ParserError = false };
+        var at = new Paint { cat = SyntaxCategory.Uninitialized, ParserError = false };
         var sbc = new StringBuilder();      // For characters
         var sbs = new StringBuilder();      // For spaces
         for (int i = 0; i < Lines.Length; i++)
         {
             for (int j = 0; j <= Lines[i].Length; j++)
             {
-                var c = j== Lines[i].Length ? '\n' : Lines[i][j];
+                var c = j == Lines[i].Length ? '\n' : Lines[i][j];
 
                 // Spaces are accumulated in a separate buffer since we only print them
                 // with attributes only if char before and char after have the same attribute
-                if (c==' ' || c=='\t')
+                if (c is ' ' or '\t')
                 {
                     sbs.Append(c);
                     continue;
@@ -88,8 +88,8 @@ internal class SourcePainter
 
                 // c is not a space
                 // If current attribute is the same as current buffer (or not assigned yet), we accumulate
-                var a = c=='\n' ? new Paint { cat = SyntaxCategory.Eof, ParserError = false } : Cats[i][j];      // Trick to force printing and reset to 'no background' before printing newline visually better
-                if (at.cat == SyntaxCategory.Uninitialized || at==a)
+                var a = c == '\n' ? new Paint { cat = SyntaxCategory.Eof, ParserError = false } : Cats[i][j];      // Trick to force printing and reset to 'no background' before printing newline visually better
+                if (at.cat == SyntaxCategory.Uninitialized || at == a)
                 {
                     // If we have accumulated spaces, merge them
                     if (sbs.Length > 0)
@@ -129,7 +129,7 @@ internal class SourcePainter
             Console.Write(sbs.ToString());
     }
 
-    private void SetColorMode(Paint p)
+    private static void SetColorMode(Paint p)
     {
         switch (p.cat)
         {
@@ -173,7 +173,7 @@ internal class SourcePainter
             Console.Write("\x1b[4m");
     }
 
-    private void ResetColorMode()
+    private static void ResetColorMode()
     {
         Console.Write("\x1b[0m");
         Console.ForegroundColor = ConsoleColor.Gray;
