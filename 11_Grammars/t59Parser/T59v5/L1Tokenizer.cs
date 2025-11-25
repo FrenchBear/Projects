@@ -234,7 +234,32 @@ internal sealed class L1Tokenizer(Vocab lexer)
         TIKeys.Add(Vocab.I7740_x_greater_or_equal_than_t_indirect, new TIKey { Op = [77, 40], M = "GE*", S = StatementSyntax.i, I = true });
     }
 
-    public IEnumerable<L1Token> EnumerateL1Tokens()
+    public List<T59Program> GetPrograms()
+    {
+        List<T59Program> lp = [];
+
+        T59Program curProg = new();
+        foreach (var l1t in EnumerateL1Tokens())
+        {
+            if (l1t is L1PgmSeparator or L1Eof)
+            {
+                // Each program is terminated by EOF, PgmSeparators are discarded and replaced by EOF
+                // Ignore empty programs
+                if (curProg.L1Tokens.Count > 0)
+                {
+                    var eof = new L1Eof { Cat = SyntaxCategory.Eof, Tokens = [] };
+                    curProg.L1Tokens.Add(eof);
+                    lp.Add(curProg);
+                    curProg = new();
+                }
+            }
+            else
+                curProg.L1Tokens.Add(l1t);
+        }
+        return lp;
+    }
+
+    private IEnumerable<L1Token> EnumerateL1Tokens()
     {
         IToken? nextToken = null;
         for (; ; )
@@ -269,7 +294,7 @@ internal sealed class L1Tokenizer(Vocab lexer)
                     break;
 
                 case Vocab.PROGRAM_SEPARATOR:
-                    var tps = new L1PgmSeparator { Tokens = [token], Cat = SyntaxCategory.PgmSeparator };
+                    var tps = new L1PgmSeparator { Tokens = [token], Cat = SyntaxCategory.Eof };
                     yield return tps;
                     break;
 

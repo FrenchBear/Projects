@@ -59,11 +59,6 @@ sealed record L2Eof: L2StatementBase
     public L2Eof(L1Eof l1i) => AddL1Token(l1i);
 }
 
-sealed record L2PgmSeparator: L2StatementBase
-{
-    public L2PgmSeparator(L1PgmSeparator l1i) => AddL1Token(l1i);
-}
-
 sealed record L2LineComment: L2StatementBase
 {
     public L2LineComment(L1LineComment l1i) => AddL1Token(l1i);
@@ -84,7 +79,7 @@ sealed record L2Number: L2ActualInstruction { }
 
 // -----
 
-internal sealed class L2Parser(L1Tokenizer L1T)
+internal sealed class L2Parser(T59Program Prog)
 {
     enum L2ParserState
     {
@@ -101,12 +96,14 @@ internal sealed class L2Parser(L1Tokenizer L1T)
         expect_colon,       // After a tag at state 0, expects :
     }
 
-    public IEnumerable<L2StatementBase> EnumerateL2Statements()
+    public void L2Process() => Prog.L2Statements.AddRange(EnumerateL2Statements());
+
+    private IEnumerable<L2StatementBase> EnumerateL2Statements()
     {
         List<L1Token> Context = [];
 
         //L1Token? nextToken = null;
-        var e = L1T.EnumerateL1Tokens().GetEnumerator();
+        var e = Prog.L1Tokens.GetEnumerator();
 
         bool IsContextInv()
             => Context.Count > 0 && Context[0] is L1Instruction { Inst.Op: [22] };
@@ -190,9 +187,10 @@ internal sealed class L2Parser(L1Tokenizer L1T)
                             yield return new L2Eof(l1eof);
                             break;
 
-                        case L1PgmSeparator l1ps:
-                            yield return new L2PgmSeparator(l1ps);
-                            break;
+                        // Program separators are transformed in separate programs during L1 processing
+                        //case L1PgmSeparator l1ps:
+                        //    yield return new L2PgmSeparator(l1ps);
+                        //    break;
 
                         // For now, we consider a L1LineComment as a standalone statement, that can't be used
                         // in the middle of an instruction (contrary to most languages).

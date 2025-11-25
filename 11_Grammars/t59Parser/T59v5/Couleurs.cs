@@ -13,7 +13,7 @@ public enum SyntaxCategory: byte
     Unknown = 0,            // Default, if not painted
     Uninitialized,          // For internal use
     Invalid,                // L1InvalidToken (ex: ZYP). Incorrect/incomplete statements will be stored in a L2InvalidStatement, and its individual tokens may still keey their categegory
-    PgmSeparator,           // END
+    //PgmSeparator,         // END  (Obsolete)
     Eof,                    // Eof
     LineComment,            // souble slash and following text up to EOL
     Number,                 // Number
@@ -48,7 +48,7 @@ public static class Couleurs
             SyntaxCategory.Tag => CC(255, 192, 128),
             SyntaxCategory.Label => CC(255, 192, 0),
             SyntaxCategory.DirectAddress => CC(255, 144, 0),
-            _ => CC(255, 255, 255)      // Uninitialized, PgmSeparator, Eof
+            _ => CC(255, 255, 255)      // Uninitialized, Eof
         };
 
     public static string GetDefaultColor() => "\x1b[39m";

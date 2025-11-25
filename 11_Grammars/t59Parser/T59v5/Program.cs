@@ -6,11 +6,11 @@
 // 2025-11-20   PV
 
 // ToDo:
-// Crate an class "T59Program" so L1Tokenizer can output a List<T59Program>, and from L2 and above, work on T59Program objects
-// instead of low-level enumerables
+// Simplify code of L2Parser, rejecting invalid statement code should not be duplicated
 
 using Antlr4.Runtime;
 using System;
+using System.Linq;
 
 #pragma warning disable IDE0059 // Unnecessary assignment of a value
 
@@ -61,7 +61,7 @@ Sto Ind Z CLR";
         //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\Master Library\ML-01-!ALL.t59");
         //input = "// Initial comment\nLbl CLR STO 12 @Loop3: STO IND 12 GTO CLR GTO 25 GTO 123 GTO 01 23 END ZYP 123456 GTO @Tag Sto Ind Ind 12 Nop Sto Sin e^x INV SBR";
         //input = "SBR 240 INV SBR STO IND 12 INV SUM IND 33 OP 23 OP IND 23";
-        input = "1.414 * 6.02e-23";
+        input = "// A simple calculation\n1.414 * 6.02e-23 END SBR 240 INV SBR STO IND 12 END";
 
         //Console.WriteLine("--- Parsing Input ---");
         //Console.WriteLine(input);
@@ -77,18 +77,48 @@ Sto Ind Z CLR";
         lexer.AddErrorListener(myLexerErrorListener);
 
         var l1t = new L1Tokenizer(lexer);
-        //Console.WriteLine("=== L1 Tokens ===");
-        //foreach (L1Token t1 in l1t.EnumerateL1Tokens())
-        //    Console.WriteLine(t1.AsString());
+        var programs = l1t.GetPrograms();
 
-        var l2p = new L2Parser(l1t);
-        //Console.WriteLine("=== L2 Statements ===");
-        //foreach (L2StatementBase l2s in l2p.EnumerateL2Statements())
-        //    Console.WriteLine(l2s.AsString());
+        /*
+        Console.WriteLine("=== L1 Tokens ===\n");
+        foreach (var (ix, p) in Enumerable.Index(programs))
+        {
+            if (ix > 0)
+                Console.WriteLine("\n--------------\n");
+            foreach (L1Token t1 in p.L1Tokens)
+                Console.WriteLine(t1.AsString());
+        }
+        */
 
-        var l3e = new L3Encoder(l2p);
-        Console.WriteLine("=== L2 Statements with opcodes ===");
-        foreach (L2StatementBase l2e in l3e.EnumerateStatements())
-            Console.WriteLine(l2e.AsStringWithOpcodes());
+        foreach (var p in programs)
+        {
+            var l2p = new L2Parser(p);
+            l2p.L2Process();
+        }
+        /*
+        Console.WriteLine("=== L2 Statements ===\n");
+        foreach (var (ix, p) in Enumerable.Index(programs))
+        {
+            if (ix > 0)
+                Console.WriteLine("\n--------------\n");
+            foreach (L2StatementBase l2s in p.L2Statements)
+                Console.WriteLine(l2s.AsString());
+        }
+        */
+
+        foreach (var p in programs)
+        {
+            var l3e = new L3Encoder(p);
+            l3e.L3Process();
+        }
+
+        Console.WriteLine("=== L3 Statements with opcodes ===\n");
+        foreach (var (ix, p) in Enumerable.Index(programs))
+        {
+            if (ix > 0)
+                Console.WriteLine("\n--------------\n");
+            foreach (L2StatementBase l3s in p.L3Statements)
+                Console.WriteLine(l3s.AsStringWithOpcodes());
+        }
     }
 }

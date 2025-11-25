@@ -11,12 +11,15 @@ using System.Linq;
 
 namespace T59v5;
 
-internal sealed class L3Encoder(L2Parser L2P)
+internal sealed class L3Encoder(T59Program Prog)
 {
 
-    internal IEnumerable<L2StatementBase> EnumerateStatements()
+    internal void L3Process() => Prog.L3Statements.AddRange(EnumerateL3Statements());
+
+    private IEnumerable<L2StatementBase> EnumerateL3Statements()
     {
-        var e = L2P.EnumerateL2Statements().GetEnumerator();
+
+        var e = Prog.L2Statements.GetEnumerator();
         int pc = 0;     // Program counter
 
         for (; ; )
@@ -115,7 +118,6 @@ internal sealed class L3Encoder(L2Parser L2P)
                     break;
 
                 case L2Eof:
-                case L2PgmSeparator:
                     pc = 0;
                     yield return l2s;
                     break;
@@ -128,4 +130,5 @@ internal sealed class L3Encoder(L2Parser L2P)
 
         yield break;
     }
+
 }
