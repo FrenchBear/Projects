@@ -74,14 +74,24 @@ internal sealed class L3Encoder(T59Program Prog)
         }
 
         // Second pass, check branch addresses, replace temp tag addresses by real addresses
+        bool skipInstruction = false;
         foreach (var l2s in Prog.L2Statements)
             if (l2s is L2Instruction l2i)
             {
+                if (l2i.OpCodes[0] == 36)     // PGM
+                {
+                    skipInstruction = true;
+                    continue;
+                }
+
                 foreach (var l1t in l2i.L1Tokens)
                 {
                     switch (l1t)
                     {
                         case L1A3 l1a3:
+                            // Don't test address 240 in PGM 02 SBR 240
+                            if (skipInstruction)
+                                break;
                             var a3 = int.Parse(l1a3.L0Tokens[0].Text);
                             if (!Prog.ValidAddresses.ContainsKey(a3))
                             {
@@ -93,6 +103,9 @@ internal sealed class L3Encoder(T59Program Prog)
                             break;
 
                         case L1A4 l1a4:
+                            // Don't test address 240 in PGM 02 SBR 02 40
+                            if (skipInstruction)
+                                break;
                             var a4 = 100 * int.Parse(l1a4.L0Tokens[0].Text) + int.Parse(l1a4.L0Tokens[1].Text);
                             if (!Prog.ValidAddresses.ContainsKey(a4))
                             {
@@ -119,13 +132,16 @@ internal sealed class L3Encoder(T59Program Prog)
                                     if (l2i.OpCodes[i] == 100)
                                     {
                                         l2i.OpCodes[i] = (byte)(addr / 100);
-                                        l2i.OpCodes[i+1] = (byte)(addr % 100);
+                                        l2i.OpCodes[i + 1] = (byte)(addr % 100);
                                         break;
                                     }
                             }
                             break;
 
                         case L1D2 { Cat: SyntaxCategory.Label } l1d2:
+                            // Don't test address 20 in PGM 01 SBR 20
+                            if (skipInstruction)
+                                break;
                             var label = byte.Parse(l1d2.L0Tokens[0].Text);
                             if (!Labels.TryGetValue(label, out L2Instruction? value))
                             {
@@ -137,6 +153,9 @@ internal sealed class L3Encoder(T59Program Prog)
                             break;
 
                         case L1Instruction { Cat: SyntaxCategory.Label } l1i:
+                            // Don't test address CLR in PGM 01 SBR CLR
+                            if (skipInstruction)
+                                break;
                             var ilabel = l1i.Inst.Op[0];
                             if (!Labels.TryGetValue(ilabel, out L2Instruction? ivalue))
                             {
@@ -148,6 +167,9 @@ internal sealed class L3Encoder(T59Program Prog)
                             break;
                     }
                 }
+
+                // Always reset skipInstruction after processing a non-pgm instruction
+                skipInstruction = false;
             }
     }
 
