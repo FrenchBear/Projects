@@ -19,10 +19,9 @@ abstract record L2StatementBase
     public void AddL1Token(L1Token l1t)
         => L1Tokens.Add(l1t);
 
-    internal string AsString()
+    internal string AsDebugString()
     {
         var sb = new StringBuilder();
-
         var invalid = this is L2InvalidStatement;
         if (invalid)
             sb.Append(Couleurs.GetCategoryColor(SyntaxCategory.Invalid));
@@ -30,10 +29,8 @@ abstract record L2StatementBase
         foreach (var (ix, l1t) in Enumerable.Index(L1Tokens))
         {
             if (ix != 0)
-            {
                 sb.Append("                    ");
-            }
-            sb.Append(l1t.AsString(invalid));
+            sb.Append(l1t.AsDebugString(invalid));
             sb.Append('\n');
         }
         if (invalid)
@@ -41,16 +38,32 @@ abstract record L2StatementBase
         return sb.ToString();
     }
 
-    internal string AsStringWithOpcodes()
+    internal string AsDebugStringWithOpcodes()
     {
-        var s = AsString();
-
+        var s = AsDebugString();
         var op1 = this is L2Instruction l2i ? l2i.OpCodes
                   : this is L2Number l2n ? l2n.OpCodes
                   : null;
         if (op1 != null && op1.Count > 0)
             s += "OpCodes: " + string.Join(" ", op1.Select(o => o.ToString("D2"))) + "\n";
         return s;
+    }
+
+    internal string AsFormattedString()
+    {
+        var sb = new StringBuilder();
+        var invalid = this is L2InvalidStatement;
+
+        if (invalid)
+            sb.Append(Couleurs.GetCategoryColor(SyntaxCategory.Invalid));
+        foreach (var (ix, l1t) in Enumerable.Index(L1Tokens))
+        {
+            if (ix != 0)
+                sb.Append(' ');
+            sb.Append(l1t.AsFormattedString(invalid));
+        }
+        sb.Append(Couleurs.GetDefaultColor());
+        return sb.ToString();
     }
 }
 
@@ -64,7 +77,7 @@ sealed record L2Tag: L2StatementBase { }
 
 abstract record L2ActualInstruction: L2StatementBase
 {
-    public int PC { get; set; }
+    public int Address { get; set; }
     public List<byte> OpCodes { get; set; } = [];
 }
 

@@ -12,6 +12,7 @@ using Antlr4.Runtime;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 
 namespace T59v5;
 
@@ -22,11 +23,9 @@ abstract record L1Token
     public required List<IToken> Tokens { get; set; }
     public SyntaxCategory Cat { get; set; }
 
-    public virtual string AsString(bool noColor = false)
+    public virtual string AsDebugString(bool noColor = false)
     {
-        //var s = string.Join(", ", Tokens.Select(t => $"{t.Line}:{t.Column} {t.Text}"));
         var s = string.Join(", ", Tokens.Select(t => t.Text));
-
         string res = $"{GetType().Name,-15}: ";
 
         if (!noColor)
@@ -37,7 +36,22 @@ abstract record L1Token
         if (s.Length < 15)
             res += new string(' ', 15 - s.Length);
         res += " " + Cat.ToString();
+
         return res;
+    }
+
+    public virtual string AsFormattedString(bool noColor = false)
+    {
+        var sb = new StringBuilder();
+        if (!noColor)
+            sb.Append(Couleurs.GetCategoryColor(Cat));
+        if (this is L1Instruction l1i)
+            sb.Append(l1i.Inst.M);
+        else
+            sb.Append(string.Join(" ", Tokens.Select(t => t.Text)));
+        if (!noColor)
+            sb.Append(Couleurs.GetDefaultColor());
+        return sb.ToString();
     }
 }
 
@@ -49,11 +63,11 @@ sealed record L1Instruction: L1Token
 {
     public required TIKey Inst { get; init; }
 
-    public override string AsString(bool noColor = false)
+    public override string AsDebugString(bool noColor = false)
     {
         // For labels, don't need TInst details
         if (Cat == SyntaxCategory.Label)
-            return base.AsString();
+            return base.AsDebugString();
 
         //var s = string.Join(", ", Tokens.Select(t => $"{t.Line}:{t.Column} {t.Text}"));
         var s = string.Join(", ", Tokens.Select(t => t.Text));
@@ -77,7 +91,7 @@ sealed record L1D2: L1Token { }
 sealed record L1A3: L1Token { }
 sealed record L1Num: L1Token
 {
-    public override string AsString(bool noColor = false)
+    public override string AsDebugString(bool noColor = false)
     {
         var s = string.Join("", Tokens.Select(t => t.Text));
         var c = Cat.ToString();
@@ -105,11 +119,20 @@ enum StatementSyntax
 
 sealed record TIKey
 {
-    public required byte[] Op { get; init; } // Opcodes
-    public required string M { get; init; }  // Mnemonic (canonical version)
-    public StatementSyntax S { get; init; }  // Syntax
-    public bool I { get; init; }             // Invertible
-    public int MOp { get; init; }            // Indirect merged index in TIKeys, or 0 if instruction is not mergeable
+    /// <summary>Opcodes</summary>
+    public required byte[] Op { get; init; }
+
+    /// <summary>Mnemonic (canonical version)</summary>
+    public required string M { get; init; }
+
+    /// <summary>Syntax</summary>
+    public StatementSyntax S { get; init; }
+
+    /// <summary>Invertible: true if key supports INC prefix</summary>
+    public bool I { get; init; }
+
+    /// <summary>Indirect merged index in TIKeys, or 0 if instruction is not mergeable</summary>
+    public int MOp { get; init; }
 
     public override string ToString()
     {
@@ -159,7 +182,7 @@ internal sealed class L1Tokenizer(Vocab lexer)
         TIKeys.Add(Vocab.I29_clear_program, new TIKey { Op = [29], M = "CP", S = StatementSyntax.a });
         TIKeys.Add(Vocab.I30_tan, new TIKey { Op = [30], M = "tan", S = StatementSyntax.a, I = true });
 
-        TIKeys.Add(Vocab.I32_exchange_x_and_t, new TIKey { Op = [32], M = "x⇄t", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I32_exchange_x_and_t, new TIKey { Op = [32], M = "x↔t", S = StatementSyntax.a });
         TIKeys.Add(Vocab.I33_square, new TIKey { Op = [33], M = "x²", S = StatementSyntax.a });
         TIKeys.Add(Vocab.I34_square_root, new TIKey { Op = [34], M = "√", S = StatementSyntax.a });
         TIKeys.Add(Vocab.I35_reciprocal, new TIKey { Op = [35], M = "1/x", S = StatementSyntax.a });

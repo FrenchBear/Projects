@@ -58,10 +58,11 @@ Sto Ind Z CLR";
         //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\all-1.t59");
         //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\all-2.t59");
         //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\Master Library\ML-01.T59");
+        input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\Master Library\ML-02.T59");
         //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\Master Library\ML-01-!ALL.t59");
         //input = "// Initial comment\nLbl CLR STO 12 @Loop3: STO IND 12 GTO CLR GTO 25 GTO 123 GTO 01 23 END ZYP 123456 GTO @Tag Sto Ind Ind 12 Nop Sto Sin e^x INV SBR";
         //input = "SBR 240 INV SBR STO IND 12 INV SUM IND 33 OP 23 OP IND 23";
-        input = "// A simple calculation\n1.414 * 6.02e-23 END SBR 240 INV SBR STO IND 12 END";
+        //input = "// A simple calculation\n1.414 * 6.02e-23 END SBR 240 INV SBR STO IND 12 END";
 
         //Console.WriteLine("--- Parsing Input ---");
         //Console.WriteLine(input);
@@ -76,9 +77,9 @@ Sto Ind Z CLR";
         lexer.RemoveErrorListeners();       // Remove default console error listener
         lexer.AddErrorListener(myLexerErrorListener);
 
+        // Clean the list of tokens returned by Vocab lexter into L1Tokens, easier to manage in later stages
         var l1t = new L1Tokenizer(lexer);
         var programs = l1t.GetPrograms();
-
         /*
         Console.WriteLine("=== L1 Tokens ===\n");
         foreach (var (ix, p) in Enumerable.Index(programs))
@@ -89,11 +90,9 @@ Sto Ind Z CLR";
         }
         */
 
+        // Build statements from tokens
         foreach (var p in programs)
-        {
-            var l2p = new L2Parser(p);
-            l2p.L2Process();
-        }
+            new L2Parser(p).L2Process();
         /*
         Console.WriteLine("=== L2 Statements ===\n");
         foreach (var (ix, p) in Enumerable.Index(programs))
@@ -104,18 +103,23 @@ Sto Ind Z CLR";
         }
         */
 
+        // Generate OpCodes and addresses
         foreach (var p in programs)
-        {
-            var l3e = new L3Encoder(p);
-            l3e.L3Process();
-        }
+            new L3Encoder(p).L3Process();
+        //Console.WriteLine("=== L3 Statements with opcodes ===\n");
+        //foreach (var (ix, p) in Enumerable.Index(programs))
+        //{
+        //    if (ix > 0)
+        //        Console.WriteLine("\n--------------\n");
+        //    p.PrintL3Debug();
+        //}
 
-        Console.WriteLine("=== L3 Statements with opcodes ===\n");
+        Console.WriteLine("=== Reformatted program ===\n");
         foreach (var (ix, p) in Enumerable.Index(programs))
         {
             if (ix > 0)
                 Console.WriteLine("\n--------------\n");
-            p.PrintL3Debug();
+            p.PrintL3Reformatted();
         }
     }
 }

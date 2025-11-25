@@ -13,39 +13,15 @@ namespace T59v5;
 
 internal sealed class L3Encoder(T59Program Prog)
 {
-
-    internal void L3Process() => Prog.L3Statements.AddRange(EnumerateL3Statements());
-
-    private IEnumerable<L2StatementBase> EnumerateL3Statements()
+    internal void L3Process()
     {
-
-        var e = Prog.L2Statements.GetEnumerator();
         int pc = 0;     // Program counter
-
-        for (; ; )
+        foreach (var l2s in Prog.L2Statements)
         {
-            // Don't need peeking support
-            //L1Token token;
-            //if (nextToken != null)
-            //{
-            //    token = nextToken;
-            //    nextToken = null;
-            //}
-            //else
-            //{
-            //    if (!e.MoveNext())
-            //        break;
-            //    token = e.Current;
-            //}
-
-            if (!e.MoveNext())
-                break;
-            var l2s = e.Current;
-
             switch (l2s)
             {
                 case L2Instruction l2si:
-                    l2si.PC = pc;
+                    l2si.Address = pc;
                     foreach (var l1t in l2s.L1Tokens)
                     {
                         if (l1t is L1Instruction l1i)
@@ -90,15 +66,12 @@ internal sealed class L3Encoder(T59Program Prog)
                         if (inst.Inst.MOp > 0 && next.Inst.Op is [40])      // Meargeable opcode followed by IND?
                             MergeInstructions(start, inst.Inst.MOp);
                     }
-
                     // Finally update pc
                     pc += l2si.OpCodes.Count;
-
-                    yield return l2si;
                     break;
 
                 case L2Number l2n:
-                    l2n.PC = pc;
+                    l2n.Address = pc;
                     foreach (var l1t in l2n.L1Tokens)
                         foreach (char c in string.Join("", l1t.Tokens.Select(t => t.Text)))
                         {
@@ -114,21 +87,13 @@ internal sealed class L3Encoder(T59Program Prog)
                                 Debugger.Break();
                         }
                     pc += l2n.OpCodes.Count;
-                    yield return l2n;
                     break;
 
                 case L2Eof:
                     Prog.OpCodesCount = pc;
-                    yield return l2s;
-                    break;
-
-                default:
-                    yield return l2s;
                     break;
             }
         }
-
-        yield break;
     }
 
 }
