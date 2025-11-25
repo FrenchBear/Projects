@@ -46,7 +46,7 @@ abstract record L1Token
         if (!noColor)
             sb.Append(Couleurs.GetCategoryColor(Cat));
         if (this is L1Instruction l1i)
-            sb.Append(l1i.Inst.M);
+            sb.Append(l1i.Inst.M);      // For formatted output, use canonical mnemonic for instructions, not the one used on source code
         else
             sb.Append(string.Join(" ", Tokens.Select(t => t.Text)));
         if (!noColor)
