@@ -54,19 +54,14 @@ abstract record L2StatementBase
     }
 }
 
-sealed record L2Eof: L2StatementBase
-{
-    public L2Eof(L1Eof l1i) => AddL1Token(l1i);
-}
+sealed record L2Eof: L2StatementBase { }
 
-sealed record L2LineComment: L2StatementBase
-{
-    public L2LineComment(L1LineComment l1i) => AddL1Token(l1i);
-}
+sealed record L2LineComment: L2StatementBase { }
 
 sealed record L2InvalidStatement: L2StatementBase { }
 
 sealed record L2Tag: L2StatementBase { }
+
 abstract record L2ActualInstruction: L2StatementBase
 {
     public int PC { get; set; }
@@ -135,6 +130,16 @@ internal sealed class L2Parser(T59Program Prog)
             yield break;
         }
 
+        // Helper to create a new L2Instruction from current context after adding l1t
+        L2Instruction BuildL2Instruction(L1Token l1t)
+        {
+            Context.Add(l1t);
+            var l2s = new L2Instruction();
+            l2s.L1Tokens.AddRange(Context);
+            Context.Clear();
+            return l2s;
+        }
+
         L2ParserState state = L2ParserState.zero;
         for (; ; )
         {
@@ -184,19 +189,18 @@ internal sealed class L2Parser(T59Program Prog)
                     switch (token)
                     {
                         case L1Eof l1eof:
-                            yield return new L2Eof(l1eof);
+                            var l2eof = new L2Eof();
+                            l2eof.L1Tokens.Add(l1eof);
+                            yield return l2eof;
                             break;
-
-                        // Program separators are transformed in separate programs during L1 processing
-                        //case L1PgmSeparator l1ps:
-                        //    yield return new L2PgmSeparator(l1ps);
-                        //    break;
 
                         // For now, we consider a L1LineComment as a standalone statement, that can't be used
                         // in the middle of an instruction (contrary to most languages).
-                        // ToDo: Allow this at some point: STO  // guess where?\r\n  12
+                        // Allow this at some point: STO  // guess where?\r\n  12
                         case L1LineComment l1lc:
-                            yield return new L2LineComment(l1lc);
+                            var l2lc = new L2LineComment();
+                            yield return l2lc;
+                            l2lc.L1Tokens.Add(l1lc);
                             break;
 
                         case L1Tag:
@@ -303,11 +307,7 @@ internal sealed class L2Parser(T59Program Prog)
                 case L2ParserState.expect_d:
                     if (token is L1D1 or L1D2)
                     {
-                        Context.Add(token with { Cat = SyntaxCategory.DirectMemoryOrNumber });
-                        var l2s = new L2Instruction();
-                        l2s.L1Tokens.AddRange(Context);
-                        Context.Clear();
-                        yield return l2s;
+                        yield return BuildL2Instruction(token with { Cat = SyntaxCategory.DirectMemoryOrNumber });
                         state = L2ParserState.zero;
                     }
                     else
@@ -323,11 +323,7 @@ internal sealed class L2Parser(T59Program Prog)
                 case L2ParserState.expect_i:
                     if (token is L1D1 or L1D2)
                     {
-                        Context.Add(token with { Cat = SyntaxCategory.IndirectMemory });
-                        var l2s = new L2Instruction();
-                        l2s.L1Tokens.AddRange(Context);     // AddRange because of INV SM* for instance
-                        Context.Clear();
-                        yield return l2s;
+                        yield return BuildL2Instruction(token with { Cat = SyntaxCategory.IndirectMemory });
                         state = L2ParserState.zero;
                     }
                     else
@@ -353,21 +349,13 @@ internal sealed class L2Parser(T59Program Prog)
                 case L2ParserState.expect_b:
                     if (IsLabelMnemonic(token))
                     {
-                        Context.Add(token with { Cat = SyntaxCategory.Label });     // Need to recategorise token
-                        var l2s = new L2Instruction();
-                        l2s.L1Tokens.AddRange(Context);     // AddRange because of INV x=t for instance
-                        Context.Clear();
-                        yield return l2s;
+                        yield return BuildL2Instruction(token with { Cat = SyntaxCategory.Label });
                         state = L2ParserState.zero;
                         break;
                     }
                     if (token is L1A3 or L1Tag)
                     {
-                        Context.Add(token);                 // Already categorized
-                        var l2s = new L2Instruction();
-                        l2s.L1Tokens.AddRange(Context);     // AddRange because of INV x=t for instance
-                        Context.Clear();
-                        yield return l2s;
+                        yield return BuildL2Instruction(token);
                         state = L2ParserState.zero;
                         break;
                     }
@@ -376,11 +364,7 @@ internal sealed class L2Parser(T59Program Prog)
                         // Extension, numeric label 10..99 (except 40)
                         if (!d2.Tokens[0].Text.StartsWith('0'))
                         {
-                            Context.Add(token with { Cat = SyntaxCategory.Label });     // Need to categorise token
-                            var l2s = new L2Instruction();
-                            l2s.L1Tokens.AddRange(Context);     // AddRange because of INV x=t for instance
-                            Context.Clear();
-                            yield return l2s;
+                            yield return BuildL2Instruction(token with { Cat = SyntaxCategory.Label });
                             state = L2ParserState.zero;
                         }
                         else    // We are in A4 = D2 D2 with 1st D2 starting with 0, for compatibility with .t59 modules dumps
@@ -407,11 +391,7 @@ internal sealed class L2Parser(T59Program Prog)
                 case L2ParserState.expect_a4_part_2:
                     if (token is L1D2)
                     {
-                        Context.Add(token with { Cat = SyntaxCategory.DirectAddress });     // Need to categorise token
-                        var l2s = new L2Instruction();
-                        l2s.L1Tokens.AddRange(Context);     // AddRange because of INV x=t for instance
-                        Context.Clear();
-                        yield return l2s;
+                        yield return BuildL2Instruction(token with { Cat = SyntaxCategory.DirectAddress });
                         state = L2ParserState.zero;
                     }
                     else
@@ -469,11 +449,7 @@ internal sealed class L2Parser(T59Program Prog)
                 case L2ParserState.expect_m:
                     if (IsLabelMnemonic(token) || (token is L1D2 ld2 && ld2.Tokens[0].Text != "40" && ld2.Tokens[0].Text[0] != '0'))
                     {
-                        Context.Add(token with { Cat = SyntaxCategory.Label });     // Need to recategorise token
-                        var l2s = new L2Instruction();
-                        l2s.L1Tokens.AddRange(Context);     // AddRange because of INV x=t for instance
-                        Context.Clear();
-                        yield return l2s;
+                        yield return BuildL2Instruction(token with { Cat = SyntaxCategory.Label });
                         state = L2ParserState.zero;
                     }
                     else
@@ -489,6 +465,7 @@ internal sealed class L2Parser(T59Program Prog)
                 case L2ParserState.expect_colon:
                     if (token is L1Colon)
                     {
+                        // Build a L2Tag here, not a L2Instruction, can't reuse BuildL2Instruction
                         Context.Add(token);
                         var l2s = new L2Tag();
                         l2s.L1Tokens.AddRange(Context);

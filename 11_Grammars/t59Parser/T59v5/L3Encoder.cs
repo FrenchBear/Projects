@@ -118,7 +118,7 @@ internal sealed class L3Encoder(T59Program Prog)
                     break;
 
                 case L2Eof:
-                    pc = 0;
+                    Prog.OpCodesCount = pc;
                     yield return l2s;
                     break;
 

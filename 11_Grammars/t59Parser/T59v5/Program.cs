@@ -85,8 +85,7 @@ Sto Ind Z CLR";
         {
             if (ix > 0)
                 Console.WriteLine("\n--------------\n");
-            foreach (L1Token t1 in p.L1Tokens)
-                Console.WriteLine(t1.AsString());
+            p.PrintL1();
         }
         */
 
@@ -101,8 +100,7 @@ Sto Ind Z CLR";
         {
             if (ix > 0)
                 Console.WriteLine("\n--------------\n");
-            foreach (L2StatementBase l2s in p.L2Statements)
-                Console.WriteLine(l2s.AsString());
+            p.PrintL2();
         }
         */
 
@@ -117,8 +115,7 @@ Sto Ind Z CLR";
         {
             if (ix > 0)
                 Console.WriteLine("\n--------------\n");
-            foreach (L2StatementBase l3s in p.L3Statements)
-                Console.WriteLine(l3s.AsStringWithOpcodes());
+            p.PrintL3Debug();
         }
     }
 }
