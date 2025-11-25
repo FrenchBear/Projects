@@ -73,7 +73,7 @@ internal sealed class L3Encoder(T59Program Prog)
             }
         }
 
-        // Second pass, check branch addresses
+        // Second pass, check branch addresses, replace temp tag addresses by real addresses
         foreach (var l2s in Prog.L2Statements)
             if (l2s is L2Instruction l2i)
             {
@@ -105,13 +105,24 @@ internal sealed class L3Encoder(T59Program Prog)
 
                         case L1Tag l1tag:
                             var tag = l1tag.L0Tokens[0].Text;
-                            if (!Tags.ContainsKey(tag))
+                            if (!Tags.TryGetValue(tag, out L2Tag? tagValue))
                             {
                                 Prog.Errors.Add($"Target tag invalid: {l2i.Address}: {l2i.AsFormattedString()}");
                                 l2i.Problem = true;
                             }
                             else
+                            {
+                                var addr = tagValue.Address;
                                 Prog.ValidAddresses[l2i.Address] = true;
+                                // Find placeholder
+                                for (int i = 0; i < l2i.OpCodes.Count; i++)
+                                    if (l2i.OpCodes[i] == 100)
+                                    {
+                                        l2i.OpCodes[i] = (byte)(addr / 100);
+                                        l2i.OpCodes[i+1] = (byte)(addr % 100);
+                                        break;
+                                    }
+                            }
                             break;
 
                         case L1D2 { Cat: SyntaxCategory.Label } l1d2:

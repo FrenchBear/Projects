@@ -44,12 +44,18 @@ internal sealed class T59Program
             switch (l2s)
             {
                 case L2LineComment l2lc:
+                    Console.Write(new string(' ', 3 * opCols + 8));
                     Console.WriteLine(l2lc.AsFormattedString());
                     break;
 
                 case L2InvalidStatement l2is:
                     Console.Write(new string(' ', 3 * opCols + 10));
                     Console.WriteLine(l2is.AsFormattedString());
+                    break;
+
+                case L2Tag l2tag:
+                    Console.Write(new string(' ', 3 * opCols + 8));
+                    Console.WriteLine(l2tag.AsFormattedString().Replace(" ", ""));
                     break;
 
                 case L2ActualInstruction l2i:
