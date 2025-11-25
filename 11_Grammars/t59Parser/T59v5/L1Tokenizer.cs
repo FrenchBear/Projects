@@ -20,12 +20,12 @@ namespace T59v5;
 
 abstract record L1Token
 {
-    public required List<IToken> Tokens { get; set; }
+    public required List<IToken> L0Tokens { get; set; }
     public SyntaxCategory Cat { get; set; }
 
     public virtual string AsDebugString(bool noColor = false)
     {
-        var s = string.Join(", ", Tokens.Select(t => t.Text));
+        var s = string.Join(", ", L0Tokens.Select(t => t.Text));
         string res = $"{GetType().Name,-15}: ";
 
         if (!noColor)
@@ -47,8 +47,10 @@ abstract record L1Token
             sb.Append(Couleurs.GetCategoryColor(Cat));
         if (this is L1Instruction l1i)
             sb.Append(l1i.Inst.M);      // For formatted output, use canonical mnemonic for instructions, not the one used on source code
+        else if (this is L1A4 l1a4)
+            sb.Append(string.Join("", L0Tokens.Select(t => t.Text))[1..]);
         else
-            sb.Append(string.Join(" ", Tokens.Select(t => t.Text)));
+            sb.Append(string.Join(" ", L0Tokens.Select(t => t.Text)));
         if (!noColor)
             sb.Append(Couleurs.GetDefaultColor());
         return sb.ToString();
@@ -70,7 +72,7 @@ sealed record L1Instruction: L1Token
             return base.AsDebugString();
 
         //var s = string.Join(", ", Tokens.Select(t => $"{t.Line}:{t.Column} {t.Text}"));
-        var s = string.Join(", ", Tokens.Select(t => t.Text));
+        var s = string.Join(", ", L0Tokens.Select(t => t.Text));
 
         string res = $"{GetType().Name,-15}: ";
         if (!noColor)
@@ -89,11 +91,12 @@ sealed record L1Instruction: L1Token
 sealed record L1D1: L1Token { }
 sealed record L1D2: L1Token { }
 sealed record L1A3: L1Token { }
+sealed record L1A4: L1Token { }     // Not part of Vocab, will be created during pass 2 to replace two consecutive L1D2 that should be considered as an address
 sealed record L1Num: L1Token
 {
     public override string AsDebugString(bool noColor = false)
     {
-        var s = string.Join("", Tokens.Select(t => t.Text));
+        var s = string.Join("", L0Tokens.Select(t => t.Text));
         var c = Cat.ToString();
         return $"{GetType().Name,-15}: {s,-15} {c,-15} {s}";
     }
@@ -270,7 +273,7 @@ internal sealed class L1Tokenizer(Vocab lexer)
                 // Ignore empty programs
                 if (curProg.L1Tokens.Count > 0)
                 {
-                    var eof = new L1Eof { Cat = SyntaxCategory.Eof, Tokens = [] };
+                    var eof = new L1Eof { Cat = SyntaxCategory.Eof, L0Tokens = [] };
                     curProg.L1Tokens.Add(eof);
                     lp.Add(curProg);
                     curProg = new();
@@ -303,7 +306,7 @@ internal sealed class L1Tokenizer(Vocab lexer)
             switch (token.Type)
             {
                 case TokenConstants.EOF:
-                    var teof = new L1Eof { Tokens = [token], Cat = SyntaxCategory.Eof };
+                    var teof = new L1Eof { L0Tokens = [token], Cat = SyntaxCategory.Eof };
                     yield return teof;
                     yield break;
 
@@ -312,53 +315,53 @@ internal sealed class L1Tokenizer(Vocab lexer)
                     break;
 
                 case Vocab.LINE_COMMENT:
-                    var tlc = new L1LineComment { Tokens = [token], Cat = SyntaxCategory.LineComment };
+                    var tlc = new L1LineComment { L0Tokens = [token], Cat = SyntaxCategory.LineComment };
                     yield return tlc;
                     break;
 
                 case Vocab.PROGRAM_SEPARATOR:
-                    var tps = new L1PgmSeparator { Tokens = [token], Cat = SyntaxCategory.Eof };
+                    var tps = new L1PgmSeparator { L0Tokens = [token], Cat = SyntaxCategory.Eof };
                     yield return tps;
                     break;
 
                 case Vocab.D1:      // SyntaxCategory will be determined later
-                    var td1 = new L1D1 { Tokens = [token], Cat = SyntaxCategory.Unknown };
+                    var td1 = new L1D1 { L0Tokens = [token], Cat = SyntaxCategory.Unknown };
                     yield return td1;
                     break;
 
                 case Vocab.D2:      // SyntaxCategory will be determined later
-                    var td2 = new L1D2 { Tokens = [token], Cat = SyntaxCategory.Unknown };
+                    var td2 = new L1D2 { L0Tokens = [token], Cat = SyntaxCategory.Unknown };
                     yield return td2;
                     break;
 
                 case Vocab.A3:
-                    var ta3 = new L1A3 { Tokens = [token], Cat = SyntaxCategory.DirectAddress };
+                    var ta3 = new L1A3 { L0Tokens = [token], Cat = SyntaxCategory.DirectAddress };
                     yield return ta3;
                     break;
 
                 case Vocab.NUM:
-                    var tnum = new L1Num { Tokens = [token], Cat = SyntaxCategory.Number };
+                    var tnum = new L1Num { L0Tokens = [token], Cat = SyntaxCategory.Number };
                     yield return tnum;
                     break;
 
                 case Vocab.TAG:
-                    var ttag = new L1Tag { Tokens = [token], Cat = SyntaxCategory.Tag };
+                    var ttag = new L1Tag { L0Tokens = [token], Cat = SyntaxCategory.Tag };
                     yield return ttag;
                     break;
 
                 case Vocab.COLON:       // Category is not really clear, let's assume Tag for now
-                    var tco = new L1Colon() { Tokens = [token], Cat = SyntaxCategory.Tag };
+                    var tco = new L1Colon() { L0Tokens = [token], Cat = SyntaxCategory.Tag };
                     yield return tco;
                     break;
 
                 case Vocab.INVALID_CHAR:
-                    var tic = new L1InvalidToken() { Tokens = [token], Cat = SyntaxCategory.Invalid };
+                    var tic = new L1InvalidToken() { L0Tokens = [token], Cat = SyntaxCategory.Invalid };
                     for (; ; )
                     {
                         nextToken = lexer.NextToken();
                         if (nextToken.Type != Vocab.INVALID_CHAR)
                             break;
-                        tic.Tokens.Add(nextToken);
+                        tic.L0Tokens.Add(nextToken);
                     }
                     yield return tic;
                     break;
@@ -366,7 +369,7 @@ internal sealed class L1Tokenizer(Vocab lexer)
                 default:
                     Debug.Assert(symbolicName.StartsWith('I')); // Only instructions should remain
                     Debug.Assert(TIKeys.ContainsKey(token.Type));
-                    var ti = new L1Instruction() { Tokens = [token], Cat = SyntaxCategory.Instruction, Inst = TIKeys[token.Type] };
+                    var ti = new L1Instruction() { L0Tokens = [token], Cat = SyntaxCategory.Instruction, Inst = TIKeys[token.Type] };
                     yield return ti;
                     break;
             }

@@ -13,6 +13,8 @@ internal sealed class T59Program
     public List<L1Token> L1Tokens = [];
     public List<L2StatementBase> L2Statements = [];
     public int OpCodesCount;
+    public Dictionary<int, bool> ValidAddresses = [];
+    public List<string> Errors = [];
 
     public void PrintL1Debug()
     {
@@ -62,12 +64,26 @@ internal sealed class T59Program
 
                         if (l2i.OpCodes[0] == 76)
                         {
-                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.Write(Couleurs.GetCategoryColor(l2i.Problem ? SyntaxCategory.Invalid : SyntaxCategory.Label));
                             Console.Write("■ ");
-                            Console.ForegroundColor = ConsoleColor.Gray;
+                            Console.Write(Couleurs.GetDefaultColor());
                         }
                         else
-                            Console.Write("  ");
+                        {
+                            if (l2i.Problem)
+                            {
+                                Console.Write(Couleurs.GetCategoryColor(SyntaxCategory.Invalid));
+                                Console.Write("? ");
+                                Console.Write(Couleurs.GetDefaultColor());
+                            }
+                            else
+                            {
+                                if (ValidAddresses.TryGetValue(l2i.Address, out bool value) && value)
+                                    Console.Write("› ");
+                                else
+                                    Console.Write("  ");
+                            }
+                        }
 
                         Console.WriteLine(l2i.AsFormattedString());
 
@@ -83,6 +99,18 @@ internal sealed class T59Program
                     }
                     break;
             }
+        }
+    }
+
+    public void PrintErrors()
+    {
+        if (Errors.Count == 0)
+            Console.WriteLine("No error detected");
+        else
+        {
+            Console.WriteLine("Errors:");
+            foreach (var error in Errors)
+                Console.WriteLine(error);
         }
     }
 }

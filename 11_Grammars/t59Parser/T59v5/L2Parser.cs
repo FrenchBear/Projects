@@ -49,19 +49,13 @@ abstract record L2StatementBase
         return s;
     }
 
-    internal string AsFormattedString()
+    internal virtual string AsFormattedString()
     {
         var sb = new StringBuilder();
         var invalid = this is L2InvalidStatement;
-
         if (invalid)
             sb.Append(Couleurs.GetCategoryColor(SyntaxCategory.Invalid));
-        foreach (var (ix, l1t) in Enumerable.Index(L1Tokens))
-        {
-            if (ix != 0)
-                sb.Append(' ');
-            sb.Append(l1t.AsFormattedString(invalid));
-        }
+        sb.Append(string.Join(" ", L1Tokens.Select(l1t => l1t.AsFormattedString(invalid))));
         sb.Append(Couleurs.GetDefaultColor());
         return sb.ToString();
     }
@@ -73,17 +67,78 @@ sealed record L2LineComment: L2StatementBase { }
 
 sealed record L2InvalidStatement: L2StatementBase { }
 
-sealed record L2Tag: L2StatementBase { }
+sealed record L2Tag: L2StatementBase
+{
+    public required string Tag { get; set; }
+    public int Address { get; set; }
+    public bool Problem { get; set; }
+}
 
 abstract record L2ActualInstruction: L2StatementBase
 {
     public int Address { get; set; }
     public List<byte> OpCodes { get; set; } = [];
+    public bool Problem { get; set; }
 }
 
 sealed record L2Instruction: L2ActualInstruction { }
 
-sealed record L2Number: L2ActualInstruction { }
+sealed record L2Number: L2ActualInstruction
+{
+    internal override string AsFormattedString()
+    {
+        StringBuilder mantissa = new();
+        StringBuilder exponent = new();
+        bool inExponent = false;
+
+        foreach (var op in OpCodes)
+        {
+            switch (op)
+            {
+                case >= 0 and <= 9:
+                    if (inExponent)
+                        exponent.Append((char)(48 + op));
+                    else
+                        mantissa.Append((char)(48 + op));
+                    break;
+                case 93:
+                    if (inExponent || mantissa.ToString().Contains('.'))
+                        Debugger.Break();
+                    mantissa.Append('.');
+                    break;
+                case 94:
+                    if (inExponent)
+                    {
+                        if (exponent.Length > 0 && exponent[0] == '-')
+                            Debugger.Break();
+                        else
+                            exponent.Append('.');
+                    }
+                    else
+                    {
+                        if (mantissa.Length > 0 && mantissa[0] == '-')
+                            Debugger.Break();
+                        else
+                            mantissa.Append('.');
+                    }
+                    break;
+                case 52:
+                    if (inExponent)
+                        Debugger.Break();
+                    inExponent = true;
+                    break;
+                default:
+                    Debugger.Break();
+                    break;
+            }
+        }
+
+        var res = mantissa.ToString();
+        if (exponent.Length > 0)
+            res += "E" + mantissa.ToString();
+        return Couleurs.GetCategoryColor(SyntaxCategory.Number) + res + Couleurs.GetDefaultColor();
+    }
+}
 
 // -----
 
@@ -221,9 +276,7 @@ internal sealed class L2Parser(T59Program Prog)
                             state = L2ParserState.expect_colon;
                             continue;
 
-                        case L1Num:
-                        case L1D2:
-                        case L1A3:
+                        case L1Num or L1D2 or L1A3 or L1A4:
                             var l2n = new L2Number();
                             l2n.AddL1Token(token with { Cat = SyntaxCategory.Number });
                             yield return l2n;
@@ -231,7 +284,7 @@ internal sealed class L2Parser(T59Program Prog)
 
                         case L1D1 l1d1:
                             var st = new L2Instruction();
-                            var l1inst = new L1Instruction() { Tokens = l1d1.Tokens, Cat = SyntaxCategory.Instruction, Inst = new TIKey { Op = [byte.Parse(l1d1.Tokens[0].Text)], M = l1d1.Tokens[0].Text, S = StatementSyntax.a } };
+                            var l1inst = new L1Instruction() { L0Tokens = l1d1.L0Tokens, Cat = SyntaxCategory.Instruction, Inst = new TIKey { Op = [byte.Parse(l1d1.L0Tokens[0].Text)], M = l1d1.L0Tokens[0].Text, S = StatementSyntax.a } };
                             st.L1Tokens.Add(l1inst);
                             yield return st;
                             break;
@@ -366,16 +419,16 @@ internal sealed class L2Parser(T59Program Prog)
                         state = L2ParserState.zero;
                         break;
                     }
-                    if (token is L1A3 or L1Tag)
+                    if (token is L1A3 or L1A4 or L1Tag)
                     {
                         yield return BuildL2Instruction(token);
                         state = L2ParserState.zero;
                         break;
                     }
-                    if (token is L1D2 d2 && d2.Tokens[0].Text != "40")
+                    if (token is L1D2 d2 && d2.L0Tokens[0].Text != "40")
                     {
                         // Extension, numeric label 10..99 (except 40)
-                        if (!d2.Tokens[0].Text.StartsWith('0'))
+                        if (!d2.L0Tokens[0].Text.StartsWith('0'))
                         {
                             yield return BuildL2Instruction(token with { Cat = SyntaxCategory.Label });
                             state = L2ParserState.zero;
@@ -402,9 +455,13 @@ internal sealed class L2Parser(T59Program Prog)
                     goto RestartAnalysis;
 
                 case L2ParserState.expect_a4_part_2:
-                    if (token is L1D2)
+                    if (token is L1D2 second)
                     {
-                        yield return BuildL2Instruction(token with { Cat = SyntaxCategory.DirectAddress });
+                        var first = Context[^1];
+                        var t1a4 = new L1A4 { L0Tokens = [.. first.L0Tokens, .. second.L0Tokens] };
+                        Context.RemoveAt(Context.Count - 1);
+                        // Upgrade L1D2 L1D2 to a new L1A4, will make later addresses checking much easier by only checking L1A3, L1A4 and L1TAG
+                        yield return BuildL2Instruction(t1a4 with { Cat = SyntaxCategory.DirectAddress });
                         state = L2ParserState.zero;
                     }
                     else
@@ -460,7 +517,7 @@ internal sealed class L2Parser(T59Program Prog)
                     break;
 
                 case L2ParserState.expect_m:
-                    if (IsLabelMnemonic(token) || (token is L1D2 ld2 && ld2.Tokens[0].Text != "40" && ld2.Tokens[0].Text[0] != '0'))
+                    if (IsLabelMnemonic(token) || (token is L1D2 ld2 && ld2.L0Tokens[0].Text != "40" && ld2.L0Tokens[0].Text[0] != '0'))
                     {
                         yield return BuildL2Instruction(token with { Cat = SyntaxCategory.Label });
                         state = L2ParserState.zero;
@@ -480,10 +537,10 @@ internal sealed class L2Parser(T59Program Prog)
                     {
                         // Build a L2Tag here, not a L2Instruction, can't reuse BuildL2Instruction
                         Context.Add(token);
-                        var l2s = new L2Tag();
-                        l2s.L1Tokens.AddRange(Context);
+                        var l2t = new L2Tag { Tag = Context[0].L0Tokens[0].Text };
+                        l2t.L1Tokens.AddRange(Context);
                         Context.Clear();
-                        yield return l2s;
+                        yield return l2t;
                         state = L2ParserState.zero;
                     }
                     else

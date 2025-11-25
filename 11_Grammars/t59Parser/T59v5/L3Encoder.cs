@@ -4,7 +4,10 @@
 //
 // 2025-11-24   PV      First version
 
+// ToDo: During encoding pass, replace tag temp addresses 100 100 by actual address
+
 using Antlr4.Runtime;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -17,6 +20,124 @@ internal sealed class L3Encoder(T59Program Prog)
     {
         MergeInstructionsAndEncode();
         GroupNumbers();
+        CheckErrors();
+    }
+
+    private void CheckErrors()
+    {
+        // First pass, build labels, tags and valid addresses tables, report invalid statements
+        var Labels = new Dictionary<byte, L2Instruction>();
+        var Tags = new Dictionary<string, L2Tag>(StringComparer.InvariantCultureIgnoreCase);
+
+        foreach (var l2s in Prog.L2Statements)
+        {
+            switch (l2s)
+            {
+                case L2Instruction { OpCodes: [76, var lab] } l2i:
+                    if (Labels.TryGetValue(lab, out L2Instruction? oldi))
+                    {
+                        l2i.Problem = true;
+                        Prog.Errors.Add($"Duplicate label: {oldi.Address}: {oldi.AsFormattedString()} and {l2i.Address}: {l2i.AsFormattedString()}");
+                    }
+                    else
+                    {
+                        Labels.Add(lab, l2i);
+                        Prog.ValidAddresses.Add(l2i.Address, false);
+                    }
+                    break;
+
+                case L2Instruction l2i:
+                    Prog.ValidAddresses.Add(l2i.Address, false);
+                    // Special case, if an instruction (other than standalone INV) starts with INV, then following address is a valid address
+                    if (l2i.OpCodes.Count > 1 && l2i.OpCodes[0] == 22)
+                        Prog.ValidAddresses.Add(l2i.Address + 1, false);
+                    break;
+
+                case L2Tag { Tag: var t } l2t:
+                    if (Tags.TryGetValue(t, out L2Tag? oldt))
+                        Prog.Errors.Add($"Duplicate tag: {oldt.Address}: {oldt.AsFormattedString()} and {l2t.Address}: {l2t.AsFormattedString()}");
+                    else
+                        // No need to add tag address to valid instructions, since tag will inherit 
+                        Tags.Add(t, l2t);
+                    break;
+
+                case L2Number l2n:
+                    // Any address inside a L2Number can be considered as valid
+                    for (var i = 0; i < l2n.OpCodes.Count; i++)
+                        Prog.ValidAddresses.TryAdd(l2n.Address + 1, false);      // ToDo: Investigate how I can get an error with existing key
+                    break;
+
+                case L2InvalidStatement l2is:
+                    Prog.Errors.Add("Invalid statement: " + l2is.AsFormattedString());
+                    break;
+            }
+        }
+
+        // Second pass, check branch addresses
+        foreach (var l2s in Prog.L2Statements)
+            if (l2s is L2Instruction l2i)
+            {
+                foreach (var l1t in l2i.L1Tokens)
+                {
+                    switch (l1t)
+                    {
+                        case L1A3 l1a3:
+                            var a3 = int.Parse(l1a3.L0Tokens[0].Text);
+                            if (!Prog.ValidAddresses.ContainsKey(a3))
+                            {
+                                Prog.Errors.Add($"Target address invalid: {l2i.Address}: {l2i.AsFormattedString()}");
+                                l2i.Problem = true;
+                            }
+                            else
+                                Prog.ValidAddresses[a3] = true;
+                            break;
+
+                        case L1A4 l1a4:
+                            var a4 = 100 * int.Parse(l1a4.L0Tokens[0].Text) + int.Parse(l1a4.L0Tokens[1].Text);
+                            if (!Prog.ValidAddresses.ContainsKey(a4))
+                            {
+                                Prog.Errors.Add($"Target address invalid: {l2i.Address}: {l2i.AsFormattedString()}");
+                                l2i.Problem = true;
+                            }
+                            else
+                                Prog.ValidAddresses[a4] = true;
+                            break;
+
+                        case L1Tag l1tag:
+                            var tag = l1tag.L0Tokens[0].Text;
+                            if (!Tags.ContainsKey(tag))
+                            {
+                                Prog.Errors.Add($"Target tag invalid: {l2i.Address}: {l2i.AsFormattedString()}");
+                                l2i.Problem = true;
+                            }
+                            else
+                                Prog.ValidAddresses[l2i.Address] = true;
+                            break;
+
+                        case L1D2 { Cat: SyntaxCategory.Label } l1d2:
+                            var label = byte.Parse(l1d2.L0Tokens[0].Text);
+                            if (!Labels.TryGetValue(label, out L2Instruction? value))
+                            {
+                                Prog.Errors.Add($"Target label invalid: {l2i.Address}: {l2i.AsFormattedString()}");
+                                l2i.Problem = true;
+                            }
+                            else
+                                Prog.ValidAddresses[value.Address] = true;
+                            break;
+
+                        case L1Instruction { Cat: SyntaxCategory.Label } l1i:
+                            var ilabel = l1i.Inst.Op[0];
+                            if (!Labels.TryGetValue(ilabel, out L2Instruction? ivalue))
+                            {
+                                Prog.Errors.Add($"Target label invalid: {l2i.Address}: {l2i.AsFormattedString()}");
+                                l2i.Problem = true;
+                            }
+                            else
+                                Prog.ValidAddresses[ivalue.Address] = true;
+                            break;
+                    }
+                }
+            }
     }
 
     internal void MergeInstructionsAndEncode()
@@ -33,15 +154,23 @@ internal sealed class L3Encoder(T59Program Prog)
                         if (l1t is L1Instruction l1i)
                             l2si.OpCodes.AddRange(l1i.Inst.Op);
                         else if (l1t is L1D1 or L1D2)
-                            l2si.OpCodes.Add(byte.Parse(l1t.Tokens[0].Text));
+                            l2si.OpCodes.Add(byte.Parse(l1t.L0Tokens[0].Text));
                         else if (l1t is L1A3)
                         {
-                            int addr = int.Parse(l1t.Tokens[0].Text);
+                            int addr = int.Parse(l1t.L0Tokens[0].Text);
                             l2si.OpCodes.Add((byte)(addr / 100));
                             l2si.OpCodes.Add((byte)(addr % 100));
                         }
+                        else if (l1t is L1A4)
+                        {
+                            l2si.OpCodes.Add(byte.Parse(l1t.L0Tokens[0].Text));
+                            l2si.OpCodes.Add(byte.Parse(l1t.L0Tokens[1].Text));
+                        }
                         else if (l1t is L1Tag)
+                        {
                             l2si.OpCodes.Add(100);  // Special, placeholder for now
+                            l2si.OpCodes.Add(100);  // Will be replaced by actual tag address during encoding pass
+                        }
                         else
                             Debugger.Break();
                     }
@@ -51,10 +180,10 @@ internal sealed class L3Encoder(T59Program Prog)
                     {
                         // Merge Vocab tokens (can't keep L1 tokens since they will be deleted)
                         List<IToken> l0tokens = [];
-                        l0tokens.AddRange(l2si.L1Tokens[ix].Tokens);
-                        l0tokens.AddRange(l2si.L1Tokens[ix + 1].Tokens);
+                        l0tokens.AddRange(l2si.L1Tokens[ix].L0Tokens);
+                        l0tokens.AddRange(l2si.L1Tokens[ix + 1].L0Tokens);
 
-                        var l1inst = new L1Instruction() { Tokens = l0tokens, Cat = SyntaxCategory.Instruction, Inst = L1Tokenizer.TIKeys[newTIKey] };
+                        var l1inst = new L1Instruction() { L0Tokens = l0tokens, Cat = SyntaxCategory.Instruction, Inst = L1Tokenizer.TIKeys[newTIKey] };
                         l2si.L1Tokens.RemoveAt(ix);
                         l2si.L1Tokens[ix] = l1inst;
                         l2si.OpCodes.RemoveAt(ix);
@@ -79,7 +208,7 @@ internal sealed class L3Encoder(T59Program Prog)
                 case L2Number l2n:
                     l2n.Address = pc;
                     foreach (var l1t in l2n.L1Tokens)
-                        foreach (char c in string.Join("", l1t.Tokens.Select(t => t.Text)))
+                        foreach (char c in string.Join("", l1t.L0Tokens.Select(t => t.Text)))
                         {
                             if (c is >= '0' and <= '9')
                                 l2n.OpCodes.Add((byte)(c - '0'));
@@ -93,6 +222,10 @@ internal sealed class L3Encoder(T59Program Prog)
                                 Debugger.Break();
                         }
                     pc += l2n.OpCodes.Count;
+                    break;
+
+                case L2Tag l2t:
+                    l2t.Address = pc;
                     break;
 
                 case L2Eof:
@@ -258,6 +391,7 @@ internal sealed class L3Encoder(T59Program Prog)
             NumberContext nc = new();
             List<byte> opCodes = [];
             List<L1Token> tokens = [];
+            int address = 0;
             bool isOk = false;
             if (Prog.L2Statements[i] is L2Number l2n)
             {
@@ -268,19 +402,21 @@ internal sealed class L3Encoder(T59Program Prog)
                 tokens = l2n.L1Tokens;
                 isOk = true;
             }
-            else if (Prog.L2Statements[i] is L2Instruction l2d && l2d.OpCodes.Count == 1 && l2d.OpCodes[0] < 10)    // single digit
+            else if (Prog.L2Statements[i] is L2Instruction { OpCodes: [var op] } l2d && op < 10)    // single digit
             {
                 nc.isNumber = false;        // starting instruction is not a number, if next instructions is compatible, we should convert this instruction to a number
                 opCodes = l2d.OpCodes;
                 tokens = l2d.L1Tokens;
+                address = l2d.Address;
                 isOk = true;
             }
-            else if (Prog.L2Statements[i] is L2Instruction l2i && l2i.OpCodes is [93])    // .
+            else if (Prog.L2Statements[i] is L2Instruction { OpCodes: [93] } l2i)    // .
             {
                 nc.DotFound = true;
                 nc.isNumber = false;        // starting instruction is not a number, if next instructions is compatible, we should convert this instruction to a number
                 opCodes = l2i.OpCodes;
                 tokens = l2i.L1Tokens;
+                address = l2i.Address;
                 isOk = true;
             }
 
@@ -304,7 +440,7 @@ internal sealed class L3Encoder(T59Program Prog)
                 // Should we convert previous statement to a number?
                 if (!nc.isNumber)
                 {
-                    Prog.L2Statements.Insert(i, new L2Number { OpCodes = opCodes, L1Tokens = tokens });
+                    Prog.L2Statements.Insert(i, new L2Number { OpCodes = opCodes, L1Tokens = tokens, Address = address });
                     Prog.L2Statements.RemoveAt(i + 1);
                 }
 
@@ -340,7 +476,7 @@ internal sealed class L3Encoder(T59Program Prog)
                 // Should we convert previous statement to a number?
                 if (!nc.isNumber)
                 {
-                    Prog.L2Statements.Insert(i, new L2Number { OpCodes = opCodes, L1Tokens = tokens });
+                    Prog.L2Statements.Insert(i, new L2Number { OpCodes = opCodes, L1Tokens = tokens, Address = address });
                     Prog.L2Statements.RemoveAt(i + 1);
                 }
 
