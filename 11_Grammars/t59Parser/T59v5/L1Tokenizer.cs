@@ -2,8 +2,8 @@
 //
 // Transform a stream of lexer tokens into L1Tokens:
 // - Ignore WS
-// - Group successive InvalidChar into InvalidToken
-// - Transform all I_xx into L1Instruction with attributes
+// - Group successive INVALID_CHAR into L1InvalidToken
+// - Transform all I_xx into L1Instruction with TIKey attribute
 // - Add a property SyntaxCategory, initialized at a reasonable default from lexer perspective but maigh change later
 //
 // 2025-11-22   PV

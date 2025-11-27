@@ -1,5 +1,5 @@
-﻿// Class L2Parser, my own version of T59 language grammar analyzer
-// Transforms a stream of L2Token into a stream of L2Statement
+﻿// Class L2aParser, my own version of T59 language grammar analyzer
+// Transforms a stream of L1Token into a stream of L2Statement
 //
 // 2025-11-21   PV      First version
 
@@ -67,23 +67,24 @@ sealed record L2LineComment: L2StatementBase { }
 
 sealed record L2InvalidStatement: L2StatementBase { }
 
-sealed record L2Tag: L2StatementBase
-{
-    public required string Tag { get; set; }
-    public int Address { get; set; }
-    public bool Problem { get; set; }
-}
-
-abstract record L2ActualInstruction: L2StatementBase
+abstract record L2AddressableInstructionBase: L2StatementBase
 {
     public int Address { get; set; }
     public List<byte> OpCodes { get; set; } = [];
     public bool Problem { get; set; }
 }
 
-sealed record L2Instruction: L2ActualInstruction { }
+sealed record L2Tag: L2AddressableInstructionBase
+{
+    public required string Tag { get; set; }
 
-sealed record L2Number: L2ActualInstruction
+    internal override string AsFormattedString()
+        => string.Join("", L1Tokens.Select(l1t => l1t.AsFormattedString()));
+}
+
+sealed record L2Instruction: L2AddressableInstructionBase { }
+
+sealed record L2Number: L2AddressableInstructionBase
 {
     internal override string AsFormattedString()
     {
@@ -142,9 +143,9 @@ sealed record L2Number: L2ActualInstruction
 
 // -----
 
-internal sealed class L2Parser(T59Program Prog)
+internal sealed class L2aParser(T59Program Prog)
 {
-    enum L2ParserState
+    enum L2aParserState
     {
         zero,
         expect_d,           // Expects D1 or D2, to be retagged as SyntaxCategory.DirectMemoryOrNumber
@@ -208,7 +209,7 @@ internal sealed class L2Parser(T59Program Prog)
             return l2s;
         }
 
-        L2ParserState state = L2ParserState.zero;
+        L2aParserState state = L2aParserState.zero;
         for (; ; )
         {
             // Don't need peeking support, so a simple foreach should be enough
@@ -237,7 +238,7 @@ internal sealed class L2Parser(T59Program Prog)
         RestartAnalysis:
             switch (state)
             {
-                case L2ParserState.zero:
+                case L2aParserState.zero:
                     // We marge (L1InvalidToken or illegal token in state 0) with current state and we remain at state 0,
                     // will be flushed at next L1Token that is accepted at state 0.
                     // In theory we should always get L1Eof or L1ProgramSeparator before the end of the flow, and these
@@ -273,7 +274,7 @@ internal sealed class L2Parser(T59Program Prog)
 
                         case L1Tag:
                             Context.Add(token);
-                            state = L2ParserState.expect_colon;
+                            state = L2aParserState.expect_colon;
                             continue;
 
                         case L1Num or L1D2 or L1A3 or L1A4:
@@ -321,32 +322,32 @@ internal sealed class L2Parser(T59Program Prog)
 
                                 case StatementSyntax.d:
                                     Context.Add(l1i);
-                                    state = L2ParserState.expect_d;
+                                    state = L2aParserState.expect_d;
                                     break;
 
                                 case StatementSyntax.i:
                                     Context.Add(l1i);
-                                    state = L2ParserState.expect_i;
+                                    state = L2aParserState.expect_i;
                                     break;
 
                                 case StatementSyntax.di:
                                     Context.Add(l1i);
-                                    state = L2ParserState.expect_di;
+                                    state = L2aParserState.expect_di;
                                     break;
 
                                 case StatementSyntax.b:
                                     Context.Add(l1i);
-                                    state = L2ParserState.expect_b;
+                                    state = L2aParserState.expect_b;
                                     break;
 
                                 case StatementSyntax.dib:
                                     Context.Add(l1i);
-                                    state = L2ParserState.expect_dib;
+                                    state = L2aParserState.expect_dib;
                                     break;
 
                                 case StatementSyntax.m:
                                     Context.Add(l1i);
-                                    state = L2ParserState.expect_m;
+                                    state = L2aParserState.expect_m;
                                     break;
 
                                 case StatementSyntax.p:
@@ -370,59 +371,59 @@ internal sealed class L2Parser(T59Program Prog)
                     }
                     break;
 
-                case L2ParserState.expect_d:
+                case L2aParserState.expect_d:
                     if (token is L1D1 or L1D2)
                     {
                         yield return BuildL2Instruction(token with { Cat = SyntaxCategory.DirectMemoryOrNumber });
-                        state = L2ParserState.zero;
+                        state = L2aParserState.zero;
                     }
                     else
                     {
                         // Flush incomplete context as an error
                         foreach (var s in FlushContext(false))
                             yield return s;
-                        state = L2ParserState.zero;
+                        state = L2aParserState.zero;
                         goto RestartAnalysis;
                     }
                     break;
 
-                case L2ParserState.expect_i:
+                case L2aParserState.expect_i:
                     if (token is L1D1 or L1D2)
                     {
                         yield return BuildL2Instruction(token with { Cat = SyntaxCategory.IndirectMemory });
-                        state = L2ParserState.zero;
+                        state = L2aParserState.zero;
                     }
                     else
                     {
                         // Flush incomplete context as an error
                         foreach (var s in FlushContext(false))
                             yield return s;
-                        state = L2ParserState.zero;
+                        state = L2aParserState.zero;
                         goto RestartAnalysis;
                     }
                     break;
 
-                case L2ParserState.expect_di:
+                case L2aParserState.expect_di:
                     if (token is L1Instruction { Inst.Op: [40] })
                     {
                         Context.Add(token);
-                        state = L2ParserState.expect_i;
+                        state = L2aParserState.expect_i;
                         continue;
                     }
-                    state = L2ParserState.expect_d;
+                    state = L2aParserState.expect_d;
                     goto RestartAnalysis;
 
-                case L2ParserState.expect_b:
+                case L2aParserState.expect_b:
                     if (IsLabelMnemonic(token))
                     {
                         yield return BuildL2Instruction(token with { Cat = SyntaxCategory.Label });
-                        state = L2ParserState.zero;
+                        state = L2aParserState.zero;
                         break;
                     }
                     if (token is L1A3 or L1A4 or L1Tag)
                     {
                         yield return BuildL2Instruction(token);
-                        state = L2ParserState.zero;
+                        state = L2aParserState.zero;
                         break;
                     }
                     if (token is L1D2 d2 && d2.L0Tokens[0].Text != "40")
@@ -431,19 +432,19 @@ internal sealed class L2Parser(T59Program Prog)
                         if (!d2.L0Tokens[0].Text.StartsWith('0'))
                         {
                             yield return BuildL2Instruction(token with { Cat = SyntaxCategory.Label });
-                            state = L2ParserState.zero;
+                            state = L2aParserState.zero;
                         }
                         else    // We are in A4 = D2 D2 with 1st D2 starting with 0, for compatibility with .t59 modules dumps
                         {
                             Context.Add(token with { Cat = SyntaxCategory.DirectAddress });     // Need to categorise token
-                            state = L2ParserState.expect_a4_part_2;
+                            state = L2aParserState.expect_a4_part_2;
                         }
                         break;
                     }
                     else if (token is L1Instruction { Inst.Op: [40] })
                     {
                         Context.Add(token);
-                        state = L2ParserState.expect_i;
+                        state = L2aParserState.expect_i;
                         continue;
                     }
 
@@ -451,10 +452,10 @@ internal sealed class L2Parser(T59Program Prog)
                     // Flush incomplete context as an error
                     foreach (var s in FlushContext(false))
                         yield return s;
-                    state = L2ParserState.zero;
+                    state = L2aParserState.zero;
                     goto RestartAnalysis;
 
-                case L2ParserState.expect_a4_part_2:
+                case L2aParserState.expect_a4_part_2:
                     if (token is L1D2 second)
                     {
                         var first = Context[^1];
@@ -462,77 +463,77 @@ internal sealed class L2Parser(T59Program Prog)
                         Context.RemoveAt(Context.Count - 1);
                         // Upgrade L1D2 L1D2 to a new L1A4, will make later addresses checking much easier by only checking L1A3, L1A4 and L1TAG
                         yield return BuildL2Instruction(t1a4 with { Cat = SyntaxCategory.DirectAddress });
-                        state = L2ParserState.zero;
+                        state = L2aParserState.zero;
                     }
                     else
                     {
                         // Flush incomplete context as an error
                         foreach (var s in FlushContext(false))
                             yield return s;
-                        state = L2ParserState.zero;
+                        state = L2aParserState.zero;
                         goto RestartAnalysis;
                     }
                     break;
 
-                case L2ParserState.expect_dib:
+                case L2aParserState.expect_dib:
                     if (token is L1Instruction { Inst.Op: [40] })
                     {
                         Context.Add(token);
-                        state = L2ParserState.expect_dib_i;
+                        state = L2aParserState.expect_dib_i;
                         break;
                     }
-                    state = L2ParserState.expect_dib_d;
+                    state = L2aParserState.expect_dib_d;
                     goto RestartAnalysis;
 
-                case L2ParserState.expect_dib_d:
+                case L2aParserState.expect_dib_d:
                     if (token is L1D1 or L1D2)
                     {
                         Context.Add(token with { Cat = SyntaxCategory.DirectMemoryOrNumber });
-                        state = L2ParserState.expect_b;
+                        state = L2aParserState.expect_b;
                     }
                     else
                     {
                         // Flush incomplete context as an error
                         foreach (var s in FlushContext(false))
                             yield return s;
-                        state = L2ParserState.zero;
+                        state = L2aParserState.zero;
                         goto RestartAnalysis;
                     }
                     break;
 
-                case L2ParserState.expect_dib_i:
+                case L2aParserState.expect_dib_i:
                     if (token is L1D1 or L1D2)
                     {
                         Context.Add(token with { Cat = SyntaxCategory.IndirectMemory });
-                        state = L2ParserState.expect_b;
+                        state = L2aParserState.expect_b;
                     }
                     else
                     {
                         // Flush incomplete context as an error
                         foreach (var s in FlushContext(false))
                             yield return s;
-                        state = L2ParserState.zero;
+                        state = L2aParserState.zero;
                         goto RestartAnalysis;
                     }
                     break;
 
-                case L2ParserState.expect_m:
+                case L2aParserState.expect_m:
                     if (IsLabelMnemonic(token) || (token is L1D2 ld2 && ld2.L0Tokens[0].Text != "40" && ld2.L0Tokens[0].Text[0] != '0'))
                     {
                         yield return BuildL2Instruction(token with { Cat = SyntaxCategory.Label });
-                        state = L2ParserState.zero;
+                        state = L2aParserState.zero;
                     }
                     else
                     {
                         // Flush incomplete context as an error
                         foreach (var s in FlushContext(false))
                             yield return s;
-                        state = L2ParserState.zero;
+                        state = L2aParserState.zero;
                         goto RestartAnalysis;
                     }
                     break;
 
-                case L2ParserState.expect_colon:
+                case L2aParserState.expect_colon:
                     if (token is L1Colon)
                     {
                         // Build a L2Tag here, not a L2Instruction, can't reuse BuildL2Instruction
@@ -541,14 +542,14 @@ internal sealed class L2Parser(T59Program Prog)
                         l2t.L1Tokens.AddRange(Context);
                         Context.Clear();
                         yield return l2t;
-                        state = L2ParserState.zero;
+                        state = L2aParserState.zero;
                     }
                     else
                     {
                         // Flush incomplete context as an error
                         foreach (var s in FlushContext(false))
                             yield return s;
-                        state = L2ParserState.zero;
+                        state = L2aParserState.zero;
                         goto RestartAnalysis;
                     }
                     break;

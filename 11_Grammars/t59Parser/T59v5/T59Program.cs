@@ -1,6 +1,8 @@
-﻿// Representation of a T9 program
+﻿// Representation of a T95 program
 //
 // 2025-11-25   PV
+
+// ToDo: Use T59Error class instead of a string, and replace L2Statement Problem flag by a reference to T59Error
 
 using System;
 using System.Linq;
@@ -34,87 +36,94 @@ internal sealed class T59Program
             Console.WriteLine(l2s.AsDebugStringWithOpcodes());
     }
 
-    public void PrintL3Reformatted(bool onlyLabelsAndComments = false)
+    public void PrintL3Reformatted()
     {
         // Number of max opcodes per line in reformatted listing
         const int opCols = 6;
+
+        static string FormattedOpCode(byte opCode) => opCode == 100 ? "??" : opCode.ToString("D2");
 
         foreach (L2StatementBase l2s in L2Statements)
         {
             switch (l2s)
             {
-                case L2LineComment l2lc:
+                case L2LineComment or L2InvalidStatement or L2Tag:
                     Console.Write(new string(' ', 3 * opCols + 8));
-                    Console.WriteLine(l2lc.AsFormattedString());
+                    if (l2s is L2InvalidStatement)
+                        Console.Write("  ");
+                    Console.WriteLine(l2s.AsFormattedString());
                     break;
 
-                case L2InvalidStatement l2is:
-                    Console.Write(new string(' ', 3 * opCols + 10));
-                    Console.WriteLine(l2is.AsFormattedString());
-                    break;
-
-                case L2Tag l2tag:
-                    Console.Write(new string(' ', 3 * opCols + 8));
-                    Console.WriteLine(l2tag.AsFormattedString().Replace(" ", ""));
-                    break;
-
-                case L2ActualInstruction l2i:
+                case L2AddressableInstructionBase l2i:      // L2Tag is L2AddressableInstructionBase, but don't need to print address or opCodes
                     int skip = 0;
-                    if (!onlyLabelsAndComments)
-                    {
-                        int cp = l2i.Address;
-                        Console.ForegroundColor = ConsoleColor.White;
-                        Console.Write($"{cp:D3}: ");
-                        Console.ForegroundColor = ConsoleColor.Gray;
-                        Console.Write($"{string.Join(" ", l2i.OpCodes.Take(opCols).Select(b => b.ToString("D2"))),-3 * opCols}   ");
+                    int cp = l2i.Address;
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Write($"{cp:D3}: ");
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    Console.Write($"{string.Join(" ", l2i.OpCodes.Take(opCols).Select(FormattedOpCode)),-3 * opCols}   ");
 
-                        if (l2i.OpCodes[0] == 76)
+                    if (l2i.OpCodes[0] == 76)
+                    {
+                        Console.Write(Couleurs.GetCategoryColor(l2i.Problem ? SyntaxCategory.Invalid : SyntaxCategory.Label));
+                        Console.Write("■ ");
+                        Console.Write(Couleurs.GetDefaultColor());
+                    }
+                    else
+                    {
+                        if (l2i.Problem)
                         {
-                            Console.Write(Couleurs.GetCategoryColor(l2i.Problem ? SyntaxCategory.Invalid : SyntaxCategory.Label));
-                            Console.Write("■ ");
+                            Console.Write(Couleurs.GetCategoryColor(SyntaxCategory.Invalid));
+                            Console.Write("? ");
                             Console.Write(Couleurs.GetDefaultColor());
                         }
                         else
                         {
-                            if (l2i.Problem)
-                            {
-                                Console.Write(Couleurs.GetCategoryColor(SyntaxCategory.Invalid));
-                                Console.Write("? ");
-                                Console.Write(Couleurs.GetDefaultColor());
-                            }
+                            if (ValidAddresses.TryGetValue(l2i.Address, out bool value) && value)
+                                Console.Write("› ");
                             else
-                            {
-                                if (ValidAddresses.TryGetValue(l2i.Address, out bool value) && value)
-                                    Console.Write("› ");
-                                else
-                                    Console.Write("  ");
-                            }
+                                Console.Write("  ");
                         }
+                    }
 
-                        Console.WriteLine(l2i.AsFormattedString());
+                    Console.WriteLine(l2i.AsFormattedString());
 
-                        while (l2i.OpCodes.Count - skip > opCols)
-                        {
-                            cp += opCols;
-                            skip += opCols;
-                            Console.ForegroundColor = ConsoleColor.White;
-                            Console.Write($"{cp:D3}: ");
-                            Console.ForegroundColor = ConsoleColor.Gray;
-                            Console.WriteLine($"{string.Join(" ", l2i.OpCodes.Skip(skip).Take(opCols).Select(b => b.ToString("D2"))),-3 * opCols} ");
-                        }
+                    while (l2i.OpCodes.Count - skip > opCols)
+                    {
+                        cp += opCols;
+                        skip += opCols;
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.Write($"{cp:D3}: ");
+                        Console.ForegroundColor = ConsoleColor.Gray;
+                        Console.WriteLine($"{string.Join(" ", l2i.OpCodes.Skip(skip).Take(opCols).Select(FormattedOpCode)),-3 * opCols} ");
                     }
                     break;
             }
         }
     }
 
+    public void PrintLabels()
+    {
+        bool isHeaderPrinted = false;
+        foreach (L2StatementBase l2s in L2Statements)
+            if (l2s is L2AddressableInstructionBase l2a and (L2Tag or L2Instruction { OpCodes: [76, _] }))
+            {
+                if (!isHeaderPrinted)
+                {
+                    isHeaderPrinted = true;
+                    Console.WriteLine("\nLabels and Tags:");
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write($"{l2a.Address:D3}: ");
+                //Console.ForegroundColor = ConsoleColor.Gray;
+                Console.WriteLine(l2a.AsFormattedString());
+            }
+    }
+
     public void PrintErrors()
     {
-        if (Errors.Count == 0)
-            Console.WriteLine("No error detected");
-        else
+        if (Errors.Count > 0)
         {
-            Console.WriteLine("Errors:");
+            Console.WriteLine("\nErrors:");
             foreach (var error in Errors)
                 Console.WriteLine(error);
         }

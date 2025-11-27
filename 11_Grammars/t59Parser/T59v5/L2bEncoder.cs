@@ -1,10 +1,8 @@
-﻿// Class L3Encoder
-// Generate opcodes for L2Statement and L2Number
-// This layer doesn't implement new classes, it updates existing L2 objects
+﻿// Class L2bEncoder
+// Enhance list of L2Statements produced by L2aParser, generating OpCodes for L2Statement and L2Number,
+// addresses and Problem flag, replace tags by their actual address.
 //
 // 2025-11-24   PV      First version
-
-// ToDo: During encoding pass, replace tag temp addresses 100 100 by actual address
 
 using Antlr4.Runtime;
 using System;
@@ -14,7 +12,7 @@ using System.Linq;
 
 namespace T59v5;
 
-internal sealed class L3Encoder(T59Program Prog)
+internal sealed class L2bEncoder(T59Program Prog)
 {
     internal void L3Process()
     {
@@ -414,13 +412,6 @@ internal sealed class L3Encoder(T59Program Prog)
         for (int i = 0; i < Prog.L2Statements.Count; i++)
         {
             // First, determine if this can start a sequence
-            // Probably need to be extracted to a separate function, it's too long
-
-            // ToDo: We just consider numbers, but a dot can start a sequence (just EE not, too special: in entry mode (for instance, after
-            // CLR) a sequence EE 1 2 . 45 actually means 0.45E12) but we don't  know if we are in entry mode or not from static analysis.
-            // Also note that if it starts with a dot, we need to change statement from AstInstruction to AstNumber... But a valid next statement
-            // is guaranteed to be a number: . . is stupid, . +/- ok but unlikely, and . EE barely Ok
-            // There are several examples in ML-25.t59
             NumberContext nc = new();
             List<byte> opCodes = [];
             List<L1Token> tokens = [];
