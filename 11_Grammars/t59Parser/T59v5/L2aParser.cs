@@ -166,8 +166,7 @@ internal sealed class L2aParser(T59Program Prog)
     {
         List<L1Token> Context = [];
 
-        //L1Token? nextToken = null;
-        var e = Prog.L1Tokens.GetEnumerator();
+        var e = Prog.L1TokensWithoutWhiteSpace().GetEnumerator();
 
         bool IsContextInv()
             => Context.Count > 0 && Context[0] is L1Instruction { Inst.Op: [22] };

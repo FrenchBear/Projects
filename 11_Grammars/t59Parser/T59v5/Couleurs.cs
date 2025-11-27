@@ -14,6 +14,7 @@ public enum SyntaxCategory: byte
     Uninitialized,          // For internal use
     Invalid,                // L1InvalidToken (ex: ZYP). Incorrect/incomplete statements will be stored in a L2InvalidStatement, and its individual tokens may still keey their categegory
     Eof,                    // Eof
+    WS,                     // White Space
     LineComment,            // souble slash and following text up to EOL
     Number,                 // Number
     Tag,                    // @xxx (and also :)

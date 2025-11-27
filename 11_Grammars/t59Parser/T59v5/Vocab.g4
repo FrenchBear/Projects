@@ -10,8 +10,8 @@ options {
 }
 
 // White space
-//WS: [ \t\r\n]+ -> channel(HIDDEN); // Skip whitespace     // NOTE: ignore may be more efficient since we drop WS in L1Tokenizer
-WS: [ \t\r\n]+ -> skip;
+WS: [ \t\r\n]+ -> channel(HIDDEN); // Skip whitespace     // NOTE: ignore may be more efficient since we drop WS in L1Tokenizer
+//WS: [ \t\r\n]+ -> skip;
 
 LINE_COMMENT: '//' ~[\r\n]*;
 

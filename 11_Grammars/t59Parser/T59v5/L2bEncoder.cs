@@ -18,7 +18,15 @@ internal sealed class L2bEncoder(T59Program Prog)
     {
         MergeInstructionsAndEncode();
         GroupNumbers();
+        UpdateL1Parent();
         CheckErrors();
+    }
+
+    private void UpdateL1Parent()
+    {
+        foreach (var l2s in Prog.L2Statements)
+            foreach (var l1t in l2s.L1Tokens)
+                l1t.Parent = l2s;
     }
 
     internal sealed class TagInfo
@@ -206,17 +214,17 @@ internal sealed class L2bEncoder(T59Program Prog)
             }
 
         // Third pass, report unreferenced labels and tags
-        foreach (var li in LabelsTable.Values)
-            if (!li.IsReferenced)
-            {
-                var msg = new T59Message { Message = $"Unreferenced label: {li.Label.Address:D3}: " + li.Label.AsFormattedString(), Statement = li.Label };
-                li.Label.Message = msg;
-                Prog.Messages.Add(msg);
-            }
+        //foreach (var li in LabelsTable.Values)
+        //    if (!li.IsReferenced)
+        //    {
+        //        var msg = new T59Message { Message = $"Unreferenced label: {li.Label.Address:D3}: " + li.Label.AsFormattedString(), Statement = li.Label };
+        //        li.Label.Message = msg;
+        //        Prog.Messages.Add(msg);
+        //    }
         foreach (var ti in TagsTable.Values)
             if (!ti.IsReferenced)
             {
-                var msg = new T59Message { Message = "Unreferenced tag: " + ti.Tag.AsFormattedString()[..^3], Statement = ti.Tag };
+                var msg = new T59Message { Message = "Unreferenced tag: " + ti.Tag.AsFormattedString(), Statement = ti.Tag };
                 ti.Tag.Message = msg;
                 Prog.Messages.Add(msg);
             }

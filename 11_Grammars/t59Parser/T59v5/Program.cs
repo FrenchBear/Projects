@@ -59,12 +59,14 @@ Sto Ind Z CLR";
         //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\Master Library\ML-15.T59");
         //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\Master Library\ML-25.T59");
         //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\Master Library\ML-01-!ALL.t59");
-        input = "// Initial comment\nLbl CLR STO 12 @Loop3: STO IND 12 Lbl Σ+ GTO CLR GTO 25 GTO 123 Lbl 25 GTO 01 23 END ZYP 123456 GTO @Tag Sto Ind Ind 12 Nop Sto Sin e^x INV SBR";
+        //input = "// Initial comment\nLbl CLR STO 12 @Loop3: STO IND 12 Lbl Σ+ GTO CLR GTO 25 GTO 123 Lbl 25 GTO 01 23 END ZYP 123456 GTO @Tag Sto Ind Ind 12 Nop Sto Sin e^x INV SBR";
         //input = "SBR 240 INV SBR STO IND 12 INV SUM IND 33 OP 23 OP IND 23";
         //input = "// A simple calculation\n1.414 * 6.02e-23 =";
         // Also test with INV x=t, and after [INV] Dsz
         //input = "Lbl CLR Lbl 85 Gto CLR GTO + GTO 005 Lbl 25 GTO 00 05 GTO * GTO 75 GTO 124 GTO 01 24";
         //input = "// Simple test\nLBL A STO 0 CLR @Loop: + RCL 0 Dsz 0 @Loop = R/S END";
+
+        input = "Lbl CLR";
 
         //Console.WriteLine("--- Parsing Input ---");
         //Console.WriteLine(input);
@@ -116,12 +118,17 @@ Sto Ind Z CLR";
         //    p.PrintL3Debug();
         //}
 
-        Console.WriteLine("=== Reformatted program ===\n");
+        //Console.WriteLine("=== Reformatted program ===\n");
         foreach (var (ix, p) in Enumerable.Index(programs))
         {
             if (ix > 0)
                 Console.WriteLine("\n--------------\n");
+
+            Console.WriteLine("--- Original in color");
+            p.PrintOriginalColorized();
+            Console.WriteLine("--- Reformatted");
             p.PrintL3Reformatted();
+
             p.PrintLabels();
             p.PrintErrors();
         }

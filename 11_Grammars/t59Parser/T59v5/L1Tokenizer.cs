@@ -22,6 +22,7 @@ abstract record L1Token
 {
     public required List<IToken> L0Tokens { get; set; }
     public SyntaxCategory Cat { get; set; }
+    public L2StatementBase? Parent { get; set; }
 
     public virtual string AsDebugString(bool noColor = false)
     {
@@ -58,6 +59,7 @@ abstract record L1Token
 }
 
 sealed record L1Eof: L1Token { }
+sealed record L1WS: L1Token { }
 sealed record L1PgmSeparator: L1Token { }
 sealed record L1LineComment: L1Token { }
 sealed record L1InvalidToken: L1Token { }
@@ -288,6 +290,8 @@ internal sealed class L1Tokenizer(Vocab lexer)
     private IEnumerable<L1Token> EnumerateL1Tokens()
     {
         IToken? nextToken = null;
+        bool ignoreNextWS = false;      // Skip WS after END program separator
+
         for (; ; )
         {
             IToken token;
@@ -299,10 +303,6 @@ internal sealed class L1Tokenizer(Vocab lexer)
             else
                 token = lexer.NextToken();
 
-            string symbolicName = lexer.Vocabulary.GetSymbolicName(token.Type);
-            //string typeName = symbolicName ?? lexer.Vocabulary.GetDisplayName(token.Type);
-            //Console.WriteLine($"Type: {typeName,-15} Text: '{token.Text}'");
-
             switch (token.Type)
             {
                 case TokenConstants.EOF:
@@ -311,7 +311,13 @@ internal sealed class L1Tokenizer(Vocab lexer)
                     yield break;
 
                 case Vocab.WS:
-                    // Ignore WS, they are useful to split ambiguous sequences, but we don't need them for analysis
+                    if (ignoreNextWS)
+                    {
+                        ignoreNextWS = false;
+                        continue;
+                    }
+                    var tws = new L1WS { L0Tokens = [token], Cat = SyntaxCategory.WS };
+                    yield return tws;
                     break;
 
                 case Vocab.LINE_COMMENT:
@@ -321,6 +327,7 @@ internal sealed class L1Tokenizer(Vocab lexer)
 
                 case Vocab.PROGRAM_SEPARATOR:
                     var tps = new L1PgmSeparator { L0Tokens = [token], Cat = SyntaxCategory.Eof };
+                    ignoreNextWS = true;
                     yield return tps;
                     break;
 
@@ -367,7 +374,8 @@ internal sealed class L1Tokenizer(Vocab lexer)
                     break;
 
                 default:
-                    Debug.Assert(symbolicName.StartsWith('I')); // Only instructions should remain
+                    //string symbolicName = lexer.Vocabulary.GetSymbolicName(token.Type);
+                    //Debug.Assert(symbolicName.StartsWith('I')); // Only instructions should remain
                     Debug.Assert(TIKeys.ContainsKey(token.Type));
                     var ti = new L1Instruction() { L0Tokens = [token], Cat = SyntaxCategory.Instruction, Inst = TIKeys[token.Type] };
                     yield return ti;

@@ -18,6 +18,13 @@ internal sealed class T59Program
     public Dictionary<int, bool> ValidAddresses = [];
     public List<T59Message> Messages = [];
 
+    public IEnumerable<L1Token> L1TokensWithoutWhiteSpace()
+    {
+        foreach (var t1 in L1Tokens)
+            if (t1 is not L1WS)
+                yield return t1;
+    }
+
     public void PrintL1Debug()
     {
         foreach (L1Token t1 in L1Tokens)
@@ -34,6 +41,20 @@ internal sealed class T59Program
     {
         foreach (L2StatementBase l2s in L2Statements)
             Console.WriteLine(l2s.AsDebugStringWithOpcodes());
+    }
+
+    public void PrintOriginalColorized()
+    {
+        foreach (var l1t in L1Tokens)
+        {
+            if (l1t is not L1WS)
+                Console.Write(Couleurs.GetCategoryColor(l1t.Parent is L2InvalidStatement ? SyntaxCategory.Invalid : l1t.Cat));
+            foreach (var l0t in l1t.L0Tokens)
+                Console.Write(l0t.Text);
+            if (l1t is not L1WS)
+                Console.Write(Couleurs.GetDefaultColor());
+        }
+        Console.WriteLine();
     }
 
     public void PrintL3Reformatted()
