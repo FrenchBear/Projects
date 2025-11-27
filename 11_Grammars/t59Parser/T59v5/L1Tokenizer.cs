@@ -1,7 +1,7 @@
 ﻿// Level 1 tokenizer
 //
 // Transform a stream of lexer tokens into L1Tokens:
-// - Ignore WS
+// - WS are preserved, but T59Program.L1TokensWithoutWhiteSpace() enumerator used by L2aParser ignores them
 // - Group successive INVALID_CHAR into L1InvalidToken
 // - Transform all I_xx into L1Instruction with TIKey attribute
 // - Add a property SyntaxCategory, initialized at a reasonable default from lexer perspective but maigh change later
@@ -44,12 +44,12 @@ abstract record L1Token
     public virtual string AsFormattedString(bool noColor = false)
     {
         var sb = new StringBuilder();
+        // Instructions "0" to "9" are rendered using SyntaxCategory.Number color instead of SyntaxCategory.Instruction
+        var cat = this is L1Instruction aa && aa.Inst.Op[0] < 10 ? SyntaxCategory.Number : Cat;
         if (!noColor)
-            sb.Append(Couleurs.GetCategoryColor(Cat));
+            sb.Append(Couleurs.GetCategoryColor(cat));
         if (this is L1Instruction l1i)
             sb.Append(l1i.Inst.M);      // For formatted output, use canonical mnemonic for instructions, not the one used on source code
-        else if (this is L1A4 l1a4)
-            sb.Append(string.Join("", L0Tokens.Select(t => t.Text))[1..]);
         else
             sb.Append(string.Join(" ", L0Tokens.Select(t => t.Text)));
         if (!noColor)
@@ -93,7 +93,6 @@ sealed record L1Instruction: L1Token
 sealed record L1D1: L1Token { }
 sealed record L1D2: L1Token { }
 sealed record L1A3: L1Token { }
-sealed record L1A4: L1Token { }     // Not part of Vocab, will be created during pass 2 to replace two consecutive L1D2 that should be considered as an address
 sealed record L1Num: L1Token
 {
     public override string AsDebugString(bool noColor = false)

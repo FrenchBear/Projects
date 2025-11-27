@@ -199,9 +199,10 @@ internal sealed class L2aParser(T59Program Prog)
         }
 
         // Helper to create a new L2Instruction from current context after adding l1t
-        L2Instruction BuildL2Instruction(L1Token l1t)
+        L2Instruction BuildL2Instruction(L1Token? l1t)
         {
-            Context.Add(l1t);
+            if (l1t != null)
+                Context.Add(l1t);
             var l2s = new L2Instruction();
             l2s.L1Tokens.AddRange(Context);
             Context.Clear();
@@ -211,21 +212,7 @@ internal sealed class L2aParser(T59Program Prog)
         L2aParserState state = L2aParserState.zero;
         for (; ; )
         {
-            // Don't need peeking support, so a simple foreach should be enough
-
-            //L1Token token;
-            //if (nextToken != null)
-            //{
-            //    token = nextToken;
-            //    nextToken = null;
-            //}
-            //else
-            //{
-            //    if (!e.MoveNext())
-            //        break;
-            //    token = e.Current;
-            //}
-
+            // ToDo: Don't need peeking support, so a simple foreach should be enough
             if (!e.MoveNext())
                 break;
             L1Token token = e.Current;
@@ -276,14 +263,16 @@ internal sealed class L2aParser(T59Program Prog)
                             state = L2aParserState.expect_colon;
                             continue;
 
-                        case L1Num or L1D2 or L1A3 or L1A4:
+                        case L1Num or L1D2 or L1A3:
                             var l2n = new L2Number();
-                            l2n.AddL1Token(token with { Cat = SyntaxCategory.Number });
+                            token.Cat = SyntaxCategory.Number;
+                            l2n.AddL1Token(token);
                             yield return l2n;
                             break;
 
                         case L1D1 l1d1:
                             var st = new L2Instruction();
+                            token.Cat = SyntaxCategory.Number;         // ToDo: Maybe Number should be better?
                             var l1inst = new L1Instruction() { L0Tokens = l1d1.L0Tokens, Cat = SyntaxCategory.Instruction, Inst = new TIKey { Op = [byte.Parse(l1d1.L0Tokens[0].Text)], M = l1d1.L0Tokens[0].Text, S = StatementSyntax.a } };
                             st.L1Tokens.Add(l1inst);
                             yield return st;
@@ -373,7 +362,8 @@ internal sealed class L2aParser(T59Program Prog)
                 case L2aParserState.expect_d:
                     if (token is L1D1 or L1D2)
                     {
-                        yield return BuildL2Instruction(token with { Cat = SyntaxCategory.DirectMemoryOrNumber });
+                        token.Cat = SyntaxCategory.DirectMemoryOrNumber;
+                        yield return BuildL2Instruction(token);
                         state = L2aParserState.zero;
                     }
                     else
@@ -389,7 +379,8 @@ internal sealed class L2aParser(T59Program Prog)
                 case L2aParserState.expect_i:
                     if (token is L1D1 or L1D2)
                     {
-                        yield return BuildL2Instruction(token with { Cat = SyntaxCategory.IndirectMemory });
+                        token.Cat = SyntaxCategory.IndirectMemory;
+                        yield return BuildL2Instruction(token);
                         state = L2aParserState.zero;
                     }
                     else
@@ -415,11 +406,12 @@ internal sealed class L2aParser(T59Program Prog)
                 case L2aParserState.expect_b:
                     if (IsLabelMnemonic(token))
                     {
-                        yield return BuildL2Instruction(token with { Cat = SyntaxCategory.Label });
+                        token.Cat = SyntaxCategory.Label;
+                        yield return BuildL2Instruction(token);
                         state = L2aParserState.zero;
                         break;
                     }
-                    if (token is L1A3 or L1A4 or L1Tag)
+                    if (token is L1A3 or L1Tag)
                     {
                         yield return BuildL2Instruction(token);
                         state = L2aParserState.zero;
@@ -430,12 +422,14 @@ internal sealed class L2aParser(T59Program Prog)
                         // Extension, numeric label 10..99 (except 40)
                         if (!d2.L0Tokens[0].Text.StartsWith('0'))
                         {
-                            yield return BuildL2Instruction(token with { Cat = SyntaxCategory.Label });
+                            token.Cat = SyntaxCategory.Label;
+                            yield return BuildL2Instruction(token);
                             state = L2aParserState.zero;
                         }
                         else    // We are in A4 = D2 D2 with 1st D2 starting with 0, for compatibility with .t59 modules dumps
                         {
-                            Context.Add(token with { Cat = SyntaxCategory.DirectAddress });     // Need to categorise token
+                            token.Cat = SyntaxCategory.DirectAddress;
+                            Context.Add(token);     // Need to categorise token
                             state = L2aParserState.expect_a4_part_2;
                         }
                         break;
@@ -458,10 +452,10 @@ internal sealed class L2aParser(T59Program Prog)
                     if (token is L1D2 second)
                     {
                         var first = Context[^1];
-                        var t1a4 = new L1A4 { L0Tokens = [.. first.L0Tokens, .. second.L0Tokens] };
-                        Context.RemoveAt(Context.Count - 1);
-                        // Upgrade L1D2 L1D2 to a new L1A4, will make later addresses checking much easier by only checking L1A3, L1A4 and L1TAG
-                        yield return BuildL2Instruction(t1a4 with { Cat = SyntaxCategory.DirectAddress });
+                        // This just retags category of L1D2 tokens
+                        first.Cat = SyntaxCategory.DirectAddress;
+                        second.Cat = SyntaxCategory.DirectAddress;
+                        yield return BuildL2Instruction(second);
                         state = L2aParserState.zero;
                     }
                     else
@@ -487,7 +481,8 @@ internal sealed class L2aParser(T59Program Prog)
                 case L2aParserState.expect_dib_d:
                     if (token is L1D1 or L1D2)
                     {
-                        Context.Add(token with { Cat = SyntaxCategory.DirectMemoryOrNumber });
+                        token.Cat = SyntaxCategory.DirectMemoryOrNumber;
+                        Context.Add(token);
                         state = L2aParserState.expect_b;
                     }
                     else
@@ -503,7 +498,8 @@ internal sealed class L2aParser(T59Program Prog)
                 case L2aParserState.expect_dib_i:
                     if (token is L1D1 or L1D2)
                     {
-                        Context.Add(token with { Cat = SyntaxCategory.IndirectMemory });
+                        token.Cat = SyntaxCategory.IndirectMemory;
+                        Context.Add(token);
                         state = L2aParserState.expect_b;
                     }
                     else
@@ -519,7 +515,8 @@ internal sealed class L2aParser(T59Program Prog)
                 case L2aParserState.expect_m:
                     if (IsLabelMnemonic(token) || (token is L1D2 ld2 && ld2.L0Tokens[0].Text != "40" && ld2.L0Tokens[0].Text[0] != '0'))
                     {
-                        yield return BuildL2Instruction(token with { Cat = SyntaxCategory.Label });
+                        token.Cat = SyntaxCategory.Label;
+                        yield return BuildL2Instruction(token);
                         state = L2aParserState.zero;
                     }
                     else

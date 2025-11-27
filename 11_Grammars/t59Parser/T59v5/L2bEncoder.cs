@@ -113,6 +113,8 @@ internal sealed class L2bEncoder(T59Program Prog)
                 if (l2i.OpCodes[0] == 76)       // Ignore Lbl statements when checking addresses
                     continue;
 
+                bool firstD2HalfAddressFound = false;
+                int firstD2HalfAddress = 0;
                 foreach (var l1t in l2i.L1Tokens)
                 {
                     switch (l1t)
@@ -132,11 +134,18 @@ internal sealed class L2bEncoder(T59Program Prog)
                                 Prog.ValidAddresses[a3] = true;
                             break;
 
-                        case L1A4 l1a4:
-                            // Don't test address 240 in PGM 02 SBR 02 40
+                        case L1D2 l1a4 when l1a4.Cat == SyntaxCategory.DirectAddress:
+                            int val = int.Parse(l1a4.L0Tokens[0].Text);
+                            if (!firstD2HalfAddressFound)
+                            {
+                                firstD2HalfAddressFound = true;
+                                firstD2HalfAddress = val;
+                                continue;       // Don't use break to avoid resetting skipInstruction until we have the 2nd half
+                            }
                             if (skipInstruction)
                                 break;
-                            var a4 = 100 * int.Parse(l1a4.L0Tokens[0].Text) + int.Parse(l1a4.L0Tokens[1].Text);
+                            var a4 = 100 * firstD2HalfAddress + val;
+                            // Don't test address 240 in PGM 02 SBR 02 40
                             if (!Prog.ValidAddresses.ContainsKey(a4))
                             {
                                 var msg = new T59Message { Message = $"Target address invalid: {l2i.Address:D3}: {l2i.AsFormattedString()}", Statement = l2s, Token = l1a4 };
@@ -250,11 +259,6 @@ internal sealed class L2bEncoder(T59Program Prog)
                             int addr = int.Parse(l1t.L0Tokens[0].Text);
                             l2si.OpCodes.Add((byte)(addr / 100));
                             l2si.OpCodes.Add((byte)(addr % 100));
-                        }
-                        else if (l1t is L1A4)
-                        {
-                            l2si.OpCodes.Add(byte.Parse(l1t.L0Tokens[0].Text));
-                            l2si.OpCodes.Add(byte.Parse(l1t.L0Tokens[1].Text));
                         }
                         else if (l1t is L1Tag)
                         {
