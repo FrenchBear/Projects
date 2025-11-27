@@ -16,7 +16,7 @@ internal sealed class T59Program
     public List<L2StatementBase> L2Statements = [];
     public int OpCodesCount;
     public Dictionary<int, bool> ValidAddresses = [];
-    public List<string> Errors = [];
+    public List<T59Message> Messages = [];
 
     public void PrintL1Debug()
     {
@@ -64,13 +64,13 @@ internal sealed class T59Program
 
                     if (l2i.OpCodes[0] == 76)
                     {
-                        Console.Write(Couleurs.GetCategoryColor(l2i.Problem ? SyntaxCategory.Invalid : SyntaxCategory.Label));
+                        Console.Write(Couleurs.GetCategoryColor(l2i.Message != null ? SyntaxCategory.Invalid : SyntaxCategory.Label));
                         Console.Write("■ ");
                         Console.Write(Couleurs.GetDefaultColor());
                     }
                     else
                     {
-                        if (l2i.Problem)
+                        if (l2i.Message != null)
                         {
                             Console.Write(Couleurs.GetCategoryColor(SyntaxCategory.Invalid));
                             Console.Write("? ");
@@ -121,11 +121,11 @@ internal sealed class T59Program
 
     public void PrintErrors()
     {
-        if (Errors.Count > 0)
+        if (Messages.Count > 0)
         {
-            Console.WriteLine("\nErrors:");
-            foreach (var error in Errors)
-                Console.WriteLine(error);
+            Console.WriteLine("\nErrors/Warnings:");
+            foreach (var msg in Messages)
+                Console.WriteLine(msg.Message);
         }
     }
 }

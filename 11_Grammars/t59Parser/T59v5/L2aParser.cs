@@ -15,6 +15,7 @@ namespace T59v5;
 abstract record L2StatementBase
 {
     public List<L1Token> L1Tokens { get; set; } = [];
+    public T59Message? Message { get; set; }
 
     public void AddL1Token(L1Token l1t)
         => L1Tokens.Add(l1t);
@@ -71,7 +72,6 @@ abstract record L2AddressableInstructionBase: L2StatementBase
 {
     public int Address { get; set; }
     public List<byte> OpCodes { get; set; } = [];
-    public bool Problem { get; set; }
 }
 
 sealed record L2Tag: L2AddressableInstructionBase

@@ -21,25 +21,38 @@ internal sealed class L2bEncoder(T59Program Prog)
         CheckErrors();
     }
 
+    internal sealed class TagInfo
+    {
+        public required L2Tag Tag { get; set; }
+        public bool IsReferenced { get; set; }
+    }
+
+    internal sealed class LabelInfo
+    {
+        public required L2Instruction Label { get; set; }
+        public bool IsReferenced { get; set; }
+    }
+
     private void CheckErrors()
     {
         // First pass, build labels, tags and valid addresses tables, report invalid statements
-        var Labels = new Dictionary<byte, L2Instruction>();
-        var Tags = new Dictionary<string, L2Tag>(StringComparer.InvariantCultureIgnoreCase);
+        var LabelsTable = new Dictionary<byte, LabelInfo>();
+        var TagsTable = new Dictionary<string, TagInfo>(StringComparer.InvariantCultureIgnoreCase);
 
         foreach (var l2s in Prog.L2Statements)
         {
             switch (l2s)
             {
                 case L2Instruction { OpCodes: [76, var lab] } l2i:
-                    if (Labels.TryGetValue(lab, out L2Instruction? oldi))
+                    if (LabelsTable.TryGetValue(lab, out LabelInfo? oldli))
                     {
-                        l2i.Problem = true;
-                        Prog.Errors.Add($"Duplicate label: {oldi.Address}: {oldi.AsFormattedString()} and {l2i.Address}: {l2i.AsFormattedString()}");
+                        var msg = new T59Message { Message = $"Duplicate label: {oldli.Label.Address:D3}: {oldli.Label.AsFormattedString()} and {l2i.Address:D3}: {l2i.AsFormattedString()}", Statement = l2s };
+                        l2i.Message = msg;
+                        Prog.Messages.Add(msg);
                     }
                     else
                     {
-                        Labels.Add(lab, l2i);
+                        LabelsTable.Add(lab, new LabelInfo { Label = l2i });
                         Prog.ValidAddresses.Add(l2i.Address, false);
                     }
                     break;
@@ -52,11 +65,15 @@ internal sealed class L2bEncoder(T59Program Prog)
                     break;
 
                 case L2Tag { Tag: var t } l2t:
-                    if (Tags.TryGetValue(t, out L2Tag? oldt))
-                        Prog.Errors.Add($"Duplicate tag: {oldt.Address}: {oldt.AsFormattedString()} and {l2t.Address}: {l2t.AsFormattedString()}");
+                    if (TagsTable.TryGetValue(t, out TagInfo? oldti))
+                    {
+                        var msg = new T59Message { Message = $"Duplicate tag: {oldti.Tag.Address:D3}: {oldti.Tag.AsFormattedString()} and {l2t.Address:D3}: {l2t.AsFormattedString()}", Statement = l2s };
+                        l2t.Message = msg;
+                        Prog.Messages.Add(msg);
+                    }
                     else
                         // No need to add tag address to valid instructions, since tag will inherit 
-                        Tags.Add(t, l2t);
+                        TagsTable.Add(t, new TagInfo { Tag = l2t });
                     break;
 
                 case L2Number l2n:
@@ -66,7 +83,11 @@ internal sealed class L2bEncoder(T59Program Prog)
                     break;
 
                 case L2InvalidStatement l2is:
-                    Prog.Errors.Add("Invalid statement: " + l2is.AsFormattedString());
+                    {
+                        var msg = new T59Message { Message = "Invalid statement: " + l2is.AsFormattedString(), Statement = l2is };
+                        l2is.Message = msg;
+                        Prog.Messages.Add(msg);
+                    }
                     break;
             }
         }
@@ -76,11 +97,13 @@ internal sealed class L2bEncoder(T59Program Prog)
         foreach (var l2s in Prog.L2Statements)
             if (l2s is L2Instruction l2i)
             {
-                if (l2i.OpCodes[0] == 36)     // PGM
+                if (l2i.OpCodes[0] == 36)       // PGM
                 {
                     skipInstruction = true;
                     continue;
                 }
+                if (l2i.OpCodes[0] == 76)       // Ignore Lbl statements when checking addresses
+                    continue;
 
                 foreach (var l1t in l2i.L1Tokens)
                 {
@@ -93,8 +116,9 @@ internal sealed class L2bEncoder(T59Program Prog)
                             var a3 = int.Parse(l1a3.L0Tokens[0].Text);
                             if (!Prog.ValidAddresses.ContainsKey(a3))
                             {
-                                Prog.Errors.Add($"Target address invalid: {l2i.Address}: {l2i.AsFormattedString()}");
-                                l2i.Problem = true;
+                                var msg = new T59Message { Message = $"Target address invalid: {l2i.Address}: {l2i.AsFormattedString()}", Statement = l2s, Token = l1t };
+                                l2i.Message = msg;
+                                Prog.Messages.Add(msg);
                             }
                             else
                                 Prog.ValidAddresses[a3] = true;
@@ -107,8 +131,9 @@ internal sealed class L2bEncoder(T59Program Prog)
                             var a4 = 100 * int.Parse(l1a4.L0Tokens[0].Text) + int.Parse(l1a4.L0Tokens[1].Text);
                             if (!Prog.ValidAddresses.ContainsKey(a4))
                             {
-                                Prog.Errors.Add($"Target address invalid: {l2i.Address}: {l2i.AsFormattedString()}");
-                                l2i.Problem = true;
+                                var msg = new T59Message { Message = $"Target address invalid: {l2i.Address:D3}: {l2i.AsFormattedString()}", Statement = l2s, Token = l1a4 };
+                                l2i.Message = msg;
+                                Prog.Messages.Add(msg);
                             }
                             else
                                 Prog.ValidAddresses[a4] = true;
@@ -116,14 +141,16 @@ internal sealed class L2bEncoder(T59Program Prog)
 
                         case L1Tag l1tag:
                             var tag = l1tag.L0Tokens[0].Text;
-                            if (!Tags.TryGetValue(tag, out L2Tag? tagValue))
+                            if (!TagsTable.TryGetValue(tag, out TagInfo? tagInfo))
                             {
-                                Prog.Errors.Add($"Target tag invalid: {l2i.Address}: {l2i.AsFormattedString()}");
-                                l2i.Problem = true;
+                                var msg = new T59Message { Message = $"Target tag invalid: {l2i.Address:D3}: {l2i.AsFormattedString()}", Statement = l2s, Token = l1tag };
+                                l2i.Message = msg;
+                                Prog.Messages.Add(msg);
                             }
                             else
                             {
-                                var addr = tagValue.Address;
+                                tagInfo.IsReferenced = true;
+                                var addr = tagInfo.Tag.Address;
                                 Prog.ValidAddresses[l2i.Address] = true;
                                 // Find placeholder
                                 for (int i = 0; i < l2i.OpCodes.Count; i++)
@@ -141,13 +168,17 @@ internal sealed class L2bEncoder(T59Program Prog)
                             if (skipInstruction)
                                 break;
                             var label = byte.Parse(l1d2.L0Tokens[0].Text);
-                            if (!Labels.TryGetValue(label, out L2Instruction? value))
+                            if (!LabelsTable.TryGetValue(label, out LabelInfo? lin))
                             {
-                                Prog.Errors.Add($"Target label invalid: {l2i.Address}: {l2i.AsFormattedString()}");
-                                l2i.Problem = true;
+                                var msg = new T59Message { Message = $"Target label invalid: {l2i.Address:D3}: {l2i.AsFormattedString()}", Statement = l2s, Token = l1d2 };
+                                l2i.Message = msg;
+                                Prog.Messages.Add(msg);
                             }
                             else
-                                Prog.ValidAddresses[value.Address] = true;
+                            {
+                                lin.IsReferenced = true;
+                                Prog.ValidAddresses[lin.Label.Address] = true;
+                            }
                             break;
 
                         case L1Instruction { Cat: SyntaxCategory.Label } l1i:
@@ -155,19 +186,39 @@ internal sealed class L2bEncoder(T59Program Prog)
                             if (skipInstruction)
                                 break;
                             var ilabel = l1i.Inst.Op[0];
-                            if (!Labels.TryGetValue(ilabel, out L2Instruction? ivalue))
+                            if (!LabelsTable.TryGetValue(ilabel, out LabelInfo? lim))
                             {
-                                Prog.Errors.Add($"Target label invalid: {l2i.Address}: {l2i.AsFormattedString()}");
-                                l2i.Problem = true;
+                                var msg = new T59Message { Message = $"Target label invalid: {l2i.Address:D3}: {l2i.AsFormattedString()}", Statement = l2s, Token = l1i };
+                                l2i.Message = msg;
+                                Prog.Messages.Add(msg);
                             }
                             else
-                                Prog.ValidAddresses[ivalue.Address] = true;
+                            {
+                                lim.IsReferenced = true;
+                                Prog.ValidAddresses[lim.Label.Address] = true;
+                            }
                             break;
                     }
                 }
 
                 // Always reset skipInstruction after processing a non-pgm instruction
                 skipInstruction = false;
+            }
+
+        // Third pass, report unreferenced labels and tags
+        foreach (var li in LabelsTable.Values)
+            if (!li.IsReferenced)
+            {
+                var msg = new T59Message { Message = $"Unreferenced label: {li.Label.Address:D3}: " + li.Label.AsFormattedString(), Statement = li.Label };
+                li.Label.Message = msg;
+                Prog.Messages.Add(msg);
+            }
+        foreach (var ti in TagsTable.Values)
+            if (!ti.IsReferenced)
+            {
+                var msg = new T59Message { Message = "Unreferenced tag: " + ti.Tag.AsFormattedString()[..^3], Statement = ti.Tag };
+                ti.Tag.Message = msg;
+                Prog.Messages.Add(msg);
             }
     }
 
