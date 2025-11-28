@@ -8,14 +8,14 @@ namespace T59v6Core;
 
 public enum SyntaxCategory: byte
 {
-    // Special
+    // For internal processing
     Unknown = 0,    // Default, if not painted
     Uninitialized,  // For internal use
     Invalid,        // L1InvalidToken (ex: ZYP). Incorrect/incomplete statements will be stored in a L2InvalidStatement, and its individual tokens may still keey their categegory
     Eof,            // Eof
     WS,             // White Space
 
-    // Program stuff
+    // Program code
     Comment,        // souble slash and following text up to EOL
     Number,         // Number
     Tag,            // @xxx (and also :)
@@ -41,5 +41,5 @@ public static class Categories
     internal static string GetCategoryTag(SyntaxCategory cat) => cat.ToString().ToLower();
     internal static string GetCategoryOpenTag(SyntaxCategory cat) => $"[{GetCategoryTag(cat)}]";
     internal static string GetCategoryCloseTag(SyntaxCategory cat) => $"[/{GetCategoryTag(cat)}]";
-    internal static string GetTaggedText(string s, SyntaxCategory cat) => GetCategoryOpenTag(cat) + s + GetCategoryCloseTag(cat);
+    public static string GetTaggedText(string s, SyntaxCategory cat) => GetCategoryOpenTag(cat) + s + GetCategoryCloseTag(cat);
 }

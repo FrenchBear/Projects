@@ -18,7 +18,6 @@ public static class Program
 {
     public static void Main(string[] args)
     {
-        /*
         var s = @"
 comment:     [comment]Text 123[/comment]
 invalid:     [invalid]Text 123[/invalid]
@@ -32,20 +31,19 @@ label:       [label]Text 123[/label]
 address:     [address]Text 123[/address]
 
 "
-+ Couleurs.GetTaggedText("// Example", SyntaxCategory.Comment) + "\n"
-+ Couleurs.GetTaggedText("@Loop:", SyntaxCategory.Tag) + " "
-+ Couleurs.GetTaggedText("-1.6E-19", SyntaxCategory.Number) + " "
-+ Couleurs.GetTaggedText("PD*", SyntaxCategory.Instruction) + " "
-+ Couleurs.GetTaggedText("04", SyntaxCategory.Indirect) + " "
-+ Couleurs.GetTaggedText("ZYP", SyntaxCategory.Invalid) + " "
-+ Couleurs.GetTaggedText("Dsz", SyntaxCategory.Instruction) + " "
-+ Couleurs.GetTaggedText("12", SyntaxCategory.Direct) + " "
-+ Couleurs.GetTaggedText("CLR", SyntaxCategory.Label) + "\n";
++ Categories.GetTaggedText("// Example", SyntaxCategory.Comment) + "\n"
++ Categories.GetTaggedText("@Loop:", SyntaxCategory.Tag) + " "
++ Categories.GetTaggedText("-1.6E-19", SyntaxCategory.Number) + " "
++ Categories.GetTaggedText("PD*", SyntaxCategory.Instruction) + " "
++ Categories.GetTaggedText("04", SyntaxCategory.Indirect) + " "
++ Categories.GetTaggedText("ZYP", SyntaxCategory.Invalid) + " "
++ Categories.GetTaggedText("Dsz", SyntaxCategory.Instruction) + " "
++ Categories.GetTaggedText("12", SyntaxCategory.Direct) + " "
++ Categories.GetTaggedText("CLR", SyntaxCategory.Label) + "\n";
 
         //Console.WriteLine(s);
-        Console.WriteLine(Couleurs.RenderTaggedText(s));
+        Console.WriteLine(ConsoleRendering.RenderTaggedText(s));
         return;
-        */
 
         string input = @"LBL 99 Lbl STO CLR CE STO 12 STO IND 42 RCL 5
 cos INV Sin INV CLR

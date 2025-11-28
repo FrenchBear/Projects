@@ -13,26 +13,26 @@ namespace T59v6Console;
 
 public static class ConsoleRendering
 {
-    const bool DoRendering = true;
+    const bool DoRendering = false;
 
     static readonly Dictionary<string, string> TagColors = new()
     {
-        {"comment", "40C040" },
-        {"invalid", "ff4040"},
-        {"unknown", "ff0000"},
-        {"instruction", "80c0ff"},
-        {"number", "d2d2d2"},
-        {"direct", "ffc0ff"},
-        {"indirect", "ff80ff"},
-        {"tag", "ffc080"},
-        {"label", "ffc000"},
-        {"address", "ff9000"},
+        {"comment",     ConsoleColorFromHexColor("40C040") },
+        {"invalid",     ConsoleColorFromHexColor("ff4040")},
+        {"unknown",     ConsoleColorFromHexColor("ff0000")},
+        {"instruction", ConsoleColorFromHexColor("80c0ff")},
+        {"number",      ConsoleColorFromHexColor("d2d2d2")},
+        {"direct",      ConsoleColorFromHexColor("ffc0ff")},
+        {"indirect",    ConsoleColorFromHexColor("ff80ff")},
+        {"tag",         ConsoleColorFromHexColor("ffc080")},
+        {"label",       ConsoleColorFromHexColor("ffc000")},
+        {"address",     ConsoleColorFromHexColor("ff9000")},
 
-        {"linenumber", "A0A0A0"},
-        {"opcode", "C0A080"},
+        {"linenumber",  ConsoleColorFromHexColor("A0A0A0")},
+        {"opcode",      ConsoleColorFromHexColor("C0A080")},
     };
 
-    private static string ConsoleColor(int r, int g, int b) => "\x1b[38;2;" + $"{r};{g};{b}m";
+    private static string ConsoleColorFromRGB(int r, int g, int b) => "\x1b[38;2;" + $"{r};{g};{b}m";
 
     public static string ConsoleDefaultColor() => "\x1b[39m";
 
@@ -41,7 +41,7 @@ public static class ConsoleRendering
         var r = int.Parse(hexcolor[0..2], System.Globalization.NumberStyles.HexNumber);
         var g = int.Parse(hexcolor[2..4], System.Globalization.NumberStyles.HexNumber);
         var b = int.Parse(hexcolor[4..6], System.Globalization.NumberStyles.HexNumber);
-        return ConsoleColor(r, g, b);
+        return ConsoleColorFromRGB(r, g, b);
     }
 
     static readonly Regex reTag = new(@"\[([^]]+)\]");
@@ -53,7 +53,7 @@ public static class ConsoleRendering
         if (tag.StartsWith('/'))
             return TagColors.ContainsKey(tag[1..]) ? ConsoleDefaultColor() : "[" + tag + "]";
         else
-            return TagColors.TryGetValue(tag, out var hexcolor) ? ConsoleColorFromHexColor(hexcolor) : "[" + tag + "]";
+            return TagColors.TryGetValue(tag, out var ccolor) ? ccolor : "[" + tag + "]";
 #pragma warning restore IDE0046 // Convert to conditional expression
     }
 
