@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Text;
 
 namespace T59v5;
 
@@ -45,16 +46,17 @@ internal sealed class T59Program
 
     public void PrintOriginalColorized()
     {
+        var sb = new StringBuilder();
         foreach (var l1t in L1Tokens)
         {
             if (l1t is not L1WS)
-                Console.Write(Couleurs.GetCategoryColor(l1t.Parent is L2InvalidStatement ? SyntaxCategory.Invalid : l1t.Cat));
+                sb.Append(Couleurs.GetCategoryOpenTag(l1t.Parent is L2InvalidStatement ? SyntaxCategory.Invalid : l1t.Cat));
             foreach (var l0t in l1t.L0Tokens)
-                Console.Write(l0t.Text);
+                sb.Append(l0t.Text);
             if (l1t is not L1WS)
-                Console.Write(Couleurs.GetDefaultColor());
+                sb.Append(Couleurs.GetCategoryCloseTag(l1t.Parent is L2InvalidStatement ? SyntaxCategory.Invalid : l1t.Cat));
         }
-        Console.WriteLine();
+        Console.WriteLine(Couleurs.RenderTaggedText(sb.ToString()));
     }
 
     public void PrintL3Reformatted()
@@ -64,58 +66,47 @@ internal sealed class T59Program
 
         static string FormattedOpCode(byte opCode) => opCode == 100 ? "??" : opCode.ToString("D2");
 
+        var sb = new StringBuilder();
         foreach (L2StatementBase l2s in L2Statements)
         {
+            sb.Clear();
             switch (l2s)
             {
                 case L2LineComment or L2InvalidStatement or L2Tag:
-                    Console.Write(new string(' ', 3 * opCols + 8));
+                    sb.Append(new string(' ', 3 * opCols + 8));
                     if (l2s is L2InvalidStatement)
-                        Console.Write("  ");
-                    Console.WriteLine(l2s.AsFormattedString());
+                        sb.Append("  ");
+                    sb.Append(l2s.AsFormattedString());
+                    Console.WriteLine(Couleurs.RenderTaggedText(sb.ToString()));
                     break;
 
                 case L2AddressableInstructionBase l2i:      // L2Tag is L2AddressableInstructionBase, but don't need to print address or opCodes
                     int skip = 0;
                     int cp = l2i.Address;
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.Write($"{cp:D3}: ");
-                    Console.ForegroundColor = ConsoleColor.Gray;
-                    Console.Write($"{string.Join(" ", l2i.OpCodes.Take(opCols).Select(FormattedOpCode)),-3 * opCols}   ");
+                    sb.Append(Couleurs.GetTaggedText($"{cp:D3}: ", SyntaxCategory.LineNumber));
+                    sb.Append($"{string.Join(" ", l2i.OpCodes.Take(opCols).Select(FormattedOpCode)),-3 * opCols}   ");
 
                     if (l2i.OpCodes[0] == 76)
-                    {
-                        Console.Write(Couleurs.GetCategoryColor(l2i.Message != null ? SyntaxCategory.Invalid : SyntaxCategory.Label));
-                        Console.Write("■ ");
-                        Console.Write(Couleurs.GetDefaultColor());
-                    }
+                        sb.Append(Couleurs.GetTaggedText("■ ", l2i.Message != null ? SyntaxCategory.Invalid : SyntaxCategory.Label));
                     else
                     {
                         if (l2i.Message != null)
-                        {
-                            Console.Write(Couleurs.GetCategoryColor(SyntaxCategory.Invalid));
-                            Console.Write("? ");
-                            Console.Write(Couleurs.GetDefaultColor());
-                        }
+                            sb.Append(Couleurs.GetTaggedText("? ", SyntaxCategory.Invalid));
                         else
-                        {
-                            if (ValidAddresses.TryGetValue(l2i.Address, out bool value) && value)
-                                Console.Write("› ");
-                            else
-                                Console.Write("  ");
-                        }
+                            sb.Append(ValidAddresses.TryGetValue(l2i.Address, out bool value) && value ? "› " : "  ");
                     }
 
-                    Console.WriteLine(l2i.AsFormattedString());
+                    sb.Append(l2i.AsFormattedString());
+                    Console.WriteLine(Couleurs.RenderTaggedText(sb.ToString()));
 
                     while (l2i.OpCodes.Count - skip > opCols)
                     {
                         cp += opCols;
                         skip += opCols;
-                        Console.ForegroundColor = ConsoleColor.White;
-                        Console.Write($"{cp:D3}: ");
-                        Console.ForegroundColor = ConsoleColor.Gray;
-                        Console.WriteLine($"{string.Join(" ", l2i.OpCodes.Skip(skip).Take(opCols).Select(FormattedOpCode)),-3 * opCols} ");
+                        sb.Clear();
+                        sb.Append(Couleurs.GetTaggedText($"{cp:D3}: ", SyntaxCategory.LineNumber));
+                        sb.Append($"{string.Join(" ", l2i.OpCodes.Skip(skip).Take(opCols).Select(FormattedOpCode)),-3 * opCols} ");
+                        Console.WriteLine(Couleurs.RenderTaggedText(sb.ToString()));
                     }
                     break;
             }
@@ -133,10 +124,11 @@ internal sealed class T59Program
                     isHeaderPrinted = true;
                     Console.WriteLine("\nLabels and Tags:");
                 }
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.Write($"{l2a.Address:D3}: ");
-                //Console.ForegroundColor = ConsoleColor.Gray;
-                Console.WriteLine(l2a.AsFormattedString());
+
+                var sb = new StringBuilder();
+                sb.Append(Couleurs.GetTaggedText($"{l2a.Address:D3}: ", SyntaxCategory.LineNumber));
+                sb.Append(l2a.AsFormattedString());
+                Console.WriteLine(Couleurs.RenderTaggedText(sb.ToString()));
             }
     }
 
@@ -146,7 +138,7 @@ internal sealed class T59Program
         {
             Console.WriteLine("\nErrors/Warnings:");
             foreach (var msg in Messages)
-                Console.WriteLine(msg.Message);
+                Console.WriteLine(Couleurs.RenderTaggedText(msg.Message));
         }
     }
 }
