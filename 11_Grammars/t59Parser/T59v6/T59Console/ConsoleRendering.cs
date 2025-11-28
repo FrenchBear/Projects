@@ -7,7 +7,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace T59Console;
+namespace T59v6Console;
 
 #pragma warning disable SYSLIB1045 // Convert to 'GeneratedRegexAttribute'.
 

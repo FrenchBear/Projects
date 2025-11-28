@@ -6,7 +6,7 @@
 using Antlr4.Runtime;
 using System.Collections.Generic;
 
-namespace T59Core;
+namespace T59v6Core;
 
 public class T59Processor
 {

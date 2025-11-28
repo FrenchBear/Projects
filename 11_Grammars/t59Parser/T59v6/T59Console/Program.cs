@@ -7,12 +7,12 @@
 
 using System;
 using System.Linq;
-using T59Core;
+using T59v6Core;
 
 #pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable IDE0059 // Unnecessary assignment of a value
 
-namespace T59Console;
+namespace T59v6Console;
 
 public static class Program
 {

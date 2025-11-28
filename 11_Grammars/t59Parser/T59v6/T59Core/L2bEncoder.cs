@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace T59Core;
+namespace T59v6Core;
 
 internal sealed class L2bEncoder(T59Program Prog)
 {

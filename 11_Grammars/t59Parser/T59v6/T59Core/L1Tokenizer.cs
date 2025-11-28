@@ -14,7 +14,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
-namespace T59Core;
+namespace T59v6Core;
 
 // ------------------
 

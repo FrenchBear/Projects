@@ -9,7 +9,7 @@ using System.IO;
 
 #pragma warning disable CS9113 // Parameter is unread.
 
-namespace T59Core;
+namespace T59v6Core;
 
 internal sealed class MyLexerErrorListener(bool showErrors): IAntlrErrorListener<int>
 {

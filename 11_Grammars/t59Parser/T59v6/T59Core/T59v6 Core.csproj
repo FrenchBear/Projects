@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
 		<TargetFramework>net10.0</TargetFramework>
-		<RootNamespace>T59Core</RootNamespace>
+		<RootNamespace>T59v6Core</RootNamespace>
 		<WarningLevel>1</WarningLevel>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>

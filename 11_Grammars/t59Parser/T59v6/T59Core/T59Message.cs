@@ -3,7 +3,7 @@
 //
 // 2025-11-27   PV
 
-namespace T59Core;
+namespace T59v6Core;
 
 public sealed class T59Message
 {

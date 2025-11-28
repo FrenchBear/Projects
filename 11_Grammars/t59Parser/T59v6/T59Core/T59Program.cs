@@ -9,7 +9,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 
-namespace T59Core;
+namespace T59v6Core;
 
 public sealed class T59Program
 {

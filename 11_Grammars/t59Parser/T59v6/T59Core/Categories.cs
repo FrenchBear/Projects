@@ -4,7 +4,7 @@
 // 2025-11-20   PV
 // 2025-11-28   PV      Tagging
 
-namespace T59Core;
+namespace T59v6Core;
 
 public enum SyntaxCategory: byte
 {
