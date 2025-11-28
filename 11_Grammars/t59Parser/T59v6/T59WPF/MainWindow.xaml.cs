@@ -1,90 +1,74 @@
 ﻿using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using T59v6Core;
 
-namespace T59Visual
+namespace T59v6WPF;
+
+public partial class MainWindow: Window
 {
-    public partial class MainWindow: Window
+    public MainWindow()
     {
-        public MainWindow()
+        InitializeComponent();
+        Loaded += async (s, e) =>
         {
-            InitializeComponent();
-            Loaded += async (s, e) =>
-            {
-                string test = @"comment:     [comment]Text 123[/comment]
-invalid:     [invalid]Text 123[/invalid]
-unknown:     [unknown]Text 123[/unknown]
-instruction: [instruction]Text 123[/instruction]
-number:      [number]Text 123[/number]
-direct:      [direct]Text 123[/direct]
-indirect:    [indirect]Text 123[/indirect]
-tag:         [tag]Text 123[/tag]
-label:       [label]Text 123[/label]
-address:     [address]Text 123[/address]
+            //                string test = @"comment:     [comment]Text 123[/comment]
+            //invalid:     [invalid]Text 123[/invalid]
+            //unknown:     [unknown]Text 123[/unknown]
+            //instruction: [instruction]Text 123[/instruction]
+            //number:      [number]Text 123[/number]
+            //direct:      [direct]Text 123[/direct]
+            //indirect:    [indirect]Text 123[/indirect]
+            //tag:         [tag]Text 123[/tag]
+            //label:       [label]Text 123[/label]
+            //address:     [address]Text 123[/address]
 
-[comment]// Example[/comment]
-[tag]@Loop:[/tag] [number]-1.6E-19[/number] [instruction]PD*[/instruction] [indirect]04[/indirect] [invalid]ZYP[/invalid] [instruction]Dsz[/instruction] [direct]12[/direct] [label]CLR[/label]";
-                await webView.EnsureCoreWebView2Async();
-                HtmlRender(test);
-            };
-        }
+            //[comment]// Example[/comment]
+            //[tag]@Loop:[/tag] [number]-1.6E-19[/number] [instruction]PD*[/instruction] [indirect]04[/indirect] [invalid]ZYP[/invalid] [instruction]Dsz[/instruction] [direct]12[/direct] [label]CLR[/label]";
+            //                await webView1.EnsureCoreWebView2Async();
+            //                HtmlRender(test);
+
+            htmlTextBox.Text = "// Initial comment\r\nLbl CLR STO 12 @Loop3: STO IND 12 Lbl Σ+ GTO CLR GTO 25 GTO 123 Lbl 25 GTO 00 10 ZYP 123456 GTO @Tag Sto Ind Ind 12 Nop Sto Sin e^x INV SBR";
+
+            //await webView1.EnsureCoreWebView2Async();
+            //webView1.NavigateToString("");
+            //await webView2.EnsureCoreWebView2Async();
+            //webView2.NavigateToString("");
+        };
+    }
 
 #pragma warning disable SYSLIB1045 // Convert to 'GeneratedRegexAttribute'.
-        static readonly Regex reTag = new(@"\[([^]]+)\]");
+    static readonly Regex reTag = new(@"\[([^]]+)\]");
 
-        private static string Evaluator(Match match)
-        {
-            string tag = match.Groups[1].Value.ToLower();
+    private static string Evaluator(Match match)
+    {
+        string tag = match.Groups[1].Value.ToLower();
 #pragma warning disable IDE0046 // Convert to conditional expression
-            if (tag.StartsWith('/'))
-                return "</span>";
-            else
-                return "<span class=\"" + tag + "\">";
+        if (tag.StartsWith('/'))
+            return "</span>";
+        else
+            return "<span class=\"" + tag + "\">";
 #pragma warning restore IDE0046 // Convert to conditional expression
-        }
+    }
 
-        private async void HtmlTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            await webView.EnsureCoreWebView2Async();
-            HtmlRender(htmlTextBox.Text);
-        }
+    private async void HtmlTextBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        var programs = T59Processor.GetPrograms(htmlTextBox.Text);
+        var out1 = HtmlRender(programs[0].OriginalColorizedTagged());
+        var out2 = HtmlRender(programs[0].L3ReformattedTagged());
 
-        void HtmlRender(string s)
-        {
-            var processedText = reTag.Replace(s, Evaluator);
+        await webView1.EnsureCoreWebView2Async();
+        webView1.NavigateToString(out1);
+        await webView2.EnsureCoreWebView2Async();
+        webView2.NavigateToString(out2);
+    }
 
-            // Replace custom tags with spans that have CSS classes
-            //var processedText = htmlTextBox.Text
-            //    .Replace("<", "&lt;")
-            //    .Replace("\r\n", "</BR>")
-            //    .Replace("\n", "</BR>")
-            //    .Replace("[comment]", "<span class=\"comment\">")
-            //    .Replace("[/comment]", "</span>")
-            //    .Replace("[invalid]", "<span class=\"invalid\">")
-            //    .Replace("[/invalid]", "</span>")
-            //    .Replace("[unknown]", "<span class=\"unknown\">")
-            //    .Replace("[/unknown]", "</span>")
-            //    .Replace("[eof]", "<span class=\"eof\">")
-            //    .Replace("[/eof]", "</span>")
-            //    .Replace("[instruction]", "<span class=\"instruction\">")
-            //    .Replace("[/instruction]", "</span>")
-            //    .Replace("[number]", "<span class=\"number\">")
-            //    .Replace("[/number]", "</span>")
-            //    .Replace("[direct]", "<span class=\"direct\">")
-            //    .Replace("[/direct]", "</span>")
-            //    .Replace("[indirect]", "<span class=\"indirect\">")
-            //    .Replace("[/indirect]", "</span>")
-            //    .Replace("[tag]", "<span class=\"tag\">")
-            //    .Replace("[/tag]", "</span>")
-            //    .Replace("[label]", "<span class=\"label\">")
-            //    .Replace("[/label]", "</span>")
-            //    .Replace("[address]", "<span class=\"address\">")
-            //    .Replace("[/address]", "</span>")
-            //    .Replace("[linenumber]", "<span class=\"linenumber\">")
-            //    .Replace("[/linenumber]", "</span>");
+    static string HtmlRender(string s)
+    {
+        var processedText = reTag.Replace(s, Evaluator);
 
-            // HTML content with an embedded CSS stylesheet for styling
-            var htmlContent = $@"
+        // HTML content with an embedded CSS stylesheet for styling
+        var htmlContent = $@"
                 <html>
                 <head>
                     <style>
@@ -112,7 +96,6 @@ address:     [address]Text 123[/address]
                 <body>{processedText}</body>
                 </html>";
 
-            webView.NavigateToString(htmlContent);
-        }
+        return htmlContent;
     }
 }

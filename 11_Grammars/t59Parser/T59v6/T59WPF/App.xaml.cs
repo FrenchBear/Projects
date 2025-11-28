@@ -2,7 +2,7 @@
 using System.Data;
 using System.Windows;
 
-namespace T59Visual
+namespace T59v6WPF
 {
     /// <summary>
     /// Interaction logic for App.xaml
