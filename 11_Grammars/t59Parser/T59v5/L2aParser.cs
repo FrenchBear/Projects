@@ -25,7 +25,7 @@ abstract record L2StatementBase
         var sb = new StringBuilder();
         var invalid = this is L2InvalidStatement;
         if (invalid)
-            sb.Append(Couleurs.GetCategoryOpenTag(SyntaxCategory.Invalid));
+            sb.Append(Couleurs.GetCategoryColor(SyntaxCategory.Invalid));
         sb.Append($"{GetType().Name,-18}: ");
         foreach (var (ix, l1t) in Enumerable.Index(L1Tokens))
         {
@@ -35,7 +35,7 @@ abstract record L2StatementBase
             sb.Append('\n');
         }
         if (invalid)
-            sb.Append(Couleurs.GetCategoryCloseTag(SyntaxCategory.Invalid));
+            sb.Append(Couleurs.GetDefaultColor());
         return sb.ToString();
     }
 
@@ -55,10 +55,9 @@ abstract record L2StatementBase
         var sb = new StringBuilder();
         var invalid = this is L2InvalidStatement;
         if (invalid)
-            sb.Append(Couleurs.GetCategoryOpenTag(SyntaxCategory.Invalid));
+            sb.Append(Couleurs.GetCategoryColor(SyntaxCategory.Invalid));
         sb.Append(string.Join(" ", L1Tokens.Select(l1t => l1t.AsFormattedString(invalid))));
-        if (invalid)
-            sb.Append(Couleurs.GetCategoryCloseTag(SyntaxCategory.Invalid));
+        sb.Append(Couleurs.GetDefaultColor());
         return sb.ToString();
     }
 }
@@ -138,7 +137,7 @@ sealed record L2Number: L2AddressableInstructionBase
         var res = mantissa.ToString();
         if (exponent.Length > 0)
             res += "E" + mantissa.ToString();
-        return Couleurs.GetTaggedText(res, SyntaxCategory.Number);
+        return Couleurs.GetCategoryColor(SyntaxCategory.Number) + res + Couleurs.GetDefaultColor();
     }
 }
 
@@ -363,7 +362,7 @@ internal sealed class L2aParser(T59Program Prog)
                 case L2aParserState.expect_d:
                     if (token is L1D1 or L1D2)
                     {
-                        token.Cat = SyntaxCategory.Direct;
+                        token.Cat = SyntaxCategory.DirectMemoryOrNumber;
                         yield return BuildL2Instruction(token);
                         state = L2aParserState.zero;
                     }
@@ -380,7 +379,7 @@ internal sealed class L2aParser(T59Program Prog)
                 case L2aParserState.expect_i:
                     if (token is L1D1 or L1D2)
                     {
-                        token.Cat = SyntaxCategory.Indirect;
+                        token.Cat = SyntaxCategory.IndirectMemory;
                         yield return BuildL2Instruction(token);
                         state = L2aParserState.zero;
                     }
@@ -429,7 +428,7 @@ internal sealed class L2aParser(T59Program Prog)
                         }
                         else    // We are in A4 = D2 D2 with 1st D2 starting with 0, for compatibility with .t59 modules dumps
                         {
-                            token.Cat = SyntaxCategory.Address;
+                            token.Cat = SyntaxCategory.DirectAddress;
                             Context.Add(token);     // Need to categorise token
                             state = L2aParserState.expect_a4_part_2;
                         }
@@ -454,8 +453,8 @@ internal sealed class L2aParser(T59Program Prog)
                     {
                         var first = Context[^1];
                         // This just retags category of L1D2 tokens
-                        first.Cat = SyntaxCategory.Address;
-                        second.Cat = SyntaxCategory.Address;
+                        first.Cat = SyntaxCategory.DirectAddress;
+                        second.Cat = SyntaxCategory.DirectAddress;
                         yield return BuildL2Instruction(second);
                         state = L2aParserState.zero;
                     }
@@ -482,7 +481,7 @@ internal sealed class L2aParser(T59Program Prog)
                 case L2aParserState.expect_dib_d:
                     if (token is L1D1 or L1D2)
                     {
-                        token.Cat = SyntaxCategory.Direct;
+                        token.Cat = SyntaxCategory.DirectMemoryOrNumber;
                         Context.Add(token);
                         state = L2aParserState.expect_b;
                     }
@@ -499,7 +498,7 @@ internal sealed class L2aParser(T59Program Prog)
                 case L2aParserState.expect_dib_i:
                     if (token is L1D1 or L1D2)
                     {
-                        token.Cat = SyntaxCategory.Indirect;
+                        token.Cat = SyntaxCategory.IndirectMemory;
                         Context.Add(token);
                         state = L2aParserState.expect_b;
                     }

@@ -30,10 +30,10 @@ abstract record L1Token
         string res = $"{GetType().Name,-15}: ";
 
         if (!noColor)
-            res += Couleurs.GetCategoryOpenTag(Cat);
+            res += Couleurs.GetCategoryColor(Cat);
         res += s;
         if (!noColor)
-            res += Couleurs.GetCategoryCloseTag(Cat);
+            res += Couleurs.GetDefaultColor();
         if (s.Length < 15)
             res += new string(' ', 15 - s.Length);
         res += " " + Cat.ToString();
@@ -47,13 +47,13 @@ abstract record L1Token
         // Instructions "0" to "9" are rendered using SyntaxCategory.Number color instead of SyntaxCategory.Instruction
         var cat = this is L1Instruction aa && aa.Inst.Op[0] < 10 ? SyntaxCategory.Number : Cat;
         if (!noColor)
-            sb.Append(Couleurs.GetCategoryOpenTag(cat));
+            sb.Append(Couleurs.GetCategoryColor(cat));
         if (this is L1Instruction l1i)
             sb.Append(l1i.Inst.M);      // For formatted output, use canonical mnemonic for instructions, not the one used on source code
         else
             sb.Append(string.Join(" ", L0Tokens.Select(t => t.Text)));
         if (!noColor)
-            sb.Append(Couleurs.GetCategoryCloseTag(cat));
+            sb.Append(Couleurs.GetDefaultColor());
         return sb.ToString();
     }
 }
@@ -77,10 +77,11 @@ sealed record L1Instruction: L1Token
         var s = string.Join(", ", L0Tokens.Select(t => t.Text));
 
         string res = $"{GetType().Name,-15}: ";
-        if (noColor)
-            res = s;
-        else
-            res += Couleurs.GetTaggedText(s, Cat);
+        if (!noColor)
+            res += Couleurs.GetCategoryColor(Cat);
+        res += s;
+        if (!noColor)
+            res += Couleurs.GetDefaultColor();
         if (s.Length < 15)
             res += new string(' ', 15 - s.Length);
         res += " " + Cat.ToString();
@@ -319,7 +320,7 @@ internal sealed class L1Tokenizer(Vocab lexer)
                     break;
 
                 case Vocab.LINE_COMMENT:
-                    var tlc = new L1LineComment { L0Tokens = [token], Cat = SyntaxCategory.Comment };
+                    var tlc = new L1LineComment { L0Tokens = [token], Cat = SyntaxCategory.LineComment };
                     yield return tlc;
                     break;
 
@@ -340,7 +341,7 @@ internal sealed class L1Tokenizer(Vocab lexer)
                     break;
 
                 case Vocab.A3:
-                    var ta3 = new L1A3 { L0Tokens = [token], Cat = SyntaxCategory.Address };
+                    var ta3 = new L1A3 { L0Tokens = [token], Cat = SyntaxCategory.DirectAddress };
                     yield return ta3;
                     break;
 

@@ -54,7 +54,7 @@ internal sealed class L2bEncoder(T59Program Prog)
                 case L2Instruction { OpCodes: [76, var lab] } l2i:
                     if (LabelsTable.TryGetValue(lab, out LabelInfo? oldli))
                     {
-                        var msg = new T59Message { Message = $"Duplicate label: {FormattedLabel(oldli.Label.Address)}{oldli.Label.AsFormattedString()} and {l2i.Address:D3}: {l2i.AsFormattedString()}", Statement = l2s };
+                        var msg = new T59Message { Message = $"Duplicate label: {oldli.Label.Address:D3}: {oldli.Label.AsFormattedString()} and {l2i.Address:D3}: {l2i.AsFormattedString()}", Statement = l2s };
                         l2i.Message = msg;
                         Prog.Messages.Add(msg);
                     }
@@ -75,7 +75,7 @@ internal sealed class L2bEncoder(T59Program Prog)
                 case L2Tag { Tag: var t } l2t:
                     if (TagsTable.TryGetValue(t, out TagInfo? oldti))
                     {
-                        var msg = new T59Message { Message = $"Duplicate tag: {FormattedLabel(oldti.Tag.Address)}{oldti.Tag.AsFormattedString()} and {l2t.Address:D3}: {l2t.AsFormattedString()}", Statement = l2s };
+                        var msg = new T59Message { Message = $"Duplicate tag: {oldti.Tag.Address:D3}: {oldti.Tag.AsFormattedString()} and {l2t.Address:D3}: {l2t.AsFormattedString()}", Statement = l2s };
                         l2t.Message = msg;
                         Prog.Messages.Add(msg);
                     }
@@ -126,7 +126,7 @@ internal sealed class L2bEncoder(T59Program Prog)
                             var a3 = int.Parse(l1a3.L0Tokens[0].Text);
                             if (!Prog.ValidAddresses.ContainsKey(a3))
                             {
-                                var msg = new T59Message { Message = $"Target address invalid: {FormattedLabel(l2i.Address)}{l2i.AsFormattedString()}", Statement = l2s, Token = l1t };
+                                var msg = new T59Message { Message = $"Target address invalid: {l2i.Address}: {l2i.AsFormattedString()}", Statement = l2s, Token = l1t };
                                 l2i.Message = msg;
                                 Prog.Messages.Add(msg);
                             }
@@ -134,7 +134,7 @@ internal sealed class L2bEncoder(T59Program Prog)
                                 Prog.ValidAddresses[a3] = true;
                             break;
 
-                        case L1D2 l1a4 when l1a4.Cat == SyntaxCategory.Address:
+                        case L1D2 l1a4 when l1a4.Cat == SyntaxCategory.DirectAddress:
                             int val = int.Parse(l1a4.L0Tokens[0].Text);
                             if (!firstD2HalfAddressFound)
                             {
@@ -148,7 +148,7 @@ internal sealed class L2bEncoder(T59Program Prog)
                             // Don't test address 240 in PGM 02 SBR 02 40
                             if (!Prog.ValidAddresses.ContainsKey(a4))
                             {
-                                var msg = new T59Message { Message = $"Target address invalid: {FormattedLabel(l2i.Address)}{l2i.AsFormattedString()}", Statement = l2s, Token = l1a4 };
+                                var msg = new T59Message { Message = $"Target address invalid: {l2i.Address:D3}: {l2i.AsFormattedString()}", Statement = l2s, Token = l1a4 };
                                 l2i.Message = msg;
                                 Prog.Messages.Add(msg);
                             }
@@ -160,7 +160,7 @@ internal sealed class L2bEncoder(T59Program Prog)
                             var tag = l1tag.L0Tokens[0].Text;
                             if (!TagsTable.TryGetValue(tag, out TagInfo? tagInfo))
                             {
-                                var msg = new T59Message { Message = $"Target tag invalid: {FormattedLabel(l2i.Address)}{l2i.AsFormattedString()}", Statement = l2s, Token = l1tag };
+                                var msg = new T59Message { Message = $"Target tag invalid: {l2i.Address:D3}: {l2i.AsFormattedString()}", Statement = l2s, Token = l1tag };
                                 l2i.Message = msg;
                                 Prog.Messages.Add(msg);
                             }
@@ -187,7 +187,7 @@ internal sealed class L2bEncoder(T59Program Prog)
                             var label = byte.Parse(l1d2.L0Tokens[0].Text);
                             if (!LabelsTable.TryGetValue(label, out LabelInfo? lin))
                             {
-                                var msg = new T59Message { Message = $"Target label invalid: {FormattedLabel(l2i.Address)}{l2i.AsFormattedString()}", Statement = l2s, Token = l1d2 };
+                                var msg = new T59Message { Message = $"Target label invalid: {l2i.Address:D3}: {l2i.AsFormattedString()}", Statement = l2s, Token = l1d2 };
                                 l2i.Message = msg;
                                 Prog.Messages.Add(msg);
                             }
@@ -205,7 +205,7 @@ internal sealed class L2bEncoder(T59Program Prog)
                             var ilabel = l1i.Inst.Op[0];
                             if (!LabelsTable.TryGetValue(ilabel, out LabelInfo? lim))
                             {
-                                var msg = new T59Message { Message = $"Target label invalid: {FormattedLabel(l2i.Address)}{l2i.AsFormattedString()}", Statement = l2s, Token = l1i };
+                                var msg = new T59Message { Message = $"Target label invalid: {l2i.Address:D3}: {l2i.AsFormattedString()}", Statement = l2s, Token = l1i };
                                 l2i.Message = msg;
                                 Prog.Messages.Add(msg);
                             }
@@ -238,8 +238,6 @@ internal sealed class L2bEncoder(T59Program Prog)
                 Prog.Messages.Add(msg);
             }
     }
-
-    private static string FormattedLabel(int address) => Couleurs.GetTaggedText($"{address:D3}: ", SyntaxCategory.LineNumber);
 
     internal void MergeInstructionsAndEncode()
     {

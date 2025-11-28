@@ -9,7 +9,6 @@ using Antlr4.Runtime;
 using System;
 using System.Linq;
 
-#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable IDE0059 // Unnecessary assignment of a value
 
 namespace T59v5;
@@ -18,35 +17,6 @@ public static class Program
 {
     public static void Main(string[] args)
     {
-        /*
-        var s = @"
-comment:     [comment]Text 123[/comment]
-invalid:     [invalid]Text 123[/invalid]
-unknown:     [unknown]Text 123[/unknown]
-instruction: [instruction]Text 123[/instruction]
-number:      [number]Text 123[/number]
-direct:      [direct]Text 123[/direct]
-indirect:    [indirect]Text 123[/indirect]
-tag:         [tag]Text 123[/tag]
-label:       [label]Text 123[/label]
-address:     [address]Text 123[/address]
-
-"
-+ Couleurs.GetTaggedText("// Example", SyntaxCategory.Comment) + "\n"
-+ Couleurs.GetTaggedText("@Loop:", SyntaxCategory.Tag) + " "
-+ Couleurs.GetTaggedText("-1.6E-19", SyntaxCategory.Number) + " "
-+ Couleurs.GetTaggedText("PD*", SyntaxCategory.Instruction) + " "
-+ Couleurs.GetTaggedText("04", SyntaxCategory.Indirect) + " "
-+ Couleurs.GetTaggedText("ZYP", SyntaxCategory.Invalid) + " "
-+ Couleurs.GetTaggedText("Dsz", SyntaxCategory.Instruction) + " "
-+ Couleurs.GetTaggedText("12", SyntaxCategory.Direct) + " "
-+ Couleurs.GetTaggedText("CLR", SyntaxCategory.Label) + "\n";
-
-        //Console.WriteLine(s);
-        Console.WriteLine(Couleurs.RenderTaggedText(s));
-        return;
-        */
-
         string input = @"LBL 99 Lbl STO CLR CE STO 12 STO IND 42 RCL 5
 cos INV Sin INV CLR
 Nop sin INV cos CLR
@@ -85,14 +55,14 @@ Sto Ind Z CLR";
         //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\all-1.t59");
         //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\all-2.t59");
         //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\Master Library\ML-01.T59");
-        //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\Master Library\ML-02.T59");
+        input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\Master Library\ML-02.T59");
         //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\Master Library\ML-15.T59");
         //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\Master Library\ML-25.T59");
         //input = System.IO.File.ReadAllText(@"C:\Development\GitHub\Projects\11_Grammars\Ti Programs\Master Library\ML-01-!ALL.t59");
         //input = "// Initial comment\nLbl CLR STO 12 @Loop3: STO IND 12 Lbl Σ+ GTO CLR GTO 25 GTO 123 Lbl 25 GTO 01 23 END ZYP 123456 GTO @Tag Sto Ind Ind 12 Nop Sto Sin e^x INV SBR";
         //input = "SBR 240 INV SBR STO IND 12 INV SUM IND 33 OP 23 OP IND 23";
         //input = "// A simple calculation\n1.414 * 6.02e-23 =";
-        input = "Lbl CLR Lbl 85 Gto CLR GTO + GTO 005 Lbl 25 GTO 00 05 GTO * GTO 75 GTO 124 GTO 01 24";
+        //input = "Lbl CLR Lbl 85 Gto CLR GTO + GTO 005 Lbl 25 GTO 00 05 GTO * GTO 75 GTO 124 GTO 01 24";
         //input = "// Simple test\nLBL A STO 0 CLR @Loop: + RCL 0 Dsz 0 @Loop = R/S END";
         //input = "GTO 00 15   Pgm 02  SBR  02  40";
 
