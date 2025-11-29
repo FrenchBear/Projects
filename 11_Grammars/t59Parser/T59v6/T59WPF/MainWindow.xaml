@@ -7,20 +7,36 @@
         xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         mc:Ignorable="d"
         Title="T59 v6 WPF" Height="450" Width="1300">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
 
-        <TextBox x:Name="htmlTextBox"
-                 Grid.Column="0"
-                 AcceptsReturn="True"
-                 TextWrapping="Wrap"
-                 VerticalScrollBarVisibility="Auto"
-                 TextChanged="HtmlTextBox_TextChanged" />
-        <wv2:WebView2 x:Name="webView1" Grid.Column="1" />
-        <wv2:WebView2 x:Name="webView2" Grid.Column="2" />
-    </Grid>
+    <DockPanel>
+
+        <StatusBar DockPanel.Dock="Bottom">
+            <TextBlock Name="StatusMessage" />
+        </StatusBar>
+
+        <Grid TextElement.FontSize="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Label TextBlock.FontWeight="DemiBold">Source code</Label>
+            <Label Grid.Column="1" TextBlock.FontWeight="DemiBold">Colorized source</Label>
+            <Label Grid.Column="2" TextBlock.FontWeight="DemiBold">Reformatted source</Label>
+
+            <TextBox x:Name="SourceTextBox"
+                 Grid.Row="1" Grid.Column="0"
+                 FontFamily="Consolas"
+                 AcceptsReturn="True" TextWrapping="Wrap"
+                 VerticalScrollBarVisibility="Auto" Margin="3"
+                 TextChanged="SourceTextBox_TextChanged" />
+            <wv2:WebView2 x:Name="webView1" Grid.Row="1" Grid.Column="1" Margin="3" />
+            <wv2:WebView2 x:Name="webView2" Grid.Row="1" Grid.Column="2" Margin="3" />
+        </Grid>
+    </DockPanel>
 </Window>

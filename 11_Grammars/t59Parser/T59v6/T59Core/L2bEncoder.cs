@@ -54,7 +54,7 @@ internal sealed class L2bEncoder(T59Program Prog)
                 case L2Instruction { OpCodes: [76, var lab] } l2i:
                     if (LabelsTable.TryGetValue(lab, out LabelInfo? oldli))
                     {
-                        var msg = new T59Message { Message = $"Duplicate label: {FormattedLabel(oldli.Label.Address)}{oldli.Label.AsFormattedString()} and {l2i.Address:D3}: {l2i.AsFormattedString()}", Statement = l2s };
+                        var msg = new T59Message { Message = $"Duplicate label: {FormattedLabel(oldli.Label.Address)}{oldli.Label.AsFormattedString()} and {FormattedLabel(l2i.Address)}{l2i.AsFormattedString()}", Statement = l2s };
                         l2i.Message = msg;
                         Prog.Messages.Add(msg);
                     }
@@ -237,6 +237,13 @@ internal sealed class L2bEncoder(T59Program Prog)
                 ti.Tag.Message = msg;
                 Prog.Messages.Add(msg);
             }
+
+        // No more than 1000 steps!
+        if (Prog.OpCodesCount > 1000)
+        {
+            var msg = new T59Message { Message = "Program too large, more than 1000 opcodes" };
+            Prog.Messages.Add(msg);
+        }
     }
 
     private static string FormattedLabel(int address) => Categories.GetTaggedText($"{address:D3}: ", SyntaxCategory.LineNumber);

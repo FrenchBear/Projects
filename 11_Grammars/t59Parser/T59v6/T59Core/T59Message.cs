@@ -8,6 +8,6 @@ namespace T59v6Core;
 public sealed class T59Message
 {
     public required string Message { get; set; }
-    public required L2StatementBase Statement { get; set; }
+    public L2StatementBase? Statement { get; set; }
     public L1Token? Token { get; set; }
 }

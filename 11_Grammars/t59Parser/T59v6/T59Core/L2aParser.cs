@@ -230,7 +230,7 @@ internal sealed class L2aParser(T59Program Prog)
                     // will be flushed at next L1Token that is accepted at state 0.
                     // In theory we should always get L1Eof or L1ProgramSeparator before the end of the flow, and these
                     // L1Token are valid in state 0
-                    if (token is L1InvalidToken)
+                    if (token is L1InvalidToken or L1Colon)
                     {
                         Context.Add(token);
                         continue;

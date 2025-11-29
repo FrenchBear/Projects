@@ -1,4 +1,9 @@
-﻿using System.Text.RegularExpressions;
+﻿// T59v6WPF - Visual rendering of colorized/reformatted T59 source code
+// It's a WPF app, but rendering is done in HTML using WebView2 component
+//
+// 2025-11-29   PV
+
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using T59v6Core;
@@ -28,7 +33,8 @@ public partial class MainWindow: Window
             //                await webView1.EnsureCoreWebView2Async();
             //                HtmlRender(test);
 
-            htmlTextBox.Text = "// Initial comment\r\nLbl CLR STO 12 @Loop3: STO IND 12 Lbl Σ+ GTO CLR GTO 25 GTO 123 Lbl 25 GTO 00 10 ZYP 123456 GTO @Tag Sto Ind Ind 12 Nop Sto Sin e^x INV SBR";
+            // Sample code
+            SourceTextBox.Text = "// Initial comment\r\nLbl CLR STO 12 @Loop3: STO IND 12 Lbl Σ+ GTO CLR GTO 25 GTO 123 Lbl 25 GTO 00 10 ZYP 123456 GTO @Tag Sto Ind Ind 12 Nop Sto Sin e^x INV SBR";
 
             //await webView1.EnsureCoreWebView2Async();
             //webView1.NavigateToString("");
@@ -51,12 +57,35 @@ public partial class MainWindow: Window
 #pragma warning restore IDE0046 // Convert to conditional expression
     }
 
-    private async void HtmlTextBox_TextChanged(object sender, TextChangedEventArgs e)
+    private async void SourceTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
-        var programs = T59Processor.GetPrograms(htmlTextBox.Text);
-        var out1 = HtmlRender(programs[0].OriginalColorizedTagged());
-        var out2 = HtmlRender(programs[0].L3ReformattedTagged());
+        var programs = T59Processor.GetPrograms(SourceTextBox.Text);
+        if (programs.Count == 0)
+        {
+            StatusMessage.Text = "";
+            DisplayHTML("", "");
+            return;
+        }
+        StatusMessage.Text = programs.Count > 1 ? "More than 1 program, only the first one is reformatted" : "";
 
+        // First panel, source colorized, preserving original layout
+        var out1 = HtmlRender(programs[0].OriginalColorizedTagged());
+
+        // Second panel, reformatted source code with labels and errors lists
+        var t2 = programs[0].L3ReformattedTagged();
+        var x = programs[0].LabelsTagged();
+        if (x.Length > 0)
+            t2 += "<H2>Labels</H2>" + x;
+        x = programs[0].ErrorsTagged();
+        if (x.Length > 0)
+            t2 += "<H2>Errors</H2>" + x;
+        var out2 = HtmlRender(t2);
+
+        DisplayHTML(out1, out2);
+    }
+
+    private async void DisplayHTML(string out1, string out2)
+    {
         await webView1.EnsureCoreWebView2Async();
         webView1.NavigateToString(out1);
         await webView2.EnsureCoreWebView2Async();
@@ -65,37 +94,41 @@ public partial class MainWindow: Window
 
     static string HtmlRender(string s)
     {
-        var processedText = reTag.Replace(s, Evaluator);
+        var processedText = reTag.Replace(s.Replace("<<<", "&lt;"), Evaluator).Replace("\r\n", "<P>").Replace("\n", "<P>");
 
-        // HTML content with an embedded CSS stylesheet for styling
         var htmlContent = $@"
-                <html>
-                <head>
-                    <style>
-                        body {{
-                            color: #D0D0D0; /* Light gray text color */
-                            font-family: Consolas;
-                            background-color: #1e1e1e; /* A dark background similar to code editors */
-                            white-space: pre-wrap; /* Preserve whitespace and wrap lines */
-                        }}
-                        .comment {{ color: #40c040; }}
-                        .invalid {{ color: #ff4040; }}
-                        .unknown {{ color: #ff0000; }}
-                        .eof {{ color: #ffffff; }}
-                        .instruction {{ color: #80c0ff; }}
-                        .number {{ color: #d2d2d2; }}
-                        .direct {{ color: #ffc0ff; }}
-                        .indirect {{ color: #ff80ff; }}
-                        .tag {{ color: #ffc080; }}
-                        .label {{ color: #ffc000; }}
-                        .address {{ color: #ff9000; }}
-                        .linenumber {{ color: #a0a0a0; }}
-                        .opcode {{ color: #c0a080; }}
-                    </style>
-                </head>
-                <body>{processedText}</body>
-                </html>";
+<html>
+<head>
+	<style>
+		body {{
+			background-color: #1e1e1e;
+			color: #D0D0D0;
+			font-family: Consolas;
+			font-size: 11pt;
+			white-space: pre-wrap;
+		}}
+        p {{ margin-top: 0; margin-bottom: 0; line-height: 1.2em; }}
+        p:empty::before {{ content: ""\00a0""; }}
+		.comment {{ color: #40c040; }}
+		.invalid {{ color: #ff4040; }}
+		.unknown {{ color: #ff0000; }}
+		.eof {{ color: #ffffff; }}
+		.instruction {{ color: #80c0ff; }}
+		.number {{ color: #d2d2d2; }}
+		.direct {{ color: #ffc0ff; }}
+		.indirect {{ color: #ff80ff; }}
+		.tag {{ color: #ffc080; }}
+		.label {{ color: #ffc000; }}
+		.address {{ color: #ff9000; }}
+		.linenumber {{ color: #a0a0a0; }}
+		.opcode {{ color: #c0a080; }}
+	</style>
+</head>
+<body>{processedText}</body>
+</html>";
 
         return htmlContent;
     }
 }
+//<body>{processedText}</body>
+//p {{ margin-top: 0; margin-bottom: 0; min-height=1.2em; }}
