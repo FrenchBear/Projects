@@ -87,7 +87,7 @@ internal sealed class L2bEncoder(T59Program Prog)
                 case L2Number l2n:
                     // Any address inside a L2Number can be considered as valid
                     for (var i = 0; i < l2n.OpCodes.Count; i++)
-                        Prog.ValidAddresses.TryAdd(l2n.Address + 1, false);      // ToDo: Investigate how I can get an error with existing key
+                        Prog.ValidAddresses.TryAdd(l2n.Address + i, false);
                     break;
 
                 case L2InvalidStatement l2is:

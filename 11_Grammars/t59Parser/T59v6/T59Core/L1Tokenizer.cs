@@ -190,7 +190,7 @@ internal sealed class L1Tokenizer(Vocab lexer)
         TIKeys.Add(Vocab.I34_square_root, new TIKey { Op = [34], M = "√", S = StatementSyntax.a });
         TIKeys.Add(Vocab.I35_reciprocal, new TIKey { Op = [35], M = "1/x", S = StatementSyntax.a });
         TIKeys.Add(Vocab.I36_program, new TIKey { Op = [36], M = "Pgm", S = StatementSyntax.di, MOp = Vocab.I62_program_indirect });
-        TIKeys.Add(Vocab.I37_polar_to_rectangular, new TIKey { Op = [37], M = "P->R", S = StatementSyntax.a, I = true });
+        TIKeys.Add(Vocab.I37_polar_to_rectangular, new TIKey { Op = [37], M = "P→R", S = StatementSyntax.a, I = true });
         TIKeys.Add(Vocab.I38_sin, new TIKey { Op = [38], M = "sin", S = StatementSyntax.a, I = true });
         TIKeys.Add(Vocab.I39_cos, new TIKey { Op = [39], M = "cos", S = StatementSyntax.a, I = true });
         TIKeys.Add(Vocab.I40_indirect, new TIKey { Op = [40], M = "Ind", S = StatementSyntax.p });
@@ -208,7 +208,7 @@ internal sealed class L1Tokenizer(Vocab lexer)
         TIKeys.Add(Vocab.I52_exponent, new TIKey { Op = [52], M = "EE", S = StatementSyntax.a, I = true });
         TIKeys.Add(Vocab.I53_left_parenthesis, new TIKey { Op = [53], M = "(", S = StatementSyntax.a });
         TIKeys.Add(Vocab.I54_right_parenthesis, new TIKey { Op = [54], M = ")", S = StatementSyntax.a });
-        TIKeys.Add(Vocab.I55_divide, new TIKey { Op = [55], M = "/", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I55_divide, new TIKey { Op = [55], M = "÷", S = StatementSyntax.a });
 
         TIKeys.Add(Vocab.I57_engineering, new TIKey { Op = [57], M = "Eng", S = StatementSyntax.a, I = true });
         TIKeys.Add(Vocab.I58_fix, new TIKey { Op = [58], M = "Fix", S = StatementSyntax.di, I = true });
@@ -218,7 +218,7 @@ internal sealed class L1Tokenizer(Vocab lexer)
         TIKeys.Add(Vocab.I62_program_indirect, new TIKey { Op = [62], M = "PG*", S = StatementSyntax.i });
         TIKeys.Add(Vocab.I63_exchange_indirect, new TIKey { Op = [63], M = "EX*", S = StatementSyntax.i });
         TIKeys.Add(Vocab.I64_product_indirect, new TIKey { Op = [64], M = "PD*", S = StatementSyntax.i, I = true });
-        TIKeys.Add(Vocab.I65_multiply, new TIKey { Op = [65], M = "*", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I65_multiply, new TIKey { Op = [65], M = "×", S = StatementSyntax.a });
         TIKeys.Add(Vocab.I66_pause, new TIKey { Op = [66], M = "Pause", S = StatementSyntax.a });
         TIKeys.Add(Vocab.I67_x_equals_t, new TIKey { Op = [67], M = "x=t", S = StatementSyntax.b, I = true });
         TIKeys.Add(Vocab.I68_nop, new TIKey { Op = [68], M = "Nop", S = StatementSyntax.a });
@@ -230,7 +230,7 @@ internal sealed class L1Tokenizer(Vocab lexer)
         TIKeys.Add(Vocab.I74_sum_indirect, new TIKey { Op = [74], M = "SM*", S = StatementSyntax.i, I = true });
         TIKeys.Add(Vocab.I75_subtract, new TIKey { Op = [75], M = "-", S = StatementSyntax.a });
         TIKeys.Add(Vocab.I76_label, new TIKey { Op = [76], M = "Lbl", S = StatementSyntax.m });
-        TIKeys.Add(Vocab.I77_x_greater_or_equal_than_t, new TIKey { Op = [77], M = "x≥t", S = StatementSyntax.b });
+        TIKeys.Add(Vocab.I77_x_greater_or_equal_than_t, new TIKey { Op = [77], M = "x≥t", S = StatementSyntax.b, I = true });
         TIKeys.Add(Vocab.I78_sigma_plus, new TIKey { Op = [78], M = "Σ+", S = StatementSyntax.a, I = true });
         TIKeys.Add(Vocab.I79_average, new TIKey { Op = [79], M = "x̄", S = StatementSyntax.a, I = true });
         TIKeys.Add(Vocab.I80_grades, new TIKey { Op = [80], M = "Grad", S = StatementSyntax.a });
@@ -258,6 +258,7 @@ internal sealed class L1Tokenizer(Vocab lexer)
         TIKeys.Add(Vocab.I2228_10_power_x, new TIKey { Op = [22, 28], M = "10ˣ", S = StatementSyntax.a });
         TIKeys.Add(Vocab.I6740_x_equals_t_indirect, new TIKey { Op = [67, 40], M = "EQ*", S = StatementSyntax.i, I = true });
         TIKeys.Add(Vocab.I7740_x_greater_or_equal_than_t_indirect, new TIKey { Op = [77, 40], M = "GE*", S = StatementSyntax.i, I = true });
+
     }
 
     public List<T59Program> GetPrograms()
