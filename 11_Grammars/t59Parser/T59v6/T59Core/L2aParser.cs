@@ -15,6 +15,7 @@ namespace T59v6Core;
 public abstract record L2StatementBase
 {
     public List<L1Token> L1Tokens { get; set; } = [];
+    public L2LineComment? MergedComment { get; set; }
     public T59Message? Message { get; set; }
 
     public void AddL1Token(L1Token l1t)
@@ -59,13 +60,25 @@ public abstract record L2StatementBase
         sb.Append(string.Join(" ", L1Tokens.Select(l1t => l1t.AsFormattedString(invalid))));
         if (invalid)
             sb.Append(Categories.GetCategoryCloseTag(SyntaxCategory.Invalid));
+
+        if (MergedComment != null)
+        {
+            var len = string.Join(" ", L1Tokens.Select(l1t => l1t.AsFormattedString(true))).Length;
+            if (len < 15)
+                sb.Append(' ', 15 - len);
+            sb.Append(MergedComment.AsFormattedString());
+        }
+
         return sb.ToString();
     }
 }
 
 sealed record L2Eof: L2StatementBase { }
 
-sealed record L2LineComment: L2StatementBase { }
+public sealed record L2LineComment: L2StatementBase
+{
+    public bool IsMergedComment { get; set; }
+}
 
 sealed record L2InvalidStatement: L2StatementBase { }
 
@@ -167,7 +180,7 @@ internal sealed class L2aParser(T59Program Prog)
     {
         List<L1Token> Context = [];
 
-        var e = Prog.L1TokensWithoutWhiteSpace().GetEnumerator();
+        //var e = Prog.L1TokensWithoutWhiteSpace().GetEnumerator();
 
         bool IsContextInv()
             => Context.Count > 0 && Context[0] is L1Instruction { Inst.Op: [22] };
@@ -211,16 +224,11 @@ internal sealed class L2aParser(T59Program Prog)
         }
 
         L2aParserState state = L2aParserState.zero;
-        for (; ; )
+        foreach (var token in Prog.L1TokensWithoutWhiteSpace())
         {
-            // ToDo: Don't need peeking support, so a simple foreach should be enough
-            if (!e.MoveNext())
-                break;
-            L1Token token = e.Current;
-
         // If at some point we get an unexpected token, we emit context as error and flush it, revert to state zero
         // and we restart analysis at unexpected token, not at next token
-        // We control precisely the lexer restart context at unexpected input, what I haven't found how to do reliabily
+        // We control precisely the lexer restart context at unexpected input, which I haven't found how to do reliabily
         // with ANTLR4 generated parser
         RestartAnalysis:
             switch (state)

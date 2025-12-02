@@ -1,8 +1,7 @@
 ﻿// Representation of a T95 program
 //
 // 2025-11-25   PV
-
-// ToDo: Use T59Error class instead of a string, and replace L2Statement Problem flag by a reference to T59Error
+// 2025-12-03   PV      MergedComment
 
 using System;
 using System.Linq;
@@ -74,6 +73,8 @@ public sealed class T59Program
             switch (l2s)
             {
                 case L2LineComment or L2InvalidStatement or L2Tag:
+                    if (l2s is L2LineComment { IsMergedComment: true })     // Merged comments have already been included in previous starement
+                        break;
                     sb.Append(new string(' ', 3 * opCols + 7));
                     if (l2s is L2InvalidStatement)
                         sb.Append("  ");

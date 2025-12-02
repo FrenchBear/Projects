@@ -13,7 +13,7 @@ namespace T59v6Console;
 
 public static class ConsoleRendering
 {
-    const bool DoRendering = false;
+    const bool DoRendering = true;
 
     static readonly Dictionary<string, string> TagColors = new()
     {

@@ -72,11 +72,11 @@ public partial class MainWindow: Window
         var out1 = HtmlRender(programs[0].OriginalColorizedTagged());
 
         // Second panel, reformatted source code with labels and errors lists
-        var t2 = programs[0].L3ReformattedTagged();
-        var x = programs[0].LabelsTagged();
+        var t2 = programs[0].L3ReformattedTagged().Replace("<", "&lt;");
+        var x = programs[0].LabelsTagged().Replace("<", "&lt;");
         if (x.Length > 0)
             t2 += "<H2>Labels</H2>" + x;
-        x = programs[0].ErrorsTagged();
+        x = programs[0].ErrorsTagged().Replace("<", "&lt;");
         if (x.Length > 0)
             t2 += "<H2>Errors</H2>" + x;
         var out2 = HtmlRender(t2);
@@ -94,7 +94,7 @@ public partial class MainWindow: Window
 
     static string HtmlRender(string s)
     {
-        var processedText = reTag.Replace(s.Replace("<<<", "&lt;"), Evaluator).Replace("\r\n", "<P>").Replace("\n", "<P>");
+        var processedText = reTag.Replace(s, Evaluator).Replace("\r\n", "<P>").Replace("\n", "<P>");
 
         var htmlContent = $@"
 <html>

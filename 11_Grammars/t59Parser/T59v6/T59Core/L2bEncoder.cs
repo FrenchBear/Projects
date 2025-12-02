@@ -3,6 +3,7 @@
 // addresses and Problem flag, replace tags by their actual address.
 //
 // 2025-11-24   PV      First version
+// 2025-12-03   PV      MergedComment
 
 using Antlr4.Runtime;
 using System;
@@ -47,10 +48,19 @@ internal sealed class L2bEncoder(T59Program Prog)
         var LabelsTable = new Dictionary<byte, LabelInfo>();
         var TagsTable = new Dictionary<string, TagInfo>(StringComparer.InvariantCultureIgnoreCase);
 
+        L2StatementBase? prevl2s = null;
         foreach (var l2s in Prog.L2Statements)
         {
             switch (l2s)
             {
+                case L2LineComment l2lc:
+                    if (l2s.L1Tokens[^1].L0Tokens[^1].Line == prevl2s?.L1Tokens[^1].L0Tokens[^1].Line)
+                    {
+                        prevl2s.MergedComment = l2lc;
+                        l2lc.IsMergedComment = true;
+                    }
+                    break;
+
                 case L2Instruction { OpCodes: [76, var lab] } l2i:
                     if (LabelsTable.TryGetValue(lab, out LabelInfo? oldli))
                     {
@@ -98,6 +108,8 @@ internal sealed class L2bEncoder(T59Program Prog)
                     }
                     break;
             }
+
+            prevl2s = l2s;
         }
 
         // Second pass, check branch addresses, replace temp tag addresses by real addresses

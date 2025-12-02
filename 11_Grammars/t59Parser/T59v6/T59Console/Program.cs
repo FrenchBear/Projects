@@ -16,7 +16,7 @@ namespace T59v6Console;
 
 public static class Program
 {
-    public static void Main(string[] args)
+    public static void MainColorDemo(string[] args)
     {
         var s = @"
 comment:     [comment]Text 123[/comment]
@@ -41,10 +41,11 @@ address:     [address]Text 123[/address]
 + Categories.GetTaggedText("12", SyntaxCategory.Direct) + " "
 + Categories.GetTaggedText("CLR", SyntaxCategory.Label) + "\n";
 
-        //Console.WriteLine(s);
         Console.WriteLine(ConsoleRendering.RenderTaggedText(s));
-        return;
+    }
 
+    public static void Main(string[] args)
+    {
         string input = @"LBL 99 Lbl STO CLR CE STO 12 STO IND 42 RCL 5
 cos INV Sin INV CLR
 Nop sin INV cos CLR
@@ -97,6 +98,61 @@ Sto Ind Z CLR";
         //input = "// Simple test\nLBL A STO 0 CLR @Loop: + RCL 0 Dsz 0 @Loop = R/S END";
         //input = "GTO 00 15   Pgm 02  SBR  02  40";
 
+        input = @"
+; My (partial) recreation of the ""Master Library"" module
+; that came with the original TI-58C/59 calculators.
+;
+; Pgm 17: Moving Avegares
+; Written by Lawrence D'Oliveiro <ldo@geek-central.gen.nz>.
+;
+; Register usage (different from original):
+;     01 -- operand-accumulation pointer
+;     02 -- n
+;     03 -- # operands
+;     04 -- loop counter
+;     05 -- average-computation pointer
+;     06 .. 05 + n -- operands
+;
+
+lbl A
+; enter n
+    sto 02
+    x<>t 0 x≥t 1/x ; error if non-positive
+    rcl 02 int inv x=t 1/x ; error if non-integral
+    0 sto 03
+    ( rcl 02 + 6 ) sto 01 ; end of operand array + 1
+    gto √x
+lbl 1/x
+    0 1/x ; trigger error
+lbl √x
+    rcl 02  ; return showing what user entered
+    inv sbr
+
+lbl B
+; enter next number and show average so far
+    op 31   ; step to next location in operand array
+    sto ind 01 ; save operand
+    6 x<>t rcl 01 inv x=t |x| ; reached start?
+    ( rcl 02 + 6 ) sto 01 ; wraparound if so
+lbl |x|
+    rcl 02 x<>t rcl 03 x=t ∑+ ; branch if already got n numbers
+    op 23 ; else increase count
+lbl ∑+
+; compute and return new average
+    rcl 03 sto 04
+    ( rcl 02 + 6 ) sto 05
+    0 ; initialize total
+lbl mean
+    op 35
+    ( ce + rcl ind 05 ) ; accumulate next term
+    dsz 4 mean
+    ( ce ÷ rcl 03 ) ; convert total to average
+    inv sbr
+
+lbl E´
+; initialize--no-op
+    inv sbr";
+
         var programs = T59Processor.GetPrograms(input);
 
         foreach (var (ix, p) in Enumerable.Index(programs))
@@ -106,12 +162,23 @@ Sto Ind Z CLR";
 
             Console.WriteLine("--- Original in color");
             Render(p.OriginalColorizedTagged());
+
             Console.WriteLine("--- Reformatted");
             Render(p.L3ReformattedTagged());
-            Console.WriteLine("--- Labels");
-            Render(p.LabelsTagged());
-            Console.WriteLine("--- Errors/Warnings");
-            Render(p.ErrorsTagged());
+
+            var l = p.LabelsTagged();
+            if (!string.IsNullOrWhiteSpace(l))
+            {
+                Console.WriteLine("--- Labels");
+                Render(l);
+            }
+
+            var e = p.ErrorsTagged();
+            if (!string.IsNullOrWhiteSpace(e))
+            {
+                Console.WriteLine("--- Errors/Warnings");
+                Render(e);
+            }
         }
     }
 

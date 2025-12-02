@@ -305,8 +305,7 @@ internal sealed class L1Tokenizer(Vocab lexer)
             switch (token.Type)
             {
                 case TokenConstants.EOF:
-                    var teof = new L1Eof { L0Tokens = [token], Cat = SyntaxCategory.Eof };
-                    yield return teof;
+                    yield return new L1Eof { L0Tokens = [token], Cat = SyntaxCategory.Eof };
                     yield break;
 
                 case Vocab.WS:
@@ -315,49 +314,40 @@ internal sealed class L1Tokenizer(Vocab lexer)
                         ignoreNextWS = false;
                         continue;
                     }
-                    var tws = new L1WS { L0Tokens = [token], Cat = SyntaxCategory.WS };
-                    yield return tws;
+                    yield return new L1WS { L0Tokens = [token], Cat = SyntaxCategory.WS };
                     break;
 
                 case Vocab.LINE_COMMENT:
-                    var tlc = new L1LineComment { L0Tokens = [token], Cat = SyntaxCategory.Comment };
-                    yield return tlc;
+                    yield return new L1LineComment { L0Tokens = [token], Cat = SyntaxCategory.Comment };
                     break;
 
                 case Vocab.PROGRAM_SEPARATOR:
-                    var tps = new L1PgmSeparator { L0Tokens = [token], Cat = SyntaxCategory.Eof };
+                    yield return new L1PgmSeparator { L0Tokens = [token], Cat = SyntaxCategory.Eof };
                     ignoreNextWS = true;
-                    yield return tps;
                     break;
 
                 case Vocab.D1:      // SyntaxCategory will be determined later
-                    var td1 = new L1D1 { L0Tokens = [token], Cat = SyntaxCategory.Unknown };
-                    yield return td1;
+                    yield return new L1D1 { L0Tokens = [token], Cat = SyntaxCategory.Unknown };
                     break;
 
                 case Vocab.D2:      // SyntaxCategory will be determined later
-                    var td2 = new L1D2 { L0Tokens = [token], Cat = SyntaxCategory.Unknown };
-                    yield return td2;
+                    yield return new L1D2 { L0Tokens = [token], Cat = SyntaxCategory.Unknown };
                     break;
 
                 case Vocab.A3:
-                    var ta3 = new L1A3 { L0Tokens = [token], Cat = SyntaxCategory.Address };
-                    yield return ta3;
+                    yield return new L1A3 { L0Tokens = [token], Cat = SyntaxCategory.Address };
                     break;
 
                 case Vocab.NUM:
-                    var tnum = new L1Num { L0Tokens = [token], Cat = SyntaxCategory.Number };
-                    yield return tnum;
+                    yield return new L1Num { L0Tokens = [token], Cat = SyntaxCategory.Number };
                     break;
 
                 case Vocab.TAG:
-                    var ttag = new L1Tag { L0Tokens = [token], Cat = SyntaxCategory.Tag };
-                    yield return ttag;
+                    yield return new L1Tag { L0Tokens = [token], Cat = SyntaxCategory.Tag };
                     break;
 
                 case Vocab.COLON:       // Category is not really clear, let's assume Tag for now
-                    var tco = new L1Colon() { L0Tokens = [token], Cat = SyntaxCategory.Tag };
-                    yield return tco;
+                    yield return new L1Colon() { L0Tokens = [token], Cat = SyntaxCategory.Tag };
                     break;
 
                 case Vocab.INVALID_CHAR:
@@ -376,8 +366,7 @@ internal sealed class L1Tokenizer(Vocab lexer)
                     //string symbolicName = lexer.Vocabulary.GetSymbolicName(token.Type);
                     //Debug.Assert(symbolicName.StartsWith('I')); // Only instructions should remain
                     Debug.Assert(TIKeys.ContainsKey(token.Type));
-                    var ti = new L1Instruction() { L0Tokens = [token], Cat = SyntaxCategory.Instruction, Inst = TIKeys[token.Type] };
-                    yield return ti;
+                    yield return new L1Instruction() { L0Tokens = [token], Cat = SyntaxCategory.Instruction, Inst = TIKeys[token.Type] };
                     break;
             }
         }
