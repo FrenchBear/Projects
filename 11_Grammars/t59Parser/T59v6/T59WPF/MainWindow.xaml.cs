@@ -3,44 +3,57 @@
 //
 // 2025-11-29   PV
 
+using System;
+using System.ComponentModel;
+using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using T59v6Core;
 
 namespace T59v6WPF;
 
 public partial class MainWindow: Window
 {
+    private bool IsDirty;
+    private string? FileName;
+
+    const string AppName = "T59 v6 WPF";
+
+    public static readonly RoutedUICommand TestColors = new("_Test Colors", "TestColors", typeof(MainWindow));
+    public static readonly RoutedUICommand About = new("À propos de...", "About", typeof(MainWindow), [new KeyGesture(Key.F1)]);
+
     public MainWindow()
     {
         InitializeComponent();
-        Loaded += async (s, e) =>
-        {
-            //                string test = @"comment:     [comment]Text 123[/comment]
-            //invalid:     [invalid]Text 123[/invalid]
-            //unknown:     [unknown]Text 123[/unknown]
-            //instruction: [instruction]Text 123[/instruction]
-            //number:      [number]Text 123[/number]
-            //direct:      [direct]Text 123[/direct]
-            //indirect:    [indirect]Text 123[/indirect]
-            //tag:         [tag]Text 123[/tag]
-            //label:       [label]Text 123[/label]
-            //address:     [address]Text 123[/address]
 
-            //[comment]// Example[/comment]
-            //[tag]@Loop:[/tag] [number]-1.6E-19[/number] [instruction]PD*[/instruction] [indirect]04[/indirect] [invalid]ZYP[/invalid] [instruction]Dsz[/instruction] [direct]12[/direct] [label]CLR[/label]";
-            //                await webView1.EnsureCoreWebView2Async();
-            //                HtmlRender(test);
+        CommandBindings.Add(new CommandBinding(TestColors, TestColorsExecuted));
+        CommandBindings.Add(new CommandBinding(About, AboutExecuted));
+    }
 
-            // Sample code
-            SourceTextBox.Text = "// Initial comment\r\nLbl CLR STO 12 @Loop3: STO IND 12 Lbl Σ+ GTO CLR GTO 25 GTO 123 Lbl 25 GTO 00 10 ZYP 123456 GTO @Tag Sto Ind Ind 12 Nop Sto Sin e^x INV SBR";
+    private void AboutExecuted(object sender, ExecutedRoutedEventArgs e) 
+        => MessageBox.Show("Simple ANTRL4 lexer + my own grammar parser to validate, encode and colorize a TI-58C/59 program", AppName, MessageBoxButton.OK, MessageBoxImage.Information);
 
-            //await webView1.EnsureCoreWebView2Async();
-            //webView1.NavigateToString("");
-            //await webView2.EnsureCoreWebView2Async();
-            //webView2.NavigateToString("");
-        };
+    private async void TestColorsExecuted(object sender, ExecutedRoutedEventArgs e)
+    {
+        string test = @"comment:     [comment]Text 123[/comment]
+            invalid:     [invalid]Text 123[/invalid]
+            unknown:     [unknown]Text 123[/unknown]
+            instruction: [instruction]Text 123[/instruction]
+            number:      [number]Text 123[/number]
+            direct:      [direct]Text 123[/direct]
+            indirect:    [indirect]Text 123[/indirect]
+            tag:         [tag]Text 123[/tag]
+            label:       [label]Text 123[/label]
+            address:     [address]Text 123[/address]
+
+            [comment]// Example[/comment]
+            [tag]@Loop:[/tag] [number]-1.6E-19[/number] [instruction]PD*[/instruction] [indirect]04[/indirect] [invalid]ZYP[/invalid] [instruction]Dsz[/instruction] [direct]12[/direct] [label]CLR[/label]";
+        var out2 = HtmlRender(test);
+        await webView2.EnsureCoreWebView2Async();
+        webView2.NavigateToString(out2);
     }
 
 #pragma warning disable SYSLIB1045 // Convert to 'GeneratedRegexAttribute'.
@@ -59,6 +72,9 @@ public partial class MainWindow: Window
 
     private async void SourceTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
+        IsDirty = true;
+        UpdateTitle();
+
         var programs = T59Processor.GetPrograms(SourceTextBox.Text);
         if (programs.Count == 0)
         {
@@ -82,6 +98,17 @@ public partial class MainWindow: Window
         var out2 = HtmlRender(t2);
 
         DisplayHTML(out1, out2);
+    }
+
+    private void UpdateTitle()
+    {
+        string msg = IsDirty ? "*" : "";
+        if (FileName != null)
+            msg += FileName;
+        if (msg != "")
+            msg += " – ";
+        msg += AppName;
+        Title = msg;
     }
 
     private async void DisplayHTML(string out1, string out2)
@@ -129,6 +156,113 @@ public partial class MainWindow: Window
 
         return htmlContent;
     }
+
+    protected override void OnClosing(CancelEventArgs e)
+    {
+        if (IsDirty)
+            e.Cancel = !CanContinue();
+        else
+            base.OnClosing(e);
+    }
+
+    private void NewExecuted(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+    {
+        if (!CanContinue())
+            return;
+        SourceTextBox.Text = "";
+        FileName = null;
+        IsDirty = false;
+        UpdateTitle();
+    }
+
+    private bool CanContinue()
+    {
+        if (IsDirty)
+        {
+            var r = MessageBox.Show("Le programme a été modifié mais pas enregistré.\r\nVoulez-vous conserver ces changements?", "T59v6WPF", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes, MessageBoxOptions.None);
+            return MessageBoxResult.No == r;
+        }
+        else
+            return true;
+    }
+
+    private void OpenExecuted(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+    {
+        if (!CanContinue())
+            return;
+
+        // Configure open file dialog box
+        Microsoft.Win32.OpenFileDialog dlg = new()
+        {
+            FileName = "", // Default file name
+            DefaultExt = ".t59", // Default file extension
+            Filter = "Ti 58C/59 programs|*.t59|Tous les fichiers (*.*)|*.*"
+        };
+
+        // Show open file dialog box
+        bool? result = dlg.ShowDialog();
+
+        // Process open file dialog box results
+        if (result == true)
+        {
+            try
+            {
+                using StreamReader sr = new(dlg.FileName, Encoding.UTF8);
+                SourceTextBox.Text = sr.ReadToEnd();
+                IsDirty = false;
+                FileName = dlg.FileName;
+                UpdateTitle();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Une erreur est survenue lors de l'ouverture du fichier " + dlg.FileName + ": " + ex.Message, "T59v6WPF", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+        }
+    }
+
+    private void CloseExecuted(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+        => Close();
+
+    private void SaveExecuted(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+    {
+        if (FileName == null)
+            SaveAsExecuted(sender, e);
+        else
+        {
+            try
+            {
+                using StreamWriter sw = new(FileName, false, Encoding.UTF8);
+                sw.Write(SourceTextBox.Text);
+                IsDirty = false;
+                UpdateTitle();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Une erreur est survenue lors de l'écriture du fichier " + FileName + ": " + ex.Message, "T59v6WPF", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+        }
+
+    }
+
+    private void SaveAsExecuted(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+    {
+        // Configure save file dialog box
+        Microsoft.Win32.SaveFileDialog dlg = new()
+        {
+            FileName = "", // Default file name
+            DefaultExt = ".t59", // Default file extension
+            Filter = "Ti 58C/59 programs|*.t59|Tous les fichiers (*.*)|*.*"  // Filter files by extension
+        };
+
+        // Show save file dialog box
+        bool? result = dlg.ShowDialog();
+
+        // Process save file dialog box results
+        if (result == true)
+        {
+            // Save program
+            FileName = dlg.FileName;
+            SaveExecuted(sender, e);
+        }
+    }
 }
-//<body>{processedText}</body>
-//p {{ margin-top: 0; margin-bottom: 0; min-height=1.2em; }}

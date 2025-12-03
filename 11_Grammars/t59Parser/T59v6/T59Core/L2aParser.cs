@@ -127,14 +127,14 @@ sealed record L2Number: L2AddressableInstructionBase
                         if (exponent.Length > 0 && exponent[0] == '-')
                             Debugger.Break();
                         else
-                            exponent.Append('.');
+                            exponent.Append('-');
                     }
                     else
                     {
                         if (mantissa.Length > 0 && mantissa[0] == '-')
                             Debugger.Break();
                         else
-                            mantissa.Append('.');
+                            mantissa.Append('-');
                     }
                     break;
                 case 52:

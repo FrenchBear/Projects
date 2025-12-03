@@ -8,13 +8,88 @@
         mc:Ignorable="d"
         Title="T59 v6 WPF" Height="450" Width="1300">
 
+    <Window.CommandBindings>
+        <CommandBinding Command="New" Executed="NewExecuted" />
+        <CommandBinding Command="Open" Executed="OpenExecuted" />
+        <CommandBinding Command="Close" Executed="CloseExecuted" />
+        <CommandBinding Command="Save" Executed="SaveExecuted" />
+        <CommandBinding Command="SaveAs" Executed="SaveAsExecuted" />
+    </Window.CommandBindings>
+
+    <Window.InputBindings>
+        <KeyBinding Command="New" Key="N" Modifiers="Control" />
+        <KeyBinding Command="Open" Key="O" Modifiers="Control" />
+        <KeyBinding Command="Save" Key="S" Modifiers="Control" />
+        <!--<KeyBinding Command="local:MainWindow.About" Key="F1" />-->
+    </Window.InputBindings>
+
+    <Window.Resources>
+        <!-- Gray out toolbar elements when disabled (why is it not automatic ??) -->
+        <Style TargetType="{x:Type Image}" x:Key="ToolbarImageStyle">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}, AncestorLevel=1}, Path=IsEnabled}" Value="False">
+                    <Setter Property="Opacity" Value="0.35"></Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
     <DockPanel>
+        <Menu DockPanel.Dock="Top" Padding="3" FontSize="14">
+            <MenuItem Name="FileMenu" Header="_Fichier">
+                <MenuItem Command="New" Header="_Nouveau">
+                    <MenuItem.Icon>
+                        <Image Source="Icons/new.ico" Stretch="None" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="Open" Header="_Ouvrir...">
+                    <MenuItem.Icon>
+                        <Image Source="Icons/open.ico" Stretch="None" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="Save" Header="_Enregistrer">
+                    <MenuItem.Icon>
+                        <Image Source="Icons/save.ico" Stretch="None" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="SaveAs" Header="Enregistrer _sous..." />
+                <Separator />
+                <MenuItem Command="Close" InputGestureText="Alt+F4" Header="_Quitter">
+                    <MenuItem.Icon>
+                        <Image Source="Icons/close.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+
+            <MenuItem Name="HelpMenu" Header="_?">
+                <MenuItem Name="AboutCommand" Command="local:MainWindow.About" Header="À _propos de T59v6WPF...">
+                    <MenuItem.Icon>
+                        <Image Source="Icons/about.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator />
+                <MenuItem Name="TestColorCommand" Command="local:MainWindow.TestColors" Header="_Test Colors" />
+            </MenuItem>
+
+        </Menu>
+
+        <ToolBar DockPanel.Dock="Top" Margin="0,-1,0,1" ToolBarTray.IsLocked="True">
+            <Button Command="New" ToolTip="Crée un nouveau document">
+                <Image Source="Icons/new.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
+            </Button>
+            <Button Command="Open" ToolTip="Ouvre un fichier existant">
+                <Image Source="Icons/open.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
+            </Button>
+            <Button Name="SaveTbButton" Command="Save" ToolTip="Enregistre le fichier courant">
+                <Image Source="Icons/save.ico" Stretch="None" Style="{StaticResource ToolbarImageStyle}" />
+            </Button>
+        </ToolBar>
 
         <StatusBar DockPanel.Dock="Bottom">
             <TextBlock Name="StatusMessage" />
         </StatusBar>
 
-        <Grid TextElement.FontSize="16">
+        <Grid TextElement.FontSize="14">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
