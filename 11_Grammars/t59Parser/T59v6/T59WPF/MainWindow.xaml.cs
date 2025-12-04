@@ -33,7 +33,7 @@ public partial class MainWindow: Window
         CommandBindings.Add(new CommandBinding(About, AboutExecuted));
     }
 
-    private void AboutExecuted(object sender, ExecutedRoutedEventArgs e) 
+    private void AboutExecuted(object sender, ExecutedRoutedEventArgs e)
         => MessageBox.Show("Simple ANTRL4 lexer + my own grammar parser to validate, encode and colorize a TI-58C/59 program", AppName, MessageBoxButton.OK, MessageBoxImage.Information);
 
     private async void TestColorsExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -165,7 +165,7 @@ public partial class MainWindow: Window
             base.OnClosing(e);
     }
 
-    private void NewExecuted(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+    private void NewExecuted(object sender, ExecutedRoutedEventArgs e)
     {
         if (!CanContinue())
             return;
@@ -186,7 +186,7 @@ public partial class MainWindow: Window
             return true;
     }
 
-    private void OpenExecuted(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+    private void OpenExecuted(object sender, ExecutedRoutedEventArgs e)
     {
         if (!CanContinue())
             return;
@@ -220,10 +220,10 @@ public partial class MainWindow: Window
         }
     }
 
-    private void CloseExecuted(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+    private void CloseExecuted(object sender, ExecutedRoutedEventArgs e)
         => Close();
 
-    private void SaveExecuted(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+    private void SaveExecuted(object sender, ExecutedRoutedEventArgs e)
     {
         if (FileName == null)
             SaveAsExecuted(sender, e);
@@ -244,7 +244,7 @@ public partial class MainWindow: Window
 
     }
 
-    private void SaveAsExecuted(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+    private void SaveAsExecuted(object sender, ExecutedRoutedEventArgs e)
     {
         // Configure save file dialog box
         Microsoft.Win32.SaveFileDialog dlg = new()

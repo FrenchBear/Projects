@@ -1,0 +1,374 @@
+﻿// Level 1 tokenizer
+//
+// Transform a stream of lexer tokens into L1Tokens:
+// - WS are preserved, but T59Program.L1TokensWithoutWhiteSpace() enumerator used by L2aParser ignores them
+// - Group successive INVALID_CHAR into L1InvalidToken
+// - Transform all I_xx into L1Instruction with TIKey attribute
+// - Add a property SyntaxCategory, initialized at a reasonable default from lexer perspective but maigh change later
+//
+// 2025-11-22   PV
+
+using Antlr4.Runtime;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+
+namespace T59v7Core;
+
+// ------------------
+
+public abstract record L1Token
+{
+    public required List<IToken> L0Tokens { get; set; }
+    public SyntaxCategory Cat { get; set; }
+    public L2StatementBase? Parent { get; set; }
+
+    public virtual string AsDebugString(bool noColor = false)
+    {
+        var s = string.Join(", ", L0Tokens.Select(t => t.Text));
+        string res = $"{GetType().Name,-15}: ";
+
+        if (!noColor)
+            res += Categories.GetCategoryOpenTag(Cat);
+        res += s;
+        if (!noColor)
+            res += Categories.GetCategoryCloseTag(Cat);
+        if (s.Length < 15)
+            res += new string(' ', 15 - s.Length);
+        res += " " + Cat.ToString();
+
+        return res;
+    }
+
+    public virtual string AsFormattedString(bool noColor = false)
+    {
+        var sb = new StringBuilder();
+        // Instructions "0" to "9" are rendered using SyntaxCategory.Number color instead of SyntaxCategory.Instruction
+        var cat = this is L1Instruction aa && aa.Inst.Op[0] < 10 ? SyntaxCategory.Number : Cat;
+        if (!noColor)
+            sb.Append(Categories.GetCategoryOpenTag(cat));
+        if (this is L1Instruction l1i)
+            sb.Append(l1i.Inst.M);      // For formatted output, use canonical mnemonic for instructions, not the one used on source code
+        else
+            sb.Append(string.Join(" ", L0Tokens.Select(t => t.Text)));
+        if (!noColor)
+            sb.Append(Categories.GetCategoryCloseTag(cat));
+        return sb.ToString();
+    }
+}
+
+sealed record L1Eof: L1Token { }
+sealed record L1WS: L1Token { }
+sealed record L1PgmSeparator: L1Token { }
+sealed record L1LineComment: L1Token { }
+sealed record L1InvalidToken: L1Token { }
+sealed record L1Instruction: L1Token
+{
+    public required TIKey Inst { get; init; }
+
+    public override string AsDebugString(bool noColor = false)
+    {
+        // For labels, don't need TInst details
+        if (Cat == SyntaxCategory.Label)
+            return base.AsDebugString();
+
+        //var s = string.Join(", ", Tokens.Select(t => $"{t.Line}:{t.Column} {t.Text}"));
+        var s = string.Join(", ", L0Tokens.Select(t => t.Text));
+
+        string res = $"{GetType().Name,-15}: ";
+        if (noColor)
+            res = s;
+        else
+            res += Categories.GetTaggedText(s, Cat);
+        if (s.Length < 15)
+            res += new string(' ', 15 - s.Length);
+        res += " " + Cat.ToString();
+        res += " " + Inst;
+
+        return res;
+    }
+}
+sealed record L1D1: L1Token { }
+sealed record L1D2: L1Token { }
+sealed record L1A3: L1Token { }
+sealed record L1Num: L1Token
+{
+    public override string AsDebugString(bool noColor = false)
+    {
+        var s = string.Join("", L0Tokens.Select(t => t.Text));
+        var c = Cat.ToString();
+        return $"{GetType().Name,-15}: {s,-15} {c,-15} {s}";
+    }
+}
+sealed record L1Tag: L1Token { }
+sealed record L1Colon: L1Token { }
+
+// ------------------
+
+enum StatementSyntax
+{
+    a,      // Atomic (Nop)
+    d,      // Direct (Hir)
+    i,      // Indirect (ST*)
+    di,     // Direct or indirect (STO)
+    b,      // Branch: address or label or tag (GTO)
+    dib,    // Direct or indirect, branch (Dsz)
+    m,      // Mnemonic (Lbl)
+    p       // Special for Ind (prefix)
+}
+
+// ------------------
+
+sealed record TIKey
+{
+    /// <summary>Opcodes</summary>
+    public required byte[] Op { get; init; }
+
+    /// <summary>Mnemonic (canonical version)</summary>
+    public required string M { get; init; }
+
+    /// <summary>Syntax</summary>
+    public StatementSyntax S { get; init; }
+
+    /// <summary>Invertible: true if key supports INC prefix</summary>
+    public bool I { get; init; }
+
+    /// <summary>Indirect merged index in TIKeys, or 0 if instruction is not mergeable</summary>
+    public int MOp { get; init; }
+
+    public override string ToString()
+    {
+        string s = "TIKey Op=" + string.Join(",", Op.Select(c => c.ToString())) + " M=" + M + " S=" + S;
+        if (I)
+            s += " Invertible";
+        if (MOp != 0)
+            s += " Mop=" + MOp;
+        return s;
+    }
+}
+
+// ------------------
+
+internal sealed class L1Tokenizer(Vocab lexer)
+{
+    private readonly Vocab lexer = lexer;
+
+    public static readonly Dictionary<int, TIKey> TIKeys = [];
+
+    static L1Tokenizer()
+    {
+        // Build dictionary of instructions attributes, generated by Excel
+        // Doesn't include extra instructions I123_e_power_x and I128_10_power_x, we'll see later if they need to be included or managed directly in parser code
+        // Maybe simplify sonsidering s="a" is the default ?
+        // This dic doesn't contain single digit 0-9 since with current parser, it will always be superseeded by L1Number, but it could be
+        // added later for an interpreter, to be seen later
+        TIKeys.Add(Vocab.I10_e_prime, new TIKey { Op = [10], M = "E'", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I11_a, new TIKey { Op = [11], M = "A", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I12_b, new TIKey { Op = [12], M = "B", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I13_c, new TIKey { Op = [13], M = "C", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I14_d, new TIKey { Op = [14], M = "D", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I15_e, new TIKey { Op = [15], M = "E", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I16_a_prime, new TIKey { Op = [16], M = "A'", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I17_b_prime, new TIKey { Op = [17], M = "B'", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I18_c_prime, new TIKey { Op = [18], M = "C'", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I19_d_prime, new TIKey { Op = [19], M = "D'", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I20_2nd_clear, new TIKey { Op = [20], M = "CLR'", S = StatementSyntax.a });
+
+        TIKeys.Add(Vocab.I22_invert, new TIKey { Op = [22], M = "INV", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I23_ln, new TIKey { Op = [23], M = "lnx", S = StatementSyntax.a, I = true });
+        TIKeys.Add(Vocab.I24_correct_entry, new TIKey { Op = [24], M = "CE", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I25_clear, new TIKey { Op = [25], M = "CLR", S = StatementSyntax.a });
+
+        TIKeys.Add(Vocab.I27_2nd_invert, new TIKey { Op = [27], M = "INV'", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I28_log, new TIKey { Op = [28], M = "log", S = StatementSyntax.a, I = true });
+        TIKeys.Add(Vocab.I29_clear_program, new TIKey { Op = [29], M = "CP", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I30_tan, new TIKey { Op = [30], M = "tan", S = StatementSyntax.a, I = true });
+
+        TIKeys.Add(Vocab.I32_exchange_x_and_t, new TIKey { Op = [32], M = "x↔t", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I33_square, new TIKey { Op = [33], M = "x²", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I34_square_root, new TIKey { Op = [34], M = "√", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I35_reciprocal, new TIKey { Op = [35], M = "1/x", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I36_program, new TIKey { Op = [36], M = "Pgm", S = StatementSyntax.di, MOp = Vocab.I62_program_indirect });
+        TIKeys.Add(Vocab.I37_polar_to_rectangular, new TIKey { Op = [37], M = "P→R", S = StatementSyntax.a, I = true });
+        TIKeys.Add(Vocab.I38_sin, new TIKey { Op = [38], M = "sin", S = StatementSyntax.a, I = true });
+        TIKeys.Add(Vocab.I39_cos, new TIKey { Op = [39], M = "cos", S = StatementSyntax.a, I = true });
+        TIKeys.Add(Vocab.I40_indirect, new TIKey { Op = [40], M = "Ind", S = StatementSyntax.p });
+
+        TIKeys.Add(Vocab.I42_store, new TIKey { Op = [42], M = "STO", S = StatementSyntax.di, MOp = Vocab.I72_store_indirect });
+        TIKeys.Add(Vocab.I43_recall, new TIKey { Op = [43], M = "RCL", S = StatementSyntax.di, MOp = Vocab.I73_recall_indirect });
+        TIKeys.Add(Vocab.I44_sum, new TIKey { Op = [44], M = "SUM", S = StatementSyntax.di, I = true, MOp = Vocab.I74_sum_indirect });
+        TIKeys.Add(Vocab.I45_power, new TIKey { Op = [45], M = "yˣ", S = StatementSyntax.a, I = true });
+
+        TIKeys.Add(Vocab.I47_clear_memory, new TIKey { Op = [47], M = "CMs", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I48_exchange, new TIKey { Op = [48], M = "Exc", S = StatementSyntax.di, MOp = Vocab.I63_exchange_indirect });
+        TIKeys.Add(Vocab.I49_product, new TIKey { Op = [49], M = "Prd", S = StatementSyntax.di, I = true, MOp = Vocab.I64_product_indirect });
+        TIKeys.Add(Vocab.I50_absolute, new TIKey { Op = [50], M = "|x|", S = StatementSyntax.a });
+
+        TIKeys.Add(Vocab.I52_exponent, new TIKey { Op = [52], M = "EE", S = StatementSyntax.a, I = true });
+        TIKeys.Add(Vocab.I53_left_parenthesis, new TIKey { Op = [53], M = "(", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I54_right_parenthesis, new TIKey { Op = [54], M = ")", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I55_divide, new TIKey { Op = [55], M = "÷", S = StatementSyntax.a });
+
+        TIKeys.Add(Vocab.I57_engineering, new TIKey { Op = [57], M = "Eng", S = StatementSyntax.a, I = true });
+        TIKeys.Add(Vocab.I58_fix, new TIKey { Op = [58], M = "Fix", S = StatementSyntax.di, I = true });
+        TIKeys.Add(Vocab.I59_integer, new TIKey { Op = [59], M = "Int", S = StatementSyntax.a, I = true });
+        TIKeys.Add(Vocab.I60_degrees, new TIKey { Op = [60], M = "Deg", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I61_goto, new TIKey { Op = [61], M = "GTO", S = StatementSyntax.b, MOp = Vocab.I83_goto_indirect });
+        TIKeys.Add(Vocab.I62_program_indirect, new TIKey { Op = [62], M = "PG*", S = StatementSyntax.i });
+        TIKeys.Add(Vocab.I63_exchange_indirect, new TIKey { Op = [63], M = "EX*", S = StatementSyntax.i });
+        TIKeys.Add(Vocab.I64_product_indirect, new TIKey { Op = [64], M = "PD*", S = StatementSyntax.i, I = true });
+        TIKeys.Add(Vocab.I65_multiply, new TIKey { Op = [65], M = "×", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I66_pause, new TIKey { Op = [66], M = "Pause", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I67_x_equals_t, new TIKey { Op = [67], M = "x=t", S = StatementSyntax.b, I = true });
+        TIKeys.Add(Vocab.I68_nop, new TIKey { Op = [68], M = "Nop", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I69_operation, new TIKey { Op = [69], M = "Op", S = StatementSyntax.di, MOp = Vocab.I84_operation_indirect });
+        TIKeys.Add(Vocab.I70_radians, new TIKey { Op = [70], M = "Rad", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I71_subroutine, new TIKey { Op = [71], M = "SBR", S = StatementSyntax.b, I = true });
+        TIKeys.Add(Vocab.I72_store_indirect, new TIKey { Op = [72], M = "ST*", S = StatementSyntax.i });
+        TIKeys.Add(Vocab.I73_recall_indirect, new TIKey { Op = [73], M = "RC*", S = StatementSyntax.i });
+        TIKeys.Add(Vocab.I74_sum_indirect, new TIKey { Op = [74], M = "SM*", S = StatementSyntax.i, I = true });
+        TIKeys.Add(Vocab.I75_subtract, new TIKey { Op = [75], M = "-", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I76_label, new TIKey { Op = [76], M = "Lbl", S = StatementSyntax.m });
+        TIKeys.Add(Vocab.I77_x_greater_or_equal_than_t, new TIKey { Op = [77], M = "x≥t", S = StatementSyntax.b, I = true });
+        TIKeys.Add(Vocab.I78_sigma_plus, new TIKey { Op = [78], M = "Σ+", S = StatementSyntax.a, I = true });
+        TIKeys.Add(Vocab.I79_average, new TIKey { Op = [79], M = "x̄", S = StatementSyntax.a, I = true });
+        TIKeys.Add(Vocab.I80_grades, new TIKey { Op = [80], M = "Grad", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I81_reset, new TIKey { Op = [81], M = "RST", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I82_hir, new TIKey { Op = [82], M = "HIR", S = StatementSyntax.d });
+        TIKeys.Add(Vocab.I83_goto_indirect, new TIKey { Op = [83], M = "GO*", S = StatementSyntax.i });
+        TIKeys.Add(Vocab.I84_operation_indirect, new TIKey { Op = [84], M = "Op*", S = StatementSyntax.i });
+        TIKeys.Add(Vocab.I85_add, new TIKey { Op = [85], M = "+", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I86_set_flag, new TIKey { Op = [86], M = "STF", S = StatementSyntax.di, I = true });
+        TIKeys.Add(Vocab.I87_if_flag, new TIKey { Op = [87], M = "IFF", S = StatementSyntax.dib, I = true });
+        TIKeys.Add(Vocab.I88_dms, new TIKey { Op = [88], M = "D.MS", S = StatementSyntax.a, I = true });
+        TIKeys.Add(Vocab.I89_pi, new TIKey { Op = [89], M = "π", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I90_list, new TIKey { Op = [90], M = "List", S = StatementSyntax.a, I = true });
+        TIKeys.Add(Vocab.I91_run_stop, new TIKey { Op = [91], M = "R/S", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I92_return, new TIKey { Op = [92], M = "RTN", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I93_dot, new TIKey { Op = [93], M = ".", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I94_change_sign, new TIKey { Op = [94], M = "+/-", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I95_equals, new TIKey { Op = [95], M = "=", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I96_write, new TIKey { Op = [96], M = "Write", S = StatementSyntax.a, I = true });
+        TIKeys.Add(Vocab.I97_dsz, new TIKey { Op = [97], M = "Dsz", S = StatementSyntax.dib, I = true });
+        TIKeys.Add(Vocab.I98_advance, new TIKey { Op = [98], M = "Adv", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I99_print, new TIKey { Op = [99], M = "Prt", S = StatementSyntax.a });
+
+        TIKeys.Add(Vocab.I2223_e_power_x, new TIKey { Op = [22, 23], M = "eˣ", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I2228_10_power_x, new TIKey { Op = [22, 28], M = "10ˣ", S = StatementSyntax.a });
+        TIKeys.Add(Vocab.I6740_x_equals_t_indirect, new TIKey { Op = [67, 40], M = "EQ*", S = StatementSyntax.i, I = true });
+        TIKeys.Add(Vocab.I7740_x_greater_or_equal_than_t_indirect, new TIKey { Op = [77, 40], M = "GE*", S = StatementSyntax.i, I = true });
+
+    }
+
+    public List<T59Program> GetPrograms()
+    {
+        List<T59Program> lp = [];
+
+        T59Program curProg = new();
+        foreach (var l1t in EnumerateL1Tokens())
+        {
+            if (l1t is L1PgmSeparator or L1Eof)
+            {
+                // Each program is terminated by EOF, PgmSeparators are discarded and replaced by EOF
+                // Ignore empty programs
+                if (curProg.L1Tokens.Count > 0)
+                {
+                    var eof = new L1Eof { Cat = SyntaxCategory.Eof, L0Tokens = [] };
+                    curProg.L1Tokens.Add(eof);
+                    lp.Add(curProg);
+                    curProg = new();
+                }
+            }
+            else
+                curProg.L1Tokens.Add(l1t);
+        }
+        return lp;
+    }
+
+    private IEnumerable<L1Token> EnumerateL1Tokens()
+    {
+        IToken? nextToken = null;
+        bool ignoreNextWS = false;      // Skip WS after END program separator
+
+        for (; ; )
+        {
+            IToken token;
+            if (nextToken != null)
+            {
+                token = nextToken;
+                nextToken = null;
+            }
+            else
+                token = lexer.NextToken();
+
+            switch (token.Type)
+            {
+                case TokenConstants.EOF:
+                    yield return new L1Eof { L0Tokens = [token], Cat = SyntaxCategory.Eof };
+                    yield break;
+
+                case Vocab.WS:
+                    if (ignoreNextWS)
+                    {
+                        ignoreNextWS = false;
+                        continue;
+                    }
+                    yield return new L1WS { L0Tokens = [token], Cat = SyntaxCategory.WS };
+                    break;
+
+                case Vocab.LINE_COMMENT:
+                    yield return new L1LineComment { L0Tokens = [token], Cat = SyntaxCategory.Comment };
+                    break;
+
+                case Vocab.PROGRAM_SEPARATOR:
+                    yield return new L1PgmSeparator { L0Tokens = [token], Cat = SyntaxCategory.Eof };
+                    ignoreNextWS = true;
+                    break;
+
+                case Vocab.D1:      // SyntaxCategory will be determined later
+                    yield return new L1D1 { L0Tokens = [token], Cat = SyntaxCategory.Unknown };
+                    break;
+
+                case Vocab.D2:      // SyntaxCategory will be determined later
+                    yield return new L1D2 { L0Tokens = [token], Cat = SyntaxCategory.Unknown };
+                    break;
+
+                case Vocab.A3:
+                    yield return new L1A3 { L0Tokens = [token], Cat = SyntaxCategory.Address };
+                    break;
+
+                case Vocab.NUM:
+                    yield return new L1Num { L0Tokens = [token], Cat = SyntaxCategory.Number };
+                    break;
+
+                case Vocab.TAG:
+                    yield return new L1Tag { L0Tokens = [token], Cat = SyntaxCategory.Tag };
+                    break;
+
+                case Vocab.COLON:       // Category is not really clear, let's assume Tag for now
+                    yield return new L1Colon() { L0Tokens = [token], Cat = SyntaxCategory.Tag };
+                    break;
+
+                case Vocab.INVALID_CHAR:
+                    var tic = new L1InvalidToken() { L0Tokens = [token], Cat = SyntaxCategory.Invalid };
+                    for (; ; )
+                    {
+                        nextToken = lexer.NextToken();
+                        if (nextToken.Type != Vocab.INVALID_CHAR)
+                            break;
+                        tic.L0Tokens.Add(nextToken);
+                    }
+                    yield return tic;
+                    break;
+
+                default:
+                    //string symbolicName = lexer.Vocabulary.GetSymbolicName(token.Type);
+                    //Debug.Assert(symbolicName.StartsWith('I')); // Only instructions should remain
+                    Debug.Assert(TIKeys.ContainsKey(token.Type));
+                    yield return new L1Instruction() { L0Tokens = [token], Cat = SyntaxCategory.Instruction, Inst = TIKeys[token.Type] };
+                    break;
+            }
+        }
+    }
+}
