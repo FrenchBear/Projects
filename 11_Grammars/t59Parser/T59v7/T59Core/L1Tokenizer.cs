@@ -7,6 +7,7 @@
 // - Add a property SyntaxCategory, initialized at a reasonable default from lexer perspective but maigh change later
 //
 // 2025-11-22   PV
+// 2025-12-06   PV      Ins, Del added as label-only instructions for civil engineering pgm 22
 
 using Antlr4.Runtime;
 using System.Collections.Generic;
@@ -115,7 +116,8 @@ enum StatementSyntax
     b,      // Branch: address or label or tag (GTO)
     dib,    // Direct or indirect, branch (Dsz)
     m,      // Mnemonic (Lbl)
-    p       // Special for Ind (prefix)
+    p,      // Special for Ind (prefix)
+    l,      // Label only: Ins, Del
 }
 
 // ------------------
@@ -199,7 +201,7 @@ internal sealed class L1Tokenizer(Vocab lexer)
         TIKeys.Add(Vocab.I43_recall, new TIKey { Op = [43], M = "RCL", S = StatementSyntax.di, MOp = Vocab.I73_recall_indirect });
         TIKeys.Add(Vocab.I44_sum, new TIKey { Op = [44], M = "SUM", S = StatementSyntax.di, I = true, MOp = Vocab.I74_sum_indirect });
         TIKeys.Add(Vocab.I45_power, new TIKey { Op = [45], M = "yˣ", S = StatementSyntax.a, I = true });
-
+        TIKeys.Add(Vocab.I46_insert, new TIKey { Op = [46], M = "Ins", S = StatementSyntax.l });
         TIKeys.Add(Vocab.I47_clear_memory, new TIKey { Op = [47], M = "CMs", S = StatementSyntax.a });
         TIKeys.Add(Vocab.I48_exchange, new TIKey { Op = [48], M = "Exc", S = StatementSyntax.di, MOp = Vocab.I63_exchange_indirect });
         TIKeys.Add(Vocab.I49_product, new TIKey { Op = [49], M = "Prd", S = StatementSyntax.di, I = true, MOp = Vocab.I64_product_indirect });
@@ -209,7 +211,7 @@ internal sealed class L1Tokenizer(Vocab lexer)
         TIKeys.Add(Vocab.I53_left_parenthesis, new TIKey { Op = [53], M = "(", S = StatementSyntax.a });
         TIKeys.Add(Vocab.I54_right_parenthesis, new TIKey { Op = [54], M = ")", S = StatementSyntax.a });
         TIKeys.Add(Vocab.I55_divide, new TIKey { Op = [55], M = "÷", S = StatementSyntax.a });
-
+        TIKeys.Add(Vocab.I56_delete, new TIKey { Op = [56], M = "Del", S = StatementSyntax.l });
         TIKeys.Add(Vocab.I57_engineering, new TIKey { Op = [57], M = "Eng", S = StatementSyntax.a, I = true });
         TIKeys.Add(Vocab.I58_fix, new TIKey { Op = [58], M = "Fix", S = StatementSyntax.di, I = true });
         TIKeys.Add(Vocab.I59_integer, new TIKey { Op = [59], M = "Int", S = StatementSyntax.a, I = true });
@@ -258,7 +260,6 @@ internal sealed class L1Tokenizer(Vocab lexer)
         TIKeys.Add(Vocab.I2228_10_power_x, new TIKey { Op = [22, 28], M = "10ˣ", S = StatementSyntax.a });
         TIKeys.Add(Vocab.I6740_x_equals_t_indirect, new TIKey { Op = [67, 40], M = "EQ*", S = StatementSyntax.i, I = true });
         TIKeys.Add(Vocab.I7740_x_greater_or_equal_than_t_indirect, new TIKey { Op = [77, 40], M = "GE*", S = StatementSyntax.i, I = true });
-
     }
 
     public List<T59Program> GetPrograms()

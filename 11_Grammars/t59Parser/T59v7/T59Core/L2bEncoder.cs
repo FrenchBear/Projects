@@ -306,8 +306,9 @@ internal sealed class L2bEncoder(T59Program Prog)
                     }
 
                     // Special case, merge INV SBR -> RTN
-                    if (l2si.OpCodes is [22, 71])
-                        MergeInstructions(0, Vocab.I92_return);
+                    // This is now handled in lexter
+                    //if (l2si.OpCodes is [22, 71])
+                    //    MergeInstructions(0, Vocab.I92_return);
 
                     // Check if we have a mergeable instruction, skipping optional initial INV
                     int start = (l2si.L1Tokens[0] is L1Instruction { Inst.Op: [22] }) ? 1 : 0;

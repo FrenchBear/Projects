@@ -186,7 +186,7 @@ internal sealed class L2aParser(T59Program Prog)
             => Context.Count > 0 && Context[0] is L1Instruction { Inst.Op: [22] };
 
         // If we have a non-empty context, then we must flush it as a L2InvalidStatement
-        IEnumerable<L2StatementBase> FlushContext(bool keepOnlyIndStatement)
+        IEnumerable<L2StatementBase> FlushContextAsInvalidStatement(bool keepOnlyIndStatement)
         {
             // Special case, if the context starts by Inv, then we emit a legitimate L2Statement for this prefix,
             // it can't be considered as an error
@@ -247,7 +247,7 @@ internal sealed class L2aParser(T59Program Prog)
                     // At this point in state 0, if we have a context, that's a problem.
                     // Just flush existing context as InvalidStatement
                     // If current token is an invertible instruction and current context is just {Inv}, we keep it
-                    foreach (var s in FlushContext(token is L1Instruction { Inst.I: true }))
+                    foreach (var s in FlushContextAsInvalidStatement(token is L1Instruction { Inst.I: true }))
                         yield return s;
 
                     switch (token)
@@ -347,10 +347,10 @@ internal sealed class L2aParser(T59Program Prog)
                                     state = L2aParserState.expect_m;
                                     break;
 
-                                case StatementSyntax.p:
-                                    // Ind is not valid as a statement
+                                case StatementSyntax.p:     // Ind is not valid as a statement
+                                case StatementSyntax.l:     // Ins, Del not valid as a statement
                                     Context.Add(token);
-                                    foreach (var s in FlushContext(false))
+                                    foreach (var s in FlushContextAsInvalidStatement(false))
                                         yield return s;
                                     break;
 
@@ -378,7 +378,7 @@ internal sealed class L2aParser(T59Program Prog)
                     else
                     {
                         // Flush incomplete context as an error
-                        foreach (var s in FlushContext(false))
+                        foreach (var s in FlushContextAsInvalidStatement(false))
                             yield return s;
                         state = L2aParserState.zero;
                         goto RestartAnalysis;
@@ -395,7 +395,7 @@ internal sealed class L2aParser(T59Program Prog)
                     else
                     {
                         // Flush incomplete context as an error
-                        foreach (var s in FlushContext(false))
+                        foreach (var s in FlushContextAsInvalidStatement(false))
                             yield return s;
                         state = L2aParserState.zero;
                         goto RestartAnalysis;
@@ -452,7 +452,7 @@ internal sealed class L2aParser(T59Program Prog)
 
                     // We've exhausted valid possibilities, token it not accepted
                     // Flush incomplete context as an error
-                    foreach (var s in FlushContext(false))
+                    foreach (var s in FlushContextAsInvalidStatement(false))
                         yield return s;
                     state = L2aParserState.zero;
                     goto RestartAnalysis;
@@ -470,7 +470,7 @@ internal sealed class L2aParser(T59Program Prog)
                     else
                     {
                         // Flush incomplete context as an error
-                        foreach (var s in FlushContext(false))
+                        foreach (var s in FlushContextAsInvalidStatement(false))
                             yield return s;
                         state = L2aParserState.zero;
                         goto RestartAnalysis;
@@ -497,7 +497,7 @@ internal sealed class L2aParser(T59Program Prog)
                     else
                     {
                         // Flush incomplete context as an error
-                        foreach (var s in FlushContext(false))
+                        foreach (var s in FlushContextAsInvalidStatement(false))
                             yield return s;
                         state = L2aParserState.zero;
                         goto RestartAnalysis;
@@ -514,7 +514,7 @@ internal sealed class L2aParser(T59Program Prog)
                     else
                     {
                         // Flush incomplete context as an error
-                        foreach (var s in FlushContext(false))
+                        foreach (var s in FlushContextAsInvalidStatement(false))
                             yield return s;
                         state = L2aParserState.zero;
                         goto RestartAnalysis;
@@ -531,7 +531,7 @@ internal sealed class L2aParser(T59Program Prog)
                     else
                     {
                         // Flush incomplete context as an error
-                        foreach (var s in FlushContext(false))
+                        foreach (var s in FlushContextAsInvalidStatement(false))
                             yield return s;
                         state = L2aParserState.zero;
                         goto RestartAnalysis;
@@ -552,7 +552,7 @@ internal sealed class L2aParser(T59Program Prog)
                     else
                     {
                         // Flush incomplete context as an error
-                        foreach (var s in FlushContext(false))
+                        foreach (var s in FlushContextAsInvalidStatement(false))
                             yield return s;
                         state = L2aParserState.zero;
                         goto RestartAnalysis;

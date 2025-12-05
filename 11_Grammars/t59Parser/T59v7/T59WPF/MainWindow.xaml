@@ -115,7 +115,8 @@
                  FontFamily="Consolas"
                  AcceptsReturn="True" TextWrapping="Wrap"
                  VerticalScrollBarVisibility="Auto" Margin="3"
-                 Text="{Binding SourceCode, UpdateSourceTrigger=PropertyChanged, Delay=250, ValidatesOnDataErrors=True, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                 Text="{Binding SourceCode, UpdateSourceTrigger=PropertyChanged, Delay=250, ValidatesOnDataErrors=True, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                 AllowDrop="True" PreviewDragOver="SourceTextBox_PreviewDragOver" Drop="SourceTextBox_Drop" />
             <wv2:WebView2 x:Name="webView1" Grid.Row="1" Grid.Column="1" Margin="3" />
             <wv2:WebView2 x:Name="webView2" Grid.Row="1" Grid.Column="2" Margin="3" />
         </Grid>
