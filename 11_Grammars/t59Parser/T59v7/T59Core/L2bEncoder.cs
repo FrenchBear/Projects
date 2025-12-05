@@ -402,14 +402,14 @@ internal sealed class L2bEncoder(T59Program Prog)
                 if (nc.EeFound)
                 {
                     nc.ExponentDigits++;
-                    if (nc.ExponentDigits > 2)
-                        return false;
+                    //if (nc.ExponentDigits > 2)
+                    //    return false;
                 }
                 else
                 {
                     nc.MantissaDigits++;
-                    if (nc.MantissaDigits > 10)
-                        return false;
+                    //if (nc.MantissaDigits > 10)
+                    //    return false;
                 }
                 continue;
             }

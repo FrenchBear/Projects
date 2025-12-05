@@ -191,7 +191,7 @@ internal sealed class ViewModel: INotifyPropertyChanged
         {
             FileName = "", // Default file name
             DefaultExt = ".t59", // Default file extension
-            Filter = "Ti 58C/59 programs|*.t59|Tous les fichiers (*.*)|*.*"
+            Filter = "Ti 58C/59 programs|*.t59;*.src|Tous les fichiers (*.*)|*.*"
         };
 
         // Show open file dialog box
@@ -247,7 +247,7 @@ internal sealed class ViewModel: INotifyPropertyChanged
         {
             FileName = "", // Default file name
             DefaultExt = ".t59", // Default file extension
-            Filter = "Ti 58C/59 programs|*.t59|Tous les fichiers (*.*)|*.*"  // Filter files by extension
+            Filter = "Ti 58C/59 programs|*.t59;*.src|Tous les fichiers (*.*)|*.*"  // Filter files by extension
         };
 
         // Show save file dialog box

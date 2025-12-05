@@ -6,6 +6,7 @@
 // 2025-11-20   PV
 
 using System;
+using System.IO;
 using System.Linq;
 using T59v7Core;
 
@@ -16,7 +17,17 @@ namespace T59v7Console;
 
 public static class Program
 {
-    public static void MainColorDemo(string[] args)
+    public static void Main(string[] args)
+    {
+        foreach (var folder in Directory.EnumerateDirectories(@"D:\Pierre\CryptomatorPV\Calculators\TI\TI-58C TI-59 Docs and extra\Modules source ti5x_android-master (TurboGit)"))
+            foreach (var file in Directory.EnumerateFiles(folder, "*.src"))
+            {
+                var source = File.ReadAllText(file);
+                ProcessSource(source, file);
+            }
+    }
+
+    public static void MainColorDemo()
     {
         var s = @"
 comment:     [comment]Text 123[/comment]
@@ -44,7 +55,7 @@ address:     [address]Text 123[/address]
         Console.WriteLine(ConsoleRendering.RenderTaggedText(s));
     }
 
-    public static void Main(string[] args)
+    public static void MainSimpleTests()
     {
         string input = @"LBL 99 Lbl STO CLR CE STO 12 STO IND 42 RCL 5
 cos INV Sin INV CLR
@@ -152,7 +163,12 @@ lbl mean
 lbl E´
 ; initialize--no-op
     inv sbr";
+        ProcessSource(input, "");
+    }
 
+    static void ProcessSource(string input, string file)
+    {
+        Console.WriteLine("\n\n########## " + file + "\n");
         var programs = T59Processor.GetPrograms(input);
 
         foreach (var (ix, p) in Enumerable.Index(programs))
