@@ -1,6 +1,11 @@
+// Matrix3x5Unit UserControl
+// Implement a standard 3x5 display
+//
+// 2025-12-06   PV
+
 namespace Displays;
 
-public partial class DotMatrix3x5Display : UserControl
+public partial class Matrix3x5Unit: UserControl
 {
     private static readonly Dictionary<char, bool[,]> CharMap = new()
     {
@@ -155,12 +160,28 @@ public partial class DotMatrix3x5Display : UserControl
             { false, false, false },
             { false, false, false },
             { false, false, false }
+        },
+        ['R'] = new bool[,]
+        {
+            { false, false, false },
+            { false, false, false },
+            { true, true, true },
+            { true, false, false },
+            { true, false, false }
+        },
+        ['O'] = new bool[,]
+        {
+            { false, false, false },
+            { false, false, false },
+            { true, true, true },
+            { true, false, true },
+            { true, true, true }
         }
     };
 
     private readonly Rectangle[,] dots = new Rectangle[5, 3];
 
-    public DotMatrix3x5Display()
+    public Matrix3x5Unit()
     {
         InitializeComponent();
         for (int row = 0; row < 5; row++)
@@ -170,7 +191,7 @@ public partial class DotMatrix3x5Display : UserControl
                 var dot = new Rectangle
                 {
                     Fill = Brushes.Blue,
-                    Visibility = Visibility.Hidden,
+                    Opacity = 0.1,
                     Margin = new Thickness(0.15),
                 };
                 Grid.SetRow(dot, row);
@@ -182,42 +203,32 @@ public partial class DotMatrix3x5Display : UserControl
     }
 
     public static readonly DependencyProperty DigitProperty =
-        DependencyProperty.Register("Digit", typeof(char), typeof(DotMatrix3x5Display),
+        DependencyProperty.Register("Digit", typeof(char), typeof(Matrix3x5Unit),
         new PropertyMetadata(' ', new PropertyChangedCallback(OnDigitChanged)));
 
     public char Digit
     {
-        get { return (char)GetValue(DigitProperty); }
-        set { SetValue(DigitProperty, value); }
+        get => (char)GetValue(DigitProperty);
+        set => SetValue(DigitProperty, value);
     }
 
     private static void OnDigitChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        ((DotMatrix3x5Display)d).UpdateDisplay();
-    }
+        => ((Matrix3x5Unit)d).UpdateDisplay();
 
     private void UpdateDisplay()
     {
         if (CharMap.TryGetValue(char.ToUpper(Digit), out bool[,]? pattern))
         {
             for (int row = 0; row < 5; row++)
-            {
                 for (int col = 0; col < 3; col++)
-                {
-                    dots[row, col].Visibility = pattern[row, col] ? Visibility.Visible : Visibility.Hidden;
-                }
-            }
+                    dots[row, col].Opacity = pattern[row, col] ? 1.0 : 0.1;
         }
         else
         {
             // Hide all if character not found
             for (int row = 0; row < 5; row++)
-            {
                 for (int col = 0; col < 3; col++)
-                {
-                    dots[row, col].Visibility = Visibility.Hidden;
-                }
-            }
+                    dots[row, col].Opacity = 0.1;
         }
     }
 }

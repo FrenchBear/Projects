@@ -1,15 +1,13 @@
-#pragma warning disable IDE0005 // Using directive is unnecessary.
+// Global Usings
+// Move all using to a global file
+//
+// 2025-12-06   PV
 
-global using System.Text;
+//#pragma warning disable IDE0005 // Using directive is unnecessary.
+
 global using System.Windows;
 global using System.Windows.Controls;
-global using System.Windows.Data;
-global using System.Windows.Documents;
-global using System.Windows.Input;
 global using System.Windows.Media;
-global using System.Windows.Media.Imaging;
-global using System.Windows.Navigation;
 global using System.Windows.Shapes;
 global using System.ComponentModel;
 global using System.Collections.Generic;
-global using System.Linq;

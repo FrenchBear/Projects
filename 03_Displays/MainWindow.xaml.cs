@@ -1,4 +1,9 @@
-﻿namespace Displays;
+﻿// MainWindow
+// Test all displays
+//
+// 2025-12-06   PV
+
+namespace Displays;
 
 public partial class MainWindow: Window
 {
@@ -6,13 +11,7 @@ public partial class MainWindow: Window
 
     private void InputBox_TextChanged(object sender, TextChangedEventArgs e)
     {
-        if (sender is TextBox { Text: { Length: > 0 } } textBox)
-        {
-            MyDotMatrix.Digit = textBox.Text[0];
-        }
-        else
-        {
-            MyDotMatrix.Digit = ' ';
-        }
+        SevenSegmentDisplay.Value = InputBox.Text;
+        Matrix3x5Display.Value = InputBox.Text;
     }
 }

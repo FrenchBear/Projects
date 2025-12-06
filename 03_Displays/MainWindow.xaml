@@ -8,17 +8,8 @@
         Title="MainWindow" Height="450" Width="800">
         
     <StackPanel>
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <local:SevenSegmentDisplay Digit="-" Width="100"/>
-            <local:SevenSegmentDisplay Digit="1" Dot="True" Width="100"/>
-            <local:SevenSegmentDisplay Digit="2" Width="100"/>
-            <local:SevenSegmentDisplay Digit="3" Dot="False" Width="100"/>
-            <local:SevenSegmentDisplay Digit="A" Width="100"/>
-            <local:SevenSegmentDisplay Digit="F" Dot="False" Width="100"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,10,0,0">
-            <local:DotMatrix3x5Display x:Name="MyDotMatrix" Digit="A" Height="150" Width="100"/>
-            <TextBox x:Name="InputBox" TextChanged="InputBox_TextChanged" MaxLength="1" Width="50" Height="30" VerticalAlignment="Center" Margin="10,0,0,0" />
-        </StackPanel>
+        <TextBox x:Name="InputBox" Text="-12.43 E" Width="100" Height="28" VerticalContentAlignment="Center" Margin="0,20" FontSize="16" />
+        <local:SevenSegmentScreen8 x:Name="SevenSegmentDisplay" Width="500" Value="{Binding ElementName=InputBox, Path=Text}" />
+        <local:Matrix3x5Screen8 x:Name="Matrix3x5Display" Width="500" Value="{Binding ElementName=InputBox, Path=Text}" />
     </StackPanel>
 </Window>
