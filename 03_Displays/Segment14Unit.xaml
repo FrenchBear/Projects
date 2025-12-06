@@ -1,0 +1,51 @@
+﻿<UserControl x:Class="Displays.Segment14Unit"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Displays"
+             mc:Ignorable="d" 
+             d:DesignHeight="100" d:DesignWidth="60">
+    
+    <UserControl.DataContext>
+        <Binding RelativeSource="{RelativeSource Self}" Path="."/>
+    </UserControl.DataContext>
+
+    <Viewbox>
+        <Grid x:Name="SegmentGrid" Width="60" Height="100">
+            <!-- Segments -->
+            <!-- Segment A (Top) -->
+            <Polygon x:Name="SegmentA" Points="10,10 15,5 45,5 50,10 45,15 15,15" Fill="Green" Opacity="{Binding SegmentAOpacity}"/>
+            <!-- Segment B (Top-Right) -->
+            <Polygon x:Name="SegmentB" Points="50,10 55,15 55,45 50,50 45,45 45,15" Fill="Green" Opacity="{Binding SegmentBOpacity}"/>
+            <!-- Segment C (Bottom-Right) -->
+            <Polygon x:Name="SegmentC" Points="50,50 55,55 55,85 50,90 45,85 45,55" Fill="Green" Opacity="{Binding SegmentCOpacity}"/>
+            <!-- Segment D (Bottom) -->
+            <Polygon x:Name="SegmentD" Points="10,90 15,95 45,95 50,90 45,85 15,85" Fill="Green" Opacity="{Binding SegmentDOpacity}"/>
+            <!-- Segment E (Bottom-Left) -->
+            <Polygon x:Name="SegmentE" Points="10,50 15,55 15,85 10,90 5,85 5,55" Fill="Green" Opacity="{Binding SegmentEOpacity}"/>
+            <!-- Segment F (Top-Left) -->
+            <Polygon x:Name="SegmentF" Points="10,10 15,15 15,45 10,50 5,45 5,15" Fill="Green" Opacity="{Binding SegmentFOpacity}"/>
+            <!-- Segment G1 (Middle Left) -->
+            <Polygon x:Name="SegmentG1" Points="10,50 15,45 25,45 30,50 25,55 15,55" Fill="Green" Opacity="{Binding SegmentG1Opacity}"/>
+            <!-- Segment G2 (Middle Right) -->
+            <Polygon x:Name="SegmentG2" Points="30,50 35,45 45,45 50,50 45,55 35,55" Fill="Green" Opacity="{Binding SegmentG2Opacity}"/>
+            <!-- Segment H (Diagonal Top Left) -->
+            <Polygon x:Name="SegmentH" Points="15,15 15,30 25,45 25,30" Fill="Green" Opacity="{Binding SegmentHOpacity}"/>
+            <!-- Segment I (Top Center) -->
+            <Polygon x:Name="SegmentI" Points="25,15 35,15 35,45 30,50 25,45" Fill="Green" Opacity="{Binding SegmentIOpacity}"/>
+            <!-- Segment J (Diagonal Top Right) -->
+            <Polygon x:Name="SegmentJ" Points="35,45 45,30 45,15 35,30" Fill="Green" Opacity="{Binding SegmentJOpacity}"/>
+            <!-- Segment K (Diagonal Bottom Left) -->
+            <Polygon x:Name="SegmentK" Points="15,85 25,70 25,55 15,70" Fill="Green" Opacity="{Binding SegmentKOpacity}"/>
+            <!-- Segment L (Bottom Center) -->
+            <Polygon x:Name="SegmentL" Points="25,85 35,85 35,55 30,50 25,55" Fill="Green" Opacity="{Binding SegmentLOpacity}"/>
+            <!-- Segment M (Diagonel Bottom Right) -->
+            <Polygon x:Name="SegmentM" Points="35,55 35,70 45,85 45,70" Fill="Green" Opacity="{Binding SegmentMOpacity}"/>
+
+            <!-- Dot -->
+            <Ellipse Width="10" Height="10" Fill="Green" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Opacity="{Binding DotOpacity}"/>
+        </Grid>
+    </Viewbox>
+    
+</UserControl>

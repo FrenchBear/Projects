@@ -5,9 +5,9 @@
 
 namespace Displays;
 
-public partial class Segmen7tUnit: UserControl, INotifyPropertyChanged
+public partial class Segment7Unit: UserControl, INotifyPropertyChanged
 {
-    public Segmen7tUnit()
+    public Segment7Unit()
     {
         InitializeComponent();
 
@@ -39,7 +39,7 @@ public partial class Segmen7tUnit: UserControl, INotifyPropertyChanged
     // ----
 
     public static readonly DependencyProperty SymbolProperty =
-        DependencyProperty.Register("Symbol", typeof(char), typeof(Segmen7tUnit), new PropertyMetadata(' ', OnSymbolChanged));
+        DependencyProperty.Register("Symbol", typeof(char), typeof(Segment7Unit), new PropertyMetadata(' ', OnSymbolChanged));
 
     public char Symbol
     {
@@ -50,7 +50,7 @@ public partial class Segmen7tUnit: UserControl, INotifyPropertyChanged
     // ----
 
     public static readonly DependencyProperty DotProperty =
-        DependencyProperty.Register("Dot", typeof(bool), typeof(Segmen7tUnit), new PropertyMetadata(false, OnDotChanged));
+        DependencyProperty.Register("Dot", typeof(bool), typeof(Segment7Unit), new PropertyMetadata(false, OnDotChanged));
 
     public bool Dot
     {
@@ -61,7 +61,7 @@ public partial class Segmen7tUnit: UserControl, INotifyPropertyChanged
     // ----
 
     public static readonly DependencyProperty VariantProperty =
-        DependencyProperty.Register("Variant", typeof(int), typeof(Segmen7tUnit),
+        DependencyProperty.Register("Variant", typeof(int), typeof(Segment7Unit),
         new PropertyMetadata(0, new PropertyChangedCallback(OnVariantChanged)));
 
     public int Variant
@@ -72,11 +72,11 @@ public partial class Segmen7tUnit: UserControl, INotifyPropertyChanged
 
     // ----
 
-    private static void OnSymbolChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((Segmen7tUnit)d).UpdateSegments();
+    private static void OnSymbolChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((Segment7Unit)d).UpdateSegments();
 
-    private static void OnDotChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((Segmen7tUnit)d).UpdateDot();
+    private static void OnDotChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((Segment7Unit)d).UpdateDot();
 
-    private static void OnVariantChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((Segmen7tUnit)d).UpdateSegments();
+    private static void OnVariantChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((Segment7Unit)d).UpdateSegments();
 
     public double SegmentAOpacity { get; private set; }
     public double SegmentBOpacity { get; private set; }

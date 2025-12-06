@@ -55,7 +55,7 @@ public partial class Segment7Screen8: UserControl, INotifyPropertyChanged
         Symbols[7] = S7;
     }
 
-    private readonly Segmen7tUnit[] Symbols = new Segmen7tUnit[8];
+    private readonly Segment7Unit[] Symbols = new Segment7Unit[8];
 
     private void UpdateScreen()
     {

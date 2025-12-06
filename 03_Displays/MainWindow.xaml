@@ -5,12 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Displays"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="550" Width="800">
         
     <StackPanel>
         <TextBox x:Name="InputBox" Text="-12.43 E" Width="100" Height="28" VerticalContentAlignment="Center" Margin="0,20" FontSize="16" />
-        <local:Segment7Screen8 x:Name="SevenSegmentDisplay" Width="500" Value="{Binding ElementName=InputBox, Path=Text}" />
+        <local:Segment7Screen8 x:Name="Segment7Display" Width="500" Value="{Binding ElementName=InputBox, Path=Text}" />
         <local:Matrix3x5Screen8 x:Name="Matrix3x5Display" Width="500" Value="{Binding ElementName=InputBox, Path=Text}" />
         <local:Matrix5x7Screen8 x:Name="Matrix5x7Display" Width="500" Variant="0" Value="{Binding ElementName=InputBox, Path=Text}" />
+        <local:Segment14Unit x:Name="Segment14Display" Height="100" Variant="0" Symbol="B" />
     </StackPanel>
 </Window>
