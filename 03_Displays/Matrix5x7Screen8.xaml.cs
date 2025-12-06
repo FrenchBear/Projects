@@ -1,11 +1,6 @@
-﻿// Matrix3x5Display8 UserControl
-// Implement a display of eight standard 3x5 units
-//
-// 2025-12-06   PV
+﻿namespace Displays;
 
-namespace Displays;
-
-public partial class Matrix3x5Screen8: UserControl, INotifyPropertyChanged
+public partial class Matrix5x7Screen8: UserControl, INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -15,7 +10,7 @@ public partial class Matrix3x5Screen8: UserControl, INotifyPropertyChanged
     // ----
 
     public static readonly DependencyProperty ValueProperty =
-        DependencyProperty.Register("Value", typeof(string), typeof(Matrix3x5Screen8), new PropertyMetadata("", OnValueChanged));
+        DependencyProperty.Register("Value", typeof(string), typeof(Matrix5x7Screen8), new PropertyMetadata("", OnValueChanged));
 
     public string Value
     {
@@ -23,12 +18,12 @@ public partial class Matrix3x5Screen8: UserControl, INotifyPropertyChanged
         set => SetValue(ValueProperty, value);
     }
 
-    private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((Matrix3x5Screen8)d).UpdateScreen();
+    private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((Matrix5x7Screen8)d).UpdateScreen();
 
     // ----
 
     public static readonly DependencyProperty VariantProperty =
-        DependencyProperty.Register("Variant", typeof(int), typeof(Matrix3x5Screen8),
+        DependencyProperty.Register("Variant", typeof(int), typeof(Matrix5x7Screen8),
         new PropertyMetadata(0, new PropertyChangedCallback(OnVariantChanged)));
 
     public int Variant
@@ -38,11 +33,11 @@ public partial class Matrix3x5Screen8: UserControl, INotifyPropertyChanged
     }
 
     private static void OnVariantChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        => ((Matrix3x5Screen8)d).UpdateScreen();
+        => ((Matrix5x7Screen8)d).UpdateScreen();
 
     // ----
 
-    public Matrix3x5Screen8()
+    public Matrix5x7Screen8()
     {
         InitializeComponent();
         Symbols[0] = S0;
@@ -55,7 +50,7 @@ public partial class Matrix3x5Screen8: UserControl, INotifyPropertyChanged
         Symbols[7] = S7;
     }
 
-    private readonly Matrix3x5Unit[] Symbols = new Matrix3x5Unit[8];
+    private readonly Matrix5x7Unit[] Symbols = new Matrix5x7Unit[8];
 
     private void UpdateScreen()
     {
@@ -70,15 +65,13 @@ public partial class Matrix3x5Screen8: UserControl, INotifyPropertyChanged
             if (iv == v.Length)
             {
                 while (id < 8)
-                {
-                    Symbols[id].Symbol = ' ';
-                    Symbols[id].Variant = Variant;
-                    id++;
-                }
+                    Symbols[id++].Symbol = ' ';
                 return;
             }
 
-            Symbols[id++].Symbol = v[iv++];
+            Symbols[id].Symbol = v[iv++];
+            Symbols[id].Variant = Variant;
+            id++;
         }
     }
 }

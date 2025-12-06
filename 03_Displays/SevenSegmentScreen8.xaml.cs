@@ -3,11 +3,16 @@
 //
 // 2025-12-06   PV
 
+using System;
+using System.Diagnostics;
+
 namespace Displays;
 
 public partial class SevenSegmentScreen8: UserControl, INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
+
+    // ----
 
     protected void NotifyPropertyChanged(string propertyName)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -23,26 +28,44 @@ public partial class SevenSegmentScreen8: UserControl, INotifyPropertyChanged
 
     private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((SevenSegmentScreen8)d).UpdateScreen();
 
+    // ----
+
+    public static readonly DependencyProperty VariantProperty =
+        DependencyProperty.Register("Variant", typeof(int), typeof(SevenSegmentScreen8),
+        new PropertyMetadata(0, new PropertyChangedCallback(OnVariantChanged)));
+
+    public int Variant
+    {
+        get => (int)GetValue(VariantProperty);
+        set => SetValue(VariantProperty, value);
+    }
+
+    private static void OnVariantChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        => ((SevenSegmentScreen8)d).UpdateScreen();
+
+    // ----
+
     public SevenSegmentScreen8()
     {
         InitializeComponent();
-        Digits[0] = D0;
-        Digits[1] = D1;
-        Digits[2] = D2;
-        Digits[3] = D3;
-        Digits[4] = D4;
-        Digits[5] = D5;
-        Digits[6] = D6;
-        Digits[7] = D7;
+        Symbols[0] = S0;
+        Symbols[1] = S1;
+        Symbols[2] = S2;
+        Symbols[3] = S3;
+        Symbols[4] = S4;
+        Symbols[5] = S5;
+        Symbols[6] = S6;
+        Symbols[7] = S7;
     }
 
-    private readonly SevenSegmentUnit[] Digits = new SevenSegmentUnit[8];
+    private readonly SevenSegmentUnit[] Symbols = new SevenSegmentUnit[8];
 
     private void UpdateScreen()
     {
+
         string v = Value ?? "";
         int iv = 0;     // Index of Value
-        int id = 0;     // Index of Digits
+        int id = 0;     // Index of Symbols
 
         for (; ; )
         {
@@ -52,8 +75,9 @@ public partial class SevenSegmentScreen8: UserControl, INotifyPropertyChanged
             {
                 while (id < 8)
                 {
-                    Digits[id].Digit = ' ';
-                    Digits[id].Dot = false;
+                    Symbols[id].Symbol = ' ';
+                    Symbols[id].Dot = false;
+                    Symbols[id].Variant = Variant;
                     id++;
                 }
                 return;
@@ -64,17 +88,19 @@ public partial class SevenSegmentScreen8: UserControl, INotifyPropertyChanged
             {
                 if (iv == 0 || v[iv - 1] != '.')
                 {
-                    Digits[id - 1].Dot = true;
+                    Symbols[id - 1].Dot = true;
                     iv++;
                     continue;
                 }
-                Digits[id].Digit = ' ';
-                Digits[id].Dot = true;
+                Symbols[id].Symbol = ' ';
+                Symbols[id].Dot = true;
+                Symbols[id].Variant = Variant;
             }
             else
             {
-                Digits[id].Digit = c;
-                Digits[id].Dot = false;
+                Symbols[id].Symbol = c;
+                Symbols[id].Dot = false;
+                Symbols[id].Variant = Variant;
             }
 
             iv++;

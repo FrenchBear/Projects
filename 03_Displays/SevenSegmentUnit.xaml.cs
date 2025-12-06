@@ -19,14 +19,18 @@ public partial class SevenSegmentUnit: UserControl, INotifyPropertyChanged
     protected void NotifyPropertyChanged(string propertyName)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-    public static readonly DependencyProperty DigitProperty =
-        DependencyProperty.Register("Digit", typeof(char), typeof(SevenSegmentUnit), new PropertyMetadata(' ', OnDigitChanged));
+    // ----
 
-    public char Digit
+    public static readonly DependencyProperty SymbolProperty =
+        DependencyProperty.Register("Symbol", typeof(char), typeof(SevenSegmentUnit), new PropertyMetadata(' ', OnSymbolChanged));
+
+    public char Symbol
     {
-        get => (char)GetValue(DigitProperty);
-        set => SetValue(DigitProperty, value);
+        get => (char)GetValue(SymbolProperty);
+        set => SetValue(SymbolProperty, value);
     }
+
+    // ----
 
     public static readonly DependencyProperty DotProperty =
         DependencyProperty.Register("Dot", typeof(bool), typeof(SevenSegmentUnit), new PropertyMetadata(false, OnDotChanged));
@@ -37,9 +41,25 @@ public partial class SevenSegmentUnit: UserControl, INotifyPropertyChanged
         set => SetValue(DotProperty, value);
     }
 
-    private static void OnDigitChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((SevenSegmentUnit)d).UpdateSegments();
+    // ----
+
+    public static readonly DependencyProperty VariantProperty =
+        DependencyProperty.Register("Variant", typeof(int), typeof(SevenSegmentUnit),
+        new PropertyMetadata(0, new PropertyChangedCallback(OnVariantChanged)));
+
+    public int Variant
+    {
+        get => (int)GetValue(VariantProperty);
+        set => SetValue(VariantProperty, value);
+    }
+
+    // ----
+
+    private static void OnSymbolChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((SevenSegmentUnit)d).UpdateSegments();
 
     private static void OnDotChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((SevenSegmentUnit)d).UpdateDot();
+
+    private static void OnVariantChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((SevenSegmentUnit)d).UpdateSegments();
 
     public double SegmentAOpacity { get; private set; }
     public double SegmentBOpacity { get; private set; }
@@ -55,7 +75,7 @@ public partial class SevenSegmentUnit: UserControl, INotifyPropertyChanged
         bool a, b, c, d, e, f, g;
         a = b = c = d = e = f = g = false;
 
-        switch (char.ToUpper(Digit))
+        switch (char.ToUpper(Symbol))
         {
             case '0':
                 a = b = c = d = e = f = true;

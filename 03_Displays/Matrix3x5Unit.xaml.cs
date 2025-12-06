@@ -202,22 +202,43 @@ public partial class Matrix3x5Unit: UserControl
         }
     }
 
-    public static readonly DependencyProperty DigitProperty =
-        DependencyProperty.Register("Digit", typeof(char), typeof(Matrix3x5Unit),
-        new PropertyMetadata(' ', new PropertyChangedCallback(OnDigitChanged)));
+    // ----
+    // Displayed symbol
 
-    public char Digit
+    public static readonly DependencyProperty SymbolProperty =
+        DependencyProperty.Register("Symbol", typeof(char), typeof(Matrix3x5Unit),
+        new PropertyMetadata(' ', new PropertyChangedCallback(OnSymbolChanged)));
+
+    public char Symbol
     {
-        get => (char)GetValue(DigitProperty);
-        set => SetValue(DigitProperty, value);
+        get => (char)GetValue(SymbolProperty);
+        set => SetValue(SymbolProperty, value);
     }
 
-    private static void OnDigitChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    private static void OnSymbolChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         => ((Matrix3x5Unit)d).UpdateDisplay();
+
+    // ----
+    // Currently not used
+
+    public static readonly DependencyProperty VariantProperty =
+        DependencyProperty.Register("Variant", typeof(int), typeof(Matrix3x5Unit),
+        new PropertyMetadata(0, new PropertyChangedCallback(OnVariantChanged)));
+
+    public int Variant
+    {
+        get => (int)GetValue(VariantProperty);
+        set => SetValue(VariantProperty, value);
+    }
+
+    private static void OnVariantChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        => ((Matrix3x5Unit)d).UpdateDisplay();
+
+    // ----
 
     private void UpdateDisplay()
     {
-        if (CharMap.TryGetValue(char.ToUpper(Digit), out bool[,]? pattern))
+        if (CharMap.TryGetValue(char.ToUpper(Symbol), out bool[,]? pattern))
         {
             for (int row = 0; row < 5; row++)
                 for (int col = 0; col < 3; col++)

@@ -9,14 +9,14 @@
     
     <Viewbox>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <local:SevenSegmentUnit x:Name="D0" Width="10"/>
-            <local:SevenSegmentUnit x:Name="D1" Width="10"/>
-            <local:SevenSegmentUnit x:Name="D2" Width="10"/>
-            <local:SevenSegmentUnit x:Name="D3" Width="10"/>
-            <local:SevenSegmentUnit x:Name="D4" Width="10"/>
-            <local:SevenSegmentUnit x:Name="D5" Width="10"/>
-            <local:SevenSegmentUnit x:Name="D6" Width="10"/>
-            <local:SevenSegmentUnit x:Name="D7" Width="10"/>
+            <local:SevenSegmentUnit x:Name="S0" Width="10"/>
+            <local:SevenSegmentUnit x:Name="S1" Width="10"/>
+            <local:SevenSegmentUnit x:Name="S2" Width="10"/>
+            <local:SevenSegmentUnit x:Name="S3" Width="10"/>
+            <local:SevenSegmentUnit x:Name="S4" Width="10"/>
+            <local:SevenSegmentUnit x:Name="S5" Width="10"/>
+            <local:SevenSegmentUnit x:Name="S6" Width="10"/>
+            <local:SevenSegmentUnit x:Name="S7" Width="10"/>
         </StackPanel>
     </Viewbox>
 

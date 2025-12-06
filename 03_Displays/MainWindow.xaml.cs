@@ -7,11 +7,11 @@ namespace Displays;
 
 public partial class MainWindow: Window
 {
-    public MainWindow() => InitializeComponent();
-
-    private void InputBox_TextChanged(object sender, TextChangedEventArgs e)
+    public MainWindow()
     {
-        SevenSegmentDisplay.Value = InputBox.Text;
-        Matrix3x5Display.Value = InputBox.Text;
+        InitializeComponent();
+        //Loaded += (s, e) => Matrix5x7Display.Variant = 1;
     }
+
+    private void MainWindow_Loaded(object sender, RoutedEventArgs e) => throw new System.NotImplementedException();
 }
