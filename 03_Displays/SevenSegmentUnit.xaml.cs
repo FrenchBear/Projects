@@ -10,6 +10,23 @@ public partial class SevenSegmentUnit: UserControl, INotifyPropertyChanged
     public SevenSegmentUnit()
     {
         InitializeComponent();
+
+        const double m = 1;
+        const double t = 4.5;
+
+        static PointCollection HorizSegment(double x, double y, double w)
+            => [new Point(x, y), new Point(x + t, y - t), new Point(x + w - t, y - t), new Point(x + w, y), new Point(x + w - t, y + t), new Point(x + t, y + t)];
+        static PointCollection VertSegment(double x, double y, double h)
+            => [new Point(x, y), new Point(x + t, y + t), new Point(x + t, y + h - t), new Point(x, y + h), new Point(x - t, y + h - t), new Point(x - t, y + t)];
+
+        SegmentA.Points = HorizSegment(10 + m, 10, 40 - 2 * m);
+        SegmentB.Points = VertSegment(50, 10 + m, 40 - 2 * m);
+        SegmentC.Points = VertSegment(50, 50 + m, 40 - 2 * m);
+        SegmentD.Points = HorizSegment(10 + m, 90, 40 - 2 * m);
+        SegmentE.Points = VertSegment(10, 50 + m, 40 - 2 * m);
+        SegmentF.Points = VertSegment(10, 10 + m, 40 - 2 * m);
+        SegmentG.Points = HorizSegment(10 + m, 50, 40 - 2 * m);
+
         UpdateSegments();
         UpdateDot();
     }

@@ -16,19 +16,19 @@
         <Grid x:Name="SegmentGrid" Width="60" Height="100">
             <!-- Segments -->
             <!-- Segment A (Top) -->
-            <Polygon Points="10,10 15,5 45,5 50,10 45,15 15,15" Fill="Red" Opacity="{Binding SegmentAOpacity}"/>
+            <Polygon x:Name="SegmentA" Points="10,10 15,5 45,5 50,10 45,15 15,15" Fill="Red" Opacity="{Binding SegmentAOpacity}"/>
             <!-- Segment B (Top-Right) -->
-            <Polygon Points="50,10 55,15 55,45 50,50 45,45 45,15" Fill="Red" Opacity="{Binding SegmentBOpacity}"/>
+            <Polygon x:Name="SegmentB" Points="50,10 55,15 55,45 50,50 45,45 45,15" Fill="Red" Opacity="{Binding SegmentBOpacity}"/>
             <!-- Segment C (Bottom-Right) -->
-            <Polygon Points="50,50 55,55 55,85 50,90 45,85 45,55" Fill="Red" Opacity="{Binding SegmentCOpacity}"/>
+            <Polygon x:Name="SegmentC" Points="50,50 55,55 55,85 50,90 45,85 45,55" Fill="Red" Opacity="{Binding SegmentCOpacity}"/>
             <!-- Segment D (Bottom) -->
-            <Polygon Points="10,90 15,95 45,95 50,90 45,85 15,85" Fill="Red" Opacity="{Binding SegmentDOpacity}"/>
+            <Polygon x:Name="SegmentD" Points="10,90 15,95 45,95 50,90 45,85 15,85" Fill="Red" Opacity="{Binding SegmentDOpacity}"/>
             <!-- Segment E (Bottom-Left) -->
-            <Polygon Points="10,50 15,55 15,85 10,90 5,85 5,55" Fill="Red" Opacity="{Binding SegmentEOpacity}"/>
+            <Polygon x:Name="SegmentE" Points="10,50 15,55 15,85 10,90 5,85 5,55" Fill="Red" Opacity="{Binding SegmentEOpacity}"/>
             <!-- Segment F (Top-Left) -->
-            <Polygon Points="10,10 15,15 15,45 10,50 5,45 5,15" Fill="Red" Opacity="{Binding SegmentFOpacity}"/>
+            <Polygon x:Name="SegmentF" Points="10,10 15,15 15,45 10,50 5,45 5,15" Fill="Red" Opacity="{Binding SegmentFOpacity}"/>
             <!-- Segment G (Middle) -->
-            <Polygon Points="10,50 15,45 45,45 50,50 45,55 15,55" Fill="Red" Opacity="{Binding SegmentGOpacity}"/>
+            <Polygon x:Name="SegmentG" Points="10,50 15,45 45,45 50,50 45,55 15,55" Fill="Red" Opacity="{Binding SegmentGOpacity}"/>
 
             <!-- Dot -->
             <Ellipse Width="10" Height="10" Fill="Red" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Opacity="{Binding DotOpacity}"/>
