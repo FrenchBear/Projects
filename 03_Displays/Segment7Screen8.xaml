@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Displays.SevenSegmentScreen8"
+﻿<UserControl x:Class="Displays.Segment7Screen8"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -9,14 +9,14 @@
     
     <Viewbox>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <local:SevenSegmentUnit x:Name="S0" Width="10"/>
-            <local:SevenSegmentUnit x:Name="S1" Width="10"/>
-            <local:SevenSegmentUnit x:Name="S2" Width="10"/>
-            <local:SevenSegmentUnit x:Name="S3" Width="10"/>
-            <local:SevenSegmentUnit x:Name="S4" Width="10"/>
-            <local:SevenSegmentUnit x:Name="S5" Width="10"/>
-            <local:SevenSegmentUnit x:Name="S6" Width="10"/>
-            <local:SevenSegmentUnit x:Name="S7" Width="10"/>
+            <local:Segmen7tUnit x:Name="S0" Width="10"/>
+            <local:Segmen7tUnit x:Name="S1" Width="10"/>
+            <local:Segmen7tUnit x:Name="S2" Width="10"/>
+            <local:Segmen7tUnit x:Name="S3" Width="10"/>
+            <local:Segmen7tUnit x:Name="S4" Width="10"/>
+            <local:Segmen7tUnit x:Name="S5" Width="10"/>
+            <local:Segmen7tUnit x:Name="S6" Width="10"/>
+            <local:Segmen7tUnit x:Name="S7" Width="10"/>
         </StackPanel>
     </Viewbox>
 

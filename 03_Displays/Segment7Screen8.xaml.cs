@@ -1,14 +1,11 @@
-﻿// SevenSegmentDisplay8 UserControl
+﻿// Segment7Display8 UserControl
 // Implement a display of eight standard 7-segment units
 //
 // 2025-12-06   PV
 
-using System;
-using System.Diagnostics;
-
 namespace Displays;
 
-public partial class SevenSegmentScreen8: UserControl, INotifyPropertyChanged
+public partial class Segment7Screen8: UserControl, INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -18,7 +15,7 @@ public partial class SevenSegmentScreen8: UserControl, INotifyPropertyChanged
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     public static readonly DependencyProperty ValueProperty =
-        DependencyProperty.Register("Value", typeof(string), typeof(SevenSegmentScreen8), new PropertyMetadata("", OnValueChanged));
+        DependencyProperty.Register("Value", typeof(string), typeof(Segment7Screen8), new PropertyMetadata("", OnValueChanged));
 
     public string Value
     {
@@ -26,12 +23,12 @@ public partial class SevenSegmentScreen8: UserControl, INotifyPropertyChanged
         set => SetValue(ValueProperty, value);
     }
 
-    private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((SevenSegmentScreen8)d).UpdateScreen();
+    private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((Segment7Screen8)d).UpdateScreen();
 
     // ----
 
     public static readonly DependencyProperty VariantProperty =
-        DependencyProperty.Register("Variant", typeof(int), typeof(SevenSegmentScreen8),
+        DependencyProperty.Register("Variant", typeof(int), typeof(Segment7Screen8),
         new PropertyMetadata(0, new PropertyChangedCallback(OnVariantChanged)));
 
     public int Variant
@@ -41,11 +38,11 @@ public partial class SevenSegmentScreen8: UserControl, INotifyPropertyChanged
     }
 
     private static void OnVariantChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        => ((SevenSegmentScreen8)d).UpdateScreen();
+        => ((Segment7Screen8)d).UpdateScreen();
 
     // ----
 
-    public SevenSegmentScreen8()
+    public Segment7Screen8()
     {
         InitializeComponent();
         Symbols[0] = S0;
@@ -58,7 +55,7 @@ public partial class SevenSegmentScreen8: UserControl, INotifyPropertyChanged
         Symbols[7] = S7;
     }
 
-    private readonly SevenSegmentUnit[] Symbols = new SevenSegmentUnit[8];
+    private readonly Segmen7tUnit[] Symbols = new Segmen7tUnit[8];
 
     private void UpdateScreen()
     {

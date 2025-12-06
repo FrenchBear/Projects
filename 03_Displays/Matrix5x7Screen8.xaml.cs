@@ -1,4 +1,9 @@
-﻿namespace Displays;
+﻿// Matrix5x7Screen8 UserControl
+// Implement a display of eight standard 5x7 matrix display
+//
+// 2025-12-06   PV
+
+namespace Displays;
 
 public partial class Matrix5x7Screen8: UserControl, INotifyPropertyChanged
 {

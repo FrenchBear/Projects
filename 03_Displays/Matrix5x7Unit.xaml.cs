@@ -1,4 +1,9 @@
-﻿namespace Displays;
+﻿// Matrix5x7Unit UserControl
+// Implement a standard 5x7 matrix display
+//
+// 2025-12-06   PV
+
+namespace Displays;
 
 #pragma warning disable IDE0230 // Use UTF-8 string literal
 

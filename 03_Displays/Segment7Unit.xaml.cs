@@ -1,13 +1,13 @@
-// SevenSegmentUnit UserControl
+// Segment7Unit UserControl
 // Implement a standard 7-segment display with a dot
 //
 // 2025-12-06   PV
 
 namespace Displays;
 
-public partial class SevenSegmentUnit: UserControl, INotifyPropertyChanged
+public partial class Segmen7tUnit: UserControl, INotifyPropertyChanged
 {
-    public SevenSegmentUnit()
+    public Segmen7tUnit()
     {
         InitializeComponent();
 
@@ -39,7 +39,7 @@ public partial class SevenSegmentUnit: UserControl, INotifyPropertyChanged
     // ----
 
     public static readonly DependencyProperty SymbolProperty =
-        DependencyProperty.Register("Symbol", typeof(char), typeof(SevenSegmentUnit), new PropertyMetadata(' ', OnSymbolChanged));
+        DependencyProperty.Register("Symbol", typeof(char), typeof(Segmen7tUnit), new PropertyMetadata(' ', OnSymbolChanged));
 
     public char Symbol
     {
@@ -50,7 +50,7 @@ public partial class SevenSegmentUnit: UserControl, INotifyPropertyChanged
     // ----
 
     public static readonly DependencyProperty DotProperty =
-        DependencyProperty.Register("Dot", typeof(bool), typeof(SevenSegmentUnit), new PropertyMetadata(false, OnDotChanged));
+        DependencyProperty.Register("Dot", typeof(bool), typeof(Segmen7tUnit), new PropertyMetadata(false, OnDotChanged));
 
     public bool Dot
     {
@@ -61,7 +61,7 @@ public partial class SevenSegmentUnit: UserControl, INotifyPropertyChanged
     // ----
 
     public static readonly DependencyProperty VariantProperty =
-        DependencyProperty.Register("Variant", typeof(int), typeof(SevenSegmentUnit),
+        DependencyProperty.Register("Variant", typeof(int), typeof(Segmen7tUnit),
         new PropertyMetadata(0, new PropertyChangedCallback(OnVariantChanged)));
 
     public int Variant
@@ -72,11 +72,11 @@ public partial class SevenSegmentUnit: UserControl, INotifyPropertyChanged
 
     // ----
 
-    private static void OnSymbolChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((SevenSegmentUnit)d).UpdateSegments();
+    private static void OnSymbolChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((Segmen7tUnit)d).UpdateSegments();
 
-    private static void OnDotChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((SevenSegmentUnit)d).UpdateDot();
+    private static void OnDotChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((Segmen7tUnit)d).UpdateDot();
 
-    private static void OnVariantChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((SevenSegmentUnit)d).UpdateSegments();
+    private static void OnVariantChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((Segmen7tUnit)d).UpdateSegments();
 
     public double SegmentAOpacity { get; private set; }
     public double SegmentBOpacity { get; private set; }
