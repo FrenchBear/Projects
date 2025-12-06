@@ -11,3 +11,5 @@ global using System.Windows.Media.Imaging;
 global using System.Windows.Navigation;
 global using System.Windows.Shapes;
 global using System.ComponentModel;
+global using System.Collections.Generic;
+global using System.Linq;

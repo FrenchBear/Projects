@@ -1,11 +1,18 @@
 ﻿namespace Displays;
 
-#pragma warning disable IDE0021 // Use expression body for constructor
-
 public partial class MainWindow: Window
 {
-    public MainWindow()
+    public MainWindow() => InitializeComponent();
+
+    private void InputBox_TextChanged(object sender, TextChangedEventArgs e)
     {
-        InitializeComponent();
+        if (sender is TextBox { Text: { Length: > 0 } } textBox)
+        {
+            MyDotMatrix.Digit = textBox.Text[0];
+        }
+        else
+        {
+            MyDotMatrix.Digit = ' ';
+        }
     }
 }
