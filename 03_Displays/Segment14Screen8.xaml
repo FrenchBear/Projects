@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="Displays.Segment14Screen8"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Displays"
+             mc:Ignorable="d" 
+             d:DesignHeight="100" d:DesignWidth="480">
+
+    <Viewbox>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <local:Segment14Unit x:Name="S0" Width="10"/>
+            <local:Segment14Unit x:Name="S1" Width="10"/>
+            <local:Segment14Unit x:Name="S2" Width="10"/>
+            <local:Segment14Unit x:Name="S3" Width="10"/>
+            <local:Segment14Unit x:Name="S4" Width="10"/>
+            <local:Segment14Unit x:Name="S5" Width="10"/>
+            <local:Segment14Unit x:Name="S6" Width="10"/>
+            <local:Segment14Unit x:Name="S7" Width="10"/>
+        </StackPanel>
+    </Viewbox>
+    
+</UserControl>

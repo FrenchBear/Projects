@@ -1,4 +1,4 @@
-﻿// Segment7Display8 UserControl
+﻿// Segment7Screen8 UserControl
 // Implement a display of eight standard 7-segment units
 //
 // 2025-12-06   PV
