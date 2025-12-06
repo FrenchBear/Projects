@@ -6,7 +6,15 @@
         xmlns:local="clr-namespace:Displays"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+        
     <Grid>
-
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <local:SevenSegmentDisplay Digit="-" Width="100"/>
+            <local:SevenSegmentDisplay Digit="1" Dot="True" Width="100"/>
+            <local:SevenSegmentDisplay Digit="2" Width="100"/>
+            <local:SevenSegmentDisplay Digit="3" Dot="False" Width="100"/>
+            <local:SevenSegmentDisplay Digit="A" Width="100"/>
+            <local:SevenSegmentDisplay Digit="F" Dot="False" Width="100"/>
+        </StackPanel>
     </Grid>
 </Window>
