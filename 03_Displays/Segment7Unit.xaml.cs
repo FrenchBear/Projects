@@ -15,11 +15,11 @@ public partial class Segment7Unit: UserControl, INotifyPropertyChanged
 
     void InitializeVariant()
     {
-        // Variant 0: Jointive thick segments
-        // Variant 1: Separated a bit thinner segments
+        // Variant 0: Separated a bit thinner segments
+        // Variant 1: Jointive thick segments
 
-        double m = Variant == 1 ? 1 : 0;
-        double t = Variant == 1 ? 4.5 : 5;
+        double m = Variant == 1 ? 0 : 1;
+        double t = Variant == 1 ? 5 : 4.5;
 
         PointCollection HorizSegment(double x, double y, double w)
             => [new Point(x, y), new Point(x + t, y - t), new Point(x + w - t, y - t), new Point(x + w, y), new Point(x + w - t, y + t), new Point(x + t, y + t)];
@@ -155,7 +155,9 @@ public partial class Segment7Unit: UserControl, INotifyPropertyChanged
         { 'U', [F, T, T, T, T, T, F] },
         { 'u', [F, F, T, T, T, F, F] },
         { '[', [T, F, F, T, T, T, F] },
+        { '|', [F, T, T, F, F, F, F] },
         { ']', [T, T, T, T, F, F, F] },
+        { '~', [F, T, F, F, T, F, T] },
     };
 
     private void UpdateSegments()

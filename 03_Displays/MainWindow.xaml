@@ -10,7 +10,7 @@
     <StackPanel>
         <StackPanel Orientation="Horizontal" Margin="0,20" TextBlock.FontSize="16" HorizontalAlignment="Center" >
             <Label>Value:</Label>
-            <TextBox x:Name="InputBox" Text="-1.23" Width="100" Height="28" VerticalContentAlignment="Center" />
+            <TextBox x:Name="InputBox" Text="-1.234" Width="100" Height="28" VerticalContentAlignment="Center" />
             <Label Margin="12,0,0,0">Variant:</Label>
             <TextBox x:Name="VariantTextBox" Text="0" Width="50" Height="28" VerticalContentAlignment="Center" />
         </StackPanel>
@@ -20,18 +20,19 @@
         <local:Segment14Screen8 x:Name="Segment14Display" Width="500" Value="{Binding ElementName=InputBox, Path=Text}" Variant="{Binding ElementName=VariantTextBox, Path=Text}" />
 
         <!-- All 14-segment symbols -->
-        <!--<local:Segment14Screen8 Value=" !&quot;#$%&amp;'" Width="400" />
-            <local:Segment14Screen8 Value="()*+,-./" Width="400" />
-            <local:Segment14Screen8 Value="01234567" Width="400" />
-            <local:Segment14Screen8 Value="89:;&lt;=>?" Width="400" />
-            <local:Segment14Screen8 Value="@ABCDEFG" Width="400" />
-            <local:Segment14Screen8 Value="HIJKLMNO" Width="400" />
-            <local:Segment14Screen8 Value="PQRSTUVW" Width="400" />
-            <local:Segment14Screen8 Value="XYZ[\]^_" Width="400" />
-            <local:Segment14Screen8 Value="`abcdefg" Width="400" />
-            <local:Segment14Screen8 Value="hijklmno" Width="400" />
-            <local:Segment14Screen8 Value="pqrstuvw" Width="400" />
-            <local:Segment14Screen8 Value="xyz{|}~" Width="400" />-->
-
+        <!--<WrapPanel>
+            <local:Segment14Screen8 Variant="1" Value=" !&quot;#$%&amp;'" Width="400" />
+            <local:Segment14Screen8 Variant="1" Value="()*+,-./" Width="400" />
+            <local:Segment14Screen8 Variant="1" Value="01234567" Width="400" />
+            <local:Segment14Screen8 Variant="1" Value="89:;&lt;=>?" Width="400" />
+            <local:Segment14Screen8 Variant="1" Value="@ABCDEFG" Width="400" />
+            <local:Segment14Screen8 Variant="1" Value="HIJKLMNO" Width="400" />
+            <local:Segment14Screen8 Variant="1" Value="PQRSTUVW" Width="400" />
+            <local:Segment14Screen8 Variant="1" Value="XYZ[\]^_" Width="400" />
+            <local:Segment14Screen8 Variant="1" Value="`abcdefg" Width="400" />
+            <local:Segment14Screen8 Variant="1" Value="hijklmno" Width="400" />
+            <local:Segment14Screen8 Variant="1" Value="pqrstuvw" Width="400" />
+            <local:Segment14Screen8 Variant="1"  Value="xyz{|}~" Width="400" />
+        </WrapPanel>-->
     </StackPanel>
 </Window>

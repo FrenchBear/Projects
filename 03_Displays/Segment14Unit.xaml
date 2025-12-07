@@ -44,7 +44,7 @@
             <Polygon x:Name="SegmentM" Points="50,90 45,70 38,55 30,50 35,71 42,85" Fill="Green" Opacity="{Binding SegmentMOpacity}" MouseDown="Segment_MouseDown" />
 
             <!-- Dot -->
-            <Ellipse Width="10" Height="10" Fill="Green" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Opacity="{Binding DotOpacity}"/>
+            <Ellipse Width="10" Height="10" Fill="Green" Margin="0,0,-3,3" VerticalAlignment="Bottom" HorizontalAlignment="Right" Opacity="{Binding DotOpacity}"/>
         </Grid>
     </Viewbox>
     

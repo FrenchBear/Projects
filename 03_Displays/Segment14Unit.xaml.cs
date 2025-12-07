@@ -17,23 +17,6 @@ public partial class Segment14Unit: UserControl, INotifyPropertyChanged
     {
         if (Variant == 1)
         {
-            SegmentA.Points = PointCollection.Parse("10,10 15,5 45,5 50,10 42,15 18,15");
-            SegmentB.Points = PointCollection.Parse("50,10 55,15 55,45 50,50 45,45 45,30");
-            SegmentC.Points = PointCollection.Parse("50,50 55,55 55,85 50,90 45,70 45,55");
-            SegmentD.Points = PointCollection.Parse("10,90 15,95 45,95 50,90 42,85 18,85");
-            SegmentE.Points = PointCollection.Parse("10,50 15,55 15,70 10,90 5,85 5,55");
-            SegmentF.Points = PointCollection.Parse("10,10 15,30 15,45 10,50 5,45 5,15");
-            SegmentG1.Points = PointCollection.Parse("10,50 15,45 22,45 30,50 22,55 15,55");
-            SegmentG2.Points = PointCollection.Parse("30,50 38,45 45,45 50,50 45,55 38,55");
-            SegmentH.Points = PointCollection.Parse("10,10 15,30 22,45 30,50 25,29 18,15");
-            SegmentI.Points = PointCollection.Parse("25,15 35,15 35,29 30,50 25,29");
-            SegmentJ.Points = PointCollection.Parse("50,10 45,30 38,45 30,50 35,29 42,15");
-            SegmentK.Points = PointCollection.Parse("10,90 15,70 22,55 30,50 25,71 18,85");
-            SegmentL.Points = PointCollection.Parse("25,85 35,85 35,71 30,50 25,71");
-            SegmentM.Points = PointCollection.Parse("50,90 45,70 38,55 30,50 35,71 42,85");
-        }
-        else
-        {
             SegmentA.Points = PointCollection.Parse("10,10 15,5 45,5 50,10 45,15 15,15");
             SegmentB.Points = PointCollection.Parse("50,10 55,15 55,45 50,50 45,45 45,15");
             SegmentC.Points = PointCollection.Parse("50,50 55,55 55,85 50,90 45,85 45,55");
@@ -49,6 +32,25 @@ public partial class Segment14Unit: UserControl, INotifyPropertyChanged
             SegmentL.Points = PointCollection.Parse("25,85 35,85 35,55 30,50 25,55");
             SegmentM.Points = PointCollection.Parse("35,55 35,70 45,85 45,70");
         }
+        else
+        {
+            SegmentA.Points = PointCollection.Parse("10,10 15,5 45,5 50,10 42,15 35,15 30,10 25,15 18,15");
+            SegmentB.Points = PointCollection.Parse("50,10 55,15 55,45 50,50 45,45 45,30");
+            SegmentC.Points = PointCollection.Parse("50,50 55,55 55,85 50,90 45,70 45,55");
+            SegmentD.Points = PointCollection.Parse("10,90 15,95 45,95 50,90 42,85 35,85 30,90 25,85 18,85");
+            SegmentE.Points = PointCollection.Parse("10,50 15,55 15,70 10,90 5,85 5,55");
+            SegmentF.Points = PointCollection.Parse("10,10 15,30 15,45 10,50 5,45 5,15");
+            SegmentG1.Points = PointCollection.Parse("10,50 15,45 22,45 30,50 22,55 15,55");
+            SegmentG2.Points = PointCollection.Parse("30,50 38,45 45,45 50,50 45,55 38,55");
+            SegmentH.Points = PointCollection.Parse("10,10 15,30 22,45 30,50 25,29 18,15");
+            SegmentI.Points = PointCollection.Parse("25,15 30,10 35,15 35,29 30,50 25,29");
+            SegmentJ.Points = PointCollection.Parse("50,10 45,30 38,45 30,50 35,29 42,15");
+            SegmentK.Points = PointCollection.Parse("10,90 15,70 22,55 30,50 25,71 18,85");
+            SegmentL.Points = PointCollection.Parse("25,85 30,90 35,85 35,71 30,50 25,71");
+            SegmentM.Points = PointCollection.Parse("50,90 45,70 38,55 30,50 35,71 42,85");
+        }
+
+        UpdateSegments();
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
