@@ -3,6 +3,9 @@
 //
 // 2025-12-06   PV
 
+// Path Markup Syntax:
+// https://learn.microsoft.com/en-us/dotnet/desktop/wpf/graphics-multimedia/path-markup-syntax
+
 namespace Displays;
 
 public partial class Matrix3x5Unit: UserControl
@@ -179,11 +182,12 @@ public partial class Matrix3x5Unit: UserControl
         }
     };
 
-    private readonly Rectangle[,] dots = new Rectangle[5, 3];
+    private readonly Shape[,] dots = new Shape[5, 3];
 
-    public Matrix3x5Unit()
+    void InitializeStyle()
     {
-        InitializeComponent();
+        DotMatrixGrid.Children.Clear();
+
         for (int row = 0; row < 5; row++)
         {
             for (int col = 0; col < 3; col++)
@@ -200,6 +204,12 @@ public partial class Matrix3x5Unit: UserControl
                 dots[row, col] = dot;
             }
         }
+    }
+
+    public Matrix3x5Unit()
+    {
+        InitializeComponent();
+        InitializeStyle();
     }
 
     // ----
@@ -219,7 +229,7 @@ public partial class Matrix3x5Unit: UserControl
         => ((Matrix3x5Unit)d).UpdateDisplay();
 
     // ----
-    // Currently not used
+    // Style
 
     public static readonly DependencyProperty VariantProperty =
         DependencyProperty.Register("Variant", typeof(int), typeof(Matrix3x5Unit),
@@ -232,7 +242,10 @@ public partial class Matrix3x5Unit: UserControl
     }
 
     private static void OnVariantChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        => ((Matrix3x5Unit)d).UpdateDisplay();
+    {
+        ((Matrix3x5Unit)d).InitializeStyle();
+        ((Matrix3x5Unit)d).UpdateDisplay();
+    }
 
     // ----
 

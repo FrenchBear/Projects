@@ -21,6 +21,9 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
+
+            <Path Fill="Orange" Data="M 0,10 A 10,10 90 0 1 10,0 L 10,10" />
+
         </Grid>
     </Viewbox>
 </UserControl>

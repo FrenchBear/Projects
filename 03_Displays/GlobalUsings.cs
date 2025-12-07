@@ -1,5 +1,5 @@
 // Global Usings
-// Move all using to a global file
+// Group all using into a global file
 //
 // 2025-12-06   PV
 

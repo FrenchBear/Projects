@@ -6,15 +6,21 @@
         xmlns:local="clr-namespace:Displays"
         mc:Ignorable="d"
         Title="MainWindow" Height="550" Width="800">
-        
-    <StackPanel>
-        <TextBox x:Name="InputBox" Text="A" Width="100" Height="28" VerticalContentAlignment="Center" Margin="0,20" FontSize="16" />
-        <local:Segment7Screen8 x:Name="Segment7Display" Width="500" Value="{Binding ElementName=InputBox, Path=Text}" />
-        <local:Matrix3x5Screen8 x:Name="Matrix3x5Display" Width="500" Value="{Binding ElementName=InputBox, Path=Text}" />
-        <local:Matrix5x7Screen8 x:Name="Matrix5x7Display" Width="500" Variant="0" Value="{Binding ElementName=InputBox, Path=Text}" />
-        <local:Segment14Screen8 x:Name="Segment14Display" Width="500" Value="{Binding ElementName=InputBox, Path=Text}" />
 
-            <!--<local:Segment14Screen8 Value=" !&quot;#$%&amp;'" Width="400" />
+    <StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0,20" TextBlock.FontSize="16" HorizontalAlignment="Center" >
+            <Label>Value:</Label>
+            <TextBox x:Name="InputBox" Text="A" Width="100" Height="28" VerticalContentAlignment="Center" />
+            <Label Margin="12,0,0,0">Style:</Label>
+            <TextBox x:Name="StyleTextBox" Text="0" Width="50" Height="28" VerticalContentAlignment="Center" />
+        </StackPanel>
+        <local:Segment7Screen8 x:Name="Segment7Display" Width="500"   Value="{Binding ElementName=InputBox, Path=Text}" Style="{Binding ElementName=StyleTextBox, Path=Text}" />
+        <local:Matrix3x5Screen8 x:Name="Matrix3x5Display" Width="500" Value="{Binding ElementName=InputBox, Path=Text}" Style="{Binding ElementName=StyleTextBox, Path=Text}" />
+        <local:Matrix5x7Screen8 x:Name="Matrix5x7Display" Width="500" Variant="0" Value="{Binding ElementName=InputBox, Path=Text}" Style="{Binding ElementName=StyleTextBox, Path=Text}" />
+        <local:Segment14Screen8 x:Name="Segment14Display" Width="500" Value="{Binding ElementName=InputBox, Path=Text}" Style="{Binding ElementName=StyleTextBox, Path=Text}" />
+
+        <!-- All 14-segment symbols -->
+        <!--<local:Segment14Screen8 Value=" !&quot;#$%&amp;'" Width="400" />
             <local:Segment14Screen8 Value="()*+,-./" Width="400" />
             <local:Segment14Screen8 Value="01234567" Width="400" />
             <local:Segment14Screen8 Value="89:;&lt;=>?" Width="400" />

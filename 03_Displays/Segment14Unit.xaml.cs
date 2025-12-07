@@ -81,7 +81,7 @@ public partial class Segment14Unit: UserControl, INotifyPropertyChanged
     // Truth table for 14-segment display, mapping ASCII characters 32-126 to a 14-bit integer.
     // Bit 13=A, 12=B, 11=C, 10=D, 9=E, 8=F, 7=G1, 6=G2, 5=H, 4=I, 3=J, 2=K, 1=L, 0=M
     //       [2    1]    [8    4    2    1]   [8     4     2    1]   [8    4    2    1]
-    private static Dictionary<char, int> CharToSegments = new()
+    private static readonly Dictionary<char, int> CharToSegments = new()
     {
         { ' ', 0x0000 },  // 
         { '!', 0x0012 },  // I,L
