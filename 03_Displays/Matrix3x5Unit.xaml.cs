@@ -10,176 +10,66 @@ namespace Displays;
 
 public partial class Matrix3x5Unit: UserControl
 {
+    const bool F = false;
+    const bool T = true;
+
     private static readonly Dictionary<char, bool[,]> CharMap = new()
     {
-        ['0'] = new bool[,]
-        {
-            { true, true, true },
-            { true, false, true },
-            { true, false, true },
-            { true, false, true },
-            { true, true, true }
-        },
-        ['1'] = new bool[,]
-        {
-            { false, true, false },
-            { false, true, false },
-            { false, true, false },
-            { false, true, false },
-            { false, true, false }
-        },
-        ['2'] = new bool[,]
-        {
-            { true, true, true },
-            { false, false, true },
-            { true, true, true },
-            { true, false, false },
-            { true, true, true }
-        },
-        ['3'] = new bool[,]
-        {
-            { true, true, true },
-            { false, false, true },
-            { true, true, true },
-            { false, false, true },
-            { true, true, true }
-        },
-        ['4'] = new bool[,]
-        {
-            { true, false, true },
-            { true, false, true },
-            { true, true, true },
-            { false, false, true },
-            { false, false, true }
-        },
-        ['5'] = new bool[,]
-        {
-            { true, true, true },
-            { true, false, false },
-            { true, true, true },
-            { false, false, true },
-            { true, true, true }
-        },
-        ['6'] = new bool[,]
-        {
-            { true, true, true },
-            { true, false, false },
-            { true, true, true },
-            { true, false, true },
-            { true, true, true }
-        },
-        ['7'] = new bool[,]
-        {
-            { true, true, true },
-            { false, false, true },
-            { false, false, true },
-            { false, false, true },
-            { false, false, true }
-        },
-        ['8'] = new bool[,]
-        {
-            { true, true, true },
-            { true, false, true },
-            { true, true, true },
-            { true, false, true },
-            { true, true, true }
-        },
-        ['9'] = new bool[,]
-        {
-            { true, true, true },
-            { true, false, true },
-            { true, true, true },
-            { false, false, true },
-            { true, true, true }
-        },
-        ['A'] = new bool[,]
-        {
-            { true, true, true },
-            { true, false, true },
-            { true, true, true },
-            { true, false, true },
-            { true, false, true }
-        },
-        ['B'] = new bool[,]
-        {
-            { true, true, false },
-            { true, false, true },
-            { true, true, false },
-            { true, false, true },
-            { true, true, false }
-        },
-        ['C'] = new bool[,]
-        {
-            { true, true, true },
-            { true, false, false },
-            { true, false, false },
-            { true, false, false },
-            { true, true, true }
-        },
-        ['D'] = new bool[,]
-        {
-            { true, true, false },
-            { true, false, true },
-            { true, false, true },
-            { true, false, true },
-            { true, true, false }
-        },
-        ['E'] = new bool[,]
-        {
-            { true, true, true },
-            { true, false, false },
-            { true, true, true },
-            { true, false, false },
-            { true, true, true }
-        },
-        ['F'] = new bool[,]
-        {
-            { true, true, true },
-            { true, false, false },
-            { true, true, true },
-            { true, false, false },
-            { true, false, false }
-        },
-        ['-'] = new bool[,]
-        {
-            { false, false, false },
-            { false, false, false },
-            { true, true, true },
-            { false, false, false },
-            { false, false, false }
-        },
-        ['.'] = new bool[,]
-        {
-            { false, false, false },
-            { false, false, false },
-            { false, false, false },
-            { false, false, false },
-            { false, true, false }
-        },
-        [' '] = new bool[,]
-        {
-            { false, false, false },
-            { false, false, false },
-            { false, false, false },
-            { false, false, false },
-            { false, false, false }
-        },
-        ['R'] = new bool[,]
-        {
-            { false, false, false },
-            { false, false, false },
-            { true, true, true },
-            { true, false, false },
-            { true, false, false }
-        },
-        ['O'] = new bool[,]
-        {
-            { false, false, false },
-            { false, false, false },
-            { true, true, true },
-            { true, false, true },
-            { true, true, true }
-        }
+        [' '] = new bool[,] { { F, F, F }, { F, F, F }, { F, F, F }, { F, F, F }, { F, F, F } },
+        ['0'] = new bool[,] { { T, T, T }, { T, F, T }, { T, F, T }, { T, F, T }, { T, T, T } },
+        ['1'] = new bool[,] { { F, T, F }, { F, T, F }, { F, T, F }, { F, T, F }, { F, T, F } },
+        ['2'] = new bool[,] { { T, T, T }, { F, F, T }, { T, T, T }, { T, F, F }, { T, T, T } },
+        ['3'] = new bool[,] { { T, T, T }, { F, F, T }, { T, T, T }, { F, F, T }, { T, T, T } },
+        ['4'] = new bool[,] { { T, F, T }, { T, F, T }, { T, T, T }, { F, F, T }, { F, F, T } },
+        ['5'] = new bool[,] { { T, T, T }, { T, F, F }, { T, T, T }, { F, F, T }, { T, T, T } },
+        ['6'] = new bool[,] { { T, T, T }, { T, F, F }, { T, T, T }, { T, F, T }, { T, T, T } },
+        ['7'] = new bool[,] { { T, T, T }, { F, F, T }, { F, F, T }, { F, F, T }, { F, F, T } },
+        ['8'] = new bool[,] { { T, T, T }, { T, F, T }, { T, T, T }, { T, F, T }, { T, T, T } },
+        ['9'] = new bool[,] { { T, T, T }, { T, F, T }, { T, T, T }, { F, F, T }, { T, T, T } },
+        ['-'] = new bool[,] { { F, F, F }, { F, F, F }, { T, T, T }, { F, F, F }, { F, F, F } },
+        ['.'] = new bool[,] { { F, F, F }, { F, F, F }, { F, F, F }, { F, F, F }, { F, T, F } },
+        ['='] = new bool[,] { { F, F, F }, { F, F, F }, { T, T, T }, { F, F, F }, { T, T, T } },
+        ['('] = new bool[,] { { F, F, T }, { F, T, F }, { F, T, F }, { F, T, F }, { F, F, T } },
+        [')'] = new bool[,] { { T, F, F }, { F, T, F }, { F, T, F }, { F, T, F }, { T, F, F } },
+        ['?'] = new bool[,] { { T, T, F }, { F, F, T }, { F, T, F }, { F, F, F }, { F, T, F } },
+        ['A'] = new bool[,] { { T, T, T }, { T, F, T }, { T, T, T }, { T, F, T }, { T, F, T } },
+        ['a'] = new bool[,] { { T, T, T }, { F, F, T }, { T, T, T }, { T, F, T }, { T, T, T } },
+        ['B'] = new bool[,] { { T, T, F }, { T, F, T }, { T, T, F }, { T, F, T }, { T, T, F } },
+        ['b'] = new bool[,] { { T, F, F }, { T, F, F }, { T, T, F }, { T, F, T }, { T, T, F } },
+        ['C'] = new bool[,] { { T, T, T }, { T, F, F }, { T, F, F }, { T, F, F }, { T, T, T } },
+        ['c'] = new bool[,] { { F, F, F }, { F, F, F }, { T, T, T }, { T, F, F }, { T, T, T } },
+        ['D'] = new bool[,] { { T, T, F }, { T, F, T }, { T, F, T }, { T, F, T }, { T, T, F } },
+        ['d'] = new bool[,] { { F, F, T }, { F, F, T }, { F, T, T }, { T, F, T }, { F, T, T } },
+        ['E'] = new bool[,] { { T, T, T }, { T, F, F }, { T, T, T }, { T, F, F }, { T, T, T } },
+        ['e'] = new bool[,] { { T, T, T }, { T, F, T }, { T, T, T }, { T, F, F }, { T, T, T } },
+        ['F'] = new bool[,] { { T, T, T }, { T, F, F }, { T, T, T }, { T, F, F }, { T, F, F } },
+        ['f'] = new bool[,] { { T, T, T }, { T, F, F }, { T, T, T }, { T, F, F }, { T, F, F } },
+        ['G'] = new bool[,] { { T, T, T }, { T, F, F }, { T, F, T }, { T, F, T }, { T, T, T } },
+        ['g'] = new bool[,] { { T, T, T }, { T, F, F }, { T, F, T }, { T, F, T }, { T, T, T } },
+        ['H'] = new bool[,] { { T, F, T }, { T, F, T }, { T, T, T }, { T, F, T }, { T, F, T } },
+        ['h'] = new bool[,] { { T, F, F }, { T, F, F }, { T, T, T }, { T, F, T }, { T, F, T } },
+        ['I'] = new bool[,] { { T, T, T }, { F, T, F }, { F, T, F }, { F, T, F }, { T, T, T } },
+        ['i'] = new bool[,] { { F, T, F }, { F, F, F }, { T, T, F }, { F, T, F }, { T, T, T } },
+        ['J'] = new bool[,] { { F, F, T }, { F, F, T }, { F, F, T }, { T, F, T }, { T, T, T } },
+        ['j'] = new bool[,] { { F, T, F }, { F, F, F }, { F, T, T }, { F, F, T }, { T, T, T } },
+        ['L'] = new bool[,] { { T, F, F }, { T, F, F }, { T, F, F }, { T, F, F }, { T, T, T } },
+        ['l'] = new bool[,] { { T, T, F }, { F, T, F }, { F, T, F }, { F, T, F }, { T, T, T } },
+        ['N'] = new bool[,] { { T, T, T }, { T, F, T }, { T, F, T }, { T, F, T }, { T, F, T } },
+        ['n'] = new bool[,] { { F, F, F }, { F, F, F }, { T, T, T }, { T, F, T }, { T, F, T } },
+        ['O'] = new bool[,] { { T, T, T }, { T, F, T }, { T, F, T }, { T, F, T }, { T, T, T } },
+        ['o'] = new bool[,] { { F, F, F }, { F, F, F }, { T, T, T }, { T, F, F }, { T, F, F } },
+        ['P'] = new bool[,] { { T, T, T }, { T, F, T }, { T, T, T }, { T, F, F }, { T, F, F } },
+        ['p'] = new bool[,] { { T, T, T }, { T, F, T }, { T, T, T }, { T, F, F }, { T, F, F } },
+        ['R'] = new bool[,] { { F, F, F }, { F, F, F }, { T, T, T }, { T, F, F }, { T, F, F } },
+        ['r'] = new bool[,] { { F, F, F }, { F, F, F }, { T, T, T }, { T, F, F }, { T, F, F } },
+        ['S'] = new bool[,] { { T, T, T }, { T, F, F }, { T, T, T }, { F, F, T }, { T, T, T } },
+        ['s'] = new bool[,] { { T, T, T }, { T, F, F }, { T, T, T }, { F, F, T }, { T, T, T } },
+        ['T'] = new bool[,] { { T, F, F }, { T, F, F }, { T, T, T }, { T, F, F }, { T, T, T } },
+        ['t'] = new bool[,] { { T, F, F }, { T, F, F }, { T, T, T }, { T, F, F }, { T, T, T } },
+        ['U'] = new bool[,] { { T, F, T }, { T, F, T }, { T, F, T }, { T, F, T }, { T, T, T } },
+        ['u'] = new bool[,] { { F, F, F }, { F, F, F }, { T, F, T }, { T, F, T }, { T, T, T } },
+        ['['] = new bool[,] { { F, T, T }, { F, T, F }, { F, T, F }, { F, T, F }, { F, T, T } },
+        [']'] = new bool[,] { { T, T, F }, { F, T, F }, { F, T, F }, { F, T, F }, { T, T, F } },
     };
 
     private readonly Shape[,] dots = new Shape[5, 3];
@@ -201,6 +91,7 @@ public partial class Matrix3x5Unit: UserControl
             for (int col = 0; col < 3; col++)
             {
                 Shape dot;
+#pragma warning disable IDE0045 // Convert to conditional expression
                 if (Variant == 1 && row == 0 && col == 0)
                 {
                     dot = new Path
@@ -233,6 +124,7 @@ public partial class Matrix3x5Unit: UserControl
                 {
                     dot = new Rectangle();
                 }
+#pragma warning restore IDE0045 // Convert to conditional expression
                 dot.Fill = Brushes.Blue;
                 dot.Opacity = 0.1;
                 dot.Margin = new Thickness(0.15);
@@ -283,18 +175,11 @@ public partial class Matrix3x5Unit: UserControl
 
     private void UpdateDots()
     {
-        if (CharMap.TryGetValue(char.ToUpper(Symbol), out bool[,]? pattern))
-        {
-            for (int row = 0; row < 5; row++)
-                for (int col = 0; col < 3; col++)
-                    dots[row, col].Opacity = pattern[row, col] ? 1.0 : 0.1;
-        }
-        else
-        {
-            // Hide all if character not found
-            for (int row = 0; row < 5; row++)
-                for (int col = 0; col < 3; col++)
-                    dots[row, col].Opacity = 0.1;
-        }
+        if (!CharMap.TryGetValue(Symbol, out bool[,]? pattern))
+            pattern = CharMap[' '];
+
+        for (int row = 0; row < 5; row++)
+            for (int col = 0; col < 3; col++)
+                dots[row, col].Opacity = pattern[row, col] ? 1.0 : 0.1;
     }
 }

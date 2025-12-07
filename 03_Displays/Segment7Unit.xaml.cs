@@ -98,79 +98,78 @@ public partial class Segment7Unit: UserControl, INotifyPropertyChanged
     public double SegmentGOpacity { get; private set; }
     public double DotOpacity { get; private set; }
 
+    const bool F = false;
+    const bool T = true;
+
+    private static readonly Dictionary<char, bool[]> CharToSegments = new()
+    {
+        { ' ', [F, F, F, F, F, F, F] },
+        { '0', [T, T, T, T, T, T, F] },
+        { '1', [F, T, T, F, F, F, F] },
+        { '2', [T, T, F, T, T, F, T] },
+        { '3', [T, T, T, T, F, F, T] },
+        { '4', [F, T, T, F, F, T, T] },
+        { '5', [T, F, T, T, F, T, T] },
+        { '6', [T, F, T, T, T, T, T] },
+        { '7', [T, T, T, F, F, F, F] },
+        { '8', [T, T, T, T, T, T, T] },
+        { '9', [T, T, T, T, F, T, T] },
+        { '-', [F, F, F, F, F, F, T] },
+        { '=', [F, F, F, T, F, F, T] },
+        { '(', [T, F, F, T, T, T, F] },
+        { ')', [T, T, T, T, F, F, F] },
+        { 'A', [T, T, T, F, T, T, T] },
+        { 'a', [T, T, T, F, T, T, T] },
+        { 'B', [F, F, T, T, T, T, T] },
+        { 'b', [F, F, T, T, T, T, T] },
+        { 'C', [T, F, F, T, T, T, F] },
+        { 'c', [F, F, F, T, T, F, T] },
+        { 'D', [F, T, T, T, T, F, T] },
+        { 'd', [F, T, T, T, T, F, T] },
+        { 'E', [T, F, F, T, T, T, T] },
+        { 'e', [T, F, F, T, T, T, T] },
+        { 'F', [T, F, F, F, T, T, T] },
+        { 'f', [T, F, F, F, T, T, T] },
+        { 'G', [T, F, T, T, T, T, F] },
+        { 'g', [T, F, T, T, T, T, F] },
+        { 'H', [F, T, T, F, T, T, T] },
+        { 'h', [F, F, T, F, T, T, T] },
+        { 'I', [F, T, T, F, F, F, F] },
+        { 'i', [F, F, T, F, F, F, F] },
+        { 'J', [F, T, T, T, F, F, F] },
+        { 'j', [F, F, T, T, F, F, F] },
+        { 'L', [F, F, F, T, T, T, F] },
+        { 'l', [F, F, F, T, T, F, F] },
+        { 'N', [T, T, T, F, T, T, F] },
+        { 'n', [F, F, T, F, T, F, T] },
+        { 'O', [T, T, T, T, T, T, F] },
+        { 'o', [F, F, T, T, T, F, T] },
+        { 'P', [T, T, F, F, T, T, T] },
+        { 'p', [T, T, F, F, T, T, T] },
+        { 'R', [F, F, F, F, T, F, T] },
+        { 'r', [F, F, F, F, T, F, T] },
+        { 'S', [T, F, T, T, F, T, T] },
+        { 's', [T, F, T, T, F, T, T] },
+        { 'T', [F, F, F, T, T, T, T] },
+        { 't', [F, F, F, T, T, T, T] },
+        { 'U', [F, T, T, T, T, T, F] },
+        { 'u', [F, F, T, T, T, F, F] },
+        { '[', [T, F, F, T, T, T, F] },
+        { ']', [T, T, T, T, F, F, F] },
+    };
+
     private void UpdateSegments()
     {
-        bool a, b, c, d, e, f, g;
-        a = b = c = d = e = f = g = false;
+        if (!CharToSegments.TryGetValue(Symbol, out var segments))
+            segments = CharToSegments[' '];
 
-        switch (char.ToUpper(Symbol))
-        {
-            case '0':
-                a = b = c = d = e = f = true;
-                break;
-            case '1':
-                b = c = true;
-                break;
-            case '2':
-                a = b = g = e = d = true;
-                break;
-            case '3':
-                a = b = g = c = d = true;
-                break;
-            case '4':
-                f = g = b = c = true;
-                break;
-            case '5':
-                a = f = g = c = d = true;
-                break;
-            case '6':
-                a = f = g = e = c = d = true;
-                break;
-            case '7':
-                a = b = c = true;
-                break;
-            case '8':
-                a = b = c = d = e = f = g = true;
-                break;
-            case '9':
-                a = b = c = d = f = g = true;
-                break;
-            case 'A':
-                a = b = c = e = f = g = true;
-                break;
-            case 'B':
-                c = d = e = f = g = true;
-                break;
-            case 'C':
-                a = d = e = f = true;
-                break;
-            case 'D':
-                b = c = d = e = g = true;
-                break;
-            case 'E':
-                a = d = e = f = g = true;
-                break;
-            case 'F':
-                a = e = f = g = true;
-                break;
-            case '-':
-                g = true;
-                break;
-            case 'R':
-                e = g = true;
-                break;
-            case 'O':
-                c = d = e = g = true;
-                break;
-        }
-
-        SegmentAOpacity = a ? 1.0 : 0.1;
-        SegmentBOpacity = b ? 1.0 : 0.1;
-        SegmentCOpacity = c ? 1.0 : 0.1;
-        SegmentDOpacity = d ? 1.0 : 0.1;
-        SegmentEOpacity = e ? 1.0 : 0.1;
-        SegmentFOpacity = f ? 1.0 : 0.1;
-        SegmentGOpacity = g ? 1.0 : 0.1;
+        SegmentAOpacity = segments[0] ? 1.0 : 0.1;
+        SegmentBOpacity = segments[1] ? 1.0 : 0.1;
+        SegmentCOpacity = segments[2] ? 1.0 : 0.1;
+        SegmentDOpacity = segments[3] ? 1.0 : 0.1;
+        SegmentEOpacity = segments[4] ? 1.0 : 0.1;
+        SegmentFOpacity = segments[5] ? 1.0 : 0.1;
+        SegmentGOpacity = segments[6] ? 1.0 : 0.1;
 
         NotifyPropertyChanged(nameof(SegmentAOpacity));
         NotifyPropertyChanged(nameof(SegmentBOpacity));

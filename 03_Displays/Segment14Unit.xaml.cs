@@ -3,10 +3,6 @@
 //
 // 2025-12-06   PV
 
-using System.Reflection;
-using System.Windows.Controls;
-using System.Windows.Media.Media3D;
-
 namespace Displays;
 
 public partial class Segment14Unit: UserControl, INotifyPropertyChanged
@@ -126,7 +122,7 @@ public partial class Segment14Unit: UserControl, INotifyPropertyChanged
     // Truth table for 14-segment display, mapping ASCII characters 32-126 to a 14-bit integer.
     // Bit 13=A, 12=B, 11=C, 10=D, 9=E, 8=F, 7=G1, 6=G2, 5=H, 4=I, 3=J, 2=K, 1=L, 0=M
     //       [2    1]    [8    4    2    1]   [8     4     2    1]   [8    4    2    1]
-    private static Dictionary<char, int> CharToSegments = new()
+    private static readonly Dictionary<char, int> CharToSegments = new()
     {
         { ' ', 0x0000 },  // 
         { '!', 0x0012 },  // I,L
@@ -149,7 +145,7 @@ public partial class Segment14Unit: UserControl, INotifyPropertyChanged
         { '2', 0x36c0 },  // A,B,D,E,G1,G2
         { '3', 0x3cc0 },  // A,B,C,D,G1,G2
         { '4', 0x19c0 },  // B,C,F,G1,G2
-        { '5', 0x2dc0 },  // A,C,D,F,G1,G2
+        { '5', 0x2581 },  // A,D,F,G1,M
         { '6', 0x2fc0 },  // A,C,D,E,F,G1,G2
         { '7', 0x3800 },  // A,B,C
         { '8', 0x3fc0 },  // A,B,C,D,E,F,G1,G2
@@ -227,41 +223,24 @@ public partial class Segment14Unit: UserControl, INotifyPropertyChanged
 
     private void UpdateSegments()
     {
-        if (CharToSegments.TryGetValue(Symbol, out var segments))
-        {
-            SegmentAOpacity = (segments & (1 << 13)) != 0 ? 1.0 : 0.1;
-            SegmentBOpacity = (segments & (1 << 12)) != 0 ? 1.0 : 0.1;
-            SegmentCOpacity = (segments & (1 << 11)) != 0 ? 1.0 : 0.1;
-            SegmentDOpacity = (segments & (1 << 10)) != 0 ? 1.0 : 0.1;
-            SegmentEOpacity = (segments & (1 << 9)) != 0 ? 1.0 : 0.1;
-            SegmentFOpacity = (segments & (1 << 8)) != 0 ? 1.0 : 0.1;
-            SegmentG1Opacity = (segments & (1 << 7)) != 0 ? 1.0 : 0.1;
-            SegmentG2Opacity = (segments & (1 << 6)) != 0 ? 1.0 : 0.1;
-            SegmentHOpacity = (segments & (1 << 5)) != 0 ? 1.0 : 0.1;
-            SegmentIOpacity = (segments & (1 << 4)) != 0 ? 1.0 : 0.1;
-            SegmentJOpacity = (segments & (1 << 3)) != 0 ? 1.0 : 0.1;
-            SegmentKOpacity = (segments & (1 << 2)) != 0 ? 1.0 : 0.1;
-            SegmentLOpacity = (segments & (1 << 1)) != 0 ? 1.0 : 0.1;
-            SegmentMOpacity = (segments & (1 << 0)) != 0 ? 1.0 : 0.1;
-        }
-        else
-        {
-            // All segments off
-            SegmentAOpacity = 0.1;
-            SegmentBOpacity = 0.1;
-            SegmentCOpacity = 0.1;
-            SegmentDOpacity = 0.1;
-            SegmentEOpacity = 0.1;
-            SegmentFOpacity = 0.1;
-            SegmentG1Opacity = 0.1;
-            SegmentG2Opacity = 0.1;
-            SegmentHOpacity = 0.1;
-            SegmentIOpacity = 0.1;
-            SegmentJOpacity = 0.1;
-            SegmentKOpacity = 0.1;
-            SegmentLOpacity = 0.1;
-            SegmentMOpacity = 0.1;
-        }
+        if (!CharToSegments.TryGetValue(Symbol, out var segments))
+            segments = CharToSegments[' '];
+
+        SegmentAOpacity = (segments & (1 << 13)) != 0 ? 1.0 : 0.1;
+        SegmentBOpacity = (segments & (1 << 12)) != 0 ? 1.0 : 0.1;
+        SegmentCOpacity = (segments & (1 << 11)) != 0 ? 1.0 : 0.1;
+        SegmentDOpacity = (segments & (1 << 10)) != 0 ? 1.0 : 0.1;
+        SegmentEOpacity = (segments & (1 << 9)) != 0 ? 1.0 : 0.1;
+        SegmentFOpacity = (segments & (1 << 8)) != 0 ? 1.0 : 0.1;
+        SegmentG1Opacity = (segments & (1 << 7)) != 0 ? 1.0 : 0.1;
+        SegmentG2Opacity = (segments & (1 << 6)) != 0 ? 1.0 : 0.1;
+        SegmentHOpacity = (segments & (1 << 5)) != 0 ? 1.0 : 0.1;
+        SegmentIOpacity = (segments & (1 << 4)) != 0 ? 1.0 : 0.1;
+        SegmentJOpacity = (segments & (1 << 3)) != 0 ? 1.0 : 0.1;
+        SegmentKOpacity = (segments & (1 << 2)) != 0 ? 1.0 : 0.1;
+        SegmentLOpacity = (segments & (1 << 1)) != 0 ? 1.0 : 0.1;
+        SegmentMOpacity = (segments & (1 << 0)) != 0 ? 1.0 : 0.1;
+        DotOpacity = Dot ? 1.0 : 0.1;
 
         NotifyPropertyChanged(nameof(SegmentAOpacity));
         NotifyPropertyChanged(nameof(SegmentBOpacity));
@@ -277,6 +256,7 @@ public partial class Segment14Unit: UserControl, INotifyPropertyChanged
         NotifyPropertyChanged(nameof(SegmentKOpacity));
         NotifyPropertyChanged(nameof(SegmentLOpacity));
         NotifyPropertyChanged(nameof(SegmentMOpacity));
+        NotifyPropertyChanged(nameof(DotOpacity));
     }
 
     private void UpdateDot()
