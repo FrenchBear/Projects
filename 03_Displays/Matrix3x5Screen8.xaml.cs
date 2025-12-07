@@ -38,7 +38,11 @@ public partial class Matrix3x5Screen8: UserControl, INotifyPropertyChanged
     }
 
     private static void OnVariantChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        => ((Matrix3x5Screen8)d).UpdateScreen();
+    {
+        var v = ((Matrix3x5Screen8)d).Variant;
+        foreach (var s in ((Matrix3x5Screen8)d).Symbols)
+            s.Variant = v;
+    }
 
     // ----
 
@@ -72,7 +76,6 @@ public partial class Matrix3x5Screen8: UserControl, INotifyPropertyChanged
                 while (id < 8)
                 {
                     Symbols[id].Symbol = ' ';
-                    Symbols[id].Variant = Variant;
                     id++;
                 }
                 return;

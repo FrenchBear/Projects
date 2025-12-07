@@ -38,7 +38,11 @@ public partial class Segment7Screen8: UserControl, INotifyPropertyChanged
     }
 
     private static void OnVariantChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        => ((Segment7Screen8)d).UpdateScreen();
+    {
+        var v = ((Segment7Screen8)d).Variant;
+        foreach (var s in ((Segment7Screen8)d).Symbols)
+            s.Variant = v;
+    }
 
     // ----
 
@@ -74,7 +78,6 @@ public partial class Segment7Screen8: UserControl, INotifyPropertyChanged
                 {
                     Symbols[id].Symbol = ' ';
                     Symbols[id].Dot = false;
-                    Symbols[id].Variant = Variant;
                     id++;
                 }
                 return;
@@ -91,13 +94,11 @@ public partial class Segment7Screen8: UserControl, INotifyPropertyChanged
                 }
                 Symbols[id].Symbol = ' ';
                 Symbols[id].Dot = true;
-                Symbols[id].Variant = Variant;
             }
             else
             {
                 Symbols[id].Symbol = c;
                 Symbols[id].Dot = false;
-                Symbols[id].Variant = Variant;
             }
 
             iv++;

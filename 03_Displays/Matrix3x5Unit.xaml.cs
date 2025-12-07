@@ -184,32 +184,64 @@ public partial class Matrix3x5Unit: UserControl
 
     private readonly Shape[,] dots = new Shape[5, 3];
 
-    void InitializeStyle()
+    public Matrix3x5Unit()
+    {
+        InitializeComponent();
+        InitializeVariant();
+    }
+
+    void InitializeVariant()
     {
         DotMatrixGrid.Children.Clear();
 
+        // Variant 0 = all squares
+        // Variant 1 = 4 rounded corners, all other square
         for (int row = 0; row < 5; row++)
         {
             for (int col = 0; col < 3; col++)
             {
-                var dot = new Rectangle
+                Shape dot;
+                if (Variant == 1 && row == 0 && col == 0)
                 {
-                    Fill = Brushes.Blue,
-                    Opacity = 0.1,
-                    Margin = new Thickness(0.15),
-                };
+                    dot = new Path
+                    {
+                        Data = Geometry.Parse("M 0,10 A 10,10 90 0 1 10,0 L 10,10")
+                    };
+                }
+                else if (Variant == 1 && row == 0 && col == 2)
+                {
+                    dot = new Path
+                    {
+                        Data = Geometry.Parse("M 0,0 A 10,10 90 0 1 10,10 L 0,10")
+                    };
+                }
+                else if (Variant == 1 && row == 4 && col == 2)
+                {
+                    dot = new Path
+                    {
+                        Data = Geometry.Parse("M 10,0 A 10,10 90 0 1 0,10 L 0,0")
+                    };
+                }
+                else if (Variant == 1 && row == 4 && col == 0)
+                {
+                    dot = new Path
+                    {
+                        Data = Geometry.Parse("M 10,10 A 10,10 90 0 1 0,0 L 10,0")
+                    };
+                }
+                else
+                {
+                    dot = new Rectangle();
+                }
+                dot.Fill = Brushes.Blue;
+                dot.Opacity = 0.1;
+                dot.Margin = new Thickness(0.15);
                 Grid.SetRow(dot, row);
                 Grid.SetColumn(dot, col);
                 DotMatrixGrid.Children.Add(dot);
                 dots[row, col] = dot;
             }
         }
-    }
-
-    public Matrix3x5Unit()
-    {
-        InitializeComponent();
-        InitializeStyle();
     }
 
     // ----
@@ -226,7 +258,7 @@ public partial class Matrix3x5Unit: UserControl
     }
 
     private static void OnSymbolChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        => ((Matrix3x5Unit)d).UpdateDisplay();
+        => ((Matrix3x5Unit)d).UpdateDots();
 
     // ----
     // Style
@@ -243,13 +275,13 @@ public partial class Matrix3x5Unit: UserControl
 
     private static void OnVariantChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        ((Matrix3x5Unit)d).InitializeStyle();
-        ((Matrix3x5Unit)d).UpdateDisplay();
+        ((Matrix3x5Unit)d).InitializeVariant();
+        ((Matrix3x5Unit)d).UpdateDots();
     }
 
     // ----
 
-    private void UpdateDisplay()
+    private void UpdateDots()
     {
         if (CharMap.TryGetValue(char.ToUpper(Symbol), out bool[,]? pattern))
         {

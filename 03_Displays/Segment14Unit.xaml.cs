@@ -3,6 +3,10 @@
 //
 // 2025-12-06   PV
 
+using System.Reflection;
+using System.Windows.Controls;
+using System.Windows.Media.Media3D;
+
 namespace Displays;
 
 public partial class Segment14Unit: UserControl, INotifyPropertyChanged
@@ -10,8 +14,45 @@ public partial class Segment14Unit: UserControl, INotifyPropertyChanged
     public Segment14Unit()
     {
         InitializeComponent();
-        UpdateSegments();
-        UpdateDot();
+        InitializeVariant();
+    }
+
+    void InitializeVariant()
+    {
+        if (Variant == 1)
+        {
+            SegmentA.Points = PointCollection.Parse("10,10 15,5 45,5 50,10 42,15 18,15");
+            SegmentB.Points = PointCollection.Parse("50,10 55,15 55,45 50,50 45,45 45,30");
+            SegmentC.Points = PointCollection.Parse("50,50 55,55 55,85 50,90 45,70 45,55");
+            SegmentD.Points = PointCollection.Parse("10,90 15,95 45,95 50,90 42,85 18,85");
+            SegmentE.Points = PointCollection.Parse("10,50 15,55 15,70 10,90 5,85 5,55");
+            SegmentF.Points = PointCollection.Parse("10,10 15,30 15,45 10,50 5,45 5,15");
+            SegmentG1.Points = PointCollection.Parse("10,50 15,45 22,45 30,50 22,55 15,55");
+            SegmentG2.Points = PointCollection.Parse("30,50 38,45 45,45 50,50 45,55 38,55");
+            SegmentH.Points = PointCollection.Parse("10,10 15,30 22,45 30,50 25,29 18,15");
+            SegmentI.Points = PointCollection.Parse("25,15 35,15 35,29 30,50 25,29");
+            SegmentJ.Points = PointCollection.Parse("50,10 45,30 38,45 30,50 35,29 42,15");
+            SegmentK.Points = PointCollection.Parse("10,90 15,70 22,55 30,50 25,71 18,85");
+            SegmentL.Points = PointCollection.Parse("25,85 35,85 35,71 30,50 25,71");
+            SegmentM.Points = PointCollection.Parse("50,90 45,70 38,55 30,50 35,71 42,85");
+        }
+        else
+        {
+            SegmentA.Points = PointCollection.Parse("10,10 15,5 45,5 50,10 45,15 15,15");
+            SegmentB.Points = PointCollection.Parse("50,10 55,15 55,45 50,50 45,45 45,15");
+            SegmentC.Points = PointCollection.Parse("50,50 55,55 55,85 50,90 45,85 45,55");
+            SegmentD.Points = PointCollection.Parse("10,90 15,95 45,95 50,90 45,85 15,85");
+            SegmentE.Points = PointCollection.Parse("10,50 15,55 15,85 10,90 5,85 5,55");
+            SegmentF.Points = PointCollection.Parse("10,10 15,15 15,45 10,50 5,45 5,15");
+            SegmentG1.Points = PointCollection.Parse("10,50 15,45 25,45 30,50 25,55 15,55");
+            SegmentG2.Points = PointCollection.Parse("30,50 35,45 45,45 50,50 45,55 35,55");
+            SegmentH.Points = PointCollection.Parse("15,15 15,30 25,45 25,30");
+            SegmentI.Points = PointCollection.Parse("25,15 35,15 35,45 30,50 25,45");
+            SegmentJ.Points = PointCollection.Parse("35,45 45,30 45,15 35,30");
+            SegmentK.Points = PointCollection.Parse("15,85 25,70 25,55 15,70");
+            SegmentL.Points = PointCollection.Parse("25,85 35,85 35,55 30,50 25,55");
+            SegmentM.Points = PointCollection.Parse("35,55 35,70 45,85 45,70");
+        }
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -59,7 +100,11 @@ public partial class Segment14Unit: UserControl, INotifyPropertyChanged
 
     private static void OnDotChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((Segment14Unit)d).UpdateDot();
 
-    private static void OnVariantChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((Segment14Unit)d).UpdateSegments();
+    private static void OnVariantChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        ((Segment14Unit)d).UpdateSegments();
+        ((Segment14Unit)d).InitializeVariant();
+    }
 
     public double SegmentAOpacity { get; private set; }
     public double SegmentBOpacity { get; private set; }
@@ -81,7 +126,7 @@ public partial class Segment14Unit: UserControl, INotifyPropertyChanged
     // Truth table for 14-segment display, mapping ASCII characters 32-126 to a 14-bit integer.
     // Bit 13=A, 12=B, 11=C, 10=D, 9=E, 8=F, 7=G1, 6=G2, 5=H, 4=I, 3=J, 2=K, 1=L, 0=M
     //       [2    1]    [8    4    2    1]   [8     4     2    1]   [8    4    2    1]
-    private static readonly Dictionary<char, int> CharToSegments = new()
+    private static Dictionary<char, int> CharToSegments = new()
     {
         { ' ', 0x0000 },  // 
         { '!', 0x0012 },  // I,L

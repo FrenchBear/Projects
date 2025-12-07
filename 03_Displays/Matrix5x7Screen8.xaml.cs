@@ -38,7 +38,11 @@ public partial class Matrix5x7Screen8: UserControl, INotifyPropertyChanged
     }
 
     private static void OnVariantChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        => ((Matrix5x7Screen8)d).UpdateScreen();
+    {
+        var v = ((Matrix5x7Screen8)d).Variant;
+        foreach (var s in ((Matrix5x7Screen8)d).Symbols)
+            s.Variant = v;
+    }
 
     // ----
 
@@ -75,7 +79,6 @@ public partial class Matrix5x7Screen8: UserControl, INotifyPropertyChanged
             }
 
             Symbols[id].Symbol = v[iv++];
-            Symbols[id].Variant = Variant;
             id++;
         }
     }

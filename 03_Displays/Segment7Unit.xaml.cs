@@ -10,13 +10,20 @@ public partial class Segment7Unit: UserControl, INotifyPropertyChanged
     public Segment7Unit()
     {
         InitializeComponent();
+        InitializeVariant();
+    }
 
-        const double m = 1;
-        const double t = 4.5;
+    void InitializeVariant()
+    {
+        // Variant 0: Jointive thick segments
+        // Variant 1: Separated a bit thinner segments
 
-        static PointCollection HorizSegment(double x, double y, double w)
+        double m = Variant == 1 ? 1 : 0;
+        double t = Variant == 1 ? 4.5 : 5;
+
+        PointCollection HorizSegment(double x, double y, double w)
             => [new Point(x, y), new Point(x + t, y - t), new Point(x + w - t, y - t), new Point(x + w, y), new Point(x + w - t, y + t), new Point(x + t, y + t)];
-        static PointCollection VertSegment(double x, double y, double h)
+        PointCollection VertSegment(double x, double y, double h)
             => [new Point(x, y), new Point(x + t, y + t), new Point(x + t, y + h - t), new Point(x, y + h), new Point(x - t, y + h - t), new Point(x - t, y + t)];
 
         SegmentA.Points = HorizSegment(10 + m, 10, 40 - 2 * m);
@@ -76,7 +83,11 @@ public partial class Segment7Unit: UserControl, INotifyPropertyChanged
 
     private static void OnDotChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((Segment7Unit)d).UpdateDot();
 
-    private static void OnVariantChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((Segment7Unit)d).UpdateSegments();
+    private static void OnVariantChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        ((Segment7Unit)d).InitializeVariant();
+        ((Segment7Unit)d).UpdateSegments();
+    }
 
     public double SegmentAOpacity { get; private set; }
     public double SegmentBOpacity { get; private set; }

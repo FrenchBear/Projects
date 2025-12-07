@@ -13,34 +13,35 @@
 
     <Viewbox>
         <Grid x:Name="SegmentGrid" Width="60" Height="100">
+            
             <!-- Segment A (Top) -->
-            <Polygon x:Name="SegmentA" Points="10,10 15,5 45,5 50,10 45,15 15,15" Fill="Green" Opacity="{Binding SegmentAOpacity}" MouseDown="Segment_MouseDown" />
+            <Polygon x:Name="SegmentA" Points="10,10 15,5 45,5 50,10 42,15 18,15" Fill="Green" Opacity="{Binding SegmentAOpacity}" MouseDown="Segment_MouseDown" />
             <!-- Segment B (Top-Right) -->
-            <Polygon x:Name="SegmentB" Points="50,10 55,15 55,45 50,50 45,45 45,15" Fill="Green" Opacity="{Binding SegmentBOpacity}" MouseDown="Segment_MouseDown" />
+            <Polygon x:Name="SegmentB" Points="50,10 55,15 55,45 50,50 45,45 45,30" Fill="Green" Opacity="{Binding SegmentBOpacity}" MouseDown="Segment_MouseDown" />
             <!-- Segment C (Bottom-Right) -->
-            <Polygon x:Name="SegmentC" Points="50,50 55,55 55,85 50,90 45,85 45,55" Fill="Green" Opacity="{Binding SegmentCOpacity}" MouseDown="Segment_MouseDown" />
+            <Polygon x:Name="SegmentC" Points="50,50 55,55 55,85 50,90 45,70 45,55" Fill="Green" Opacity="{Binding SegmentCOpacity}" MouseDown="Segment_MouseDown" />
             <!-- Segment D (Bottom) -->
-            <Polygon x:Name="SegmentD" Points="10,90 15,95 45,95 50,90 45,85 15,85" Fill="Green" Opacity="{Binding SegmentDOpacity}" MouseDown="Segment_MouseDown" />
+            <Polygon x:Name="SegmentD" Points="10,90 15,95 45,95 50,90 42,85 18,85" Fill="Green" Opacity="{Binding SegmentDOpacity}" MouseDown="Segment_MouseDown" />
             <!-- Segment E (Bottom-Left) -->
-            <Polygon x:Name="SegmentE" Points="10,50 15,55 15,85 10,90 5,85 5,55" Fill="Green" Opacity="{Binding SegmentEOpacity}" MouseDown="Segment_MouseDown" />
+            <Polygon x:Name="SegmentE" Points="10,50 15,55 15,70 10,90 5,85 5,55" Fill="Green" Opacity="{Binding SegmentEOpacity}" MouseDown="Segment_MouseDown" />
             <!-- Segment F (Top-Left) -->
-            <Polygon x:Name="SegmentF" Points="10,10 15,15 15,45 10,50 5,45 5,15" Fill="Green" Opacity="{Binding SegmentFOpacity}" MouseDown="Segment_MouseDown" />
+            <Polygon x:Name="SegmentF" Points="10,10 15,30 15,45 10,50 5,45 5,15" Fill="Green" Opacity="{Binding SegmentFOpacity}" MouseDown="Segment_MouseDown" />
             <!-- Segment G1 (Middle Left) -->
-            <Polygon x:Name="SegmentG1" Points="10,50 15,45 25,45 30,50 25,55 15,55" Fill="Green" Opacity="{Binding SegmentG1Opacity}" MouseDown="Segment_MouseDown" />
+            <Polygon x:Name="SegmentG1" Points="10,50 15,45 22,45 30,50 22,55 15,55" Fill="Green" Opacity="{Binding SegmentG1Opacity}" MouseDown="Segment_MouseDown" />
             <!-- Segment G2 (Middle Right) -->
-            <Polygon x:Name="SegmentG2" Points="30,50 35,45 45,45 50,50 45,55 35,55" Fill="Green" Opacity="{Binding SegmentG2Opacity}" MouseDown="Segment_MouseDown" />
+            <Polygon x:Name="SegmentG2" Points="30,50 38,45 45,45 50,50 45,55 38,55" Fill="Green" Opacity="{Binding SegmentG2Opacity}" MouseDown="Segment_MouseDown" />
             <!-- Segment H (Diagonal Top Left) -->
-            <Polygon x:Name="SegmentH" Points="15,15 15,30 25,45 25,30" Fill="Green" Opacity="{Binding SegmentHOpacity}" MouseDown="Segment_MouseDown" />
+            <Polygon x:Name="SegmentH" Points="10,10 15,30 22,45 30,50 25,29 18,15" Fill="Green" Opacity="{Binding SegmentHOpacity}" MouseDown="Segment_MouseDown" />
             <!-- Segment I (Top Center) -->
-            <Polygon x:Name="SegmentI" Points="25,15 35,15 35,45 30,50 25,45" Fill="Green" Opacity="{Binding SegmentIOpacity}" MouseDown="Segment_MouseDown" />
+            <Polygon x:Name="SegmentI" Points="25,15 35,15 35,29 30,50 25,29" Fill="Green" Opacity="{Binding SegmentIOpacity}" MouseDown="Segment_MouseDown" />
             <!-- Segment J (Diagonal Top Right) -->
-            <Polygon x:Name="SegmentJ" Points="35,45 45,30 45,15 35,30" Fill="Green" Opacity="{Binding SegmentJOpacity}" MouseDown="Segment_MouseDown" />
+            <Polygon x:Name="SegmentJ" Points="50,10 45,30 38,45 30,50 35,29 42,15" Fill="Green" Opacity="{Binding SegmentJOpacity}" MouseDown="Segment_MouseDown" />
             <!-- Segment K (Diagonal Bottom Left) -->
-            <Polygon x:Name="SegmentK" Points="15,85 25,70 25,55 15,70" Fill="Green" Opacity="{Binding SegmentKOpacity}" MouseDown="Segment_MouseDown" />
+            <Polygon x:Name="SegmentK" Points="10,90 15,70 22,55 30,50 25,71 18,85" Fill="Green" Opacity="{Binding SegmentKOpacity}" MouseDown="Segment_MouseDown" />
             <!-- Segment L (Bottom Center) -->
-            <Polygon x:Name="SegmentL" Points="25,85 35,85 35,55 30,50 25,55" Fill="Green" Opacity="{Binding SegmentLOpacity}" MouseDown="Segment_MouseDown" />
+            <Polygon x:Name="SegmentL" Points="25,85 35,85 35,71 30,50 25,71" Fill="Green" Opacity="{Binding SegmentLOpacity}" MouseDown="Segment_MouseDown" />
             <!-- Segment M (Diagonel Bottom Right) -->
-            <Polygon x:Name="SegmentM" Points="35,55 35,70 45,85 45,70" Fill="Green" Opacity="{Binding SegmentMOpacity}" MouseDown="Segment_MouseDown" />
+            <Polygon x:Name="SegmentM" Points="50,90 45,70 38,55 30,50 35,71 42,85" Fill="Green" Opacity="{Binding SegmentMOpacity}" MouseDown="Segment_MouseDown" />
 
             <!-- Dot -->
             <Ellipse Width="10" Height="10" Fill="Green" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Opacity="{Binding DotOpacity}"/>
