@@ -21,18 +21,18 @@
 
         <!-- All 14-segment symbols -->
         <!--<WrapPanel>
-            <local:Segment14Screen8 Variant="1" Value=" !&quot;#$%&amp;'" Width="400" />
-            <local:Segment14Screen8 Variant="1" Value="()*+,-./" Width="400" />
-            <local:Segment14Screen8 Variant="1" Value="01234567" Width="400" />
-            <local:Segment14Screen8 Variant="1" Value="89:;&lt;=>?" Width="400" />
-            <local:Segment14Screen8 Variant="1" Value="@ABCDEFG" Width="400" />
-            <local:Segment14Screen8 Variant="1" Value="HIJKLMNO" Width="400" />
-            <local:Segment14Screen8 Variant="1" Value="PQRSTUVW" Width="400" />
-            <local:Segment14Screen8 Variant="1" Value="XYZ[\]^_" Width="400" />
-            <local:Segment14Screen8 Variant="1" Value="`abcdefg" Width="400" />
-            <local:Segment14Screen8 Variant="1" Value="hijklmno" Width="400" />
-            <local:Segment14Screen8 Variant="1" Value="pqrstuvw" Width="400" />
-            <local:Segment14Screen8 Variant="1"  Value="xyz{|}~" Width="400" />
+            <local:Matrix5x7Screen8 Variant="0" Value=" !&quot;#$%&amp;'" Width="400" />
+            <local:Matrix5x7Screen8 Variant="0" Value="()*+,-./" Width="400" />
+            <local:Matrix5x7Screen8 Variant="0" Value="01234567" Width="400" />
+            <local:Matrix5x7Screen8 Variant="0" Value="89:;&lt;=>?" Width="400" />
+            <local:Matrix5x7Screen8 Variant="0" Value="@ABCDEFG" Width="400" />
+            <local:Matrix5x7Screen8 Variant="0" Value="HIJKLMNO" Width="400" />
+            <local:Matrix5x7Screen8 Variant="0" Value="PQRSTUVW" Width="400" />
+            <local:Matrix5x7Screen8 Variant="0" Value="XYZ[\]^_" Width="400" />
+            <local:Matrix5x7Screen8 Variant="0" Value="`abcdefg" Width="400" />
+            <local:Matrix5x7Screen8 Variant="0" Value="hijklmno" Width="400" />
+            <local:Matrix5x7Screen8 Variant="0" Value="pqrstuvw" Width="400" />
+            <local:Matrix5x7Screen8 Variant="0"  Value="xyz{|}~" Width="400" />
         </WrapPanel>-->
     </StackPanel>
 </Window>
