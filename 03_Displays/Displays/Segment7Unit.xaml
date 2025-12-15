@@ -14,21 +14,21 @@
     
     <Viewbox>
         <Grid x:Name="SegmentGrid" Width="60" Height="100">
-            <!-- Segments -->
+            <!-- Segments, could simply use <Polygon Points="10,10 15,5... but Path is more generic -->
             <!-- Segment A (Top) -->
-            <Polygon x:Name="SegmentA" Points="10,10 15,5 45,5 50,10 45,15 15,15" Fill="Red" Opacity="{Binding SegmentAOpacity}"/>
+            <Path x:Name="SegmentA" Data="M 10,10 15,5 45,5 50,10 45,15 15,15 Z" Fill="Red" Opacity="{Binding SegmentAOpacity}"/>
             <!-- Segment B (Top-Right) -->
-            <Polygon x:Name="SegmentB" Points="50,10 55,15 55,45 50,50 45,45 45,15" Fill="Red" Opacity="{Binding SegmentBOpacity}"/>
+            <Path x:Name="SegmentB" Data="M 50,10 55,15 55,45 50,50 45,45 45,15 Z" Fill="Red" Opacity="{Binding SegmentBOpacity}"/>
             <!-- Segment C (Bottom-Right) -->
-            <Polygon x:Name="SegmentC" Points="50,50 55,55 55,85 50,90 45,85 45,55" Fill="Red" Opacity="{Binding SegmentCOpacity}"/>
+            <Path x:Name="SegmentC" Data="M 50,50 55,55 55,85 50,90 45,85 45,55 Z" Fill="Red" Opacity="{Binding SegmentCOpacity}"/>
             <!-- Segment D (Bottom) -->
-            <Polygon x:Name="SegmentD" Points="10,90 15,95 45,95 50,90 45,85 15,85" Fill="Red" Opacity="{Binding SegmentDOpacity}"/>
+            <Path x:Name="SegmentD" Data="M 10,90 15,95 45,95 50,90 45,85 15,85 Z" Fill="Red" Opacity="{Binding SegmentDOpacity}"/>
             <!-- Segment E (Bottom-Left) -->
-            <Polygon x:Name="SegmentE" Points="10,50 15,55 15,85 10,90 5,85 5,55" Fill="Red" Opacity="{Binding SegmentEOpacity}"/>
+            <Path x:Name="SegmentE" Data="M 10,50 15,55 15,85 10,90 5,85 5,55 Z" Fill="Red" Opacity="{Binding SegmentEOpacity}"/>
             <!-- Segment F (Top-Left) -->
-            <Polygon x:Name="SegmentF" Points="10,10 15,15 15,45 10,50 5,45 5,15" Fill="Red" Opacity="{Binding SegmentFOpacity}"/>
+            <Path x:Name="SegmentF" Data="M 10,10 15,15 15,45 10,50 5,45 5,15 Z" Fill="Red" Opacity="{Binding SegmentFOpacity}"/>
             <!-- Segment G (Middle) -->
-            <Polygon x:Name="SegmentG" Points="10,50 15,45 45,45 50,50 45,55 15,55" Fill="Red" Opacity="{Binding SegmentGOpacity}"/>
+            <Path x:Name="SegmentG" Data="M 10,50 15,45 45,45 50,50 45,55 15,55 Z" Fill="Red" Opacity="{Binding SegmentGOpacity}"/>
 
             <!-- Dot -->
             <Ellipse Width="10" Height="10" Fill="Red" Margin="0,0,-4,3"  VerticalAlignment="Bottom" HorizontalAlignment="Right" Opacity="{Binding DotOpacity}"/>

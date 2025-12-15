@@ -101,7 +101,7 @@ public partial class Matrix3x5Unit: UserControl
         ['Z'] = new bool[,] { { T, T, T }, { F, F, T }, { F, T, F }, { T, F, F }, { T, T, T } },
         ['z'] = new bool[,] { { F, F, F }, { F, F, F }, { T, T, T }, { F, T, F }, { T, T, T } },
         ['['] = new bool[,] { { F, T, T }, { F, T, F }, { F, T, F }, { F, T, F }, { F, T, T } },
-        ['\\'] = new bool[,] {{ F, F, F }, { T, F, F }, { F, T, F }, { F, F, T }, { F, F, F } },
+        ['\\'] = new bool[,] { { F, F, F }, { T, F, F }, { F, T, F }, { F, F, T }, { F, F, F } },
         [']'] = new bool[,] { { T, T, F }, { F, T, F }, { F, T, F }, { F, T, F }, { T, T, F } },
         ['^'] = new bool[,] { { F, T, F }, { T, F, T }, { F, F, F }, { F, F, F }, { F, F, F } },
         ['_'] = new bool[,] { { F, F, F }, { F, F, F }, { F, F, F }, { F, F, F }, { T, T, T } },

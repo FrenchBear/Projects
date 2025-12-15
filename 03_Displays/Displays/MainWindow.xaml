@@ -12,7 +12,7 @@
             <Label>Value:</Label>
             <TextBox x:Name="InputBox" Text="-1.2345" Width="100" Height="28" VerticalContentAlignment="Center" />
             <Label Margin="12,0,0,0">Variant:</Label>
-            <TextBox x:Name="VariantTextBox" Text="0" Width="50" Height="28" VerticalContentAlignment="Center" />
+            <TextBox x:Name="VariantTextBox" Text="4" Width="50" Height="28" VerticalContentAlignment="Center" />
         </StackPanel>
         <local:Segment7Screen8 x:Name="Segment7Display" Width="500"   Value="{Binding ElementName=InputBox, Path=Text}" Variant="{Binding ElementName=VariantTextBox, Path=Text}" />
         <local:Matrix3x5Screen8 x:Name="Matrix3x5Display" Width="500" Value="{Binding ElementName=InputBox, Path=Text}" Variant="{Binding ElementName=VariantTextBox, Path=Text}" />
