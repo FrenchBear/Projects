@@ -44,11 +44,11 @@ internal sealed class Piece
     }
 
     // For dev/debug traces
-    public void Trace()
+    public void Trace(int p)
     {
         WriteLine("\n==============================");
-        WriteLine($"Piece {Name} {Transformations.Count} transformation(s)");
+        WriteLine($"Piece {p}: {Name} {Transformations.Count} transformation(s)");
         for (int i = 0; i < Transformations.Count; i++)
-            Transformations[i].Trace(Name, i);
+            Transformations[i].Trace(Name, p, i);
     }
 }

@@ -39,21 +39,22 @@ internal static class Quadrimino
         Piece P8 = new("Barre", X, X, X, X, o, o, o, o, 2);
         Piece P9 = new("Serpent", o, X, X, o, X, X, o, o, 2);
 
-        P1.Trace();
-        P2.Trace();
-        P3.Trace();
-        P4.Trace();
-        P5.Trace();
-        P6.Trace();
-        P7.Trace();
-        P8.Trace();
-        P9.Trace();
+        P1.Trace(1);
+        P2.Trace(2);
+        P3.Trace(3);
+        P4.Trace(4);
+        P5.Trace(5);
+        P6.Trace(6);
+        P7.Trace(7);
+        P8.Trace(8);
+        P9.Trace(9);
         //P10.Trace();
         //P11.Trace();
         //P12.Trace();
+        WriteLine("\n\n*********************************************");
 
         // Pieces to use, allowing easy indexed access (order is not meaningful)
-        Lp = [P1, P2, P3, P4, P5, P6, P7, P8, P9];
+        Lp = [P9, P1, P2, P3, P4, P5, P6, P7, P8];
 
         // Rectangle for paving, zero-initialized by default (https://stackoverflow.com/questions/8679052/initialization-of-memory-allocated-with-stackalloc)
         Span<byte> rect = stackalloc byte[ROWS * COLS];
@@ -135,6 +136,8 @@ internal static class Quadrimino
                     // Just continue to next piece/transformation, that's it
                     if (!collision)
                     {
+                        //ca.Trace(Lp[i].Name, 1, 0);
+
                         // Piece is Ok! Let's place it
                         rect.CopyTo(nextRect);
 
@@ -142,6 +145,9 @@ internal static class Quadrimino
                             for (c2 = 0; c2 < ca.Cmax; c2++)
                                 if (ca.Motif[r2, c2])
                                     nextRect[(r + r2) * COLS + c + c2 - ca.OffsetCol] = (byte)(i + 1);
+
+                        //PrintSolution(nextRect, 0);
+                        //Debugger.Break();
 
                         // If there are no more pieces left, we found a solution!
                         var nextMask = piecesMask & ~(1 << i);
@@ -168,10 +174,15 @@ internal static class Quadrimino
         {
             for (int r = 0; r < ROWS; r++)
             {
-                var p = rect[r * COLS + c];
-                Debug.Assert(p is >= 1 and <= PIECES);
-                ForegroundColor = (ConsoleColor)p;
-                Write("██");
+                var p = rect[c * COLS + r];         // Bug of original pentamino code fixed: we actually place mirror places (swapped row/col), so we swar again during print to compensate
+                if (p == 0)
+                    Write("··");
+                else
+                {
+                    Debug.Assert(p is >= 1 and <= PIECES);
+                    ForegroundColor = (ConsoleColor)p;
+                    Write("██");
+                }
             }
             WriteLine();
         }

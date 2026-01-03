@@ -3,6 +3,7 @@
 //
 // 2026-01-03   PV      First version recycling Pentamino solver code
 
+using System;
 using static System.Console;
 
 internal sealed class Carre44
@@ -124,17 +125,20 @@ internal sealed class Carre44
     }
 
     // For dev/debug traces
-    public void Trace(string name, int tr)
+    public void Trace(string name, int p, int tr)
     {
         WriteLine("-------------------------");
         WriteLine($"Piece {name}, transformation {tr}");
 
+        var bak = ForegroundColor;
+        ForegroundColor = (ConsoleColor)p;
         for (int r = 0; r < 4; r++)
         {
             for (int c = 0; c < 4; c++)
-                Write(Motif[r, c] ? "##" : ". ");
+                Write(Motif[r, c] ? "██" : "··");
             WriteLine();
         }
+        ForegroundColor = bak;
         WriteLine($"Lmax={Rmax} Cmax={Cmax} Offset={OffsetCol}");
     }
 }
