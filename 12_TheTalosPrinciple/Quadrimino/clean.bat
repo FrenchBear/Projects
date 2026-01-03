@@ -1,0 +1,1 @@
+@rd /s /q bin obj 2>NUL

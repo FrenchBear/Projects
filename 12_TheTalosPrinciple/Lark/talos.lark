@@ -1,0 +1,34 @@
+// Talos messages
+
+%import common.WS
+%import common.ESCAPED_STRING
+
+start: statement+				
+
+statement: empty
+    | comment 
+    | tw_block
+
+empty: /[ \t]*\r?\n/
+
+comment: "#" /.*\r?\n/
+
+dotted_id: _id ["." _id]*
+
+_id: /[A-Za-z][A-Za-z0-9_]*/
+
+_WS: WS
+
+tw_block: "terminal" _WS "when" _WS "(" quoted_blockname ")" _WS "{" _WS "show_text" ":" _WS? dq_string WS "}" _WS
+
+quoted_blockname: quote? blockname quote?
+
+blockname: /[A-Za-z0-9_.]+/
+
+quote: "\""
+
+dq_string: "[[" ttrs_id body "]]"
+
+body: /((?!\]\])(.|\r|\n))+/
+
+ttrs_id: "TTRS" ":" /[^=]+/ "=" _WS
