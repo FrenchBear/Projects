@@ -24,7 +24,7 @@ internal sealed class Piece
         if (N(b00) + N(b01) + N(b02) + N(b03) + N(b10) + N(b11) + N(b12) + N(b13) != 4)
             WriteLine($"Invalid definition of piece {name}");
 
-        Name=name;
+        Name = name;
         // Start with identity transformation
         var t0 = new Carre44(b00, b01, b02, b03, b10, b11, b12, b13);
         Transformations.Add(t0);

@@ -9,9 +9,9 @@ using static System.Console;
 
 internal static class Quadrimino
 {
-    private const int ROWS = 6;                 // Number of lines of the surface to pave
-    private const int COLS = 6;                 // Number of columns of the surface to pave
-    private const int PIECES = 9;
+    private static int ROWS = 6;                 // Number of lines of the surface to pave
+    private static int COLS = 6;                 // Number of columns of the surface to pave
+    private static int PIECES = 9;
 
     private const int MAXSOLUTION = 5000;       // Limit search time if needed
 
@@ -28,33 +28,122 @@ internal static class Quadrimino
         const bool X = true;
         const bool o = false;
 
-        // Prepare pieces
-        Piece P1 = new("Carré 1", X, X, o, o, X, X, o, o, 1);
-        Piece P2 = new("Carré 2", X, X, o, o, X, X, o, o, 1);
-        Piece P3 = new("T", X, X, X, o, o, X, o, o, 4);
-        Piece P4 = new("T", X, X, X, o, o, X, o, o, 4);
-        Piece P5 = new("L", X, X, X, o, X, o, o, o, 4);
-        Piece P6 = new("L", X, X, X, o, X, o, o, o, 4);
-        Piece P7 = new("L miroir", X, o, o, o, X, X, X, o, 4);
-        Piece P8 = new("Barre", X, X, X, X, o, o, o, o, 2);
-        Piece P9 = new("Serpent", o, X, X, o, X, X, o, o, 2);
+        // Puzzle 1 (A-Special)
+        //Piece P1 = new("O1", X, X, o, o, X, X, o, o, 1);
+        //Piece P2 = new("O2", X, X, o, o, X, X, o, o, 1);
+        //Piece P3 = new("T1", X, X, X, o, o, X, o, o, 4);
+        //Piece P4 = new("T2", X, X, X, o, o, X, o, o, 4);
+        //Piece P5 = new("L1", X, X, X, o, X, o, o, o, 4);
+        //Piece P6 = new("L2", X, X, X, o, X, o, o, o, 4);
+        //Piece P7 = new("L'", X, o, o, o, X, X, X, o, 4);
+        //Piece P8 = new("I", X, X, X, X, o, o, o, o, 2);
+        //Piece P9 = new("S", o, X, X, o, X, X, o, o, 2);
 
-        P1.Trace(1);
-        P2.Trace(2);
-        P3.Trace(3);
-        P4.Trace(4);
-        P5.Trace(5);
-        P6.Trace(6);
-        P7.Trace(7);
-        P8.Trace(8);
-        P9.Trace(9);
-        //P10.Trace();
-        //P11.Trace();
-        //P12.Trace();
-        WriteLine("\n\n*********************************************");
+        // Puzzle 2 (A-Special)
+        //Piece P1 = new("S'1", X, X, o, o, o, X, X, o, 2);
+        //Piece P2 = new("S'2", X, X, o, o, o, X, X, o, 2);
+        //Piece P3 = new("S'3", X, X, o, o, o, X, X, o, 2);
+        //Piece P4 = new("L1", X, X, X, o, X, o, o, o, 4);
+        //Piece P5 = new("L2", X, X, X, o, X, o, o, o, 4);
+        //Piece P6 = new("L'1", X, o, o, o, X, X, X, o, 4);
+        //Piece P7 = new("L'2", X, o, o, o, X, X, X, o, 4);
+        //Piece P8 = new("T1", X, X, X, o, o, X, o, o, 4);
+        //Piece P9 = new("T2", X, X, X, o, o, X, o, o, 4);
+
+        // Puzzle 3 (A-Special)
+        //ROWS = 10;
+        //COLS = 4;
+        //PIECES = 10;
+        //Piece P1 = new("S", o, X, X, o, X, X, o, o, 2);
+        //Piece P2 = new("T1", X, X, X, o, o, X, o, o, 4);
+        //Piece P3 = new("T2", X, X, X, o, o, X, o, o, 4);
+        //Piece P4 = new("T3", X, X, X, o, o, X, o, o, 4);
+        //Piece P5 = new("T4", X, X, X, o, o, X, o, o, 4);
+        //Piece P6 = new("O1", X, X, o, o, X, X, o, o, 1);
+        //Piece P7 = new("O2", X, X, o, o, X, X, o, o, 1);
+        //Piece P8 = new("I", X, X, X, X, o, o, o, o, 2);
+        //Piece P9 = new("L1", X, X, X, o, X, o, o, o, 4);
+        //Piece P10 = new("L2", X, X, X, o, X, o, o, o, 4);
+
+        // Puzzle B-Special 1
+        //ROWS = 10;
+        //COLS = 4;
+        //PIECES = 10;
+        //Piece P1 = new("S", o, X, X, o, X, X, o, o, 2);
+        //Piece P2 = new("T1", X, X, X, o, o, X, o, o, 4);
+        //Piece P3 = new("T2", X, X, X, o, o, X, o, o, 4);
+        //Piece P4 = new("T3", X, X, X, o, o, X, o, o, 4);
+        //Piece P5 = new("T4", X, X, X, o, o, X, o, o, 4);
+        //Piece P6 = new("S'1", X, X, o, o, o, X, X, o, 2);
+        //Piece P7 = new("S'2", X, X, o, o, o, X, X, o, 2);
+        //Piece P8 = new("I1", X, X, X, X, o, o, o, o, 2);
+        //Piece P9 = new("I2", X, X, X, X, o, o, o, o, 2);
+        //Piece P10 = new("L'", X, o, o, o, X, X, X, o, 4);
+
+        // Puzzle B-Special 2
+        //ROWS = 4;
+        //COLS = 7;
+        //PIECES = 7;
+        //Piece P1 = new("S", o, X, X, o, X, X, o, o, 2);
+        //Piece P2 = new("S'", X, X, o, o, o, X, X, o, 2);
+        //Piece P3 = new("I1", X, X, X, X, o, o, o, o, 2);
+        //Piece P4 = new("I2", X, X, X, X, o, o, o, o, 2);
+        //Piece P5 = new("T1", X, X, X, o, o, X, o, o, 4);
+        //Piece P6 = new("T2", X, X, X, o, o, X, o, o, 4);
+        //Piece P7 = new("L'", X, o, o, o, X, X, X, o, 4);
+
+        // Puzzle B-Special 3
+        //ROWS = 6;
+        //COLS = 8;
+        //PIECES = 12;
+        //Piece P1 = new("T1", X, X, X, o, o, X, o, o, 4);
+        //Piece P2 = new("T2", X, X, X, o, o, X, o, o, 4);
+        //Piece P3 = new("O1", X, X, o, o, X, X, o, o, 1);
+        //Piece P4 = new("O2", X, X, o, o, X, X, o, o, 1);
+        //Piece P5 = new("I", X, X, X, X, o, o, o, o, 2);
+        //Piece P6 = new("L1", X, X, X, o, X, o, o, o, 4);
+        //Piece P7 = new("L2", X, X, X, o, X, o, o, o, 4);
+        //Piece P8 = new("L'1", X, o, o, o, X, X, X, o, 4);
+        //Piece P9 = new("L'2", X, o, o, o, X, X, X, o, 4);
+        //Piece P10 = new("L'3", X, o, o, o, X, X, X, o, 4);
+        //Piece P11 = new("S1", o, X, X, o, X, X, o, o, 2);
+        //Piece P12 = new("S2", o, X, X, o, X, X, o, o, 2);
+
+        // Puzzle B-Special 4
+        ROWS = 6;
+        COLS = 8;
+        PIECES = 12;
+        Piece P1 = new("T1", X, X, X, o, o, X, o, o, 4);
+        Piece P2 = new("T2", X, X, X, o, o, X, o, o, 4);
+        Piece P3 = new("O1", X, X, o, o, X, X, o, o, 1);
+        Piece P4 = new("O2", X, X, o, o, X, X, o, o, 1);
+        Piece P5 = new("I", X, X, X, X, o, o, o, o, 2);
+        Piece P6 = new("S", o, X, X, o, X, X, o, o, 2);
+        Piece P7 = new("S1'", X, X, o, o, o, X, X, o, 2);
+        Piece P8 = new("S2'", X, X, o, o, o, X, X, o, 2);
+        Piece P9 = new("S3", X, X, o, o, o, X, X, o, 2);
+        Piece P10 = new("L'1", X, o, o, o, X, X, X, o, 4);
+        Piece P11 = new("L'2", X, o, o, o, X, X, X, o, 4);
+        Piece P12 = new("L'3", X, o, o, o, X, X, X, o, 4);
+
+        //P1.Trace(1);
+        //P2.Trace(2);
+        //P3.Trace(3);
+        //P4.Trace(4);
+        //P5.Trace(5);
+        //P6.Trace(6);
+        //P7.Trace(7);
+        //P8.Trace(8);
+        //P9.Trace(9);
+        //P10.Trace(10);
+        //WriteLine("\n\n*********************************************");
 
         // Pieces to use, allowing easy indexed access (order is not meaningful)
-        Lp = [P9, P1, P2, P3, P4, P5, P6, P7, P8];
+        Lp = [P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12];
+
+        Debug.Assert(Lp.Length == PIECES);
+        Debug.Assert(4 * PIECES == ROWS * COLS);
+
 
         // Rectangle for paving, zero-initialized by default (https://stackoverflow.com/questions/8679052/initialization-of-memory-allocated-with-stackalloc)
         Span<byte> rect = stackalloc byte[ROWS * COLS];
@@ -170,16 +259,16 @@ internal static class Quadrimino
         var bak = ForegroundColor;
 
         WriteLine($"--- Solution {sol}");
-        for (int c = 0; c < COLS; c++)
+        for (int r = 0; r < ROWS; r++)
         {
-            for (int r = 0; r < ROWS; r++)
+            for (int c = 0; c < COLS; c++)
             {
-                var p = rect[c * COLS + r];         // Bug of original pentamino code fixed: we actually place mirror places (swapped row/col), so we swar again during print to compensate
+                var p = rect[r * COLS + c];         // Bug of original pentamino code fixed: we actually place mirror places (swapped row/col), so we swar again during print to compensate
                 if (p == 0)
                     Write("··");
                 else
                 {
-                    Debug.Assert(p is >= 1 and <= PIECES);
+                    Debug.Assert(p >= 1 && p <= PIECES);
                     ForegroundColor = (ConsoleColor)p;
                     Write("██");
                 }
