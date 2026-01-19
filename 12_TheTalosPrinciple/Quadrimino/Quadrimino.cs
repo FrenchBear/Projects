@@ -1,4 +1,5 @@
 ﻿// Quadrimino.cs
+// Quadrimino.cs
 // Quadrimino paving paving solver for The Talos Principle
 //
 // 2026-01-03   PV      First version recycling Pentamino solver code
@@ -46,7 +47,12 @@ internal static class Quadrimino
         //Solve("B-Special 4", 6, 8, [T, T, O, O, I, S, S, S, S, Lm, Lm, Lm]);
         //Solve("Tower level 2", 6, 6, [O, T, T, T, T, L, L, L, L]);
         //Solve("Tower level 3", 5, 8, [I, I, I, I, L, L, Lm, Lm, S, Sm]);
-        Solve("Tower level 4", 6, 8, [O, O, T, T, T, T, L, Lm, S, S, Sm, Sm]);
+        //Solve("Tower level 4", 6, 8, [O, O, T, T, T, T, L, Lm, S, S, Sm, Sm]);
+        //Solve("B-Special entry", 5, 8, [I, I, O, T, T, T, T, L, L, Lm]);
+        //Solve("C Special 3", 6, 8, [T, T, I, L, L, Lm, Lm, Lm, O, O, Sm, Sm]);
+        //Solve("C Special 4", 6, 6, [I, O, O, Sm, Sm, L, L, Lm, Lm]);
+        //Solve("Tower level 5", 7, 8, [I, I, O, O, O, O, T, T, T, T, L, Lm, S, Sm]);
+        Solve("C Helper entry", 5, 8, [L, Lm, S, Sm, T, T, I, I, O, O]);
     }
 
     static void Solve(string name, int rows, int cols, Piece[] lp)

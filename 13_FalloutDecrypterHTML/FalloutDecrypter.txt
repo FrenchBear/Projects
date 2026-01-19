@@ -1,0 +1,34 @@
+I'd like to write a simple application "Fallout Decrypter" using only one html file containing both html and javascript.
+
+It's a helper to decrypt a passord of 4 to 6 letters in the video game Fallout 3 and Fallout 4 (the html application doesn't know the actual password). The user can enter a guess and see after each keypress whether this password is compatible with previous guesses (a simple text YES or NO should be shown for each previous guess), and if it's cmpatible with all previous guesses (or it's the first guess), then enter the number of matching letters for this guess, and click on a button to add it to the history of guesses (a max of 4 guesses).
+
+The interface should contain two input boxes to enter a guess (4 to 6 letters) and a number indicating the count of exact matches (correct letter in correct position) and a Add button to add the guess and the count to the history. A Clear button resets the application and clears history, returning to initial state.
+
+The history is a simple three-column table, first column contains guess, second column the count of matches, and third column contains the "compatibility status" of current guess with each previous guesses, that can be YES, NO, ERR or empty.
+
+The compatibility status of each previous guess is updated each time a key is pressed in the guess input box, except for the first guess entered (when history is empty), and as long as the length of the guess is greater than the length of previous, otherwise status is ERR.
+To evaluate the compatibility a previous guess, compute ma as the number of character matches (same letter, same position) between current guess and the previous guess. Then if depends on the number of letters entered for the guess:
+- If the guess has the same length as previous guess: if ma == previous count of matches, status is OK else status is NO
+- If the guess is shorter than previous guess: if ma <= previous count of matches, status is empty else status is NO
+
+If this explanation is not clear, here is a C# implementation of the function returning the status of current guess (parameter newGuess) with a previous guess stored in histor, parameters guess and placed (= count of matches entered for previous guess)
+
+    private string CompareWord(string newGuess, string guess, int placed)
+    {
+        newGuess = newGuess.ToUpperInvariant();
+        guess = guess.ToUpperInvariant();
+
+        if (newGuess.Length > guess.Length)
+            return "Guess too long!";
+
+        var isPartialCheck = newGuess.Length != guess.Length;
+        int match = 0;
+        for (int i = 0; i < newGuess.Length; i++)
+            if (newGuess[i] == guess[i])
+                match++;
+        if (isPartialCheck)
+            return (match > placed) ? "NO" : "";
+        return (match == placed) ? "OK" : "NO";
+    }
+
+This application should be written only in HTML, CSS and javascript, in a single html file.
