@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../T59Core/T59v7Core.csproj" />
+  <Project Path="T59v7 Console.csproj" />
+</Solution>

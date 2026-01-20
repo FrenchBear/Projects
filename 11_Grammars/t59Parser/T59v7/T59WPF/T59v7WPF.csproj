@@ -6,6 +6,9 @@
 		<TargetFramework>net10.0-windows</TargetFramework>
 		<Nullable>enable</Nullable>
 		<UseWPF>true</UseWPF>
+		<Authors>Pierre Violent</Authors>
+		<Description>A WPF interface for T59 parsing and formatting library</Description>
+		<Copyright>Copyright ©2025-2026 Pierre Violent</Copyright>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -17,7 +20,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3595.46" />
+	  <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3650.58" />
 	</ItemGroup>
 
 	<ItemGroup>

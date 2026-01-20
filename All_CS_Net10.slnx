@@ -1,0 +1,63 @@
+<Solution>
+  <Folder Name="/01 Bonza/">
+    <Project Path="01_Bonza/CS_Net10/Editor/Editor.csproj" />
+    <Project Path="01_Bonza/CS_Net10/Generator Tests/Generator Tests.csproj" />
+    <Project Path="01_Bonza/CS_Net10/Generator UnitTests/Generator UnitTests.csproj" />
+    <Project Path="01_Bonza/CS_Net10/Generator/Generator.csproj" />
+  </Folder>
+  <Folder Name="/02 Solitaire/">
+    <Project Path="02_Solitaire/CS_Net10/Solitaire/Solitaire.csproj" />
+    <Project Path="02_Solitaire/CS_Net10/SolLib/SolLib.csproj" />
+    <Project Path="02_Solitaire/CS_Net10/SolSolver/SolSolver.csproj" />
+  </Folder>
+  <Folder Name="/03 Displays/">
+    <Project Path="03_Displays/Displays/Displays.csproj" />
+  </Folder>
+  <Folder Name="/04 Foreign numbers/">
+    <Project Path="04_ForeignNumbers/CS_Net10/ForeignNumbers.csproj" />
+  </Folder>
+  <Folder Name="/05 Linedoku/">
+    <Project Path="05_Linedoku/CS_Net10/ColorFlow Solver/ColorFlow Solver.csproj" />
+    <Project Path="05_Linedoku/CS_Net10/CrossPath Solver/CrossPath.pyproj" Type="888888a0-9f3d-457c-b088-3a5042f75d52" Id="9e5c6014-69c5-49a0-95dc-9438971b8f7e">
+      <Build Project="false" />
+    </Project>
+    <Project Path="05_Linedoku/CS_Net10/DetectClosedArea/DetectClosedArea.csproj" />
+  </Folder>
+  <Folder Name="/07 Qwirkle/">
+    <Project Path="07_Qwirkle/CS_Net10/LibQwirkle/LibQwirkle.csproj" />
+    <Project Path="07_Qwirkle/CS_Net10/Q2/Q2.csproj" />
+    <Project Path="07_Qwirkle/CS_Net10/QwirkleTestProject/QwirkleTestProject.csproj" />
+    <Project Path="07_Qwirkle/CS_Net10/QwirkleUI/QwirkleUI.csproj" />
+    <Project Path="07_Qwirkle/CS_Net10/WPFTilesGenerator/WPFTilesGenerator.csproj" />
+  </Folder>
+  <Folder Name="/08 Plotter/">
+    <File Path="08_Plotter/CS_Net10/PlotterTestApp/TestPlotter.csproj" />
+    <Project Path="08_Plotter/CS_Net10/PlotterLibrary/PlotterLibrary.csproj" />
+    <Project Path="08_Plotter/CS_Net10/PlotterLSystemTest/LSystemTest.csproj" />
+    <Project Path="08_Plotter/CS_Net10/PlotterWPFTest/PlotterWPFTest.csproj" />
+  </Folder>
+  <Folder Name="/09 UniSearch/">
+    <Project Path="09_UniSearch/CS_Net10_U16/DirectDrawWrite/DirectDrawWrite.csproj">
+      <Platform Project="x64" />
+    </Project>
+    <Project Path="09_UniSearch/CS_Net10_U16/UniData/UniData.csproj">
+      <Platform Project="x64" />
+    </Project>
+    <Project Path="09_UniSearch/CS_Net10_U16/UniSearch/UniSearch.csproj">
+      <Platform Project="x64" />
+    </Project>
+  </Folder>
+  <Folder Name="/10 UniView/">
+    <Project Path="10_UniView/CS_Net10_U16/UniView.csproj" />
+  </Folder>
+  <Folder Name="/11 Grammars/">
+    <Project Path="11_Grammars/t59Parser/T59v7/T59Core/T59v7Core.csproj" />
+    <Project Path="11_Grammars/t59Parser/T59v7/T59WPF/T59v7WPF.csproj" />
+  </Folder>
+  <Folder Name="/12 TheTalosPrinciple/">
+    <Project Path="12_TheTalosPrinciple/Quadrimino/Quadrimino.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+  </Folder>
+</Solution>

@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="../LibQwirkle/LibQwirkle.csproj" />
+  <Project Path="../QwirkleTestProject/QwirkleTestProject.csproj" />
+  <Project Path="Q2.csproj" />
+</Solution>

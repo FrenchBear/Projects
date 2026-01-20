@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+  </Folder>
+  <Project Path="Editor/Editor.csproj" />
+  <Project Path="Generator Tests/Generator Tests.csproj" />
+  <Project Path="Generator UnitTests/Generator UnitTests.csproj" />
+  <Project Path="Generator/Generator.csproj" />
+</Solution>

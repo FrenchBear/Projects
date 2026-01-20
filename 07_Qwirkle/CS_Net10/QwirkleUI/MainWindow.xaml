@@ -1,0 +1,243 @@
+﻿<Window x:Class="QwirkleUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:QwirkleUI" d:DataContext="{d:DesignInstance Type=local:MainViewModel}"
+        mc:Ignorable="d"
+        Title="QwirkleUI" Height="995" Width="1500" Icon="/Qwirkle.ico">
+
+    <Window.Resources>
+        <ContextMenu x:Key="MoveTileMenu">
+            <MenuItem Command="{Binding ReturnSelectedTilesCommand}" Header="_Renvoie la tuile dans la main du joueur" InputGestureText="Suppr">
+                <MenuItem.Icon>
+                    <Image Source="/Icons/returnselectedtiles.ico" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Command="{Binding ReturnAllTilesCommand}" Header="Renvoie _toutes les tuiles en cours de placement dans la main du joueur" InputGestureText="Echap">
+                <MenuItem.Icon>
+                    <Image Source="/Icons/returnalltiles.ico" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator />
+            <MenuItem Command="{Binding SuggestPlayCommand}" Header="_Propose un placement de tuiles" InputGestureText="F1">
+                <MenuItem.Icon>
+                    <Image Source="/Icons/suggest.ico" />
+                </MenuItem.Icon>
+            </MenuItem>
+        </ContextMenu>
+
+
+        <ContextMenu x:Key="BoardTileAndBackgroundMenu">
+            <MenuItem Command="{Binding RescaleAndCenterCommand}" Header="_Recentrer la vue du jeu" InputGestureText="Ctrl+R">
+                <MenuItem.Icon>
+                    <Image Source="/Icons/recenter.ico" />
+                </MenuItem.Icon>
+            </MenuItem>
+        </ContextMenu>
+    </Window.Resources>
+
+    <Window.InputBindings>
+        <KeyBinding Key="F1" Command="{Binding SuggestPlayCommand}" />
+        <KeyBinding Key="F5" Command="{Binding AutoPlayCommand}" />
+        <KeyBinding Key="F5" Modifiers="Shift" Command="{Binding AutoPlayForeverCommand}" />
+        <KeyBinding Key="Delete" Command="{Binding ReturnSelectedTilesCommand}" />
+        <KeyBinding Key="Esc" Command="{Binding ReturnAllTilesCommand}" />
+        <KeyBinding Key="F2" Command="{Binding ValidateCommand}" />
+        <KeyBinding Key="Z" Modifiers="Ctrl" Command="{Binding UndoCommand}" />
+        <KeyBinding Key="R" Modifiers="Ctrl" Command="{Binding RescaleAndCenterCommand}" />
+        <KeyBinding Key="N" Modifiers="Ctrl" Command="{Binding NewGameCommand}" />
+        <KeyBinding Key="N" Modifiers="Ctrl+Shift" Command="{Binding NewPlayersCommand}" />
+        <KeyBinding Key="E" Modifiers="Ctrl" Command="{Binding ExchangeTilesCommand}" />
+        <KeyBinding Key="I" Modifiers="Ctrl" Command="{Binding SettingsCommand}" />
+    </Window.InputBindings>
+
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" Padding="3">
+            <Menu.LayoutTransform>
+                <ScaleTransform ScaleX="1.5" ScaleY="1.5" />
+            </Menu.LayoutTransform>
+
+            <MenuItem Name="FileMenu" Header="_Fichier">
+                <MenuItem Command="{Binding NewGameCommand}" InputGestureText="Ctrl+N" Header="_Nouveau jeu avec les mêmes joueurs">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/new.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="{Binding NewPlayersCommand}" InputGestureText="Shift+Ctrl+N" Header="Nouveau_x joueurs">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/players.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <Separator />
+
+                <MenuItem Command="{Binding AutoPlayCommand}" InputGestureText="F5" Header="Joue _automatiquement jusqu'à la fin de partie">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/auto.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="{Binding AutoPlayForeverCommand}" InputGestureText="Shift+F5" Header="Joue automatiquement en _boucle">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/autoforever.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <Separator />
+
+                <MenuItem Name="CloseCommand" Command="{Binding QuitCommand}" InputGestureText="Alt+F4" Header="_Quitter">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/close.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+
+            <MenuItem Name="EditMenu" Header="_Edition">
+                <MenuItem Command="{Binding UndoCommand}" Header="_Annuler" InputGestureText="Ctrl+Z">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/undo.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="{Binding ReturnSelectedTilesCommand}" Header="_Renvoie les tuiles sélectionnées dans la main du joueur" InputGestureText="Suppr">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/returnselectedtiles.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="{Binding ReturnAllTilesCommand}" Header="Renvoie _toutes les tuiles en cours de placement dans la main du joueur" InputGestureText="Echap">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/returnalltiles.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator />
+                <MenuItem Command="{Binding SuggestPlayCommand}" Header="_Propose un placement de tuiles" InputGestureText="F1">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/suggest.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="{Binding ExchangeTilesCommand}" Header="_Échanger toutes les tuiles" InputGestureText="Ctrl+E">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/exchange.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <Separator />
+
+                <MenuItem Command="{Binding SettingsCommand}" Header="_Options du jeu" InputGestureText="Ctrl+I">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/settings.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+
+            </MenuItem>
+
+            <MenuItem Name="ViewMenu" Header="_Vue">
+                <MenuItem Command="{Binding RescaleAndCenterCommand}" Header="_Recentrer la vue du jeu" InputGestureText="Ctrl+R">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/recenter.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+
+
+            <MenuItem Name="HelpMenu" Header="_?">
+                <MenuItem Name="AboutCommand" Command="{Binding AboutCommand}" Header="À _propos de QuirkleUI...">
+                    <MenuItem.Icon>
+                        <Image Source="/Icons/about.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+
+        <StatusBar DockPanel.Dock="Bottom" FontSize="24">
+            <Button Command="{Binding ValidateCommand}" Margin="0,0,6,0" Padding="8,2" ToolTip="Valide le placement des tuiles [F2]">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Icons/accept.ico" Width="24" Height="24" />
+                    <TextBlock Text="Valider" Margin="6,0,0,0"/>
+                </StackPanel>
+            </Button>
+            <Button Command="{Binding UndoCommand}" Margin="6,0" Padding="8,2" ToolTip="Annule la dernière validation or renvoie toutes les tuiles en cours de placement dans la main du joueur [Ctrl+Z]">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Icons/undo.ico" Width="24" Height="24" />
+                    <TextBlock Text="Annuler" Margin="6,0,0,0"/>
+                </StackPanel>
+            </Button>
+            <Button Command="{Binding SuggestPlayCommand}" Margin="6,0" Padding="8,2" ToolTip="Propose un placement de tuiles [F1]">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Icons/suggest.ico" Width="24" Height="24" />
+                    <TextBlock Text="Proposition" Margin="6,0,0,0"/>
+                </StackPanel>
+            </Button>
+            <Button Command="{Binding ExchangeTilesCommand}" Margin="6,0" Padding="8,2" ToolTip="Échanger toutes les tuiles [Ctrl+E]">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Icons/exchange.ico" Width="24" Height="24" />
+                    <TextBlock Text="Échanger" Margin="6,0,0,0"/>
+                </StackPanel>
+            </Button>
+            <Button Command="{Binding RescaleAndCenterCommand}" Margin="6,0" Padding="8,2" ToolTip="Recentrer la vue du jeu [Ctrl+R]">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Icons/recenter.ico" Width="24" Height="24" />
+                    <TextBlock Text="Recentrer" Margin="6,0,0,0"/>
+                </StackPanel>
+            </Button>
+        </StatusBar>
+
+        <StatusBar DockPanel.Dock="Bottom" FontSize="24" Margin="4,4,4,0">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+            <StatusBarItem>
+                <TextBlock Grid.Column="0" Name="StatusText" Text="{Binding StatusMessage, FallbackValue='Main ToolBar'}" Margin="6,0,0,4" HorizontalAlignment="Stretch" />
+            </StatusBarItem>
+            <Separator Grid.Column="1" />
+            <StatusBarItem Grid.Column="2">
+                <TextBlock Text="{Binding RoundNumber, FallbackValue='Round #1'}" Margin="6,0,0,4" HorizontalAlignment="Right" />
+            </StatusBarItem>
+            <Separator Grid.Column="3" />
+            <StatusBarItem Grid.Column="4">
+                <TextBlock Text="{Binding RemainingTiles, FallbackValue='# remaining tiles'}" Margin="6,0,0,4" HorizontalAlignment="Right" />
+            </StatusBarItem>
+        </StatusBar>
+
+        <Grid Margin="6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="635" />
+            </Grid.ColumnDefinitions>
+
+            <Canvas Name="BoardCanvas" ClipToBounds="True" Background="LavenderBlush"
+                        MouseMove="BoardCanvas_MouseMoveWhenUp" MouseDown="BoardCanvas_MouseDown" MouseUp="BoardCanvas_MouseUp" MouseWheel="BoardCanvas_MouseWheel" MouseRightButtonDown="BoardCanvas_MouseRightButtonDown">
+                <Canvas Name="BoardTransformingCanvas" ClipToBounds="False">
+                    <Canvas Name="BoardBackgroundGrid" ClipToBounds="False" />
+                    <Canvas Name="BoardDrawingCanvas" ClipToBounds="False" />
+                    <Canvas.RenderTransform>
+                        <MatrixTransform x:Name="TransformationMatrix" />
+                    </Canvas.RenderTransform>
+                </Canvas>
+            </Canvas>
+
+            <StackPanel Orientation="Vertical" Grid.Column="1">
+                <local:HandUserControl x:Name="Player1HandUserControl" Height="218" Visibility="Collapsed" />
+                <local:HandUserControl x:Name="Player2HandUserControl" Height="218" Visibility="Collapsed" />
+                <local:HandUserControl x:Name="Player3HandUserControl" Height="218" Visibility="Collapsed" />
+                <local:HandUserControl x:Name="Player4HandUserControl" Height="218" Visibility="Collapsed" />
+            </StackPanel>
+
+            <Image Name="BackgroundImage" Source="/Resources/QwirkleBackground.png" Grid.ColumnSpan="2" Stretch="UniformToFill" />
+
+        </Grid>
+    </DockPanel>
+</Window>

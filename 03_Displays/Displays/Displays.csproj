@@ -3,8 +3,13 @@
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net10.0-windows</TargetFramework>
+		<RootNamespace>Displays</RootNamespace>
 		<Nullable>enable</Nullable>
 		<UseWPF>true</UseWPF>
+		<Authors>Pierre Violent</Authors>
+		<Description>WPF rendering of segmented/matrix displays (Net10 C#14)</Description>
+		<Copyright>Copyright ©2025-2026 Pierre Violent</Copyright>
+		<Version>1.1.0</Version>
 	</PropertyGroup>
 
 </Project>

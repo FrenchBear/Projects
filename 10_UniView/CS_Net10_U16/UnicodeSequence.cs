@@ -1,0 +1,119 @@
+﻿// UnicodeSequence.cs
+// Represent either a codepoint (a sequence of length 1) or an Emoji sequence or a ZWJ sequence as defined by Unicode
+//
+// 2023-08-16   PV
+// 2024-09-15   PV      Unicode 16; Code cleanup
+// 2026-01-20	PV		Net10 C#14
+
+using System.Linq;
+using System.Text;
+
+namespace UniView_CS_Net10;
+
+public enum SymbolFilter
+{
+    None,
+    Emoji,
+    All,
+}
+
+public enum ScriptFilter
+{
+    None,
+    Latin,
+    All,
+}
+
+public record EmojiSequenceFilter(bool Keycap, bool Flag, bool Modifier);
+public record ZWJSequenceFilter(bool Family, bool Roles, bool Gendered, bool Hair, bool Other);
+
+/// <summary>Source of sequence</summary>
+public enum SequenceType
+{
+    None,
+    CodepointScript,
+    CodepointSymbol,
+    EmojiSequence,
+    ZWJSequence,
+}
+
+/// <summary>For each source, specifies a subtype</summary>
+public enum SequenceSubtype
+{
+    None,
+
+    // For CodepointScript, indicates it's a Latin or a Greek Codepoint
+    CodepointLatinAndGreek,
+
+    // For CodepointSymbol, indicates it's an Emoji or a Pictogram (it None, it's punctuation for example)
+    CodepointEmoji,
+
+    // For EmojiSequences
+    SequenceKeycap,
+    SequenceFlag,
+    SequenceModifier,
+
+    // For ZWJSequences
+    ZWJSequenceFamily,
+    ZWJSequenceRoles,
+    ZWJSequenceGendered,
+    ZWJSequenceHair,
+    ZWJSequenceOther,
+}
+
+public record UnicodeSequence(string Name, int[] Sequence, SequenceType SequenceType, SequenceSubtype SequenceSubtype)
+{
+    // To speed-up name searches
+    public string CanonizedName
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(field))
+                field = Name.Replace('-', ' ').Replace(':', ' ').Replace(" ", "").ToUpper();
+            return field;
+        }
+    } = "";
+
+    public string SequenceHexString
+        => string.Join(" ", Sequence.Select(cp => $"U+{cp:X4}"));
+
+    public string SequenceAsString
+    {
+        get
+        {
+            var sb = new StringBuilder();
+            foreach (var cp in Sequence)
+                sb.Append(UniData.UniData.AsString(cp));
+            return sb.ToString();
+        }
+    }
+
+    public string SequenceTypeAsString
+        => SequenceType switch
+        {
+            SequenceType.CodepointScript => "Codepoint Script",
+            SequenceType.CodepointSymbol => "Codepoint Symbol",
+            SequenceType.EmojiSequence => "Emoji Sequence",
+            SequenceType.ZWJSequence => "ZWJ Sequence",
+            SequenceType.None or _ => "None",
+        };
+
+    public string SequenceSubtypeAsString
+        => SequenceSubtype switch
+        {
+            SequenceSubtype.CodepointLatinAndGreek => "Latin+Greek",
+            SequenceSubtype.CodepointEmoji => "Emoji",
+            SequenceSubtype.SequenceKeycap => "Keycap",
+            SequenceSubtype.SequenceFlag => "Flag",
+            SequenceSubtype.SequenceModifier => "Modifier",
+            SequenceSubtype.ZWJSequenceFamily => "Family",
+            SequenceSubtype.ZWJSequenceRoles => "Roles",
+            SequenceSubtype.ZWJSequenceGendered => "Gendered",
+            SequenceSubtype.ZWJSequenceHair => "Hair",
+            SequenceSubtype.ZWJSequenceOther => "Other",
+            SequenceSubtype.None or _ => "None",
+        };
+
+    public string TypeAsString
+        => (SequenceTypeAsString + "/" + SequenceSubtypeAsString).Replace("/None", "");
+}

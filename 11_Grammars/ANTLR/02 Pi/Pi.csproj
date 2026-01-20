@@ -5,6 +5,9 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<RootNamespace>SimpleParser</RootNamespace>
 		<WarningLevel>0</WarningLevel>
+		<Authors>Pierre Violent</Authors>
+		<Description>Simple test of ANTLR parsing in C#</Description>
+		<Copyright>Copyright ©2025-2026 Pierre Violent</Copyright>
 	</PropertyGroup>
 
 	<ItemGroup>

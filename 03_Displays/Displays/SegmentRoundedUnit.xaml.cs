@@ -7,44 +7,7 @@ namespace Displays;
 
 public partial class SegmentRoundedUnit: UserControl, INotifyPropertyChanged
 {
-    public SegmentRoundedUnit()
-    {
-        InitializeComponent();
-        //InitializeVariant();
-    }
-
-    //void InitializeVariant()
-    //{
-    //    // Variant 0: Separated a bit thinner segments
-    //    // Variant 1: Jointive thick segments
-
-    //    double m = (Variant & 1) == 1 ? 0 : 1;
-    //    double t = (Variant & 1) == 1 ? 5 : 4.5;
-
-    //    PointCollection HorizSegment(double x, double y, double w)
-    //    {
-    //        if (Variant < 2)
-    //            return [new Point(x, y), new Point(x + t, y - t), new Point(x + w - t, y - t), new Point(x + w, y), new Point(x + w - t, y + t), new Point(x + t, y + t)];
-    //        return [new Point(x + m, y - t), new Point(x + w - m, y - t), new Point(x + w - m, y + t), new Point(x + m, y + t)];
-    //    }
-    //    PointCollection VertSegment(double x, double y, double h)
-    //    {
-    //        if (Variant < 2)
-    //            return [new Point(x, y), new Point(x + t, y + t), new Point(x + t, y + h - t), new Point(x, y + h), new Point(x - t, y + h - t), new Point(x - t, y + t)];
-    //        return [new Point(x + t, y + m), new Point(x + t, y + h - m), new Point(x - t, y + h - m), new Point(x - t, y + m)];
-    //    }
-
-    //    SegmentA.Points = HorizSegment(10 + m, 10, 40 - 2 * m);
-    //    SegmentB.Points = VertSegment(50, 10 + m, 40 - 2 * m);
-    //    SegmentC.Points = VertSegment(50, 50 + m, 40 - 2 * m);
-    //    SegmentD.Points = HorizSegment(10 + m, 90, 40 - 2 * m);
-    //    SegmentE.Points = VertSegment(10, 50 + m, 40 - 2 * m);
-    //    SegmentF.Points = VertSegment(10, 10 + m, 40 - 2 * m);
-    //    SegmentG.Points = HorizSegment(10 + m, 50, 40 - 2 * m);
-
-    //    UpdateSegments();
-    //    UpdateDot();
-    //}
+    public SegmentRoundedUnit() => InitializeComponent();
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -91,11 +54,7 @@ public partial class SegmentRoundedUnit: UserControl, INotifyPropertyChanged
 
     private static void OnDotChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((SegmentRoundedUnit)d).UpdateDot();
 
-    private static void OnVariantChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        //((SegmentRoundedUnit)d).InitializeVariant();
-        ((SegmentRoundedUnit)d).UpdateSegments();
-    }
+    private static void OnVariantChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((SegmentRoundedUnit)d).UpdateSegments();
 
     public double SegmentAOpacity { get; private set; }
     public double SegmentBOpacity { get; private set; }

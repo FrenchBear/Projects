@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<Description>Qwirkle reboot, Core library</Description>
+		<Authors>Pierre Violent</Authors>
+		<Copyright>Copyright ©Pierre Violent 2023-2026</Copyright>
+		<Version>1.1.0</Version>
+		<ApplicationIcon>Qwirkle.ico</ApplicationIcon>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="Qwirkle.ico" />
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="ColorFlow Solver.csproj" />
+  <Properties Name="Performance">
+    <Property Name="HasPerformanceSessions" Value="true" />
+  </Properties>
+</Solution>

@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Solitaire/Solitaire.csproj" />
+  <Project Path="SolLib/SolLib.csproj" />
+</Solution>

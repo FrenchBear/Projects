@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Displays"
         mc:Ignorable="d"
-        Title="MainWindow" Height="550" Width="800">
+        Title="Segmented/matrix Display Tests" Height="550" Width="800">
 
     <StackPanel>
         <StackPanel Orientation="Horizontal" Margin="0,20" TextBlock.FontSize="16" HorizontalAlignment="Center" >

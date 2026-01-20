@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Simple test of ANTLR parsing in C#
+// 2026-11-01   PV
+
+using System;
 using System.IO;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;

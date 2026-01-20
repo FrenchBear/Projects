@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net10.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<ApplicationIcon>SolWPF.ico</ApplicationIcon>
+		<Authors>Pierre Violent</Authors>
+		<Copyright>Copyright ©Pierre Violent 2019-2026</Copyright>
+		<Description>A simple WPF version of Solitaire classic card game with a solver (Net9 C#13)</Description>
+		<Version>1.3.0</Version>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="NewGameOptionsWindow.xaml" />
+		<None Remove="SolWPF.ico" />
+		<None Remove="ValidationError.16x16.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\SolLib\SolLib.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="SolWPF.ico" />
+		<Resource Include="ValidationError.16x16.png" />
+	</ItemGroup>
+
+</Project>

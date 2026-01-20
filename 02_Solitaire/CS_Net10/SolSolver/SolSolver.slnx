@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../SolLib/SolLib.csproj" />
+  <Project Path="SolSolver.csproj" />
+</Solution>

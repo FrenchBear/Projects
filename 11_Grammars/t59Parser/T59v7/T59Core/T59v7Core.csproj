@@ -6,6 +6,9 @@
 		<RootNamespace>T59v7Core</RootNamespace>
 		<WarningLevel>1</WarningLevel>
 		<Nullable>enable</Nullable>
+		<Authors>Pierre Violent</Authors>
+		<Description>TI59 parsing and formatting library</Description>
+		<Copyright>Copyright ©2025-2026 Pierre Violent</Copyright>
 	</PropertyGroup>
 
 	<ItemGroup>

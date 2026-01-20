@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="ColorFlow Solver/ColorFlow Solver.csproj" />
+  <Project Path="DetectClosedArea/DetectClosedArea.csproj" />
+  <Properties Name="Performance">
+    <Property Name="HasPerformanceSessions" Value="true" />
+  </Properties>
+</Solution>

@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<RootNamespace>UniDataNS</RootNamespace>
+		<Platforms>x64</Platforms>
+		<Nullable>enable</Nullable>
+		<Version>1.16.0</Version>
+		<Authors>Pierre Violent</Authors>
+		<Company>Pierre Violent</Company>
+		<Copyright>Copyright ©2018-2026 Pierre Violent</Copyright>
+		<Description>Unicode characters and blocks information [Net10 C#14 U16 Julia]</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="Confusables\confusables.txt" />
+		<None Remove="Julia\julia-tab-completion.txt" />
+		<None Remove="UCD\DerivedAge.txt" />
+		<None Remove="UCD\MetaBlocks.txt" />
+		<None Remove="UCD\NamesList.txt" />
+		<None Remove="UCD\Scripts.txt" />
+		<None Remove="UCD\UnicodeData.txt" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Confusables\confusables.txt" />
+		<EmbeddedResource Include="Julia\julia-tab-completion.txt" />
+		<EmbeddedResource Include="UCD\DerivedAge.txt" />
+		<EmbeddedResource Include="UCD\MetaBlocks.txt" />
+		<EmbeddedResource Include="UCD\NamesList.txt" />
+		<EmbeddedResource Include="UCD\Scripts.txt" />
+		<EmbeddedResource Include="UCD\UnicodeData.txt" />
+	</ItemGroup>
+
+</Project>

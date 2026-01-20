@@ -19,8 +19,8 @@ public static class Program
 {
     public static void Main(string[] args)
     {
-        foreach (var folder in Directory.EnumerateDirectories(@"D:\Pierre\CryptomatorPV\Calculators\TI\TI-58C TI-59 Docs and extra\Modules source ti5x_android-master (TurboGit)"))
-            foreach (var file in Directory.EnumerateFiles(folder, "*.src"))
+        foreach (var folder in Directory.EnumerateDirectories(@"D:\Pierre\HomeShared\Calculators\TI\TI-58C TI-59 Docs and extra"))
+            foreach (var file in Directory.EnumerateFiles(folder, "*.src", SearchOption.AllDirectories))
             {
                 var source = File.ReadAllText(file);
                 ProcessSource(source, file);

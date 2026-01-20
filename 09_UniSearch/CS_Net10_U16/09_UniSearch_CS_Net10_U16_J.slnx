@@ -1,0 +1,17 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+  </Configurations>
+  <Project Path="DirectDrawWrite/DirectDrawWrite.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="TestUniData/TestUniData.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="UniData/UniData.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="UniSearch/UniSearch.csproj">
+    <Platform Project="x64" />
+  </Project>
+</Solution>
