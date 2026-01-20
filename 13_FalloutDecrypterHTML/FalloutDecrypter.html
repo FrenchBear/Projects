@@ -1,6 +1,6 @@
 <!--
-Fallout Devrypter, HTML+CSS+Javascript version
-2026(01-19 	PV		First version (from Gemini)
+Fallout Decrypter, HTML+CSS+Javascript
+2026-01-19 	PV		First version (from Gemini)
 -->
 
 <!DOCTYPE html>
@@ -208,13 +208,13 @@ Fallout Devrypter, HTML+CSS+Javascript version
     const clearBtn = document.getElementById('clearBtn');
     const historyBody = document.getElementById('historyBody');
 
-    // --- Core Logic (Ported from C#) ---
+    // --- Core Logic
 
     function getCompatibility(newGuess, oldGuess, oldLikeness) {
         newGuess = newGuess.toUpperCase();
         oldGuess = oldGuess.toUpperCase();
 
-        // If new guess is longer than old guess, it's an error based on prompt logic
+        // If new guess is longer than old guess, it's an error
         if (newGuess.length > oldGuess.length) {
             return "ERR";
         }
@@ -238,7 +238,7 @@ Fallout Devrypter, HTML+CSS+Javascript version
         }
     }
 
-    // --- UI Updates ---
+    // --- UI Updates
 
     function updateStatuses() {
         const currentInput = guessInput.value.toUpperCase();
@@ -292,9 +292,9 @@ Fallout Devrypter, HTML+CSS+Javascript version
         historyBody.appendChild(tr);
     }
 
-    // --- Event Handlers ---
+    // --- Event Handlers
 
-    // 1. Real-time typing check
+    // Real-time typing check
     guessInput.addEventListener('keyup', () => {
         updateStatuses();
     });
@@ -304,7 +304,7 @@ Fallout Devrypter, HTML+CSS+Javascript version
         updateStatuses();
     });
 
-    // 2. Add Button Logic
+    // Add Button Logic
     addBtn.addEventListener('click', () => {
         const word = guessInput.value.toUpperCase().trim();
         const likeness = parseInt(likenessInput.value);
@@ -338,7 +338,7 @@ Fallout Devrypter, HTML+CSS+Javascript version
         updateStatuses();
     });
 
-    // 3. Clear Button Logic
+    // Clear Button Logic
     clearBtn.addEventListener('click', () => {
         history = [];
         historyBody.innerHTML = '';
