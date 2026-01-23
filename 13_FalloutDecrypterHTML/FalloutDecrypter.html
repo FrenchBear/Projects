@@ -1,6 +1,8 @@
 <!--
 Fallout Decrypter, HTML+CSS+Javascript
+
 2026-01-19 	PV		First version (from Gemini)
+2026-01-24 	PV		input maxlength=12; Enter on likenessInput -> click on Add
 -->
 
 <!DOCTYPE html>
@@ -174,8 +176,8 @@ Fallout Decrypter, HTML+CSS+Javascript
 
     <div class="helper-text">ENTER PASSWORD & MATCH COUNT</div>
     <div class="input-group">
-        <input type="text" id="guessInput" placeholder="GUESS" maxlength="10" autocomplete="off">
-        <input type="number" id="likenessInput" placeholder="#" min="0" max="6">
+        <input type="text" id="guessInput" placeholder="GUESS" maxlength="12" autocomplete="off" autofocus>
+        <input type="number" id="likenessInput" min="0" max="11">
     </div>
 
     <div class="controls">
@@ -208,8 +210,7 @@ Fallout Decrypter, HTML+CSS+Javascript
     const clearBtn = document.getElementById('clearBtn');
     const historyBody = document.getElementById('historyBody');
 
-    // --- Core Logic
-
+    // Compute compatibility status for an old guess
     function getCompatibility(newGuess, oldGuess, oldLikeness) {
         newGuess = newGuess.toUpperCase();
         oldGuess = oldGuess.toUpperCase();
@@ -303,6 +304,14 @@ Fallout Decrypter, HTML+CSS+Javascript
     guessInput.addEventListener('input', () => {
         updateStatuses();
     });
+	
+	// Enter on guess field clicks on Add button
+	likenessInput.addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();		// Cancel the default action, if needed
+        addBtn.click();
+      }
+    });
 
     // Add Button Logic
     addBtn.addEventListener('click', () => {
@@ -310,12 +319,12 @@ Fallout Decrypter, HTML+CSS+Javascript
         const likeness = parseInt(likenessInput.value);
 
         // Basic Validation
-        if (word.length < 4 || word.length > 10) {
-            alert("Password must be between 4 and 10 characters.");
+        if (word.length < 4 || word.length > 12) {
+            alert("Password must be between 4 and 12 characters.");
             return;
         }
-        if (isNaN(likeness) || likeness < 0 || likeness > 9) {
-            alert("Likeness match must be a number between 0 and 9.");
+        if (isNaN(likeness) || likeness < 0 || likeness > 11) {
+            alert("Likeness match must be a number between 0 and 11.");
             return;
         }
         if (history.length >= MAX_HISTORY) {
