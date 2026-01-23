@@ -174,7 +174,7 @@ Fallout Devrypter, HTML+CSS+Javascript version
 
     <div class="helper-text">ENTER PASSWORD & MATCH COUNT</div>
     <div class="input-group">
-        <input type="text" id="guessInput" placeholder="GUESS" maxlength="9" autocomplete="off">
+        <input type="text" id="guessInput" placeholder="GUESS" maxlength="10" autocomplete="off">
         <input type="number" id="likenessInput" placeholder="#" min="0" max="6">
     </div>
 
@@ -310,11 +310,11 @@ Fallout Devrypter, HTML+CSS+Javascript version
         const likeness = parseInt(likenessInput.value);
 
         // Basic Validation
-        if (word.length < 4 || word.length > 9) {
-            alert("Password must be between 4 and 9 characters.");
+        if (word.length < 4 || word.length > 10) {
+            alert("Password must be between 4 and 10 characters.");
             return;
         }
-        if (isNaN(likeness) || likeness < 0 || likeness > 6) {
+        if (isNaN(likeness) || likeness < 0 || likeness > 9) {
             alert("Likeness match must be a number between 0 and 9.");
             return;
         }
