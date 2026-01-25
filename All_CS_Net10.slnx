@@ -23,6 +23,10 @@
     </Project>
     <Project Path="05_Linedoku/CS_Net10/DetectClosedArea/DetectClosedArea.csproj" />
   </Folder>
+  <Folder Name="/06 FalloutDecrypter/">
+    <Project Path="06_FalloutDecrypter/CS_Blazor_Net10/FalloutDecrypter.csproj" />
+    <Project Path="06_FalloutDecrypter/VB_WPF_Net10/Fallout Decrypter VB WPF.vbproj" />
+  </Folder>
   <Folder Name="/07 Qwirkle/">
     <Project Path="07_Qwirkle/CS_Net10/LibQwirkle/LibQwirkle.csproj" />
     <Project Path="07_Qwirkle/CS_Net10/Q2/Q2.csproj" />
