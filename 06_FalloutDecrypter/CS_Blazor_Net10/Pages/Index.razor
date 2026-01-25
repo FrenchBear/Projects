@@ -1,0 +1,140 @@
+﻿@*
+** Fallout Decrypter
+** My first Blazor server app
+** 
+** 2023-01-13   PV      First version
+** 2023-01-15   PV      More tests, status message
+** 2023-11-19   PV      Net8 C#12
+** 2026-01-16   PV      Net9 C#13, and listen on all TCP ports (added «"Urls": "http://0.0.0.0:5000"» to appsettings.json), uppercase input
+** 2026-01-25   PV      Net10 C#14; Moved to Projects
+*@
+
+@page "/"
+@using System.Diagnostics;
+
+<PageTitle>Fallout Decrypter</PageTitle>
+
+<h1>Fallout Decrypter</h1>
+
+<ul>
+    @for (int i = 0; i < guesses.Count; i++)
+    {
+        <li>
+            <input @bind="guesses[i].Guess" />
+            <input @bind="guesses[i].Placed" />
+            <input @bind="guesses[i].Status" />
+        </li>
+    }
+</ul>
+
+<input style="text-transform: uppercase;" @ref="newPasswordInput" placeholder="Guess" @bind="newGuess" @bind:event="oninput" @onkeyup="newGuessKeyup" onClick="this.select();" />
+<input @ref="placedInput" placeholder="Matches" @bind="placed" @bind:event="oninput" @onkeypress="placedKeypress" />
+
+<button @onclick="AddAttempt">Add</button>
+<p role="status">@statusMessage</p>
+
+<button @onclick="ClearList">Clear</button>
+
+@code {
+    private ElementReference newPasswordInput;
+    private ElementReference placedInput;
+
+    private string? newGuess;
+    private string? placed;
+    private List<PasswordGuess> guesses = new();
+    private string statusMessage = "";
+
+    // Set initial focus
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if (firstRender)
+            newPasswordInput.FocusAsync();
+    }
+
+    // After a valid password guess and placed count entered, add it to current guess list
+    private void AddAttempt()
+    {
+        if (!string.IsNullOrWhiteSpace(newGuess) && int.TryParse(placed, out int m))
+        {
+            string guess = newGuess.ToUpper().Trim();
+            if (m < 0 || m > guess.Length)
+            {
+                statusMessage = "Invalid length!";
+                return;
+            }
+
+            foreach (var item in guesses)
+                if (guess.Length != item.Guess.Length)
+                {
+                    statusMessage = "Inconsistent length!";
+                    return;
+                }
+
+            statusMessage = string.Empty;
+
+            guesses.Add(new PasswordGuess { Guess = guess, Placed = m, Status = string.Empty });
+            newGuess = string.Empty;
+            placed = string.Empty;
+
+            for (int i = 0; i < guesses.Count; i++)
+                guesses[i].Status = "";
+
+            newPasswordInput.FocusAsync();
+        }
+    }
+
+    private string CompareWord(string newGuess, string guess, int placed)
+    {
+        newGuess = newGuess.ToUpperInvariant();
+        guess = guess.ToUpperInvariant();
+
+        if (newGuess.Length > guess.Length)
+            return "Guess too long!";
+
+        var isPartialCheck = newGuess.Length != guess.Length;
+        int match = 0;
+        for (int i = 0; i < newGuess.Length; i++)
+            if (newGuess[i] == guess[i])
+                match++;
+        if (isPartialCheck)
+            return (match > placed) ? "NO" : "";
+        return (match == placed) ? "OK" : "NO";
+    }
+
+    private void newGuessKeyup(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter" || args.Key == "Tab" || args.Key == "Shift")
+            return;
+        Debug.WriteLine(args.Key);
+
+        bool selectAll = false;
+        if (newGuess != null && args.Key != "Enter")
+        {
+            @for (int i = 0; i < guesses.Count; i++)
+            {
+                guesses[i].Status = CompareWord(newGuess.Trim(), guesses[i].Guess, guesses[i].Placed);
+                selectAll |= guesses[i].Status == "NO";
+            }
+        }
+        if (selectAll)
+        {
+            // ToDo
+        }
+    }
+
+    private void placedKeypress(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter")
+            AddAttempt();
+    }
+
+    private void ClearList()
+    {
+        guesses.Clear();
+        newGuess = string.Empty;
+        placed = string.Empty;
+        newPasswordInput.FocusAsync();
+        statusMessage = string.Empty;
+    }
+}

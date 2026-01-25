@@ -1,0 +1,48 @@
+﻿<Window x:Class="MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Fallout Decrypter" Height="237" Width="296" ResizeMode="NoResize" Icon="/Fallout.ico">
+    
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2.1*" />
+            <ColumnDefinition Width="0.8*" />
+            <ColumnDefinition Width="1.5*" />
+        </Grid.ColumnDefinitions>
+
+        <TextBox Grid.Row="6" Grid.Column="0" Name="WordTextBox" VerticalAlignment="Center" Width="120" CharacterCasing="Upper"  MaxLength="12" />
+        <TextBox Grid.Row="6" Grid.Column="1" Name="PlacedTextBox" VerticalAlignment="Center" HorizontalAlignment="Center" MaxLength="1" Width="20" />
+        <Button Grid.Row="6" Grid.Column="2" Height="23" HorizontalAlignment="Center" Name="AddButton" VerticalAlignment="Center" Width="75" IsDefault="True" >_Add</Button>
+
+
+        <Label Grid.Row="0" Grid.Column="0" Name="Label1" VerticalAlignment="Center" HorizontalAlignment="Center">Word</Label>
+        <Label Grid.Row="0" Grid.Column="1" Name="PlacedLabel" VerticalAlignment="Center" HorizontalAlignment="Center">Placed</Label>
+        <Button Grid.Row="0" Grid.Column="2" Height="23" HorizontalAlignment="Center" Name="ClearButton" VerticalAlignment="Center" Width="75" IsCancel="True">_Clear</Button>
+
+        <TextBox Grid.Row="1" Grid.Column="0" Name="Word1TextBox" VerticalAlignment="Center" Width="120" CharacterCasing="Upper" MaxLength="12">Word1</TextBox>
+        <TextBox Grid.Row="2" Grid.Column="0" Name="Word2TextBox" VerticalAlignment="Center" Width="120" CharacterCasing="Upper" MaxLength="12">Word2</TextBox>
+        <TextBox Grid.Row="3" Grid.Column="0" Name="Word3TextBox" VerticalAlignment="Center" Width="120" CharacterCasing="Upper" MaxLength="12">Word3</TextBox>
+        <TextBox Grid.Row="4" Grid.Column="0" Name="Word4TextBox" VerticalAlignment="Center" Width="120" CharacterCasing="Upper" MaxLength="12">Word4</TextBox>
+
+        <TextBox Grid.Row="1" Grid.Column="1" Name="Placed1TextBox" VerticalAlignment="Center" HorizontalAlignment="Center" MaxLength="1" Width="20"  />
+        <TextBox Grid.Row="2" Grid.Column="1" Name="Placed2TextBox" VerticalAlignment="Center" HorizontalAlignment="Center" MaxLength="1" Width="20"  />
+        <TextBox Grid.Row="3" Grid.Column="1" Name="Placed3TextBox" VerticalAlignment="Center" HorizontalAlignment="Center" MaxLength="1" Width="20"  />
+        <TextBox Grid.Row="4" Grid.Column="1" Name="Placed4TextBox" VerticalAlignment="Center" HorizontalAlignment="Center" MaxLength="1" Width="20"  />
+
+        <Label Grid.Row="1" Grid.Column="2" Name="Status1Label" VerticalAlignment="Center" Margin="0,0,0,2">S1</Label>
+        <Label Grid.Row="2" Grid.Column="2" Name="Status2Label" VerticalAlignment="Center" Margin="0,0,0,2">S2</Label>
+        <Label Grid.Row="3" Grid.Column="2" Name="Status3Label" VerticalAlignment="Center" Margin="0,0,0,2">S3</Label>
+        <Label Grid.Row="4" Grid.Column="2" Name="Status4Label" VerticalAlignment="Center" Margin="0,0,0,2">S4</Label>
+
+        <Label Grid.Row="5" Grid.Column="0" Name="AnalysisLabel" HorizontalAlignment="Center" VerticalAlignment="Center" />
+    </Grid>
+</Window>
