@@ -29,7 +29,7 @@ Fallout Decrypter, HTML+CSS+Javascript
             justify-content: center;
             padding: 20px;
             margin: 0;
-            height: 100vh;
+            height: 600px;
             box-sizing: border-box;
             text-shadow: 0 0 2px var(--terminal-dim);
         }
@@ -68,7 +68,7 @@ Fallout Decrypter, HTML+CSS+Javascript
             font-size: 1.2rem;
             padding: 10px;
             outline: none;
-            text-transform: uppercase;
+            text-transform: uppercase;      /* for rendering, DOM still contains typed text */
         }
 
         input:focus {
@@ -224,7 +224,7 @@ Fallout Decrypter, HTML+CSS+Javascript
     // --- UI Updates
 
     function updateStatuses() {
-        const currentInput = guessInput.value.toUpperCase();
+        const currentInput = guessInput.value.toUpperCase();    /* .toUpperCase() needed since text-transform: uppercase is for rendering only */
         
         // Get all rows currently in the table
         const rows = historyBody.querySelectorAll('tr');
