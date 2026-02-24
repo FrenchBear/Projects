@@ -7,7 +7,7 @@
 		<UseWPF>true</UseWPF>
 		<Authors>Pierre Violent</Authors>
 		<Version>1.16.2</Version>
-		<Copyright>Copyright ©2018-2025 Pierre Violent</Copyright>
+		<Copyright>Copyright ©2018-2026 Pierre Violent</Copyright>
 		<Description>Unicode Character Search Tool [WPF Net10 C#14]</Description>
 		<ApplicationIcon>Unicorn.ico</ApplicationIcon>
 		<Platforms>x64</Platforms>
