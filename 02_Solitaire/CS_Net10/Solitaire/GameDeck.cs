@@ -281,7 +281,7 @@ internal sealed class GameDeck: INotifyPropertyChanged, IDisposable
             bool? res = sd.Solve(cancellationToken: cts.Token);
             if (res.HasValue)
                 progress.Report(res.Value ? "Solvable" : "No solution");
-            EndTask:
+        EndTask:
             ;
         });
         t.Start();      // Don't care about task ending

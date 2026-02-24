@@ -1,4 +1,7 @@
-﻿[*.cs]
+﻿# Référence:
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/code-style-rule-options
+
+[*.cs]
 
 # Default severity for all analyzer diagnostics
 dotnet_analyzer_diagnostic.severity = warning
@@ -54,5 +57,37 @@ dotnet_diagnostic.CA1711.severity = none
 # CA5369: Deserialize overload is not safe
 dotnet_diagnostic.CA5369.severity = none
 
-# CA1838: Avoid StringBuilder for P/invokes
+# CA1838: Avoid StringBuilder parameters for P/Invokes
 dotnet_diagnostic.CA1838.severity = none
+
+# IDE0011: Add braces
+csharp_prefer_braces = false
+
+# IDE0306 Simplify collection initialization
+# IDE0028 Simplify collection initialization
+dotnet_diagnostic.IDE0306.severity = none
+dotnet_diagnostic.IDE0028.severity = none
+
+# Code-block preferences
+csharp_style_namespace_declarations = file_scoped:warning
+csharp_style_expression_bodied_methods = true:none
+
+# Expression-bodied members
+csharp_style_expression_bodied_accessors = true
+csharp_style_expression_bodied_constructors = true
+csharp_style_expression_bodied_indexers = true
+csharp_style_expression_bodied_lambdas = true
+csharp_style_expression_bodied_local_functions = true
+csharp_style_expression_bodied_methods = true
+csharp_style_expression_bodied_operators = true
+csharp_style_expression_bodied_properties = true
+
+# IDE0048: Parentheses should be added for clarity
+dotnet_style_parentheses_in_arithmetic_binary_operators = never_if_unnecessary
+
+# dotnet_style_parentheses_in_other_binary_operators = never_if_unnecessary
+# dotnet_style_parentheses_in_other_operators = never_if_unnecessary
+# dotnet_style_parentheses_in_relational_binary_operators = never_if_unnecessary
+
+# Space preferences
+csharp_space_before_colon_in_inheritance_clause = false

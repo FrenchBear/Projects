@@ -216,7 +216,7 @@ public static class UniData
                 }
                 else
                     if (codepoint < 0x20000)
-                    CharMap.Add(codepoint, new CharacterRecord(codepoint, charName, charCategory, isPrintable));
+                        CharMap.Add(codepoint, new CharacterRecord(codepoint, charName, charCategory, isPrintable));
             }
 
         // Add missing non-characters

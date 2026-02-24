@@ -226,10 +226,10 @@ internal sealed class L2aParser(T59Program Prog)
         L2aParserState state = L2aParserState.zero;
         foreach (var token in Prog.L1TokensWithoutWhiteSpace())
         {
-        // If at some point we get an unexpected token, we emit context as error and flush it, revert to state zero
-        // and we restart analysis at unexpected token, not at next token
-        // We control precisely the lexer restart context at unexpected input, which I haven't found how to do reliabily
-        // with ANTLR4 generated parser
+            // If at some point we get an unexpected token, we emit context as error and flush it, revert to state zero
+            // and we restart analysis at unexpected token, not at next token
+            // We control precisely the lexer restart context at unexpected input, which I haven't found how to do reliabily
+            // with ANTLR4 generated parser
         RestartAnalysis:
             switch (state)
             {

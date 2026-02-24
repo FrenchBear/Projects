@@ -144,7 +144,7 @@ internal abstract class InteractionManager
         }
         else
             if (!Selection.ContainsUITile(hit.UIT))
-            Selection.Add(hit);
+                Selection.Add(hit);
 
         // Remove and add again elements to move so they're displayed above non-moved elements
         foreach (UITileRowCol item in Selection)

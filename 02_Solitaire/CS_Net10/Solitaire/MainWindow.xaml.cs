@@ -353,8 +353,8 @@ public partial class MainWindow: Window, IDisposable
         if (IsShiftPressed())
             FullSolve();
         else
-        if (!OneMetaStepSolve())
-            MessageBox.Show("Sorry, no suggested play...");
+            if (!OneMetaStepSolve())
+                MessageBox.Show("Sorry, no suggested play...");
     }
 
     internal bool OneMetaStepSolve()

@@ -532,7 +532,7 @@ internal sealed class L2bEncoder(T59Program Prog)
             if (!isOk)
                 continue;
 
-            AnalyzeNextStatement:
+        AnalyzeNextStatement:
             var nextStat = GetNextCompatibleStatement(i);
             if (nextStat == null)
                 continue;

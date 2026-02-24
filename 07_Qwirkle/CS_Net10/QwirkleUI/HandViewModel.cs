@@ -103,8 +103,8 @@ internal sealed class HandViewModel: INotifyPropertyChanged
                 if (!UIHand.Any(uitrc => uitrc.RC.Row == row && uitrc.RC.Col == col))
                     goto ExitDoubleLoop;
 
-                // Guaranteed to find one
-                ExitDoubleLoop:
+        // Guaranteed to find one
+    ExitDoubleLoop:
         View.AddUITile(tile, new RowCol(row, col));
     }
 
