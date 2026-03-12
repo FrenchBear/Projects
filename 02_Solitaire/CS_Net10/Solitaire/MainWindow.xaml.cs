@@ -335,7 +335,10 @@ public partial class MainWindow: Window, IDisposable
         if (IsShiftPressed())
         {
             var vm = new NewGameOptionsViewModel();
-            var dlg = new NewGameOptionsWindow(vm);
+            var dlg = new NewGameOptionsWindow(vm)
+            {
+                Owner = this
+            };
             vm.SetWindow(dlg);
             if (dlg.ShowDialog() == true)
                 seed = vm.GameSerial;

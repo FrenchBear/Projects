@@ -3,7 +3,42 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Solitaire"
              StartupUri="MainWindow.xaml">
+
     <Application.Resources>
-        <ResourceDictionary Source="/PlayingCards.xaml" />
+        <ResourceDictionary >
+
+            <!--  TextBox with error adorner -->
+            <BitmapImage x:Key="ErrorImage" UriSource="Resources/Error24x24.png" />
+            <Style x:Key="TextBoxWithErrorStyle" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                <Setter Property="Validation.ErrorTemplate">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Control">
+                            <Grid ClipToBounds="False">
+                                <Border BorderBrush="Red" BorderThickness="1" Margin="-1">
+                                    <AdornedElementPlaceholder Name="adornedElement" />
+                                </Border>
+                                <Image HorizontalAlignment="Right" VerticalAlignment="Top"
+                       Width="24" Height="24" Margin="0,-8,-8,0"
+                       Source="{StaticResource ErrorImage}"
+                       ToolTip="{Binding ErrorContent}" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+
+                <Style.Triggers>
+                    <Trigger Property="Validation.HasError" Value="True">
+                        <Setter Property="ToolTip"
+                                Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)[0].ErrorContent}" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/PlayingCards.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+        </ResourceDictionary>
     </Application.Resources>
+
 </Application>

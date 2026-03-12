@@ -1,0 +1,1782 @@
+'Solitaire.exe' (CoreCLR: DefaultDomain): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Private.CoreLib.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Development\GitHub\Projects\02_Solitaire\CS_Net10\Solitaire\bin\Debug\net10.0-windows\Solitaire.dll'. Symbols loaded.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\10.0.4\PresentationFramework.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\10.0.4\WindowsBase.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Runtime.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\10.0.4\System.Xaml.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'c:\program files\microsoft visual studio\18\professional\common7\ide\extensions\microsoft\managedprojectsystem\HotReload\net10.0\Microsoft.Extensions.DotNetDeltaApplier.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Linq.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Runtime.Loader.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Console.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Collections.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Runtime.InteropServices.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Collections.Concurrent.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Threading.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.IO.Pipes.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Threading.Overlapped.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Security.AccessControl.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Security.Principal.Windows.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Security.Claims.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\Microsoft Visual Studio\18\Professional\Common7\IDE\PrivateAssemblies\Runtime\Microsoft.VisualStudio.Debugger.Runtime.NetCoreApp.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Threading.ThreadPool.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+Step into: Stepping over non-user code 'Solitaire.App..ctor'
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Diagnostics.TraceSource.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\10.0.4\System.IO.Packaging.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Private.Uri.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Text.RegularExpressions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\10.0.4\PresentationCore.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Memory.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\Microsoft.Win32.Primitives.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\10.0.4\DirectWriteForwarder.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Runtime.Extensions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Diagnostics.Debug.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Runtime.CompilerServices.VisualC.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Collections.NonGeneric.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\Microsoft.Win32.Registry.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Collections.Specialized.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.ComponentModel.Primitives.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Threading.Thread.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\10.0.4\System.Configuration.ConfigurationManager.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Xml.ReaderWriter.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Private.Xml.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Net.WebClient.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Text.Encoding.Extensions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+Step into: Stepping over non-user code 'Solitaire.App.InitializeComponent'
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.ComponentModel.TypeConverter.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\10.0.4\System.Windows.Extensions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.ComponentModel.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.ObjectModel.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Net.Requests.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Net.Primitives.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Net.WebHeaderCollection.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Diagnostics.Process.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\10.0.4\PresentationFramework.Aero2.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\10.0.4\UIAutomationTypes.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\10.0.4\System.Windows.Controls.Ribbon.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\10.0.4\PresentationFramework-SystemXml.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'c:\program files\microsoft visual studio\18\professional\common7\ide\commonextensions\microsoft\xamldiagnostics\Core\x64\Microsoft.VisualStudio.DesignTools.WpfTap.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Diagnostics.Tracing.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Threading.Tasks.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Runtime.Serialization.Json.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Private.DataContractSerialization.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Runtime.Serialization.Xml.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Runtime.Serialization.Primitives.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Resources.ResourceManager.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Reflection.Emit.ILGeneration.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Reflection.Emit.Lightweight.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Reflection.Primitives.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\10.0.4\UIAutomationProvider.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Development\GitHub\Projects\02_Solitaire\CS_Net10\Solitaire\bin\Debug\net10.0-windows\SolLib.dll'. Symbols loaded.
+----------------------------------------------------------
+Deck:
+Base 0   
+Base 1   
+Base 2   
+Base 3   
+Column 0 A♥˄ 
+Column 1 8♣˄ 2♠˅ 
+Column 2 J♠˄ A♠˅ 4♥˅ 
+Column 3 6♥˄ 2♦˅ 3♦˅ 3♠˅ 
+Column 4 5♣˄ J♦˅ X♦˅ 6♣˅ Q♣˅ 
+Column 5 A♣˄ 8♥˅ K♠˅ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 7♦˄ 2♣˅ 2♥˅ Q♥˅ X♣˅ Q♠˅ 9♠˅ 
+Talon FU     
+Talon FD     K♣˅ 4♣˅ K♥˅ 6♠˅ 4♦˅ 4♠˅ 7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\10.0.4\PresentationUI.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+
+DoMove From=(Column5 Cards=A♣˄ 8♥˅ K♠˅ 5♠˅ 8♠˅ 7♥˅ ) To=(Base0 Cards=) MovingCards=A♣˄  CMV=8♥˄
+----------------------------------------------------------
+Deck:
+Base 0   A♣˄ 
+Base 1   
+Base 2   
+Base 3   
+Column 0 A♥˄ 
+Column 1 8♣˄ 2♠˅ 
+Column 2 J♠˄ A♠˅ 4♥˅ 
+Column 3 6♥˄ 2♦˅ 3♦˅ 3♠˅ 
+Column 4 5♣˄ J♦˅ X♦˅ 6♣˅ Q♣˅ 
+Column 5 8♥˄ K♠˅ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 7♦˄ 2♣˅ 2♥˅ Q♥˅ X♣˅ Q♠˅ 9♠˅ 
+Talon FU     
+Talon FD     K♣˅ 4♣˅ K♥˅ 6♠˅ 4♦˅ 4♠˅ 7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+'Solitaire.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\10.0.4\System.Runtime.Intrinsics.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+
+DoMove From=(Column0 Cards=A♥˄ ) To=(Base1 Cards=) MovingCards=A♥˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   A♣˄ 
+Base 1   A♥˄ 
+Base 2   
+Base 3   
+Column 0 
+Column 1 8♣˄ 2♠˅ 
+Column 2 J♠˄ A♠˅ 4♥˅ 
+Column 3 6♥˄ 2♦˅ 3♦˅ 3♠˅ 
+Column 4 5♣˄ J♦˅ X♦˅ 6♣˅ Q♣˅ 
+Column 5 8♥˄ K♠˅ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 7♦˄ 2♣˅ 2♥˅ Q♥˅ X♣˅ Q♠˅ 9♠˅ 
+Talon FU     
+Talon FD     K♣˅ 4♣˅ K♥˅ 6♠˅ 4♦˅ 4♠˅ 7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(Column6 Cards=7♦˄ 2♣˅ 2♥˅ Q♥˅ X♣˅ Q♠˅ 9♠˅ ) To=(Column1 Cards=8♣˄ 2♠˅ ) MovingCards=7♦˄  CMV=2♣˄
+----------------------------------------------------------
+Deck:
+Base 0   A♣˄ 
+Base 1   A♥˄ 
+Base 2   
+Base 3   
+Column 0 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 J♠˄ A♠˅ 4♥˅ 
+Column 3 6♥˄ 2♦˅ 3♦˅ 3♠˅ 
+Column 4 5♣˄ J♦˅ X♦˅ 6♣˅ Q♣˅ 
+Column 5 8♥˄ K♠˅ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 2♣˄ 2♥˅ Q♥˅ X♣˅ Q♠˅ 9♠˅ 
+Talon FU     
+Talon FD     K♣˅ 4♣˅ K♥˅ 6♠˅ 4♦˅ 4♠˅ 7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(Column4 Cards=5♣˄ J♦˅ X♦˅ 6♣˅ Q♣˅ ) To=(Column3 Cards=6♥˄ 2♦˅ 3♦˅ 3♠˅ ) MovingCards=5♣˄  CMV=J♦˄
+----------------------------------------------------------
+Deck:
+Base 0   A♣˄ 
+Base 1   A♥˄ 
+Base 2   
+Base 3   
+Column 0 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 J♠˄ A♠˅ 4♥˅ 
+Column 3 5♣˄ 6♥˄ 2♦˅ 3♦˅ 3♠˅ 
+Column 4 J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 8♥˄ K♠˅ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 2♣˄ 2♥˅ Q♥˅ X♣˅ Q♠˅ 9♠˅ 
+Talon FU     
+Talon FD     K♣˅ 4♣˅ K♥˅ 6♠˅ 4♦˅ 4♠˅ 7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(Column6 Cards=2♣˄ 2♥˅ Q♥˅ X♣˅ Q♠˅ 9♠˅ ) To=(Base0 Cards=A♣˄ ) MovingCards=2♣˄  CMV=2♥˄
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   A♥˄ 
+Base 2   
+Base 3   
+Column 0 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 J♠˄ A♠˅ 4♥˅ 
+Column 3 5♣˄ 6♥˄ 2♦˅ 3♦˅ 3♠˅ 
+Column 4 J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 8♥˄ K♠˅ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 2♥˄ Q♥˅ X♣˅ Q♠˅ 9♠˅ 
+Talon FU     
+Talon FD     K♣˅ 4♣˅ K♥˅ 6♠˅ 4♦˅ 4♠˅ 7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(Column6 Cards=2♥˄ Q♥˅ X♣˅ Q♠˅ 9♠˅ ) To=(Base1 Cards=A♥˄ ) MovingCards=2♥˄  CMV=Q♥˄
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   2♥˄ A♥˄ 
+Base 2   
+Base 3   
+Column 0 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 J♠˄ A♠˅ 4♥˅ 
+Column 3 5♣˄ 6♥˄ 2♦˅ 3♦˅ 3♠˅ 
+Column 4 J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 8♥˄ K♠˅ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 Q♥˄ X♣˅ Q♠˅ 9♠˅ 
+Talon FU     
+Talon FD     K♣˅ 4♣˅ K♥˅ 6♠˅ 4♦˅ 4♠˅ 7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(Column2 Cards=J♠˄ A♠˅ 4♥˅ ) To=(Column6 Cards=Q♥˄ X♣˅ Q♠˅ 9♠˅ ) MovingCards=J♠˄  CMV=A♠˄
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   2♥˄ A♥˄ 
+Base 2   
+Base 3   
+Column 0 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 A♠˄ 4♥˅ 
+Column 3 5♣˄ 6♥˄ 2♦˅ 3♦˅ 3♠˅ 
+Column 4 J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 8♥˄ K♠˅ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 J♠˄ Q♥˄ X♣˅ Q♠˅ 9♠˅ 
+Talon FU     
+Talon FD     K♣˅ 4♣˅ K♥˅ 6♠˅ 4♦˅ 4♠˅ 7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(Column2 Cards=A♠˄ 4♥˅ ) To=(Base2 Cards=) MovingCards=A♠˄  CMV=4♥˄
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   
+Column 0 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 4♥˄ 
+Column 3 5♣˄ 6♥˄ 2♦˅ 3♦˅ 3♠˅ 
+Column 4 J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 8♥˄ K♠˅ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 J♠˄ Q♥˄ X♣˅ Q♠˅ 9♠˅ 
+Talon FU     
+Talon FD     K♣˅ 4♣˅ K♥˅ 6♠˅ 4♦˅ 4♠˅ 7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(Column2 Cards=4♥˄ ) To=(Column3 Cards=5♣˄ 6♥˄ 2♦˅ 3♦˅ 3♠˅ ) MovingCards=4♥˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   
+Column 0 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 
+Column 3 4♥˄ 5♣˄ 6♥˄ 2♦˅ 3♦˅ 3♠˅ 
+Column 4 J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 8♥˄ K♠˅ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 J♠˄ Q♥˄ X♣˅ Q♠˅ 9♠˅ 
+Talon FU     
+Talon FD     K♣˅ 4♣˅ K♥˅ 6♠˅ 4♦˅ 4♠˅ 7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFD Cards=K♣˅ 4♣˅ K♥˅ 6♠˅ 4♦˅ 4♠˅ 7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ ) To=(TalonFU Cards=) MovingCards=K♣˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   
+Column 0 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 
+Column 3 4♥˄ 5♣˄ 6♥˄ 2♦˅ 3♦˅ 3♠˅ 
+Column 4 J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 8♥˄ K♠˅ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 J♠˄ Q♥˄ X♣˅ Q♠˅ 9♠˅ 
+Talon FU     K♣˄ 
+Talon FD     4♣˅ K♥˅ 6♠˅ 4♦˅ 4♠˅ 7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFU Cards=K♣˄ ) To=(Column0 Cards=) MovingCards=K♣˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   
+Column 0 K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 
+Column 3 4♥˄ 5♣˄ 6♥˄ 2♦˅ 3♦˅ 3♠˅ 
+Column 4 J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 8♥˄ K♠˅ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 J♠˄ Q♥˄ X♣˅ Q♠˅ 9♠˅ 
+Talon FU     
+Talon FD     4♣˅ K♥˅ 6♠˅ 4♦˅ 4♠˅ 7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(Column6 Cards=J♠˄ Q♥˄ X♣˅ Q♠˅ 9♠˅ ) To=(Column0 Cards=K♣˄ ) MovingCards=J♠˄ Q♥˄  CMV=X♣˄
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   
+Column 0 J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 
+Column 3 4♥˄ 5♣˄ 6♥˄ 2♦˅ 3♦˅ 3♠˅ 
+Column 4 J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 8♥˄ K♠˅ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 X♣˄ Q♠˅ 9♠˅ 
+Talon FU     
+Talon FD     4♣˅ K♥˅ 6♠˅ 4♦˅ 4♠˅ 7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(Column6 Cards=X♣˄ Q♠˅ 9♠˅ ) To=(Column4 Cards=J♦˄ X♦˅ 6♣˅ Q♣˅ ) MovingCards=X♣˄  CMV=Q♠˄
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   
+Column 0 J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 
+Column 3 4♥˄ 5♣˄ 6♥˄ 2♦˅ 3♦˅ 3♠˅ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 8♥˄ K♠˅ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 Q♠˄ 9♠˅ 
+Talon FU     
+Talon FD     4♣˅ K♥˅ 6♠˅ 4♦˅ 4♠˅ 7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFD Cards=4♣˅ K♥˅ 6♠˅ 4♦˅ 4♠˅ 7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ ) To=(TalonFU Cards=) MovingCards=4♣˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   
+Column 0 J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 
+Column 3 4♥˄ 5♣˄ 6♥˄ 2♦˅ 3♦˅ 3♠˅ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 8♥˄ K♠˅ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 Q♠˄ 9♠˅ 
+Talon FU     4♣˄ 
+Talon FD     K♥˅ 6♠˅ 4♦˅ 4♠˅ 7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFD Cards=K♥˅ 6♠˅ 4♦˅ 4♠˅ 7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ ) To=(TalonFU Cards=4♣˄ ) MovingCards=K♥˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   
+Column 0 J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 
+Column 3 4♥˄ 5♣˄ 6♥˄ 2♦˅ 3♦˅ 3♠˅ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 8♥˄ K♠˅ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 Q♠˄ 9♠˅ 
+Talon FU     K♥˄ 4♣˄ 
+Talon FD     6♠˅ 4♦˅ 4♠˅ 7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFU Cards=K♥˄ 4♣˄ ) To=(Column2 Cards=) MovingCards=K♥˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   
+Column 0 J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 K♥˄ 
+Column 3 4♥˄ 5♣˄ 6♥˄ 2♦˅ 3♦˅ 3♠˅ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 8♥˄ K♠˅ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 Q♠˄ 9♠˅ 
+Talon FU     4♣˄ 
+Talon FD     6♠˅ 4♦˅ 4♠˅ 7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(Column6 Cards=Q♠˄ 9♠˅ ) To=(Column2 Cards=K♥˄ ) MovingCards=Q♠˄  CMV=9♠˄
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   
+Column 0 J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 4♥˄ 5♣˄ 6♥˄ 2♦˅ 3♦˅ 3♠˅ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 8♥˄ K♠˅ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 9♠˄ 
+Talon FU     4♣˄ 
+Talon FD     6♠˅ 4♦˅ 4♠˅ 7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(Column5 Cards=8♥˄ K♠˅ 5♠˅ 8♠˅ 7♥˅ ) To=(Column6 Cards=9♠˄ ) MovingCards=8♥˄  CMV=K♠˄
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   
+Column 0 J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 4♥˄ 5♣˄ 6♥˄ 2♦˅ 3♦˅ 3♠˅ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 K♠˄ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 8♥˄ 9♠˄ 
+Talon FU     4♣˄ 
+Talon FD     6♠˅ 4♦˅ 4♠˅ 7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFD Cards=6♠˅ 4♦˅ 4♠˅ 7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ ) To=(TalonFU Cards=4♣˄ ) MovingCards=6♠˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   
+Column 0 J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 4♥˄ 5♣˄ 6♥˄ 2♦˅ 3♦˅ 3♠˅ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 K♠˄ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 8♥˄ 9♠˄ 
+Talon FU     6♠˄ 4♣˄ 
+Talon FD     4♦˅ 4♠˅ 7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFD Cards=4♦˅ 4♠˅ 7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ ) To=(TalonFU Cards=6♠˄ 4♣˄ ) MovingCards=4♦˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   
+Column 0 J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 4♥˄ 5♣˄ 6♥˄ 2♦˅ 3♦˅ 3♠˅ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 K♠˄ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 8♥˄ 9♠˄ 
+Talon FU     4♦˄ 6♠˄ 4♣˄ 
+Talon FD     4♠˅ 7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFD Cards=4♠˅ 7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ ) To=(TalonFU Cards=4♦˄ 6♠˄ 4♣˄ ) MovingCards=4♠˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   
+Column 0 J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 4♥˄ 5♣˄ 6♥˄ 2♦˅ 3♦˅ 3♠˅ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 K♠˄ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 8♥˄ 9♠˄ 
+Talon FU     4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFD Cards=7♣˅ 3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ ) To=(TalonFU Cards=4♠˄ 4♦˄ 6♠˄ 4♣˄ ) MovingCards=7♣˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   
+Column 0 J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 4♥˄ 5♣˄ 6♥˄ 2♦˅ 3♦˅ 3♠˅ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 K♠˄ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 8♥˄ 9♠˄ 
+Talon FU     7♣˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFU Cards=7♣˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) To=(Column6 Cards=8♥˄ 9♠˄ ) MovingCards=7♣˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   
+Column 0 J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 4♥˄ 5♣˄ 6♥˄ 2♦˅ 3♦˅ 3♠˅ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 K♠˄ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 7♣˄ 8♥˄ 9♠˄ 
+Talon FU     4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(Column3 Cards=4♥˄ 5♣˄ 6♥˄ 2♦˅ 3♦˅ 3♠˅ ) To=(Column6 Cards=7♣˄ 8♥˄ 9♠˄ ) MovingCards=4♥˄ 5♣˄ 6♥˄  CMV=2♦˄
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   
+Column 0 J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 2♦˄ 3♦˅ 3♠˅ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 K♠˄ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 4♥˄ 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ 
+Talon FU     4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFD Cards=3♥˅ 8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ ) To=(TalonFU Cards=4♠˄ 4♦˄ 6♠˄ 4♣˄ ) MovingCards=3♥˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   
+Column 0 J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 2♦˄ 3♦˅ 3♠˅ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 K♠˄ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 4♥˄ 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ 
+Talon FU     3♥˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFU Cards=3♥˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) To=(Base1 Cards=2♥˄ A♥˄ ) MovingCards=3♥˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   3♥˄ 2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   
+Column 0 J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 2♦˄ 3♦˅ 3♠˅ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 K♠˄ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 4♥˄ 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ 
+Talon FU     4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFD Cards=8♦˅ A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ ) To=(TalonFU Cards=4♠˄ 4♦˄ 6♠˄ 4♣˄ ) MovingCards=8♦˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   3♥˄ 2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   
+Column 0 J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 2♦˄ 3♦˅ 3♠˅ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 K♠˄ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 4♥˄ 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ 
+Talon FU     8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(Column6 Cards=4♥˄ 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ ) To=(Base1 Cards=3♥˄ 2♥˄ A♥˄ ) MovingCards=4♥˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   
+Column 0 J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 2♦˄ 3♦˅ 3♠˅ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 K♠˄ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ 
+Talon FU     8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFD Cards=A♦˅ X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ ) To=(TalonFU Cards=8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) MovingCards=A♦˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   
+Column 0 J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 2♦˄ 3♦˅ 3♠˅ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 K♠˄ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ 
+Talon FU     A♦˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+The thread '.NET TP Worker' (31196) has exited with code 0 (0x0).
+
+DoMove From=(TalonFU Cards=A♦˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) To=(Base3 Cards=) MovingCards=A♦˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   A♦˄ 
+Column 0 J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 2♦˄ 3♦˅ 3♠˅ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 K♠˄ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ 
+Talon FU     8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(Column3 Cards=2♦˄ 3♦˅ 3♠˅ ) To=(Base3 Cards=A♦˄ ) MovingCards=2♦˄  CMV=3♦˄
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   2♦˄ A♦˄ 
+Column 0 J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 3♦˄ 3♠˅ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 K♠˄ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ 
+Talon FU     8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(Column3 Cards=3♦˄ 3♠˅ ) To=(Base3 Cards=2♦˄ A♦˄ ) MovingCards=3♦˄  CMV=3♠˄
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 3♠˄ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 K♠˄ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ 
+Talon FU     8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFD Cards=X♥˅ 7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ ) To=(TalonFU Cards=8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) MovingCards=X♥˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 3♠˄ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 K♠˄ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ 
+Talon FU     X♥˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFU Cards=X♥˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) To=(Column0 Cards=J♠˄ Q♥˄ K♣˄ ) MovingCards=X♥˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 3♠˄ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 K♠˄ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ 
+Talon FU     8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(Column6 Cards=5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ ) To=(Column0 Cards=X♥˄ J♠˄ Q♥˄ K♣˄ ) MovingCards=5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 3♠˄ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 K♠˄ 5♠˅ 8♠˅ 7♥˅ 
+Column 6 
+Talon FU     8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(Column5 Cards=K♠˄ 5♠˅ 8♠˅ 7♥˅ ) To=(Column6 Cards=) MovingCards=K♠˄  CMV=5♠˄
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 3♠˄ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 K♠˄ 
+Talon FU     8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFD Cards=7♠˅ Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ ) To=(TalonFU Cards=8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) MovingCards=7♠˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 3♠˄ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 K♠˄ 
+Talon FU     7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFD Cards=Q♦˅ 9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ ) To=(TalonFU Cards=7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) MovingCards=Q♦˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 3♠˄ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 K♠˄ 
+Talon FU     Q♦˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFU Cards=Q♦˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) To=(Column6 Cards=K♠˄ ) MovingCards=Q♦˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 3♠˄ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 Q♦˄ K♠˄ 
+Talon FU     7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFD Cards=9♥˅ K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ ) To=(TalonFU Cards=7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) MovingCards=9♥˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 3♠˄ 
+Column 4 X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 Q♦˄ K♠˄ 
+Talon FU     9♥˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFU Cards=9♥˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) To=(Column4 Cards=X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ ) MovingCards=9♥˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 7♦˄ 8♣˄ 2♠˅ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 3♠˄ 
+Column 4 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 Q♦˄ K♠˄ 
+Talon FU     7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(Column1 Cards=7♦˄ 8♣˄ 2♠˅ ) To=(Column4 Cards=9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ ) MovingCards=7♦˄ 8♣˄  CMV=2♠˄
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 2♠˄ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 3♠˄ 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 Q♦˄ K♠˄ 
+Talon FU     7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(Column1 Cards=2♠˄ ) To=(Base2 Cards=A♠˄ ) MovingCards=2♠˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 
+Column 2 Q♠˄ K♥˄ 
+Column 3 3♠˄ 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 Q♦˄ K♠˄ 
+Talon FU     7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(Column3 Cards=3♠˄ ) To=(Base2 Cards=2♠˄ A♠˄ ) MovingCards=3♠˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 
+Column 2 Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 Q♦˄ K♠˄ 
+Talon FU     7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFD Cards=K♦˅ 9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ ) To=(TalonFU Cards=7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) MovingCards=K♦˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 
+Column 2 Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 Q♦˄ K♠˄ 
+Talon FU     K♦˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFU Cards=K♦˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) To=(Column1 Cards=) MovingCards=K♦˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 Q♦˄ K♠˄ 
+Talon FU     7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFD Cards=9♣˅ 5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ ) To=(TalonFU Cards=7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) MovingCards=9♣˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 Q♦˄ K♠˄ 
+Talon FU     9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFD Cards=5♥˅ 6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ ) To=(TalonFU Cards=9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) MovingCards=5♥˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 Q♦˄ K♠˄ 
+Talon FU     5♥˄ 9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+The thread 1348 has exited with code 0 (0x0).
+
+DoMove From=(TalonFU Cards=5♥˄ 9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) To=(Base1 Cards=4♥˄ 3♥˄ 2♥˄ A♥˄ ) MovingCards=5♥˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 Q♦˄ K♠˄ 
+Talon FU     9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFD Cards=6♦˅ 3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ ) To=(TalonFU Cards=9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) MovingCards=6♦˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 Q♦˄ K♠˄ 
+Talon FU     6♦˄ 9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFD Cards=3♣˅ J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ ) To=(TalonFU Cards=6♦˄ 9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) MovingCards=3♣˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 Q♦˄ K♠˄ 
+Talon FU     3♣˄ 6♦˄ 9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFU Cards=3♣˄ 6♦˄ 9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) To=(Base0 Cards=2♣˄ A♣˄ ) MovingCards=3♣˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   3♣˄ 2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 Q♦˄ K♠˄ 
+Talon FU     6♦˄ 9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFD Cards=J♥˅ 5♦˅ 9♦˅ X♠˅ J♣˅ ) To=(TalonFU Cards=6♦˄ 9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) MovingCards=J♥˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   3♣˄ 2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 Q♦˄ K♠˄ 
+Talon FU     J♥˄ 6♦˄ 9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFU Cards=J♥˄ 6♦˄ 9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) To=(Column2 Cards=Q♠˄ K♥˄ ) MovingCards=J♥˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   3♣˄ 2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 Q♦˄ K♠˄ 
+Talon FU     6♦˄ 9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     5♦˅ 9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFD Cards=5♦˅ 9♦˅ X♠˅ J♣˅ ) To=(TalonFU Cards=6♦˄ 9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) MovingCards=5♦˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   3♣˄ 2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 Q♦˄ K♠˄ 
+Talon FU     5♦˄ 6♦˄ 9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     9♦˅ X♠˅ J♣˅ 
+
+DoMove From=(TalonFD Cards=9♦˅ X♠˅ J♣˅ ) To=(TalonFU Cards=5♦˄ 6♦˄ 9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) MovingCards=9♦˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   3♣˄ 2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 Q♦˄ K♠˄ 
+Talon FU     9♦˄ 5♦˄ 6♦˄ 9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     X♠˅ J♣˅ 
+
+DoMove From=(TalonFD Cards=X♠˅ J♣˅ ) To=(TalonFU Cards=9♦˄ 5♦˄ 6♦˄ 9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) MovingCards=X♠˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   3♣˄ 2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 Q♦˄ K♠˄ 
+Talon FU     X♠˄ 9♦˄ 5♦˄ 6♦˄ 9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     J♣˅ 
+
+DoMove From=(TalonFU Cards=X♠˄ 9♦˄ 5♦˄ 6♦˄ 9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) To=(Column2 Cards=J♥˄ Q♠˄ K♥˄ ) MovingCards=X♠˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   3♣˄ 2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 Q♦˄ K♠˄ 
+Talon FU     9♦˄ 5♦˄ 6♦˄ 9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     J♣˅ 
+
+DoMove From=(TalonFU Cards=9♦˄ 5♦˄ 6♦˄ 9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) To=(Column2 Cards=X♠˄ J♥˄ Q♠˄ K♥˄ ) MovingCards=9♦˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   3♣˄ 2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 Q♦˄ K♠˄ 
+Talon FU     5♦˄ 6♦˄ 9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     J♣˅ 
+
+DoMove From=(TalonFD Cards=J♣˅ ) To=(TalonFU Cards=5♦˄ 6♦˄ 9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) MovingCards=J♣˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   3♣˄ 2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 Q♦˄ K♠˄ 
+Talon FU     J♣˄ 5♦˄ 6♦˄ 9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     
+
+DoMove From=(TalonFU Cards=J♣˄ 5♦˄ 6♦˄ 9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) To=(Column6 Cards=Q♦˄ K♠˄ ) MovingCards=J♣˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   3♣˄ 2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     5♦˄ 6♦˄ 9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ 
+Talon FD     
+
+DoMove From=(TalonFU Cards=5♦˄ 6♦˄ 9♣˄ 7♠˄ 8♦˄ 4♠˄ 4♦˄ 6♠˄ 4♣˄ ) To=(TalonFD Cards=) MovingCards=4♣˄ 6♠˄ 4♦˄ 4♠˄ 8♦˄ 7♠˄ 9♣˄ 6♦˄ 5♦˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   3♣˄ 2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     
+Talon FD     4♣˅ 6♠˅ 4♦˅ 4♠˅ 8♦˅ 7♠˅ 9♣˅ 6♦˅ 5♦˅ 
+
+DoMove From=(TalonFD Cards=4♣˅ 6♠˅ 4♦˅ 4♠˅ 8♦˅ 7♠˅ 9♣˅ 6♦˅ 5♦˅ ) To=(TalonFU Cards=) MovingCards=4♣˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   3♣˄ 2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     4♣˄ 
+Talon FD     6♠˅ 4♦˅ 4♠˅ 8♦˅ 7♠˅ 9♣˅ 6♦˅ 5♦˅ 
+
+DoMove From=(TalonFU Cards=4♣˄ ) To=(Base0 Cards=3♣˄ 2♣˄ A♣˄ ) MovingCards=4♣˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     
+Talon FD     6♠˅ 4♦˅ 4♠˅ 8♦˅ 7♠˅ 9♣˅ 6♦˅ 5♦˅ 
+
+DoMove From=(Column0 Cards=5♣˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ ) To=(Base0 Cards=4♣˄ 3♣˄ 2♣˄ A♣˄ ) MovingCards=5♣˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 5♠˄ 8♠˅ 7♥˅ 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     
+Talon FD     6♠˅ 4♦˅ 4♠˅ 8♦˅ 7♠˅ 9♣˅ 6♦˅ 5♦˅ 
+
+DoMove From=(Column5 Cards=5♠˄ 8♠˅ 7♥˅ ) To=(Column0 Cards=6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ ) MovingCards=5♠˄  CMV=8♠˄
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♠˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 8♠˄ 7♥˅ 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     
+Talon FD     6♠˅ 4♦˅ 4♠˅ 8♦˅ 7♠˅ 9♣˅ 6♦˅ 5♦˅ 
+
+DoMove From=(Column5 Cards=8♠˄ 7♥˅ ) To=(Column2 Cards=9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ ) MovingCards=8♠˄  CMV=7♥˄
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♠˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 7♥˄ 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     
+Talon FD     6♠˅ 4♦˅ 4♠˅ 8♦˅ 7♠˅ 9♣˅ 6♦˅ 5♦˅ 
+
+DoMove From=(Column5 Cards=7♥˄ ) To=(Column2 Cards=8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ ) MovingCards=7♥˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♠˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 7♥˄ 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     
+Talon FD     6♠˅ 4♦˅ 4♠˅ 8♦˅ 7♠˅ 9♣˅ 6♦˅ 5♦˅ 
+
+DoMove From=(TalonFD Cards=6♠˅ 4♦˅ 4♠˅ 8♦˅ 7♠˅ 9♣˅ 6♦˅ 5♦˅ ) To=(TalonFU Cards=) MovingCards=6♠˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♠˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 7♥˄ 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     6♠˄ 
+Talon FD     4♦˅ 4♠˅ 8♦˅ 7♠˅ 9♣˅ 6♦˅ 5♦˅ 
+
+DoMove From=(TalonFU Cards=6♠˄ ) To=(Column2 Cards=7♥˄ 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ ) MovingCards=6♠˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♠˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 6♠˄ 7♥˄ 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     
+Talon FD     4♦˅ 4♠˅ 8♦˅ 7♠˅ 9♣˅ 6♦˅ 5♦˅ 
+
+DoMove From=(TalonFD Cards=4♦˅ 4♠˅ 8♦˅ 7♠˅ 9♣˅ 6♦˅ 5♦˅ ) To=(TalonFU Cards=) MovingCards=4♦˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   3♦˄ 2♦˄ A♦˄ 
+Column 0 5♠˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 6♠˄ 7♥˄ 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     4♦˄ 
+Talon FD     4♠˅ 8♦˅ 7♠˅ 9♣˅ 6♦˅ 5♦˅ 
+
+DoMove From=(TalonFU Cards=4♦˄ ) To=(Base3 Cards=3♦˄ 2♦˄ A♦˄ ) MovingCards=4♦˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   4♦˄ 3♦˄ 2♦˄ A♦˄ 
+Column 0 5♠˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 6♠˄ 7♥˄ 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     
+Talon FD     4♠˅ 8♦˅ 7♠˅ 9♣˅ 6♦˅ 5♦˅ 
+
+DoMove From=(TalonFD Cards=4♠˅ 8♦˅ 7♠˅ 9♣˅ 6♦˅ 5♦˅ ) To=(TalonFU Cards=) MovingCards=4♠˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   3♠˄ 2♠˄ A♠˄ 
+Base 3   4♦˄ 3♦˄ 2♦˄ A♦˄ 
+Column 0 5♠˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 6♠˄ 7♥˄ 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     4♠˄ 
+Talon FD     8♦˅ 7♠˅ 9♣˅ 6♦˅ 5♦˅ 
+
+DoMove From=(TalonFU Cards=4♠˄ ) To=(Base2 Cards=3♠˄ 2♠˄ A♠˄ ) MovingCards=4♠˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   4♠˄ 3♠˄ 2♠˄ A♠˄ 
+Base 3   4♦˄ 3♦˄ 2♦˄ A♦˄ 
+Column 0 5♠˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 6♠˄ 7♥˄ 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     
+Talon FD     8♦˅ 7♠˅ 9♣˅ 6♦˅ 5♦˅ 
+
+DoMove From=(TalonFD Cards=8♦˅ 7♠˅ 9♣˅ 6♦˅ 5♦˅ ) To=(TalonFU Cards=) MovingCards=8♦˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   4♠˄ 3♠˄ 2♠˄ A♠˄ 
+Base 3   4♦˄ 3♦˄ 2♦˄ A♦˄ 
+Column 0 5♠˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 6♠˄ 7♥˄ 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     8♦˄ 
+Talon FD     7♠˅ 9♣˅ 6♦˅ 5♦˅ 
+
+DoMove From=(Column0 Cards=5♠˄ 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ ) To=(Base2 Cards=4♠˄ 3♠˄ 2♠˄ A♠˄ ) MovingCards=5♠˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   5♠˄ 4♠˄ 3♠˄ 2♠˄ A♠˄ 
+Base 3   4♦˄ 3♦˄ 2♦˄ A♦˄ 
+Column 0 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 6♠˄ 7♥˄ 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     8♦˄ 
+Talon FD     7♠˅ 9♣˅ 6♦˅ 5♦˅ 
+
+DoMove From=(Column2 Cards=6♠˄ 7♥˄ 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ ) To=(Base2 Cards=5♠˄ 4♠˄ 3♠˄ 2♠˄ A♠˄ ) MovingCards=6♠˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   6♠˄ 5♠˄ 4♠˄ 3♠˄ 2♠˄ A♠˄ 
+Base 3   4♦˄ 3♦˄ 2♦˄ A♦˄ 
+Column 0 6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 7♥˄ 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     8♦˄ 
+Talon FD     7♠˅ 9♣˅ 6♦˅ 5♦˅ 
+
+DoMove From=(Column0 Cards=6♥˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ ) To=(Base1 Cards=5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ ) MovingCards=6♥˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   6♥˄ 5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   6♠˄ 5♠˄ 4♠˄ 3♠˄ 2♠˄ A♠˄ 
+Base 3   4♦˄ 3♦˄ 2♦˄ A♦˄ 
+Column 0 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 7♥˄ 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     8♦˄ 
+Talon FD     7♠˅ 9♣˅ 6♦˅ 5♦˅ 
+
+DoMove From=(Column2 Cards=7♥˄ 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ ) To=(Base1 Cards=6♥˄ 5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ ) MovingCards=7♥˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   7♥˄ 6♥˄ 5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   6♠˄ 5♠˄ 4♠˄ 3♠˄ 2♠˄ A♠˄ 
+Base 3   4♦˄ 3♦˄ 2♦˄ A♦˄ 
+Column 0 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     8♦˄ 
+Talon FD     7♠˅ 9♣˅ 6♦˅ 5♦˅ 
+
+DoMove From=(Column4 Cards=7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ ) To=(Column2 Cards=8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ ) MovingCards=7♦˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   7♥˄ 6♥˄ 5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   6♠˄ 5♠˄ 4♠˄ 3♠˄ 2♠˄ A♠˄ 
+Base 3   4♦˄ 3♦˄ 2♦˄ A♦˄ 
+Column 0 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 7♦˄ 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     8♦˄ 
+Talon FD     7♠˅ 9♣˅ 6♦˅ 5♦˅ 
+
+DoMove From=(TalonFD Cards=7♠˅ 9♣˅ 6♦˅ 5♦˅ ) To=(TalonFU Cards=8♦˄ ) MovingCards=7♠˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   7♥˄ 6♥˄ 5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   6♠˄ 5♠˄ 4♠˄ 3♠˄ 2♠˄ A♠˄ 
+Base 3   4♦˄ 3♦˄ 2♦˄ A♦˄ 
+Column 0 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 7♦˄ 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     7♠˄ 8♦˄ 
+Talon FD     9♣˅ 6♦˅ 5♦˅ 
+
+DoMove From=(TalonFU Cards=7♠˄ 8♦˄ ) To=(Base2 Cards=6♠˄ 5♠˄ 4♠˄ 3♠˄ 2♠˄ A♠˄ ) MovingCards=7♠˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   7♥˄ 6♥˄ 5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   7♠˄ 6♠˄ 5♠˄ 4♠˄ 3♠˄ 2♠˄ A♠˄ 
+Base 3   4♦˄ 3♦˄ 2♦˄ A♦˄ 
+Column 0 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 7♦˄ 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     8♦˄ 
+Talon FD     9♣˅ 6♦˅ 5♦˅ 
+
+DoMove From=(TalonFD Cards=9♣˅ 6♦˅ 5♦˅ ) To=(TalonFU Cards=8♦˄ ) MovingCards=9♣˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   7♥˄ 6♥˄ 5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   7♠˄ 6♠˄ 5♠˄ 4♠˄ 3♠˄ 2♠˄ A♠˄ 
+Base 3   4♦˄ 3♦˄ 2♦˄ A♦˄ 
+Column 0 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 7♦˄ 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     9♣˄ 8♦˄ 
+Talon FD     6♦˅ 5♦˅ 
+
+DoMove From=(TalonFD Cards=6♦˅ 5♦˅ ) To=(TalonFU Cards=9♣˄ 8♦˄ ) MovingCards=6♦˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   7♥˄ 6♥˄ 5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   7♠˄ 6♠˄ 5♠˄ 4♠˄ 3♠˄ 2♠˄ A♠˄ 
+Base 3   4♦˄ 3♦˄ 2♦˄ A♦˄ 
+Column 0 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 7♦˄ 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     6♦˄ 9♣˄ 8♦˄ 
+Talon FD     5♦˅ 
+
+DoMove From=(TalonFU Cards=6♦˄ 9♣˄ 8♦˄ ) To=(Column0 Cards=7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ ) MovingCards=6♦˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   7♥˄ 6♥˄ 5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   7♠˄ 6♠˄ 5♠˄ 4♠˄ 3♠˄ 2♠˄ A♠˄ 
+Base 3   4♦˄ 3♦˄ 2♦˄ A♦˄ 
+Column 0 6♦˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 7♦˄ 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     9♣˄ 8♦˄ 
+Talon FD     5♦˅ 
+
+DoMove From=(Column2 Cards=7♦˄ 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ ) To=(Column4 Cards=8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ ) MovingCards=7♦˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   7♥˄ 6♥˄ 5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   7♠˄ 6♠˄ 5♠˄ 4♠˄ 3♠˄ 2♠˄ A♠˄ 
+Base 3   4♦˄ 3♦˄ 2♦˄ A♦˄ 
+Column 0 6♦˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     9♣˄ 8♦˄ 
+Talon FD     5♦˅ 
+
+DoMove From=(TalonFD Cards=5♦˅ ) To=(TalonFU Cards=9♣˄ 8♦˄ ) MovingCards=5♦˅  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   7♥˄ 6♥˄ 5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   7♠˄ 6♠˄ 5♠˄ 4♠˄ 3♠˄ 2♠˄ A♠˄ 
+Base 3   4♦˄ 3♦˄ 2♦˄ A♦˄ 
+Column 0 6♦˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     5♦˄ 9♣˄ 8♦˄ 
+Talon FD     
+
+DoMove From=(TalonFU Cards=5♦˄ 9♣˄ 8♦˄ ) To=(Base3 Cards=4♦˄ 3♦˄ 2♦˄ A♦˄ ) MovingCards=5♦˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   7♥˄ 6♥˄ 5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   7♠˄ 6♠˄ 5♠˄ 4♠˄ 3♠˄ 2♠˄ A♠˄ 
+Base 3   5♦˄ 4♦˄ 3♦˄ 2♦˄ A♦˄ 
+Column 0 6♦˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     9♣˄ 8♦˄ 
+Talon FD     
+
+DoMove From=(Column0 Cards=6♦˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ ) To=(Base3 Cards=5♦˄ 4♦˄ 3♦˄ 2♦˄ A♦˄ ) MovingCards=6♦˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   7♥˄ 6♥˄ 5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   7♠˄ 6♠˄ 5♠˄ 4♠˄ 3♠˄ 2♠˄ A♠˄ 
+Base 3   6♦˄ 5♦˄ 4♦˄ 3♦˄ 2♦˄ A♦˄ 
+Column 0 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     9♣˄ 8♦˄ 
+Talon FD     
+ST.C=1  MG.C=0  ST.V=7  MG.V=6
+ST.C=1  MG.C=0  ST.V=7  MG.V=6
+
+DoMove From=(Base3 Cards=6♦˄ 5♦˄ 4♦˄ 3♦˄ 2♦˄ A♦˄ ) To=(Column0 Cards=7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ ) MovingCards=6♦˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   7♥˄ 6♥˄ 5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   7♠˄ 6♠˄ 5♠˄ 4♠˄ 3♠˄ 2♠˄ A♠˄ 
+Base 3   5♦˄ 4♦˄ 3♦˄ 2♦˄ A♦˄ 
+Column 0 6♦˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     9♣˄ 8♦˄ 
+Talon FD     
+
+DoMove From=(Column4 Cards=7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ ) To=(Column2 Cards=8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ ) MovingCards=7♦˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   7♥˄ 6♥˄ 5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   7♠˄ 6♠˄ 5♠˄ 4♠˄ 3♠˄ 2♠˄ A♠˄ 
+Base 3   5♦˄ 4♦˄ 3♦˄ 2♦˄ A♦˄ 
+Column 0 6♦˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 7♦˄ 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     9♣˄ 8♦˄ 
+Talon FD     
+
+DoMove From=(Column2 Cards=7♦˄ 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ ) To=(Column4 Cards=8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ ) MovingCards=7♦˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   7♥˄ 6♥˄ 5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   7♠˄ 6♠˄ 5♠˄ 4♠˄ 3♠˄ 2♠˄ A♠˄ 
+Base 3   5♦˄ 4♦˄ 3♦˄ 2♦˄ A♦˄ 
+Column 0 6♦˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     9♣˄ 8♦˄ 
+Talon FD     
+
+DoMove From=(Column4 Cards=7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ ) To=(Column2 Cards=8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ ) MovingCards=7♦˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   7♥˄ 6♥˄ 5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   7♠˄ 6♠˄ 5♠˄ 4♠˄ 3♠˄ 2♠˄ A♠˄ 
+Base 3   5♦˄ 4♦˄ 3♦˄ 2♦˄ A♦˄ 
+Column 0 6♦˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 7♦˄ 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     9♣˄ 8♦˄ 
+Talon FD     
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+ST.C=0  MG.C=0  ST.V=6  MG.V=7
+
+DoMove From=(Column2 Cards=7♦˄ 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ ) To=(Column4 Cards=8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ ) MovingCards=7♦˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   7♥˄ 6♥˄ 5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   7♠˄ 6♠˄ 5♠˄ 4♠˄ 3♠˄ 2♠˄ A♠˄ 
+Base 3   5♦˄ 4♦˄ 3♦˄ 2♦˄ A♦˄ 
+Column 0 6♦˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     9♣˄ 8♦˄ 
+Talon FD     
+
+DoMove From=(Column4 Cards=7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ ) To=(Column2 Cards=8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ ) MovingCards=7♦˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   7♥˄ 6♥˄ 5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   7♠˄ 6♠˄ 5♠˄ 4♠˄ 3♠˄ 2♠˄ A♠˄ 
+Base 3   5♦˄ 4♦˄ 3♦˄ 2♦˄ A♦˄ 
+Column 0 6♦˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 7♦˄ 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     9♣˄ 8♦˄ 
+Talon FD     
+
+DoMove From=(Column2 Cards=7♦˄ 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ ) To=(Column4 Cards=8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ ) MovingCards=7♦˄  CMV=
+----------------------------------------------------------
+Deck:
+Base 0   5♣˄ 4♣˄ 3♣˄ 2♣˄ A♣˄ 
+Base 1   7♥˄ 6♥˄ 5♥˄ 4♥˄ 3♥˄ 2♥˄ A♥˄ 
+Base 2   7♠˄ 6♠˄ 5♠˄ 4♠˄ 3♠˄ 2♠˄ A♠˄ 
+Base 3   5♦˄ 4♦˄ 3♦˄ 2♦˄ A♦˄ 
+Column 0 6♦˄ 7♣˄ 8♥˄ 9♠˄ X♥˄ J♠˄ Q♥˄ K♣˄ 
+Column 1 K♦˄ 
+Column 2 8♠˄ 9♦˄ X♠˄ J♥˄ Q♠˄ K♥˄ 
+Column 3 
+Column 4 7♦˄ 8♣˄ 9♥˄ X♣˄ J♦˄ X♦˅ 6♣˅ Q♣˅ 
+Column 5 
+Column 6 J♣˄ Q♦˄ K♠˄ 
+Talon FU     9♣˄ 8♦˄ 
+Talon FD     
+ST.C=0  MG.C=0  ST.V=6  MG.V=5
+ST.C=0  MG.C=0  ST.V=6  MG.V=5
+ST.C=0  MG.C=0  ST.V=6  MG.V=5
+ST.C=0  MG.C=0  ST.V=6  MG.V=5
+ST.C=0  MG.C=0  ST.V=6  MG.V=5
+ST.C=0  MG.C=0  ST.V=6  MG.V=5
+ST.C=0  MG.C=0  ST.V=6  MG.V=5
+ST.C=0  MG.C=0  ST.V=6  MG.V=5
+ST.C=0  MG.C=0  ST.V=6  MG.V=5
+ST.C=0  MG.C=0  ST.V=6  MG.V=5
+The thread '.NET TP Worker' (19084) has exited with code 0 (0x0).
+The thread '.NET TP Worker' (17172) has exited with code 0 (0x0).
+ST.C=0  MG.C=0  ST.V=6  MG.V=5
+ST.C=0  MG.C=0  ST.V=6  MG.V=5
+ST.C=0  MG.C=0  ST.V=6  MG.V=5
+ST.C=0  MG.C=0  ST.V=6  MG.V=5
+ST.C=0  MG.C=0  ST.V=6  MG.V=5
+ST.C=0  MG.C=0  ST.V=6  MG.V=5
+ST.C=0  MG.C=0  ST.V=6  MG.V=5
+ST.C=0  MG.C=0  ST.V=6  MG.V=5
+ST.C=0  MG.C=0  ST.V=6  MG.V=5
+ST.C=0  MG.C=0  ST.V=6  MG.V=5
+ST.C=0  MG.C=0  ST.V=6  MG.V=5
+ST.C=0  MG.C=0  ST.V=6  MG.V=5
+ST.C=0  MG.C=0  ST.V=6  MG.V=5
+ST.C=0  MG.C=0  ST.V=6  MG.V=5
+ST.C=0  MG.C=0  ST.V=6  MG.V=5
+ST.C=0  MG.C=0  ST.V=6  MG.V=5
+ST.C=0  MG.C=0  ST.V=6  MG.V=5
+The program '[30292] Solitaire.exe' has exited with code 0 (0x0).
