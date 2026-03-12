@@ -81,8 +81,8 @@ internal sealed class MovingGroup
     {
         Debug.Assert(MovingCards is not null);
         Debug.Assert(ToStack is not null);
-#if DEBUG
 
+#if DEBUG
         var sb = new StringBuilder($"\nDoMove From=({FromStack}) To=({ToStack}) MovingCards=");
         foreach (var c in MovingCards)
             sb.Append(c.Signature()).Append(' ');

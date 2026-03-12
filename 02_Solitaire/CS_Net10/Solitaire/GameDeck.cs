@@ -1,6 +1,6 @@
 ﻿// Solitaire WPF
-// class GameDeck
-// Data set of a solitaire session = View Model
+// class GameDeck = ViewModel
+// Data set of a solitaire session
 //
 // 2019-04-18   PV
 // 2021-11-13   PV      Net6 C#10

@@ -1,0 +1,13 @@
+Current implementation is incomplete, unsatisfying.
+
+I've blocked automoves from base (base to base is useless, base to column should be considered a waste of time), but similar rules should be used by solver (todo)
+When checking possible moves, a move to a base is always considered valid and mandatory part of the solution, I'm sure that's incorrect
+Should implement double-click
+During game auto-solve, even without animations, display is stuck in the middle: fix that
+Some classes (ex: SolverDeck) don't have ToString representation, other classes have a non-standard ToString: standardize
+Too many similarities betweed PlayingCard and SolverCard
+Maybe implement a "solver status if less than x moves", with x specified in settings, to avoid spoiling solution from the beginning, or possibly hide solver status (but still give a button to compute solvability on demand)
+Add a button "New solvable game" (interesting if solver status is hidden)
+Document classes+hierarchy and functions, current doc is minimalist!
+Chose betetr names, for instance SolverGroup vs SolverStack?  And SolverStack has no relation with GameStack!  And I don't think it should contain word 'Solver'...
+

@@ -32,8 +32,8 @@ public class PlayingCard: ButtonBase
     private const string SignatureFaceUp = "˄";
     private const string SignatureFaceDown = "˅";
 
-    static PlayingCard() =>        // Override style
-        DefaultStyleKeyProperty.OverrideMetadata(typeof(PlayingCard), new FrameworkPropertyMetadata(typeof(PlayingCard)));
+    static PlayingCard()        // Override style
+        => DefaultStyleKeyProperty.OverrideMetadata(typeof(PlayingCard), new FrameworkPropertyMetadata(typeof(PlayingCard)));
 
     public PlayingCard(string face, bool isFaceUp)
     {

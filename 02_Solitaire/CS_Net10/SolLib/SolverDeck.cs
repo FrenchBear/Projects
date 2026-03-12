@@ -8,6 +8,7 @@
 // 2023-11-20   PV      Net8 C#12
 // 2025-03-16   PV      Net9 C#13
 // 2026-01-20	PV		Net10 C#14
+// 2026-03-12	PV		Rework on code, not so sure about some optimizations
 
 using System;
 using System.Collections.Generic;
@@ -67,8 +68,6 @@ public class SolverDeck
         foreach ((SolverCard card, bool isFaceUp) in talonFD)
             TalonFD.AddCard(card, isFaceUp);
     }
-
-    //public PlayingCard ColumnTopCard(int col) => Columns[col].PlayingCards[0];
 
     public void PrintSolverDeck()
     {
@@ -341,6 +340,11 @@ public class SolverDeck
                 Movments.Add(mg);
                 if (showTraces)
                     WriteLine(mg.ToString());
+                // Here it seems that if I can move a card to base, then it has to be part of the solution,
+                // but actually I'm not totally sure about that... Not moving a card to the base may allow it
+                // to be covered by a card from another column, liberating a card that is key movable to a base
+                // and key to the solution...
+                // ==> To be reanalyzed
                 return Movments;
             }
         }

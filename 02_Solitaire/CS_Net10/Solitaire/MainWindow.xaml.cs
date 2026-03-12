@@ -3,9 +3,10 @@
 // Main Window = Startup code + interface (drag and drop) interactions
 //
 // 2019-04-09   PV
-// 2020-12-19   PV      .Net 5, C#9, nullable enable
+// 2020-12-19   PV      Net 5, C#9, nullable enable
 // 2021-11-13   PV      Net6 C#10
 // 2026-01-20	PV		Net10 C#14
+// 2026-03-12	PV		Rework on code, block automove from base to base and base to column (but manual move is Ok). Should also block it in solver
 
 using System;
 using System.Diagnostics;
@@ -44,28 +45,10 @@ public partial class MainWindow: Window, IDisposable
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
-        // Create data structures
-        //b.Bases = new BaseStack[4];
-        //b.Bases[0] = new BaseStack(b, "Base0", PlayingCanvas, Base0);
-        //b.Bases[1] = new BaseStack(b, "Base1", PlayingCanvas, Base1);
-        //b.Bases[2] = new BaseStack(b, "Base2", PlayingCanvas, Base2);
-        //b.Bases[3] = new BaseStack(b, "Base3", PlayingCanvas, Base3);
-
-        //b.Columns = new ColumnStack[7];
-        //b.Columns[0] = new ColumnStack(b, "Column0", PlayingCanvas, Column0);
-        //b.Columns[1] = new ColumnStack(b, "Column1", PlayingCanvas, Column1);
-        //b.Columns[2] = new ColumnStack(b, "Column2", PlayingCanvas, Column2);
-        //b.Columns[3] = new ColumnStack(b, "Column3", PlayingCanvas, Column3);
-        //b.Columns[4] = new ColumnStack(b, "Column4", PlayingCanvas, Column4);
-        //b.Columns[5] = new ColumnStack(b, "Column5", PlayingCanvas, Column5);
-        //b.Columns[6] = new ColumnStack(b, "Column6", PlayingCanvas, Column6);
-
-        //b.TalonFD = new TalonFaceDownStack(b, "TalonFD", PlayingCanvas, Talon0);
-        //b.TalonFU = new TalonFaceUpStack(b, "TalonFU", PlayingCanvas, Talon1);
-
         b.InitializeStacksDictionary();
 
-        b.InitRandomDeck(22);
+        //b.InitRandomDeck(22);
+        b.InitRandomDeck(3);
 
         // For performance testing
         /*
@@ -257,9 +240,14 @@ public partial class MainWindow: Window, IDisposable
     {
         Debug.Assert(movingGroup.MovingCards is not null);
 
+        // Now, as an experiment, I don't want to allow automove from base to column either
+        if (movingGroup.FromStack is BaseStack)
+            return;
+
         // First check if we can move to a base
         if (movingGroup.MovingCards.Count == 1)
         {
+
             var baseStack = GetCompatibleBaseStack(movingGroup.MovingCards[0]);
             if (baseStack != null)
             {

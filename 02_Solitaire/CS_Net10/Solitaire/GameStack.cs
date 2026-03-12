@@ -22,7 +22,8 @@ using System.Windows.Shapes;
 
 namespace Solitaire;
 
-internal class GameStack
+// Instantiable classes are BaseStack and ColumnStack
+internal abstract class GameStack
 {
     public readonly GameDeck b;
     public readonly string Name;

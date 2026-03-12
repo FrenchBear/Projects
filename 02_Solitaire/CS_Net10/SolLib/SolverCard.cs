@@ -41,4 +41,4 @@ public class SolverCard(int v, int c, bool isFaceUp)
                 Cards.Add(new SolverCard(v, ci, true));
         return Cards;
     }
-}   // class SolverCard
+}
