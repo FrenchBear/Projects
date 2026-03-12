@@ -6,14 +6,8 @@
 // 2024-11-15	PV		Net9 C#13
 // 2026-01-20	PV		Net10 C#14
 
-using System.Reflection;
-using System.Windows;
-
 namespace Bonza.Editor.View;
 
-/// <summary>
-/// Interaction logic for AboutWindow.xaml
-/// </summary>
 public partial class AboutWindow: Window
 {
     public AboutWindow()
@@ -21,10 +15,10 @@ public partial class AboutWindow: Window
         InitializeComponent();
 
         var myAssembly = Assembly.GetExecutingAssembly();
-        var aTitleAttr = (AssemblyTitleAttribute)System.Attribute.GetCustomAttribute(myAssembly, typeof(AssemblyTitleAttribute));
-        var aDescAttr = (AssemblyDescriptionAttribute)System.Attribute.GetCustomAttribute(myAssembly, typeof(AssemblyDescriptionAttribute));
+        var aTitleAttr = (AssemblyTitleAttribute)Attribute.GetCustomAttribute(myAssembly, typeof(AssemblyTitleAttribute));
+        var aDescAttr = (AssemblyDescriptionAttribute)Attribute.GetCustomAttribute(myAssembly, typeof(AssemblyDescriptionAttribute));
         string sAssemblyVersion = myAssembly.GetName().Version.ToString();
-        var aCopyrightAttr = (AssemblyCopyrightAttribute)System.Attribute.GetCustomAttribute(myAssembly, typeof(AssemblyCopyrightAttribute));
+        var aCopyrightAttr = (AssemblyCopyrightAttribute)Attribute.GetCustomAttribute(myAssembly, typeof(AssemblyCopyrightAttribute));
 
         AssemblyTitle.Text = aTitleAttr.Title;
         AssemblyDescription.Text = aDescAttr.Description;

@@ -7,10 +7,6 @@
 // 2024-11-15	PV		Net9 C#13
 // 2026-01-20	PV		Net10 C#14
 
-using System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-
 namespace Bonza.Editor.Support;
 
 public class MatrixAnimation: MatrixAnimationBase

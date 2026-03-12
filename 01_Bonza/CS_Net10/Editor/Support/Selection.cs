@@ -6,11 +6,6 @@
 // 2024-11-15	PV		Net9 C#13
 // 2026-01-20	PV		Net10 C#14
 
-using Bonza.Editor.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-
 namespace Bonza.Editor.Support;
 
 internal sealed class Selection(EditorViewModel viewModel)
@@ -40,7 +35,7 @@ internal sealed class Selection(EditorViewModel viewModel)
         if (!m_WordAndCanvasList.Contains(wac))
         {
             m_WordAndCanvasList.Add(wac);
-            wac.SetColor(App.SelectedValidForeground, App.SelectedValidBackground);
+            wac.SetColor(SelectedValidForeground, SelectedValidBackground);
 
             viewModel.SelectedWordCount++;
         }

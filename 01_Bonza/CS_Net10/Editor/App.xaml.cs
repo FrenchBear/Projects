@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Media;
+﻿// Bonza Editor - Startup class
 
 namespace Bonza.Editor;
 

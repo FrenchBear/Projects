@@ -6,12 +6,6 @@
 // 2024-11-15	PV		Net9 C#13
 // 2026-01-20	PV		Net10 C#14
 
-using Bonza.Generator;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using static Bonza.Editor.App;
-
 namespace Bonza.Editor.Support;
 
 internal sealed class WordCanvas: Canvas

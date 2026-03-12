@@ -6,27 +6,10 @@
 // 2023-11-20   PV      Net8 C#12
 // 2024-11-15	PV		Net9 C#13
 // 2026-01-20	PV		Net10 C#14
-
-using Bonza.Editor.Support;
-using Bonza.Editor.ViewModel;
-using Bonza.Generator;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using static Bonza.Editor.App;
+// 2026-03-12	PV		1.4 Standardization, use GlobalUsings
 
 namespace Bonza.Editor.View;
 
-/// <summary>
-/// Interaction logic for MainWindow.xaml
-/// </summary>
 public partial class EditorView: Window
 {
     private readonly EditorViewModel viewModel;
@@ -59,6 +42,16 @@ public partial class EditorView: Window
         FinalRefreshAfterUpdate();
         RescaleAndCenter(false);
     }
+
+    // F1 Help key shows About information
+    private void AboutExecuted(object sender, ExecutedRoutedEventArgs e)
+        => ShowAbout();
+
+    private static void ShowAbout()
+        => new AboutWindow
+        {
+            Owner = Application.Current.MainWindow        // So WindowStartupLocation="CenterOwner" works
+        }.ShowDialog();
 
     private void MainWindow_KeyDown(object sender, KeyEventArgs e)
     {

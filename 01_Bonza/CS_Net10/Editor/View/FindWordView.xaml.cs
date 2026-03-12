@@ -6,14 +6,8 @@
 // 2024-11-15	PV		Net9 C#13
 // 2026-01-20	PV		Net10 C#14
 
-using System.Windows;
-using Bonza.Editor.ViewModel;
-
 namespace Bonza.Editor.View;
 
-/// <summary>
-/// Interaction logic for FindWord.xaml
-/// </summary>
 public partial class FindWordView: Window
 {
     public FindWordView(FindWordViewModel vm)

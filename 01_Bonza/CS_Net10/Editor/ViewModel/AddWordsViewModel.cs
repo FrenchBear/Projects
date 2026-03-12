@@ -6,20 +6,14 @@
 // 2024-11-15	PV		Net9 C#13
 // 2026-01-20	PV		Net10 C#14
 
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Windows.Input;
-
-using Bonza.Editor.Support;
-
 namespace Bonza.Editor.ViewModel;
 
 internal sealed class AddWordsViewModel: INotifyPropertyChanged
 {
     // Access to View and model (EditorModel, not AddWordsModel that doesn't exist)
-    private readonly View.AddWordsView view;
+    private readonly AddWordsView view;
 
-    private readonly Model.EditorModel model;
+    private readonly EditorModel model;
 
     // Implementation of INotifyPropertyChanged, standard since View is only linked through DataBinding
     public event PropertyChangedEventHandler PropertyChanged;
@@ -32,7 +26,7 @@ internal sealed class AddWordsViewModel: INotifyPropertyChanged
 
     public ICommand CancelCommand { get; }
 
-    public AddWordsViewModel(View.AddWordsView view, Model.EditorModel model)
+    public AddWordsViewModel(AddWordsView view, EditorModel model)
     {
         // Initialize Model and ViewModel
         this.view = view;

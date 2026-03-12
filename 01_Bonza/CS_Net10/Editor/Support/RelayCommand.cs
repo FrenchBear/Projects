@@ -8,9 +8,6 @@
 // 2024-11-15	PV		Net9 C#13
 // 2026-01-20	PV		Net10 C#14
 
-using System;
-using System.Windows.Input;
-
 namespace Bonza.Editor.Support;
 
 #nullable enable

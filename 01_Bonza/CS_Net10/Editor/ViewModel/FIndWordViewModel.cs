@@ -5,17 +5,12 @@
 // 2024-11-15	PV		Net9 C#13
 // 2026-01-20	PV		Net10 C#14
 
-using System.ComponentModel;
-using System.Windows.Input;
-
-using Bonza.Editor.Support;
-
 namespace Bonza.Editor.ViewModel;
 
 public class FindWordViewModel: INotifyPropertyChanged
 {
     // Access to View and model (EditorModel, not AddWordsModel that doesn't exist)
-    private View.FindWordView view;
+    private FindWordView view;
 
     // Implementation of INotifyPropertyChanged, standard since View is only linked through DataBinding
     public event PropertyChangedEventHandler PropertyChanged;
@@ -35,7 +30,7 @@ public class FindWordViewModel: INotifyPropertyChanged
         CancelCommand = new RelayCommand<object>(CancelExecute);
     }
 
-    public void SetView(View.FindWordView view) => this.view = view;
+    public void SetView(FindWordView view) => this.view = view;
 
     // -------------------------------------------------
     // Bindings

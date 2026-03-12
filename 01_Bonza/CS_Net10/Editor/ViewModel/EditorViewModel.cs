@@ -6,22 +6,6 @@
 // 2024-11-15	PV		Net9 C#13
 // 2026-01-20	PV		Net10 C#14
 
-using Bonza.Editor.Model;
-using Bonza.Editor.Support;
-using Bonza.Editor.View;
-using Bonza.Generator;
-using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Input;
-
 namespace Bonza.Editor.ViewModel;
 
 internal sealed class EditorViewModel: INotifyPropertyChanged
@@ -57,9 +41,6 @@ internal sealed class EditorViewModel: INotifyPropertyChanged
     // View
     public ICommand RecenterLayoutViewCommand { get; }
 
-    // About
-    public ICommand AboutCommand { get; }
-
     // Constructor
     public EditorViewModel(EditorView view)
     {
@@ -86,9 +67,6 @@ internal sealed class EditorViewModel: INotifyPropertyChanged
 
         // View
         RecenterLayoutViewCommand = new RelayCommand<object>(RecenterLayoutViewExecute);
-
-        // Help
-        AboutCommand = new RelayCommand<object>(AboutExecute);
     }
 
     // -------------------------------------------------
@@ -133,7 +111,7 @@ internal sealed class EditorViewModel: INotifyPropertyChanged
         }
     }
 
-    public string Caption => LayoutName == null ? App.AppName : App.AppName + " - " + LayoutName;
+    public string Caption => LayoutName == null ? AppName : AppName + " - " + LayoutName;
 
     public string LayoutName
     {
@@ -325,7 +303,7 @@ internal sealed class EditorViewModel: INotifyPropertyChanged
         string checkStatus = model.CheckWordsList(wordsList);
         if (!string.IsNullOrEmpty(checkStatus))
         {
-            MessageBox.Show("Problème avec la liste de mots:\n" + checkStatus, App.AppName, MessageBoxButton.OK,
+            MessageBox.Show("Problème avec la liste de mots:\n" + checkStatus, AppName, MessageBoxButton.OK,
                 MessageBoxImage.Error);
             return null;
         }
@@ -334,7 +312,7 @@ internal sealed class EditorViewModel: INotifyPropertyChanged
         IEnumerable<WordPosition> wordPositionList = model.AddWordsList(wordsList);
         if (wordPositionList == null)
         {
-            MessageBox.Show("L'ajout des mots a échoué.", App.AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            MessageBox.Show("L'ajout des mots a échoué.", AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
             return null;
         }
         sw.Stop();
@@ -367,10 +345,10 @@ internal sealed class EditorViewModel: INotifyPropertyChanged
         }
         catch (Exception ex)
         {
-            MessageBox.Show("Problème avec le fichier de mots " + fileName + ":\r\n" + ex.Message, App.AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            MessageBox.Show("Problème avec le fichier de mots " + fileName + ":\r\n" + ex.Message, AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
         }
 
-        LayoutName = Path.GetFileNameWithoutExtension(fileName) + ".layout";
+        LayoutName = System.IO.Path.GetFileNameWithoutExtension(fileName) + ".layout";
     }
 
     private void RegenerateLayoutExecute(object obj)
@@ -392,7 +370,7 @@ internal sealed class EditorViewModel: INotifyPropertyChanged
         catch (Exception ex)
         {
             LayoutName = null;
-            MessageBox.Show("Problème lors de la réinitialisation du layout:\r\n" + ex.Message, App.AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            MessageBox.Show("Problème lors de la réinitialisation du layout:\r\n" + ex.Message, AppName, MessageBoxButton.OK, MessageBoxImage.Exclamation);
         }
     }
 
@@ -452,10 +430,4 @@ internal sealed class EditorViewModel: INotifyPropertyChanged
     }
 
     private void QuitExecute(object obj) => Environment.Exit(0);
-
-    private void AboutExecute(object obj)
-    {
-        var aw = new AboutWindow();
-        aw.ShowDialog();
-    }
 }
