@@ -10,4 +10,4 @@ Maybe implement a "solver status if less than x moves", with x specified in sett
 Add a button "New solvable game" (interesting if solver status is hidden)
 Document classes+hierarchy and functions, current doc is minimalist!
 Chose betetr names, for instance SolverGroup vs SolverStack?  And SolverStack has no relation with GameStack!  And I don't think it should contain word 'Solver'...
-
+Red border indicating a base can accept a drop should be green! And maybe also add a similar visual indicator to stacks when it can accept a drop
